@@ -28,6 +28,8 @@ export default function SortableColumn({
   onToggleWorn,
   onToggleConsumable,
   onQuantityChange,
+  onMoveItem,
+  onItemUpdated,
 }) {
   const scrollRef = useScrollPreserver(items);
   const catId = category._id;
@@ -118,6 +120,8 @@ export default function SortableColumn({
               onToggleWorn={onToggleWorn}
               onToggleConsumable={onToggleConsumable}
               onQuantityChange={onQuantityChange}
+              onMoveItem={onMoveItem}
+              onItemUpdated={onItemUpdated}
             />
           ))}
         </div>

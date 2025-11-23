@@ -10,7 +10,6 @@ import {
   FaGripVertical,
   FaUtensils,
   FaTshirt,
-  FaTimes,
   FaEllipsisH,
   FaShoppingCart,
 } from "react-icons/fa";
@@ -18,6 +17,8 @@ import AffiliateGateLink from "./AffiliateGateLink";
 import { useWeight } from "../hooks/useWeight";
 import { useResolvedPrice } from "../hooks/useResolvedPrice";
 import { formatCurrency } from "../utils/formatCurrency";
+import DropdownMenu from "./DropdownMenu";
+import GlobalItemEditModal from "./GlobalItemEditModal";
 
 export default function SortableItem({
   item,
@@ -29,6 +30,8 @@ export default function SortableItem({
   isListMode,
   fetchItems,
   onQuantityChange,
+  onMoveItem,
+  onItemUpdated,
 }) {
   const { currency, locale } = useUserSettings();
   const resolved = useResolvedPrice(item); // {amount,currency,merchant,deeplink,source} | null
@@ -36,6 +39,7 @@ export default function SortableItem({
   const [consumableLocal, setConsumableLocal] = useState(item.consumable);
   const weightText = useWeight(item.weight);
   const itemKey = `item-${catId}-${item._id}`;
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   // Decide price once:
   // Custom price: always in user's currency.
@@ -218,6 +222,48 @@ export default function SortableItem({
     transition,
   };
 
+  const desktopMenuItems = useMemo(
+    () => [
+      {
+        key: "details",
+        label: "View / Edit Details",
+        onClick: () => setDetailsOpen(true),
+      },
+      {
+        key: "remove",
+        label: "Remove Item",
+        onClick: () => onDelete?.(catId, item._id),
+      },
+    ],
+    [catId, item._id, onDelete]
+  );
+
+  const mobileMenuItems = useMemo(() => {
+    const base = [
+      {
+        key: "details",
+        label: "View / Edit Details",
+        onClick: () => setDetailsOpen(true),
+      },
+    ];
+
+    if (onMoveItem) {
+      base.push({
+        key: "move",
+        label: "Move Item",
+        onClick: () => onMoveItem(catId, item),
+      });
+    }
+
+    base.push({
+      key: "remove",
+      label: "Remove Item",
+      onClick: () => onDelete?.(catId, item._id),
+    });
+
+    return base;
+  }, [catId, item, onDelete, onMoveItem]);
+
   return (
     <div
       ref={setNodeRef}
@@ -227,23 +273,31 @@ export default function SortableItem({
       {/* ========== MOBILE (both list/column collapse to this) ========== */}
       <div className="sm:hidden grid grid-rows-[auto_auto] gap-y-1 gap-x-2 text-sm">
         {/* Row 1: type + name/brand + ellipsis */}
-        <div className="row-start-1 col-span-2 flex items-center justify-between space-x-2 overflow-hidden">
-          <div className="flex items-center space-x-1 overflow-hidden">
+        <div className="row-start-1 col-span-2 flex items-center justify-between space-x-2 overflow-x-hidden">
+          {" "}
+          {/* Text block gets the overflow handling, not the whole row */}
+          <div className="flex items-center space-x-1 overflow-hidden min-w-0">
             <div className="font-semibold text-primary flex-shrink-0">
               {item.itemType || "—"}
             </div>
-            <div className="truncate text-primary flex-1 overflow-hidden">
+            <div className="truncate text-primary flex-1 min-w-0">
               {item.brand && <span className="mr-1">{item.brand}</span>}
               {item.name}
             </div>
           </div>
-          <a
-            href="#"
-            title="See details"
-            className="text-secondary hover:text-secondary/50"
-          >
-            <FaEllipsisH />
-          </a>
+          <DropdownMenu
+            trigger={
+              <button
+                type="button"
+                title="Item options"
+                aria-label="Item options"
+                className="text-secondary hover:text-secondary/80 focus:outline-none"
+              >
+                <FaEllipsisH />
+              </button>
+            }
+            items={mobileMenuItems}
+          />
         </div>
 
         {/* Row 2: left (weight + price) · right (Buy · icons · qty) */}
@@ -358,18 +412,21 @@ export default function SortableItem({
             <CartIconLink href={finalLink} />
           </div>
 
-          {/* 10) Delete */}
+          {/* 10) Actions menu (desktop list) */}
           <div className="place-self-center">
-            <button
-              type="button"
-              title="Delete item"
-              aria-label="Delete item"
-              data-testid="trash"
-              onClick={() => onDelete(catId, item._id)}
-              className="inline-flex items-center justify-center h-6 w-6 text-secondary hover:text-secondary/80 focus:outline-none leading-none"
-            >
-              <FaTimes className="w-4 h-4 align-middle" />
-            </button>
+            <DropdownMenu
+              trigger={
+                <button
+                  type="button"
+                  title="Item options"
+                  aria-label="Item options"
+                  className="inline-flex items-center justify-center text-secondary hover:text-secondary/80 focus:outline-none leading-none"
+                >
+                  <FaEllipsisH className="w-4 h-4 align-middle" />
+                </button>
+              }
+              items={desktopMenuItems}
+            />
           </div>
         </div>
       )}
@@ -389,16 +446,19 @@ export default function SortableItem({
             <div className="font-semibold text-primary px-2">
               {item.itemType || "—"}
             </div>
-            <button
-              type="button"
-              title="Delete item"
-              aria-label="Delete item"
-              data-testid="trash"
-              onClick={() => onDelete(catId, item._id)}
-              className="inline-flex items-center justify-center text-secondary hover:text-secondary/50 focus:outline-none"
-            >
-              <FaTimes />
-            </button>
+            <DropdownMenu
+              trigger={
+                <button
+                  type="button"
+                  title="Item options"
+                  aria-label="Item options"
+                  className="inline-flex items-center justify-center text-secondary hover:text-secondary/80 focus:outline-none leading-none"
+                >
+                  <FaEllipsisH />
+                </button>
+              }
+              items={desktopMenuItems}
+            />
           </div>
           {/* Row 2: Brand/Name (left) */}
           <div className="grid grid-cols-[1fr] items-center">
@@ -450,6 +510,22 @@ export default function SortableItem({
             </div>
           </div>
         </div>
+      )}
+      {detailsOpen && (
+        <GlobalItemEditModal
+          item={item}
+          onClose={() => setDetailsOpen(false)}
+          onSaved={() => {
+            setDetailsOpen(false);
+            // Refresh current category (if you have a per-cat fetch)
+            fetchItems?.(catId);
+            // And ask the page to refresh the whole list if needed
+            onItemUpdated?.(); // 🔑 new line
+          }}
+          allowDelete={false}
+          listId={listId}
+          catId={catId}
+        />
       )}
     </div>
   );

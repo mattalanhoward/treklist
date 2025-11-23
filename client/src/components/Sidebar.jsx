@@ -45,6 +45,23 @@ export default function Sidebar({
     return () => clearTimeout(handler);
   }, [searchQuery]);
 
+  // Refresh global items whenever a global item is edited anywhere
+  useEffect(() => {
+    const handleGlobalUpdated = () => {
+      fetchGlobalItems(debouncedSearch);
+    };
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("global-items:updated", handleGlobalUpdated);
+    }
+
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("global-items:updated", handleGlobalUpdated);
+      }
+    };
+  }, [debouncedSearch]);
+
   // 2) fetch whenever debouncedSearch changes
   const fetchGlobalItems = async (query) => {
     try {

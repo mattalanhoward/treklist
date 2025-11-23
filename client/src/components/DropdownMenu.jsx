@@ -1,73 +1,138 @@
-import React, { Fragment } from "react";
-import { Menu, Transition } from "@headlessui/react";
+// src/components/DropdownMenu.jsx
+import React, { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 
-/**
- * Reusable dropdown menu component using HeadlessUI.
- *
- * Props:
- * - trigger: React node to render as the toggle (e.g. an icon button).
- * - items: Array of menu items. Each item can be either:
- *     { key, label, icon?, onClick, disabled?, className? }
- *     { key, render: () => ReactNode }
- * - menuWidth: Tailwind width class for the menu (default "w-48").
- * - menuClassName: additional Tailwind classes for the Menu.Items container.
- */
+function mergeRefs(refA, refB) {
+  return (node) => {
+    if (typeof refA === "function") refA(node);
+    else if (refA && typeof refA === "object") refA.current = node;
 
-export default function DropdownMenu({
-  trigger,
-  items,
-  menuWidth = "w-48",
-  menuClassName = "",
-}) {
+    if (typeof refB === "function") refB(node);
+    else if (refB && typeof refB === "object") refB.current = node;
+  };
+}
+
+export default function DropdownMenu({ trigger, items, menuWidth = "w-44" }) {
+  const [open, setOpen] = useState(false);
+  const [position, setPosition] = useState(null);
+  const triggerRef = useRef(null);
+  const menuRef = useRef(null);
+
+  const toggleOpen = (event) => {
+    event?.stopPropagation?.();
+
+    setOpen((prev) => {
+      const next = !prev;
+
+      if (!prev && triggerRef.current && typeof window !== "undefined") {
+        const rect = triggerRef.current.getBoundingClientRect();
+        const viewportWidth =
+          window.innerWidth || document.documentElement.clientWidth;
+
+        const maxMenuWidth = 260;
+        const left = Math.min(
+          rect.left + window.scrollX,
+          viewportWidth - maxMenuWidth
+        );
+        const top = rect.bottom + window.scrollY + 4;
+
+        setPosition({ top, left });
+      }
+
+      return next;
+    });
+  };
+
+  // 🔑 Close only when clicking *outside* trigger + menu
+  useEffect(() => {
+    if (!open) return;
+
+    const handlePointerDown = (e) => {
+      const t = e.target;
+      if (triggerRef.current?.contains(t) || menuRef.current?.contains(t)) {
+        return; // click is inside; do nothing
+      }
+      setOpen(false);
+    };
+
+    const handleKey = (e) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("touchstart", handlePointerDown);
+    document.addEventListener("keydown", handleKey);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("touchstart", handlePointerDown);
+      document.removeEventListener("keydown", handleKey);
+    };
+  }, [open]);
+
+  // Clone trigger to inject ref + click handler
+  const clonedTrigger = React.cloneElement(trigger, {
+    ref: mergeRefs(trigger.ref, triggerRef),
+    onClick: (e) => {
+      if (typeof trigger.props.onClick === "function") {
+        trigger.props.onClick(e);
+      }
+      if (!e.defaultPrevented) {
+        toggleOpen(e);
+      }
+    },
+  });
+
+  const menu =
+    open && position && typeof document !== "undefined"
+      ? createPortal(
+          <div
+            ref={menuRef}
+            style={{
+              position: "absolute",
+              top: position.top,
+              left: position.left,
+              zIndex: 50,
+            }}
+            className={`mt-1 rounded shadow-lg border border-base-300 bg-base-100 ${menuWidth}`}
+          >
+            <ul className="py-1 text-sm text-primary">
+              {items.map((item) =>
+                item.render ? (
+                  <li key={item.key} className="px-3 py-1">
+                    {item.render()}
+                  </li>
+                ) : (
+                  <li key={item.key}>
+                    <button
+                      type="button"
+                      disabled={item.disabled}
+                      onClick={() => {
+                        if (item.disabled) return;
+                        item.onClick?.();
+                        setOpen(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 text-sm cursor-pointer rounded-none transition-colors ${
+                        item.disabled
+                          ? "opacity-50 cursor-not-allowed"
+                          : "hover:bg-primary/10 focus:bg-primary/10"
+                      } ${item.className || ""}`}
+                    >
+                      {item.label}
+                    </button>
+                  </li>
+                )
+              )}
+            </ul>
+          </div>,
+          document.body
+        )
+      : null;
+
   return (
-    <Menu as="div" className="relative inline-block text-left">
-      <Menu.Button as="div">{trigger}</Menu.Button>
-
-      <Transition
-        as={Fragment}
-        enter="transition ease-out duration-100"
-        enterFrom="transform opacity-0 scale-95"
-        enterTo="transform opacity-100 scale-100"
-        leave="transition ease-in duration-75"
-        leaveFrom="transform opacity-100 scale-100"
-        leaveTo="transform opacity-0 scale-95"
-      >
-        <Menu.Items
-          className={`
-            absolute right-0 mt-2 ${menuWidth}
-            origin-top-right rounded-md bg-base-100 isolate shadow-lg
-            ring-1 ring-black/5 focus:outline-none z-50
-            max-h-[calc(100dvh-4rem)] sm:max-h-[80vh]
-            overflow-y-auto overscroll-contain
-            ${menuClassName}
-          `}
-        >
-          {items.map((item) =>
-            item.render ? (
-              <div key={item.key} className="px-4 py-1">
-                {item.render()}
-              </div>
-            ) : (
-              <Menu.Item key={item.key} disabled={item.disabled}>
-                {({ active, disabled }) => (
-                  <button
-                    onClick={item.onClick}
-                    disabled={disabled}
-                    className={`${
-                      active ? "bg-primaryAlt hover:text-base-100" : ""
-                    } block w-full text-left px-4 py-1 text-sm text-secondary ${
-                      item.className || ""
-                    }`}
-                  >
-                    {item.icon && <item.icon className="inline-block mr-2" />}
-                    {item.label}
-                  </button>
-                )}
-              </Menu.Item>
-            )
-          )}
-        </Menu.Items>
-      </Transition>
-    </Menu>
+    <>
+      {clonedTrigger}
+      {menu}
+    </>
   );
 }

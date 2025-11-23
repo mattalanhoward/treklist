@@ -10,7 +10,15 @@ import { useWeightInput } from "../hooks/useWeightInput";
 import { useUserSettings } from "../contexts/UserSettings";
 import { FaTimes } from "react-icons/fa";
 
-export default function GlobalItemEditModal({ item, onClose, onSaved }) {
+export default function GlobalItemEditModal({
+  item,
+  onClose,
+  onSaved,
+  allowDelete = true,
+  listId,
+  catId,
+  context = "global", // "global" | "list"
+}) {
   const [form, setForm] = useState({
     category: "",
     itemType: "",
@@ -34,6 +42,7 @@ export default function GlobalItemEditModal({ item, onClose, onSaved }) {
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const itemId = item ? item._id : null;
+  const isListContext = context === "list";
 
   const { currency, locale } = useUserSettings();
   const CURRENCY_SYMBOL = {
@@ -111,6 +120,14 @@ export default function GlobalItemEditModal({ item, onClose, onSaved }) {
     setConfirmOpen(false);
     setSaving(true);
     setError("");
+
+    // Are we editing from a gear-list item (has list + category)?
+    const isListContext = !!(listId && catId);
+    // Which id should we use for the GLOBAL template?
+    //  - from sidebar: item._id is the global id
+    //  - from gear list: use item.globalItem if present
+    const globalId = isListContext ? item?.globalItem : item?._id;
+
     try {
       const payload = {
         category: form.category,
@@ -129,26 +146,69 @@ export default function GlobalItemEditModal({ item, onClose, onSaved }) {
 
       // Price/Link handling:
       if (isAffiliate) {
+        // For imported affiliate items, lock price + link
         delete payload.price;
         delete payload.link;
       } else {
+        // Price: allow clearing to null
         if (form.price === "" || form.price == null) {
-          payload.price = null; // clear price when input is empty
+          payload.price = null;
         } else {
           const p = Number(form.price);
           if (!Number.isNaN(p)) payload.price = p; // keep 0 if they typed 0
         }
-        if (form.link && form.link.trim()) payload.link = form.link.trim();
+
+        // Link: allow clearing
+        const trimmedLink = (form.link || "").trim();
+        payload.link = trimmedLink === "" ? null : trimmedLink;
       }
 
-      await api.patch(`/global/items/${item._id}`, payload);
-      toast.success("Global item updated");
-      onSaved?.();
-      onClose?.();
+      let updatedSomething = false;
+      let touchedGlobal = false;
+
+      // 1) Update the GLOBAL template if we know its id
+      if (globalId) {
+        try {
+          await api.patch(`/global/items/${globalId}`, payload);
+          updatedSomething = true;
+          touchedGlobal = true;
+
+          // Notify other parts of the app (Sidebar) that globals changed
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(new CustomEvent("global-items:updated"));
+          }
+        } catch (err) {
+          // In list context, a 404 here just means the global template is gone.
+          // We still continue with the list-item update below.
+          if (!(isListContext && err.response?.status === 404)) {
+            throw err;
+          }
+        }
+      }
+
+      // 2) Update the LIST item when editing from a gear-list card
+      if (isListContext) {
+        await api.patch(
+          `/dashboard/${listId}/categories/${catId}/items/${item._id}`,
+          payload
+        );
+        updatedSomething = true;
+      }
+
+      if (updatedSomething) {
+        toast.success(
+          isListContext && touchedGlobal
+            ? "Item updated everywhere"
+            : "Item updated"
+        );
+        onSaved?.();
+        onClose?.();
+      }
     } catch (e) {
-      console.error("Error saving global item:", e);
+      console.error("Error saving item:", e);
       const msg =
         e.response?.data?.message || "Failed to save. Please try again.";
+      setError(msg);
       toast.error(msg);
     } finally {
       setSaving(false);
@@ -304,16 +364,17 @@ export default function GlobalItemEditModal({ item, onClose, onSaved }) {
         )}
 
         {/* Actions */}
-        <div className="mt-3 flex justify-between items-center">
-          <button
-            type="button"
-            onClick={() => setDeleteConfirmOpen(true)}
-            disabled={saving}
-            className="px-2 py-1 bg-error text-neutral text-sm font-semibold rounded-md shadow hover:bg-error/80 focus:outline-none focus:ring-2 focus:ring-error transition"
-          >
-            Delete Item
-          </button>
-
+        <div className="mt-3 flex items-center justify-end">
+          {allowDelete && (
+            <button
+              type="button"
+              onClick={() => setDeleteConfirmOpen(true)}
+              disabled={saving}
+              className="mr-auto px-2 py-1 bg-error text-neutral text-sm font-semibold rounded-md shadow hover:bg-error/80 focus:outline-none focus:ring-2 focus:ring-error transition"
+            >
+              Delete Item
+            </button>
+          )}
           <div className="flex space-x-2">
             <button
               type="button"
@@ -336,33 +397,39 @@ export default function GlobalItemEditModal({ item, onClose, onSaved }) {
         {/* Apply changes confirm dialog */}
         <ConfirmDialog
           isOpen={confirmOpen}
-          title="Apply changes to every instance?"
-          confirmText="Yes, update all"
+          title={
+            isListContext
+              ? "Save changes to this item?"
+              : "Apply changes to every instance?"
+          }
+          confirmText={isListContext ? "Save changes" : "Yes, update all"}
           cancelText="Cancel"
           onConfirm={handleConfirm}
           onCancel={handleCancelConfirm}
         />
 
         {/* Delete confirm dialog */}
-        <ConfirmDialog
-          isOpen={deleteConfirmOpen}
-          title="Delete this Gear Item?"
-          message="This will remove it from your gear items and all of your gear lists."
-          confirmText="Delete Item"
-          cancelText="Cancel"
-          onConfirm={async () => {
-            setDeleteConfirmOpen(false);
-            try {
-              await api.delete(`/global/items/${item._id}`);
-              toast.success("Item deleted");
-              onSaved?.();
-              onClose?.();
-            } catch (err) {
-              toast.error(err.response?.data?.message || "Delete failed");
-            }
-          }}
-          onCancel={() => setDeleteConfirmOpen(false)}
-        />
+        {allowDelete && (
+          <ConfirmDialog
+            isOpen={deleteConfirmOpen}
+            title="Delete this Gear Item?"
+            message="This will remove it from your gear items and all of your gear lists."
+            confirmText="Delete Item"
+            cancelText="Cancel"
+            onConfirm={async () => {
+              setDeleteConfirmOpen(false);
+              try {
+                await api.delete(`/global/items/${item._id}`);
+                toast.success("Item deleted");
+                onSaved?.();
+                onClose?.();
+              } catch (err) {
+                toast.error(err.response?.data?.message || "Delete failed");
+              }
+            }}
+            onCancel={() => setDeleteConfirmOpen(false)}
+          />
+        )}
       </form>
     </div>
   );
