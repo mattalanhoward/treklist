@@ -29,6 +29,8 @@ export default function SortableSection({
   onToggleWorn,
   onToggleConsumable,
   onQuantityChange,
+  onMoveItem,
+  onItemUpdated,
 }) {
   const filtered = useMemo(
     () => items.filter((i) => `item-${category._id}-${i._id}` !== activeId),
@@ -129,6 +131,8 @@ export default function SortableSection({
               onToggleWorn={onToggleWorn}
               onToggleConsumable={onToggleConsumable}
               onQuantityChange={onQuantityChange}
+              onMoveItem={onMoveItem}
+              onItemUpdated={onItemUpdated}
             />
           ))}
         </div>

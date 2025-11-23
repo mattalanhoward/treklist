@@ -26,6 +26,7 @@ import SortableSection from "../components/SortableSection";
 import { GEARLIST_SWATCHES as swatches } from "../config/colors";
 import { defaultBackgrounds } from "../config/defaultBackgrounds";
 import ShareModal from "../components/ShareModal";
+import MoveItemModal from "../components/MoveItemModal";
 
 export default function GearListView({
   listId,
@@ -65,6 +66,7 @@ export default function GearListView({
   const [shareOpen, setShareOpen] = useState(false);
   const closeShare = () => setShareOpen(false);
   const [busy, setBusy] = React.useState(false);
+  const [moveItemTarget, setMoveItemTarget] = useState(null); // { catId, item }
 
   const MAX_CUSTOM_BACKGROUNDS = 7;
 
@@ -133,12 +135,24 @@ export default function GearListView({
     setItemsMap(map);
   }, [items]);
 
-  const fetchItems = async (catId) => {
-    const { data } = await api.get(
-      `/dashboard/${listId}/categories/${catId}/items`
-    );
-    setItemsMap((m) => ({ ...m, [catId]: data }));
-  };
+  // right after itemsMap state + useEffect that groups items
+  const fetchItems = useCallback(
+    async (catId) => {
+      if (!catId) return; // guard against accidental calls with no cat
+      const { data } = await api.get(
+        `/dashboard/${listId}/categories/${catId}/items`
+      );
+      setItemsMap((m) => ({ ...m, [catId]: data }));
+    },
+    [listId]
+  );
+
+  // Use the parent’s onRefresh to re-fetch the whole payload
+  const refreshListAfterEdit = useCallback(() => {
+    if (typeof onRefresh === "function") {
+      onRefresh();
+    }
+  }, [onRefresh]);
 
   const stats = React.useMemo(() => computeStats(itemsMap), [itemsMap]);
 
@@ -577,6 +591,126 @@ export default function GearListView({
 
     // otherwise (categories) use pointerWithin (or whatever you prefer)
     return pointerWithin(args);
+  };
+
+  const handleMoveItemManual = async (
+    fromCatId,
+    itemId,
+    toCatId,
+    positionIndex
+  ) => {
+    if (!fromCatId || !itemId || !toCatId) return;
+
+    const sourceArr = itemsMap[fromCatId] || [];
+    const destArr = itemsMap[toCatId] || [];
+
+    const removedIdx = sourceArr.findIndex((i) => i._id === itemId);
+    if (removedIdx === -1) return;
+
+    const movedItem = sourceArr[removedIdx];
+
+    // ─── SAME-CATEGORY REORDER ───
+    if (fromCatId === toCatId) {
+      const oldArray = sourceArr;
+      const safeIndex = Math.max(
+        0,
+        Math.min(positionIndex, oldArray.length - 1)
+      );
+
+      if (safeIndex === removedIdx) return;
+
+      const reordered = arrayMove(oldArray, removedIdx, safeIndex).map(
+        (it, idx) => ({ ...it, position: idx })
+      );
+
+      setItemsMap((m) => ({ ...m, [fromCatId]: reordered }));
+
+      try {
+        for (let i = 0; i < reordered.length; i++) {
+          const it = reordered[i];
+          const oldItem = oldArray.find((x) => x._id === it._id);
+          if (!oldItem || oldItem.position === i) continue;
+
+          await api.patch(
+            `/dashboard/${listId}/categories/${fromCatId}/items/${it._id}`,
+            { position: i }
+          );
+        }
+      } catch (err) {
+        toast.error(err.message || "Failed to move item");
+        fetchItems(fromCatId);
+      }
+
+      return;
+    }
+
+    // ─── CROSS-CATEGORY MOVE ───
+    const newSource = sourceArr
+      .filter((i) => i._id !== itemId)
+      .map((it, idx) => ({ ...it, position: idx }));
+
+    const insertIndex = Math.max(0, Math.min(positionIndex, destArr.length));
+    const newDestRaw = [
+      ...destArr.slice(0, insertIndex),
+      movedItem,
+      ...destArr.slice(insertIndex),
+    ];
+
+    const newDest = newDestRaw.map((it, idx) => ({
+      ...it,
+      position: idx,
+      category: it._id === movedItem._id ? toCatId : it.category,
+    }));
+
+    setItemsMap((m) => ({
+      ...m,
+      [fromCatId]: newSource,
+      [toCatId]: newDest,
+    }));
+
+    try {
+      // 1) update moved item category + position
+      await api.patch(
+        `/dashboard/${listId}/categories/${fromCatId}/items/${itemId}`,
+        {
+          category: toCatId,
+          position: newDest.find((i) => i._id === itemId).position,
+        }
+      );
+
+      // 2) reindex source siblings
+      for (let i = 0; i < newSource.length; i++) {
+        const it = newSource[i];
+        const oldItem = sourceArr.find((x) => x._id === it._id);
+        if (!oldItem || oldItem.position === i) continue;
+
+        await api.patch(
+          `/dashboard/${listId}/categories/${fromCatId}/items/${it._id}`,
+          { position: i }
+        );
+      }
+
+      // 3) reindex dest siblings
+      for (let i = 0; i < newDest.length; i++) {
+        const it = newDest[i];
+        const oldItem = destArr.find((x) => x._id === it._id);
+        if (
+          !oldItem ||
+          it._id === itemId || // moved item already handled
+          oldItem.position === i
+        )
+          continue;
+
+        await api.patch(
+          `/dashboard/${listId}/categories/${toCatId}/items/${it._id}`,
+          { position: i }
+        );
+      }
+    } catch (err) {
+      toast.error(err.message || "Failed to move item");
+      fetchItems(fromCatId);
+      if (toCatId !== fromCatId) fetchItems(toCatId);
+    }
   };
 
   // Rename list
@@ -1027,8 +1161,11 @@ export default function GearListView({
                 onToggleWorn={handleToggleWorn}
                 onToggleConsumable={handleToggleConsumable}
                 onQuantityChange={handleQuantityChange}
+                /* move item */
+                onMoveItem={(catId, item) => setMoveItemTarget({ catId, item })}
                 /* layout */
                 viewMode={viewMode}
+                onItemUpdated={refreshListAfterEdit}
               />
             ))}
             {/* Add New Category button */}
@@ -1087,8 +1224,11 @@ export default function GearListView({
                 onToggleWorn={handleToggleWorn}
                 onToggleConsumable={handleToggleConsumable}
                 onQuantityChange={handleQuantityChange}
+                /* move item */
+                onMoveItem={(catId, item) => setMoveItemTarget({ catId, item })}
                 /* layout */
                 viewMode={viewMode}
+                onItemUpdated={refreshListAfterEdit}
               />
             ))}
             {/* Add New Category column */}
@@ -1124,6 +1264,26 @@ export default function GearListView({
           </div>
         )}
       </DndContextWrapper>
+
+      <MoveItemModal
+        isOpen={!!moveItemTarget}
+        onClose={() => setMoveItemTarget(null)}
+        item={moveItemTarget?.item || null}
+        fromCatId={moveItemTarget?.catId || null}
+        categories={categories}
+        itemsMap={itemsMap}
+        onMove={async ({ toCatId, positionIndex }) => {
+          if (!moveItemTarget) return;
+          await handleMoveItemManual(
+            moveItemTarget.catId,
+            moveItemTarget.item._id,
+            toCatId,
+            positionIndex
+          );
+          setMoveItemTarget(null);
+        }}
+      />
+
       <GearListDetailsModal
         isOpen={showDetailsModal}
         onClose={() => setShowDetailsModal(false)}

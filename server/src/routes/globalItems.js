@@ -176,6 +176,7 @@ router.patch("/:id", async (req, res) => {
     if (!current) {
       return res.status(404).json({ message: "Global item not found." });
     }
+
     const isAffiliate = current.affiliate && current.affiliate.network;
     if (
       isAffiliate &&
@@ -187,29 +188,47 @@ router.patch("/:id", async (req, res) => {
       });
     }
 
-    // Update master template with allowed fields
+    // Only allow these fields to be updated
+    const allowed = [
+      "itemType",
+      "name",
+      "brand",
+      "description",
+      "weight",
+      "price",
+      "link",
+    ];
+
+    const updates = {};
+    for (const key of allowed) {
+      if (Object.prototype.hasOwnProperty.call(req.body, key)) {
+        updates[key] = req.body[key];
+      }
+    }
+
+    // Update master template
     const updated = await GlobalItem.findOneAndUpdate(
       { _id: req.params.id, owner: req.userId },
-      req.body,
+      { $set: updates },
       { new: true }
     );
     if (!updated) {
       return res.status(404).json({ message: "Global item not found." });
     }
+
     // Cascade update to all GearItem instances referencing this template
-    await GearItem.updateMany(
-      { globalItem: req.params.id },
-      {
-        name: updated.name,
-        brand: updated.brand,
-        description: updated.description,
-        weight: updated.weight,
-        // Keep your existing cascade fields as-is; do NOT change price/link here
-        // price/link remain whatever GlobalItem has (unchanged for affiliate items)
-        price: updated.price,
-        link: updated.link,
-      }
-    );
+    const cascade = {
+      itemType: updated.itemType,
+      name: updated.name,
+      brand: updated.brand,
+      description: updated.description,
+      weight: updated.weight,
+      price: updated.price,
+      link: updated.link,
+    };
+
+    await GearItem.updateMany({ globalItem: req.params.id }, { $set: cascade });
+
     res.json(updated);
   } catch (err) {
     console.error("Error propagating global item update:", err);
