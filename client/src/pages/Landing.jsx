@@ -45,13 +45,6 @@ const heroTentSources = {
   1920: "https://res.cloudinary.com/packplanner/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1920/v1754767080/gear-list-hero-images/hero-tent_ijvmku.jpg",
 };
 
-// const Dot = ({ className = "" }) => (
-//   <span
-//     className={`inline-block h-3 w-3 rounded-full ${className}`}
-//     aria-hidden="true"
-//   />
-// );
-
 const CheckIcon = (props) => (
   <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" {...props}>
     <path
@@ -233,8 +226,8 @@ export default function Landing() {
           </h1>
           <p className="max-w-2xl text-white mb-8">
             Build, share, and check off your gear lists—designed for
-            long-distance hikers, bikepackers, and hostel-hopping travelers
-            exploring Europe and beyond.
+            long-distance hikers, weekenders, and hut to hut trekkers exploring
+            Europe and beyond.
           </p>
           <button
             onClick={() => openAuth("register")}
@@ -498,22 +491,21 @@ export default function Landing() {
           })}
         </div>
 
-        {/* Affiliate disclosure */}
+        {/* Affiliate disclosure
         <p className="mt-10 max-w-4xl mx-auto text-sm text-gray-500">
           <strong>Affiliate Disclosure:</strong> Some links in these gear lists
           are affiliate links, meaning we may earn a small commission if you
           make a purchase at no extra cost to you. This helps support
           TrekList.co and keeps our content free. We only recommend gear we
           trust and use ourselves.
-        </p>
+        </p> */}
       </section>
 
       {/* Mission / Social Good */}
-      <section id="mission" className="py-16 px-6 bg-white text-center">
+      {/* <section id="mission" className="py-16 px-6 bg-white text-center">
         <h2 className="text-3xl font-bold mb-4">Built for Adventurers</h2>
         <p className="max-w-2xl mx-auto text-gray-700 mb-6">
-          We give 5% of revenue back to trail conservation and local guide
-          programs.
+          We give 5% of revenue back to trail conservation programs.
         </p>
         <Link
           to="/about"
@@ -521,6 +513,210 @@ export default function Landing() {
         >
           Learn More
         </Link>
+      </section> */}
+
+      {/* === How TrekList Fits Into Your Planning (3-step explainer) === */}
+      <section
+        id="how-it-works"
+        aria-labelledby="how-it-works-title"
+        className="py-16 px-6 bg-white border-t border-slate-200"
+      >
+        <div className="mx-auto max-w-5xl">
+          <h2
+            id="how-it-works-title"
+            className="text-3xl font-bold text-slate-900 text-center mb-4"
+          >
+            How TrekList fits into your next hike
+          </h2>
+          <p className="max-w-2xl mx-auto text-center text-slate-600 mb-10">
+            Start with a recommended list or build your own from scratch, tune
+            your kit, and walk into your trip with a pack that feels just right.
+          </p>
+
+          <div className="grid gap-8 md:grid-cols-3">
+            {/* Step 1 */}
+            <div className="flex flex-col items-start rounded-xl border border-slate-200 bg-slate-50 p-5">
+              <div className="flex items-center justify-center h-9 w-9 rounded-full bg-blue-600 text-white text-sm font-semibold mb-4">
+                1
+              </div>
+              <h3 className="text-base font-semibold text-slate-900 mb-2">
+                Plan your list
+              </h3>
+              <p className="text-sm text-slate-700 leading-relaxed">
+                Use the import feature to quickly build your gear inventory from
+                our library, add any custom items you need, then organize
+                everything into categories like sleep, clothing, electronics,
+                and food as you build out your list.
+              </p>
+            </div>
+
+            {/* Step 2 */}
+            <div className="flex flex-col items-start rounded-xl border border-slate-200 bg-slate-50 p-5">
+              <div className="flex items-center justify-center h-9 w-9 rounded-full bg-blue-600 text-white text-sm font-semibold mb-4">
+                2
+              </div>
+              <h3 className="text-base font-semibold text-slate-900 mb-2">
+                Tune weight & budget
+              </h3>
+              <p className="text-sm text-slate-700 leading-relaxed">
+                See base, worn, consumable total weights in real time while you
+                tweak your kit. Track prices in your preferred currency as you
+                upgrade or swap items.
+              </p>
+            </div>
+
+            {/* Step 3 */}
+            <div className="flex flex-col items-start rounded-xl border border-slate-200 bg-slate-50 p-5">
+              <div className="flex items-center justify-center h-9 w-9 rounded-full bg-blue-600 text-white text-sm font-semibold mb-4">
+                3
+              </div>
+              <h3 className="text-base font-semibold text-slate-900 mb-2">
+                Pack and share
+              </h3>
+              <p className="text-sm text-slate-700 leading-relaxed">
+                Switch to checklist mode the week before you leave, tick items
+                off as they go into your pack, and share a read-only link with
+                friends, family, or forum posts.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-10 text-center">
+            <button
+              type="button"
+              onClick={() => openAuth("register")}
+              className="inline-flex items-center justify-center rounded-full bg-blue-600 px-7 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+            >
+              Start your free gear list
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* === FAQ Section === */}
+      <section
+        aria-labelledby="faq"
+        className="py-16 px-6 bg-white border-t border-slate-200"
+      >
+        <div className="mx-auto max-w-4xl">
+          <h2
+            id="faq"
+            className="text-3xl font-bold text-slate-900 text-center mb-4"
+          >
+            Questions before you start?
+          </h2>
+          <p className="max-w-2xl mx-auto text-center text-slate-600 mb-10">
+            A few quick answers about how TrekList works and what you get when
+            you create an account.
+          </p>
+
+          <div className="space-y-4">
+            <details className="group rounded-lg border border-slate-200 bg-slate-50 p-4 open:bg-white open:border-blue-200">
+              <summary className="flex cursor-pointer items-center justify-between text-sm font-semibold text-slate-900">
+                <span>Is TrekList free?</span>
+                <span className="ml-3 text-xs text-slate-500 group-open:hidden">
+                  +
+                </span>
+                <span className="ml-3 text-xs text-slate-500 hidden group-open:inline">
+                  –
+                </span>
+              </summary>
+              <p className="mt-3 text-sm text-slate-700">
+                Yes. You can start and maintain your gear lists for free. If we
+                add paid plans later, they’ll be aimed at power users with lots
+                of lists and advanced features.
+              </p>
+            </details>
+
+            <details className="group rounded-lg border border-slate-200 bg-slate-50 p-4 open:bg-white open:border-blue-200">
+              <summary className="flex cursor-pointer items-center justify-between text-sm font-semibold text-slate-900">
+                <span>Do I need to install an app?</span>
+                <span className="ml-3 text-xs text-slate-500 group-open:hidden">
+                  +
+                </span>
+                <span className="ml-3 text-xs text-slate-500 hidden group-open:inline">
+                  –
+                </span>
+              </summary>
+              <p className="mt-3 text-sm text-slate-700">
+                No. TrekList runs in your browser on desktop and mobile. Just
+                log in at treklist.co and your lists are there.
+              </p>
+            </details>
+
+            <details className="group rounded-lg border border-slate-200 bg-slate-50 p-4 open:bg-white open:border-blue-200">
+              <summary className="flex cursor-pointer items-center justify-between text-sm font-semibold text-slate-900">
+                <span>Can I use it offline?</span>
+                <span className="ml-3 text-xs text-slate-500 group-open:hidden">
+                  +
+                </span>
+                <span className="ml-3 text-xs text-slate-500 hidden group-open:inline">
+                  –
+                </span>
+              </summary>
+              <p className="mt-3 text-sm text-slate-700">
+                You’ll need a connection to create and edit lists, but you can
+                print or export your packing checklist before you leave so you
+                always have a copy.
+              </p>
+            </details>
+
+            <details className="group rounded-lg border border-slate-200 bg-slate-50 p-4 open:bg-white open:border-blue-200">
+              <summary className="flex cursor-pointer items-center justify-between text-sm font-semibold text-slate-900">
+                <span>Do I have to create an account?</span>
+                <span className="ml-3 text-xs text-slate-500 group-open:hidden">
+                  +
+                </span>
+                <span className="ml-3 text-xs text-slate-500 hidden group-open:inline">
+                  –
+                </span>
+              </summary>
+              <p className="mt-3 text-sm text-slate-700">
+                Yes. An account keeps your lists synced between devices and lets
+                you save, duplicate, and share them securely.
+              </p>
+            </details>
+          </div>
+
+          <p className="mt-10 text-center text-sm text-slate-600">
+            Ready to try it out?{" "}
+            <button
+              type="button"
+              onClick={() => openAuth("register")}
+              className="font-semibold text-blue-600 hover:underline underline-offset-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500"
+            >
+              Create your free account
+            </button>
+          </p>
+        </div>
+      </section>
+
+      {/* === Final CTA Band === */}
+      <section className="py-16 px-6 bg-slate-900 text-white">
+        <div className="mx-auto max-w-4xl text-center">
+          <h2 className="text-3xl font-bold mb-4">
+            Ready to pack smarter for your next trip?
+          </h2>
+          <p className="max-w-2xl mx-auto text-slate-200 mb-8">
+            Start a gear list for your upcoming trek, fine-tune your kit, and
+            walk out the door knowing you haven’t forgotten anything important.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => openAuth("register")}
+              className="inline-flex items-center justify-center rounded-full bg-blue-500 px-7 py-2.5 text-sm font-semibold text-white hover:bg-blue-600 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-400 focus-visible:ring-offset-slate-900"
+            >
+              Start your free gear list
+            </button>
+            <Link
+              to={sharePath(FEATURED_TOKENS.av1) || "/gearlist/alta-via-1"}
+              className="inline-flex items-center justify-center rounded-full border border-slate-400 px-6 py-2.5 text-sm font-semibold text-slate-100 hover:bg-slate-800 hover:border-slate-300 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-200 focus-visible:ring-offset-slate-900"
+            >
+              Preview an example list
+            </Link>
+          </div>
+        </div>
       </section>
 
       {/* Footer (public view) */}

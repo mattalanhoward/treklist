@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 export default function FooterLegal({
   variant = "dark", // "dark" | "light"
-  containerWidth = "max-w-5xl",
+  containerWidth = "max-w-4xl",
   className = "",
 }) {
   const year = new Date().getFullYear();
@@ -53,19 +53,18 @@ export default function FooterLegal({
               </Link>
             </li>
             <li>
-              <button
-                type="button"
+              <Link
                 className={link}
-                onClick={() => {
+                to="/legal/cookie-settings"
+                onClick={(e) => {
                   if (window.openCookieSettings) {
+                    e.preventDefault();
                     window.openCookieSettings();
-                  } else {
-                    window.location.href = "/legal/cookie-settings";
                   }
                 }}
               >
-                Cookie settings
-              </button>
+                Cookie Settings
+              </Link>
             </li>
             <li>
               <Link className={link} to="/legal/terms">
