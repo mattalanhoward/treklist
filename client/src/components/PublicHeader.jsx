@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
  * - variant: "overlay" | "solid"
  *    - overlay: for landing hero (absolute, translucent)
  *    - solid: for normal pages (relative, solid bg)
- * - showSections: boolean, whether to show #features / #mission links
+ * - showSections: boolean, whether to show #features / #howitwork links
  * - onLogin / onRegister: optional handlers
  *    - If provided, use buttons that call these
  *    - If not, fall back to <Link> that navigates to /auth/*
@@ -49,8 +49,8 @@ export default function PublicHeader({
           >
             Recommended Gear List
           </a>
-          <a href="#mission" className="hover:underline text-gray-800">
-            Mission
+          <a href="#how-it-works" className="hover:underline text-gray-800">
+            How it Works
           </a>
         </div>
       )}
