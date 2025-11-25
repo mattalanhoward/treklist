@@ -37,7 +37,7 @@ app.use(helmet());
 /**
  * CORS allow-list (env-driven)
  * Use CLIENT_URLS as a comma-separated list, e.g.:
- * CLIENT_URLS=http://localhost:5173,http://127.0.0.1:5173,https://packplanner.netlify.app
+ * CLIENT_URLS=http://localhost:5173,http://127.0.0.1:5173,https://treklist.netlify.app
  */
 const parseOrigins = (s) =>
   (s || "")
@@ -48,7 +48,7 @@ const parseOrigins = (s) =>
 const defaultOrigins = [
   "http://localhost:5173",
   "http://127.0.0.1:5173",
-  "https://packplanner.netlify.app",
+  "https://treklist.netlify.app",
 ];
 
 const envOrigins = parseOrigins(process.env.CLIENT_URLS);
