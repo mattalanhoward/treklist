@@ -94,7 +94,7 @@ async function sendVerificationEmail(email, token, nextPath) {
     from: `"TrekList" <${process.env.SMTP_USER}>`,
     to: email,
     subject: "Please verify your email",
-    html: `<p>Click to verify:</p><a href="${url}">${url}</a><p>Expires in 24h.</p>`,
+    html: `<p>Click the link below to verify your email:</p><a href="${url}">${url}</a><p>Expires in 24h.</p>`,
   });
 }
 
@@ -106,7 +106,7 @@ async function sendPasswordResetEmail(email, token) {
     from: `"TrekList" <${process.env.SMTP_USER}>`,
     to: email,
     subject: "Reset your password",
-    html: `<p>Click to reset:</p><a href="${url}">${url}</a><p>Expires in ${expHrs}h.</p>`,
+    html: `<p>Click the link below to reset your password:</p><a href="${url}">${url}</a><p>Expires in ${expHrs}h.</p>`,
   });
 }
 
