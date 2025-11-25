@@ -3,7 +3,7 @@
   publish = "dist"
 
 [[redirects]]
-  from = "/api/*"
-  to = "https://pack-planner-2-0.onrender.com/api/:splat"
+ from = "/api/*"
+  to = "https://api.treklist.co/api/:splat"
   status = 200
   force = true

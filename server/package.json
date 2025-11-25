@@ -1,7 +1,7 @@
 {
-  "name": "packplanner2.0-backend",
+  "name": "treklist-backend",
   "version": "1.0.0",
-  "description": "Backend for PackPlanner",
+  "description": "Backend for TrekList",
   "main": "src/server.js",
   "type": "commonjs",
   "scripts": {

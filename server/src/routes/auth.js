@@ -91,7 +91,7 @@ async function sendVerificationEmail(email, token, nextPath) {
     : `?token=${encodeURIComponent(token)}`;
   const url = clientUrl(`/verify-email${query}`);
   await transporter.sendMail({
-    from: `"PackPlanner" <${process.env.SMTP_USER}>`,
+    from: `"TrekList" <${process.env.SMTP_USER}>`,
     to: email,
     subject: "Please verify your email",
     html: `<p>Click to verify:</p><a href="${url}">${url}</a><p>Expires in 24h.</p>`,
@@ -103,7 +103,7 @@ async function sendPasswordResetEmail(email, token) {
   const expSec = Number(process.env.RESET_TOKEN_EXP) || 3600; // default 1h
   const expHrs = expSec / 3600;
   await transporter.sendMail({
-    from: `"PackPlanner" <${process.env.SMTP_USER}>`,
+    from: `"TrekList" <${process.env.SMTP_USER}>`,
     to: email,
     subject: "Reset your password",
     html: `<p>Click to reset:</p><a href="${url}">${url}</a><p>Expires in ${expHrs}h.</p>`,
