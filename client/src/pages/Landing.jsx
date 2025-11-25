@@ -559,9 +559,9 @@ export default function Landing() {
                 Tune weight & budget
               </h3>
               <p className="text-sm text-slate-700 leading-relaxed">
-                See base, worn, consumable total weights in real time while you
-                tweak your kit. Track prices in your preferred currency as you
-                upgrade or swap items.
+                See base, worn, consumable and total weights in real time while
+                you tweak your kit. Track prices in your preferred currency as
+                you upgrade or swap items.
               </p>
             </div>
 
@@ -622,9 +622,9 @@ export default function Landing() {
                 </span>
               </summary>
               <p className="mt-3 text-sm text-slate-700">
-                Yes. You can start and maintain your gear lists for free. If we
-                add paid plans later, they’ll be aimed at power users with lots
-                of lists and advanced features.
+                Yes. You can start and maintain your gear lists for free.
+                Treklist earns through affiliate programs. Please consider using
+                our links to support the platform at no extra cost to you.
               </p>
             </details>
 
@@ -673,7 +673,7 @@ export default function Landing() {
               </summary>
               <p className="mt-3 text-sm text-slate-700">
                 Yes. An account keeps your lists synced between devices and lets
-                you save, duplicate, and share them securely.
+                you save, duplicate, and share them.
               </p>
             </details>
           </div>
@@ -699,7 +699,7 @@ export default function Landing() {
           </h2>
           <p className="max-w-2xl mx-auto text-slate-200 mb-8">
             Start a gear list for your upcoming trek, fine-tune your kit, and
-            walk out the door knowing you haven’t forgotten anything important.
+            walk out the door knowing you haven’t forgotten anything.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <button
