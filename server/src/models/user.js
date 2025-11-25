@@ -32,7 +32,7 @@ const UserSchema = new mongoose.Schema(
     viewMode: { type: String, enum: ["column", "list"], default: "column" },
     locale: { type: String, default: "en-NL" },
     currency: { type: String, default: "EUR" },
-    theme: { type: String, default: "desert" },
+    theme: { type: String, default: "alpine" },
     weightUnit: { type: String, enum: ["g", "oz"], default: "g" },
     language: { type: String, default: "en" },
     region: {

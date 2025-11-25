@@ -1,4 +1,4 @@
-const saved = localStorage.getItem("theme") || "desert";
+const saved = localStorage.getItem("theme") || "alpine";
 document.documentElement.classList.add(`theme-${saved}`);
 
 import React from "react";
