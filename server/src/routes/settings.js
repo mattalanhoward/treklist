@@ -36,7 +36,7 @@ router.get("/", async (req, res) => {
       viewMode,
       locale,
       currency,
-      theme: theme || "desert",
+      theme: theme || "alpine",
       weightUnit: weightUnit || "g",
       language: language || "en",
       region: (region && String(region).toLowerCase()) || "nl",

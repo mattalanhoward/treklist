@@ -4,7 +4,7 @@ const MerchantOffer = require("../src/models/merchantOffer");
 const AffiliateProduct = require("../src/models/affiliateProduct");
 
 (async () => {
-  const uri = process.env.MONGO_URI || "mongodb://localhost:27017/packplanner";
+  const uri = process.env.MONGO_URI || "mongodb://localhost:27017/treklist";
   await mongoose.connect(uri);
 
   // Normalize MerchantOffer

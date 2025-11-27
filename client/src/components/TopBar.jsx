@@ -12,8 +12,8 @@ import LegalModal from "./LegalModal";
 const themes = [
   { name: "forest", label: "Forest", color: "#163A28" },
   { name: "snow", label: "Snow", color: "#f0f4f8" },
-  { name: "alpine", label: "Alpine", color: "#172b4d" },
-  { name: "desert", label: "Desert", color: "#E0B251" }, // default
+  { name: "alpine", label: "Alpine", color: "#172b4d" }, // default
+  { name: "desert", label: "Desert", color: "#E0B251" },
   { name: "light", label: "Light", color: "#ffffff" },
   { name: "dark", label: "Dark", color: "#0f172a" },
 ];

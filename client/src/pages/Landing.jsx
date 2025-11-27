@@ -22,27 +22,27 @@ const FEATURED_TOKENS = {
 
 // Cloudinary responsive hero image URLs
 const heroOspreySources = {
-  768: "https://res.cloudinary.com/packplanner/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_768/v1754767083/gear-list-hero-images/hero-hiker-blue-osprey_nm7lte.jpg",
-  1280: "https://res.cloudinary.com/packplanner/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1280/v1754767083/gear-list-hero-images/hero-hiker-blue-osprey_nm7lte.jpg",
-  1920: "https://res.cloudinary.com/packplanner/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1920/v1754767083/gear-list-hero-images/hero-hiker-blue-osprey_nm7lte.jpg",
+  768: "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_768/v1754767083/gear-list-hero-images/hero-hiker-blue-osprey_nm7lte.jpg",
+  1280: "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1280/v1754767083/gear-list-hero-images/hero-hiker-blue-osprey_nm7lte.jpg",
+  1920: "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1920/v1754767083/gear-list-hero-images/hero-hiker-blue-osprey_nm7lte.jpg",
 };
 
 const heroHikingSources = {
-  768: "https://res.cloudinary.com/packplanner/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_768/v1754767189/gear-list-hero-images/hero-hiker-ridgeline_v7twmc.jpg",
-  1280: "https://res.cloudinary.com/packplanner/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1280/v1754767189/gear-list-hero-images/hero-hiker-ridgeline_v7twmc.jpg",
-  1920: "https://res.cloudinary.com/packplanner/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1920/v1754767189/gear-list-hero-images/hero-hiker-ridgeline_v7twmc.jpg",
+  768: "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_768/v1754767189/gear-list-hero-images/hero-hiker-ridgeline_v7twmc.jpg",
+  1280: "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1280/v1754767189/gear-list-hero-images/hero-hiker-ridgeline_v7twmc.jpg",
+  1920: "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1920/v1754767189/gear-list-hero-images/hero-hiker-ridgeline_v7twmc.jpg",
 };
 
 const heroHMGSources = {
-  768: "https://res.cloudinary.com/packplanner/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_768/v1754767189/gear-list-hero-images/hero-hmg-mountains_xn6aso.jpg",
-  1280: "https://res.cloudinary.com/packplanner/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1280/v1754767189/gear-list-hero-images/hero-hmg-mountains_xn6aso.jpg",
-  1920: "https://res.cloudinary.com/packplanner/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1920/v1754767189/gear-list-hero-images/hero-hmg-mountains_xn6aso.jpg",
+  768: "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_768/v1754767189/gear-list-hero-images/hero-hmg-mountains_xn6aso.jpg",
+  1280: "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1280/v1754767189/gear-list-hero-images/hero-hmg-mountains_xn6aso.jpg",
+  1920: "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1920/v1754767189/gear-list-hero-images/hero-hmg-mountains_xn6aso.jpg",
 };
 
 const heroTentSources = {
-  768: "https://res.cloudinary.com/packplanner/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_768/v1754767080/gear-list-hero-images/hero-tent_ijvmku.jpg",
-  1280: "https://res.cloudinary.com/packplanner/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1280/v1754767080/gear-list-hero-images/hero-tent_ijvmku.jpg",
-  1920: "https://res.cloudinary.com/packplanner/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1920/v1754767080/gear-list-hero-images/hero-tent_ijvmku.jpg",
+  768: "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_768/v1754767080/gear-list-hero-images/hero-tent_ijvmku.jpg",
+  1280: "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1280/v1754767080/gear-list-hero-images/hero-tent_ijvmku.jpg",
+  1920: "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1920/v1754767080/gear-list-hero-images/hero-tent_ijvmku.jpg",
 };
 
 const CheckIcon = (props) => (
@@ -411,13 +411,13 @@ export default function Landing() {
           {[
             {
               title: "Alta Via 1",
-              img: "https://res.cloudinary.com/packplanner/image/upload/f_auto,q_auto,w_800/v1752432593/gear-list-backgrounds/docilcoaiwytxccqcc4c.jpg",
+              img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1752432593/gear-list-backgrounds/docilcoaiwytxccqcc4c.jpg",
               alt: "Alta Via 1 gear list in the Dolomites, Italy",
               link: sharePath(FEATURED_TOKENS.av1) ?? "/gearlist/alta-via-1",
             },
             {
               title: "Camino de Santiago",
-              img: "https://res.cloudinary.com/packplanner/image/upload/f_auto,q_auto,w_800/v1752415040/gear-list-backgrounds/foqdt3vgogiubrizfe0s.jpg",
+              img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1752415040/gear-list-backgrounds/foqdt3vgogiubrizfe0s.jpg",
               alt: "Camino de Santiago gear list for walking across Spain",
               link:
                 sharePath(FEATURED_TOKENS.camino) ??
@@ -425,7 +425,7 @@ export default function Landing() {
             },
             {
               title: "Tour du Mont Blanc",
-              img: "https://res.cloudinary.com/packplanner/image/upload/f_auto,q_auto,w_800/v1752609809/gear-list-backgrounds/u726utxdhmmmk5p6npuz.jpg",
+              img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1752609809/gear-list-backgrounds/u726utxdhmmmk5p6npuz.jpg",
               alt: "Tour du Mont Blanc gear list",
               link:
                 sharePath(FEATURED_TOKENS.tmb) ??
@@ -433,21 +433,21 @@ export default function Landing() {
             },
             {
               title: "West Highland Way",
-              img: "https://res.cloudinary.com/packplanner/image/upload/f_auto,q_auto,w_800/v1754772966/gear-list-landing/gear-list-west-highland-way_d8d7bq.jpg",
+              img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1754772966/gear-list-landing/gear-list-west-highland-way_d8d7bq.jpg",
               alt: "West Highland Way gear list",
               link:
                 sharePath(FEATURED_TOKENS.whw) ?? "/gearlist/west-highland-way",
             },
             {
               title: "Kungsleden",
-              img: "https://res.cloudinary.com/packplanner/image/upload/f_auto,q_auto,w_800/v1754772965/gear-list-landing/gear-list-kungsleden_yultsg.jpg",
+              img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1754772965/gear-list-landing/gear-list-kungsleden_yultsg.jpg",
               alt: "Kungsleden gear list",
               link:
                 sharePath(FEATURED_TOKENS.kungsleden) ?? "/gearlist/kungsleden",
             },
             {
               title: "GR20 Corsica",
-              img: "https://res.cloudinary.com/packplanner/image/upload/f_auto,q_auto,w_800/v1754772963/gear-list-landing/gear-list-gr20_azn4uu.jpg",
+              img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1754772963/gear-list-landing/gear-list-gr20_azn4uu.jpg",
               alt: "GR20 gear list",
               link: sharePath(FEATURED_TOKENS.gr20) ?? "/gearlist/gr20-corsica",
             },
@@ -559,9 +559,9 @@ export default function Landing() {
                 Tune weight & budget
               </h3>
               <p className="text-sm text-slate-700 leading-relaxed">
-                See base, worn, consumable total weights in real time while you
-                tweak your kit. Track prices in your preferred currency as you
-                upgrade or swap items.
+                See base, worn, consumable and total weights in real time while
+                you tweak your kit. Track prices in your preferred currency as
+                you upgrade or swap items.
               </p>
             </div>
 
@@ -622,9 +622,9 @@ export default function Landing() {
                 </span>
               </summary>
               <p className="mt-3 text-sm text-slate-700">
-                Yes. You can start and maintain your gear lists for free. If we
-                add paid plans later, they’ll be aimed at power users with lots
-                of lists and advanced features.
+                Yes. You can start and maintain your gear lists for free.
+                Treklist earns through affiliate programs. Please consider using
+                our links to support the platform at no extra cost to you.
               </p>
             </details>
 
@@ -673,7 +673,7 @@ export default function Landing() {
               </summary>
               <p className="mt-3 text-sm text-slate-700">
                 Yes. An account keeps your lists synced between devices and lets
-                you save, duplicate, and share them securely.
+                you save, duplicate, and share them.
               </p>
             </details>
           </div>
@@ -699,7 +699,7 @@ export default function Landing() {
           </h2>
           <p className="max-w-2xl mx-auto text-slate-200 mb-8">
             Start a gear list for your upcoming trek, fine-tune your kit, and
-            walk out the door knowing you haven’t forgotten anything important.
+            walk out the door knowing you haven’t forgotten anything.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <button

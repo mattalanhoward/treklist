@@ -19,7 +19,7 @@ export function SettingsProvider({ children }) {
     () => localStorage.getItem("weightUnit") || "g"
   );
   const [theme, setTheme] = useState(
-    () => localStorage.getItem("theme") || "desert"
+    () => localStorage.getItem("theme") || "alpine"
   );
   const [language, setLanguage] = useState(
     () => localStorage.getItem("language") || "en"
@@ -93,7 +93,7 @@ export function SettingsProvider({ children }) {
       const s = res.data || {};
       // Apply with sensible fallbacks + normalization
       setWeightUnit(s.weightUnit || "g");
-      setTheme(s.theme || "desert");
+      setTheme(s.theme || "alpine");
       setLanguage(s.language || "en");
       setRegion((s.region || "nl").toLowerCase());
       setViewMode(s.viewMode || "column");
