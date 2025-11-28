@@ -7,7 +7,7 @@ export default function TermsContent() {
       <h1 className="text-2xl font-semibold mb-2">Terms of Use</h1>
 
       <p>
-        <strong>Last updated:</strong> January 1, 2026
+        <strong>Last updated:</strong> Decembe 1, 2025
       </p>
 
       <p>
