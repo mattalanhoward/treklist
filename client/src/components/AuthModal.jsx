@@ -205,7 +205,6 @@ export default function AuthModal({
                 className="mt-1 w-full border border-primary rounded p-2 text-primary text-sm bg-white"
                 value={trailname}
                 onChange={(e) => setTrailname(e.target.value)}
-                required
                 autoComplete="nickname"
               />
             </label>
