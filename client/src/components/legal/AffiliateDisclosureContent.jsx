@@ -7,7 +7,7 @@ export default function AffiliateDisclosureContent() {
       <h1 className="text-2xl font-semibold mb-2">Affiliate Disclosure</h1>
 
       <p>
-        <strong>Last updated:</strong> January 1, 2026
+        <strong>Last updated:</strong> December 1, 2025
       </p>
       <div className="mt-3 mb-4 rounded-md border border-base-300 bg-base-200/60 px-3 py-2 text-xs md:text-sm">
         <p className="font-semibold mb-1">In plain language:</p>

@@ -3,6 +3,15 @@ const bcrypt = require("bcrypt");
 
 const UserSchema = new mongoose.Schema(
   {
+    // Optional marketing / email-updates preferences
+    marketing: {
+      // Has the user explicitly opted in to product / feature updates?
+      optedIn: { type: Boolean, default: false },
+      // When they last opted in (for basic GDPR hygiene / audit trail)
+      optedInAt: { type: Date },
+      // Where the opt-in came from: "register", "settings", "banner", etc.
+      optedInSource: { type: String },
+    },
     refreshTokens: {
       type: [String],
       default: [],
@@ -32,7 +41,7 @@ const UserSchema = new mongoose.Schema(
     viewMode: { type: String, enum: ["column", "list"], default: "column" },
     locale: { type: String, default: "en-NL" },
     currency: { type: String, default: "EUR" },
-    theme: { type: String, default: "alpine" },
+    theme: { type: String, default: "light" },
     weightUnit: { type: String, enum: ["g", "oz"], default: "g" },
     language: { type: String, default: "en" },
     region: {

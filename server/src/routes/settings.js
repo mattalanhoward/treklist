@@ -28,6 +28,7 @@ router.get("/", async (req, res) => {
       language,
       region,
       sidebarCollapsed,
+      marketing,
     } = user;
 
     res.json({
@@ -36,11 +37,15 @@ router.get("/", async (req, res) => {
       viewMode,
       locale,
       currency,
-      theme: theme || "alpine",
-      weightUnit: weightUnit || "g",
-      language: language || "en",
+      theme,
+      weightUnit,
+      language,
       region: (region && String(region).toLowerCase()) || "nl",
-      sidebarCollapsed: Boolean(sidebarCollapsed),
+      sidebarCollapsed: !!sidebarCollapsed,
+      marketing: {
+        // always return a boolean; treat missing doc as false
+        optedIn: marketing?.optedIn || false,
+      },
     });
   } catch (err) {
     console.error("GET /settings error:", err);
@@ -55,10 +60,12 @@ router.get("/", async (req, res) => {
 router.patch("/", async (req, res) => {
   try {
     const updates = req.body;
+
     // normalize region to lowercase if present
     if (updates.region && typeof updates.region === "string") {
       updates.region = updates.region.toLowerCase();
     }
+
     // disallow email updates via this endpoint
     if (Object.prototype.hasOwnProperty.call(updates, "email")) {
       return res.status(400).json({
@@ -67,21 +74,49 @@ router.patch("/", async (req, res) => {
         code: "EMAIL_READ_ONLY",
       });
     }
+
     const user = await User.findById(req.userId);
     if (!user) return res.status(404).json({ message: "User not found." });
 
     // --- IMPORTANT: normalize the existing user's region too ---
-    // Even if region isn't part of the PATCH, legacy uppercase values will fail enum validation.
     if (
       typeof user.region === "string" &&
       user.region !== user.region.toLowerCase()
     ) {
       user.region = user.region.toLowerCase();
     }
-    // Provide a sane default if region is missing/null
     if (!user.region) {
       user.region = "nl";
     }
+
+    // --- Handle marketing opt-in separately ---
+    if (updates.marketing && typeof updates.marketing === "object") {
+      const marketingUpdate = updates.marketing;
+      // Remove so it doesn't fall through into generic editable loop
+      delete updates.marketing;
+
+      const nextOptIn = !!marketingUpdate.optedIn;
+      const prevOptIn =
+        user.marketing && typeof user.marketing.optedIn === "boolean"
+          ? user.marketing.optedIn
+          : false;
+
+      if (!user.marketing) {
+        user.marketing = {};
+      }
+
+      if (nextOptIn && !prevOptIn) {
+        // user is opting in now
+        user.marketing.optedIn = true;
+        user.marketing.optedInAt = new Date();
+        user.marketing.optedInSource = "settings";
+      } else if (!nextOptIn && prevOptIn) {
+        // user is opting out
+        user.marketing.optedIn = false;
+        // keep optedInAt/source for history; we can wipe later if we prefer
+      }
+    }
+
     // If they’re changing password, handle separately
     if (updates.password) {
       if (!updates.currentPassword) {
@@ -98,7 +133,6 @@ router.patch("/", async (req, res) => {
       delete updates.currentPassword;
     }
 
-    // Whitelist what can be updated:
     const editable = [
       "trailname",
       "viewMode",

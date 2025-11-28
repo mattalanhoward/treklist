@@ -93,7 +93,7 @@ export default function LegalModal({ open, onClose, initialTab = "privacy" }) {
     >
       <div className="relative w-full max-w-4xl h-[80vh] bg-base-100 text-base-content rounded-lg shadow-lg flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="flex items-start justify-between gap-4 border-b border-base-300 px-4 py-3 md:px-6 shrink-0">
+        <div className="flex items-start justify-between gap-4 border-b border-base-300 px-4 py-3 md:px-6 shrink-0 items-center">
           <div>
             <h2
               id="legal-modal-title"
@@ -101,10 +101,6 @@ export default function LegalModal({ open, onClose, initialTab = "privacy" }) {
             >
               Legal &amp; Cookies
             </h2>
-            <p className="mt-1 text-xs sm:text-sm text-secondary">
-              Privacy, cookies, terms, affiliate disclosure, and contact
-              details.
-            </p>
           </div>
           <button
             type="button"

@@ -8,6 +8,8 @@ export default function Register() {
   const [trailname, setTrailname] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [marketingOptIn, setMarketingOptIn] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -19,11 +21,28 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Front-end guard so the user gets immediate feedback
+    if (!acceptTerms) {
+      toast.error(
+        "Please accept the Terms of Use and Privacy Policy to create an account."
+      );
+      return;
+    }
+
     setLoading(true);
     try {
-      const params = new URLSearchParams(location.search);
-      const next = params.get("next"); // e.g. "/share/<token>?copy=1"
-      await api.post("/auth/register", { email, trailname, password, next });
+      const next = getNext(); // only returns a safe relative path or null
+
+      await api.post("/auth/register", {
+        email,
+        trailname,
+        password,
+        acceptTerms,
+        marketingOptIn,
+        next,
+      });
+
       toast.success("Registered! Check your email to verify.");
       navigate(next ? `/login?next=${encodeURIComponent(next)}` : "/login", {
         replace: true,
@@ -41,7 +60,7 @@ export default function Register() {
         onSubmit={handleSubmit}
         className="w-full max-w-md bg-white p-6 rounded shadow"
       >
-        <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
+        <h2 className="text-2xl font-bold mb-4">Sign Upppp</h2>
 
         <label className="block mb-3">
           <span className="text-gray-700">Trail Name</span>
@@ -49,7 +68,6 @@ export default function Register() {
             type="text"
             value={trailname}
             onChange={(e) => setTrailname(e.target.value)}
-            required
             className="mt-1 block w-full border p-2 rounded"
             disabled={loading}
           />
@@ -77,6 +95,50 @@ export default function Register() {
             className="mt-1 block w-full border p-2 rounded"
             disabled={loading}
           />
+        </label>
+
+        <label className="flex items-start gap-2 mb-2">
+          <input
+            type="checkbox"
+            checked={marketingOptIn}
+            onChange={(e) => setMarketingOptIn(e.target.checked)}
+            disabled={loading}
+            className="mt-1"
+          />
+          <span className="text-gray-700 text-sm">
+            Email me about new TrekList features, tips, and occasional offers.
+          </span>
+        </label>
+
+        <label className="flex items-start gap-2 mb-4">
+          <input
+            type="checkbox"
+            checked={acceptTerms}
+            onChange={(e) => setAcceptTerms(e.target.checked)}
+            disabled={loading}
+            className="mt-1"
+          />
+          <span className="text-gray-700 text-sm">
+            I agree to the{" "}
+            <a
+              href="/legal/terms"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 underline"
+            >
+              Terms of Use
+            </a>{" "}
+            and{" "}
+            <a
+              href="/legal/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 underline"
+            >
+              Privacy Policy
+            </a>
+            .
+          </span>
         </label>
 
         <button

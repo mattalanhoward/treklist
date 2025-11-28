@@ -75,12 +75,6 @@ export default function CookieSettingsContent() {
 
   return (
     <>
-      <p className="text-[11px] italic text-secondary mb-2">
-        This Cookie Settings page helps you control non-essential cookies used
-        by TrekList. It does not cover cookies placed by third-party websites
-        when you follow affiliate links or leave TrekList.co.
-      </p>
-
       <h1 className="text-2xl font-semibold mb-4">Cookie Settings</h1>
 
       <p className="mb-3 text-sm">

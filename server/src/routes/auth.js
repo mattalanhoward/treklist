@@ -195,27 +195,53 @@ router.post("/reset-password", async (req, res) => {
 // Register
 router.post("/register", async (req, res) => {
   try {
-    const { email, trailname, password, next } = req.body;
-    if (!email || !trailname || !password) {
-      return res
-        .status(400)
-        .json({ message: "Email, trailname & password are required." });
+    const { email, trailname, password, acceptTerms, marketingOptIn, next } =
+      req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "Email & password are required.",
+      });
     }
+
+    // Require explicit terms acceptance (separate from marketing)
+    if (!acceptTerms) {
+      return res.status(400).json({
+        message:
+          "You must accept the Terms of Use and Privacy Policy to create an account.",
+      });
+    }
+
     if (await User.findOne({ email })) {
       return res.status(409).json({ message: "Email already in use." });
     }
 
-    const user = new User({ email, trailname, isVerified: false });
+    const user = new User({
+      email,
+      // trailname is optional; only set it if provided
+      ...(trailname ? { trailname } : {}),
+      isVerified: false,
+    });
+
+    // Optional marketing consent at registration
+    if (marketingOptIn) {
+      user.marketing = {
+        optedIn: true,
+        optedInAt: new Date(),
+        optedInSource: "register",
+      };
+    }
+
     await user.setPassword(password);
 
     const verifyToken = crypto.randomBytes(20).toString("hex");
     user.verifyEmailToken = verifyToken;
     user.verifyEmailExpires = Date.now() + 24 * 60 * 60 * 1000;
+
     await user.save();
 
-    // Include a safe `next` so the client can bounce straight back into the flow after verification.
-    const safeNext = sanitizeNextParam(next);
-    await sendVerificationEmail(email, verifyToken, safeNext);
+    // Pass `next` through; sendVerificationEmail will sanitize it
+    await sendVerificationEmail(email, verifyToken, next);
     res.status(201).json({ message: "Registered! Check your email." });
   } catch (err) {
     console.error(err);
