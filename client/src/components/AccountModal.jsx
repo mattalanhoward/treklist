@@ -9,6 +9,7 @@ export default function AccountModal({ isOpen, onClose }) {
   const [form, setForm] = useState({
     email: "",
     trailname: "",
+    marketingOptIn: false,
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
@@ -25,7 +26,11 @@ export default function AccountModal({ isOpen, onClose }) {
         setSettings(data);
         setForm({
           email: data.email,
-          trailname: data.trailname,
+          trailname: data.trailname || "",
+          marketingOptIn:
+            data.marketing && typeof data.marketing.optedIn === "boolean"
+              ? data.marketing.optedIn
+              : false,
           currentPassword: "",
           newPassword: "",
           confirmPassword: "",
@@ -57,9 +62,18 @@ export default function AccountModal({ isOpen, onClose }) {
     // build payload
     const payload = {};
     if (tab === "Profile") {
-      // Email is read-only; only allow trailname to be updated
-      if (form.trailname !== settings.trailname) {
+      // Email is read-only; only allow trailname & marketing prefs to be updated
+      if ((form.trailname || "") !== (settings.trailname || "")) {
         payload.trailname = form.trailname;
+      }
+
+      const previousOptIn =
+        settings.marketing && typeof settings.marketing.optedIn === "boolean"
+          ? settings.marketing.optedIn
+          : false;
+
+      if (form.marketingOptIn !== previousOptIn) {
+        payload.marketing = { optedIn: form.marketingOptIn };
       }
     }
     if (tab === "Security") {
@@ -168,6 +182,28 @@ export default function AccountModal({ isOpen, onClose }) {
                       onChange={handleChange}
                       className="mt-1 block w-full border-gray-300 rounded shadow-sm px-2 py-1"
                     />
+                  </div>
+                  <div className="mt-4">
+                    <label className="flex items-start space-x-2 text-sm text-gray-700">
+                      <input
+                        type="checkbox"
+                        checked={form.marketingOptIn}
+                        onChange={(e) =>
+                          setForm((prev) => ({
+                            ...prev,
+                            marketingOptIn: e.target.checked,
+                          }))
+                        }
+                        className="mt-1"
+                      />
+                      <span>
+                        Email me about new TrekList features, tips, and
+                        occasional offers.
+                      </span>
+                    </label>
+                    <p className="mt-1 text-xs text-gray-500">
+                      You can change this preference anytime.
+                    </p>
                   </div>
                 </>
               )}
