@@ -69,6 +69,12 @@ export default function AuthModal({
   const handleLogin = async (e) => {
     e.preventDefault();
     setErr("");
+
+    if (!email || !password) {
+      setErr("Please enter your email and password.");
+      return;
+    }
+
     setLoading(true);
     try {
       await login(email, password);
@@ -86,8 +92,13 @@ export default function AuthModal({
     e.preventDefault();
     setErr("");
 
+    if (!email || !password) {
+      setErr("Email and password are required.");
+      return;
+    }
+
     if (!acceptTerms) {
-      toast.error(
+      setErr(
         "Please accept the Terms of Use and Privacy Policy to create an account."
       );
       return;
@@ -169,7 +180,7 @@ export default function AuthModal({
 
         {/* Forms */}
         {mode === "login" ? (
-          <form onSubmit={handleLogin} className="space-y-3">
+          <form onSubmit={handleLogin} noValidate className="space-y-3">
             <label className="block text-sm text-primary">
               Email
               <input
@@ -178,7 +189,6 @@ export default function AuthModal({
                 className="mt-1 w-full border border-primary rounded p-2 text-primary text-sm bg-white"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
                 autoComplete="email"
                 inputMode="email"
               />
@@ -191,7 +201,6 @@ export default function AuthModal({
                 className="mt-1 w-full border border-primary rounded p-2 text-primary text-sm bg-white"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
                 autoComplete="current-password"
               />
             </label>
@@ -215,105 +224,7 @@ export default function AuthModal({
             </div>
           </form>
         ) : (
-          // <form onSubmit={handleRegister} className="space-y-3">
-          //   <label className="block text-sm text-primary">
-          //     Trail Name
-          //     <input
-          //       ref={firstFieldRef}
-          //       type="text"
-          //       className="mt-1 w-full border border-primary rounded p-2 text-primary text-sm bg-white"
-          //       value={trailname}
-          //       onChange={(e) => setTrailname(e.target.value)}
-          //       autoComplete="nickname"
-          //     />
-          //   </label>
-
-          //   <label className="block text-sm text-primary">
-          //     Email
-          //     <input
-          //       type="email"
-          //       className="mt-1 w-full border border-primary rounded p-2 text-primary text-sm bg-white"
-          //       value={email}
-          //       onChange={(e) => setEmail(e.target.value)}
-          //       required
-          //       autoComplete="email"
-          //       inputMode="email"
-          //     />
-          //   </label>
-
-          //   <label className="block text-sm text-primary">
-          //     Password
-          //     <input
-          //       type="password"
-          //       className="mt-1 w-full border border-primary rounded p-2 text-primary text-sm bg-white"
-          //       value={password}
-          //       onChange={(e) => setPassword(e.target.value)}
-          //       required
-          //       autoComplete="new-password"
-          //     />
-          //   </label>
-
-          //   {/* Marketing opt-in */}
-          //   <label className="flex items-start gap-2 text-xs text-primary">
-          //     <input
-          //       type="checkbox"
-          //       checked={marketingOptIn}
-          //       onChange={(e) => setMarketingOptIn(e.target.checked)}
-          //       disabled={loading}
-          //       className="mt-0.5"
-          //     />
-          //     <span>
-          //       Email me about new TrekList features, tips, and occasional
-          //       offers.
-          //     </span>
-          //   </label>
-
-          //   {/* Terms acceptance (required) */}
-          //   <label className="flex items-start gap-2 text-xs text-primary">
-          //     <input
-          //       type="checkbox"
-          //       checked={acceptTerms}
-          //       onChange={(e) => setAcceptTerms(e.target.checked)}
-          //       disabled={loading}
-          //       className="mt-0.5"
-          //       required
-          //     />
-          //     <span>
-          //       I agree to the{" "}
-          //       <a
-          //         href="/legal/terms"
-          //         target="_blank"
-          //         rel="noopener noreferrer"
-          //         className="text-secondary underline"
-          //       >
-          //         Terms of Use
-          //       </a>{" "}
-          //       and{" "}
-          //       <a
-          //         href="/legal/privacy"
-          //         target="_blank"
-          //         rel="noopener noreferrer"
-          //         className="text-secondary underline"
-          //       >
-          //         Privacy Policy
-          //       </a>
-          //       .
-          //     </span>
-          //   </label>
-
-          //   <div className="flex items-center justify-end pt-2">
-          //     <button
-          //       type="submit"
-          //       disabled={loading}
-          //       className={`px-4 py-2 rounded bg-secondary text-white hover:bg-secondary/80 ${
-          //         loading ? "opacity-60 cursor-not-allowed" : ""
-          //       }`}
-          //     >
-          //       {loading ? "Creating…" : "Create Account"}
-          //     </button>
-          //   </div>
-          // </form>
-          <form onSubmit={handleRegister} className="space-y-3">
+          <form onSubmit={handleRegister} noValidate className="space-y-3">
             <label className="block text-sm text-primary">
               Trail Name (optional)
               <input
@@ -333,7 +244,6 @@ export default function AuthModal({
                 className="mt-1 w-full border border-primary rounded p-2 text-primary text-sm bg-white"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
                 autoComplete="email"
                 inputMode="email"
               />
@@ -346,7 +256,6 @@ export default function AuthModal({
                 className="mt-1 w-full border border-primary rounded p-2 text-primary text-sm bg-white"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
                 autoComplete="new-password"
               />
             </label>
@@ -365,7 +274,6 @@ export default function AuthModal({
                 offers.
               </span>
             </label>
-
             {/* Terms acceptance (required) */}
             <label className="flex items-start gap-2 text-xs text-primary">
               <input
