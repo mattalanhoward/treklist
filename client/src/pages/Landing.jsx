@@ -516,7 +516,7 @@ export default function Landing() {
       </section> */}
 
       {/* === How TrekList Fits Into Your Planning (3-step explainer) === */}
-      <section
+      {/* <section
         id="how-it-works"
         aria-labelledby="how-it-works-title"
         className="py-16 px-6 bg-white border-t border-slate-200"
@@ -534,7 +534,6 @@ export default function Landing() {
           </p>
 
           <div className="grid gap-8 md:grid-cols-3">
-            {/* Step 1 */}
             <div className="flex flex-col items-start rounded-xl border border-slate-200 bg-slate-50 p-5">
               <div className="flex items-center justify-center h-9 w-9 rounded-full bg-blue-600 text-white text-sm font-semibold mb-4">
                 1
@@ -549,8 +548,6 @@ export default function Landing() {
                 and food as you build out your list.
               </p>
             </div>
-
-            {/* Step 2 */}
             <div className="flex flex-col items-start rounded-xl border border-slate-200 bg-slate-50 p-5">
               <div className="flex items-center justify-center h-9 w-9 rounded-full bg-blue-600 text-white text-sm font-semibold mb-4">
                 2
@@ -564,8 +561,6 @@ export default function Landing() {
                 you upgrade or swap items.
               </p>
             </div>
-
-            {/* Step 3 */}
             <div className="flex flex-col items-start rounded-xl border border-slate-200 bg-slate-50 p-5">
               <div className="flex items-center justify-center h-9 w-9 rounded-full bg-blue-600 text-white text-sm font-semibold mb-4">
                 3
@@ -591,10 +586,10 @@ export default function Landing() {
             </button>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* === FAQ Section === */}
-      <section
+      {/* <section
         aria-labelledby="faq"
         className="py-16 px-6 bg-white border-t border-slate-200"
       >
@@ -689,7 +684,7 @@ export default function Landing() {
             </button>
           </p>
         </div>
-      </section>
+      </section> */}
 
       {/* === Final CTA Band === */}
       <section className="py-16 px-6 bg-slate-900 text-white">
