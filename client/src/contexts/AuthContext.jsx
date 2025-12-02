@@ -7,6 +7,7 @@ export const AuthContext = createContext({
   login: async () => {},
   logout: async () => {},
   verifyEmail: async () => {},
+  hydrateFromStorage: () => {},
   loading: false,
   isAuthenticated: false,
 });
@@ -16,6 +17,17 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const isAuthenticated = Boolean(token);
+
+  const hydrateFromStorage = () => {
+    try {
+      const stored = localStorage.getItem("accessToken");
+      if (stored) {
+        setToken(stored);
+      }
+    } catch {
+      // ignore
+    }
+  };
 
   // Persist token and trigger API interceptor
   useEffect(() => {
@@ -83,7 +95,15 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, login, logout, verifyEmail, loading, isAuthenticated }}
+      value={{
+        user,
+        login,
+        logout,
+        verifyEmail,
+        hydrateFromStorage,
+        loading,
+        isAuthenticated,
+      }}
     >
       {children}
     </AuthContext.Provider>
