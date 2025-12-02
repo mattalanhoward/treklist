@@ -266,7 +266,7 @@ export default function TopBar({ title, openSettings }) {
       </div>
 
       {/* Banner row */}
-      <div className="px-2 pb-2 print:hidden">
+      <div className="px-2 print:hidden">
         <EmailOptInBanner />
       </div>
     </header>
