@@ -15,8 +15,11 @@ export default function PrivacyContent() {
           TrekList stores the information it needs to run your account and gear
           lists, keeps some logs to protect the service, and uses optional
           analytics (only with your consent) to understand how people use the
-          app. We don&apos;t sell your personal data, and you can ask what we
-          store or request deletion at any time.
+          app. If you choose, we may also email you occasional updates about new
+          TrekList features and tips. We don&apos;t sell your personal data, and
+          you can ask what we store or request deletion at any time. You can
+          change your email preferences at any time in your account settings or
+          by using unsubscribe links in emails.
         </p>
       </div>
       <p>
@@ -83,7 +86,8 @@ export default function PrivacyContent() {
         </li>
         <li>
           <strong>Profile &amp; settings</strong> – preferred language and
-          currency, weight units, theme, and other app preferences.
+          currency, weight units, theme, email communication preferences, and
+          other app settings.
         </li>
         <li>
           <strong>Gear lists &amp; content</strong> – names of your lists and
@@ -207,16 +211,18 @@ export default function PrivacyContent() {
           are not strictly necessary.
         </li>
         <li>
-          Send optional product updates or newsletters (if we introduce them and
-          you opt in).
+          Send optional product updates, feature tips, and occasional offers
+          about TrekList, but only if you explicitly opt in (for example during
+          registration or in your account settings).
         </li>
       </ul>
 
       <p>
-        You can withdraw your consent at any time via Cookie Settings or by
-        using unsubscribe links in emails (for optional communications).
-        Withdrawing consent does not affect the lawfulness of processing before
-        withdrawal.
+        You can withdraw your consent at any time. For cookies and similar
+        technologies, you can use the Cookie Settings page/tab. For optional
+        emails, you can update your preferences in your account settings or use
+        the unsubscribe links in those emails. Withdrawing consent does not
+        affect the lawfulness of processing before withdrawal.
       </p>
 
       <h3 className="font-semibold mt-3">

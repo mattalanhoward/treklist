@@ -6,6 +6,7 @@ const GearList = require("../models/gearList");
 const Item = require("../models/gearItem");
 const Category = require("../models/category");
 const Share = require("../models/ShareToken");
+const GlobalItem = require("../models/globalItem");
 const { v4: uuidv4 } = require("uuid");
 const upload = require("../middleware/upload");
 const {
@@ -280,6 +281,184 @@ router.patch(
     }
   }
 );
+
+// POST /api/dashboard/sample-list
+// Create (or reuse) a sample gear list for the current user.
+router.post("/sample-list", async (req, res) => {
+  try {
+    const userId = req.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "Not authenticated." });
+    }
+
+    // If we already created a sample list for this user, just reuse it
+    let sample = await GearList.findOne({ owner: userId, isSample: true });
+    if (sample) {
+      return res.json({ list: sample, reused: true });
+    }
+
+    // 1) Create the sample list itself
+    sample = await GearList.create({
+      owner: userId,
+      title: "Sample Dolomites Packing List",
+      description:
+        "A small example gear list using a few of my real-world favorite items.",
+      isSample: true,
+    });
+
+    // 2) Seed categories for the sample list
+    const categoryTitles = [
+      "Hiking",
+      "Clothing",
+      "Rifugios",
+      "Electronics",
+      "Hygiene",
+      "Other",
+    ];
+
+    const categoryDocs = await Category.insertMany(
+      categoryTitles.map((title, index) => ({
+        gearList: sample._id,
+        title,
+        position: index,
+      }))
+    );
+
+    // 3) Seed the hero items that can later become affiliate-backed
+    const itemSpecs = [
+      {
+        categoryTitle: "Hiking",
+        brand: "Osprey",
+        itemType: "Backpack - 24 L",
+        name: "Stratos 24",
+        description: "Osprey Stratos 24",
+        weight: 1262,
+        price: 180,
+        link: "https://amzn.to/43712Qe",
+        worn: false,
+        consumable: false,
+        quantity: 1,
+      },
+      {
+        categoryTitle: "Clothing",
+        brand: "Darn Tough",
+        itemType: "Socks - Hiker",
+        name: "Hiker Micro Crew Midweight Cushion",
+        description: "Darn Tough Hiker Micro Crew Midweight Cushion",
+        weight: 68,
+        price: 25,
+        link: "https://amzn.to/3RQg9bM",
+        worn: true,
+        consumable: false,
+        quantity: 1,
+      },
+      {
+        categoryTitle: "Hiking",
+        brand: "Black Diamond",
+        itemType: "Trekking Poles",
+        name: "Black Diamond Alpine Carbon Cork Poles",
+        description: "Lightweight trekking poles with cork grips.",
+        weight: 624,
+        price: 169.95,
+        link: "https://www.awin1.com/cread.php?awinmid=26895&p=https%3A%2F%2Fexample.…",
+        worn: false,
+        consumable: false,
+        quantity: 1,
+      },
+      {
+        categoryTitle: "Electronics",
+        brand: "Anker",
+        itemType: "Battery Bank",
+        name: "Portable Charger 20,000mAh USB-C",
+        description: "Anker Portable Charger 20,000mAh USB-C",
+        weight: 357,
+        price: 39.99,
+        link: "https://amzn.to/4kgaZSF",
+        worn: false,
+        consumable: false,
+        quantity: 1,
+      },
+      {
+        categoryTitle: "Rifugios",
+        brand: "Sea to Summit",
+        itemType: "Sleeping Bag Liner",
+        name: "Comfort Blend Sleeping Bag Liner",
+        description: "Sea to Summit Comfort Blend Sleeping Bag Liner",
+        weight: 156,
+        price: 41.15,
+        link: "https://amzn.to/3XxIiHo",
+        worn: false,
+        consumable: false,
+        quantity: 1,
+      },
+    ];
+
+    // Map category title → doc for easy lookup
+    const categoryByTitle = new Map(
+      categoryDocs.map((cat) => [cat.title, cat])
+    );
+
+    // Create matching GlobalItem docs (these live under "My Gear")
+    const globalItems = await GlobalItem.insertMany(
+      itemSpecs.map((spec) => ({
+        owner: userId,
+        category: spec.categoryTitle,
+        brand: spec.brand,
+        itemType: spec.itemType,
+        name: spec.name,
+        description: spec.description,
+        weight: spec.weight,
+        price: spec.price,
+        link: spec.link,
+        worn: spec.worn,
+        consumable: spec.consumable,
+        quantity: spec.quantity,
+        // weightSource, affiliate fields, etc. can be added later
+      }))
+    );
+
+    // And the list-specific GearItem docs
+    const positionsByCategory = new Map();
+    const gearItemsPayload = itemSpecs.map((spec, index) => {
+      const catDoc = categoryByTitle.get(spec.categoryTitle);
+      if (!catDoc) {
+        throw new Error(
+          `Missing category document for title: ${spec.categoryTitle}`
+        );
+      }
+
+      const catId = catDoc._id.toString();
+      const currentPos = positionsByCategory.get(catId) ?? 0;
+      positionsByCategory.set(catId, currentPos + 1);
+
+      const global = globalItems[index];
+
+      return {
+        globalItem: global._id,
+        gearList: sample._id,
+        category: catDoc._id,
+        brand: spec.brand,
+        itemType: spec.itemType,
+        name: spec.name,
+        description: spec.description,
+        weight: spec.weight,
+        price: spec.price,
+        link: spec.link,
+        worn: spec.worn,
+        consumable: spec.consumable,
+        quantity: spec.quantity,
+        position: currentPos,
+      };
+    });
+
+    await Item.insertMany(gearItemsPayload);
+
+    return res.status(201).json({ list: sample, created: true });
+  } catch (err) {
+    console.error("Error creating sample list:", err);
+    return res.status(500).json({ message: "Could not create sample list." });
+  }
+});
 
 // POST /api/dashboard/:listId/copy
 router.post("/:listId/copy", async (req, res) => {

@@ -16,15 +16,6 @@ const JWT_EXP = process.env.JWT_EXP || "7d";
 const REFRESH_TOKEN_EXP_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 const isProd = process.env.NODE_ENV === "production";
 
-// Prefer explicit CLIENT_URL; fallback to first CLIENT_URLS entry; then localhost
-const CLIENT_URL =
-  process.env.CLIENT_URL ||
-  (process.env.CLIENT_URLS || "")
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean)[0] ||
-  "http://localhost:5173";
-
 // Cross-site compatible cookie in prod (SameSite=None; Secure)
 const REFRESH_COOKIE_OPTS = {
   httpOnly: true,
@@ -265,6 +256,47 @@ router.post("/verify-email", async (req, res) => {
 
   const tokens = issueTokens(user);
   await sendTokenResponse(res, user, tokens);
+});
+
+// Resend verification email
+router.post("/resend-verification", async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required." });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      // Your existing code (forgot-password / register) already leaks
+      // existence, so we can be explicit here too.
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    if (user.isVerified) {
+      return res
+        .status(400)
+        .json({ message: "This email has already been verified." });
+    }
+
+    // Generate a fresh verification token and expiration
+    const verifyToken = crypto.randomBytes(20).toString("hex");
+    user.verifyEmailToken = verifyToken;
+    user.verifyEmailExpires = Date.now() + 24 * 60 * 60 * 1000; // 24h
+
+    await user.save();
+
+    // We don't need a `next` param here; the user is already in the flow.
+    await sendVerificationEmail(user.email, verifyToken, null);
+
+    return res.json({ message: "Verification email resent." });
+  } catch (err) {
+    console.error("Error in /auth/resend-verification:", err);
+    return res
+      .status(500)
+      .json({ message: "Could not resend verification email." });
+  }
 });
 
 // Login
