@@ -9,6 +9,88 @@ import GearListView from "./GearListView";
 import { toast } from "react-hot-toast";
 import { useUserSettings } from "../contexts/UserSettings";
 
+function DashboardEmptyState({ hasLists }) {
+  // If we DO have lists but no listId, the redirect effect is about to run.
+  // Show a simple loading message instead of the full welcome card.
+  if (hasLists) {
+    return (
+      <div className="h-full flex items-center justify-center text-primary text-sm">
+        Loading your gear lists…
+      </div>
+    );
+  }
+
+  // True first-time / zero-list state
+  return (
+    <div className="h-full flex items-center justify-center px-4">
+      <div className="max-w-xl w-full bg-base-100 rounded-lg shadow-md p-6 text-primary">
+        <h2 className="text-2xl font-semibold mb-2">Welcome to TrekList 👋</h2>
+
+        <p className="text-sm sm:text-base text-primary mb-4">
+          TrekList helps you plan and pack your hiking gear so you don&apos;t
+          forget <b>anything</b> on your next trip.
+        </p>
+
+        <section className="mb-4">
+          <h3 className="font-semibold text-primary mb-1">Getting started</h3>
+          <p className="text-sm sm:text-base text-primary/90">
+            Start by creating your first gear list in the{" "}
+            <span className="font-semibold">Gear Lists</span> panel on the left.
+            Type a trip name in the <span className="italic">New list</span> box
+            and click the <span className="font-semibold">+</span> button. That
+            opens your first list where you can add categories like{" "}
+            <span className="italic">Rifugios</span>,{" "}
+            <span className="italic">Hiking</span>, or{" "}
+            <span className="italic">Toiletries</span>, and start adding gear.
+          </p>
+        </section>
+
+        <section className="mb-4">
+          <h3 className="font-semibold text-primary mb-1">
+            How TrekList is organized
+          </h3>
+          <ul className="list-disc list-inside space-y-1 text-sm sm:text-base text-primary/90">
+            <li>
+              <span className="font-semibold">Gear Lists</span> — one list per
+              trip or pack, for example{" "}
+              <span className="italic">Alta Via 1</span>,{" "}
+              <span className="italic">Tour du Mont Blanc</span>, or{" "}
+              <span className="italic">Ultralight Summer 2025</span>.
+            </li>
+            <li>
+              <span className="font-semibold">My Gear</span> — your library of
+              gear you currently own or want to buy. You can reuse these items
+              across different lists.
+            </li>
+            <li>
+              <span className="font-semibold">Pack stats</span> — at the top of
+              each list you&apos;ll see total, base, worn, and consumable
+              weight, so you can dial in your pack.
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h3 className="font-semibold text-primary mb-1">
+            Settings & preferences
+          </h3>
+          <ul className="list-disc list-inside space-y-1 text-sm sm:text-base text-primary/90">
+            <li>
+              Use the <span className="font-semibold">…</span> (ellipsis) menu
+              at the top of a gear list for list-specific preferences like
+              background, checklist view, share, copy, and delete.
+            </li>
+            <li>
+              Use the icon in the top-right of the app for account and global
+              settings.
+            </li>
+          </ul>
+        </section>
+      </div>
+    </div>
+  );
+}
+
 export default function Dashboard() {
   const { isAuthenticated } = useAuth();
   const { listId } = useParams(); // from /dashboard/:listId
@@ -178,9 +260,7 @@ export default function Dashboard() {
               collapsed={collapsed}
             />
           ) : (
-            <div className="h-full flex items-center justify-center text-primary text-lg">
-              Create a gear list to begin.
-            </div>
+            <DashboardEmptyState hasLists={lists.length > 0} />
           )}
         </main>
       </div>
