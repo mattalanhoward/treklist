@@ -39,6 +39,14 @@ export default {
         "d-screen": "100dvh",
         "s-screen": "100svh",
       },
+      fontSize: {
+        // ~13px
+        sm: ["0.8125rem", { lineHeight: "1.5" }],
+        // 14px
+        base: ["0.875rem", { lineHeight: "1.5" }],
+        // 16px
+        lg: ["1rem", { lineHeight: "1.5" }],
+      },
     },
   },
   plugins: [],

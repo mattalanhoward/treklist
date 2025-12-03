@@ -247,7 +247,7 @@ export default function ChecklistView() {
         <section className="mb-6">
           <div className="flex items-end justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-semibold tracking-tight">
+              <h1 className="text-xl font-semibold tracking-tight">
                 {tripMeta.title}
               </h1>
               <p className="text-sm text-secondary">
@@ -277,7 +277,7 @@ export default function ChecklistView() {
           </div>
 
           {/* Legend */}
-          <div className="mt-3 flex items-center gap-4 text-xs text-secondary">
+          <div className="mt-3 flex items-center gap-4 text-sm text-secondary">
             <div className="flex items-center gap-1">
               <FaTshirt className="h-3.5 w-3.5" /> worn
             </div>
@@ -325,7 +325,7 @@ export default function ChecklistView() {
                         >
                           <span className="font-medium">{label}</span>
                           {item.quantity > 1 && (
-                            <span className="ml-2 rounded bg-base-200 px-2 py-0.5 text-xs text-secondary">
+                            <span className="ml-2 rounded bg-base-200 px-2 py-0.5 text-sm text-secondary">
                               ×{item.quantity}
                             </span>
                           )}

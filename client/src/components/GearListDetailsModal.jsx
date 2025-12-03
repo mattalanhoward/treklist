@@ -86,7 +86,7 @@ export default function GearListDetailsModal({
       >
         {/* Header */}
         <div className="flex justify-between items-center mb-2 sm:mb-3">
-          <h2 className="text-2xl font-semibold text-primary">
+          <h2 className="text-xl font-semibold text-primary">
             Gear List Details
           </h2>
           <button
@@ -103,7 +103,7 @@ export default function GearListDetailsModal({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Weight Breakdown full row */}
           <div className="md:col-span-3 flex flex-col items-center px-2 py-1">
-            <label className="block text-sm font-medium text-primary mb-3">
+            <label className="block font-medium text-primary mb-3">
               Weight Breakdown
             </label>
             <div className="scale-110">
@@ -132,9 +132,7 @@ export default function GearListDetailsModal({
           </div>
           {/* Name */}
           <div className="md:col-span-2">
-            <label className="block text-sm font-medium text-primary mb-1">
-              Name
-            </label>
+            <label className="block font-medium text-primary mb-1">Name</label>
             <input
               type="text"
               value={title}
@@ -142,14 +140,14 @@ export default function GearListDetailsModal({
                 setTitle(e.target.value);
                 setDirty(true);
               }}
-              className="w-full border border-primary rounded px-2 py-1 text-primary text-sm"
+              className="w-full border border-primary rounded px-2 py-1 text-primary"
             />
           </div>
           {/* Trip Dates */}
           <div className="md:col-span-2 grid grid-cols-2 gap-4">
             {/* Trip Start */}
             <div>
-              <label className="block text-sm font-medium text-primary mb-1">
+              <label className="block font-medium text-primary mb-1">
                 Trip Start
               </label>
               <DatePicker
@@ -160,13 +158,13 @@ export default function GearListDetailsModal({
                 }}
                 dateFormat="P"
                 locale={dfnsLocale}
-                className="w-full border border-primary rounded px-2 py-1 text-primary text-sm"
+                className="w-full border border-primary rounded px-2 py-1 text-primary"
                 placeholderText="Select date"
               />
             </div>
             {/* Trip End */}
             <div>
-              <label className="block text-sm font-medium text-primary mb-1">
+              <label className="block font-medium text-primary mb-1">
                 Trip End
               </label>
               <DatePicker
@@ -177,7 +175,7 @@ export default function GearListDetailsModal({
                 }}
                 dateFormat="P"
                 locale={dfnsLocale}
-                className="w-full border border-primary rounded px-2 py-1 text-primary text-sm"
+                className="w-full border border-primary rounded px-2 py-1 text-primary"
                 placeholderText="Select date"
               />
             </div>
@@ -185,7 +183,7 @@ export default function GearListDetailsModal({
 
           {/* Location */}
           <div>
-            <label className="block text-sm font-medium text-primary mb-1">
+            <label className="block font-medium text-primary mb-1">
               Location
             </label>
             <input
@@ -195,13 +193,13 @@ export default function GearListDetailsModal({
                 setLocation(e.target.value);
                 setDirty(true);
               }}
-              className="w-full border border-primary rounded px-2 py-1 text-primary text-sm"
+              className="w-full border border-primary rounded px-2 py-1 text-primary"
             />
           </div>
 
           {/* Notes */}
           <div className="md:col-span-3">
-            <label className="block text-sm font-medium text-primary mb-1">
+            <label className="block font-medium text-primary mb-1">
               Notes / Description
             </label>
             <textarea
@@ -211,19 +209,19 @@ export default function GearListDetailsModal({
                 setNotes(e.target.value);
                 setDirty(true);
               }}
-              className="w-full border border-primary rounded px-2 py-1 text-primary text-sm"
+              className="w-full border border-primary rounded px-2 py-1 text-primary"
             />
           </div>
           {/* Stats */}
           <div className="md:col-span-2 flex flex-wrap items-baseline gap-x-6 gap-y-2 text-primary">
             <p className="flex items-baseline gap-1">
-              <span className="text-sm font-medium">Total cost: </span>
-              <span className="text-sm font-semibold">{formattedCost}</span>
+              <span className=" font-medium">Total cost: </span>
+              <span className=" font-semibold">{formattedCost}</span>
             </p>
 
             <p className="flex items-baseline gap-1">
-              <span className="text-sm font-medium"># of items: </span>
-              <span className="text-sm">{itemsCount}</span>
+              <span className=" font-medium"># of items: </span>
+              <span className="">{itemsCount}</span>
             </p>
           </div>
         </div>
@@ -233,13 +231,13 @@ export default function GearListDetailsModal({
           <button
             type="button"
             onClick={handleClose}
-            className="px-2 py-1 bg-neutralAlt rounded hover:bg-neutralAlt/90 text-primary text-sm"
+            className="px-2 py-1 bg-neutralAlt rounded hover:bg-neutralAlt/90 text-primary "
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-2 py-1 bg-secondary text-white rounded hover:bg-secondary/80 text-sm"
+            className="px-2 py-1 bg-secondary text-white rounded hover:bg-secondary/80 "
           >
             Save
           </button>

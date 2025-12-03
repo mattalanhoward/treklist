@@ -190,7 +190,7 @@ export default function AddGearItemModal({
                 return (
                   <li
                     key={item._id}
-                    className={`flex items-center px-2 py-1 rounded bg-neutral/20 border border-primary/20 rounded-lg hover:bg-base-100/20 mb-1 \
+                    className={`flex items-center px-2 py-1 rounded bg-neutral/20 border border-primary/20 hover:bg-base-100/20 mb-1 \
                       ${
                         disabled
                           ? "opacity-50 cursor-default"

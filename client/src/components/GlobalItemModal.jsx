@@ -216,14 +216,12 @@ export default function GlobalItemModal({
       >
         {/* Header (smaller on phones) */}
         <div className="flex justify-between items-center mb-2 sm:mb-3">
-          <h2 className="text-lg sm:text-xl font-semibold text-primary">
-            New Gear Item
-          </h2>
+          <h2 className="text-xl font-semibold text-primary">New Gear Item</h2>
           <button
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="text-error hover:text-error/80 text-xl sm:text-2xl"
+            className="text-error hover:text-error/80"
           >
             <FaTimes />
           </button>
@@ -234,7 +232,7 @@ export default function GlobalItemModal({
           <div className="flex gap-2">
             <button
               type="button"
-              className={`px-2 py-1 rounded border text-sm ${
+              className={`px-2 py-1 rounded border ${
                 tab === "import"
                   ? "bg-primary/10 border-primary"
                   : "bg-neutralAlt border-primary/30"
@@ -246,7 +244,7 @@ export default function GlobalItemModal({
             </button>
             <button
               type="button"
-              className={`px-2 py-1 rounded border text-sm ${
+              className={`px-2 py-1 rounded border ${
                 tab === "custom"
                   ? "bg-primary/10 border-primary"
                   : "bg-neutralAlt border-primary/30"
@@ -260,7 +258,7 @@ export default function GlobalItemModal({
 
           {affProduct ? (
             <div className="flex items-center gap-2">
-              {/* <span className="text-xs text-primary">
+              {/* <span className=" text-primary">
                 Selected: <strong>{affProduct.name}</strong>
               </span> */}
               <button
@@ -312,7 +310,7 @@ export default function GlobalItemModal({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
             {/* Item Type */}
             <div>
-              <label className="block text-xs sm:text-sm font-medium text-primary mb-0.5">
+              <label className="block font-medium text-primary mb-0.5">
                 Item Type
               </label>
               <input
@@ -321,13 +319,13 @@ export default function GlobalItemModal({
                 required
                 value={itemType}
                 onChange={(e) => setItemType(e.target.value)}
-                className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary text-sm"
+                className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
               />
             </div>
 
             {/* Name */}
             <div>
-              <label className="block text-xs sm:text-sm font-medium text-primary mb-0.5">
+              <label className="block font-medium text-primary mb-0.5">
                 Name<span className="text-red-500">*</span>
               </label>
               <input
@@ -336,13 +334,13 @@ export default function GlobalItemModal({
                 value={name}
                 required
                 onChange={(e) => setName(e.target.value)}
-                className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary text-sm"
+                className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
               />
             </div>
 
             {/* Brand */}
             <div>
-              <label className="block text-xs sm:text-sm font-medium text-primary mb-0.5">
+              <label className="block font-medium text-primary mb-0.5">
                 Brand
               </label>
               <input
@@ -350,7 +348,7 @@ export default function GlobalItemModal({
                 placeholder="Rainbow"
                 value={brand}
                 onChange={(e) => setBrand(e.target.value)}
-                className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary text-sm"
+                className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
               />
             </div>
 
@@ -377,7 +375,7 @@ export default function GlobalItemModal({
             {/* Weight + Price: force flex on all breakpoints */}
             <div className="flex space-x-1 sm:space-x-2 col-span-1 sm:col-span-2">
               <div className="flex-1">
-                <label className="block text-xs sm:text-sm font-medium text-primary mb-0.5">
+                <label className="block font-medium text-primary mb-0.5">
                   Weight ({unitLabel})
                 </label>
                 <input
@@ -386,11 +384,11 @@ export default function GlobalItemModal({
                   value={displayWeight}
                   placeholder={unitLabel === "g" ? "e.g. 350" : "e.g. 12.6"}
                   onChange={(e) => setDisplayWeight(e.target.value)}
-                  className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary text-sm"
+                  className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
                 />
               </div>
               <div className="flex-1">
-                <label className="block text-xs sm:text-sm font-medium text-primary mb-0.5">
+                <label className="block font-medium text-primary mb-0.5">
                   Price ({currencySymbol})
                 </label>
                 <div className="relative">
@@ -415,13 +413,13 @@ export default function GlobalItemModal({
 
             {/* Description spans full width */}
             <div className="sm:col-span-2">
-              <label className="block text-xs sm:text-sm font-medium text-primary mb-0.5">
+              <label className="block font-medium text-primary mb-0.5">
                 Description
               </label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary text-sm"
+                className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
                 rows={2}
               />
             </div>
@@ -431,7 +429,7 @@ export default function GlobalItemModal({
         {/* Worn / Consumable (only on Custom tab) */}
         {/* {tab === "custom" && (
           <div className="flex items-center space-x-4 mt-2">
-            <label className="inline-flex items-center text-xs sm:text-sm text-primary">
+            <label className="inline-flex items-center text-primary">
               <input
                 type="checkbox"
                 checked={worn}
@@ -440,7 +438,7 @@ export default function GlobalItemModal({
               />
               Worn
             </label>
-            <label className="inline-flex items-center text-xs sm:text-sm text-primary">
+            <label className="inline-flex items-center text-primary">
               <input
                 type="checkbox"
                 checked={consumable}
@@ -455,7 +453,7 @@ export default function GlobalItemModal({
         {/* Actions + merchant note */}
         <div className="mt-3 flex items-center gap-2">
           {affProduct && (
-            <p className="flex-1 text-[11px] sm:text-xs text-primary">
+            <p className="flex-1 text-sm text-primary">
               Link and price set by merchant for imported items.
             </p>
           )}
@@ -470,14 +468,14 @@ export default function GlobalItemModal({
                   ? "Pick a product (Import) or switch to Custom"
                   : undefined
               }
-              className="px-2 py-1 bg-neutralAlt rounded hover:bg-neutralAlt/90 text-primary text-sm sm:text-base"
+              className="px-2 py-1 bg-neutralAlt rounded hover:bg-neutralAlt/90 text-primary"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-2 py-1 bg-secondary text-white rounded hover:bg-secondary-700 text-sm sm:text-base"
+              className="px-2 py-1 bg-secondary text-white rounded hover:bg-secondary-700"
             >
               Save
             </button>
