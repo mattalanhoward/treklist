@@ -264,6 +264,8 @@ export default function SortableItem({
     return base;
   }, [catId, item, onDelete, onMoveItem]);
 
+  const twoRowVisibilityClasses = isListMode ? "xl:hidden" : "sm:hidden";
+
   return (
     <div
       ref={setNodeRef}
@@ -271,7 +273,9 @@ export default function SortableItem({
       className="bg-base-100 px-3 sm:px-1 py-2 rounded shadow mb-2"
     >
       {/* ========== MOBILE (both list/column collapse to this) ========== */}
-      <div className="sm:hidden grid grid-rows-[auto_auto] gap-y-1 gap-x-2 text-sm">
+      <div
+        className={`${twoRowVisibilityClasses} grid grid-rows-[auto_auto] gap-y-1 gap-x-2 text-sm`}
+      >
         {/* Row 1: type + name/brand + ellipsis */}
         <div className="row-start-1 col-span-2 flex items-center justify-between space-x-2 overflow-x-hidden">
           {" "}
@@ -299,7 +303,6 @@ export default function SortableItem({
             items={mobileMenuItems}
           />
         </div>
-
         {/* Row 2: left (weight + price) · right (Buy · icons · qty) */}
         <div className="row-start-2 col-span-2 grid grid-cols-[1fr_auto] items-center">
           {/* Left group (fixed column sizes) */}
@@ -340,7 +343,7 @@ export default function SortableItem({
       {/* ========== DESKTOP LIST MODE (single row) ========== */}
       {isListMode && (
         <div
-          className="hidden sm:grid items-center text-sm
+          className="hidden xl:grid items-center text-sm
       grid-cols-[32px,120px,minmax(260px,1fr),96px,112px,24px,24px,48px,24px,24px] gap-x-2"
         >
           {/* 1) Drag */}
