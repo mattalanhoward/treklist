@@ -5,6 +5,7 @@ import { FaTimes } from "react-icons/fa";
 import useAuth from "../hooks/useAuth";
 import api from "../services/api";
 import { toast } from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 export default function AuthModal({
   isOpen,
@@ -29,6 +30,7 @@ export default function AuthModal({
 
   const { login, hydrateFromStorage } = useAuth();
   const firstFieldRef = useRef(null);
+  const { t } = useTranslation("common");
 
   // Keep mode and fields in sync when the modal opens/closes
   useEffect(() => {
@@ -84,18 +86,18 @@ export default function AuthModal({
     setErr("");
 
     if (!email || !password) {
-      setErr("Please enter your email and password.");
+      setErr(t("auth.errors.loginMissingFields"));
       return;
     }
 
     setLoading(true);
     try {
       await login(email, password);
-      toast.success("Welcome back!");
+      toast.success(t("auth.toasts.welcomeBack"));
       onAuthed?.();
       onClose?.();
     } catch (e) {
-      setErr(e?.response?.data?.message || "Login failed");
+      setErr(e?.response?.data?.message || t("auth.errors.loginFailed"));
     } finally {
       setLoading(false);
     }
@@ -106,14 +108,12 @@ export default function AuthModal({
     setErr("");
 
     if (!email || !password) {
-      setErr("Email and password are required.");
+      setErr(t("auth.errors.registerMissingFields"));
       return;
     }
 
     if (!acceptTerms) {
-      setErr(
-        "Please accept the Terms of Use and Privacy Policy to create an account."
-      );
+      setErr(t("auth.errors.acceptTermsRequired"));
       return;
     }
 
@@ -130,7 +130,14 @@ export default function AuthModal({
       // No toast here; we switch into the "Check your email" step instead.
       setMode("verify");
     } catch (e) {
-      setErr(e?.response?.data?.message || "Registration failed");
+      const backendMsg = e?.response?.data?.message;
+
+      if (backendMsg === "Email already in use.") {
+        // Map known backend message to a translated string
+        setErr(t("auth.errors.emailInUse"));
+      } else {
+        setErr(backendMsg || t("auth.errors.registerFailed"));
+      }
     } finally {
       setLoading(false);
     }
@@ -154,11 +161,11 @@ export default function AuthModal({
         onAuthed?.();
         onClose?.();
       } else {
-        toast("Not verified yet — try again in a few seconds.");
+        toast(t("auth.toasts.notVerifiedYet"));
       }
     } catch (error) {
       // No valid token yet (user clicked too quickly / wrong link, etc.)
-      toast("Not verified yet — try again in a few seconds.");
+      toast(t("auth.toasts.notVerifiedYet"));
     } finally {
       setLoading(false);
     }
@@ -168,10 +175,10 @@ export default function AuthModal({
     setLoading(true);
     try {
       await api.post("/auth/resend-verification", { email });
-      toast.success("Verification email resent.");
+      toast.success(t("auth.toasts.verificationEmailResent"));
     } catch (error) {
       toast.error(
-        error?.response?.data?.message || "Unable to resend verification email."
+        error?.response?.data?.message || t("auth.toasts.resendFailed")
       );
     } finally {
       setLoading(false);
@@ -180,15 +187,12 @@ export default function AuthModal({
 
   const renderVerifyStep = () => (
     <div className="space-y-4 text-sm text-primary">
+      <p>{t("auth.verify.sentTo", { email })}</p>{" "}
       <p>
-        We&apos;ve sent a verification link to <strong>{email}</strong>.
-      </p>
-      <p>
-        1. Open your email and click the verification link.
+        {t("auth.verify.step1")}
         <br />
-        2. Then come back to this window and press the button below.
+        {t("auth.verify.step2")}
       </p>
-
       <div className="flex flex-col gap-2 pt-2">
         <button
           type="button"
@@ -198,7 +202,9 @@ export default function AuthModal({
             loading ? "opacity-60 cursor-not-allowed" : ""
           }`}
         >
-          {loading ? "Checking…" : "I’ve verified my email"}
+          {loading
+            ? t("auth.buttons.verifyCheckLoading")
+            : t("auth.buttons.verifyCheck")}
         </button>
         <button
           type="button"
@@ -208,23 +214,19 @@ export default function AuthModal({
             loading ? "opacity-60 cursor-not-allowed" : ""
           }`}
         >
-          Resend verification email
+          {t("auth.buttons.verifyResend")}
         </button>
       </div>
-
-      <p className="text-xs text-primary/80">
-        You can also close this window and come back later. Once your email is
-        verified, you&apos;ll be able to sign in normally.
-      </p>
+      <p className="text-xs text-primary/80">{t("auth.verify.laterInfo")}</p>
     </div>
   );
 
   const title =
     mode === "login"
-      ? "Sign In"
+      ? t("auth.title.login")
       : mode === "register"
-      ? "Create your account"
-      : "Check your email";
+      ? t("auth.title.register")
+      : t("auth.title.verify");
 
   // --- Render ---
   return (
@@ -245,7 +247,7 @@ export default function AuthModal({
             type="button"
             onClick={onClose}
             className="text-error hover:text-error/80"
-            aria-label="Close modal"
+            aria-label={t("auth.a11y.closeModal")}
           >
             <FaTimes size={20} />
           </button>
@@ -263,7 +265,7 @@ export default function AuthModal({
               }`}
               onClick={() => switchTo("login")}
             >
-              Sign In
+              {t("auth.tabs.login")}{" "}
             </button>
             <button
               type="button"
@@ -274,7 +276,7 @@ export default function AuthModal({
               }`}
               onClick={() => switchTo("register")}
             >
-              Sign Up
+              {t("auth.tabs.register")}{" "}
             </button>
           </div>
         )}
@@ -287,7 +289,7 @@ export default function AuthModal({
         {mode === "login" && (
           <form onSubmit={handleLogin} noValidate className="space-y-3">
             <label className="block text-sm text-primary">
-              Email
+              {t("auth.labels.email")}{" "}
               <input
                 ref={firstFieldRef}
                 type="email"
@@ -300,7 +302,7 @@ export default function AuthModal({
             </label>
 
             <label className="block text-sm text-primary">
-              Password
+              {t("auth.labels.password")}{" "}
               <input
                 type="password"
                 className="mt-1 w-full border border-primary rounded p-2 text-primary text-sm bg-white"
@@ -315,7 +317,7 @@ export default function AuthModal({
                 href="/forgot-password"
                 className="text-sm text-secondary hover:underline"
               >
-                Forgot password?
+                {t("auth.links.forgotPassword")}{" "}
               </a>
               <button
                 type="submit"
@@ -324,7 +326,9 @@ export default function AuthModal({
                   loading ? "opacity-60 cursor-not-allowed" : ""
                 }`}
               >
-                {loading ? "Signing in…" : "Sign In"}
+                {loading
+                  ? t("auth.buttons.signInLoading")
+                  : t("auth.buttons.signIn")}{" "}
               </button>
             </div>
           </form>
@@ -332,10 +336,9 @@ export default function AuthModal({
 
         {mode === "register" && (
           <>
-            {err && <div className="text-error text-sm mb-3">{err}</div>}
             <form onSubmit={handleRegister} noValidate className="space-y-3">
               <label className="block text-sm text-primary">
-                Trail Name (optional)
+                {t("auth.labels.trailNameOptional")}{" "}
                 <input
                   ref={firstFieldRef}
                   type="text"
@@ -347,7 +350,7 @@ export default function AuthModal({
               </label>
 
               <label className="block text-sm text-primary">
-                Email
+                {t("auth.labels.email")}{" "}
                 <input
                   type="email"
                   className="mt-1 w-full border border-primary rounded p-2 text-primary text-sm bg-white"
@@ -359,7 +362,7 @@ export default function AuthModal({
               </label>
 
               <label className="block text-sm text-primary">
-                Password
+                {t("auth.labels.password")}{" "}
                 <input
                   type="password"
                   className="mt-1 w-full border border-primary rounded p-2 text-primary text-sm bg-white"
@@ -378,10 +381,7 @@ export default function AuthModal({
                   disabled={loading}
                   className="mt-0.5"
                 />
-                <span>
-                  Email me about new TrekList features, tips, and occasional
-                  offers.
-                </span>
+                <span>{t("auth.text.marketingOptIn")}</span>
               </label>
               {/* Terms acceptance (required) */}
               <label className="flex items-start gap-2 text-xs text-primary">
@@ -393,25 +393,25 @@ export default function AuthModal({
                   className="mt-0.5"
                 />
                 <span>
-                  I agree to the{" "}
+                  {t("auth.text.termsPrefix")}
                   <a
                     href="/legal/terms"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-secondary underline"
                   >
-                    Terms of Use
+                    {t("auth.text.termsTermsOfUse")}
                   </a>{" "}
-                  and{" "}
+                  {t("auth.text.termsAnd")}{" "}
                   <a
                     href="/legal/privacy"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-secondary underline"
                   >
-                    Privacy Policy
+                    {t("auth.text.termsPrivacyPolicy")}
                   </a>
-                  .
+                  {t("auth.text.termsSuffix")}
                 </span>
               </label>
 
@@ -423,7 +423,9 @@ export default function AuthModal({
                     loading ? "opacity-60 cursor-not-allowed" : ""
                   }`}
                 >
-                  {loading ? "Creating…" : "Create Account"}
+                  {loading
+                    ? t("auth.buttons.createAccountLoading")
+                    : t("auth.buttons.createAccount")}
                 </button>
               </div>
             </form>

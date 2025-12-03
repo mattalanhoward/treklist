@@ -12,5 +12,114 @@
   "language": {
     "english": "English",
     "dutch": "Nederlands"
+  },
+  "topbar": {
+    "accountHeader": "Account",
+    "manageAccount": "Manage account…",
+    "preferencesHeader": "Preferences",
+    "viewMode": "View mode",
+    "theme": "Theme",
+    "weightUnit": "Weight unit",
+    "language": "Language",
+    "region": "Region",
+    "legal": "Legal & Policies",
+    "logout": "Log out"
+  },
+  "sidebar": {
+    "gearListsTitle": "Gear Lists",
+    "newListPlaceholder": "New list",
+    "listNameEmpty": "List name cannot be empty.",
+    "listCreated": "List created!",
+    "couldNotCreateList": "Could not create list.",
+    "myGearTitle": "My Gear",
+    "searchGearPlaceholder": "Search gear items",
+    "noGearItems": "No gear items",
+    "mustSelectListFirst": "Pick or create a list with at least one category first.",
+    "addToListFailed": "Failed to add item into your list.",
+    "editGlobalTemplate": "Edit global template"
+  },
+  "auth": {
+    "title": {
+      "login": "Sign In",
+      "register": "Create your account",
+      "verify": "Check your email"
+    },
+    "tabs": {
+      "login": "Sign In",
+      "register": "Sign Up"
+    },
+    "labels": {
+      "email": "Email",
+      "password": "Password",
+      "trailNameOptional": "Trail Name (optional)"
+    },
+    "links": {
+      "forgotPassword": "Forgot password?"
+    },
+    "buttons": {
+      "signIn": "Sign In",
+      "signInLoading": "Signing in…",
+      "createAccount": "Create Account",
+      "createAccountLoading": "Creating…",
+      "verifyCheck": "I’ve verified my email",
+      "verifyCheckLoading": "Checking…",
+      "verifyResend": "Resend verification email"
+    },
+    "errors": {
+      "loginMissingFields": "Please enter your email and password.",
+      "loginFailed": "Login failed",
+      "registerMissingFields": "Email and password are required.",
+      "acceptTermsRequired": "Please accept the Terms of Use and Privacy Policy to create an account.",
+      "registerFailed": "Registration failed",
+      "emailInUse": "Email already in use."
+    },
+    "text": {
+      "marketingOptIn": "Email me about new TrekList features, tips, and occasional offers.",
+      "termsPrefix": "I agree to the ",
+      "termsTermsOfUse": "Terms of Use",
+      "termsAnd": "and",
+      "termsPrivacyPolicy": "Privacy Policy",
+      "termsSuffix": "."
+    },
+    "verify": {
+      "sentTo": "We've sent a verification link to {{email}}.",
+      "step1": "1. Open your email and click the verification link.",
+      "step2": "2. Then come back to this window and press the button below.",
+      "laterInfo": "You can also close this window and come back later. Once your email is verified, you'll be able to sign in normally."
+    },
+    "toasts": {
+      "welcomeBack": "Welcome back!",
+      "verificationEmailResent": "Verification email resent.",
+      "resendFailed": "Unable to resend verification email.",
+      "notVerifiedYet": "Not verified yet — try again in a few seconds."
+    },
+    "a11y": {
+      "closeModal": "Close modal"
+    }
+  },
+  "dashboard": {
+    "loadingLists": "Loading your gear lists…",
+    "empty": {
+      "title": "Welcome to TrekList 👋",
+      "intro": "TrekList helps you plan and pack your hiking gear so you don't forget anything on your next trip.",
+      "gettingStartedTitle": "Getting started",
+      "gettingStartedBody": "Start by creating your first gear list in the Gear Lists panel on the left. Type a trip or pack name in the New list box and click the + button. That opens your first list, where you can add categories like Rifugios, Hiking, or Toiletries. Then use the My Gear panel to build your personal gear library—adding items you own or want to buy—and add those items into the right categories in your list.",
+      "howOrganizedTitle": "How TrekList is organized",
+      "howOrganizedGearLists": "One list per trip or pack, for example Alta Via 1, Tour du Mont Blanc, or Ultralight Summer 2025.",
+      "howOrganizedMyGear": "Your library of gear you currently own or want to buy. You can reuse these items across different lists.",
+      "howOrganizedPackStats": "At the top of each list you'll see total, base, worn, and consumable weight, so you can dial in your pack.",
+      "settingsTitle": "Settings & preferences",
+      "settingsListMenu": "Use the … (ellipsis) menu at the top of a gear list for list-specific preferences like background, checklist view, share, copy, and delete.",
+      "settingsAccount": "Use the icon in the top-right of the app for account and global settings.",
+      "buttonSampleListLoading": "Loading sample list…",
+      "buttonSampleList": "Load a sample list",
+      "startFromScratch": "Or start from scratch in the Gear Lists panel."
+    },
+    "toasts": {
+      "loadListsFailed": "Could not load your gear lists",
+      "createSampleFailed": "Could not create a sample list.",
+      "listGone": "This gear list no longer exists",
+      "loadListFailed": "Could not load this gear list"
+    }
   }
 }

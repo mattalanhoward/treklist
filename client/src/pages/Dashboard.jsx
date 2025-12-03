@@ -8,14 +8,16 @@ import Sidebar from "../components/Sidebar";
 import GearListView from "./GearListView";
 import { toast } from "react-hot-toast";
 import { useUserSettings } from "../contexts/UserSettings";
+import { useTranslation } from "react-i18next";
 
 function DashboardEmptyState({ hasLists, onCreateSampleList, creatingSample }) {
+  const { t } = useTranslation("common");
   // If we DO have lists but no listId, the redirect effect is about to run.
   // Show a simple loading message instead of the full welcome card.
   if (hasLists) {
     return (
       <div className="h-full flex items-center justify-center text-primary text-sm">
-        Loading your gear lists…
+        {t("dashboard.loadingLists")}
       </div>
     );
   }
@@ -25,72 +27,51 @@ function DashboardEmptyState({ hasLists, onCreateSampleList, creatingSample }) {
     <div className="h-full px-3 py-4 sm:px-4 sm:py-6 overflow-y-auto sm:overflow-visible">
       <div className="mx-auto w-full max-w-4xl bg-base-100/95 rounded-xl shadow-md p-4 sm:p-6 space-y-3 my-2 sm:my-4">
         <h1 className="text-xl font-semibold text-primary">
-          Welcome to TrekList 👋
+          {t("dashboard.empty.title")}
         </h1>
 
         <p className="text-sm sm:text-base text-primary">
-          TrekList helps you plan and pack your hiking gear so you don&apos;t
-          forget <span className="font-semibold">anything</span> on your next
-          trip.
+          {t("dashboard.empty.intro")}
         </p>
 
         <section className="mb-3">
-          <h3 className="font-semibold text-primary mb-1">Getting started</h3>
+          <h3 className="font-semibold text-primary mb-1">
+            {t("dashboard.empty.gettingStartedTitle")}
+          </h3>
           <p className="text-sm sm:text-base text-primary/90">
-            Start by creating your first gear list in the{" "}
-            <span className="font-semibold">Gear Lists</span> panel on the left.
-            Type a trip or pack name in the{" "}
-            <span className="italic">New list</span> box and click the{" "}
-            <span className="font-semibold">+</span> button. That opens your
-            first list, where you can add categories like{" "}
-            <span className="italic">Rifugios</span>,{" "}
-            <span className="italic">Hiking</span>, or{" "}
-            <span className="italic">Toiletries</span>. Then use the{" "}
-            <span className="font-semibold">My Gear</span> panel to build your
-            personal gear library—adding items you own or want to buy—and add
-            those items into the right categories in your list.
+            {t("dashboard.empty.gettingStartedBody")}
           </p>
         </section>
 
         <section className="mb-3">
           <h3 className="font-semibold text-primary mb-1">
-            How TrekList is organized
+            {t("dashboard.empty.howOrganizedTitle")}
           </h3>
           <ul className="list-disc list-inside space-y-1 text-sm sm:text-base text-primary/90">
             <li>
-              <span className="font-semibold">Gear Lists</span> — one list per
-              trip or pack, for example{" "}
-              <span className="italic">Alta Via 1</span>,{" "}
-              <span className="italic">Tour du Mont Blanc</span>, or{" "}
-              <span className="italic">Ultralight Summer 2025</span>.
+              <span className="font-semibold">
+                {t("sidebar.gearListsTitle")}
+              </span>{" "}
+              — {t("dashboard.empty.howOrganizedGearLists")}
             </li>
             <li>
-              <span className="font-semibold">My Gear</span> — your library of
-              gear you currently own or want to buy. You can reuse these items
-              across different lists.
+              <span className="font-semibold">{t("sidebar.myGearTitle")}</span>{" "}
+              — {t("dashboard.empty.howOrganizedMyGear")}
             </li>
             <li>
-              <span className="font-semibold">Pack stats</span> — at the top of
-              each list you&apos;ll see total, base, worn, and consumable
-              weight, so you can dial in your pack.
+              <span className="font-semibold">Pack stats</span> —{" "}
+              {t("dashboard.empty.howOrganizedPackStats")}
             </li>
           </ul>
         </section>
 
         <section>
           <h3 className="font-semibold text-primary mb-1">
-            Settings & preferences
+            {t("dashboard.empty.settingsTitle")}
           </h3>
           <ul className="list-disc list-inside space-y-1 text-sm sm:text-base text-primary/90">
-            <li>
-              Use the <span className="font-semibold">…</span> (ellipsis) menu
-              at the top of a gear list for list-specific preferences like
-              background, checklist view, share, copy, and delete.
-            </li>
-            <li>
-              Use the icon in the top-right of the app for account and global
-              settings.
-            </li>
+            <li>{t("dashboard.empty.settingsListMenu")}</li>
+            <li>{t("dashboard.empty.settingsAccount")}</li>
           </ul>
         </section>
 
@@ -104,12 +85,13 @@ function DashboardEmptyState({ hasLists, onCreateSampleList, creatingSample }) {
                 creatingSample ? "opacity-60 cursor-not-allowed" : ""
               }`}
             >
-              {creatingSample ? "Loading sample list…" : "Load a sample list"}
+              {creatingSample
+                ? t("dashboard.empty.buttonSampleListLoading")
+                : t("dashboard.empty.buttonSampleList")}
             </button>
           </div>
           <p className="text-xs text-primary/80">
-            Or start from scratch in the{" "}
-            <span className="font-semibold">Gear Lists</span> panel.
+            {t("dashboard.empty.startFromScratch")}
           </p>
         </div>
       </div>
@@ -119,6 +101,7 @@ function DashboardEmptyState({ hasLists, onCreateSampleList, creatingSample }) {
 
 export default function Dashboard() {
   const { isAuthenticated } = useAuth();
+  const { t } = useTranslation("common");
   const { listId } = useParams(); // from /dashboard/:listId
   const navigate = useNavigate();
 
@@ -141,9 +124,9 @@ export default function Dashboard() {
       setLists(data);
     } catch (err) {
       console.error("Failed to fetch lists", err);
-      toast.error("Could not load your gear lists");
+      toast.error(t("dashboard.toasts.loadListsFailed"));
     }
-  }, []);
+  }, [t]);
 
   const [creatingSample, setCreatingSample] = useState(false);
 
@@ -154,7 +137,7 @@ export default function Dashboard() {
       const newList = data?.list;
 
       if (!newList || !newList._id) {
-        toast.error("Could not create a sample list.");
+        toast.error(t("dashboard.toasts.createSampleFailed"));
         return;
       }
 
@@ -169,12 +152,12 @@ export default function Dashboard() {
     } catch (err) {
       console.error("Failed to create sample list", err);
       toast.error(
-        err?.response?.data?.message || "Could not create a sample list"
+        err?.response?.data?.message || t("dashboard.toasts.createSampleFailed")
       );
     } finally {
       setCreatingSample(false);
     }
-  }, [fetchLists, navigate]);
+  }, [fetchLists, navigate, t]);
 
   // if we’re not logged in, bounce straight back to /login
   useEffect(() => {
@@ -227,7 +210,7 @@ export default function Dashboard() {
 
       if (status === 404) {
         // This list no longer exists (e.g. it was deleted)
-        toast.error("This gear list no longer exists");
+        toast.error(t("dashboard.toasts.listGone"));
 
         // Clear stale lastListId if it was pointing at this deleted list
         const stored = localStorage.getItem("lastListId");
@@ -239,10 +222,10 @@ export default function Dashboard() {
         navigate("/dashboard", { replace: true });
       } else {
         // Other errors (network, 500, etc.)
-        toast.error("Could not load this gear list");
+        toast.error(t("dashboard.toasts.loadListFailed"));
       }
     }
-  }, [listId, navigate]);
+  }, [listId, navigate, t]);
 
   // — New: Optimistic reorder + persist for categories
   const onReorderCategories = useCallback(

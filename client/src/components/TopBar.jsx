@@ -9,6 +9,7 @@ import AccountModal from "./AccountModal";
 import ViewToggle from "./ViewToggle";
 import LegalModal from "./LegalModal";
 import EmailOptInBanner from "./EmailOptInBanner";
+import { useTranslation } from "react-i18next";
 
 const themes = [
   { name: "forest", label: "Forest", color: "#163A28" },
@@ -36,6 +37,8 @@ export default function TopBar({ title, openSettings }) {
     viewMode,
     setViewMode,
   } = useUserSettings();
+
+  const { t } = useTranslation("common");
 
   const navigate = useNavigate();
 
@@ -97,7 +100,7 @@ export default function TopBar({ title, openSettings }) {
                 key: "header-account",
                 render: () => (
                   <div className="text-xs font-semibold text-primary uppercase">
-                    Account
+                    {t("topbar.accountHeader")}
                   </div>
                 ),
               },
@@ -112,7 +115,7 @@ export default function TopBar({ title, openSettings }) {
               },
               {
                 key: "manage-account",
-                label: "Manage account…",
+                label: t("topbar.manageAccount"),
                 onClick: () => setIsAccountOpen(true),
               },
               {
@@ -123,7 +126,7 @@ export default function TopBar({ title, openSettings }) {
                 key: "header-prefs",
                 render: () => (
                   <div className="text-xs font-semibold text-primary uppercase">
-                    Preferences
+                    {t("topbar.preferencesHeader")}
                   </div>
                 ),
               },
@@ -131,7 +134,7 @@ export default function TopBar({ title, openSettings }) {
                 key: "view-mode",
                 render: () => (
                   <div className="flex items-center justify-between text-sm text-secondary">
-                    <span>View mode</span>
+                    <span>{t("topbar.viewMode")}</span>
                     <ViewToggle viewMode={viewMode} setViewMode={setViewMode} />
                   </div>
                 ),
@@ -143,7 +146,7 @@ export default function TopBar({ title, openSettings }) {
                     className="flex items-center justify-between text-sm text-secondary"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <span>Theme</span>
+                    <span>{t("topbar.theme")}</span>
                     <select
                       value={theme}
                       onChange={(e) => setTheme(e.target.value)}
@@ -165,7 +168,7 @@ export default function TopBar({ title, openSettings }) {
                     className="flex items-center justify-between text-sm text-secondary"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <span>Weight unit</span>
+                    <span>{t("topbar.weightUnit")}</span>
                     <select
                       value={weightUnit}
                       onChange={(e) => setWeightUnit(e.target.value)}
@@ -184,7 +187,7 @@ export default function TopBar({ title, openSettings }) {
                     className="flex items-center justify-between text-sm text-secondary"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <span>Language</span>
+                    <span>{t("topbar.language")}</span>
                     <select
                       value={language}
                       onChange={(e) => setLanguage(e.target.value)}
@@ -203,7 +206,7 @@ export default function TopBar({ title, openSettings }) {
                     className="flex items-center justify-between text-sm text-secondary"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <span>Region</span>
+                    <span>{t("topbar.region")}</span>
                     <select
                       value={region}
                       onChange={(e) => setRegion(e.target.value.toLowerCase())}
@@ -228,7 +231,7 @@ export default function TopBar({ title, openSettings }) {
                 className:
                   "flex items-center justify-between text-sm text-secondary",
                 key: "legal",
-                label: "Legal & Policies",
+                label: t("topbar.legal"),
                 onClick: () => {
                   setLegalInitialTab("privacy");
                   setIsLegalOpen(true);
@@ -241,7 +244,7 @@ export default function TopBar({ title, openSettings }) {
               {
                 key: "logout",
                 className: "mb-2",
-                label: "Log out",
+                label: t("topbar.logout"),
                 onClick: async () => {
                   navigate("/", { replace: true, state: { reason: "manual" } });
                   await logout();
