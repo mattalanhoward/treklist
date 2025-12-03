@@ -1,0 +1,16 @@
+{
+  "app": {
+    "name": "TrekList",
+    "tagline": "Plan and share your hiking gear lists"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "close": "Close"
+  },
+  "language": {
+    "english": "English",
+    "dutch": "Nederlands"
+  }
+}

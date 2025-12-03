@@ -191,10 +191,6 @@ export default function TopBar({ title, openSettings }) {
                       className="ml-2 bg-transparent focus:outline-none"
                     >
                       <option value="en">EN</option>
-                      <option value="de">DE</option>
-                      <option value="fr">FR</option>
-                      <option value="es">ES</option>
-                      <option value="it">IT</option>
                       <option value="nl">NL</option>
                     </select>
                   </div>

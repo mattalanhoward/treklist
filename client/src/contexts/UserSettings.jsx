@@ -8,8 +8,10 @@ import React, {
 import api from "../services/api";
 import useAuth from "../hooks/useAuth";
 import { currencyForRegion } from "../utils/region";
+import i18n from "../i18n";
 
 const SettingsCtx = createContext();
+const SUPPORTED_LANGS = ["en", "nl"];
 
 export function SettingsProvider({ children }) {
   const { isAuthenticated } = useAuth();
@@ -21,9 +23,18 @@ export function SettingsProvider({ children }) {
   const [theme, setTheme] = useState(
     () => localStorage.getItem("theme") || "alpine"
   );
-  const [language, setLanguage] = useState(
-    () => localStorage.getItem("language") || "en"
-  );
+  const [language, setLanguage] = useState(() => {
+    // Prefer an explicit stored choice
+    const stored = localStorage.getItem("language");
+    if (stored && SUPPORTED_LANGS.includes(stored)) return stored;
+
+    // Then whatever i18next detected (browser, etc.)
+    const detected = i18n.resolvedLanguage || i18n.language;
+    if (detected && SUPPORTED_LANGS.includes(detected)) return detected;
+
+    // Fallback
+    return "en";
+  });
   const [region, setRegion] = useState(() =>
     (localStorage.getItem("region") || "nl").toLowerCase()
   );
@@ -53,7 +64,23 @@ export function SettingsProvider({ children }) {
   }, [weightUnit]);
 
   useEffect(() => {
-    localStorage.setItem("language", language);
+    if (!language) return;
+
+    // Normalize to a supported language
+    const normalized = SUPPORTED_LANGS.includes(language) ? language : "en";
+
+    // If we had an unsupported value (e.g. old "de"), fix it once
+    if (normalized !== language) {
+      setLanguage(normalized);
+      return;
+    }
+
+    localStorage.setItem("language", normalized);
+
+    // Keep i18next in sync
+    if (i18n.language !== normalized) {
+      i18n.changeLanguage(normalized);
+    }
   }, [language]);
 
   useEffect(() => {

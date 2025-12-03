@@ -12,6 +12,7 @@ import GlobalItemEditModal from "./GlobalItemEditModal";
 import { toast } from "react-hot-toast";
 import ConfirmDialog from "./ConfirmDialog";
 import { useUserSettings } from "../contexts/UserSettings";
+import { useTranslation } from "react-i18next";
 
 export default function Sidebar({
   lists,
@@ -23,6 +24,8 @@ export default function Sidebar({
   collapsed,
   setCollapsed,
 }) {
+  const { t } = useTranslation("common");
+
   const [newListTitle, setNewListTitle] = useState("");
 
   const [showCreateModal, setShowCreateModal] = useState(false);

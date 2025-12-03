@@ -1,0 +1,16 @@
+{
+  "app": {
+    "name": "TrekList",
+    "tagline": "Plan en deel je paklijsten voor hikes"
+  },
+  "actions": {
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "delete": "Verwijderen",
+    "close": "Sluiten"
+  },
+  "language": {
+    "english": "Engels",
+    "dutch": "Nederlands"
+  }
+}
