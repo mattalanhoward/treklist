@@ -235,7 +235,9 @@ export default function Sidebar({
         <button
           onClick={() => setCollapsed((c) => !c)}
           className={
-            `absolute top-2 text-primaryAlt hover:text-primaryAlt/80 p-1 transform ` +
+            // top offset is ALWAYS 0.3rem mobile / 0.4rem desktop
+            `absolute top-[0.3rem] sm:top-[0.4rem] text-primaryAlt hover:text-primaryAlt/80 p-1 transform ` +
+            // only right/translate changes when collapsed vs open
             (collapsed ? "right-[-1rem] translate-x-full" : "right-4")
           }
         >
@@ -245,7 +247,7 @@ export default function Sidebar({
         {!collapsed && (
           <div className="h-full flex flex-col overflow-hidden">
             {/* Gear Lists section */}
-            <section className="flex flex-col flex-none h-1/3 p-4 border-b border-base-100 overflow-hidden">
+            <section className="flex flex-col flex-none h-1/3 px-4 py-2 border-b border-base-100 overflow-hidden">
               <h2 className="font-bold mb-2 truncate text-primaryAlt">
                 Gear Lists
               </h2>
@@ -299,7 +301,7 @@ export default function Sidebar({
             </section>
 
             {/* Gear Items / Global Items */}
-            <section className="flex flex-col flex-1 p-4 overflow-hidden">
+            <section className="flex flex-col flex-1 px-4 py-2 overflow-hidden">
               <div className="flex justify-between items-center mb-2 text-primaryAlt">
                 <h2 className="font-bold truncate">My Gear</h2>
                 <button
