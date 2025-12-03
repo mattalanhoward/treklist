@@ -361,6 +361,17 @@ export default function GearListView({
       toast.error("Category name cannot be empty");
       return;
     }
+
+    // 🛑 If the title hasn’t actually changed, do nothing
+    const currentCat =
+      Array.isArray(categories) && categories.find((c) => c._id === id);
+
+    if (currentCat && currentCat.title.trim() === newTitle) {
+      // Just exit edit mode, no API call, no toast
+      setEditingCatId(null);
+      return;
+    }
+
     try {
       await api.patch(`/dashboard/${listId}/categories/${id}`, {
         title: newTitle,
