@@ -903,13 +903,13 @@ export default function GearListView({
                   }
                 }}
                 onBlur={handleTitleSubmit}
-                className="hide-on-touch text-xl text-accent bg-transparent border-b border-accent focus:outline-none"
+                className="hide-on-touch text-accent bg-transparent border-b border-accent focus:outline-none"
               />
             ) : (
               <>
                 <h2
                   onClick={() => setIsEditingTitle(true)}
-                  className="hide-on-touch text-xl text-primary"
+                  className="hide-on-touch text-primary"
                 >
                   {list.title}
                 </h2>
@@ -939,7 +939,7 @@ export default function GearListView({
               {
                 key: "header-prefs",
                 render: () => (
-                  <div className="text-xs font-semibold text-primary uppercase">
+                  <div className="font-semibold text-primary uppercase">
                     Gear List Preferences
                   </div>
                 ),
@@ -954,9 +954,7 @@ export default function GearListView({
                     </div>
 
                     {/* My images + upload tile */}
-                    <p className="text-[11px] text-primary/80 mb-1">
-                      My images
-                    </p>
+                    <p className="text-sm text-primary/80 mb-1">My images</p>
                     <div className="grid grid-cols-4 gap-2 mt-1 mx-auto w-full max-w-xs">
                       {customBackgrounds.map((url) => (
                         <button
@@ -993,7 +991,7 @@ export default function GearListView({
                     </div>
 
                     {/* Default images */}
-                    <p className="mt-3 text-[11px] text-primary/80 mb-1">
+                    <p className="mt-3 text-sm text-primary/80 mb-1">
                       Default images
                     </p>
                     <div className="grid grid-cols-4 gap-2 mt-1 mx-auto w-full max-w-xs">
@@ -1019,9 +1017,7 @@ export default function GearListView({
                 render: () => (
                   <div onClick={(e) => e.stopPropagation()}>
                     {/* Header */}
-                    <p className="mt-3 text-[11px] text-primary/80 mb-1">
-                      Colors
-                    </p>
+                    <p className="mt-3 text-sm text-primary/80 mb-1">Colors</p>
                     {/* Swatches Grid */}
                     <div className="grid grid-cols-4 gap-2 place-items-center mt-2">
                       {swatches.map(({ key, value, class: cls }) => (
@@ -1031,7 +1027,7 @@ export default function GearListView({
                             className={`${cls} w-6 h-6 rounded-full flex items-center justify-center p-0`}
                           >
                             {bgColor === value && (
-                              <FaCheck className="text-white text-xs" />
+                              <FaCheck className="text-white text-sm" />
                             )}
                           </button>
                           {/* tooltip */}
@@ -1043,7 +1039,7 @@ export default function GearListView({
          transform -translate-x-1/2 
          mb-1 
          px-2 py-0.5 
-         text-xs 
+         text-sm 
          text-white 
          bg-black bg-opacity-75 
          rounded 
@@ -1195,7 +1191,7 @@ export default function GearListView({
                   className="p-2 w-full border border-secondary rounded flex items-center justify-center space-x-2 bg-base-100 text-primary hover:bg-base-100/80"
                 >
                   <FaPlus />
-                  <span className="text-xs">New Category</span>
+                  <span className="text-sm">New Category</span>
                 </button>
               )}
             </div>
@@ -1240,7 +1236,7 @@ export default function GearListView({
                     value={newCatName}
                     onChange={(e) => setNewCatName(e.target.value)}
                     placeholder="New category name"
-                    className="w-full py-1 px-2 border-b-2 border-accent focus:outline-none bg-neutral text-primary rounded text-xs"
+                    className="w-full py-1 px-2 border-b-2 border-accent focus:outline-none bg-neutral text-primary rounded"
                     onKeyDown={(e) => {
                       if (e.key === "Enter") confirmAddCat();
                       if (e.key === "Escape") cancelAddCat();
@@ -1257,7 +1253,7 @@ export default function GearListView({
                   className="p-2 w-full border border-secondary rounded flex items-center justify-center space-x-2 bg-base-100 text-primary hover:bg-base-100/80"
                 >
                   <FaPlus />
-                  <span className="text-xs">New Category</span>
+                  <span className="text-sm">New Category</span>
                 </button>
               )}
             </div>

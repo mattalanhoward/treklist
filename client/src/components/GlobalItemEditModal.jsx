@@ -225,14 +225,14 @@ export default function GlobalItemEditModal({
       >
         {/* Header */}
         <div className="flex justify-between items-center mb-2 sm:mb-3">
-          <h2 className="text-lg sm:text-xl font-semibold text-primary">
+          <h2 className="text-xl font-semibold text-primary">
             Edit Global Item
           </h2>
           <button
             type="button"
             onClick={onClose}
             disabled={saving}
-            className="text-error hover:text-error/80 text-xl sm:text-2xl"
+            className="text-error hover:text-error/80"
           >
             <FaTimes />
           </button>
@@ -244,40 +244,40 @@ export default function GlobalItemEditModal({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
           {/* Item Type */}
           <div>
-            <label className="block text-xs sm:text-sm font-medium text-primary mb-0.5">
+            <label className="block font-medium text-primary mb-0.5">
               Item Type
             </label>
             <input
               name="itemType"
               value={form.itemType}
               onChange={handleChange}
-              className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary text-sm"
+              className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
             />
           </div>
 
           {/* Name */}
           <div>
-            <label className="block text-xs sm:text-sm font-medium text-primary mb-0.5">
+            <label className="block font-medium text-primary mb-0.5">
               Name<span className="text-red-500">*</span>
             </label>
             <input
               name="name"
               value={form.name}
               onChange={handleChange}
-              className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary text-sm"
+              className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
             />
           </div>
 
           {/* Brand */}
           <div>
-            <label className="block text-xs sm:text-sm font-medium text-primary mb-0.5">
+            <label className="block font-medium text-primary mb-0.5">
               Brand
             </label>
             <input
               name="brand"
               value={form.brand}
               onChange={handleChange}
-              className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary text-sm"
+              className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
             />
           </div>
 
@@ -305,7 +305,7 @@ export default function GlobalItemEditModal({
           {/* Weight + Price */}
           <div className="flex space-x-1 sm:space-x-2 col-span-1 sm:col-span-2">
             <div className="flex-1">
-              <label className="block text-xs sm:text-sm font-medium text-primary mb-0.5">
+              <label className="block font-medium text-primary mb-0.5">
                 Weight ({unitLabel})
               </label>
               <input
@@ -313,12 +313,12 @@ export default function GlobalItemEditModal({
                 inputMode="decimal"
                 value={displayWeight}
                 onChange={(e) => setDisplayWeight(e.target.value)}
-                className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary text-sm"
+                className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
               />
             </div>
 
             <div className="flex-1 relative">
-              <label className="block text-xs sm:text-sm font-medium text-primary mb-0.5">
+              <label className="block font-medium text-primary mb-0.5">
                 Price ({currencySymbol})
               </label>
               <div className="relative">
@@ -344,21 +344,21 @@ export default function GlobalItemEditModal({
 
           {/* Description */}
           <div className="sm:col-span-2">
-            <label className="block text-xs sm:text-sm font-medium text-primary mb-0.5">
+            <label className="block font-medium text-primary mb-0.5">
               Description
             </label>
             <textarea
               name="description"
               value={form.description}
               onChange={handleChange}
-              className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary text-sm"
+              className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
               rows={2}
             />
           </div>
         </div>
 
         {isAffiliate && (
-          <p className="mt-2 text-[11px] sm:text-xs text-primary">
+          <p className="mt-2 text-sm text-primary">
             Link and price set by merchant for imported items.
           </p>
         )}
@@ -370,7 +370,7 @@ export default function GlobalItemEditModal({
               type="button"
               onClick={() => setDeleteConfirmOpen(true)}
               disabled={saving}
-              className="mr-auto px-2 py-1 bg-error text-neutral text-sm font-semibold rounded-md shadow hover:bg-error/80 focus:outline-none focus:ring-2 focus:ring-error transition"
+              className="mr-auto px-2 py-1 bg-error text-neutral font-semibold rounded-md shadow hover:bg-error/80 focus:outline-none focus:ring-2 focus:ring-error transition"
             >
               Delete Item
             </button>
@@ -380,7 +380,7 @@ export default function GlobalItemEditModal({
               type="button"
               onClick={onClose}
               disabled={saving}
-              className="px-2 py-1 bg-neutralAlt rounded hover:bg-neutralAlt/90 text-primary text-sm sm:text-base"
+              className="px-2 py-1 bg-neutralAlt rounded hover:bg-neutralAlt/90 text-primary sm:text-base"
             >
               Cancel
             </button>

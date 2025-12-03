@@ -153,7 +153,7 @@ export default function ShareModal({ listId, isOpen, onClose }) {
         <div className="flex items-center justify-between mb-2 sm:mb-4">
           <h2
             id="share-modal-title"
-            className="text-lg sm:text-xl font-semibold text-primary"
+            className="text-xl font-semibold text-primary"
           >
             Share this gear list
           </h2>
@@ -164,7 +164,7 @@ export default function ShareModal({ listId, isOpen, onClose }) {
         <div className="space-y-4">
           {/* Share URL */}
           <div>
-            <label className="block text-xs sm:text-sm font-medium text-primary mb-0.5">
+            <label className="block font-medium text-primary mb-0.5">
               Shareable URL
             </label>
             <div className="flex gap-2">
@@ -172,7 +172,7 @@ export default function ShareModal({ listId, isOpen, onClose }) {
                 ref={inputRef}
                 type="text"
                 readOnly
-                className="flex-1 mt-0.5 block w-full border border-primary rounded p-2 h-10 text-primary text-sm"
+                className="flex-1 mt-0.5 block w-full border border-primary rounded p-2 h-10 text-primary"
                 value={shareUrl}
                 placeholder={busy ? "Generating…" : "No active link"}
               />
@@ -185,20 +185,20 @@ export default function ShareModal({ listId, isOpen, onClose }) {
                 <FaCopy /> Copy
               </button>
             </div>
-            <p className="mt-1 text-[11px] text-primary/80">
+            <p className="mt-1 text-sm text-primary/80">
               Anyone with this link can view a read-only version of your list.
             </p>
           </div>
 
           {/* Embeddable snippet */}
           <div>
-            <label className="block text-xs sm:text-sm font-medium text-primary mb-0.5">
+            <label className="block font-medium text-primary mb-0.5">
               Embeddable snippet
             </label>
             <div className="flex gap-2">
               <textarea
                 ref={embedRef}
-                className="flex-1 mt-0.5 block w-full border border-primary rounded p-2 h-10 resize-none text-primary text-sm"
+                className="flex-1 mt-0.5 block w-full border border-primary rounded p-2 h-10 resize-none text-primary"
                 rows={1}
                 readOnly
                 value={embedCode}
@@ -217,11 +217,11 @@ export default function ShareModal({ listId, isOpen, onClose }) {
 
           {/* CSV Export */}
           <div>
-            <label className="block text-xs sm:text-sm font-medium text-primary mb-0.5">
+            <label className="block font-medium text-primary mb-0.5">
               Export CSV
             </label>
             <div className="flex items-center justify-between">
-              <div className="text-[11px] text-primary/80">
+              <div className="text-sm text-primary/80">
                 Download a CSV of this shared list.
               </div>
               <button
@@ -239,7 +239,7 @@ export default function ShareModal({ listId, isOpen, onClose }) {
         {/* Footer: Revoke on the left (destructive), Close on the right (cancel) */}
         <div className="mt-4 flex items-center justify-between">
           <button
-            className="px-4 py-2 bg-error text-neutral text-sm font-semibold rounded-md shadow hover:bg-error/80 disabled:opacity-50 flex items-center gap-2"
+            className="px-4 py-2 bg-error text-neutral font-semibold rounded-md shadow hover:bg-error/80 disabled:opacity-50 flex items-center gap-2"
             onClick={() => setRevokeConfirmOpen(true)}
             disabled={busy || !token}
             title="Revoke link"

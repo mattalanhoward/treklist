@@ -68,7 +68,7 @@ export default function PackStats({
     : stats;
   if (!showLabels) {
     return (
-      <div className="flex items-center space-x-3 text-xs overflow-x-auto px-3 hide-scrollbar">
+      <div className="flex items-center space-x-3 text-sm overflow-x-auto px-3 hide-scrollbar">
         {visibleStats.map((s) => (
           <StatWithDetails
             key={s.label}
@@ -81,11 +81,11 @@ export default function PackStats({
   }
 
   return (
-    <div className="flex items-center space-x-6 text-xs overflow-x-auto px-3 hide-scrollbar">
+    <div className="flex items-center space-x-6 text-sm overflow-x-auto px-3 hide-scrollbar">
       {visibleStats.map((s) => (
         <div key={s.label} className="flex flex-col items-center space-y-2">
           <StatWithDetails {...s} disablePopover={disablePopover} />
-          <span className="text-xs font-medium text-primary">{s.label}</span>
+          <span className="text-sm text-primary">{s.label}</span>
         </div>
       ))}
     </div>

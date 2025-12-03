@@ -56,9 +56,12 @@ a {
   }
 }
 
-/* iOS focus-zoom fix: keep interactive controls ≥16px.
-   Chrome/Safari on iOS share WebKit, so both benefit. */
 @layer base {
+  /* Make the default text size 14px (via Tailwind’s text-base) */
+  body {
+    @apply text-base;
+  }
+
   .no-ios-zoom input:not([type="checkbox"]):not([type="radio"]),
   .no-ios-zoom select,
   .no-ios-zoom textarea,

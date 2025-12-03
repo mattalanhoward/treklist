@@ -204,23 +204,19 @@ export default function AffiliateProductPicker({
     <div className="space-y-3">
       {/* Search */}
       <div>
-        <label className="block text-xs sm:text-sm font-medium text-primary mb-0.5">
-          Search
-        </label>
+        <label className="block font-medium text-primary mb-0.5">Search</label>
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Brand or product (e.g., Osprey pack)"
-          className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary text-sm"
+          className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
         />
       </div>
 
       {/* Filters (independent of q) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <div>
-          <label className="block text-xs sm:text-sm font-medium text-primary mb-0.5">
-            Brand
-          </label>
+          <label className="block font-medium text-primary mb-0.5">Brand</label>
           <select
             value={brand}
             onChange={(e) => setBrand(e.target.value)}
@@ -242,13 +238,13 @@ export default function AffiliateProductPicker({
           </select>
         </div>
         <div>
-          <label className="block text-xs sm:text-sm font-medium text-primary mb-0.5">
+          <label className="block font-medium text-primary mb-0.5">
             Item Type
           </label>
           <select
             value={itemType}
             onChange={(e) => setItemType(e.target.value)}
-            className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary text-sm"
+            className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
           >
             <option value="">All</option>
             {typeOpts.map((t) =>
@@ -302,9 +298,7 @@ export default function AffiliateProductPicker({
               <div className="w-8 h-8 rounded bg-primary/10" />
             )}
             <div className="flex-1 min-w-0">
-              <div className="text-sm font-sm text-primary line-clamp-1">
-                {p.name}
-              </div>
+              <div className="text-sm text-primary line-clamp-1">{p.name}</div>
               {/* <div className="text-xs text-primary/80 truncate">
                 {p.brand || p.merchantName} •{" "}
                 {p.itemType || (p.categoryPath?.slice?.(-1)[0] ?? "")}
