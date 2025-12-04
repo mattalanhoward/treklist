@@ -262,7 +262,7 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col h-d-screen overflow-hidden bg-neutral/50 text-primary">
       <TopBar
-        title="TrekList.co"
+        title={t("app.name")}
         viewMode={viewMode}
         setViewMode={setViewMode}
       />

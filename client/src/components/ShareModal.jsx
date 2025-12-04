@@ -4,8 +4,11 @@ import { FaCopy, FaBan, FaCode, FaFileCsv } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import api from "../services/api";
 import ConfirmDialog from "./ConfirmDialog";
+import { useTranslation } from "react-i18next";
 
 export default function ShareModal({ listId, isOpen, onClose }) {
+  const { t } = useTranslation("common");
+
   const [busy, setBusy] = React.useState(false);
   const [token, setToken] = React.useState("");
   const [revokeConfirmOpen, setRevokeConfirmOpen] = React.useState(false);
@@ -24,7 +27,7 @@ export default function ShareModal({ listId, isOpen, onClose }) {
         if (!cancelled) setToken(data.token);
       } catch (e) {
         console.error(e);
-        if (!cancelled) toast.error("Could not create share link");
+        if (!cancelled) toast.error(t("shareModal.toasts.createLinkError"));
       } finally {
         if (!cancelled) setBusy(false);
       }
@@ -33,16 +36,17 @@ export default function ShareModal({ listId, isOpen, onClose }) {
     return () => {
       cancelled = true;
     };
-  }, [isOpen, listId]);
+  }, [isOpen, listId, t]);
 
   async function copyToClipboard(text) {
     try {
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(text);
-        toast.success("Copied!");
+        toast.success(t("shareModal.toasts.copySuccess"));
         return true;
       }
     } catch {}
+
     try {
       const el = inputRef.current;
       if (el) {
@@ -51,12 +55,13 @@ export default function ShareModal({ listId, isOpen, onClose }) {
         el.setSelectionRange(0, text.length);
         const ok = document.execCommand("copy");
         if (ok) {
-          toast.success("Copied!");
+          toast.success(t("shareModal.toasts.copySuccess"));
           return true;
         }
       }
     } catch {}
-    toast.error("Copy not supported on this device.");
+
+    toast.error(t("shareModal.toasts.copyError"));
     return false;
   }
 
@@ -74,20 +79,22 @@ export default function ShareModal({ listId, isOpen, onClose }) {
     try {
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(embedCode);
-        toast.success("Embed copied!");
+        toast.success(t("shareModal.toasts.embedCopySuccess"));
         return;
       }
     } catch {}
+
     try {
       if (embedRef.current) {
         embedRef.current.focus();
         embedRef.current.select();
         document.execCommand("copy");
-        toast.success("Embed copied!");
+        toast.success(t("shareModal.toasts.embedCopySuccess"));
         return;
       }
     } catch {}
-    toast.error("Copy not supported on this device.");
+
+    toast.error(t("shareModal.toasts.copyError"));
   }
 
   async function actuallyRevoke() {
@@ -96,10 +103,10 @@ export default function ShareModal({ listId, isOpen, onClose }) {
       setBusy(true);
       await api.post(`/dashboard/${listId}/share/revoke`);
       setToken("");
-      toast.success("Share link revoked");
+      toast.success(t("shareModal.toasts.revokeSuccess"));
     } catch (e) {
       console.error(e);
-      toast.error("Could not revoke link");
+      toast.error(t("shareModal.toasts.revokeError"));
     } finally {
       setBusy(false);
     }
@@ -120,7 +127,7 @@ export default function ShareModal({ listId, isOpen, onClose }) {
       a.remove();
     } catch (e) {
       console.error(e);
-      toast.error("Could not download CSV");
+      toast.error(t("shareModal.toasts.csvError"));
     } finally {
       setBusy(false);
     }
@@ -140,7 +147,7 @@ export default function ShareModal({ listId, isOpen, onClose }) {
   return (
     <div
       className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-50"
-      role="modal"
+      role="dialog"
       aria-modal="true"
       aria-labelledby="share-modal-title"
       onMouseDown={(e) => {
@@ -155,7 +162,7 @@ export default function ShareModal({ listId, isOpen, onClose }) {
             id="share-modal-title"
             className="text-xl font-semibold text-primary"
           >
-            Share this gear list
+            {t("shareModal.title")}
           </h2>
           <div className="w-6 h-6" aria-hidden="true" />
         </div>
@@ -165,7 +172,7 @@ export default function ShareModal({ listId, isOpen, onClose }) {
           {/* Share URL */}
           <div>
             <label className="block font-medium text-primary mb-0.5">
-              Shareable URL
+              {t("shareModal.fields.shareUrlLabel")}
             </label>
             <div className="flex gap-2">
               <input
@@ -174,26 +181,30 @@ export default function ShareModal({ listId, isOpen, onClose }) {
                 readOnly
                 className="flex-1 mt-0.5 block w-full border border-primary rounded p-2 h-10 text-primary"
                 value={shareUrl}
-                placeholder={busy ? "Generating…" : "No active link"}
+                placeholder={
+                  busy
+                    ? t("shareModal.fields.shareUrlPlaceholderGenerating")
+                    : t("shareModal.fields.shareUrlPlaceholderNone")
+                }
               />
               <button
                 className="px-3 py-1.5 sm:px-4 sm:py-2 rounded bg-secondary text-white hover:bg-secondary/80 disabled:opacity-50 flex items-center gap-2"
                 onClick={onCopyUrl}
                 disabled={busy || !token}
-                title="Copy link"
+                title={t("shareModal.tooltips.copyLink")}
               >
-                <FaCopy /> Copy
+                <FaCopy /> {t("shareModal.buttons.copyLink")}
               </button>
             </div>
             <p className="mt-1 text-sm text-primary/80">
-              Anyone with this link can view a read-only version of your list.
+              {t("shareModal.fields.shareUrlHelp")}
             </p>
           </div>
 
           {/* Embeddable snippet */}
           <div>
             <label className="block font-medium text-primary mb-0.5">
-              Embeddable snippet
+              {t("shareModal.fields.embedLabel")}
             </label>
             <div className="flex gap-2">
               <textarea
@@ -202,15 +213,19 @@ export default function ShareModal({ listId, isOpen, onClose }) {
                 rows={1}
                 readOnly
                 value={embedCode}
-                placeholder={busy ? "Generating…" : "No active link"}
+                placeholder={
+                  busy
+                    ? t("shareModal.fields.embedPlaceholderGenerating")
+                    : t("shareModal.fields.embedPlaceholderNone")
+                }
               />
               <button
                 className="px-3 py-1.5 sm:px-4 sm:py-2 rounded bg-secondary text-white hover:bg-secondary/80 disabled:opacity-50 flex items-center gap-2"
                 onClick={onCopyEmbed}
                 disabled={busy || !token}
-                title="Copy embed"
+                title={t("shareModal.tooltips.copyEmbed")}
               >
-                <FaCode /> Copy
+                <FaCode /> {t("shareModal.buttons.copyEmbed")}
               </button>
             </div>
           </div>
@@ -218,19 +233,19 @@ export default function ShareModal({ listId, isOpen, onClose }) {
           {/* CSV Export */}
           <div>
             <label className="block font-medium text-primary mb-0.5">
-              Export CSV
+              {t("shareModal.fields.csvLabel")}
             </label>
             <div className="flex items-center justify-between">
               <div className="text-sm text-primary/80">
-                Download a CSV of this shared list.
+                {t("shareModal.fields.csvHelp")}
               </div>
               <button
                 className="px-3 py-1.5 sm:px-4 sm:py-2 rounded bg-neutralAlt text-primary border border-primary hover:bg-neutralAlt/90 disabled:opacity-50 flex items-center gap-2"
                 onClick={onDownloadCsv}
                 disabled={busy || !token}
-                title="Download CSV"
+                title={t("shareModal.tooltips.downloadCsv")}
               >
-                <FaFileCsv /> Download
+                <FaFileCsv /> {t("shareModal.buttons.downloadCsv")}
               </button>
             </div>
           </div>
@@ -242,27 +257,27 @@ export default function ShareModal({ listId, isOpen, onClose }) {
             className="px-4 py-2 bg-error text-neutral font-semibold rounded-md shadow hover:bg-error/80 disabled:opacity-50 flex items-center gap-2"
             onClick={() => setRevokeConfirmOpen(true)}
             disabled={busy || !token}
-            title="Revoke link"
+            title={t("shareModal.tooltips.revokeLink")}
           >
-            <FaBan /> Revoke link
+            <FaBan /> {t("shareModal.buttons.revokeLink")}
           </button>
 
           <button
             className="px-4 py-2 rounded bg-secondary text-white hover:bg-secondary/80"
             onClick={onClose}
-            title="Cancel"
+            title={t("actions.close")}
           >
-            Close
+            {t("actions.close")}
           </button>
         </div>
 
-        {/* Revoke confirm dialog (same component/style used in GlobalItemEditModal) */}
+        {/* Revoke confirm dialog */}
         <ConfirmDialog
           isOpen={revokeConfirmOpen}
-          title="Revoke this share URL?"
-          message="This will immediately disable the current link."
-          confirmText="Revoke Link"
-          cancelText="Cancel"
+          title={t("shareModal.confirm.revokeTitle")}
+          message={t("shareModal.confirm.revokeMessage")}
+          confirmText={t("shareModal.confirm.revokeConfirm")}
+          cancelText={t("actions.cancel")}
           onConfirm={async () => {
             setRevokeConfirmOpen(false);
             await actuallyRevoke();

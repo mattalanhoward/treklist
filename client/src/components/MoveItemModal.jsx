@@ -1,6 +1,7 @@
 // src/components/MoveItemModal.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { FaTimes } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 export default function MoveItemModal({
   isOpen,
@@ -11,6 +12,7 @@ export default function MoveItemModal({
   itemsMap,
   onMove, // ({ toCatId, positionIndex }) => void|Promise
 }) {
+  const { t } = useTranslation("common");
   const [selectedCatId, setSelectedCatId] = useState(fromCatId || "");
   const [selectedPos, setSelectedPos] = useState(1);
 
@@ -60,13 +62,13 @@ export default function MoveItemModal({
         {/* Header */}
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-primary font-semibold text-base sm:text-lg">
-            Move “{item.name}”
+            {t("moveItemModal.title", { name: item.name })}
           </h2>
           <button
             type="button"
             onClick={handleClose}
             className="text-primaryAlt hover:text-primaryAlt/80 focus:outline-none"
-            aria-label="Close move item modal"
+            aria-label={t("moveItemModal.a11y.close")}
           >
             <FaTimes />
           </button>
@@ -75,7 +77,7 @@ export default function MoveItemModal({
         {/* Category select */}
         <div className="space-y-1">
           <label className="block text-xs font-semibold text-primary/80 uppercase tracking-wide">
-            Category
+            {t("moveItemModal.labels.category")}
           </label>
           <select
             className="w-full border border-base-200 rounded px-2 py-1 bg-base-100 text-primary text-sm"
@@ -93,7 +95,7 @@ export default function MoveItemModal({
         {/* Position select */}
         <div className="space-y-1">
           <label className="block text-xs font-semibold text-primary/80 uppercase tracking-wide">
-            Position in category
+            {t("moveItemModal.labels.position")}
           </label>
           <select
             className="w-full border border-base-200 rounded px-2 py-1 bg-base-100 text-primary text-sm"
@@ -102,7 +104,7 @@ export default function MoveItemModal({
           >
             {positionOptions.map((pos) => (
               <option key={pos} value={pos}>
-                {pos === 1 ? "1 (top)" : pos}
+                {pos === 1 ? t("moveItemModal.topPosition", { pos }) : pos}
               </option>
             ))}
           </select>
@@ -115,13 +117,13 @@ export default function MoveItemModal({
             onClick={handleClose}
             className="px-3 py-1 rounded bg-neutralAlt hover:bg-neutralAlt/90 text-primary text-sm"
           >
-            Cancel
+            {t("actions.cancel")}
           </button>
           <button
             type="submit"
             className="px-3 py-1 rounded bg-secondary hover:bg-secondary/90 text-neutral text-sm"
           >
-            Move item
+            {t("moveItemModal.buttons.move")}
           </button>
         </div>
       </form>

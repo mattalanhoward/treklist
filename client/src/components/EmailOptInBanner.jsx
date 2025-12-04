@@ -1,12 +1,13 @@
-// src/components/EmailOptInBanner.jsx
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import api from "../services/api";
 import useAuth from "../hooks/useAuth";
+import { useTranslation } from "react-i18next";
 
 const DISMISS_KEY = "email_updates_banner_dismissed_v1";
 
 export default function EmailOptInBanner() {
+  const { t } = useTranslation("common");
   const { isAuthenticated } = useAuth();
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -69,11 +70,11 @@ export default function EmailOptInBanner() {
         // ignore
       }
       toast.success(
-        "Thanks! We’ll occasionally email you about new TrekList features and tips."
+        t("emailOptInBanner.toast.success", { appName: t("app.name") })
       );
     } catch (err) {
       console.error("EmailOptInBanner opt-in error:", err);
-      toast.error("Couldn’t update your email preference. Please try again.");
+      toast.error(t("emailOptInBanner.toast.error"));
     } finally {
       setLoading(false);
     }
@@ -86,8 +87,7 @@ export default function EmailOptInBanner() {
   return (
     <div className="mt-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-xs sm:text-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
       <p className="text-amber-900">
-        Want occasional updates on new TrekList features and tips? No spam, just
-        helpful stuff a few times a year.
+        {t("emailOptInBanner.text.body", { appName: t("app.name") })}
       </p>
       <div className="flex items-center justify-end gap-2">
         <button
@@ -95,7 +95,7 @@ export default function EmailOptInBanner() {
           onClick={handleDismiss}
           className="px-2 py-1 rounded border border-amber-300 text-amber-900 hover:bg-amber-100 text-xs sm:text-sm"
         >
-          No thanks
+          {t("emailOptInBanner.buttons.noThanks")}
         </button>
         <button
           type="button"
@@ -105,7 +105,9 @@ export default function EmailOptInBanner() {
             loading ? "opacity-70 cursor-not-allowed" : ""
           }`}
         >
-          {loading ? "Saving…" : "Yes, email me"}
+          {loading
+            ? t("emailOptInBanner.states.saving")
+            : t("emailOptInBanner.buttons.yesEmailMe")}
         </button>
       </div>
     </div>

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../services/api";
 import { toast } from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import CurrencyInput from "../components/CurrencyInput";
 import LinkInput from "../components/LinkInput";
 import ConfirmDialog from "./ConfirmDialog";
@@ -19,6 +20,7 @@ export default function GlobalItemEditModal({
   catId,
   context = "global", // "global" | "list"
 }) {
+  const { t } = useTranslation("common");
   const [form, setForm] = useState({
     category: "",
     itemType: "",
@@ -42,7 +44,7 @@ export default function GlobalItemEditModal({
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const itemId = item ? item._id : null;
-  const isListContext = context === "list";
+  const isListContext = context === "list" || (!!listId && !!catId);
 
   const { currency, locale } = useUserSettings();
   const CURRENCY_SYMBOL = {
@@ -91,15 +93,15 @@ export default function GlobalItemEditModal({
   };
 
   const validate = () => {
-    if (!form.name.trim()) return "Name is required.";
+    if (!form.name.trim()) return t("validation.nameRequired");
     const trimmed = String(displayWeight ?? "").trim();
     const parsed = trimmed === "" ? null : parseInput(trimmed);
-    if (trimmed !== "" && parsed == null) return "Enter a valid weight.";
-    if (parsed != null && parsed < 0) return "Weight cannot be negative.";
+    if (trimmed !== "" && parsed == null) return t("validation.weightInvalid");
+    if (parsed != null && parsed < 0) return t("validation.weightNegative");
     if (!isAffiliate && form.price !== "" && Number(form.price) < 0)
-      return "Price cannot be negative.";
+      return t("validation.priceNegative");
     if (!isAffiliate && form.link && !/^https?:\/\//.test(form.link))
-      return "Link must be a valid URL.";
+      return t("validation.urlInvalid");
     return "";
   };
 
@@ -121,8 +123,6 @@ export default function GlobalItemEditModal({
     setSaving(true);
     setError("");
 
-    // Are we editing from a gear-list item (has list + category)?
-    const isListContext = !!(listId && catId);
     // Which id should we use for the GLOBAL template?
     //  - from sidebar: item._id is the global id
     //  - from gear list: use item.globalItem if present
@@ -198,8 +198,8 @@ export default function GlobalItemEditModal({
       if (updatedSomething) {
         toast.success(
           isListContext && touchedGlobal
-            ? "Item updated everywhere"
-            : "Item updated"
+            ? t("globalItemEditModal.toast.updatedEverywhere")
+            : t("globalItemEditModal.toast.updated")
         );
         onSaved?.();
         onClose?.();
@@ -207,7 +207,7 @@ export default function GlobalItemEditModal({
     } catch (e) {
       console.error("Error saving item:", e);
       const msg =
-        e.response?.data?.message || "Failed to save. Please try again.";
+        e.response?.data?.message || t("globalItemEditModal.toast.saveFailed");
       setError(msg);
       toast.error(msg);
     } finally {
@@ -226,7 +226,9 @@ export default function GlobalItemEditModal({
         {/* Header */}
         <div className="flex justify-between items-center mb-2 sm:mb-3">
           <h2 className="text-xl font-semibold text-primary">
-            Edit Global Item
+            {isListContext
+              ? t("globalItemEditModal.titleList")
+              : t("globalItemEditModal.titleGlobal")}
           </h2>
           <button
             type="button"
@@ -245,7 +247,7 @@ export default function GlobalItemEditModal({
           {/* Item Type */}
           <div>
             <label className="block font-medium text-primary mb-0.5">
-              Item Type
+              {t("globalItemModal.labels.itemType")}
             </label>
             <input
               name="itemType"
@@ -258,7 +260,8 @@ export default function GlobalItemEditModal({
           {/* Name */}
           <div>
             <label className="block font-medium text-primary mb-0.5">
-              Name<span className="text-red-500">*</span>
+              {t("globalItemModal.labels.name")}
+              <span className="text-red-500">*</span>
             </label>
             <input
               name="name"
@@ -271,7 +274,7 @@ export default function GlobalItemEditModal({
           {/* Brand */}
           <div>
             <label className="block font-medium text-primary mb-0.5">
-              Brand
+              {t("globalItemModal.labels.brand")}
             </label>
             <input
               name="brand"
@@ -294,8 +297,10 @@ export default function GlobalItemEditModal({
             {isAffiliate && (
               <button
                 type="button"
-                aria-label="Link is locked"
-                title="Link is set by the merchant for imported items."
+                aria-label={t(
+                  "globalItemModal.messages.affiliateLinkLockedTitle"
+                )}
+                title={t("globalItemModal.messages.affiliateLinkLockedBody")}
                 className="absolute inset-0 cursor-not-allowed bg-transparent"
                 onClick={(e) => e.preventDefault()}
               />
@@ -306,7 +311,7 @@ export default function GlobalItemEditModal({
           <div className="flex space-x-1 sm:space-x-2 col-span-1 sm:col-span-2">
             <div className="flex-1">
               <label className="block font-medium text-primary mb-0.5">
-                Weight ({unitLabel})
+                {t("globalItemModal.labels.weight", { unit: unitLabel })}
               </label>
               <input
                 type="text"
@@ -319,7 +324,9 @@ export default function GlobalItemEditModal({
 
             <div className="flex-1 relative">
               <label className="block font-medium text-primary mb-0.5">
-                Price ({currencySymbol})
+                {t("globalItemModal.labels.price", {
+                  currency: currencySymbol,
+                })}
               </label>
               <div className="relative">
                 <CurrencyInput
@@ -332,8 +339,12 @@ export default function GlobalItemEditModal({
                 {isAffiliate && (
                   <button
                     type="button"
-                    aria-label="Price is locked"
-                    title="Price is set by the merchant for imported items."
+                    aria-label={t(
+                      "globalItemModal.messages.affiliateLinkLockedTitle"
+                    )}
+                    title={t(
+                      "globalItemModal.messages.affiliateLinkLockedBody"
+                    )}
                     className="absolute inset-0 cursor-not-allowed bg-transparent"
                     onClick={(e) => e.preventDefault()}
                   />
@@ -345,7 +356,7 @@ export default function GlobalItemEditModal({
           {/* Description */}
           <div className="sm:col-span-2">
             <label className="block font-medium text-primary mb-0.5">
-              Description
+              {t("globalItemModal.labels.description")}
             </label>
             <textarea
               name="description"
@@ -359,7 +370,7 @@ export default function GlobalItemEditModal({
 
         {isAffiliate && (
           <p className="mt-2 text-sm text-primary">
-            Link and price set by merchant for imported items.
+            {t("globalItemModal.messages.affiliateNote")}
           </p>
         )}
 
@@ -372,7 +383,7 @@ export default function GlobalItemEditModal({
               disabled={saving}
               className="mr-auto px-2 py-1 bg-error text-neutral font-semibold rounded-md shadow hover:bg-error/80 focus:outline-none focus:ring-2 focus:ring-error transition"
             >
-              Delete Item
+              {t("globalItemEditModal.buttons.delete")}
             </button>
           )}
           <div className="flex space-x-2">
@@ -382,14 +393,16 @@ export default function GlobalItemEditModal({
               disabled={saving}
               className="px-2 py-1 bg-neutralAlt rounded hover:bg-neutralAlt/90 text-primary sm:text-base"
             >
-              Cancel
+              {t("actions.cancel")}
             </button>
             <button
               type="submit"
               disabled={saving}
               className="px-2 py-1 rounded bg-secondary text-white hover:bg-secondary/80"
             >
-              {saving ? "Saving…" : "Save"}
+              {saving
+                ? t("globalItemEditModal.buttons.saving")
+                : t("actions.save")}
             </button>
           </div>
         </div>
@@ -399,11 +412,15 @@ export default function GlobalItemEditModal({
           isOpen={confirmOpen}
           title={
             isListContext
-              ? "Save changes to this item?"
-              : "Apply changes to every instance?"
+              ? t("globalItemEditModal.confirm.saveListTitle")
+              : t("globalItemEditModal.confirm.saveGlobalTitle")
           }
-          confirmText={isListContext ? "Save changes" : "Yes, update all"}
-          cancelText="Cancel"
+          confirmText={
+            isListContext
+              ? t("globalItemEditModal.confirm.saveListConfirm")
+              : t("globalItemEditModal.confirm.saveGlobalConfirm")
+          }
+          cancelText={t("actions.cancel")}
           onConfirm={handleConfirm}
           onCancel={handleCancelConfirm}
         />
@@ -412,19 +429,22 @@ export default function GlobalItemEditModal({
         {allowDelete && (
           <ConfirmDialog
             isOpen={deleteConfirmOpen}
-            title="Delete this Gear Item?"
-            message="This will remove it from your gear items and all of your gear lists."
-            confirmText="Delete Item"
-            cancelText="Cancel"
+            title={t("globalItemEditModal.confirm.deleteTitle")}
+            message={t("globalItemEditModal.confirm.deleteMessage")}
+            confirmText={t("globalItemEditModal.confirm.deleteConfirm")}
+            cancelText={t("actions.cancel")}
             onConfirm={async () => {
               setDeleteConfirmOpen(false);
               try {
                 await api.delete(`/global/items/${item._id}`);
-                toast.success("Item deleted");
+                toast.success(t("globalItemEditModal.toast.deleted"));
                 onSaved?.();
                 onClose?.();
               } catch (err) {
-                toast.error(err.response?.data?.message || "Delete failed");
+                toast.error(
+                  err.response?.data?.message ||
+                    t("globalItemEditModal.toast.deleteFailed")
+                );
               }
             }}
             onCancel={() => setDeleteConfirmOpen(false)}

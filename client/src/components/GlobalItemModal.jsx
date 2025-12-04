@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import api from "../services/api";
 import { FaTimes } from "react-icons/fa";
 import { toast } from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import CurrencyInput from "../components/CurrencyInput";
 import LinkInput from "../components/LinkInput";
 import { useUnit } from "../hooks/useUnit";
@@ -10,7 +11,6 @@ import { useWeightInput } from "../hooks/useWeightInput";
 import AffiliateProductPicker from "./AffiliateProductPicker";
 import { useUserSettings } from "../contexts/UserSettings";
 import { detectRegion, normalizeRegion } from "../utils/region";
-import { createGlobalItemFromAffiliate } from "../services/affiliates";
 import { extractWeightGrams } from "../utils/weight";
 
 export default function GlobalItemModal({
@@ -18,6 +18,7 @@ export default function GlobalItemModal({
   onClose,
   onCreated,
 }) {
+  const { t } = useTranslation("common");
   const [category, setCategory] = useState("");
   const [itemType, setItemType] = useState("");
   const [name, setName] = useState("");
@@ -33,18 +34,7 @@ export default function GlobalItemModal({
   const { unitLabel, parseInput } = useWeightInput(unit);
   const [displayWeight, setDisplayWeight] = useState("");
   const [weightSource, setWeightSource] = useState("user"); // "user" | "heuristic" | "scraped" | "catalog" | "verified"
-  const [form, setForm] = useState({
-    name: "",
-    brand: "",
-    description: "",
-    itemType: "",
-    weight: null,
-    worn: false,
-    consumable: false,
-    price: null,
-    link: "",
-    quantity: 1,
-  });
+
   const [tab, setTab] = useState("import"); // "import" | "custom"
   const [affProduct, setAffProduct] = useState(null); // selected affiliate product (or null)
 
@@ -120,7 +110,7 @@ export default function GlobalItemModal({
 
     // Basic validation (still require a name)
     if (!name.trim()) {
-      toast.error("Name is required.");
+      toast.error(t("validation.nameRequired"));
       return;
     }
 
@@ -129,11 +119,11 @@ export default function GlobalItemModal({
     if (displayWeight !== "") {
       grams = parseInput(displayWeight);
       if (grams == null) {
-        toast.error("Enter a valid weight.");
+        toast.error(t("validation.weightInvalid"));
         return;
       }
       if (grams < 0) {
-        toast.error("Weight cannot be negative.");
+        toast.error(t("validation.weightNegative"));
         return;
       }
     }
@@ -178,7 +168,7 @@ export default function GlobalItemModal({
         } else {
           const p = Number(price);
           if (Number.isNaN(p) || p < 0) {
-            toast.error("Enter a valid price.");
+            toast.error(t("validation.priceInvalid"));
             setLoading(false);
             return;
           }
@@ -194,12 +184,13 @@ export default function GlobalItemModal({
         created = await api.post("/global/items", payload).then((r) => r.data);
       }
 
-      toast.success("Global item created!");
+      toast.success(t("globalItemModal.toast.created"));
       onCreated?.(created);
       onClose?.();
     } catch (err) {
       console.error("Error creating global item:", err);
-      const msg = err.response?.data?.message || "Failed to create item.";
+      const msg =
+        err.response?.data?.message || t("globalItemModal.toast.createFailed");
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -214,7 +205,9 @@ export default function GlobalItemModal({
       >
         {/* Header (smaller on phones) */}
         <div className="flex justify-between items-center mb-2 sm:mb-3">
-          <h2 className="text-xl font-semibold text-primary">New Gear Item</h2>
+          <h2 className="text-xl font-semibold text-primary">
+            {t("globalItemModal.title")}
+          </h2>
           <button
             type="button"
             onClick={onClose}
@@ -238,7 +231,7 @@ export default function GlobalItemModal({
               onClick={() => setTab("import")}
               disabled={loading}
             >
-              Import
+              {t("globalItemModal.tabs.import")}
             </button>
             <button
               type="button"
@@ -250,7 +243,7 @@ export default function GlobalItemModal({
               onClick={() => setTab("custom")}
               disabled={loading}
             >
-              Custom
+              {t("globalItemModal.tabs.custom")}
             </button>
           </div>
 
@@ -286,7 +279,7 @@ export default function GlobalItemModal({
                 }}
                 disabled={loading}
               >
-                Clear Selection
+                {t("globalItemModal.buttons.clearSelection")}
               </button>
             </div>
           ) : null}
@@ -309,11 +302,11 @@ export default function GlobalItemModal({
             {/* Item Type */}
             <div>
               <label className="block font-medium text-primary mb-0.5">
-                Item Type
+                {t("globalItemModal.labels.itemType")}
               </label>
               <input
                 type="text"
-                placeholder="Tent"
+                placeholder={t("globalItemModal.placeholders.itemType")}
                 required
                 value={itemType}
                 onChange={(e) => setItemType(e.target.value)}
@@ -324,11 +317,12 @@ export default function GlobalItemModal({
             {/* Name */}
             <div>
               <label className="block font-medium text-primary mb-0.5">
-                Name<span className="text-red-500">*</span>
+                {t("globalItemModal.labels.name")}
+                <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
-                placeholder="Tarptent"
+                placeholder={t("globalItemModal.placeholders.name")}
                 value={name}
                 required
                 onChange={(e) => setName(e.target.value)}
@@ -339,11 +333,11 @@ export default function GlobalItemModal({
             {/* Brand */}
             <div>
               <label className="block font-medium text-primary mb-0.5">
-                Brand
+                {t("globalItemModal.labels.brand")}
               </label>
               <input
                 type="text"
-                placeholder="Rainbow"
+                placeholder={t("globalItemModal.placeholders.brand")}
                 value={brand}
                 onChange={(e) => setBrand(e.target.value)}
                 className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
@@ -355,16 +349,18 @@ export default function GlobalItemModal({
               <LinkInput
                 value={link}
                 onChange={setLink}
-                label="Link"
-                placeholder="tarptent.com"
+                label={t("globalItemModal.labels.link")}
+                placeholder={t("globalItemModal.placeholders.link")}
                 required={false}
                 readOnly={!!affProduct}
               />
               {affProduct && (
                 <button
                   type="button"
-                  aria-label="Link is locked"
-                  title="Link is set by the merchant for imported items."
+                  aria-label={t(
+                    "globalItemModal.messages.affiliateLinkLockedTitle"
+                  )}
+                  title={t("globalItemModal.messages.affiliateLinkLockedBody")}
                   className="absolute inset-0 cursor-not-allowed bg-transparent"
                 />
               )}
@@ -374,20 +370,26 @@ export default function GlobalItemModal({
             <div className="flex space-x-1 sm:space-x-2 col-span-1 sm:col-span-2">
               <div className="flex-1">
                 <label className="block font-medium text-primary mb-0.5">
-                  Weight ({unitLabel})
+                  {t("globalItemModal.labels.weight", { unit: unitLabel })}
                 </label>
                 <input
                   type="text"
                   inputMode="decimal"
                   value={displayWeight}
-                  placeholder={unitLabel === "g" ? "e.g. 350" : "e.g. 12.6"}
+                  placeholder={
+                    unitLabel === "g"
+                      ? t("globalItemModal.placeholders.weightGrams")
+                      : t("globalItemModal.placeholders.weightOunces")
+                  }
                   onChange={(e) => setDisplayWeight(e.target.value)}
                   className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
                 />
               </div>
               <div className="flex-1">
                 <label className="block font-medium text-primary mb-0.5">
-                  Price ({currencySymbol})
+                  {t("globalItemModal.labels.price", {
+                    currency: currencySymbol,
+                  })}
                 </label>
                 <div className="relative">
                   <CurrencyInput
@@ -400,8 +402,12 @@ export default function GlobalItemModal({
                   {affProduct && (
                     <button
                       type="button"
-                      aria-label="Price is locked"
-                      title="Price is set by the merchant for imported items."
+                      aria-label={t(
+                        "globalItemModal.messages.affiliateLinkLockedTitle"
+                      )}
+                      title={t(
+                        "globalItemModal.messages.affiliateLinkLockedBody"
+                      )}
                       className="absolute inset-0 cursor-not-allowed bg-transparent"
                     />
                   )}
@@ -412,7 +418,7 @@ export default function GlobalItemModal({
             {/* Description spans full width */}
             <div className="sm:col-span-2">
               <label className="block font-medium text-primary mb-0.5">
-                Description
+                {t("globalItemModal.labels.description")}
               </label>
               <textarea
                 value={description}
@@ -452,7 +458,7 @@ export default function GlobalItemModal({
         <div className="mt-3 flex items-center gap-2">
           {affProduct && (
             <p className="flex-1 text-sm text-primary">
-              Link and price set by merchant for imported items.
+              {t("globalItemModal.messages.affiliateNote")}
             </p>
           )}
 
@@ -463,19 +469,19 @@ export default function GlobalItemModal({
               disabled={loading}
               title={
                 tab === "import"
-                  ? "Pick a product (Import) or switch to Custom"
+                  ? t("globalItemModal.messages.cancelHintImport")
                   : undefined
               }
               className="px-2 py-1 bg-neutralAlt rounded hover:bg-neutralAlt/90 text-primary"
             >
-              Cancel
+              {t("actions.cancel")}
             </button>
             <button
               type="submit"
               disabled={loading}
               className="px-2 py-1 bg-secondary text-white rounded hover:bg-secondary-700"
             >
-              Save
+              {t("actions.save")}
             </button>
           </div>
         </div>
