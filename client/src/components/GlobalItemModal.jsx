@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import api from "../services/api";
 import { FaTimes } from "react-icons/fa";
 import { toast } from "react-hot-toast";
-import Swal from "sweetalert2";
 import CurrencyInput from "../components/CurrencyInput";
 import LinkInput from "../components/LinkInput";
 import { useUnit } from "../hooks/useUnit";
@@ -201,7 +200,6 @@ export default function GlobalItemModal({
     } catch (err) {
       console.error("Error creating global item:", err);
       const msg = err.response?.data?.message || "Failed to create item.";
-      await Swal.fire({ icon: "error", title: "Creation Failed", text: msg });
       toast.error(msg);
     } finally {
       setLoading(false);
