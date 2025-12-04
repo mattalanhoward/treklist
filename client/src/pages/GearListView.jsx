@@ -27,6 +27,7 @@ import { GEARLIST_SWATCHES as swatches } from "../config/colors";
 import { defaultBackgrounds } from "../config/defaultBackgrounds";
 import ShareModal from "../components/ShareModal";
 import MoveItemModal from "../components/MoveItemModal";
+import { useTranslation } from "react-i18next";
 
 export default function GearListView({
   listId,
@@ -39,6 +40,7 @@ export default function GearListView({
   fetchLists,
   collapsed,
 }) {
+  const { t } = useTranslation("common");
   const [editingCatId, setEditingCatId] = useState(null);
   const [addingNewCat, setAddingNewCat] = useState(false);
   const [newCatName, setNewCatName] = useState("");
@@ -258,11 +260,11 @@ export default function GearListView({
         await fetchItems(catId);
       } catch (err) {
         // 4) Rollback on error
-        toast.error(err.message || "Failed to update quantity");
+        toast.error(err.message || t("gearList.toasts.quantityUpdateFailed"));
         fetchItems(catId);
       }
     },
-    [fetchItems, listId]
+    [fetchItems, listId, t]
   );
 
   const handleDeleteClick = (catId, itemId) => {
@@ -278,9 +280,11 @@ export default function GearListView({
         `/dashboard/${listId}/categories/${catId}/items/${itemId}`
       );
       fetchItems(catId);
-      toast.success("Item deleted");
+      toast.success(t("gearList.toasts.itemDeleted"));
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to delete");
+      toast.error(
+        err.response?.data?.message || t("gearList.toasts.itemDeleteFailed")
+      );
     } finally {
       // Close the confirmation dialog (regardless of success/failure)
       setConfirmOpen(false);
@@ -301,8 +305,10 @@ export default function GearListView({
   // — add category —
   const confirmAddCat = async () => {
     const title = newCatName.trim();
-    if (!title) return;
-
+    if (!title) {
+      toast.error(t("gearList.toasts.categoryNameEmpty"));
+      return;
+    }
     try {
       await api.post(`/dashboard/${listId}/categories`, {
         title,
@@ -315,10 +321,10 @@ export default function GearListView({
       setNewCatName("");
       setAddingNewCat(false);
 
-      toast.success("Category Added! 🎉");
+      toast.success(t("gearList.toasts.categoryAdded"));
     } catch (err) {
       // show the error message from the thrown Error
-      toast.error(err.message || "Failed to add category");
+      toast.error(err.message || t("gearList.toasts.categoryAddFailed"));
     }
   };
 
@@ -339,10 +345,12 @@ export default function GearListView({
       // re-sync our entire `fullData` (including categories & items)
       await onRefresh();
 
-      toast.success("Category deleted");
+      toast.success(t("gearList.toasts.categoryDeleted"));
     } catch (err) {
       console.error(err);
-      toast.error(err.response?.data?.message || "Failed to delete");
+      toast.error(
+        err.response?.data?.message || t("gearList.toasts.categoryDeleteFailed")
+      );
     } finally {
       setConfirmCatOpen(false);
       setPendingDeleteCatId(null);
@@ -358,7 +366,7 @@ export default function GearListView({
   const editCat = async (id, title) => {
     const newTitle = title.trim();
     if (!newTitle) {
-      toast.error("Category name cannot be empty");
+      toast.error(t("gearList.toasts.categoryNameEmpty"));
       return;
     }
 
@@ -379,9 +387,11 @@ export default function GearListView({
       // re-pull the entire payload (list, cats, items)
       await onRefresh();
       setEditingCatId(null);
-      toast.success("Category renamed");
+      toast.success(t("gearList.toasts.categoryRenamed"));
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to rename category");
+      toast.error(
+        err.response?.data?.message || t("gearList.toasts.categoryRenameFailed")
+      );
     }
   };
 
@@ -648,7 +658,7 @@ export default function GearListView({
           );
         }
       } catch (err) {
-        toast.error(err.message || "Failed to move item");
+        toast.error(err.message || t("gearList.toasts.moveItemFailed"));
         fetchItems(fromCatId);
       }
 
@@ -733,11 +743,11 @@ export default function GearListView({
     }
     try {
       await api.patch(`/dashboard/${listId}`, { title: trimmed });
-      toast.success("List renamed");
+      toast.success(t("gearList.toasts.listRenamed"));
       onRefresh();
       fetchLists();
     } catch (err) {
-      toast.error(err.message || "Rename failed");
+      toast.error(err.message || t("gearList.toasts.listRenameFailed"));
       setTitleText(list.title);
     } finally {
       setIsEditingTitle(false);
@@ -750,7 +760,7 @@ export default function GearListView({
     if (!file) return;
 
     if (file.size > MAX_SIZE) {
-      toast.error("Please select an image under 5 MB.");
+      toast.error(t("gearList.toasts.imageTooLargeUnder5MB"));
       return;
     }
     const fd = new FormData();
@@ -759,13 +769,13 @@ export default function GearListView({
     setIsUploading(true);
     try {
       await api.patch(`/dashboard/${listId}/preferences/image`, fd);
-      toast.success("Background image updated");
+      toast.success(t("gearList.toasts.backgroundImageUpdated"));
       await onRefresh();
     } catch (err) {
       if (err.response?.status === 413) {
-        toast.error("Image is too large. Please pick one under 5 MB.");
+        toast.error(t("gearList.toasts.imageTooLargeExplicit"));
       } else {
-        toast.error(err.message || "Upload failed");
+        toast.error(err.message || t("gearList.toasts.imageUploadFailed"));
       }
     } finally {
       setIsUploading(false);
@@ -790,7 +800,7 @@ export default function GearListView({
     } catch (err) {
       // 5️⃣ revert on failure
       setBgColor(previous);
-      toast.error(err.message || "Update failed");
+      toast.error(err.message || t("gearList.toasts.backgroundUpdateFailed"));
     }
   };
 
@@ -813,7 +823,7 @@ export default function GearListView({
     } catch (error) {
       // 5️⃣ Roll back if something goes wrong
       setBgImage(previousImage);
-      toast.error(error.message || "Update failed");
+      toast.error(error.message || t("gearList.toasts.backgroundUpdateFailed"));
     }
   };
 
@@ -821,18 +831,13 @@ export default function GearListView({
   const handleCopyList = async () => {
     try {
       const { data } = await api.post(`/dashboard/${listId}/copy`);
-      toast.success("List copied");
+      toast.success(t("gearList.toasts.listCopied"));
       fetchLists(); // refresh sidebar (you’ll need to pass fetchLists in as a prop)
       localStorage.setItem("lastListId", data.list._id);
       navigate(`/dashboard/${data.list._id}`);
     } catch (err) {
-      toast.error(err.message || "Copy failed");
+      toast.error(err.message || t("gearList.toasts.listCopyFailed"));
     }
-  };
-
-  // Share list (placeholder)
-  const handleShareList = () => {
-    toast("Share feature coming soon");
   };
 
   // Checklist View
@@ -847,12 +852,12 @@ export default function GearListView({
   const actuallyDeleteList = async () => {
     try {
       await api.delete(`/dashboard/${listId}`);
-      toast.success("List deleted");
+      toast.success(t("gearList.toasts.listDeleted"));
       fetchLists();
       cancelDeleteList();
       navigate("/dashboard");
     } catch (err) {
-      toast.error(err.message || "Delete failed");
+      toast.error(err.message || t("gearList.toasts.listDeleteFailed"));
     }
   };
 
@@ -940,7 +945,7 @@ export default function GearListView({
               <button
                 onMouseEnter={preloadBackgroundThumbs}
                 className="inline-flex items-center justify-center text-l text-primaryAlt hover:text-primaryAlt/80 leading-none"
-                aria-label="List options"
+                aria-label={t("gearList.menu.listOptionsA11y")}
               >
                 <FaEllipsisH />
               </button>
@@ -951,7 +956,7 @@ export default function GearListView({
                 key: "header-prefs",
                 render: () => (
                   <div className="font-semibold text-primary uppercase">
-                    Gear List Preferences
+                    {t("gearList.menu.headerPreferences")}{" "}
                   </div>
                 ),
               },
@@ -961,11 +966,13 @@ export default function GearListView({
                 render: () => (
                   <div onClick={(e) => e.stopPropagation()}>
                     <div className="block text-sm text-primary mb-1">
-                      Background
+                      {t("gearList.menu.background")}{" "}
                     </div>
 
                     {/* My images + upload tile */}
-                    <p className="text-sm text-primary/80 mb-1">My images</p>
+                    <p className="text-sm text-primary/80 mb-1">
+                      {t("gearList.menu.myImages")}
+                    </p>
                     <div className="grid grid-cols-4 gap-2 mt-1 mx-auto w-full max-w-xs">
                       {customBackgrounds.map((url) => (
                         <button
@@ -1003,7 +1010,7 @@ export default function GearListView({
 
                     {/* Default images */}
                     <p className="mt-3 text-sm text-primary/80 mb-1">
-                      Default images
+                      {t("gearList.menu.defaultImages")}{" "}
                     </p>
                     <div className="grid grid-cols-4 gap-2 mt-1 mx-auto w-full max-w-xs">
                       {defaultBackgrounds.map(({ key, url }) => (
@@ -1028,7 +1035,9 @@ export default function GearListView({
                 render: () => (
                   <div onClick={(e) => e.stopPropagation()}>
                     {/* Header */}
-                    <p className="mt-3 text-sm text-primary/80 mb-1">Colors</p>
+                    <p className="mt-3 text-sm text-primary/80 mb-1">
+                      {t("gearList.menu.colors")}
+                    </p>
                     {/* Swatches Grid */}
                     <div className="grid grid-cols-4 gap-2 place-items-center mt-2">
                       {swatches.map(({ key, value, class: cls }) => (
@@ -1074,24 +1083,28 @@ export default function GearListView({
               },
               {
                 key: "details",
-                label: "View / Edit Details",
+                label: t("gearList.menu.viewEditDetails"),
                 onClick: () => setShowDetailsModal(true),
               },
               {
                 key: "checklist",
-                label: "View as Checklist",
+                label: t("gearList.menu.viewAsChecklist"),
                 onClick: handleCheckList,
               },
-              { key: "copy", label: "Copy Gear List", onClick: handleCopyList },
+              {
+                key: "copy",
+                label: t("gearList.menu.copyList"),
+                onClick: handleCopyList,
+              },
               {
                 key: "sharelist",
-                label: "Share Gear List",
+                label: t("gearList.menu.shareList"),
                 onClick: () => setShareOpen(true),
                 disabled: busy,
               },
               {
                 key: "delete",
-                label: "Delete Gear List",
+                label: t("gearList.menu.deleteList"),
                 onClick: openDeleteListConfirm,
                 className: "text-error",
               },
@@ -1182,7 +1195,7 @@ export default function GearListView({
                   autoFocus
                   value={newCatName}
                   onChange={(e) => setNewCatName(e.target.value)}
-                  placeholder="New category (Enter to save, Escape to cancel)"
+                  placeholder={t("gearList.addCategory.inlinePlaceholder")}
                   className="w-full p-2 border-b-2 border-accent focus:outline-none bg-neutral text-primary rounded"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") confirmAddCat();
@@ -1202,7 +1215,9 @@ export default function GearListView({
                   className="p-2 w-full border border-secondary rounded flex items-center justify-center space-x-2 bg-base-100 text-primary hover:bg-base-100/80"
                 >
                   <FaPlus />
-                  <span className="text-sm">New Category</span>
+                  <span className="text-sm">
+                    {t("gearList.addCategory.button")}
+                  </span>{" "}
                 </button>
               )}
             </div>
@@ -1246,7 +1261,7 @@ export default function GearListView({
                     autoFocus
                     value={newCatName}
                     onChange={(e) => setNewCatName(e.target.value)}
-                    placeholder="New category name"
+                    placeholder={t("gearList.addCategory.columnPlaceholder")}
                     className="w-full py-1 px-2 border-b-2 border-accent focus:outline-none bg-neutral text-primary rounded"
                     onKeyDown={(e) => {
                       if (e.key === "Enter") confirmAddCat();
@@ -1264,7 +1279,9 @@ export default function GearListView({
                   className="p-2 w-full border border-secondary rounded flex items-center justify-center space-x-2 bg-base-100 text-primary hover:bg-base-100/80"
                 >
                   <FaPlus />
-                  <span className="text-sm">New Category</span>
+                  <span className="text-sm">
+                    {t("gearList.addCategory.button")}
+                  </span>
                 </button>
               )}
             </div>
@@ -1304,9 +1321,9 @@ export default function GearListView({
 
       <ConfirmDialog
         isOpen={confirmOpen}
-        title="Remove this item?"
-        confirmText="Yes, remove"
-        cancelText="Cancel"
+        title={t("gearList.confirm.removeItemTitle")}
+        confirmText={t("gearList.confirm.removeItemConfirm")}
+        cancelText={t("common.buttons.cancel")}
         onConfirm={actuallyDeleteItem}
         onCancel={cancelDeleteItem}
       />
@@ -1315,22 +1332,24 @@ export default function GearListView({
         isOpen={confirmCatOpen}
         title={
           pendingDeleteCategory
-            ? `Delete "${pendingDeleteCategory.title}" category?`
-            : "Delete this category?"
+            ? t("gearList.confirm.deleteCategoryTitle", {
+                title: pendingDeleteCategory.title,
+              })
+            : t("gearList.confirm.deleteCategoryTitleGeneric")
         }
-        message="Deleting a category will remove all its items from this gear list."
-        confirmText="Yes, delete"
-        cancelText="Cancel"
+        message={t("gearList.confirm.deleteCategoryMessage")}
+        confirmText={t("gearList.confirm.deleteCategoryConfirm")}
+        cancelText={t("common.buttons.cancel")}
         onConfirm={actuallyDeleteCat}
         onCancel={cancelDeleteCat}
       />
 
       <ConfirmDialog
         isOpen={confirmDeleteOpen}
-        title={`Delete the ${list.title} gear list?`}
-        message="This action cannot be undone."
-        confirmText="Delete"
-        cancelText="Cancel"
+        title={t("gearList.confirm.deleteListTitle", { title: list.title })}
+        message={t("gearList.confirm.deleteListMessage")}
+        confirmText={t("common.buttons.delete")}
+        cancelText={t("common.buttons.cancel")}
         onConfirm={actuallyDeleteList}
         onCancel={cancelDeleteList}
       />

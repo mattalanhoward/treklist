@@ -12,6 +12,9 @@ import { SettingsProvider } from "./contexts/UserSettings";
 
 import { BrowserRouter } from "react-router-dom";
 
+// Initialize i18n before rendering anything
+import "./i18n";
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>

@@ -10,8 +10,8 @@ import {
 import GlobalItemModal from "./GlobalItemModal";
 import GlobalItemEditModal from "./GlobalItemEditModal";
 import { toast } from "react-hot-toast";
-import ConfirmDialog from "./ConfirmDialog";
 import { useUserSettings } from "../contexts/UserSettings";
+import { useTranslation } from "react-i18next";
 
 export default function Sidebar({
   lists,
@@ -23,14 +23,12 @@ export default function Sidebar({
   collapsed,
   setCollapsed,
 }) {
+  const { t } = useTranslation("common");
+
   const [newListTitle, setNewListTitle] = useState("");
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingGlobalItem, setEditingGlobalItem] = useState(null);
-
-  // delete list dialog
-  const [confirmListOpen, setConfirmListOpen] = useState(false);
-  const [pendingDeleteListId, setPendingDeleteListId] = useState(null);
 
   const { region } = useUserSettings();
 
@@ -39,7 +37,7 @@ export default function Sidebar({
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState(searchQuery);
 
-  // 1) update debouncedSearch 300 ms after user stops typing
+  // 1) update debouncedSearch 1000 ms after user stops typing
   useEffect(() => {
     const handler = setTimeout(() => setDebouncedSearch(searchQuery), 1000);
     return () => clearTimeout(handler);
@@ -89,7 +87,7 @@ export default function Sidebar({
 
   const createList = async () => {
     const title = newListTitle.trim();
-    if (!title) return toast.error("List name cannot be empty.");
+    if (!title) return toast.error(t("sidebar.listNameEmpty"));
 
     try {
       const { data } = await api.post("/dashboard", { title, region });
@@ -97,46 +95,20 @@ export default function Sidebar({
       await fetchLists();
       localStorage.setItem("lastListId", data.list._id);
       onSelectList(data.list._id);
-      toast.success("List created!");
+      toast.success(t("sidebar.listCreated"));
     } catch (err) {
       console.error("Error creating list:", err);
-      toast.error(err.response?.data?.message || "Could not create list.");
+      toast.error(
+        err.response?.data?.message || t("sidebar.couldNotCreateList")
+      );
     }
-  };
-
-  // ─── Delete list flow ───
-  const handleDeleteListClick = (id) => {
-    setPendingDeleteListId(id);
-    setConfirmListOpen(true);
-  };
-
-  const actuallyDeleteList = async () => {
-    const id = pendingDeleteListId;
-    try {
-      await api.delete(`/dashboard/${id}`);
-      setConfirmListOpen(false);
-      setPendingDeleteListId(null);
-      await fetchLists();
-      if (currentListId === id) onSelectList(null);
-      toast.success("List deleted");
-    } catch (err) {
-      console.error("Error deleting list:", err);
-      toast.error(err.response?.data?.message || "Could not delete list.");
-    }
-  };
-
-  const cancelDeleteList = () => {
-    setConfirmListOpen(false);
-    setPendingDeleteListId(null);
   };
 
   // === gear item actions ===
 
   const addToList = async (item) => {
     if (!currentListId || categories.length === 0) {
-      return toast.error(
-        "Pick or create a list with at least one category first."
-      );
+      return toast.error(t("sidebar.mustSelectListFirst"));
     }
 
     const cat = categories[0]; // or whichever category you're using
@@ -179,7 +151,7 @@ export default function Sidebar({
       onRefresh();
     } catch (err) {
       console.error("Error adding item to list:", err);
-      toast.error("Failed to add item into your list.");
+      toast.error(t("sidebar.addToListFailed"));
     }
   };
 
@@ -249,12 +221,12 @@ export default function Sidebar({
             {/* Gear Lists section */}
             <section className="flex flex-col flex-none h-1/3 px-4 py-2 border-b border-base-100 overflow-hidden">
               <h2 className="font-bold mb-2 truncate text-primaryAlt">
-                Gear Lists
+                {t("sidebar.gearListsTitle")}
               </h2>
               <div className="flex mb-3">
                 <input
                   className="flex-1 rounded-lg py-1 px-2 bg-base-100 text-primary border-primary"
-                  placeholder="New list"
+                  placeholder={t("sidebar.newListPlaceholder")}
                   value={newListTitle}
                   onChange={(e) => setNewListTitle(e.target.value)}
                 />
@@ -303,7 +275,9 @@ export default function Sidebar({
             {/* Gear Items / Global Items */}
             <section className="flex flex-col flex-1 px-4 py-2 overflow-hidden">
               <div className="flex justify-between items-center mb-2 text-primaryAlt">
-                <h2 className="font-bold truncate">My Gear</h2>
+                <h2 className="font-bold truncate">
+                  {t("sidebar.myGearTitle")}
+                </h2>
                 <button
                   onClick={() => setShowCreateModal(true)}
                   className="p-1 text-primaryAlt  hover:text-primaryAlt/80"
@@ -314,7 +288,7 @@ export default function Sidebar({
               </div>
               <input
                 className="w-full rounded-lg py-1 px-2 bg-base-100 text-primary border border-primary mb-3"
-                placeholder="Search Gear Items"
+                placeholder={t("sidebar.searchGearPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -331,7 +305,7 @@ export default function Sidebar({
                     <div className="flex items-center space-x-2 ml-4">
                       <button
                         onClick={() => setEditingGlobalItem(item)}
-                        title="Edit global template"
+                        title={t("sidebar.editGlobalTemplate")}
                         className="hover:text-base-100/80 text-secondaryAlt hover:text-secondaryAlt/80 rounded-lg"
                       >
                         <FaEllipsisH />
@@ -340,7 +314,9 @@ export default function Sidebar({
                   </li>
                 ))}
                 {filteredAndSortedItems.length === 0 && (
-                  <li className="text-primaryAlt py-1 px-2">No Gear Items</li>
+                  <li className="text-primaryAlt py-1 px-2">
+                    {t("sidebar.noGearItems")}
+                  </li>
                 )}
               </ul>
 
