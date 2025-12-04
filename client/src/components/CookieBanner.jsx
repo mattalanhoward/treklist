@@ -1,4 +1,3 @@
-// src/components/CookieBanner.jsx
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -7,6 +6,7 @@ import {
   saveConsent,
 } from "../utils/cookieConsent";
 import { initAnalytics } from "../utils/analytics";
+import { useTranslation } from "react-i18next";
 
 // Better heuristic:
 // 1) If timezone is Europe/* → show banner (treat as EU-ish).
@@ -42,6 +42,7 @@ function isBannerRegion() {
 }
 
 export default function CookieBanner() {
+  const { t } = useTranslation("common");
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -100,32 +101,34 @@ export default function CookieBanner() {
       <div className="max-w-3xl w-full bg-base-100 border border-base-300 shadow-lg rounded-lg p-3 md:p-4 flex flex-col md:flex-row md:items-center gap-3 text-xs sm:text-sm">
         <div className="flex-1">
           <p className="mb-1">
-            TrekList uses <strong>essential cookies</strong> to keep the site
-            secure and running, and optional <strong>analytics cookies</strong>{" "}
-            to understand how the site is used and improve it.
+            {t("cookieBanner.text.prefix", { appName: t("app.name") })}{" "}
+            <strong>{t("cookieBanner.text.essential")}</strong>{" "}
+            {t("cookieBanner.text.middle")}{" "}
+            <strong>{t("cookieBanner.text.analytics")}</strong>{" "}
+            {t("cookieBanner.text.suffix")}
           </p>
           <button
             type="button"
             onClick={handleOpenCookiePolicy}
             className="underline text-secondary hover:text-primary"
           >
-            Read our Cookie Policy
+            {t("cookieBanner.buttons.readPolicy")}
           </button>
         </div>
         <div className="flex items-center gap-2 justify-end">
           <button
             type="button"
             onClick={handleOpenSettings}
-            className="px-2 py-1 rounded bg-white text-secondary hover:bg-secondary/20 rounded border border-secondary-300"
+            className="px-2 py-1 rounded bg-white text-secondary hover:bg-secondary/20 border border-secondary-300"
           >
-            Cookie settings
+            {t("cookieBanner.buttons.settings")}
           </button>
           <button
             type="button"
             onClick={handleAcceptAll}
             className="px-2 py-1 rounded bg-secondary text-white hover:bg-secondary/80"
           >
-            Accept all
+            {t("cookieBanner.buttons.acceptAll")}
           </button>
         </div>
       </div>

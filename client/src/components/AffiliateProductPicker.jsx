@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { searchAwinProducts, getAwinFacets } from "../services/affiliates";
 import { FaPlus } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 function useDebounced(value, delay = 300) {
   const [v, setV] = useState(value);
@@ -24,6 +25,8 @@ export default function AffiliateProductPicker({
   onPick,
   pageSize = 10,
 }) {
+  const { t } = useTranslation("common");
+
   const [q, setQ] = useState("");
   const [brand, setBrand] = useState("");
   const [itemType, setItemType] = useState("");
@@ -161,12 +164,25 @@ export default function AffiliateProductPicker({
         setPage(res.page);
         setHasMore(res.hasMore);
       } catch (e) {
-        setError(e?.response?.data?.message || e.message || "Search failed.");
+        setError(
+          e?.response?.data?.message ||
+            e.message ||
+            t("affiliateProductPicker.errors.searchFailed")
+        );
       } finally {
         setBusy(false);
       }
     },
-    [debouncedQ, region, merchantId, brand, itemType, limit, applyLocalFilter]
+    [
+      debouncedQ,
+      region,
+      merchantId,
+      brand,
+      itemType,
+      limit,
+      applyLocalFilter,
+      t,
+    ]
   );
 
   // Reset to page 1 when q or filters change
@@ -204,11 +220,13 @@ export default function AffiliateProductPicker({
     <div className="space-y-3">
       {/* Search */}
       <div>
-        <label className="block font-medium text-primary mb-0.5">Search</label>
+        <label className="block font-medium text-primary mb-0.5">
+          {t("affiliateProductPicker.labels.search")}
+        </label>
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Brand or product (e.g., Osprey pack)"
+          placeholder={t("affiliateProductPicker.placeholders.search")}
           className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
         />
       </div>
@@ -216,13 +234,15 @@ export default function AffiliateProductPicker({
       {/* Filters (independent of q) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         <div>
-          <label className="block font-medium text-primary mb-0.5">Brand</label>
+          <label className="block font-medium text-primary mb-0.5">
+            {t("affiliateProductPicker.labels.brand")}
+          </label>
           <select
             value={brand}
             onChange={(e) => setBrand(e.target.value)}
             className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary text-sm"
           >
-            <option value="">All</option>
+            <option value="">{t("affiliateProductPicker.options.all")}</option>
             {brandOpts.map((b) =>
               b.value ? (
                 <option key={b.value} value={b.value}>
@@ -232,31 +252,31 @@ export default function AffiliateProductPicker({
             )}
             {brandOpts.length === 0 && (
               <option value="" disabled>
-                No brands for this selection
+                {t("affiliateProductPicker.options.noBrands")}
               </option>
             )}
           </select>
         </div>
         <div>
           <label className="block font-medium text-primary mb-0.5">
-            Item Type
+            {t("affiliateProductPicker.labels.itemType")}
           </label>
           <select
             value={itemType}
             onChange={(e) => setItemType(e.target.value)}
             className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
           >
-            <option value="">All</option>
-            {typeOpts.map((t) =>
-              t.value ? (
-                <option key={t.value} value={t.value}>
-                  {t.value} ({t.count})
+            <option value="">{t("affiliateProductPicker.options.all")}</option>
+            {typeOpts.map((tOpt) =>
+              tOpt.value ? (
+                <option key={tOpt.value} value={tOpt.value}>
+                  {tOpt.value} ({tOpt.count})
                 </option>
               ) : null
             )}
             {typeOpts.length === 0 && (
               <option value="" disabled>
-                No item types for this selection
+                {t("affiliateProductPicker.options.noItemTypes")}
               </option>
             )}
           </select>
@@ -265,11 +285,19 @@ export default function AffiliateProductPicker({
 
       {error ? <div className="text-xs text-red-600">{error}</div> : null}
 
-      {/* <div className="flex justify-between items-center">
+      {/* Optional status bar if you re-enable it later
+      <div className="flex justify-between items-center">
         <div className="text-xs text-primary/70">
-          {busy ? "Loading…" : `Showing ${items.length}/${total}`}
+          {busy
+            ? t("affiliateProductPicker.messages.loading")
+            : t("affiliateProductPicker.messages.showingCount", {
+                shown: items.length,
+                total,
+              })}
         </div>
-      </div> */}
+      </div>
+      */}
+
       {/* Results (fixed height to avoid modal jumping) */}
       <div
         ref={listRef}
@@ -277,7 +305,7 @@ export default function AffiliateProductPicker({
       >
         {!busy && items.length === 0 && (
           <div className="text-sm text-primary/70 px-2 py-1">
-            No results for that selection.
+            {t("affiliateProductPicker.messages.noResults")}
           </div>
         )}
         {items.map((p) => (
@@ -299,22 +327,12 @@ export default function AffiliateProductPicker({
             )}
             <div className="flex-1 min-w-0">
               <div className="text-sm text-primary line-clamp-1">{p.name}</div>
-              {/* <div className="text-xs text-primary/80 truncate">
-                {p.brand || p.merchantName} •{" "}
-                {p.itemType || (p.categoryPath?.slice?.(-1)[0] ?? "")}
-                {typeof p.price === "number"
-                  ? ` • ${p.price} ${p.currency || ""}`
-                  : ""}
-              </div> */}
-              {/* <div className="text-xs opacity-70">
-                {p.merchantName || p.merchantId} · {p.region}
-              </div> */}
             </div>
             <button
               type="button"
               className="p-1 rounded bg-secondary text-white hover:bg-secondary-700"
-              aria-label="Use this product"
-              title="Use this product"
+              aria-label={t("affiliateProductPicker.buttons.useProduct")}
+              title={t("affiliateProductPicker.buttons.useProduct")}
               onClick={() => onPick(p)}
             >
               <FaPlus />

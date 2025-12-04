@@ -1323,7 +1323,7 @@ export default function GearListView({
         isOpen={confirmOpen}
         title={t("gearList.confirm.removeItemTitle")}
         confirmText={t("gearList.confirm.removeItemConfirm")}
-        cancelText={t("common.buttons.cancel")}
+        cancelText={t("actions.cancel")}
         onConfirm={actuallyDeleteItem}
         onCancel={cancelDeleteItem}
       />
@@ -1339,7 +1339,7 @@ export default function GearListView({
         }
         message={t("gearList.confirm.deleteCategoryMessage")}
         confirmText={t("gearList.confirm.deleteCategoryConfirm")}
-        cancelText={t("common.buttons.cancel")}
+        cancelText={t("actions.cancel")}
         onConfirm={actuallyDeleteCat}
         onCancel={cancelDeleteCat}
       />
@@ -1348,8 +1348,8 @@ export default function GearListView({
         isOpen={confirmDeleteOpen}
         title={t("gearList.confirm.deleteListTitle", { title: list.title })}
         message={t("gearList.confirm.deleteListMessage")}
-        confirmText={t("common.buttons.delete")}
-        cancelText={t("common.buttons.cancel")}
+        confirmText={t("actions.delete")}
+        cancelText={t("actions.cancel")}
         onConfirm={actuallyDeleteList}
         onCancel={cancelDeleteList}
       />

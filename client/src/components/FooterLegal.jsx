@@ -1,12 +1,13 @@
-// src/components/FooterLegal.jsx
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function FooterLegal({
   variant = "dark", // "dark" | "light"
   containerWidth = "max-w-4xl",
   className = "",
 }) {
+  const { t } = useTranslation("common");
   const year = new Date().getFullYear();
   const dark = variant === "dark";
 
@@ -28,10 +29,8 @@ export default function FooterLegal({
       >
         {/* left: brand + contact */}
         <div className="space-y-1 text-sm leading-6 text-center md:text-left">
-          <p className="font-medium">© {year} TrekList</p>
-          <p>
-            <span className="font-medium">Tall Joe Hikes</span> — KvK 98785419
-          </p>
+          <p className="font-medium">{t("footerLegal.brandLine", { year })}</p>
+          <p>{t("footerLegal.companyLine")}</p>
           <p>
             <a className={link} href="mailto:support@treklist.co">
               support@treklist.co
@@ -44,12 +43,12 @@ export default function FooterLegal({
           <ul className="flex flex-wrap justify-center md:justify-end gap-x-5 gap-y-2 text-sm">
             <li>
               <Link className={link} to="/legal/privacy">
-                Privacy
+                {t("footerLegal.links.privacy")}
               </Link>
             </li>
             <li>
               <Link className={link} to="/legal/cookies">
-                Cookie Policy
+                {t("footerLegal.links.cookies")}
               </Link>
             </li>
             <li>
@@ -57,28 +56,31 @@ export default function FooterLegal({
                 className={link}
                 to="/legal/cookie-settings"
                 onClick={(e) => {
-                  if (window.openCookieSettings) {
+                  if (
+                    typeof window !== "undefined" &&
+                    window.openCookieSettings
+                  ) {
                     e.preventDefault();
                     window.openCookieSettings();
                   }
                 }}
               >
-                Cookie Settings
+                {t("footerLegal.links.cookieSettings")}
               </Link>
             </li>
             <li>
               <Link className={link} to="/legal/terms">
-                Terms
+                {t("footerLegal.links.terms")}
               </Link>
             </li>
             <li>
               <Link className={link} to="/legal/affiliate-disclosure">
-                Affiliate Disclosure
+                {t("footerLegal.links.affiliateDisclosure")}
               </Link>
             </li>
             <li>
               <Link className={link} to="/legal/imprint">
-                Imprint / Contact
+                {t("footerLegal.links.imprint")}
               </Link>
             </li>
           </ul>

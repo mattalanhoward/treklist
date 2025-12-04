@@ -4,6 +4,7 @@ import { useUserSettings } from "../contexts/UserSettings";
 import { BsBackpack4 } from "react-icons/bs";
 import { FaTshirt, FaUtensils, FaBalanceScale } from "react-icons/fa";
 import StatWithDetails from "./StatWithDetails";
+import { useTranslation } from "react-i18next";
 
 /**
  * Returns a tailwind text color class based on weight thresholds
@@ -27,36 +28,41 @@ export default function PackStats({
   showLabels = false,
 }) {
   const { weightUnit } = useUserSettings();
+  const { t } = useTranslation("common");
 
   // only in imperial units we’ll hide the “Total” stat
   const isImperial = weightUnit === "lb" || weightUnit === "oz";
 
   const stats = [
     {
+      id: "base",
       icon: BsBackpack4,
       raw: base,
-      label: "Base",
+      label: t("packStats.base"),
       items: breakdowns.base,
       colorClass: baseColorClass(base),
     },
     {
+      id: "worn",
       icon: FaTshirt,
       raw: worn,
-      label: "Worn",
+      label: t("packStats.worn"),
       items: breakdowns.worn,
       colorClass: "text-blue-600",
     },
     {
+      id: "consumable",
       icon: FaUtensils,
       raw: consumable,
-      label: "Consumable",
+      label: t("packStats.consumable"),
       items: breakdowns.consumable,
       colorClass: "text-green-600",
     },
     {
+      id: "total",
       icon: FaBalanceScale,
       raw: total,
-      label: "Total",
+      label: t("packStats.total"),
       items: breakdowns.total,
       colorClass: "text-accent",
     },
@@ -64,17 +70,14 @@ export default function PackStats({
 
   // drop the Total entry when in lb/oz mode
   const visibleStats = isImperial
-    ? stats.filter((s) => s.label !== "Total")
+    ? stats.filter((s) => s.id !== "total")
     : stats;
+
   if (!showLabels) {
     return (
       <div className="flex items-center space-x-3 text-sm overflow-x-auto px-3 hide-scrollbar">
         {visibleStats.map((s) => (
-          <StatWithDetails
-            key={s.label}
-            {...s}
-            disablePopover={disablePopover}
-          />
+          <StatWithDetails key={s.id} {...s} disablePopover={disablePopover} />
         ))}
       </div>
     );
@@ -83,7 +86,7 @@ export default function PackStats({
   return (
     <div className="flex items-center space-x-6 text-sm overflow-x-auto px-3 hide-scrollbar">
       {visibleStats.map((s) => (
-        <div key={s.label} className="flex flex-col items-center space-y-2">
+        <div key={s.id} className="flex flex-col items-center space-y-2">
           <StatWithDetails {...s} disablePopover={disablePopover} />
           <span className="text-sm text-primary">{s.label}</span>
         </div>

@@ -7,7 +7,19 @@
     "save": "Opslaan",
     "cancel": "Annuleren",
     "delete": "Verwijderen",
-    "close": "Sluiten"
+    "close": "Sluiten",
+    "saving": "Bezig met opslaan…"
+  },
+  "validation": {
+    "nameRequired": "Naam is verplicht.",
+    "weightInvalid": "Vul een geldig gewicht in.",
+    "weightNegative": "Gewicht kan niet negatief zijn.",
+    "priceInvalid": "Vul een geldige prijs in.",
+    "priceNegative": "Prijs kan niet negatief zijn.",
+    "urlInvalid": "Link moet een geldige URL zijn."
+  },
+  "confirm": {
+    "defaultTitle": "Weet je het zeker?"
   },
   "language": {
     "english": "Engels",
@@ -120,6 +132,260 @@
       "createSampleFailed": "Voorbeeldlijst kon niet worden aangemaakt.",
       "listGone": "Deze paklijst bestaat niet meer",
       "loadListFailed": "Deze paklijst kon niet worden geladen"
+    }
+  },
+  "packStats": {
+    "base": "Basis",
+    "worn": "Gedragen",
+    "consumable": "Verbruikbaar",
+    "total": "Totaal"
+  },
+  "gearList": {
+    "menu": {
+      "listOptionsA11y": "Lijstopties",
+      "headerPreferences": "Lijstinstellingen",
+      "background": "Achtergrond",
+      "myImages": "Mijn afbeeldingen",
+      "defaultImages": "Standaardafbeeldingen",
+      "colors": "Kleuren",
+      "viewEditDetails": "Details bekijken/bewerken",
+      "viewAsChecklist": "Bekijken als checklist",
+      "copyList": "Lijst kopiëren",
+      "shareList": "Lijst delen",
+      "deleteList": "Lijst verwijderen"
+    },
+
+    "confirm": {
+      "removeItemTitle": "Dit item verwijderen?",
+      "removeItemConfirm": "Item verwijderen",
+
+      "deleteCategoryTitle": "‘{{title}}’ verwijderen?",
+      "deleteCategoryTitleGeneric": "Deze categorie verwijderen?",
+      "deleteCategoryMessage": "Items in deze categorie blijven in je lijst maar worden verplaatst naar ‘Unsorted’.",
+      "deleteCategoryConfirm": "Categorie verwijderen",
+
+      "deleteListTitle": "‘{{title}}’ verwijderen?",
+      "deleteListMessage": "Hiermee verwijder je deze lijst en alle items daarin permanent.",
+      "deleteListConfirm": "Lijst verwijderen"
+    },
+
+    "toasts": {
+      "itemDeleted": "Item verwijderd",
+      "itemDeleteFailed": "Item kon niet worden verwijderd.",
+
+      "categoryNameEmpty": "Categorienaam mag niet leeg zijn.",
+      "categoryAdded": "Categorie toegevoegd",
+      "categoryAddFailed": "Categorie kon niet worden toegevoegd.",
+      "categoryDeleted": "Categorie verwijderd",
+      "categoryDeleteFailed": "Categorie kon niet worden verwijderd.",
+      "categoryRenamed": "Categorie hernoemd",
+      "categoryRenameFailed": "Categorie kon niet worden hernoemd.",
+
+      "quantityUpdateFailed": "Aantal kon niet worden bijgewerkt.",
+
+      "listRenamed": "Lijst hernoemd",
+      "listRenameFailed": "Lijst kon niet worden hernoemd.",
+
+      "backgroundUpdateFailed": "Achtergrond kon niet worden bijgewerkt.",
+      "backgroundImageUpdated": "Achtergrondafbeelding bijgewerkt.",
+      "imageTooLargeUnder5MB": "Afbeelding moet kleiner zijn dan 5 MB.",
+      "imageTooLargeExplicit": "Afbeelding is te groot. Upload een bestand kleiner dan 5 MB.",
+      "imageUploadFailed": "Afbeelding uploaden mislukt.",
+
+      "listCopied": "Lijst gekopieerd",
+      "listCopyFailed": "Lijst kon niet worden gekopieerd.",
+
+      "listDeleted": "Lijst verwijderd",
+      "listDeleteFailed": "Lijst kon niet worden verwijderd."
+    },
+
+    "addCategory": {
+      "button": "Categorie toevoegen",
+      "inlinePlaceholder": "Nieuwe categorienaam",
+      "columnPlaceholder": "Nieuwe categorienaam"
+    }
+  },
+  "cookieBanner": {
+    "text": {
+      "prefix": "{{appName}} gebruikt",
+      "essential": "noodzakelijke cookies",
+      "middle": "om de site veilig en draaiende te houden, en optionele",
+      "analytics": "analyse-cookies",
+      "suffix": "om te begrijpen hoe de site wordt gebruikt en om deze te verbeteren."
+    },
+    "buttons": {
+      "readPolicy": "Lees ons cookiebeleid",
+      "settings": "Cookie-instellingen",
+      "acceptAll": "Alles accepteren"
+    }
+  },
+  "emailOptInBanner": {
+    "text": {
+      "body": "Wil je af en toe updates over nieuwe {{appName}}-functies en tips? Geen spam, alleen een paar keer per jaar iets nuttigs."
+    },
+    "buttons": {
+      "noThanks": "Liever niet",
+      "yesEmailMe": "Ja, stuur mij e-mail"
+    },
+    "states": {
+      "saving": "Bezig met opslaan…"
+    },
+    "toast": {
+      "success": "Bedankt! We mailen je af en toe over nieuwe {{appName}}-functies en tips.",
+      "error": "Je e-mailvoorkeur kon niet worden bijgewerkt. Probeer het opnieuw."
+    }
+  },
+  "footerLegal": {
+    "brandLine": "© {{year}} TrekList",
+    "companyLine": "Tall Joe Hikes — KvK 98785419",
+    "links": {
+      "privacy": "Privacy",
+      "cookies": "Cookiebeleid",
+      "cookieSettings": "Cookie-instellingen",
+      "terms": "Voorwaarden",
+      "affiliateDisclosure": "Affiliate-verklaring",
+      "imprint": "Imprint / contact"
+    }
+  },
+  "globalItemModal": {
+    "title": "Nieuw uitrustingsitem",
+    "tabs": {
+      "import": "Importeren",
+      "custom": "Aangepast"
+    },
+    "buttons": {
+      "clearSelection": "Selectie wissen"
+    },
+    "labels": {
+      "itemType": "Itemtype",
+      "name": "Naam",
+      "brand": "Merk",
+      "link": "Link",
+      "weight": "Gewicht ({{unit}})",
+      "price": "Prijs ({{currency}})",
+      "description": "Omschrijving"
+    },
+    "placeholders": {
+      "itemType": "Tent",
+      "name": "Rainbow",
+      "brand": "Tarptent",
+      "link": "tarptent.com",
+      "weightGrams": "bijv. 350",
+      "weightOunces": "bijv. 12,6"
+    },
+    "messages": {
+      "affiliateLinkLockedTitle": "Link is vergrendeld",
+      "affiliateLinkLockedBody": "De link wordt ingesteld door de aanbieder voor geïmporteerde items.",
+      "affiliateNote": "Link en prijs worden ingesteld door de aanbieder voor geïmporteerde items.",
+      "cancelHintImport": "Kies een product (Importeren) of schakel over naar Aangepast."
+    },
+    "toast": {
+      "created": "Globaal item aangemaakt!",
+      "createFailed": "Item kon niet worden aangemaakt."
+    }
+  },
+  "globalItemEditModal": {
+    "titleGlobal": "Globaal item bewerken",
+    "titleList": "Uitrustingsitem bewerken",
+    "buttons": {
+      "delete": "Item verwijderen",
+      "saving": "Bezig met opslaan…"
+    },
+    "toast": {
+      "updated": "Item bijgewerkt",
+      "updatedEverywhere": "Item overal bijgewerkt",
+      "deleted": "Item verwijderd",
+      "deleteFailed": "Verwijderen mislukt",
+      "saveFailed": "Opslaan mislukt. Probeer het opnieuw."
+    },
+    "confirm": {
+      "saveListTitle": "Wijzigingen aan dit item opslaan?",
+      "saveGlobalTitle": "Wijzigingen op alle exemplaren toepassen?",
+      "saveListConfirm": "Wijzigingen opslaan",
+      "saveGlobalConfirm": "Ja, alles bijwerken",
+      "deleteTitle": "Dit uitrustingsitem verwijderen?",
+      "deleteMessage": "Dit verwijdert het uit je uitrustingsitems en al je gearlists.",
+      "deleteConfirm": "Item verwijderen"
+    }
+  },
+  "affiliateProductPicker": {
+    "labels": {
+      "search": "Zoeken",
+      "brand": "Merk",
+      "itemType": "Itemtype"
+    },
+    "placeholders": {
+      "search": "Merk of product (bijv. Osprey-rugzak)"
+    },
+    "options": {
+      "all": "Alle",
+      "noBrands": "Geen merken voor deze selectie",
+      "noItemTypes": "Geen itemtypes voor deze selectie"
+    },
+    "messages": {
+      "noResults": "Geen resultaten voor deze selectie.",
+      "loading": "Bezig met laden…",
+      "showingCount": "Toont {{shown}}/{{total}}"
+    },
+    "buttons": {
+      "useProduct": "Dit product gebruiken"
+    },
+    "errors": {
+      "searchFailed": "Zoeken mislukt."
+    }
+  },
+  "shareModal": {
+    "title": "Deel deze uitrustingslijst",
+    "fields": {
+      "shareUrlLabel": "Deelbare URL",
+      "shareUrlPlaceholderGenerating": "Bezig met genereren…",
+      "shareUrlPlaceholderNone": "Geen actieve link",
+      "shareUrlHelp": "Iedereen met deze link kan een alleen-lezen versie van je lijst bekijken.",
+      "embedLabel": "Insluitcode",
+      "embedPlaceholderGenerating": "Bezig met genereren…",
+      "embedPlaceholderNone": "Geen actieve link",
+      "csvLabel": "CSV exporteren",
+      "csvHelp": "Download een CSV van deze gedeelde lijst."
+    },
+    "buttons": {
+      "copyLink": "Kopiëren",
+      "copyEmbed": "Kopiëren",
+      "downloadCsv": "Downloaden",
+      "revokeLink": "Link intrekken"
+    },
+    "tooltips": {
+      "copyLink": "Link kopiëren",
+      "copyEmbed": "Insluitcode kopiëren",
+      "downloadCsv": "CSV downloaden",
+      "revokeLink": "Link intrekken"
+    },
+    "toasts": {
+      "copySuccess": "Gekopieerd!",
+      "copyError": "Kopiëren wordt niet ondersteund op dit apparaat.",
+      "embedCopySuccess": "Insluitcode gekopieerd!",
+      "createLinkError": "Kon geen deel-link aanmaken.",
+      "revokeSuccess": "Deellink ingetrokken",
+      "revokeError": "Kon de link niet intrekken.",
+      "csvError": "Kon CSV niet downloaden."
+    },
+    "confirm": {
+      "revokeTitle": "Deze deel-URL intrekken?",
+      "revokeMessage": "Hiermee wordt de huidige link direct uitgeschakeld.",
+      "revokeConfirm": "Link intrekken"
+    }
+  },
+  "moveItemModal": {
+    "title": "‘{{name}}’ verplaatsen",
+    "labels": {
+      "category": "Categorie",
+      "position": "Positie in categorie"
+    },
+    "topPosition": "{{pos}} (bovenaan)",
+    "buttons": {
+      "move": "Item verplaatsen"
+    },
+    "a11y": {
+      "close": "Venster item verplaatsen sluiten"
     }
   }
 }

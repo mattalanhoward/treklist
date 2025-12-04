@@ -7,7 +7,19 @@
     "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",
-    "close": "Close"
+    "close": "Close",
+    "saving": "Saving…"
+  },
+  "validation": {
+    "nameRequired": "Name is required.",
+    "weightInvalid": "Enter a valid weight.",
+    "weightNegative": "Weight cannot be negative.",
+    "priceInvalid": "Enter a valid price.",
+    "priceNegative": "Price cannot be negative.",
+    "urlInvalid": "Link must be a valid URL."
+  },
+  "confirm": {
+    "defaultTitle": "Are you sure?"
   },
   "language": {
     "english": "English",
@@ -120,6 +132,260 @@
       "createSampleFailed": "Could not create a sample list.",
       "listGone": "This gear list no longer exists",
       "loadListFailed": "Could not load this gear list"
+    }
+  },
+  "packStats": {
+    "base": "Base",
+    "worn": "Worn",
+    "consumable": "Consumable",
+    "total": "Total"
+  },
+  "gearList": {
+    "menu": {
+      "listOptionsA11y": "List options",
+      "headerPreferences": "List preferences",
+      "background": "Background",
+      "myImages": "My images",
+      "defaultImages": "Default images",
+      "colors": "Colors",
+      "viewEditDetails": "View / edit details",
+      "viewAsChecklist": "View as checklist",
+      "copyList": "Copy list",
+      "shareList": "Share list",
+      "deleteList": "Delete list"
+    },
+
+    "confirm": {
+      "removeItemTitle": "Remove this item?",
+      "removeItemConfirm": "Remove item",
+
+      "deleteCategoryTitle": "Delete “{{title}}”?",
+      "deleteCategoryTitleGeneric": "Delete this category?",
+      "deleteCategoryMessage": "Items in this category will stay in your list but move to “Unsorted”.",
+      "deleteCategoryConfirm": "Delete category",
+
+      "deleteListTitle": "Delete “{{title}}”?",
+      "deleteListMessage": "This will permanently delete this list and all of its items.",
+      "deleteListConfirm": "Delete list"
+    },
+
+    "toasts": {
+      "itemDeleted": "Item deleted",
+      "itemDeleteFailed": "Could not delete item.",
+
+      "categoryNameEmpty": "Category name cannot be empty.",
+      "categoryAdded": "Category added",
+      "categoryAddFailed": "Could not add category.",
+      "categoryDeleted": "Category deleted",
+      "categoryDeleteFailed": "Could not delete category.",
+      "categoryRenamed": "Category renamed",
+      "categoryRenameFailed": "Could not rename category.",
+
+      "quantityUpdateFailed": "Could not update quantity.",
+
+      "listRenamed": "List renamed",
+      "listRenameFailed": "Could not rename list.",
+
+      "backgroundUpdateFailed": "Could not update background.",
+      "backgroundImageUpdated": "Background image updated.",
+      "imageTooLargeUnder5MB": "Image must be smaller than 5 MB.",
+      "imageTooLargeExplicit": "Image is too large. Please upload a file under 5 MB.",
+      "imageUploadFailed": "Image upload failed.",
+
+      "listCopied": "List copied",
+      "listCopyFailed": "Could not copy list.",
+
+      "listDeleted": "List deleted",
+      "listDeleteFailed": "Could not delete list."
+    },
+
+    "addCategory": {
+      "button": "Add category",
+      "inlinePlaceholder": "New category name",
+      "columnPlaceholder": "New category name"
+    }
+  },
+  "cookieBanner": {
+    "text": {
+      "prefix": "{{appName}} uses",
+      "essential": "essential cookies",
+      "middle": "to keep the site secure and running, and optional",
+      "analytics": "analytics cookies",
+      "suffix": "to understand how the site is used and improve it."
+    },
+    "buttons": {
+      "readPolicy": "Read our Cookie Policy",
+      "settings": "Cookie settings",
+      "acceptAll": "Accept all"
+    }
+  },
+  "emailOptInBanner": {
+    "text": {
+      "body": "Want occasional updates on new {{appName}} features and tips? No spam, just helpful stuff a few times a year."
+    },
+    "buttons": {
+      "noThanks": "No thanks",
+      "yesEmailMe": "Yes, email me"
+    },
+    "states": {
+      "saving": "Saving…"
+    },
+    "toast": {
+      "success": "Thanks! We’ll occasionally email you about new {{appName}} features and tips.",
+      "error": "Couldn’t update your email preference. Please try again."
+    }
+  },
+  "footerLegal": {
+    "brandLine": "© {{year}} TrekList",
+    "companyLine": "Tall Joe Hikes — KvK 98785419",
+    "links": {
+      "privacy": "Privacy",
+      "cookies": "Cookie Policy",
+      "cookieSettings": "Cookie Settings",
+      "terms": "Terms",
+      "affiliateDisclosure": "Affiliate Disclosure",
+      "imprint": "Imprint / Contact"
+    }
+  },
+  "globalItemModal": {
+    "title": "New gear item",
+    "tabs": {
+      "import": "Import",
+      "custom": "Custom"
+    },
+    "buttons": {
+      "clearSelection": "Clear selection"
+    },
+    "labels": {
+      "itemType": "Item type",
+      "name": "Name",
+      "brand": "Brand",
+      "link": "Link",
+      "weight": "Weight ({{unit}})",
+      "price": "Price ({{currency}})",
+      "description": "Description"
+    },
+    "placeholders": {
+      "itemType": "Tent",
+      "name": "Rainbow",
+      "brand": "Tarptent",
+      "link": "tarptent.com",
+      "weightGrams": "e.g. 350",
+      "weightOunces": "e.g. 12.6"
+    },
+    "messages": {
+      "affiliateLinkLockedTitle": "Link is locked",
+      "affiliateLinkLockedBody": "Link is set by the merchant for imported items.",
+      "affiliateNote": "Link and price are set by the merchant for imported items.",
+      "cancelHintImport": "Pick a product (Import) or switch to Custom."
+    },
+    "toast": {
+      "created": "Global item created!",
+      "createFailed": "Failed to create item."
+    }
+  },
+  "globalItemEditModal": {
+    "titleGlobal": "Edit global item",
+    "titleList": "Edit gear item",
+    "buttons": {
+      "delete": "Delete item",
+      "saving": "Saving…"
+    },
+    "toast": {
+      "updated": "Item updated",
+      "updatedEverywhere": "Item updated everywhere",
+      "deleted": "Item deleted",
+      "deleteFailed": "Delete failed",
+      "saveFailed": "Failed to save. Please try again."
+    },
+    "confirm": {
+      "saveListTitle": "Save changes to this item?",
+      "saveGlobalTitle": "Apply changes to every instance?",
+      "saveListConfirm": "Save changes",
+      "saveGlobalConfirm": "Yes, update all",
+      "deleteTitle": "Delete this gear item?",
+      "deleteMessage": "This will remove it from your gear items and all of your gear lists.",
+      "deleteConfirm": "Delete item"
+    }
+  },
+  "affiliateProductPicker": {
+    "labels": {
+      "search": "Search",
+      "brand": "Brand",
+      "itemType": "Item Type"
+    },
+    "placeholders": {
+      "search": "Brand or product (e.g., Osprey pack)"
+    },
+    "options": {
+      "all": "All",
+      "noBrands": "No brands for this selection",
+      "noItemTypes": "No item types for this selection"
+    },
+    "messages": {
+      "noResults": "No results for that selection.",
+      "loading": "Loading…",
+      "showingCount": "Showing {{shown}}/{{total}}"
+    },
+    "buttons": {
+      "useProduct": "Use this product"
+    },
+    "errors": {
+      "searchFailed": "Search failed."
+    }
+  },
+  "shareModal": {
+    "title": "Share this gear list",
+    "fields": {
+      "shareUrlLabel": "Shareable URL",
+      "shareUrlPlaceholderGenerating": "Generating…",
+      "shareUrlPlaceholderNone": "No active link",
+      "shareUrlHelp": "Anyone with this link can view a read-only version of your list.",
+      "embedLabel": "Embeddable snippet",
+      "embedPlaceholderGenerating": "Generating…",
+      "embedPlaceholderNone": "No active link",
+      "csvLabel": "Export CSV",
+      "csvHelp": "Download a CSV of this shared list."
+    },
+    "buttons": {
+      "copyLink": "Copy",
+      "copyEmbed": "Copy",
+      "downloadCsv": "Download",
+      "revokeLink": "Revoke link"
+    },
+    "tooltips": {
+      "copyLink": "Copy link",
+      "copyEmbed": "Copy embed",
+      "downloadCsv": "Download CSV",
+      "revokeLink": "Revoke link"
+    },
+    "toasts": {
+      "copySuccess": "Copied!",
+      "copyError": "Copy not supported on this device.",
+      "embedCopySuccess": "Embed copied!",
+      "createLinkError": "Could not create share link",
+      "revokeSuccess": "Share link revoked",
+      "revokeError": "Could not revoke link",
+      "csvError": "Could not download CSV"
+    },
+    "confirm": {
+      "revokeTitle": "Revoke this share URL?",
+      "revokeMessage": "This will immediately disable the current link.",
+      "revokeConfirm": "Revoke link"
+    }
+  },
+  "moveItemModal": {
+    "title": "Move “{{name}}”",
+    "labels": {
+      "category": "Category",
+      "position": "Position in category"
+    },
+    "topPosition": "{{pos}} (top)",
+    "buttons": {
+      "move": "Move item"
+    },
+    "a11y": {
+      "close": "Close move item modal"
     }
   }
 }
