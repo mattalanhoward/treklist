@@ -35,7 +35,27 @@
     "language": "Taal",
     "region": "Regio",
     "legal": "Juridisch & beleid",
-    "logout": "Uitloggen"
+    "logout": "Uitloggen",
+    "themeOptions": {
+      "forest": "Bos",
+      "snow": "Sneeuw",
+      "alpine": "Alpen",
+      "desert": "Woestijn",
+      "light": "Licht",
+      "dark": "Donker"
+    },
+    "regions": {
+      "ca": "Canada",
+      "fr": "Frankrijk",
+      "de": "Duitsland",
+      "it": "Italië",
+      "nl": "Nederland",
+      "gb": "Verenigd Koninkrijk",
+      "us": "Verenigde Staten"
+    },
+    "a11y": {
+      "openAccountMenu": "Accountmenu openen"
+    }
   },
   "sidebar": {
     "gearListsTitle": "Paklijsten",
@@ -54,7 +74,8 @@
     "title": {
       "login": "Inloggen",
       "register": "Maak je account aan",
-      "verify": "Controleer je e-mail"
+      "verify": "Controleer je e-mail",
+      "forgotPassword": "Wachtwoord vergeten"
     },
     "tabs": {
       "login": "Inloggen",
@@ -75,7 +96,9 @@
       "createAccountLoading": "Bezig met aanmaken…",
       "verifyCheck": "Ik heb mijn e-mail bevestigd",
       "verifyCheckLoading": "Bezig met controleren…",
-      "verifyResend": "Verificatie-e-mail opnieuw versturen"
+      "verifyResend": "Verificatie-e-mail opnieuw versturen",
+      "forgotPasswordSend": "Resetlink versturen",
+      "forgotPasswordSendLoading": "Bezig met versturen…"
     },
     "errors": {
       "loginMissingFields": "Vul je e-mail en wachtwoord in.",
@@ -103,11 +126,74 @@
       "welcomeBack": "Welkom terug!",
       "verificationEmailResent": "Verificatie-e-mail opnieuw verstuurd.",
       "resendFailed": "Verificatie-e-mail kon niet opnieuw worden verstuurd.",
-      "notVerifiedYet": "Nog niet bevestigd — probeer het over een paar seconden opnieuw."
+      "notVerifiedYet": "Nog niet bevestigd — probeer het over een paar seconden opnieuw.",
+      "forgotPasswordEmailSent": "Controleer je inbox voor instructies om je wachtwoord te resetten.",
+      "forgotPasswordFailed": "Reset-e-mail kon niet worden verstuurd."
     },
     "a11y": {
       "closeModal": "Sluit venster"
+    },
+    "reset": {
+      "title": "Wachtwoord resetten",
+      "labels": {
+        "newPassword": "Nieuw wachtwoord",
+        "confirmPassword": "Bevestig wachtwoord"
+      },
+      "buttons": {
+        "submit": "Wachtwoord resetten",
+        "submitting": "Bezig met resetten…"
+      },
+      "invalidLink": "Ongeldige resetlink.",
+      "errors": {
+        "passwordsDontMatch": "Wachtwoorden komen niet overeen."
+      },
+      "toast": {
+        "success": "Wachtwoord gereset! Log opnieuw in.",
+        "failed": "Resetten mislukt"
+      }
     }
+  },
+  "accountModal": {
+    "title": "Accountinstellingen",
+    "tabs": {
+      "profile": "Profiel",
+      "security": "Beveiliging"
+    },
+    "labels": {
+      "email": "E-mail",
+      "trailname": "Trailnaam",
+      "currentPassword": "Huidig wachtwoord",
+      "newPassword": "Nieuw wachtwoord",
+      "confirmNewPassword": "Nieuw wachtwoord bevestigen"
+    },
+    "messages": {
+      "emailImmutable": "E-mail kan hier niet worden aangepast",
+      "emailChangeSupport": "Neem contact op met support om je e-mail te wijzigen.",
+      "marketingHint": "Je kunt deze voorkeur op elk moment aanpassen."
+    },
+    "errors": {
+      "passwordMismatch": "Nieuw wachtwoord en bevestiging komen niet overeen.",
+      "currentPasswordRequired": "Voer je huidige wachtwoord in om het te wijzigen."
+    },
+    "toast": {
+      "loadFailed": "Accountinstellingen konden niet worden geladen.",
+      "nothingToSave": "Niets om op te slaan",
+      "saveSuccess": "Instellingen opgeslagen",
+      "saveFailed": "Instellingen opslaan mislukt. Probeer het opnieuw."
+    },
+    "loading": "Bezig met laden…"
+  },
+  "verifyEmailPage": {
+    "loading": "Je e-mailadres wordt gecontroleerd…",
+    "missingToken": "Er is geen verificatietoken meegegeven.",
+    "fallbackSuccessMessage": "Je e-mailadres is bevestigd.",
+    "fallbackErrorMessage": "Verificatie mislukt.",
+    "successTitle": "E-mailadres bevestigd",
+    "successHelp": "Je kunt dit tabblad sluiten en teruggaan naar {{appName}} in je oorspronkelijke venster. Als je wilt, kun je {{appName}} ook vanaf hier openen.",
+    "successButton": "{{appName}} openen",
+    "errorTitle": "Probleem bij e-mailverificatie",
+    "errorHelp": "De verificatielink is mogelijk verlopen of al gebruikt. Denk je dat je e-mailadres al is bevestigd, probeer dan in te loggen via de inlogpagina van {{appName}}. Werkt dat niet, start dan het registratieproces opnieuw met hetzelfde e-mailadres zodat je een nieuwe verificatielink ontvangt.",
+    "errorLoginLink": "Ga naar inloggen"
   },
   "dashboard": {
     "loadingLists": "Je paklijsten worden geladen…",
@@ -196,13 +282,27 @@
       "listCopyFailed": "Lijst kon niet worden gekopieerd.",
 
       "listDeleted": "Lijst verwijderd",
-      "listDeleteFailed": "Lijst kon niet worden verwijderd."
+      "listDeleteFailed": "Lijst kon niet worden verwijderd.",
+
+      "toggleWornFailed": "Status 'gedragen' kon niet worden bijgewerkt.",
+      "toggleConsumableFailed": "Status 'verbruikbaar' kon niet worden bijgewerkt."
     },
 
     "addCategory": {
       "button": "Categorie toevoegen",
       "inlinePlaceholder": "Nieuwe categorienaam",
       "columnPlaceholder": "Nieuwe categorienaam"
+    },
+    "items": {
+      "addButton": "Item toevoegen",
+      "editQuantityTitle": "Klik om aantal te wijzigen",
+      "viewEditDetails": "Details bekijken/bewerken",
+      "moveItem": "Item verplaatsen",
+      "toggleConsumable": "Verbruikbaar aan/uit",
+      "toggleWorn": "Gedragen aan/uit",
+      "openProductPageTitle": "Productpagina openen",
+      "openProductPageAria": "Productpagina openen (betaalde link)",
+      "itemOptionsA11y": "Itemopties"
     }
   },
   "cookieBanner": {
@@ -245,6 +345,17 @@
       "terms": "Voorwaarden",
       "affiliateDisclosure": "Affiliate-verklaring",
       "imprint": "Imprint / contact"
+    }
+  },
+  "publicHeader": {
+    "nav": {
+      "features": "Functies",
+      "recommendedGearList": "Aanbevolen paklijst",
+      "howItWorks": "Hoe het werkt"
+    },
+    "auth": {
+      "login": "Inloggen",
+      "getStarted": "Aan de slag"
     }
   },
   "globalItemModal": {
@@ -306,6 +417,56 @@
       "deleteTitle": "Dit uitrustingsitem verwijderen?",
       "deleteMessage": "Dit verwijdert het uit je uitrustingsitems en al je gearlists.",
       "deleteConfirm": "Item verwijderen"
+    }
+  },
+  "addGearItemModal": {
+    "title": "Uitrustingsitems toevoegen",
+    "a11y": {
+      "close": "Venster uitrustingsitems toevoegen sluiten"
+    },
+    "searchPlaceholder": "Zoek globale items…",
+    "badges": {
+      "added": "Al toegevoegd"
+    },
+    "empty": "Geen items gevonden",
+    "buttons": {
+      "add": "{{count}} item toevoegen",
+      "add_plural": "{{count}} items toevoegen",
+      "adding": "Items toevoegen…"
+    },
+    "toasts": {
+      "selectAtLeastOne": "Selecteer minimaal één item.",
+      "alreadyInList": "Sommige items staan al in deze lijst.",
+      "addSuccess": "Items succesvol toegevoegd.",
+      "addFailed": "Een of meer items konden niet worden toegevoegd."
+    }
+  },
+  "gearListDetailsModal": {
+    "title": "Lijstgegevens",
+    "labels": {
+      "weightBreakdown": "Gewichtsverdeling",
+      "name": "Naam",
+      "tripStart": "Start van de tocht",
+      "tripEnd": "Einde van de tocht",
+      "location": "Locatie",
+      "notes": "Notities / omschrijving"
+    },
+    "placeholders": {
+      "date": "Kies een datum"
+    },
+    "stats": {
+      "totalCost": "Totale kosten:",
+      "itemsCount": "Aantal items:"
+    },
+    "confirm": {
+      "discardTitle": "Wijzigingen negeren?",
+      "discardMessage": "Je hebt niet-opgeslagen wijzigingen. Weet je zeker dat je wilt sluiten?",
+      "discardConfirm": "Negeren",
+      "discardCancel": "Verder bewerken"
+    },
+    "toast": {
+      "saveSuccess": "Lijstgegevens opgeslagen.",
+      "saveFailed": "Lijstgegevens konden niet worden opgeslagen. Probeer het opnieuw."
     }
   },
   "affiliateProductPicker": {
@@ -374,6 +535,37 @@
       "revokeConfirm": "Link intrekken"
     }
   },
+  "checklistView": {
+    "fallbackTitle": "Paklijst",
+    "titleSuffix": "Checklist",
+    "error": {
+      "loadFailed": "Deze lijst kon niet worden geladen."
+    },
+    "buttons": {
+      "backToDashboard": "Terug naar dashboard",
+      "reset": "Resetten",
+      "print": "Printen"
+    },
+    "a11y": {
+      "backToDashboard": "Terug naar het dashboard",
+      "reset": "Alle vinkjes resetten",
+      "print": "Checklist afdrukken"
+    },
+    "progress": {
+      "packed": "Ingepakt {{packed}} / {{total}}",
+      "categoryPacked": "{{packed}} / {{total}}"
+    },
+    "nightSingular": "nacht",
+    "nightPlural": "nachten",
+    "legend": {
+      "worn": "gedragen",
+      "consumable": "verbruikbaar"
+    },
+    "print": {
+      "totalItems": "Totaal aantal items: {{total}}",
+      "categoryTotal": "Totaal: {{count}}"
+    }
+  },
   "moveItemModal": {
     "title": "‘{{name}}’ verplaatsen",
     "labels": {
@@ -387,5 +579,92 @@
     "a11y": {
       "close": "Venster item verplaatsen sluiten"
     }
+  },
+  "legalModal": {
+    "title": "Juridisch & cookies",
+    "buttons": {
+      "close": "Sluiten"
+    },
+    "a11y": {
+      "close": "Sluit juridische informatie"
+    },
+    "tabs": {
+      "privacy": {
+        "label": "Privacy",
+        "subtitle": "Hoe we met je gegevens omgaan"
+      },
+      "cookies": {
+        "label": "Cookiebeleid",
+        "subtitle": "Welke cookies we gebruiken"
+      },
+      "cookieSettings": {
+        "label": "Cookie-instellingen",
+        "subtitle": "Optionele cookies beheren"
+      },
+      "terms": {
+        "label": "Voorwaarden",
+        "subtitle": "Gebruik & beperkingen"
+      },
+      "affiliate": {
+        "label": "Affiliate-verklaring",
+        "subtitle": "Hoe TrekList geld verdient"
+      },
+      "imprint": {
+        "label": "Imprint / contact",
+        "subtitle": "Bedrijfs- & contactgegevens"
+      }
+    }
+  },
+  "publicList": {
+    "documentTitleSuffix": "Openbare uitrustingslijst",
+
+    "status": {
+      "loading": "Laden…"
+    },
+
+    "errors": {
+      "loadFailed": "Lijst kon niet worden geladen",
+      "copyFailedAlert": "Deze lijst kon niet worden gekopieerd."
+    },
+
+    "stats": {
+      "base": "Basisgewicht",
+      "worn": "Gedragen gewicht",
+      "consumable": "Verbruiksgewicht",
+      "total": "Totaalgewicht"
+    },
+
+    "cta": {
+      "ariaLabel": "Pas deze lijst aan in TrekList",
+      "labelDesktop": "Deze lijst aanpassen",
+      "labelMobile": "Deze lijst aanpassen"
+    },
+
+    "categories": {
+      "uncategorized": "Zonder categorie",
+      "untitled": "Categorie"
+    },
+
+    "item": {
+      "consumable": "Verbruikbaar",
+      "worn": "Gedragen",
+      "quantity": "Aantal",
+      "viewProduct": "Bekijk product",
+      "viewProductPaid": "Bekijk product (betaalde link)"
+    }
+  },
+  "affiliateDisclosure": {
+    "label": "Disclosure:",
+    "public": {
+      "bodyPrefix": "Deze pagina bevat affiliate links (EU & VS). Als je via een link iets koopt, kan",
+      "actor": "TrekList of de eigenaar van de lijst",
+      "bodySuffix": "een commissie verdienen zonder extra kosten voor jou."
+    },
+    "private": {
+      "bodyPrefix": "Deze pagina bevat affiliate links (EU & VS). Als je via een link iets koopt, kan",
+      "actor": "TrekList",
+      "bodySuffix": "een commissie verdienen zonder extra kosten voor jou."
+    },
+    "amazon": "Als Amazon-partner verdien ik aan in aanmerking komende aankopen."
   }
 }

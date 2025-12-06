@@ -19,6 +19,7 @@ import { useResolvedPrice } from "../hooks/useResolvedPrice";
 import { formatCurrency } from "../utils/formatCurrency";
 import DropdownMenu from "./DropdownMenu";
 import GlobalItemEditModal from "./GlobalItemEditModal";
+import { useTranslation } from "react-i18next";
 
 export default function SortableItem({
   item,
@@ -33,6 +34,7 @@ export default function SortableItem({
   onMoveItem,
   onItemUpdated,
 }) {
+  const { t } = useTranslation("common");
   const { currency, locale } = useUserSettings();
   const resolved = useResolvedPrice(item); // {amount,currency,merchant,deeplink,source} | null
   const [wornLocal, setWornLocal] = useState(item.worn);
@@ -80,8 +82,8 @@ export default function SortableItem({
         href={href}
         context="private"
         className={className}
-        title="Open product page"
-        ariaLabel="Open product page (paid link)"
+        title={t("gearList.items.openProductPageTitle")}
+        ariaLabel={t("gearList.items.openProductPageAria")}
       >
         <FaShoppingCart className="w-4 h-4" />
       </AffiliateGateLink>
@@ -116,10 +118,10 @@ export default function SortableItem({
       .patch(`/dashboard/${listId}/categories/${catId}/items/${item._id}`, {
         worn: newWorn,
       })
-      .catch((err) => {
+      .catch(() => {
         setWornLocal(!newWorn);
         fetchItems?.(catId);
-        toast.error(err.message || "Failed to toggle worn");
+        toast.error(t("gearList.toasts.toggleWornFailed"));
       });
 
     onToggleWorn?.(catId, item._id, newWorn);
@@ -134,10 +136,10 @@ export default function SortableItem({
       .patch(`/dashboard/${listId}/categories/${catId}/items/${item._id}`, {
         consumable: newConsumable,
       })
-      .catch((err) => {
+      .catch(() => {
         setConsumableLocal(!newConsumable);
-        fetchItems(catId);
-        toast.error(err.message || "Failed to toggle consumable");
+        fetchItems?.(catId);
+        toast.error(t("gearList.toasts.toggleConsumableFailed"));
       });
 
     onToggleConsumable?.(catId, item._id, newConsumable);
@@ -180,11 +182,11 @@ export default function SortableItem({
           .patch(`/dashboard/${listId}/categories/${catId}/items/${itemId}`, {
             quantity: newQty,
           })
-          .catch((err) => {
+          .catch(() => {
             // rollback on error
             setLocalQty(qty);
-            fetchItems(catId);
-            toast.error(err.message || "Failed to update quantity");
+            fetchItems?.(catId);
+            toast.error(t("gearList.toasts.quantityUpdateFailed"));
           });
       }
 
@@ -210,7 +212,7 @@ export default function SortableItem({
       <span
         onClick={() => setEditing(true)}
         className="cursor-pointer select-none px-1"
-        title="Click to edit quantity"
+        title={t("gearList.items.editQuantityTitle")}
       >
         {localQty}
       </span>
@@ -226,23 +228,23 @@ export default function SortableItem({
     () => [
       {
         key: "details",
-        label: "View / Edit Details",
+        label: t("gearList.items.viewEditDetails"),
         onClick: () => setDetailsOpen(true),
       },
       {
         key: "remove",
-        label: "Remove Item",
+        label: t("gearList.confirm.removeItemConfirm"),
         onClick: () => onDelete?.(catId, item._id),
       },
     ],
-    [catId, item._id, onDelete]
+    [catId, item._id, onDelete, t]
   );
 
   const mobileMenuItems = useMemo(() => {
     const base = [
       {
         key: "details",
-        label: "View / Edit Details",
+        label: t("gearList.items.viewEditDetails"),
         onClick: () => setDetailsOpen(true),
       },
     ];
@@ -250,19 +252,19 @@ export default function SortableItem({
     if (onMoveItem) {
       base.push({
         key: "move",
-        label: "Move Item",
+        label: t("gearList.items.moveItem"),
         onClick: () => onMoveItem(catId, item),
       });
     }
 
     base.push({
       key: "remove",
-      label: "Remove Item",
+      label: t("gearList.confirm.removeItemConfirm"),
       onClick: () => onDelete?.(catId, item._id),
     });
 
     return base;
-  }, [catId, item, onDelete, onMoveItem]);
+  }, [catId, item, onDelete, onMoveItem, t]);
 
   const twoRowVisibilityClasses = isListMode ? "xl:hidden" : "sm:hidden";
 
@@ -293,8 +295,8 @@ export default function SortableItem({
             trigger={
               <button
                 type="button"
-                title="Item options"
-                aria-label="Item options"
+                title={t("gearList.menu.listOptionsA11y")}
+                aria-label={t("gearList.menu.listOptionsA11y")}
                 className="text-secondary hover:text-secondary/80 focus:outline-none"
               >
                 <FaEllipsisH />
@@ -314,14 +316,16 @@ export default function SortableItem({
           {/* Right group (mobile): 🍴 | 👕 | qty | 🛒 */}
           <div className="flex items-center gap-3">
             <FaUtensils
-              title="Toggle consumable"
+              title={t("gearList.items.toggleConsumable")}
+              aria-label={t("gearList.items.toggleConsumable")}
               onClick={handleConsumableClick}
               className={`cursor-pointer ${
                 consumableLocal ? "text-green-600" : "opacity-30"
               }`}
             />
             <FaTshirt
-              title="Toggle worn"
+              title={t("gearList.items.toggleWorn")}
+              aria-label={t("gearList.items.toggleWorn")}
               onClick={handleWornClick}
               className={`cursor-pointer ${
                 wornLocal ? "text-blue-600" : "opacity-30"
@@ -379,7 +383,8 @@ export default function SortableItem({
           {/* 6) Consumable */}
           <div className="justify-self-center">
             <FaUtensils
-              title="Toggle consumable"
+              title={t("gearList.items.toggleConsumable")}
+              aria-label={t("gearList.items.toggleConsumable")}
               onClick={handleConsumableClick}
               className={`cursor-pointer ${
                 consumableLocal ? "text-green-600" : "opacity-30"
@@ -390,7 +395,8 @@ export default function SortableItem({
           {/* 7) Worn */}
           <div className="justify-self-center">
             <FaTshirt
-              title="Toggle worn"
+              title={t("gearList.items.toggleWorn")}
+              aria-label={t("gearList.items.toggleWorn")}
               onClick={handleWornClick}
               className={`cursor-pointer ${
                 wornLocal ? "text-blue-600" : "opacity-30"
@@ -421,8 +427,8 @@ export default function SortableItem({
               trigger={
                 <button
                   type="button"
-                  title="Item options"
-                  aria-label="Item options"
+                  title={t("gearList.menu.listOptionsA11y")}
+                  aria-label={t("gearList.menu.listOptionsA11y")}
                   className="inline-flex items-center justify-center text-secondary hover:text-secondary/80 focus:outline-none leading-none"
                 >
                   <FaEllipsisH className="w-4 h-4 align-middle" />
@@ -453,8 +459,8 @@ export default function SortableItem({
               trigger={
                 <button
                   type="button"
-                  title="Item options"
-                  aria-label="Item options"
+                  title={t("gearList.menu.listOptionsA11y")}
+                  aria-label={t("gearList.menu.listOptionsA11y")}
                   className="inline-flex items-center justify-center text-secondary hover:text-secondary/80 focus:outline-none leading-none"
                 >
                   <FaEllipsisH />
@@ -484,8 +490,8 @@ export default function SortableItem({
             </div>
             <div className="grid grid-cols-[16px_16px_auto_16px] items-center justify-end gap-x-3">
               <FaUtensils
-                title="Toggle consumable"
-                aria-label="Toggle consumable"
+                title={t("gearList.items.toggleConsumable")}
+                aria-label={t("gearList.items.toggleConsumable")}
                 data-testid="utensils"
                 onClick={handleConsumableClick}
                 className={`cursor-pointer ${
@@ -493,8 +499,8 @@ export default function SortableItem({
                 }`}
               />
               <FaTshirt
-                title="Toggle worn"
-                aria-label="Toggle worn"
+                title={t("gearList.items.toggleWorn")}
+                aria-label={t("gearList.items.toggleWorn")}
                 data-testid="tshirt"
                 onClick={handleWornClick}
                 className={`cursor-pointer ${

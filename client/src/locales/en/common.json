@@ -35,7 +35,27 @@
     "language": "Language",
     "region": "Region",
     "legal": "Legal & Policies",
-    "logout": "Log out"
+    "logout": "Log out",
+    "themeOptions": {
+      "forest": "Forest",
+      "snow": "Snow",
+      "alpine": "Alpine",
+      "desert": "Desert",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "regions": {
+      "ca": "Canada",
+      "fr": "France",
+      "de": "Germany",
+      "it": "Italy",
+      "nl": "Netherlands",
+      "gb": "United Kingdom",
+      "us": "United States"
+    },
+    "a11y": {
+      "openAccountMenu": "Open account menu"
+    }
   },
   "sidebar": {
     "gearListsTitle": "Gear Lists",
@@ -54,7 +74,8 @@
     "title": {
       "login": "Sign In",
       "register": "Create your account",
-      "verify": "Check your email"
+      "verify": "Check your email",
+      "forgotPassword": "Forgot password"
     },
     "tabs": {
       "login": "Sign In",
@@ -75,7 +96,9 @@
       "createAccountLoading": "Creating…",
       "verifyCheck": "I’ve verified my email",
       "verifyCheckLoading": "Checking…",
-      "verifyResend": "Resend verification email"
+      "verifyResend": "Resend verification email",
+      "forgotPasswordSend": "Send reset link",
+      "forgotPasswordSendLoading": "Sending…"
     },
     "errors": {
       "loginMissingFields": "Please enter your email and password.",
@@ -103,11 +126,74 @@
       "welcomeBack": "Welcome back!",
       "verificationEmailResent": "Verification email resent.",
       "resendFailed": "Unable to resend verification email.",
-      "notVerifiedYet": "Not verified yet — try again in a few seconds."
+      "notVerifiedYet": "Not verified yet — try again in a few seconds.",
+      "forgotPasswordEmailSent": "Check your inbox for reset instructions.",
+      "forgotPasswordFailed": "Failed to send reset email."
     },
     "a11y": {
       "closeModal": "Close modal"
+    },
+    "reset": {
+      "title": "Reset password",
+      "labels": {
+        "newPassword": "New password",
+        "confirmPassword": "Confirm password"
+      },
+      "buttons": {
+        "submit": "Reset password",
+        "submitting": "Resetting…"
+      },
+      "invalidLink": "Invalid reset link.",
+      "errors": {
+        "passwordsDontMatch": "Passwords do not match."
+      },
+      "toast": {
+        "success": "Password reset! Please log in.",
+        "failed": "Reset failed"
+      }
     }
+  },
+  "accountModal": {
+    "title": "Account settings",
+    "tabs": {
+      "profile": "Profile",
+      "security": "Security"
+    },
+    "labels": {
+      "email": "Email",
+      "trailname": "Trail name",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "confirmNewPassword": "Confirm new password"
+    },
+    "messages": {
+      "emailImmutable": "Email can’t be changed here",
+      "emailChangeSupport": "To change your email, contact support.",
+      "marketingHint": "You can change this preference anytime."
+    },
+    "errors": {
+      "passwordMismatch": "New password and confirmation do not match.",
+      "currentPasswordRequired": "You must enter your current password to change it."
+    },
+    "toast": {
+      "loadFailed": "Failed to load account settings.",
+      "nothingToSave": "Nothing to save",
+      "saveSuccess": "Settings saved",
+      "saveFailed": "Failed to save settings. Please try again."
+    },
+    "loading": "Loading…"
+  },
+  "verifyEmailPage": {
+    "loading": "Verifying your email…",
+    "missingToken": "No verification token was provided.",
+    "fallbackSuccessMessage": "Your email has been verified.",
+    "fallbackErrorMessage": "Verification failed.",
+    "successTitle": "Email verified",
+    "successHelp": "You can close this tab and return to {{appName}} in your original window. If you prefer, you can also open {{appName}} from here.",
+    "successButton": "Open {{appName}}",
+    "errorTitle": "Email verification problem",
+    "errorHelp": "The verification link may have expired or already been used. If you think your email is already verified, you can try signing in from the {{appName}} login page. If that doesn't work, please start the sign up process again with the same email so you can receive a fresh verification link.",
+    "errorLoginLink": "Go to Login"
   },
   "dashboard": {
     "loadingLists": "Loading your gear lists…",
@@ -196,13 +282,27 @@
       "listCopyFailed": "Could not copy list.",
 
       "listDeleted": "List deleted",
-      "listDeleteFailed": "Could not delete list."
+      "listDeleteFailed": "Could not delete list.",
+
+      "toggleWornFailed": "Could not update worn status.",
+      "toggleConsumableFailed": "Could not update consumable status."
     },
 
     "addCategory": {
       "button": "Add category",
       "inlinePlaceholder": "New category name",
       "columnPlaceholder": "New category name"
+    },
+    "items": {
+      "addButton": "Add item",
+      "editQuantityTitle": "Click to edit quantity",
+      "viewEditDetails": "View / Edit details",
+      "moveItem": "Move item",
+      "toggleConsumable": "Toggle consumable",
+      "toggleWorn": "Toggle worn",
+      "openProductPageTitle": "Open product page",
+      "openProductPageAria": "Open product page (paid link)",
+      "itemOptionsA11y": "Item options"
     }
   },
   "cookieBanner": {
@@ -233,6 +333,17 @@
     "toast": {
       "success": "Thanks! We’ll occasionally email you about new {{appName}} features and tips.",
       "error": "Couldn’t update your email preference. Please try again."
+    }
+  },
+  "publicHeader": {
+    "nav": {
+      "features": "Features",
+      "recommendedGearList": "Recommended Gear List",
+      "howItWorks": "How it works"
+    },
+    "auth": {
+      "login": "Log in",
+      "getStarted": "Get started"
     }
   },
   "footerLegal": {
@@ -308,6 +419,56 @@
       "deleteConfirm": "Delete item"
     }
   },
+  "addGearItemModal": {
+    "title": "Add gear item(s)",
+    "a11y": {
+      "close": "Close add gear items modal"
+    },
+    "searchPlaceholder": "Search global items…",
+    "badges": {
+      "added": "Added"
+    },
+    "empty": "No items found",
+    "buttons": {
+      "add": "Add {{count}} item",
+      "add_plural": "Add {{count}} items",
+      "adding": "Adding…"
+    },
+    "toasts": {
+      "selectAtLeastOne": "Please select at least one item.",
+      "alreadyInList": "Some items are already in this list.",
+      "addSuccess": "Items added successfully.",
+      "addFailed": "Failed to add one or more items."
+    }
+  },
+  "gearListDetailsModal": {
+    "title": "Gear list details",
+    "labels": {
+      "weightBreakdown": "Weight breakdown",
+      "name": "Name",
+      "tripStart": "Trip start",
+      "tripEnd": "Trip end",
+      "location": "Location",
+      "notes": "Notes / description"
+    },
+    "placeholders": {
+      "date": "Select date"
+    },
+    "stats": {
+      "totalCost": "Total cost:",
+      "itemsCount": "Number of items:"
+    },
+    "confirm": {
+      "discardTitle": "Discard changes?",
+      "discardMessage": "You have unsaved changes. Are you sure you want to close?",
+      "discardConfirm": "Discard",
+      "discardCancel": "Continue editing"
+    },
+    "toast": {
+      "saveSuccess": "List details saved.",
+      "saveFailed": "Failed to save list details. Please try again."
+    }
+  },
   "affiliateProductPicker": {
     "labels": {
       "search": "Search",
@@ -374,6 +535,37 @@
       "revokeConfirm": "Revoke link"
     }
   },
+  "checklistView": {
+    "fallbackTitle": "Gear list",
+    "titleSuffix": "Checklist",
+    "error": {
+      "loadFailed": "Could not load this list."
+    },
+    "buttons": {
+      "backToDashboard": "Back to Dashboard",
+      "reset": "Reset",
+      "print": "Print"
+    },
+    "a11y": {
+      "backToDashboard": "Back to dashboard",
+      "reset": "Reset all checks",
+      "print": "Print checklist"
+    },
+    "progress": {
+      "packed": "Packed {{packed}} / {{total}}",
+      "categoryPacked": "{{packed}} / {{total}}"
+    },
+    "nightSingular": "night",
+    "nightPlural": "nights",
+    "legend": {
+      "worn": "worn",
+      "consumable": "consumable"
+    },
+    "print": {
+      "totalItems": "Total items: {{total}}",
+      "categoryTotal": "Total: {{count}}"
+    }
+  },
   "moveItemModal": {
     "title": "Move “{{name}}”",
     "labels": {
@@ -387,5 +579,92 @@
     "a11y": {
       "close": "Close move item modal"
     }
+  },
+  "legalModal": {
+    "title": "Legal & Cookies",
+    "buttons": {
+      "close": "Close"
+    },
+    "a11y": {
+      "close": "Close legal information"
+    },
+    "tabs": {
+      "privacy": {
+        "label": "Privacy",
+        "subtitle": "How we handle your data"
+      },
+      "cookies": {
+        "label": "Cookie Policy",
+        "subtitle": "What cookies we use"
+      },
+      "cookieSettings": {
+        "label": "Cookie settings",
+        "subtitle": "Control optional cookies"
+      },
+      "terms": {
+        "label": "Terms",
+        "subtitle": "Usage & limitations"
+      },
+      "affiliate": {
+        "label": "Affiliate disclosure",
+        "subtitle": "How TrekList earns"
+      },
+      "imprint": {
+        "label": "Imprint / Contact",
+        "subtitle": "Business & contact details"
+      }
+    }
+  },
+  "publicList": {
+    "documentTitleSuffix": "Public Gear List",
+
+    "status": {
+      "loading": "Loading…"
+    },
+
+    "errors": {
+      "loadFailed": "Failed to load list",
+      "copyFailedAlert": "Could not copy this list."
+    },
+
+    "stats": {
+      "base": "Base weight",
+      "worn": "Worn",
+      "consumable": "Consumable",
+      "total": "Total weight"
+    },
+
+    "cta": {
+      "ariaLabel": "Customize this list in TrekList",
+      "labelDesktop": "Customize This List",
+      "labelMobile": "Customize This List"
+    },
+
+    "categories": {
+      "uncategorized": "Uncategorized",
+      "untitled": "Category"
+    },
+
+    "item": {
+      "consumable": "Consumable",
+      "worn": "Worn",
+      "quantity": "Quantity",
+      "viewProduct": "View product",
+      "viewProductPaid": "View product (paid link)"
+    }
+  },
+  "affiliateDisclosure": {
+    "label": "Disclosure:",
+    "public": {
+      "bodyPrefix": "This page includes affiliate links (EU & US). If you buy through a link,",
+      "actor": "TrekList or the list owner",
+      "bodySuffix": "may earn a commission at no extra cost to you."
+    },
+    "private": {
+      "bodyPrefix": "This page includes affiliate links (EU & US). If you buy through a link,",
+      "actor": "TrekList",
+      "bodySuffix": "may earn a commission at no extra cost to you."
+    },
+    "amazon": "As an Amazon Associate, I earn from qualifying purchases."
   }
 }

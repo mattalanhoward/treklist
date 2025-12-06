@@ -13,8 +13,8 @@ import AffiliateGateLink from "../components/AffiliateGateLink";
 import AffiliateDisclosureNotice from "../components/AffiliateDisclosureNotice";
 import { currencyForRegion, normalizeRegion } from "../utils/region";
 import { formatCurrency as fmtCurrency } from "../utils/formatCurrency";
-
 import api, { refreshAccessToken } from "../services/api";
+import { useTranslation } from "react-i18next";
 
 // tiny class combiner to avoid pulling in classnames
 const cx = (...parts) => parts.filter(Boolean).join(" ");
@@ -142,6 +142,7 @@ function fallbackCurrencyFromLinks(items = []) {
 }
 
 export default function PublicGearList() {
+  const { t } = useTranslation("common");
   const { token } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
@@ -164,7 +165,9 @@ export default function PublicGearList() {
       } catch (e) {
         console.error(e);
         if (!cancelled)
-          setError(e.response?.data?.error || "Failed to load list");
+          setError(
+            e.response?.data?.error || t("publicList.errors.loadFailed")
+          );
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -173,7 +176,7 @@ export default function PublicGearList() {
     return () => {
       cancelled = true;
     };
-  }, [token]);
+  }, [token, t]);
 
   // If ?copy=1 is present, attempt copy automatically after mount (post-auth return)
   React.useEffect(() => {
@@ -224,24 +227,41 @@ export default function PublicGearList() {
       }
       // Other errors → surface and stay
       console.error(e);
-      alert(e.response?.data?.error || "Could not copy this list.");
+      alert(e.response?.data?.error || t("publicList.errors.copyFailedAlert"));
     }
   }
 
   // document title + noindex
   React.useEffect(() => {
     const prevTitle = document.title;
-    if (data?.list?.title)
-      document.title = `${data.list.title} • Public Gear List`;
-    const meta = document.createElement("meta");
-    meta.name = "robots";
-    meta.content = "noindex";
-    document.head.appendChild(meta);
+    const robotsMetaExisting = document.querySelector('meta[name="robots"]');
+    const prevRobotsContent = robotsMetaExisting?.getAttribute("content") || "";
+
+    let robotsMeta = robotsMetaExisting;
+    if (!robotsMeta) {
+      robotsMeta = document.createElement("meta");
+      robotsMeta.name = "robots";
+      document.head.appendChild(robotsMeta);
+    }
+    robotsMeta.content = "noindex";
+
+    if (data?.list?.title) {
+      document.title = `${data.list.title} • ${t(
+        "publicList.documentTitleSuffix"
+      )}`;
+    }
+
     return () => {
       document.title = prevTitle;
-      document.head.removeChild(meta);
+      if (robotsMeta) {
+        if (robotsMetaExisting) {
+          robotsMeta.content = prevRobotsContent;
+        } else {
+          document.head.removeChild(robotsMeta);
+        }
+      }
     };
-  }, [data]);
+  }, [data, t]);
 
   // ---- Compute stats for PackStats (grams in, component handles display) ----
   function computeStatsPublic(items = []) {
@@ -275,17 +295,27 @@ export default function PublicGearList() {
   // compact, icon-only stats row that follows the unit toggle
   function StatsRow({ className = "" }) {
     const chips = [
-      { key: "base", title: "Base", icon: BsBackpack4, value: stats.base },
-      { key: "worn", title: "Worn", icon: FaTshirt, value: stats.worn },
+      {
+        key: "base",
+        title: t("publicList.stats.base"),
+        icon: BsBackpack4,
+        value: stats.base,
+      },
+      {
+        key: "worn",
+        title: t("publicList.stats.worn"),
+        icon: FaTshirt,
+        value: stats.worn,
+      },
       {
         key: "consumable",
-        title: "Consumable",
+        title: t("publicList.stats.consumable"),
         icon: FaUtensils,
         value: stats.consumable,
       },
       {
         key: "total",
-        title: "Total",
+        title: t("publicList.stats.total"),
         icon: FaBalanceScale,
         value: stats.total,
       },
@@ -311,7 +341,7 @@ export default function PublicGearList() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-secondary">
-        Loading…
+        {t("publicList.status.loading")}
       </div>
     );
   }
@@ -330,8 +360,6 @@ export default function PublicGearList() {
   // with robust fallbacks to items and affiliate links.
   const rawRegion = data?.list?.region || data?.list?.storeRegion || "";
   // Only normalize if we actually have a region string
-
-  console.log("Raw region:", rawRegion);
   const listRegion = rawRegion ? normalizeRegion(rawRegion) : "";
 
   let defaultCurrency = listRegion ? currencyForRegion(listRegion) : undefined;
@@ -366,10 +394,13 @@ export default function PublicGearList() {
     ...(grouped["__uncategorized__"] ? ["__uncategorized__"] : []),
   ];
 
+  const uncategorizedLabel = t("publicList.categories.uncategorized");
+  const fallbackCategoryLabel = t("publicList.categories.untitled");
+
   return (
     <div className="public-share-theme min-h-screen bg-neutral">
       {/* Scoped palette for the public page only */}
-      <style>{PUBLIC_THEME_CSS}</style>{" "}
+      <style>{PUBLIC_THEME_CSS}</style>
       <div className="max-w-5xl mx-auto px-4 py-6">
         {/* ===== Header ===== */}
         {/* Desktop (>= md): Row 1 = Title | CTA | Toggle; Row 2 = icon-only stats */}
@@ -423,10 +454,12 @@ export default function PublicGearList() {
           focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-accent-rgb))] focus:ring-offset-1
           transition
         "
-                aria-label="Customize this list"
+                aria-label={t("publicList.cta.ariaLabel")}
               >
                 <FaEdit aria-hidden />
-                <span className="font-sm">Customize This List</span>
+                <span className="font-sm">
+                  {t("publicList.cta.labelDesktop")}
+                </span>
               </button>
             </div>
           </div>
@@ -457,10 +490,10 @@ export default function PublicGearList() {
       focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-accent-rgb))] focus:ring-offset-1
       transition
     "
-              aria-label="Customize this list"
+              aria-label={t("publicList.cta.ariaLabel")}
             >
               <FaEdit aria-hidden />
-              <span className="font-sm">Customize This List</span>
+              <span className="font-sm">{t("publicList.cta.labelMobile")}</span>
             </button>
           </div>
 
@@ -494,13 +527,14 @@ export default function PublicGearList() {
 
           <StatsRow className="justify-center mt-3" />
         </div>
+
         {/* ======= PUBLIC LIST MODE: MOBILE CARDS (< md) ======= */}
         <div className="md:hidden">
           {catOrder.map((catId) => {
             const title =
               catId === "__uncategorized__"
-                ? "Uncategorized"
-                : catById.get(catId) || "Category";
+                ? uncategorizedLabel
+                : catById.get(catId) || fallbackCategoryLabel;
             const items = grouped[catId] || [];
             const totalG = catTotalG(items);
 
@@ -570,8 +604,8 @@ export default function PublicGearList() {
                                     ? "text-green-600"
                                     : "opacity-30"
                                 }`}
-                                title="Consumable"
-                                aria-label="Consumable"
+                                title={t("publicList.item.consumable")}
+                                aria-label={t("publicList.item.consumable")}
                               >
                                 <FaUtensils aria-hidden />
                               </span>
@@ -579,14 +613,14 @@ export default function PublicGearList() {
                                 className={`${
                                   it.worn ? "text-blue-600" : "opacity-30"
                                 }`}
-                                title="Worn"
-                                aria-label="Worn"
+                                title={t("publicList.item.worn")}
+                                aria-label={t("publicList.item.worn")}
                               >
                                 <FaTshirt aria-hidden />
                               </span>
                               <span
                                 className="text-xs text-primary tabular-nums"
-                                title="Quantity"
+                                title={t("publicList.item.quantity")}
                               >
                                 × {it.qty ?? 1}
                               </span>
@@ -595,8 +629,10 @@ export default function PublicGearList() {
                                   href={linkHref}
                                   context="public"
                                   className="text-primary"
-                                  title="View product"
-                                  ariaLabel="View product (paid link)"
+                                  title={t("publicList.item.viewProduct")}
+                                  ariaLabel={t(
+                                    "publicList.item.viewProductPaid"
+                                  )}
                                 >
                                   <FaShoppingCart
                                     className="h-4 w-4"
@@ -627,8 +663,8 @@ export default function PublicGearList() {
           {catOrder.map((catId) => {
             const title =
               catId === "__uncategorized__"
-                ? "Uncategorized"
-                : catById.get(catId) || "Category";
+                ? uncategorizedLabel
+                : catById.get(catId) || fallbackCategoryLabel;
             const items = grouped[catId] || [];
             const totalG = catTotalG(items);
 
@@ -692,8 +728,8 @@ export default function PublicGearList() {
                             className={`${
                               it.consumable ? "text-green-600" : "opacity-30"
                             }`}
-                            title="Consumable"
-                            aria-label="Consumable"
+                            title={t("publicList.item.consumable")}
+                            aria-label={t("publicList.item.consumable")}
                           >
                             <FaUtensils aria-hidden />
                           </span>
@@ -705,8 +741,8 @@ export default function PublicGearList() {
                             className={`${
                               it.worn ? "text-blue-600" : "opacity-30"
                             }`}
-                            title="Worn"
-                            aria-label="Worn"
+                            title={t("publicList.item.worn")}
+                            aria-label={t("publicList.item.worn")}
                           >
                             <FaTshirt aria-hidden />
                           </span>
@@ -724,8 +760,8 @@ export default function PublicGearList() {
                               href={linkHref}
                               context="public"
                               className="text-primary hover:text-primary/80"
-                              title="View product"
-                              ariaLabel="View product (paid link)"
+                              title={t("publicList.item.viewProduct")}
+                              ariaLabel={t("publicList.item.viewProductPaid")}
                             >
                               <FaShoppingCart aria-hidden />
                             </AffiliateGateLink>

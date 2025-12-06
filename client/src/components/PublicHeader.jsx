@@ -1,6 +1,7 @@
 // src/components/PublicHeader.jsx
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 /**
  * Public (logged-out) header used on Landing and legal pages.
@@ -20,6 +21,8 @@ export default function PublicHeader({
   onLogin,
   onRegister,
 }) {
+  const { t } = useTranslation("common");
+
   const base = "w-full flex items-center justify-between px-6 py-4 z-30";
 
   const variantClasses =
@@ -32,25 +35,25 @@ export default function PublicHeader({
       {/* Brand */}
       <Link
         to="/"
-        className="text-2xl font-semibold tracking-tight hover:underline"
+        className="text-2xl text-white font-semibold tracking-tight hover:underline"
       >
         TrekList.co
       </Link>
 
       {/* Section links (landing only) */}
       {showSections && (
-        <div className="space-x-6 hidden md:flex">
+        <div className="text-lg font-medium space-x-6 hidden md:flex">
           <a href="#features" className="hover:underline text-gray-800">
-            Features
+            {t("publicHeader.nav.features")}
           </a>
           <a
             href="#recommendedGearList"
             className="hover:underline text-gray-800"
           >
-            Recommended Gear List
+            {t("publicHeader.nav.recommendedGearList")}
           </a>
           <a href="#how-it-works" className="hover:underline text-gray-800">
-            How it Works
+            {t("publicHeader.nav.howItWorks")}
           </a>
         </div>
       )}
@@ -61,16 +64,13 @@ export default function PublicHeader({
           <button
             type="button"
             onClick={onLogin}
-            className="text-sm font-medium hover:underline"
+            className="font-medium hover:underline"
           >
-            Log In
+            {t("publicHeader.auth.login")}
           </button>
         ) : (
-          <Link
-            to="/auth/login"
-            className="text-sm font-medium hover:underline"
-          >
-            Log In
+          <Link to="/auth/login" className="font-medium hover:underline">
+            {t("publicHeader.auth.login")}
           </Link>
         )}
 
@@ -80,14 +80,14 @@ export default function PublicHeader({
             onClick={onRegister}
             className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-full hover:opacity-90 transition"
           >
-            Get Started
+            {t("publicHeader.auth.getStarted")}
           </button>
         ) : (
           <Link
             to="/auth/register"
             className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-full hover:opacity-90 transition"
           >
-            Get Started
+            {t("publicHeader.auth.getStarted")}
           </Link>
         )}
       </div>

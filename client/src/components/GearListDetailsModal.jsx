@@ -7,6 +7,8 @@ import { useUserSettings } from "../contexts/UserSettings";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { dateFnsLocales } from "../utils/dateLocales";
+import { toast } from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 /**
  * Modal for viewing/editing a gear list's details
@@ -21,6 +23,8 @@ export default function GearListDetailsModal({
   onRefresh,
   onRefreshSidebar,
 }) {
+  const { t } = useTranslation("common");
+
   const [title, setTitle] = useState("");
   const [notes, setNotes] = useState("");
   const [tripStart, setTripStart] = useState(null);
@@ -55,6 +59,8 @@ export default function GearListDetailsModal({
 
   const handleSave = async (e) => {
     e.preventDefault();
+    if (!list?._id) return;
+
     try {
       await api.patch(`/dashboard/${list._id}`, {
         title,
@@ -65,9 +71,15 @@ export default function GearListDetailsModal({
       });
       onRefresh();
       onRefreshSidebar();
+      toast.success(t("gearListDetailsModal.toast.saveSuccess"));
+      setDirty(false);
       onClose();
     } catch (err) {
       console.error("Failed to save list details:", err);
+      const msg =
+        err.response?.data?.message ||
+        t("gearListDetailsModal.toast.saveFailed");
+      toast.error(msg);
     }
   };
 
@@ -87,13 +99,13 @@ export default function GearListDetailsModal({
         {/* Header */}
         <div className="flex justify-between items-center mb-2 sm:mb-3">
           <h2 className="text-xl font-semibold text-primary">
-            Gear List Details
+            {t("gearListDetailsModal.title")}
           </h2>
           <button
             type="button"
             onClick={handleClose}
             className="text-error hover:text-error/80"
-            aria-label="Close modal"
+            aria-label={t("auth.a11y.closeModal")}
           >
             <FaTimes size={20} />
           </button>
@@ -104,7 +116,7 @@ export default function GearListDetailsModal({
           {/* Weight Breakdown full row */}
           <div className="md:col-span-3 flex flex-col items-center px-2 py-1">
             <label className="block font-medium text-primary mb-3">
-              Weight Breakdown
+              {t("gearListDetailsModal.labels.weightBreakdown")}
             </label>
             <div className="scale-110">
               <PackStats
@@ -125,14 +137,16 @@ export default function GearListDetailsModal({
                   0
                 )}
                 breakdowns={breakdowns}
-                // disablePopover
                 showLabels={true}
               />
             </div>
           </div>
+
           {/* Name */}
           <div className="md:col-span-2">
-            <label className="block font-medium text-primary mb-1">Name</label>
+            <label className="block font-medium text-primary mb-1">
+              {t("gearListDetailsModal.labels.name")}
+            </label>
             <input
               type="text"
               value={title}
@@ -143,12 +157,13 @@ export default function GearListDetailsModal({
               className="w-full border border-primary rounded px-2 py-1 text-primary"
             />
           </div>
+
           {/* Trip Dates */}
           <div className="md:col-span-2 grid grid-cols-2 gap-4">
             {/* Trip Start */}
             <div>
               <label className="block font-medium text-primary mb-1">
-                Trip Start
+                {t("gearListDetailsModal.labels.tripStart")}
               </label>
               <DatePicker
                 selected={tripStart}
@@ -159,13 +174,13 @@ export default function GearListDetailsModal({
                 dateFormat="P"
                 locale={dfnsLocale}
                 className="w-full border border-primary rounded px-2 py-1 text-primary"
-                placeholderText="Select date"
+                placeholderText={t("gearListDetailsModal.placeholders.date")}
               />
             </div>
             {/* Trip End */}
             <div>
               <label className="block font-medium text-primary mb-1">
-                Trip End
+                {t("gearListDetailsModal.labels.tripEnd")}
               </label>
               <DatePicker
                 selected={tripEnd}
@@ -176,7 +191,7 @@ export default function GearListDetailsModal({
                 dateFormat="P"
                 locale={dfnsLocale}
                 className="w-full border border-primary rounded px-2 py-1 text-primary"
-                placeholderText="Select date"
+                placeholderText={t("gearListDetailsModal.placeholders.date")}
               />
             </div>
           </div>
@@ -184,7 +199,7 @@ export default function GearListDetailsModal({
           {/* Location */}
           <div>
             <label className="block font-medium text-primary mb-1">
-              Location
+              {t("gearListDetailsModal.labels.location")}
             </label>
             <input
               type="text"
@@ -200,7 +215,7 @@ export default function GearListDetailsModal({
           {/* Notes */}
           <div className="md:col-span-3">
             <label className="block font-medium text-primary mb-1">
-              Notes / Description
+              {t("gearListDetailsModal.labels.notes")}
             </label>
             <textarea
               rows={3}
@@ -212,16 +227,21 @@ export default function GearListDetailsModal({
               className="w-full border border-primary rounded px-2 py-1 text-primary"
             />
           </div>
+
           {/* Stats */}
           <div className="md:col-span-2 flex flex-wrap items-baseline gap-x-6 gap-y-2 text-primary">
             <p className="flex items-baseline gap-1">
-              <span className=" font-medium">Total cost: </span>
-              <span className=" font-semibold">{formattedCost}</span>
+              <span className="font-medium">
+                {t("gearListDetailsModal.stats.totalCost")}{" "}
+              </span>
+              <span className="font-semibold">{formattedCost}</span>
             </p>
 
             <p className="flex items-baseline gap-1">
-              <span className=" font-medium"># of items: </span>
-              <span className="">{itemsCount}</span>
+              <span className="font-medium">
+                {t("gearListDetailsModal.stats.itemsCount")}{" "}
+              </span>
+              <span>{itemsCount}</span>
             </p>
           </div>
         </div>
@@ -231,15 +251,15 @@ export default function GearListDetailsModal({
           <button
             type="button"
             onClick={handleClose}
-            className="px-2 py-1 bg-neutralAlt rounded hover:bg-neutralAlt/90 text-primary "
+            className="px-2 py-1 bg-neutralAlt rounded hover:bg-neutralAlt/90 text-primary"
           >
-            Cancel
+            {t("actions.cancel")}
           </button>
           <button
             type="submit"
-            className="px-2 py-1 bg-secondary text-white rounded hover:bg-secondary/80 "
+            className="px-2 py-1 bg-secondary text-white rounded hover:bg-secondary/80"
           >
-            Save
+            {t("actions.save")}
           </button>
         </div>
       </form>
@@ -247,10 +267,10 @@ export default function GearListDetailsModal({
       {/* Confirm discard */}
       <ConfirmDialog
         isOpen={showConfirmClose}
-        title="Discard changes?"
-        message="You have unsaved changes. Are you sure you want to close?"
-        confirmText="Discard"
-        cancelText="Continue Editing"
+        title={t("gearListDetailsModal.confirm.discardTitle")}
+        message={t("gearListDetailsModal.confirm.discardMessage")}
+        confirmText={t("gearListDetailsModal.confirm.discardConfirm")}
+        cancelText={t("gearListDetailsModal.confirm.discardCancel")}
         onConfirm={() => {
           setShowConfirmClose(false);
           onClose();

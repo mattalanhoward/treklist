@@ -1,7 +1,9 @@
+// src/components/AddGearItemModal.jsx
 import React, { useState, useEffect, useMemo } from "react";
 import api from "../services/api";
 import { FaTimes } from "react-icons/fa";
 import { toast } from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 export default function AddGearItemModal({
   listId,
@@ -9,6 +11,8 @@ export default function AddGearItemModal({
   onClose,
   onAdded,
 }) {
+  const { t } = useTranslation("common");
+
   // 1) Store all global items (fetched once on mount)
   const [allResults, setAllResults] = useState([]);
   // 2) searchQuery (initially empty string)
@@ -85,7 +89,7 @@ export default function AddGearItemModal({
   // Save all selected items in parallel
   const handleSave = async () => {
     if (selectedIds.size === 0) {
-      return toast.error("Please select at least one item");
+      return toast.error(t("addGearItemModal.toasts.selectAtLeastOne"));
     }
 
     // DUP CHECK
@@ -96,7 +100,7 @@ export default function AddGearItemModal({
       existingGlobalIds.has(id)
     );
     if (dup.length > 0) {
-      return toast.error("Some items are already in this list");
+      return toast.error(t("addGearItemModal.toasts.alreadyInList"));
     }
 
     setSaving(true);
@@ -140,12 +144,12 @@ export default function AddGearItemModal({
         })
       );
 
-      toast.success("Items added successfully");
+      toast.success(t("addGearItemModal.toasts.addSuccess"));
       onAdded();
       onClose();
     } catch (err) {
       console.error("Error adding items:", err);
-      toast.error("Failed to add one or more items");
+      toast.error(t("addGearItemModal.toasts.addFailed"));
     } finally {
       setSaving(false);
     }
@@ -156,31 +160,39 @@ export default function AddGearItemModal({
     existingItems.map((it) => it.globalItem || it._id)
   );
 
+  const addButtonLabel = saving
+    ? t("addGearItemModal.buttons.adding")
+    : t("addGearItemModal.buttons.add", { count: selectedIds.size });
+
   return (
     <div className="fixed inset-0 bg-neutral bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-base-100 rounded-xl shadow-2xl max-w-lg w-full sm:h-[80vh] h-[70vh] p-6 flex flex-col overflow-hidden">
         {/* Header */}
         <div className="flex justify-between items-center mb-2 sm:mb-3">
           <h2 className="text-xl font-semibold text-primary">
-            Add Gear Item(s)
+            {t("addGearItemModal.title")}
           </h2>
           <button
             onClick={onClose}
             disabled={saving}
             className="text-error hover:text-error/80"
+            aria-label={t("addGearItemModal.a11y.close")}
           >
             <FaTimes size={20} />
           </button>
         </div>
+
+        {/* Search */}
         <div className="flex items-center w-full pb-4">
           <input
             type="text"
-            placeholder="Search global items…"
+            placeholder={t("addGearItemModal.searchPlaceholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="flex-1 border border-primary rounded px-2 py-1 text-primary placeholder:text-primary/50 bg-white"
           />
         </div>
+
         {/* Results list */}
         <div className="flex-1 overflow-y-auto">
           <ul className="space-y-1">
@@ -190,12 +202,11 @@ export default function AddGearItemModal({
                 return (
                   <li
                     key={item._id}
-                    className={`flex items-center px-2 py-1 rounded bg-neutral/20 border border-primary/20 hover:bg-base-100/20 mb-1 \
-                      ${
-                        disabled
-                          ? "opacity-50 cursor-default"
-                          : "hover:bg-primary/10 cursor-pointer"
-                      }`}
+                    className={`flex items-center px-2 py-1 rounded bg-neutral/20 border border-primary/20 mb-1 ${
+                      disabled
+                        ? "opacity-50 cursor-default"
+                        : "hover:bg-primary/10 cursor-pointer"
+                    }`}
                   >
                     <input
                       type="checkbox"
@@ -219,7 +230,7 @@ export default function AddGearItemModal({
                         </div>
                         {disabled && (
                           <span className="text-red-500 text-xs ml-2">
-                            Added
+                            {t("addGearItemModal.badges.added")}
                           </span>
                         )}
                       </div>
@@ -228,10 +239,13 @@ export default function AddGearItemModal({
                 );
               })
             ) : (
-              <li className="px-2 py-1 text-primary/80">No items found</li>
+              <li className="px-2 py-1 text-primary/80">
+                {t("addGearItemModal.empty")}
+              </li>
             )}
           </ul>
         </div>
+
         {/* Actions */}
         <div className="mt-4 flex justify-end space-x-2">
           <button
@@ -239,7 +253,7 @@ export default function AddGearItemModal({
             disabled={saving}
             className="px-2 py-1 bg-base-100 text-primary rounded"
           >
-            Cancel
+            {t("actions.cancel")}
           </button>
           <button
             onClick={handleSave}
@@ -250,11 +264,7 @@ export default function AddGearItemModal({
                 : "hover:bg-primary/80"
             }`}
           >
-            {saving
-              ? "Adding…"
-              : `Add ${selectedIds.size} Item${
-                  selectedIds.size > 1 ? "s" : ""
-                }`}
+            {addButtonLabel}
           </button>
         </div>
       </div>

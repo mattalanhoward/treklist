@@ -164,6 +164,10 @@ export default function AffiliateProductPicker({
         setPage(res.page);
         setHasMore(res.hasMore);
       } catch (e) {
+        if (e?.response?.status === 429) {
+          // stop trying to load more in this session
+          setHasMore(false);
+        }
         setError(
           e?.response?.data?.message ||
             e.message ||
@@ -197,16 +201,16 @@ export default function AffiliateProductPicker({
 
   // Infinite scroll: observe sentinel at list bottom
   useEffect(() => {
-    if (!hasMore || busy) return;
     const sentinel = sentinelRef.current;
     const root = listRef.current;
     if (!sentinel || !root) return;
 
     const io = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && hasMore && !busy) {
-          runSearch(page + 1);
-        }
+        const first = entries[0];
+        if (!first.isIntersecting) return;
+        if (!hasMore || busy) return;
+        runSearch(page + 1);
       },
       { root, rootMargin: "200px", threshold: 0.1 }
     );
