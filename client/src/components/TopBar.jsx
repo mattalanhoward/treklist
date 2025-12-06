@@ -12,12 +12,12 @@ import EmailOptInBanner from "./EmailOptInBanner";
 import { useTranslation } from "react-i18next";
 
 const themes = [
-  { name: "forest", label: "Forest", color: "#163A28" },
-  { name: "snow", label: "Snow", color: "#f0f4f8" },
-  { name: "alpine", label: "Alpine", color: "#172b4d" }, // default
-  { name: "desert", label: "Desert", color: "#E0B251" },
-  { name: "light", label: "Light", color: "#ffffff" },
-  { name: "dark", label: "Dark", color: "#0f172a" },
+  { name: "forest", color: "#163A28" },
+  { name: "snow", color: "#f0f4f8" },
+  { name: "alpine", color: "#172b4d" }, // default
+  { name: "desert", color: "#E0B251" },
+  { name: "light", color: "#ffffff" },
+  { name: "dark", color: "#0f172a" },
 ];
 
 export default function TopBar({ title, openSettings }) {
@@ -39,7 +39,6 @@ export default function TopBar({ title, openSettings }) {
   } = useUserSettings();
 
   const { t } = useTranslation("common");
-
   const navigate = useNavigate();
 
   // Install global helpers so non-React code (footer, future cookie banner)
@@ -68,8 +67,6 @@ export default function TopBar({ title, openSettings }) {
     };
   }, [setIsLegalOpen, setLegalInitialTab]);
 
-  // const currentTheme = themes.find((t) => t.name === theme)?.label || theme;
-
   if (!user) return null;
 
   const initial =
@@ -80,7 +77,7 @@ export default function TopBar({ title, openSettings }) {
       {/* Top row: logo + account menu */}
       <div className="flex items-center justify-between px-2 py-2">
         <div className="flex items-center space-x-3">
-          <img src={logo} alt="Logo" className="h-8" />
+          <img src={logo} alt={t("app.name")} className="h-8" />
           <h1 className="text-xl font-semibold">{title}</h1>
         </div>
 
@@ -89,7 +86,7 @@ export default function TopBar({ title, openSettings }) {
             trigger={
               <button
                 className="w-8 h-8 rounded-full bg-primaryAlt flex items-center justify-center text-sm font-medium uppercase text-base-100 hover:bg-primaryAlt/80 focus:outline-none"
-                aria-label="Open account menu"
+                aria-label={t("topbar.a11y.openAccountMenu")}
               >
                 {initial}
               </button>
@@ -152,9 +149,9 @@ export default function TopBar({ title, openSettings }) {
                       onChange={(e) => setTheme(e.target.value)}
                       className="ml-2 bg-transparent focus:outline-none"
                     >
-                      {themes.map((t) => (
-                        <option key={t.name} value={t.name}>
-                          {t.label}
+                      {themes.map((themeOption) => (
+                        <option key={themeOption.name} value={themeOption.name}>
+                          {t(`topbar.themeOptions.${themeOption.name}`)}
                         </option>
                       ))}
                     </select>
@@ -193,8 +190,8 @@ export default function TopBar({ title, openSettings }) {
                       onChange={(e) => setLanguage(e.target.value)}
                       className="ml-2 bg-transparent focus:outline-none"
                     >
-                      <option value="en">EN</option>
-                      <option value="nl">NL</option>
+                      <option value="en">{t("language.english")}</option>
+                      <option value="nl">{t("language.dutch")}</option>
                     </select>
                   </div>
                 ),
@@ -212,13 +209,13 @@ export default function TopBar({ title, openSettings }) {
                       onChange={(e) => setRegion(e.target.value.toLowerCase())}
                       className="ml-2 bg-transparent focus:outline-none"
                     >
-                      <option value="ca">Canada</option>
-                      <option value="fr">France</option>
-                      <option value="de">Germany</option>
-                      <option value="it">Italy</option>
-                      <option value="nl">Netherlands</option>
-                      <option value="gb">United Kingdom</option>
-                      <option value="us">United States</option>
+                      <option value="ca">{t("topbar.regions.ca")}</option>
+                      <option value="fr">{t("topbar.regions.fr")}</option>
+                      <option value="de">{t("topbar.regions.de")}</option>
+                      <option value="it">{t("topbar.regions.it")}</option>
+                      <option value="nl">{t("topbar.regions.nl")}</option>
+                      <option value="gb">{t("topbar.regions.gb")}</option>
+                      <option value="us">{t("topbar.regions.us")}</option>
                     </select>
                   </div>
                 ),
@@ -246,7 +243,10 @@ export default function TopBar({ title, openSettings }) {
                 className: "mb-2",
                 label: t("topbar.logout"),
                 onClick: async () => {
-                  navigate("/", { replace: true, state: { reason: "manual" } });
+                  navigate("/", {
+                    replace: true,
+                    state: { reason: "manual" },
+                  });
                   await logout();
                 },
               },

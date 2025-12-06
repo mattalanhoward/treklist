@@ -3,8 +3,11 @@ import React, { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import api from "../services/api";
+import { useTranslation } from "react-i18next";
 
 export default function AccountModal({ isOpen, onClose }) {
+  const { t } = useTranslation("common");
+
   const [settings, setSettings] = useState(null);
   const [form, setForm] = useState({
     email: "",
@@ -14,7 +17,7 @@ export default function AccountModal({ isOpen, onClose }) {
     newPassword: "",
     confirmPassword: "",
   });
-  const [tab, setTab] = useState("Profile");
+  const [tab, setTab] = useState("profile"); // "profile" | "security"
   const [error, setError] = useState("");
 
   // Fetch when opening
@@ -39,10 +42,11 @@ export default function AccountModal({ isOpen, onClose }) {
       })
       .catch((err) => {
         console.error(err);
-        toast.error("Failed to load account settings");
+        const msg = t("accountModal.toast.loadFailed");
+        toast.error(msg);
         onClose();
       });
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, t]);
 
   const handleChange = (e) => {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
@@ -54,14 +58,15 @@ export default function AccountModal({ isOpen, onClose }) {
     setError("");
 
     // client‐side validation
-    if (tab === "Security" && form.newPassword !== form.confirmPassword) {
-      setError("New password and confirmation do not match");
+    if (tab === "security" && form.newPassword !== form.confirmPassword) {
+      const msg = t("accountModal.errors.passwordMismatch");
+      setError(msg);
       return;
     }
 
     // build payload
     const payload = {};
-    if (tab === "Profile") {
+    if (tab === "profile") {
       // Email is read-only; only allow trailname & marketing prefs to be updated
       if ((form.trailname || "") !== (settings.trailname || "")) {
         payload.trailname = form.trailname;
@@ -76,9 +81,10 @@ export default function AccountModal({ isOpen, onClose }) {
         payload.marketing = { optedIn: form.marketingOptIn };
       }
     }
-    if (tab === "Security") {
+    if (tab === "security") {
       if (!form.currentPassword) {
-        setError("You must enter your current password to change it");
+        const msg = t("accountModal.errors.currentPasswordRequired");
+        setError(msg);
         return;
       }
       if (form.newPassword) {
@@ -88,19 +94,18 @@ export default function AccountModal({ isOpen, onClose }) {
     }
 
     if (Object.keys(payload).length === 0) {
-      toast("Nothing to save", { icon: "ℹ️" });
+      toast(t("accountModal.toast.nothingToSave"), { icon: "ℹ️" });
       return onClose();
     }
 
     try {
       await api.patch("/settings", payload);
-      toast.success("Settings saved");
+      toast.success(t("accountModal.toast.saveSuccess"));
       onClose();
     } catch (err) {
       console.error(err);
       const msg =
-        err.response?.data?.message ||
-        "Failed to save settings. Please try again.";
+        err.response?.data?.message || t("accountModal.toast.saveFailed");
       setError(msg);
       toast.error(msg);
     }
@@ -114,28 +119,36 @@ export default function AccountModal({ isOpen, onClose }) {
         {/* Header */}
         <div className="flex justify-between items-center mb-2 sm:mb-3">
           <h2 className="text-xl font-semibold text-primary">
-            Account Settings
+            {t("accountModal.title")}
           </h2>
-          <button onClick={onClose} className="text-error hover:text-error/80">
+          <button
+            onClick={onClose}
+            className="text-error hover:text-error/80"
+            aria-label={t("actions.close")}
+          >
             <FaTimes size={20} />
           </button>
         </div>
         {/* Tabs */}
         <div className="flex border-b mb-2 sm:mb-3">
-          {["Profile", "Security"].map((t) => (
+          {["profile", "security"].map((tKey) => (
             <button
-              key={t}
+              key={tKey}
               onClick={() => {
-                setTab(t);
+                setTab(tKey);
                 setError("");
               }}
               className={`mr-6 pb-2 ${
-                tab === t
+                tab === tKey
                   ? "border-b-2 border-emerald-500 font-medium"
                   : "text-gray-600"
               }`}
             >
-              {t}
+              {t(
+                tKey === "profile"
+                  ? "accountModal.tabs.profile"
+                  : "accountModal.tabs.security"
+              )}
             </button>
           ))}
         </div>
@@ -152,11 +165,11 @@ export default function AccountModal({ isOpen, onClose }) {
               onSubmit={handleSubmit}
               className="flex flex-col space-y-3 h-full"
             >
-              {tab === "Profile" && (
+              {tab === "profile" && (
                 <>
                   <div>
                     <label className="block font-medium text-gray-700">
-                      Email
+                      {t("accountModal.labels.email")}
                     </label>
                     <input
                       name="email"
@@ -166,15 +179,15 @@ export default function AccountModal({ isOpen, onClose }) {
                       disabled
                       aria-disabled="true"
                       className="mt-1 block w-full border-gray-300 rounded shadow-sm px-2 py-1 bg-gray-100 text-gray-700 cursor-not-allowed"
-                      title="Email can’t be changed here"
+                      title={t("accountModal.messages.emailImmutable")}
                     />
                     <p className="mt-1 text-sm text-gray-500">
-                      To change your email, contact support.
+                      {t("accountModal.messages.emailChangeSupport")}
                     </p>
                   </div>
                   <div>
                     <label className="block font-medium text-gray-700">
-                      Trailname
+                      {t("accountModal.labels.trailname")}
                     </label>
                     <input
                       name="trailname"
@@ -196,23 +209,20 @@ export default function AccountModal({ isOpen, onClose }) {
                         }
                         className="mt-1"
                       />
-                      <span>
-                        Email me about new TrekList features, tips, and
-                        occasional offers.
-                      </span>
+                      <span>{t("auth.text.marketingOptIn")}</span>
                     </label>
                     <p className="mt-1 text-sm text-gray-500">
-                      You can change this preference anytime.
+                      {t("accountModal.messages.marketingHint")}
                     </p>
                   </div>
                 </>
               )}
 
-              {tab === "Security" && (
+              {tab === "security" && (
                 <>
                   <div>
                     <label className="block font-medium text-gray-700">
-                      Current Password
+                      {t("accountModal.labels.currentPassword")}
                     </label>
                     <input
                       name="currentPassword"
@@ -224,7 +234,7 @@ export default function AccountModal({ isOpen, onClose }) {
                   </div>
                   <div>
                     <label className="block font-medium text-gray-700">
-                      New Password
+                      {t("accountModal.labels.newPassword")}
                     </label>
                     <input
                       name="newPassword"
@@ -236,7 +246,7 @@ export default function AccountModal({ isOpen, onClose }) {
                   </div>
                   <div>
                     <label className="block font-medium text-gray-700">
-                      Confirm New Password
+                      {t("accountModal.labels.confirmNewPassword")}
                     </label>
                     <input
                       name="confirmPassword"
@@ -256,18 +266,18 @@ export default function AccountModal({ isOpen, onClose }) {
                   onClick={onClose}
                   className="px-2 py-1 bg-base-100 text-primary rounded hover:bg-base-100/80"
                 >
-                  Cancel
+                  {t("actions.cancel")}
                 </button>
                 <button
                   type="submit"
                   className="px-2 py-1 bg-primary text-base-100 rounded flex items-center hover:bg-primary/80"
                 >
-                  Save
+                  {t("actions.save")}
                 </button>
               </div>
             </form>
           ) : (
-            <div>Loading…</div>
+            <div>{t("accountModal.loading")}</div>
           )}
         </div>
       </div>

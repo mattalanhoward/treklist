@@ -11,6 +11,7 @@ import AddGearItemModal from "../components/AddGearItemModal";
 import { useScrollPreserver } from "../hooks/useScrollPreserver";
 import { useUserSettings } from "../contexts/UserSettings";
 import { useWeight } from "../hooks/useWeight";
+import { useTranslation } from "react-i18next";
 
 export default function SortableColumn({
   category,
@@ -31,6 +32,7 @@ export default function SortableColumn({
   onMoveItem,
   onItemUpdated,
 }) {
+  const { t } = useTranslation("common");
   const scrollRef = useScrollPreserver(items);
   const catId = category._id;
   const [localTitle, setLocalTitle] = useState(category.title);
@@ -50,9 +52,6 @@ export default function SortableColumn({
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: `cat-${catId}` });
   const style = { transform: CSS.Transform.toString(transform), transition };
-
-  const { theme, altTheme } = useUserSettings();
-  const isAlt = theme === altTheme;
 
   return (
     <div
@@ -96,6 +95,8 @@ export default function SortableColumn({
               {totalWeightText}
             </span>
             <FaTimes
+              aria-label={t("gearList.confirm.deleteCategoryConfirm")}
+              title={t("gearList.confirm.deleteCategoryConfirm")}
               onClick={() => onDeleteCategory(catId)}
               className="cursor-pointer flex-shrink-0 text-primaryAlt hover:text-primaryAlt/80"
             />
@@ -130,9 +131,11 @@ export default function SortableColumn({
       <button
         onClick={() => setShowAddModalCat(catId)}
         className="p-2 w-full border border-base-100 rounded flex items-center justify-center space-x-2 bg-base-100 text-primary hover:bg-base-100/80"
+        aria-label={t("gearList.items.addButton")}
+        title={t("gearList.items.addButton")}
       >
         <FaPlus />
-        <span className="text-sm">Add Item</span>
+        <span className="text-sm">{t("gearList.items.addButton")} </span>
       </button>
 
       {showAddModalCat === catId && (

@@ -13,6 +13,7 @@ import {
 import api from "../services/api";
 import useAuth from "../hooks/useAuth";
 import useChecklistProgress from "../hooks/useChecklistProgress";
+import { useTranslation } from "react-i18next";
 
 /**
  * Screen: interactive checklist (2-col grid)
@@ -78,7 +79,8 @@ export default function ChecklistView() {
   const pct = total ? Math.round((packed / total) * 100) : 0;
 
   // ─── viewMode persistence ───
-  const { viewMode, setViewMode } = useUserSettings();
+  const { viewMode, setViewMode, locale } = useUserSettings();
+  const { t } = useTranslation("common");
 
   const tripMeta = useMemo(() => {
     const s = full.list?.tripStart ? new Date(full.list.tripStart) : null;
@@ -86,32 +88,32 @@ export default function ChecklistView() {
     const nights =
       s && e ? Math.max(0, Math.round((e - s) / (1000 * 60 * 60 * 24))) : null;
     return {
-      title: full.list?.title || "Gear List",
+      title: full.list?.title || t("checklistView.fallbackTitle"),
       location: full.list?.location || "",
       dates:
         s && e
-          ? s.toLocaleDateString() + " – " + e.toLocaleDateString()
+          ? s.toLocaleDateString(locale) + " – " + e.toLocaleDateString(locale)
           : s
-          ? s.toLocaleDateString()
+          ? s.toLocaleDateString(locale)
           : "",
       nights,
     };
-  }, [full.list]);
+  }, [full.list, locale, t]);
 
   // Remember whatever the title was before opening the checklist
   const originalTitleRef = useRef(document.title);
 
   // While this view is active, show "<Trip> · Checklist"
   useEffect(() => {
-    document.title = `${tripMeta.title} · Checklist`;
-  }, [tripMeta.title]);
+    document.title = `${tripMeta.title} · ${t("checklistView.titleSuffix")}`;
+  }, [tripMeta.title, t]);
 
   // When leaving this view, restore the original title
   useEffect(() => {
     return () => {
-      document.title = originalTitleRef.current || "TrekList.co";
+      document.title = originalTitleRef.current || t("app.name");
     };
-  }, []);
+  }, [t]);
 
   // Build the print columns (must be before any early returns to keep hook order stable)
   const { leftCols, rightCols } = useMemo(() => {
@@ -138,11 +140,7 @@ export default function ChecklistView() {
     return (
       <div className="min-h-screen bg-neutral/50 text-primary">
         {/* RENDER TopBar in loading state */}
-        <TopBar
-          title="TrekList.co"
-          viewMode={viewMode}
-          setViewMode={setViewMode}
-        />
+        <TopBar title={t("app.name")} />
 
         {/* NEW ACTION BAR PLACEHOLDER for loading state (max-w-3xl) */}
         <div className="border-b bg-base-100 print:hidden sticky top-[52px] z-50">
@@ -194,7 +192,7 @@ export default function ChecklistView() {
   if (!full.list && error) {
     return (
       <div className="min-h-screen flex items-center justify-center text-secondary">
-        Could not load this list.
+        {t("checklistView.error.loadFailed")}{" "}
       </div>
     );
   }
@@ -202,11 +200,7 @@ export default function ChecklistView() {
   return (
     <div className="min-h-screen bg-neutral/50 text-primary print:bg-white">
       {/* 1. NEW: Render the standard TopBar component */}
-      <TopBar
-        title="TrekList.co" // FIXED: Ensuring the title is set to the brand name
-        viewMode={viewMode}
-        setViewMode={setViewMode}
-      />
+      <TopBar title={t("app.name")} />
 
       <div className="border-b bg-base-100 print:hidden sticky top-[48px] z-50">
         <div className="max-w-5xl mx-auto px-4 py-2 flex items-center justify-between gap-4">
@@ -214,9 +208,9 @@ export default function ChecklistView() {
             // Navigation remains to the specific list dashboard view
             onClick={() => navigate(`/dashboard/${listId}`)}
             className="flex items-center gap-2 px-2 py-1 bg-white text-secondary rounded hover:bg-secondary-700 text-sm sm:text-base"
-            aria-label="Back to dashboard"
+            aria-label={t("checklistView.a11y.backToDashboard")}
           >
-            <FaChevronLeft /> Back to Dashboard
+            <FaChevronLeft /> {t("checklistView.buttons.backToDashboard")}
           </button>
 
           <div className="flex items-center gap-2">
@@ -224,17 +218,17 @@ export default function ChecklistView() {
               type="button"
               onClick={reset}
               className="flex items-center gap-2 px-2 py-1 bg-secondary text-white rounded hover:bg-secondary-700 text-sm sm:text-base"
-              aria-label="Reset all checks"
+              aria-label={t("checklistView.a11y.reset")}
             >
-              <FaUndoAlt /> Reset
+              <FaUndoAlt /> {t("checklistView.buttons.reset")}{" "}
             </button>
             <button
               type="button"
               onClick={() => window.print()}
               className="flex items-center gap-2 px-2 py-1 bg-white text-secondary rounded hover:bg-secondary-700 text-sm sm:text-base"
-              aria-label="Print checklist"
+              aria-label={t("checklistView.a11y.print")}
             >
-              <FaPrint /> Print
+              <FaPrint /> {t("checklistView.buttons.print")}{" "}
             </button>
           </div>
         </div>
@@ -256,7 +250,9 @@ export default function ChecklistView() {
                   <>
                     {" "}
                     · {tripMeta.nights}{" "}
-                    {tripMeta.nights === 1 ? "night" : "nights"}
+                    {tripMeta.nights === 1
+                      ? t("checklistView.nightSingular")
+                      : t("checklistView.nightPlural")}
                   </>
                 )}
                 {tripMeta.location && <> · {tripMeta.location}</>}
@@ -264,7 +260,10 @@ export default function ChecklistView() {
             </div>
             <div className="text-right">
               <div className="text-sm font-medium">
-                Packed {packed} / {total}
+                {t("checklistView.progress.packed", {
+                  packed,
+                  total,
+                })}
               </div>
               <div className="mt-1 h-2 w-48 overflow-hidden rounded-full bg-base-200">
                 <div
@@ -279,10 +278,12 @@ export default function ChecklistView() {
           {/* Legend */}
           <div className="mt-3 flex items-center gap-4 text-sm text-secondary">
             <div className="flex items-center gap-1">
-              <FaTshirt className="h-3.5 w-3.5" /> worn
+              <FaTshirt className="h-3.5 w-3.5" />{" "}
+              {t("checklistView.legend.worn")}
             </div>
             <div className="flex items-center gap-1">
-              <FaUtensils className="h-3.5 w-3.5" /> consumable
+              <FaUtensils className="h-3.5 w-3.5" />{" "}
+              {t("checklistView.legend.consumable")}
             </div>
           </div>
         </section>
@@ -299,7 +300,10 @@ export default function ChecklistView() {
                     {cat.title || cat.name}
                   </h2>
                   <div className="text-sm text-secondary">
-                    {cPacked} / {cTotal}
+                    {t("checklistView.progress.categoryPacked", {
+                      packed: cPacked,
+                      total: cTotal,
+                    })}
                   </div>
                 </div>
                 <ul className="divide-y divide-base-200 rounded-xl border bg-base-100">
@@ -378,7 +382,7 @@ export default function ChecklistView() {
                       {tripMeta.title}
                     </div>
                     <div className="text-right" style={{ fontSize: "10pt" }}>
-                      Total items: {total}
+                      {t("checklistView.print.totalItems", { total })}{" "}
                     </div>
                   </div>
 
@@ -422,7 +426,9 @@ export default function ChecklistView() {
                         className="text-secondary"
                         style={{ fontSize: "9.5pt" }}
                       >
-                        Total: {items.length}
+                        {t("checklistView.print.categoryTotal", {
+                          count: items.length,
+                        })}
                       </div>
                     </div>
                     <ul className="print-ul">
@@ -467,7 +473,9 @@ export default function ChecklistView() {
                         className="text-secondary"
                         style={{ fontSize: "9.5pt" }}
                       >
-                        Total: {items.length}
+                        {t("checklistView.print.categoryTotal", {
+                          count: items.length,
+                        })}
                       </div>
                     </div>
                     <ul className="print-ul">

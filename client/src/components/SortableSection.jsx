@@ -10,6 +10,7 @@ import SortableItem from "../components/SortableItem";
 import AddGearItemModal from "../components/AddGearItemModal";
 import { useUserSettings } from "../contexts/UserSettings";
 import { useWeight } from "../hooks/useWeight";
+import { useTranslation } from "react-i18next";
 
 // ───────────── SORTABLESECTION (LIST MODE) ─────────────
 export default function SortableSection({
@@ -32,6 +33,7 @@ export default function SortableSection({
   onMoveItem,
   onItemUpdated,
 }) {
+  const { t } = useTranslation("common");
   const filtered = useMemo(
     () => items.filter((i) => `item-${category._id}-${i._id}` !== activeId),
     [items, activeId, category._id]
@@ -57,9 +59,6 @@ export default function SortableSection({
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: `cat-${catId}` });
   const style = { transform: CSS.Transform.toString(transform), transition };
-
-  const { theme, altTheme } = useUserSettings();
-  const isAlt = theme === altTheme;
 
   return (
     <section
@@ -106,8 +105,8 @@ export default function SortableSection({
               {totalWeightText}
             </span>
             <FaTimes
-              aria-label="Delete category"
-              title="Delete category"
+              aria-label={t("gearList.confirm.deleteCategoryConfirm")}
+              title={t("gearList.confirm.deleteCategoryConfirm")}
               onClick={() => onDeleteCategory(catId)}
               className="flex-shrink-0 cursor-pointer text-primaryAlt hover:text-primaryAlt/80"
             />
@@ -140,9 +139,11 @@ export default function SortableSection({
       <button
         onClick={() => setShowAddModalCat(catId)}
         className="p-2 w-full border border-secondary rounded flex items-center justify-center space-x-2 bg-base-100 text-primary hover:bg-base-100/80"
+        aria-label={t("gearList.items.addButton")}
+        title={t("gearList.items.addButton")}
       >
         <FaPlus />
-        <span className="text-sm">Add Item</span>
+        <span className="text-sm">{t("gearList.items.addButton")}</span>
       </button>
       {showAddModalCat === catId && (
         <AddGearItemModal

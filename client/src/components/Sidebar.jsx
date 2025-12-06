@@ -306,7 +306,7 @@ export default function Sidebar({
                       <button
                         onClick={() => setEditingGlobalItem(item)}
                         title={t("sidebar.editGlobalTemplate")}
-                        className="hover:text-base-100/80 text-secondaryAlt hover:text-secondaryAlt/80 rounded-lg"
+                        className="text-secondaryAlt hover:text-secondaryAlt/80 rounded-lg"
                       >
                         <FaEllipsisH />
                       </button>
