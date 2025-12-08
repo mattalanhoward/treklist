@@ -580,6 +580,17 @@
       "close": "Venster item verplaatsen sluiten"
     }
   },
+  "viewToggle": {
+    "ariaLabel": "Wissel tussen lijst- en kolomweergave",
+    "title": "Wissel tussen lijst- en kolomweergave"
+  },
+  "linkInput": {
+    "placeholder": "voorbeeld.com",
+    "errors": {
+      "required": "Vul een link in.",
+      "invalid": "Voer een geldige URL of domeinnaam in."
+    }
+  },
   "legalModal": {
     "title": "Juridisch & cookies",
     "buttons": {
@@ -666,5 +677,26 @@
       "bodySuffix": "een commissie verdienen zonder extra kosten voor jou."
     },
     "amazon": "Als Amazon-partner verdien ik aan in aanmerking komende aankopen."
+  },
+  "affiliateGate": {
+    "modal": {
+      "title": "Bedankt dat je TrekList steunt!",
+      "cancel": "Annuleren",
+      "continue": "Doorgaan naar webshop"
+    },
+    "button": {
+      "openProductPageTitle": "Productpagina openen",
+      "openProductPageAria": "Productpagina openen (betaalde link)"
+    },
+    "public": {
+      "body": "TrekList is een gratis tool die mogelijk wordt gemaakt door affiliate-links. Als je via deze links spullen koopt, kunnen TrekList of de eigenaar van deze lijst een kleine commissie verdienen — zonder extra kosten voor jou. Jouw steun helpt om het project draaiende en gratis te houden voor iedereen."
+    },
+    "private": {
+      "body": "TrekList is een gratis dienst die wordt ondersteund door affiliate-links. Als je iets koopt nadat je geklikt hebt, kan TrekList een kleine commissie verdienen — zonder extra kosten voor jou. Elke aankoop helpt het project en toekomstige updates te ondersteunen."
+    },
+    "common": {
+      "amazonAssociate": "Als Amazon-partner verdien ik aan gekwalificeerde aankopen.",
+      "learnMore": "Meer informatie"
+    }
   }
 }
