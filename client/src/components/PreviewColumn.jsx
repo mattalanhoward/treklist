@@ -1,46 +1,69 @@
-// ─────────── PreviewColumn.jsx (define inside this file) ───────────
-import React from "react";
-import { FaGripVertical, FaEdit, FaTimes, FaPlus } from "react-icons/fa";
+// src/components/PreviewColumn.jsx
+import React, { useMemo } from "react";
+import { FaGripVertical, FaTimes, FaPlus } from "react-icons/fa";
+import { useWeight } from "../hooks/useWeight";
+import { useTranslation } from "react-i18next";
 
-// We only need a visual skeleton: title + icons + blank items placeholder
 export default function PreviewColumn({ category, items }) {
+  const { t } = useTranslation("common");
+
+  // mirror SortableColumn’s total weight logic (in grams)
+  const totalWeight = useMemo(() => {
+    return (items || []).reduce((sum, i) => {
+      const qty = i.quantity || 1;
+      const countable = i.worn ? Math.max(0, qty - 1) : qty;
+      return sum + (i.weight || 0) * countable;
+    }, 0);
+  }, [items]);
+
+  const totalWeightText = useWeight(totalWeight);
+
   return (
     <div
       className="
-        snap-center flex-shrink-0 m-2 w-90 sm:w-64
-        bg-neutral/20 rounded-lg p-3 flex flex-col h-full
+        snap-center flex-shrink-0 my-0 mx-2 w-90 sm:w-64
+        bg-neutral rounded-lg p-3 flex flex-col self-start max-h-full
         opacity-75
       "
       style={{ pointerEvents: "none" }}
     >
-      {/* Header row: grip icon + title */}
+      {/* Header row: grip + title + totalWeight + placeholder X */}
       <div className="flex items-center mb-2">
-        <FaGripVertical className="mr-2 text-primary" />
-        <h3 className="flex-1 font-semibold text-primary">{category.title}</h3>
-        <FaEdit className="opacity-0" /> {/* invisible placeholders */}
-        <FaTimes className="opacity-0" />
+        <FaGripVertical className="hide-on-touch mr-2 text-primaryAlt" />
+        <h3 className="flex-1 min-w-0 truncate pr-2 text-primaryAlt font-semibold">
+          {category.title}
+        </h3>
+        <span className="pr-3 flex-shrink-0 text-primaryAlt">
+          {totalWeightText}
+        </span>
+        {/* invisible X to match spacing with real column header */}
+        <FaTimes className="flex-shrink-0 text-primaryAlt opacity-0" />
       </div>
 
-      {/* “Ghost” list of items (just blanks) */}
+      {/* Ghost items list – just skeleton cards */}
       <div className="flex-1 overflow-y-auto space-y-2 mb-2">
-        {items.map((item, idx) => (
+        {(items || []).map((_, idx) => (
           <div
             key={idx}
-            className="bg-white p-3 rounded shadow flex flex-col opacity-50"
+            className="bg-base-100 px-3 py-2 rounded shadow flex flex-col opacity-60"
           >
-            <div className="h-4 bg-gray-200 rounded mb-1 w-1/2"></div>
-            <div className="h-3 bg-gray-200 rounded w-3/4" />
+            <div className="h-4 bg-base-200 rounded mb-1 w-1/2" />
+            <div className="h-3 bg-base-200 rounded w-3/4" />
           </div>
         ))}
       </div>
 
-      {/* bottom: “Add Item” button placeholder */}
+      {/* Add Item button placeholder */}
       <button
-        className="px-2 py-1 w-full border border-primary rounded flex items-center justify-center space-x-2 opacity-50 cursor-not-allowed"
+        type="button"
         disabled
+        className="p-2 w-full border border-base-100 rounded flex items-center justify-center space-x-2 bg-base-100 text-primary opacity-60 cursor-not-allowed"
+        aria-hidden="true"
       >
         <FaPlus />
-        <span className="text-xs">Add Item</span>
+        <span className="text-sm">
+          {t("gearList.items.addButton", "Add Item")}
+        </span>
       </button>
     </div>
   );

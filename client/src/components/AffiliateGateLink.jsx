@@ -1,6 +1,7 @@
 // client/src/components/AffiliateGateLink.jsx
 import React from "react";
 import ReactDOM from "react-dom";
+import { useTranslation } from "react-i18next";
 
 const DISCLOSURE_PATH = "/legal/affiliate-disclosure";
 const REMEMBER_DAYS = 60;
@@ -36,6 +37,8 @@ function useDisclosureGate(context = "private") {
 }
 
 function Modal({ titleId, onClose, onProceed, children }) {
+  const { t } = useTranslation("common");
+
   React.useEffect(() => {
     const onKey = (e) => {
       if (e.key === "Escape") onClose();
@@ -65,7 +68,7 @@ function Modal({ titleId, onClose, onProceed, children }) {
       <div className="relative m-2 sm:m-0 w-full max-w-md rounded-lg bg-white shadow-lg outline-none">
         <div className="px-4 py-3 border-b">
           <h2 id={titleId} className="text-base font-semibold text-gray-900">
-            Thanks for supporting TrekList!
+            {t("affiliateGate.modal.title")}
           </h2>
         </div>
         <div className="px-4 py-3 text-sm text-gray-800">{children}</div>
@@ -75,7 +78,7 @@ function Modal({ titleId, onClose, onProceed, children }) {
             className="px-3 py-2 rounded-md border border-gray-300 bg-white text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-1"
             onClick={onClose}
           >
-            Cancel
+            {t("affiliateGate.modal.cancel")}
           </button>
           <button
             ref={firstBtnRef}
@@ -83,7 +86,7 @@ function Modal({ titleId, onClose, onProceed, children }) {
             className="px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-1"
             onClick={onProceed}
           >
-            Continue to retailer
+            {t("affiliateGate.modal.continue")}
           </button>
         </div>
       </div>
@@ -103,10 +106,11 @@ export default function AffiliateGateLink({
   href,
   context = "private",
   className = "",
-  title = "Open product page",
-  ariaLabel = "Open product page (paid link)",
+  title,
+  ariaLabel,
   children,
 }) {
+  const { t } = useTranslation("common");
   const { open, setOpen, ready, acknowledged, markAck } =
     useDisclosureGate(context);
 
@@ -119,18 +123,18 @@ export default function AffiliateGateLink({
     );
   }
 
+  // Default copy is now translated, but caller can still override via props
+  const effectiveTitle =
+    title || t("affiliateGate.button.openProductPageTitle");
+  const effectiveAria =
+    ariaLabel || t("affiliateGate.button.openProductPageAria");
+
   const text =
     context === "public" ? (
       <>
-        TrekList is a free tool made possible through affiliate links. When you
-        purchase gear using these links,{" "}
-        <strong>TrekList or the list owner</strong> may earn a small commission
-        — at no extra cost to you. Your support helps keep the project running
-        and free for everyone. <br />
+        {t("affiliateGate.public.body")}{" "}
         <span className="inline-block mt-1">
-          <strong>
-            As an Amazon Associate, I earn from qualifying purchases.
-          </strong>
+          <strong>{t("affiliateGate.common.amazonAssociate")}</strong>
         </span>{" "}
         <a
           className="underline"
@@ -138,20 +142,15 @@ export default function AffiliateGateLink({
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn more
+          {t("affiliateGate.common.learnMore")}
         </a>
         .
       </>
     ) : (
       <>
-        TrekList is a free service supported by affiliate links. If you decide
-        to buy something after clicking, <strong>TrekList</strong> may earn a
-        small commission — at no extra cost to you. Every purchase helps support
-        the project and future updates. <br />
+        {t("affiliateGate.private.body")}{" "}
         <span className="inline-block mt-1">
-          <strong>
-            As an Amazon Associate, I earn from qualifying purchases.
-          </strong>
+          <strong>{t("affiliateGate.common.amazonAssociate")}</strong>
         </span>{" "}
         <a
           className="underline"
@@ -159,7 +158,7 @@ export default function AffiliateGateLink({
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn more
+          {t("affiliateGate.common.learnMore")}
         </a>
         .
       </>
@@ -188,8 +187,8 @@ export default function AffiliateGateLink({
       <button
         type="button"
         onClick={onClick}
-        title={title}
-        aria-label={ariaLabel}
+        title={effectiveTitle}
+        aria-label={effectiveAria}
         className={`inline-flex items-center justify-center h-5 w-5 align-middle text-secondary hover:text-secondary/70 ${className}`}
       >
         {children}

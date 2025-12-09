@@ -1,22 +1,30 @@
 // src/components/LinkInput.jsx
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function LinkInput({
   value,
   onChange,
   label = "Link",
   name = "link",
-  placeholder = "example.com",
+  placeholder = "",
   required = false,
 }) {
+  const { t } = useTranslation("common");
   const [error, setError] = useState("");
 
   // Called when the user leaves (blurs) the input, or right before form submit
   const normalizeAndValidate = () => {
-    const raw = value.trim();
+    const raw = (value || "").trim();
+
     if (!raw) {
-      // If it’s empty and not required, clear any error
-      setError("");
+      // If it's empty and not required, clear any error
+      if (!required) {
+        setError("");
+      } else {
+        // browser will also enforce required on submit, but this gives inline feedback
+        setError(t("linkInput.errors.required"));
+      }
       return;
     }
 
@@ -28,14 +36,14 @@ export default function LinkInput({
 
     // 2) Try the native URL constructor
     try {
-      // This will throw if “candidate” is not a syntactically valid URL
+      // This will throw if "candidate" is not a syntactically valid URL
       new URL(candidate);
 
       // If valid, clear error and propagate the normalized value
       setError("");
       onChange(candidate);
     } catch {
-      setError("Please enter a valid URL or domain name.");
+      setError(t("linkInput.errors.invalid"));
     }
   };
 
@@ -45,8 +53,14 @@ export default function LinkInput({
     onChange(e.target.value);
   };
 
+  // Use a translated placeholder if none is passed in
+  const effectivePlaceholder =
+    placeholder || t("linkInput.placeholder", { defaultValue: "example.com" });
+
   // Remove any leading http(s):// before rendering
-  const displayPlaceholder = placeholder.replace(/^https?:\/\//i, "");
+  const displayPlaceholder = effectivePlaceholder.replace(/^https?:\/\//i, "");
+
+  const errorId = error ? `${name}-error` : undefined;
 
   return (
     <div>
@@ -61,18 +75,24 @@ export default function LinkInput({
       <input
         id={name}
         name={name}
-        type="text"
+        type="url"
         placeholder={displayPlaceholder}
         value={value}
         onChange={handleChange}
         onBlur={normalizeAndValidate}
+        aria-invalid={!!error}
+        aria-describedby={errorId}
         className={
           "mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary text-sm " +
           (error ? "border-error" : "")
         }
       />
 
-      {error && <p className="mt-1 text-error text-xs">{error}</p>}
+      {error && (
+        <p id={errorId} className="mt-1 text-error text-xs">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
