@@ -539,10 +539,10 @@ export default function PublicGearList() {
             const totalG = catTotalG(items);
 
             return (
-              <section key={catId} className="bg-neutral rounded-lg p-4 mb-6">
+              <section key={catId} className="bg-neutral rounded-lg py-2">
                 {/* Category header (no grabber / no X) */}
                 <div className="flex items-center mb-3 min-w-0">
-                  <h3 className="flex-1 min-w-0 truncate pr-2 text-primaryAlt">
+                  <h3 className="font-bold flex-1 min-w-0 truncate pr-2 text-primaryAlt">
                     <span>{title}</span>
                   </h3>
                   <span className="pr-1 flex-shrink-0 text-primaryAlt tabular-nums">
@@ -669,10 +669,10 @@ export default function PublicGearList() {
             const totalG = catTotalG(items);
 
             return (
-              <section key={catId} className="bg-neutral rounded-lg p-4 mb-6">
+              <section key={catId} className="bg-neutral rounded-lg py-2">
                 {/* Category header (no grabber / no X) */}
                 <div className="flex items-center mb-3 min-w-0">
-                  <h3 className="flex-1 min-w-0 truncate pr-2 text-primaryAlt">
+                  <h3 className="font-bold flex-1 min-w-0 truncate pr-2 text-primaryAlt">
                     <span>{title}</span>
                   </h3>
                   <span className="pr-1 flex-shrink-0 text-primaryAlt tabular-nums">
