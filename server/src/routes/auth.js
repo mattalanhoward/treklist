@@ -141,7 +141,9 @@ async function authenticate(req, res, next) {
 // GET /auth/me — returns the current user’s public profile
 router.get("/me", authenticate, async (req, res) => {
   try {
-    const user = await User.findById(req.userId).select("email trailname");
+    const user = await User.findById(req.userId).select(
+      "email trailname isAdmin"
+    );
     if (!user) return res.status(404).json({ message: "User not found." });
     res.json({ user });
   } catch (err) {

@@ -50,6 +50,14 @@ export function SettingsProvider({ children }) {
     })()
   );
 
+  const [sidebarGearListsCollapsed, setSidebarGearListsCollapsed] = useState(
+    () => localStorage.getItem("sidebarGearListsCollapsed") === "true"
+  );
+
+  const [sidebarMyGearCollapsed, setSidebarMyGearCollapsed] = useState(
+    () => localStorage.getItem("sidebarMyGearCollapsed") === "true"
+  );
+
   // Track if we've hydrated from the server to avoid echo PATCH
   const [hydrated, setHydrated] = useState(false);
 
@@ -112,6 +120,20 @@ export function SettingsProvider({ children }) {
     localStorage.setItem("sidebarCollapsed", String(!!sidebarCollapsed));
   }, [sidebarCollapsed]);
 
+  useEffect(() => {
+    localStorage.setItem(
+      "sidebarGearListsCollapsed",
+      String(!!sidebarGearListsCollapsed)
+    );
+  }, [sidebarGearListsCollapsed]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "sidebarMyGearCollapsed",
+      String(!!sidebarMyGearCollapsed)
+    );
+  }, [sidebarMyGearCollapsed]);
+
   // ─── HYDRATE from server on mount/login ───
   const refreshSettings = useCallback(async () => {
     if (!isAuthenticated) return;
@@ -125,6 +147,8 @@ export function SettingsProvider({ children }) {
       setRegion((s.region || "nl").toLowerCase());
       setViewMode(s.viewMode || "column");
       setSidebarCollapsed(Boolean(s.sidebarCollapsed));
+      setSidebarGearListsCollapsed(Boolean(s.sidebarGearListsCollapsed));
+      setSidebarMyGearCollapsed(Boolean(s.sidebarMyGearCollapsed));
       setHydrated(true);
     } catch (err) {
       console.error("Failed to load settings:", err);
@@ -147,6 +171,8 @@ export function SettingsProvider({ children }) {
       viewMode,
       locale,
       sidebarCollapsed,
+      sidebarGearListsCollapsed,
+      sidebarMyGearCollapsed,
     };
     api.patch("/settings", payload).catch((err) => {
       console.error("Failed to save settings:", err);
@@ -161,6 +187,8 @@ export function SettingsProvider({ children }) {
     viewMode,
     locale,
     sidebarCollapsed,
+    sidebarGearListsCollapsed,
+    sidebarMyGearCollapsed,
   ]);
 
   // Optional helpers for screens that PATCH explicitly:
@@ -172,6 +200,10 @@ export function SettingsProvider({ children }) {
     if (partial.viewMode != null) setViewMode(partial.viewMode);
     if (partial.sidebarCollapsed != null)
       setSidebarCollapsed(Boolean(partial.sidebarCollapsed));
+    if (partial.sidebarGearListsCollapsed != null)
+      setSidebarGearListsCollapsed(Boolean(partial.sidebarGearListsCollapsed));
+    if (partial.sidebarMyGearCollapsed != null)
+      setSidebarMyGearCollapsed(Boolean(partial.sidebarMyGearCollapsed));
   }, []);
 
   return (
@@ -186,6 +218,8 @@ export function SettingsProvider({ children }) {
         locale,
         viewMode,
         sidebarCollapsed,
+        sidebarGearListsCollapsed,
+        sidebarMyGearCollapsed,
         hydrated,
         // setters
         setWeightUnit,
@@ -194,6 +228,8 @@ export function SettingsProvider({ children }) {
         setRegion,
         setViewMode,
         setSidebarCollapsed,
+        setSidebarGearListsCollapsed,
+        setSidebarMyGearCollapsed,
         // helpers
         refreshSettings,
         applySettings,

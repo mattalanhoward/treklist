@@ -6,6 +6,8 @@ import useAuth from "../hooks/useAuth";
 import TopBar from "../components/TopBar";
 import Sidebar from "../components/Sidebar";
 import GearListView from "./GearListView";
+import AdminView from "../pages/AdminView";
+import ForumView from "../pages/ForumView";
 import { toast } from "react-hot-toast";
 import { useUserSettings } from "../contexts/UserSettings";
 import { useTranslation } from "react-i18next";
@@ -100,7 +102,8 @@ function DashboardEmptyState({ hasLists, onCreateSampleList, creatingSample }) {
 }
 
 export default function Dashboard() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+  const isAdmin = !!user?.isAdmin;
   const { t } = useTranslation("common");
   const { listId } = useParams(); // from /dashboard/:listId
   const navigate = useNavigate();
@@ -108,6 +111,14 @@ export default function Dashboard() {
   // ─── Sidebar collapsed state ───
   const { sidebarCollapsed: collapsed, setSidebarCollapsed } =
     useUserSettings();
+
+  // ─── Which main panel is active: "gear" "admin" "forum" ───
+  const [activePane, setActivePane] = useState("gear");
+
+  useEffect(() => {
+    if (!listId) return;
+    setActivePane("gear");
+  }, [listId]);
 
   // ─── Single‐source‐of‐truth for our `/full` payload ───
   const [fullData, setFullData] = useState({
@@ -255,8 +266,14 @@ export default function Dashboard() {
     fetchFullData();
   }, [fetchFullData, listId]);
 
-  // ─── If auth, lists or fullData not loaded yet ───
-  if (!isAuthenticated || (listId && fullData.list === null)) {
+  // ─── If auth not ready, or (for gear view) our fullData isn't ready ───
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  // Only block rendering while loading fullData when we're actually
+  // showing the gear view. This lets Admin render even if fullData is empty.
+  if (activePane === "gear" && listId && fullData.list === null) {
     return null;
   }
   return (
@@ -275,7 +292,14 @@ export default function Dashboard() {
           categories={fullData?.categories || []}
           collapsed={collapsed}
           setCollapsed={setSidebarCollapsed}
+          onOpenAdmin={() => {
+            if (isAdmin) setActivePane("admin");
+          }}
+          isAdmin={isAdmin}
+          onOpenForum={() => setActivePane("forum")}
+          onShowGearPane={() => setActivePane("gear")}
           onSelectList={(id) => {
+            setFullData({ list: null, categories: [], items: [] });
             if (id) {
               localStorage.setItem("lastListId", id);
             } else {
@@ -287,7 +311,11 @@ export default function Dashboard() {
         />
 
         <main className="flex-1 overflow-hidden">
-          {listId ? (
+          {activePane === "admin" && isAdmin ? (
+            <AdminView />
+          ) : activePane === "forum" ? (
+            <ForumView />
+          ) : listId ? (
             <GearListView
               listId={listId}
               viewMode={viewMode}
