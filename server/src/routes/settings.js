@@ -28,6 +28,8 @@ router.get("/", async (req, res) => {
       language,
       region,
       sidebarCollapsed,
+      sidebarGearListsCollapsed,
+      sidebarMyGearCollapsed,
       marketing,
     } = user;
 
@@ -42,6 +44,8 @@ router.get("/", async (req, res) => {
       language,
       region: (region && String(region).toLowerCase()) || "nl",
       sidebarCollapsed: !!sidebarCollapsed,
+      sidebarGearListsCollapsed: !!sidebarGearListsCollapsed,
+      sidebarMyGearCollapsed: !!sidebarMyGearCollapsed,
       marketing: {
         // always return a boolean; treat missing doc as false
         optedIn: marketing?.optedIn || false,
@@ -143,6 +147,8 @@ router.patch("/", async (req, res) => {
       "language",
       "region",
       "sidebarCollapsed",
+      "sidebarGearListsCollapsed",
+      "sidebarMyGearCollapsed",
     ];
     editable.forEach((key) => {
       if (updates[key] !== undefined) {

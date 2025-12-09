@@ -6,6 +6,8 @@ import {
   FaChevronRight,
   FaPlus,
   FaEllipsisH,
+  FaChevronDown,
+  FaChevronUp,
 } from "react-icons/fa";
 import GlobalItemModal from "./GlobalItemModal";
 import GlobalItemEditModal from "./GlobalItemEditModal";
@@ -22,6 +24,10 @@ export default function Sidebar({
   onRefresh,
   collapsed,
   setCollapsed,
+  onOpenAdmin = () => {},
+  onOpenForum = () => {},
+  onShowGearPane = () => {},
+  isAdmin = false,
 }) {
   const { t } = useTranslation("common");
 
@@ -30,7 +36,13 @@ export default function Sidebar({
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingGlobalItem, setEditingGlobalItem] = useState(null);
 
-  const { region } = useUserSettings();
+  const {
+    region,
+    sidebarGearListsCollapsed,
+    setSidebarGearListsCollapsed,
+    sidebarMyGearCollapsed,
+    setSidebarMyGearCollapsed,
+  } = useUserSettings();
 
   // global gear items & debounced search
   const [items, setItems] = useState([]);
@@ -219,106 +231,154 @@ export default function Sidebar({
         {!collapsed && (
           <div className="h-full flex flex-col overflow-hidden">
             {/* Gear Lists section */}
-            <section className="flex flex-col flex-none h-1/3 px-4 py-2 border-b border-base-100 overflow-hidden">
-              <h2 className="font-bold mb-2 truncate text-primaryAlt">
-                {t("sidebar.gearListsTitle")}
-              </h2>
-              <div className="flex mb-3">
-                <input
-                  className="flex-1 rounded-lg py-1 px-2 bg-base-100 text-primary border-primary"
-                  placeholder={t("sidebar.newListPlaceholder")}
-                  value={newListTitle}
-                  onChange={(e) => setNewListTitle(e.target.value)}
-                />
+            <section
+              className={
+                "flex flex-col flex-none px-4 py-2 border-b border-base-100 overflow-hidden " +
+                (sidebarGearListsCollapsed ? "" : "h-1/3")
+              }
+            >
+              <div className="flex items-center mb-2 text-primaryAlt">
                 <button
-                  aria-label="Create list"
-                  onClick={createList}
-                  disabled={!newListTitle.trim()}
-                  className="ml-2 p-1 text-primaryAlt hover:text-primaryAlt/80"
+                  type="button"
+                  onClick={onShowGearPane}
+                  className="font-bold truncate mr-1 text-left"
                 >
-                  <FaPlus />
+                  {t("sidebar.gearListsTitle")}
+                </button>
+                <button
+                  type="button"
+                  aria-label="Toggle gear lists section"
+                  onClick={() => setSidebarGearListsCollapsed((prev) => !prev)}
+                  className="p-1 hover:text-primaryAlt/80"
+                >
+                  {sidebarGearListsCollapsed ? (
+                    <FaChevronDown className="text-xs" />
+                  ) : (
+                    <FaChevronUp className="text-xs" />
+                  )}
                 </button>
               </div>
-
-              <ul className="overflow-y-auto flex-1 space-y-1 text-secondaryAlt">
-                {sortedLists.map((l) => (
-                  <li key={l._id} className="flex items-center">
+              {!sidebarGearListsCollapsed && (
+                <>
+                  <div className="flex mb-3">
+                    <input
+                      className="flex-1 rounded-lg py-1 px-2 bg-base-100 text-primary border-primary"
+                      placeholder={t("sidebar.newListPlaceholder")}
+                      value={newListTitle}
+                      onChange={(e) => setNewListTitle(e.target.value)}
+                    />
                     <button
-                      onClick={() => {
-                        // 1) Select the new list
-                        onSelectList(l._id);
-                        // 2) if on mobile, collapse sidebar
-                        if (isMobile()) {
-                          setCollapsed(true);
-                        }
-                        // 3) Persist or clear storage
-                        if (l._id) {
-                          localStorage.setItem("lastListId", l._id);
-                        } else {
-                          localStorage.removeItem("lastListId");
-                        }
-                      }}
-                      className={`flex-1 text-left py-1 px-2 rounded-lg whitespace-nowrap overflow-hidden truncate ${
-                        l._id === currentListId
-                          ? "bg-primaryAlt text-base-100"
-                          : "hover:bg-primaryAlt hover:text-neutral"
-                      }`}
+                      aria-label="Create list"
+                      onClick={createList}
+                      disabled={!newListTitle.trim()}
+                      className="ml-2 p-1 text-primaryAlt hover:text-primaryAlt/80"
                     >
-                      {" "}
-                      {l.title}
+                      <FaPlus />
                     </button>
-                  </li>
-                ))}
-              </ul>
+                  </div>
+                  <ul className="overflow-y-auto flex-1 space-y-1 text-secondaryAlt">
+                    {sortedLists.map((l) => (
+                      <li key={l._id} className="flex items-center">
+                        <button
+                          onClick={() => {
+                            // 1) Select the new list
+                            onSelectList(l._id);
+                            // 2) if on mobile, collapse sidebar
+                            if (isMobile()) {
+                              setCollapsed(true);
+                            }
+                            // 3) Persist or clear storage
+                            if (l._id) {
+                              localStorage.setItem("lastListId", l._id);
+                            } else {
+                              localStorage.removeItem("lastListId");
+                            }
+                          }}
+                          className={`flex-1 text-left py-1 px-2 rounded-lg whitespace-nowrap overflow-hidden truncate ${
+                            l._id === currentListId
+                              ? "bg-primaryAlt text-base-100"
+                              : "hover:bg-primaryAlt hover:text-neutral"
+                          }`}
+                        >
+                          {" "}
+                          {l.title}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
             </section>
 
             {/* Gear Items / Global Items */}
             <section className="flex flex-col flex-1 px-4 py-2 overflow-hidden">
-              <div className="flex justify-between items-center mb-2 text-primaryAlt">
-                <h2 className="font-bold truncate">
+              <div className="flex items-center mb-2 text-primaryAlt">
+                <button
+                  type="button"
+                  onClick={onShowGearPane}
+                  className="font-bold truncate mr-1 text-left"
+                >
                   {t("sidebar.myGearTitle")}
-                </h2>
+                </button>
+                <button
+                  type="button"
+                  aria-label="Toggle my gear section"
+                  onClick={() => setSidebarMyGearCollapsed((prev) => !prev)}
+                  className="p-1 hover:text-primaryAlt/80"
+                >
+                  {sidebarMyGearCollapsed ? (
+                    <FaChevronDown className="text-xs" />
+                  ) : (
+                    <FaChevronUp className="text-xs" />
+                  )}
+                </button>
+                <div className="flex-1" />
                 <button
                   onClick={() => setShowCreateModal(true)}
-                  className="p-1 text-primaryAlt  hover:text-primaryAlt/80"
+                  className="p-1 text-primaryAlt hover:text-primaryAlt/80"
                   disabled={!currentListId || categories.length === 0}
                 >
                   <FaPlus />
                 </button>
               </div>
-              <input
-                className="w-full rounded-lg py-1 px-2 bg-base-100 text-primary border border-primary mb-3"
-                placeholder={t("sidebar.searchGearPlaceholder")}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
 
-              <ul className="overflow-y-auto flex-1 space-y-2">
-                {filteredAndSortedItems.map((item) => (
-                  <li
-                    key={item._id}
-                    className="flex items-center py-1 px-2 bg-base-100/10 border border-primary/20 rounded-lg hover:bg-base-100/20"
-                  >
-                    <span className="flex-1 truncate text-secondaryAlt">
-                      {item.itemType} – {item.name}
-                    </span>
-                    <div className="flex items-center space-x-2 ml-4">
-                      <button
-                        onClick={() => setEditingGlobalItem(item)}
-                        title={t("sidebar.editGlobalTemplate")}
-                        className="text-secondaryAlt hover:text-secondaryAlt/80 rounded-lg"
+              {!sidebarMyGearCollapsed && (
+                <>
+                  <input
+                    className="w-full rounded-lg py-1 px-2 bg-base-100 text-primary border border-primary mb-3"
+                    placeholder={t("sidebar.searchGearPlaceholder")}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+
+                  <ul className="overflow-y-auto flex-1 space-y-2">
+                    {filteredAndSortedItems.map((item) => (
+                      <li
+                        key={item._id}
+                        className="flex items-center py-1 px-2 bg-base-100/10 border border-primary/20 rounded-lg hover:bg-base-100/20"
                       >
-                        <FaEllipsisH />
-                      </button>
-                    </div>
-                  </li>
-                ))}
-                {filteredAndSortedItems.length === 0 && (
-                  <li className="text-primaryAlt py-1 px-2">
-                    {t("sidebar.noGearItems")}
-                  </li>
-                )}
-              </ul>
+                        <span className="flex-1 truncate text-secondaryAlt">
+                          {item.itemType} – {item.name}
+                        </span>
+                        <div className="flex items-center space-x-2 ml-4">
+                          <button
+                            onClick={() => setEditingGlobalItem(item)}
+                            title={t("sidebar.editGlobalTemplate")}
+                            className="text-secondaryAlt hover:text-secondaryAlt/80 rounded-lg"
+                          >
+                            <FaEllipsisH />
+                          </button>
+                        </div>
+                      </li>
+                    ))}
+                    {filteredAndSortedItems.length === 0 && (
+                      <li className="text-primaryAlt py-1 px-2">
+                        {t("sidebar.noGearItems")}
+                      </li>
+                    )}
+                  </ul>
+                </>
+              )}
 
               {showCreateModal && (
                 <GlobalItemModal
@@ -347,6 +407,33 @@ export default function Sidebar({
                 />
               )}
             </section>
+            {/* Bottom actions group: Forum (future) + Admin */}
+            <div className="mt-auto">
+              {/* Forum (future feature) */}
+
+              <section className="px-4 py-2 border-t border-base-100">
+                <button
+                  type="button"
+                  onClick={onOpenForum}
+                  className="flex items-center text-primaryAlt font-bold truncate"
+                >
+                  Forum
+                </button>
+              </section>
+
+              {/* Admin header pinned at the bottom */}
+              {isAdmin && (
+                <section className="px-4 py-2 border-t border-base-100">
+                  <button
+                    type="button"
+                    onClick={onOpenAdmin}
+                    className="flex items-center text-primaryAlt font-bold truncate"
+                  >
+                    Admin
+                  </button>
+                </section>
+              )}
+            </div>
           </div>
         )}
       </div>
