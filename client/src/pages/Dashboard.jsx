@@ -266,10 +266,26 @@ export default function Dashboard() {
     fetchFullData();
   }, [fetchFullData, listId]);
 
+  // const handleSelectList = useCallback(
+  //   (id) => {
+  //     // clear current list data so the new list can load fresh
+  //     setFullData({ list: null, categories: [], items: [] });
+
+  //     if (id) {
+  //       localStorage.setItem("lastListId", id);
+  //     } else {
+  //       localStorage.removeItem("lastListId");
+  //     }
+
+  //     navigate(`/dashboard/${id}`);
+  //   },
+  //   [navigate]
+  // );
+
   const handleSelectList = useCallback(
     (id) => {
-      // clear current list data so the new list can load fresh
-      setFullData({ list: null, categories: [], items: [] });
+      // ❌ don't clear fullData here; let the old list stay until the new one loads
+      // setFullData({ list: null, categories: [], items: [] });
 
       if (id) {
         localStorage.setItem("lastListId", id);
@@ -284,12 +300,6 @@ export default function Dashboard() {
 
   // ─── If auth not ready, or (for gear view) our fullData isn't ready ───
   if (!isAuthenticated) {
-    return null;
-  }
-
-  // Only block rendering while loading fullData when we're actually
-  // showing the gear view. This lets Admin render even if fullData is empty.
-  if (activePane === "gear" && listId && fullData.list === null) {
     return null;
   }
 
@@ -325,17 +335,23 @@ export default function Dashboard() {
           ) : activePane === "forum" ? (
             <ForumView />
           ) : listId ? (
-            <GearListView
-              listId={listId}
-              viewMode={viewMode}
-              categories={fullData.categories}
-              onRefresh={fetchFullData}
-              onReorderCategories={onReorderCategories}
-              list={fullData.list}
-              items={fullData.items}
-              fetchLists={fetchLists}
-              collapsed={collapsed}
-            />
+            fullData.list === null ? (
+              <div className="h-full flex items-center justify-center text-primary text-sm">
+                {t("dashboard.loadingLists")}
+              </div>
+            ) : (
+              <GearListView
+                listId={listId}
+                viewMode={viewMode}
+                categories={fullData.categories}
+                onRefresh={fetchFullData}
+                onReorderCategories={onReorderCategories}
+                list={fullData.list}
+                items={fullData.items}
+                fetchLists={fetchLists}
+                collapsed={collapsed}
+              />
+            )
           ) : (
             <DashboardEmptyState
               hasLists={lists.length > 0}
