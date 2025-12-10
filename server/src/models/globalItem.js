@@ -52,7 +52,11 @@ const GlobalItemSchema = new mongoose.Schema(
     affiliate: {
       type: new (require("mongoose").Schema)(
         {
-          network: { type: String, enum: ["awin"], required: true },
+          network: {
+            type: String,
+            enum: ["awin", "amazon", "impact"],
+            required: true,
+          },
           merchantId: { type: String },
           merchantName: { type: String },
           region: { type: String }, // source region (e.g., "GB")

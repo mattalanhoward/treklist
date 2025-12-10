@@ -7,6 +7,7 @@ const AffiliateProduct = require("../models/affiliateProduct");
 const { body, validationResult } = require("express-validator");
 const mongoose = require("mongoose");
 const { isValidObjectId } = mongoose;
+const CatalogItem = require("../models/catalogItem");
 
 const router = express.Router();
 
@@ -253,6 +254,62 @@ router.delete("/:id", async (req, res) => {
   } catch (err) {
     console.error("Error deleting global item:", err);
     res.status(500).json({ message: err.message });
+  }
+});
+
+// POST /api/global/items/from-catalog/:id
+// Create a user-owned GlobalItem cloned from a catalog item
+router.post("/from-catalog/:id", async (req, res) => {
+  try {
+    const catalogId = req.params.id;
+    const catalogItem = await CatalogItem.findById(catalogId);
+    if (!catalogItem || !catalogItem.isActive) {
+      return res.status(404).json({ message: "Catalog item not found." });
+    }
+
+    const primaryLink = Array.isArray(catalogItem.links)
+      ? catalogItem.links[0]
+      : null;
+
+    // Prepare new GlobalItem payload
+    const payload = {
+      owner: req.userId,
+      // core fields
+      name: catalogItem.name,
+      brand: catalogItem.brand,
+      // use catalog category as a reasonable default for itemType
+      itemType: catalogItem.category || null,
+      description: catalogItem.description,
+      // weight (+ mark it as coming from catalog if present)
+      weight: catalogItem.weightGrams,
+      ...(typeof catalogItem.weightGrams === "number" && {
+        weightSource: "catalog",
+      }),
+      tags: catalogItem.tags,
+
+      // old top-level link field used throughout the app
+      link: primaryLink ? primaryLink.url : "",
+
+      // affiliate metadata for future routing
+      affiliate: primaryLink
+        ? {
+            network: primaryLink.network,
+            region: primaryLink.region || "global",
+            url: primaryLink.url,
+            merchant: primaryLink.merchantName || "",
+            externalId: primaryLink.externalId || "",
+          }
+        : undefined,
+    };
+
+    const newItem = await GlobalItem.create(payload);
+    return res.status(201).json(newItem);
+  } catch (err) {
+    console.error("POST /global/items/from-catalog error:", err);
+    if (err.name === "ValidationError") {
+      return res.status(400).json({ message: err.message });
+    }
+    return res.status(500).json({ message: "Failed to import catalog item." });
   }
 });
 

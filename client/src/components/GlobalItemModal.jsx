@@ -1,5 +1,5 @@
 // src/components/GlobalItemModal.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import api from "../services/api";
 import { FaTimes } from "react-icons/fa";
 import { toast } from "react-hot-toast";
@@ -8,10 +8,169 @@ import CurrencyInput from "../components/CurrencyInput";
 import LinkInput from "../components/LinkInput";
 import { useUnit } from "../hooks/useUnit";
 import { useWeightInput } from "../hooks/useWeightInput";
-import AffiliateProductPicker from "./AffiliateProductPicker";
+// import AffiliateProductPicker from "./AffiliateProductPicker";
 import { useUserSettings } from "../contexts/UserSettings";
 import { detectRegion, normalizeRegion } from "../utils/region";
 import { extractWeightGrams } from "../utils/weight";
+
+function ImportCatalogTab({ onImported }) {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [query, setQuery] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [brandFilter, setBrandFilter] = useState("all");
+
+  const loadItems = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const params = {};
+      if (query) params.q = query;
+      if (categoryFilter !== "all") params.category = categoryFilter;
+
+      const { data } = await api.get("/catalog/items", { params });
+      setItems(data || []);
+    } catch (err) {
+      console.error("Failed to load catalog items", err);
+      setError(
+        err?.response?.data?.message ||
+          err?.message ||
+          "Failed to load catalog items."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadItems();
+  }, []);
+
+  const handleImport = async (id) => {
+    try {
+      const { data } = await api.post(`/global/items/from-catalog/${id}`);
+      toast.success("Item imported to your account.");
+      if (onImported) onImported(data);
+    } catch (err) {
+      console.error("Import failed", err);
+      toast.error(
+        err?.response?.data?.message || err?.message || "Import failed."
+      );
+    }
+  };
+
+  const categories = Array.from(
+    new Set(items.map((i) => i.category).filter(Boolean))
+  ).sort();
+
+  const brands = Array.from(
+    new Set(items.map((i) => i.brand).filter(Boolean))
+  ).sort();
+
+  const filteredItems = items.filter((item) => {
+    const catOk = categoryFilter === "all" || item.category === categoryFilter;
+    const brandOk = brandFilter === "all" || item.brand === brandFilter;
+    return catOk && brandOk;
+  });
+
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
+        <div className="flex-1 flex gap-2">
+          <input
+            type="text"
+            placeholder="Search catalog (e.g. tent, jacket)..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="input input-sm input-bordered flex-1"
+          />
+          <button
+            type="button"
+            onClick={loadItems}
+            className="btn btn-sm btn-secondary"
+          >
+            Search
+          </button>
+        </div>
+
+        <div className="flex gap-2">
+          <select
+            className="select select-xs select-bordered"
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+          >
+            <option value="all">All categories</option>
+            {categories.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+
+          <select
+            className="select select-xs select-bordered"
+            value={brandFilter}
+            onChange={(e) => setBrandFilter(e.target.value)}
+          >
+            <option value="all">All brands</option>
+            {brands.map((brand) => (
+              <option key={brand} value={brand}>
+                {brand}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {loading && <div className="text-sm text-primary/70">Loading...</div>}
+
+      {error && <div className="text-error text-sm">{error}</div>}
+
+      {!loading && !error && items.length === 0 && (
+        <div className="text-sm text-primary/70">
+          No catalog items found. Try adding some in the Admin panel.
+        </div>
+      )}
+
+      {!loading && !error && items.length > 0 && filteredItems.length === 0 && (
+        <div className="text-sm text-primary/70">
+          No catalog items match these filters.
+        </div>
+      )}
+
+      {!loading && !error && filteredItems.length > 0 && (
+        <div className="space-y-1 max-h-[60vh] overflow-y-auto">
+          {filteredItems.map((item) => (
+            <div
+              key={item._id}
+              className="border border-base-200 bg-base-100 hover:bg-base-200/60 rounded-lg p-2 flex items-center justify-between"
+            >
+              <div>
+                <div className="font-medium text-sm">{item.name}</div>
+                <div className="text-xs text-primary/70">
+                  {item.brand || "Unknown"} · {item.category || "Uncategorized"}
+                </div>
+                {item.links?.[0]?.network && (
+                  <div className="text-[11px] text-secondary">
+                    {item.links[0].network.toUpperCase()}
+                  </div>
+                )}
+              </div>
+              <button
+                type="button"
+                className="btn btn-xs btn-secondary"
+                onClick={() => handleImport(item._id)}
+              >
+                Import
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function GlobalItemModal({
   categories = [],
@@ -57,35 +216,35 @@ export default function GlobalItemModal({
   };
 
   // When a product is picked, prefill the visible fields and lock price/link
-  function handlePickAffiliate(p) {
-    setAffProduct(p);
-    setTab("custom");
-    setName(p?.name || "");
-    setBrand(p?.brand || p?.merchantName || "");
-    setDescription(p?.description || "");
-    // keep price as a number for CurrencyInput; empty string otherwise
-    setPrice(typeof p?.price === "number" ? p.price : "");
-    setLink(p?.awDeepLink || "");
-    const derived =
-      deriveItemTypeFromCategoryPath(p?.categoryPath) ||
-      deriveItemTypeFromCategoryPath(p?.category) ||
-      deriveItemTypeFromCategoryPath(p?.categories);
-    if (derived) setItemType(derived);
+  // function handlePickAffiliate(p) {
+  //   setAffProduct(p);
+  //   setTab("custom");
+  //   setName(p?.name || "");
+  //   setBrand(p?.brand || p?.merchantName || "");
+  //   setDescription(p?.description || "");
+  //   // keep price as a number for CurrencyInput; empty string otherwise
+  //   setPrice(typeof p?.price === "number" ? p.price : "");
+  //   setLink(p?.awDeepLink || "");
+  //   const derived =
+  //     deriveItemTypeFromCategoryPath(p?.categoryPath) ||
+  //     deriveItemTypeFromCategoryPath(p?.category) ||
+  //     deriveItemTypeFromCategoryPath(p?.categories);
+  //   if (derived) setItemType(derived);
 
-    // Prefill weight from name/description if present
-    const grams = extractWeightGrams(
-      [p?.name, p?.description].filter(Boolean).join(" ")
-    );
-    if (grams != null) {
-      if (unitLabel === "g") {
-        setDisplayWeight(String(grams));
-      } else {
-        const oz = Math.round((grams / 28.349523125) * 10) / 10; // 1 decimal
-        setDisplayWeight(String(oz));
-      }
-      setWeightSource("heuristic");
-    }
-  }
+  //   // Prefill weight from name/description if present
+  //   const grams = extractWeightGrams(
+  //     [p?.name, p?.description].filter(Boolean).join(" ")
+  //   );
+  //   if (grams != null) {
+  //     if (unitLabel === "g") {
+  //       setDisplayWeight(String(grams));
+  //     } else {
+  //       const oz = Math.round((grams / 28.349523125) * 10) / 10; // 1 decimal
+  //       setDisplayWeight(String(oz));
+  //     }
+  //     setWeightSource("heuristic");
+  //   }
+  // }
 
   // Region: prefer user setting, then browser, always normalized to ISO-2
   // Region/Currency/Locale from settings
@@ -197,6 +356,12 @@ export default function GlobalItemModal({
     }
   };
 
+  const handleImported = (created) => {
+    // Pass the created GlobalItem back up (gear list page will handle it)
+    if (onCreated) onCreated(created);
+    if (onClose) onClose();
+  };
+
   return (
     <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-50">
       <form
@@ -286,7 +451,7 @@ export default function GlobalItemModal({
         </div>
 
         {/* Import tab content */}
-        {tab === "import" && (
+        {/* {tab === "import" && (
           <div className="">
             <AffiliateProductPicker
               region={regionForSearch}
@@ -294,7 +459,9 @@ export default function GlobalItemModal({
               pageSize={10}
             />
           </div>
-        )}
+        )} */}
+
+        {tab === "import" && <ImportCatalogTab onImported={handleImported} />}
 
         {/* Grid: only visible on the Custom tab */}
         {tab === "custom" && (
@@ -455,36 +622,38 @@ export default function GlobalItemModal({
         )} */}
 
         {/* Actions + merchant note */}
-        <div className="mt-3 flex items-center gap-2">
-          {affProduct && (
-            <p className="flex-1 text-sm text-primary">
-              {t("globalItemModal.messages.affiliateNote")}
-            </p>
-          )}
+        {tab === "custom" && (
+          <div className="mt-3 flex items-center gap-2">
+            {affProduct && (
+              <p className="flex-1 text-sm text-primary">
+                {t("globalItemModal.messages.affiliateNote")}
+              </p>
+            )}
 
-          <div className="flex space-x-2 ml-auto">
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={loading}
-              title={
-                tab === "import"
-                  ? t("globalItemModal.messages.cancelHintImport")
-                  : undefined
-              }
-              className="px-2 py-1 bg-neutralAlt rounded hover:bg-neutralAlt/90 text-primary"
-            >
-              {t("actions.cancel")}
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-2 py-1 bg-secondary text-white rounded hover:bg-secondary-700"
-            >
-              {t("actions.save")}
-            </button>
+            <div className="flex space-x-2 ml-auto">
+              <button
+                type="button"
+                onClick={onClose}
+                disabled={loading}
+                title={
+                  tab === "import"
+                    ? t("globalItemModal.messages.cancelHintImport")
+                    : undefined
+                }
+                className="px-2 py-1 bg-neutralAlt rounded hover:bg-neutralAlt/90 text-primary"
+              >
+                {t("actions.cancel")}
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-2 py-1 bg-secondary text-white rounded hover:bg-secondary-700"
+              >
+                {t("actions.save")}
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </form>
     </div>
   );
