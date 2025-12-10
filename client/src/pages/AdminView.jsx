@@ -2,7 +2,16 @@
 import React, { useState, useEffect } from "react";
 import api from "../services/api";
 import { toast } from "react-hot-toast";
-import { FaEdit, FaTimes, FaChevronUp, FaChevronDown } from "react-icons/fa";
+import {
+  FaEdit,
+  FaTimes,
+  FaChevronUp,
+  FaChevronDown,
+  FaUsers,
+  FaUser,
+} from "react-icons/fa";
+import ConfirmDialog from "../components/ConfirmDialog";
+
 const TABS = [
   { id: "gear", label: "Gear catalog" },
   { id: "users", label: "Users" },
@@ -1186,6 +1195,655 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
   );
 }
 
+function UserDetailModal({ userId, onClose, onUserChanged }) {
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [user, setUser] = useState(null);
+  const [lists, setLists] = useState([]);
+  const [error, setError] = useState("");
+  const [trailname, setTrailname] = useState("");
+  const [isVerified, setIsVerified] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    const load = async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const { data } = await api.get(`/admin/users/${userId}`);
+        setUser(data.user);
+        setLists(data.lists || []);
+        setTrailname(data.user.trailname || "");
+        setIsVerified(Boolean(data.user.isVerified));
+        setIsAdmin(Boolean(data.user.isAdmin));
+      } catch (err) {
+        console.error("Failed to load user", err);
+        const msg =
+          err?.response?.data?.message ||
+          err?.message ||
+          "Failed to load user.";
+        setError(msg);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
+  }, [userId]);
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    if (!user) return;
+    setSaving(true);
+    setError("");
+    try {
+      const payload = {
+        trailname: trailname,
+        isVerified,
+        isAdmin,
+      };
+      const { data } = await api.patch(`/admin/users/${user._id}`, payload);
+      setUser(data);
+      toast.success("User updated.");
+      onUserChanged?.("updated");
+      onClose?.();
+    } catch (err) {
+      console.error("Failed to update user", err);
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to update user.";
+      setError(msg);
+      toast.error(msg);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!user) return;
+    try {
+      await api.delete(`/admin/users/${user._id}`);
+      toast.success("User and related data deleted.");
+      setConfirmDeleteOpen(false);
+      onUserChanged?.("deleted");
+      onClose?.();
+    } catch (err) {
+      console.error("Failed to delete user", err);
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to delete user.";
+      toast.error(msg);
+    }
+  };
+
+  const formatDateTime = (val) => {
+    if (!val) return "–";
+    const d = new Date(val);
+    if (Number.isNaN(d.getTime())) return "–";
+    return d.toLocaleString();
+  };
+
+  return (
+    <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-50">
+      <form
+        onSubmit={handleSave}
+        className="bg-neutralAlt rounded-lg shadow-2xl max-w-2xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4"
+      >
+        {/* Header */}
+        <div className="flex justify-between items-center mb-2 sm:mb-3">
+          <h2 className="text-xl font-semibold text-primary flex items-center gap-2">
+            <FaUser />
+            <span>User details</span>
+          </h2>
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={saving}
+            className="text-error hover:text-error/80"
+          >
+            <FaTimes />
+          </button>
+        </div>
+
+        {loading && (
+          <div className="text-sm text-primary/70">
+            Loading user information…
+          </div>
+        )}
+
+        {!loading && error && (
+          <div className="text-error mb-2 text-sm">{error}</div>
+        )}
+
+        {!loading && user && (
+          <>
+            {/* Profile fields */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-3">
+              <div>
+                <label className="block font-medium text-primary mb-0.5">
+                  Email
+                </label>
+                <div className="mt-0.5 text-sm text-primary bg-base-200 rounded px-2 py-1 break-all">
+                  {user.email}
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-medium text-primary mb-0.5">
+                  Trailname
+                </label>
+                <input
+                  type="text"
+                  className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                  value={trailname}
+                  onChange={(e) => setTrailname(e.target.value)}
+                  placeholder="Optional public name"
+                />
+              </div>
+
+              <div>
+                <label className="block font-medium text-primary mb-0.5">
+                  Created at
+                </label>
+                <div className="mt-0.5 text-sm text-primary bg-base-200 rounded px-2 py-1">
+                  {formatDateTime(user.createdAt)}
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-medium text-primary mb-0.5">
+                  Updated at
+                </label>
+                <div className="mt-0.5 text-sm text-primary bg-base-200 rounded px-2 py-1">
+                  {formatDateTime(user.updatedAt)}
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-medium text-primary mb-0.5">
+                  Role
+                </label>
+                <select
+                  className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                  value={isAdmin ? "admin" : "user"}
+                  onChange={(e) => setIsAdmin(e.target.value === "admin")}
+                >
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+
+              <div className="flex flex-col justify-end">
+                <label className="inline-flex items-center gap-2 text-primary">
+                  <input
+                    type="checkbox"
+                    className="checkbox checkbox-sm"
+                    checked={isVerified}
+                    onChange={(e) => setIsVerified(e.target.checked)}
+                  />
+                  <span>Verified email</span>
+                </label>
+              </div>
+            </div>
+
+            {/* Lists summary */}
+            <div className="border-t border-base-200 pt-3 mt-2">
+              <h3 className="text-sm font-semibold text-primary flex items-center gap-1 mb-2">
+                <FaUsers className="text-primary/80" />
+                <span>Gear lists ({lists.length})</span>
+              </h3>
+
+              {lists.length === 0 && (
+                <div className="text-sm text-primary/70">
+                  This user has no gear lists yet.
+                </div>
+              )}
+
+              {lists.length > 0 && (
+                <div className="max-h-48 overflow-auto text-xs sm:text-sm">
+                  <table className="min-w-full">
+                    <thead>
+                      <tr className="bg-base-200/70">
+                        <th className="text-left px-2 py-1">Title</th>
+                        <th className="text-left px-2 py-1">Region</th>
+                        <th className="text-left px-2 py-1">Created</th>
+                        <th className="text-left px-2 py-1">Updated</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {lists.map((l) => (
+                        <tr
+                          key={l._id}
+                          className="border-t border-base-200 hover:bg-base-200/40"
+                        >
+                          <td className="px-2 py-1 truncate max-w-[180px]">
+                            {l.title || "(untitled list)"}
+                          </td>
+                          <td className="px-2 py-1 text-xs">
+                            {l.region || "–"}
+                          </td>
+                          <td className="px-2 py-1 text-xs">
+                            {formatDateTime(l.createdAt)}
+                          </td>
+                          <td className="px-2 py-1 text-xs">
+                            {formatDateTime(l.updatedAt)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+
+            {/* Actions */}
+            <div className="mt-3 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => setConfirmDeleteOpen(true)}
+                disabled={saving}
+                className="px-2 py-1 bg-error text-neutral font-semibold rounded-md shadow hover:bg-error/80 focus:outline-none focus:ring-2 focus:ring-error transition text-xs sm:text-sm"
+              >
+                Delete user
+              </button>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  disabled={saving}
+                  className="px-2 py-1 bg-neutralAlt rounded hover:bg-neutralAlt/90 text-primary text-xs sm:text-sm"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="px-2 py-1 rounded bg-secondary text-white hover:bg-secondary/80 text-xs sm:text-sm"
+                >
+                  {saving ? "Saving…" : "Save changes"}
+                </button>
+              </div>
+            </div>
+
+            {/* Delete confirm dialog */}
+            <ConfirmDialog
+              isOpen={confirmDeleteOpen}
+              title="Delete user?"
+              message="This will permanently delete this user and all of their gear lists and templates. This action cannot be undone."
+              confirmText="Delete user"
+              cancelText="Cancel"
+              onConfirm={handleDelete}
+              onCancel={() => setConfirmDeleteOpen(false)}
+            />
+          </>
+        )}
+      </form>
+    </div>
+  );
+}
+
+function UsersSection() {
+  const [users, setUsers] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all"); // "all" | "user" | "admin"
+  const [verifiedFilter, setVerifiedFilter] = useState("all"); // "all" | "true" | "false"
+
+  const [page, setPage] = useState(0); // 0-based
+  const [pageSize, setPageSize] = useState(25);
+
+  const [showListBody, setShowListBody] = useState(true);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+
+  const loadUsers = async ({
+    pageOverride,
+    pageSizeOverride,
+    searchOverride,
+    roleOverride,
+    verifiedOverride,
+  } = {}) => {
+    const nextPage = pageOverride ?? page;
+    const nextPageSize = pageSizeOverride ?? pageSize;
+    const nextSearch = searchOverride ?? search;
+    const nextRole = roleOverride ?? roleFilter;
+    const nextVerified = verifiedOverride ?? verifiedFilter;
+
+    setLoading(true);
+    setError("");
+    try {
+      const params = {
+        limit: nextPageSize,
+        skip: nextPage * nextPageSize,
+      };
+
+      if (nextSearch.trim()) params.q = nextSearch.trim();
+      if (nextRole !== "all") params.role = nextRole;
+      if (nextVerified !== "all") params.isVerified = nextVerified;
+
+      const { data } = await api.get("/admin/users", { params });
+      setUsers(data.users || []);
+      setTotal(data.total || 0);
+      setPage(nextPage);
+      setPageSize(nextPageSize);
+    } catch (err) {
+      console.error("Failed to load users", err);
+      const msg =
+        err?.response?.data?.message || err?.message || "Failed to load users.";
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadUsers({ pageOverride: 0 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const currentPage = Math.min(page, totalPages - 1);
+  const startIndex = total === 0 ? 0 : currentPage * pageSize + 1;
+  const endIndex =
+    total === 0 ? 0 : Math.min((currentPage + 1) * pageSize, total);
+
+  const handleRefresh = () => {
+    loadUsers({ pageOverride: currentPage });
+  };
+
+  const handleFilterChange = (nextRole, nextVerified) => {
+    setRoleFilter(nextRole);
+    setVerifiedFilter(nextVerified);
+    setPage(0);
+    loadUsers({
+      pageOverride: 0,
+      roleOverride: nextRole,
+      verifiedOverride: nextVerified,
+    });
+  };
+
+  const formatDate = (val) => {
+    if (!val) return "–";
+    const d = new Date(val);
+    if (Number.isNaN(d.getTime())) return "–";
+    return d.toLocaleDateString();
+  };
+
+  const handleUserChanged = () => {
+    // After update/delete, reload current page with same filters
+    loadUsers({ pageOverride: currentPage });
+  };
+
+  return (
+    <div className="space-y-3">
+      {/* Section header */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-primary flex items-center gap-2">
+          <FaUsers />
+          <span>Users</span>
+        </h2>
+      </div>
+
+      {/* List container */}
+      <div className="border border-base-300 rounded-lg bg-base-100/80 overflow-hidden">
+        {/* Header bar */}
+        <div className="flex items-center justify-between px-3 py-2 border-b border-base-200 text-xs text-primary/80">
+          <span>
+            {loading
+              ? "Loading users…"
+              : `Users: ${total} (page ${currentPage + 1} of ${totalPages})`}
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleRefresh}
+              disabled={loading}
+              className="btn btn-ghost btn-xs"
+            >
+              Refresh
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowListBody((v) => !v)}
+              className="btn btn-ghost btn-xs"
+              title={showListBody ? "Hide users list" : "Show users list"}
+            >
+              {showListBody ? <FaChevronUp /> : <FaChevronDown />}
+            </button>
+          </div>
+        </div>
+
+        {showListBody && (
+          <>
+            {/* Filters row */}
+            <div className="px-3 py-2 border-b border-base-200 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between text-xs">
+              <div className="flex-1 flex gap-2">
+                <input
+                  type="text"
+                  className="input input-xs input-bordered w-full"
+                  placeholder="Search by email or trailname…"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      setPage(0);
+                      loadUsers({ pageOverride: 0 });
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  className="btn btn-xs btn-secondary"
+                  onClick={() => {
+                    setPage(0);
+                    loadUsers({ pageOverride: 0 });
+                  }}
+                >
+                  Search
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <select
+                  className="select select-xs select-bordered"
+                  value={roleFilter}
+                  onChange={(e) =>
+                    handleFilterChange(e.target.value, verifiedFilter)
+                  }
+                >
+                  <option value="all">All roles</option>
+                  <option value="user">Users</option>
+                  <option value="admin">Admins</option>
+                </select>
+
+                <select
+                  className="select select-xs select-bordered"
+                  value={verifiedFilter}
+                  onChange={(e) =>
+                    handleFilterChange(roleFilter, e.target.value)
+                  }
+                >
+                  <option value="all">All verification states</option>
+                  <option value="true">Verified</option>
+                  <option value="false">Unverified</option>
+                </select>
+
+                <select
+                  className="select select-xs select-bordered"
+                  value={pageSize}
+                  onChange={(e) => {
+                    const next = Number(e.target.value) || 25;
+                    setPageSize(next);
+                    setPage(0);
+                    loadUsers({
+                      pageOverride: 0,
+                      pageSizeOverride: next,
+                    });
+                  }}
+                >
+                  <option value={10}>10 / page</option>
+                  <option value={25}>25 / page</option>
+                  <option value={50}>50 / page</option>
+                  <option value={100}>100 / page</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Error / empty states */}
+            {error && !loading && (
+              <div className="px-3 py-2 text-xs text-error">{error}</div>
+            )}
+
+            {!error && !loading && users.length === 0 && (
+              <div className="px-3 py-3 text-xs text-primary/70">
+                No users found for the current filters.
+              </div>
+            )}
+
+            {/* Table */}
+            {!loading && !error && users.length > 0 && (
+              <>
+                <table className="min-w-full text-xs sm:text-sm">
+                  <thead className="bg-base-200/80">
+                    <tr>
+                      <th className="text-left px-3 py-2 font-semibold">
+                        Email
+                      </th>
+                      <th className="text-left px-3 py-2 font-semibold">
+                        Trailname
+                      </th>
+                      <th className="text-left px-3 py-2 font-semibold">
+                        Role
+                      </th>
+                      <th className="text-left px-3 py-2 font-semibold">
+                        Verified
+                      </th>
+                      <th className="text-right px-3 py-2 font-semibold">
+                        Lists
+                      </th>
+                      <th className="text-left px-3 py-2 font-semibold">
+                        Created
+                      </th>
+                      <th className="text-left px-3 py-2 font-semibold">
+                        Updated
+                      </th>
+                      <th className="text-right px-3 py-2 font-semibold">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {users.map((u) => (
+                      <tr
+                        key={u._id}
+                        className="border-t border-base-200 hover:bg-base-200/40"
+                      >
+                        <td className="px-3 py-2 align-top max-w-[200px] truncate">
+                          {u.email}
+                        </td>
+                        <td className="px-3 py-2 align-top max-w-[160px] truncate">
+                          {u.trailname || "–"}
+                        </td>
+                        <td className="px-3 py-2 align-top">
+                          <span
+                            className={
+                              "badge badge-xs " +
+                              (u.isAdmin ? "badge-secondary" : "badge-ghost")
+                            }
+                          >
+                            {u.isAdmin ? "Admin" : "User"}
+                          </span>
+                        </td>
+                        <td className="px-3 py-2 align-top">
+                          <span
+                            className={
+                              "badge badge-xs " +
+                              (u.isVerified ? "badge-success" : "badge-ghost")
+                            }
+                          >
+                            {u.isVerified ? "Verified" : "Unverified"}
+                          </span>
+                        </td>
+                        <td className="px-3 py-2 text-right align-top">
+                          {u.listsCount ?? 0}
+                        </td>
+                        <td className="px-3 py-2 align-top text-xs">
+                          {formatDate(u.createdAt)}
+                        </td>
+                        <td className="px-3 py-2 align-top text-xs">
+                          {formatDate(u.updatedAt)}
+                        </td>
+                        <td className="px-3 py-2 text-right align-top">
+                          <button
+                            type="button"
+                            className="btn btn-ghost btn-xs"
+                            onClick={() => setSelectedUserId(u._id)}
+                            title="View user details"
+                          >
+                            <FaEdit />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                {/* Pagination footer */}
+                <div className="flex items-center justify-between px-3 py-2 border-t border-base-200 text-xs text-primary/80">
+                  <span>
+                    Showing {startIndex}–{endIndex} of {total}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      className="btn btn-ghost btn-xs"
+                      disabled={currentPage === 0 || loading}
+                      onClick={() =>
+                        loadUsers({ pageOverride: currentPage - 1 })
+                      }
+                    >
+                      Previous
+                    </button>
+                    <span>
+                      Page {currentPage + 1} of {totalPages}
+                    </span>
+                    <button
+                      type="button"
+                      className="btn btn-ghost btn-xs"
+                      disabled={currentPage >= totalPages - 1 || loading}
+                      onClick={() =>
+                        loadUsers({ pageOverride: currentPage + 1 })
+                      }
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* Detail modal */}
+      {selectedUserId && (
+        <UserDetailModal
+          userId={selectedUserId}
+          onClose={() => setSelectedUserId(null)}
+          onUserChanged={handleUserChanged}
+        />
+      )}
+    </div>
+  );
+}
+
 function AdminView() {
   const [activeTab, setActiveTab] = useState("gear");
 
@@ -1225,17 +1883,7 @@ function AdminView() {
       {/* Content */}
       <main className="flex-1 px-4 py-3 overflow-auto bg-neutral/20">
         {activeTab === "gear" && <GearCatalogSection />}
-
-        {activeTab === "users" && (
-          <section className="space-y-2">
-            <h2 className="text-base font-semibold text-primary">Users</h2>
-            <p className="text-sm text-primary/80">
-              In a later step we&apos;ll add a simple user search and GDPR-safe
-              actions (view, delete) here.
-            </p>
-          </section>
-        )}
-
+        {activeTab === "users" && <UsersSection />}
         {activeTab === "lists" && (
           <section className="space-y-2">
             <h2 className="text-base font-semibold text-primary">

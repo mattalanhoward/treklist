@@ -168,7 +168,6 @@
     },
     "messages": {
       "emailImmutable": "Email can’t be changed here",
-      "emailChangeSupport": "To change your email, contact support.",
       "marketingHint": "You can change this preference anytime."
     },
     "errors": {
