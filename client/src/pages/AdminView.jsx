@@ -1204,6 +1204,7 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
   const [trailname, setTrailname] = useState("");
   const [isVerified, setIsVerified] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   useEffect(() => {
@@ -1219,6 +1220,7 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
         setTrailname(data.user.trailname || "");
         setIsVerified(Boolean(data.user.isVerified));
         setIsAdmin(Boolean(data.user.isAdmin));
+        setIsDisabled(Boolean(data.user.isDisabled));
       } catch (err) {
         console.error("Failed to load user", err);
         const msg =
@@ -1244,6 +1246,7 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
         trailname: trailname,
         isVerified,
         isAdmin,
+        isDisabled,
       };
       const { data } = await api.patch(`/admin/users/${user._id}`, payload);
       setUser(data);
@@ -1366,6 +1369,15 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
 
               <div>
                 <label className="block font-medium text-primary mb-0.5">
+                  Last login
+                </label>
+                <div className="mt-0.5 text-sm text-primary bg-base-200 rounded px-2 py-1">
+                  {formatDateTime(user.lastLoginAt)}
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-medium text-primary mb-0.5">
                   Role
                 </label>
                 <select
@@ -1378,7 +1390,7 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
                 </select>
               </div>
 
-              <div className="flex flex-col justify-end">
+              <div className="flex flex-col justify-end gap-1">
                 <label className="inline-flex items-center gap-2 text-primary">
                   <input
                     type="checkbox"
@@ -1387,6 +1399,15 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
                     onChange={(e) => setIsVerified(e.target.checked)}
                   />
                   <span>Verified email</span>
+                </label>
+                <label className="inline-flex items-center gap-2 text-primary">
+                  <input
+                    type="checkbox"
+                    className="checkbox checkbox-sm"
+                    checked={isDisabled}
+                    onChange={(e) => setIsDisabled(e.target.checked)}
+                  />
+                  <span>Disable login for this user</span>
                 </label>
               </div>
             </div>
@@ -1503,6 +1524,11 @@ function UsersSection() {
   const [showListBody, setShowListBody] = useState(true);
   const [selectedUserId, setSelectedUserId] = useState(null);
 
+  const [sort, setSort] = useState({
+    field: "createdAt", // "email" | "trailname" | "role" | "verified" | "lists" | "createdAt" | "updatedAt" | "lastLoginAt"
+    dir: "desc", // "asc" | "desc"
+  });
+
   const loadUsers = async ({
     pageOverride,
     pageSizeOverride,
@@ -1548,11 +1574,83 @@ function UsersSection() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleSort = (field) => {
+    setSort((prev) => {
+      if (prev.field === field) {
+        return {
+          field,
+          dir: prev.dir === "asc" ? "desc" : "asc",
+        };
+      }
+      return {
+        field,
+        dir: "asc",
+      };
+    });
+  };
+
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const currentPage = Math.min(page, totalPages - 1);
   const startIndex = total === 0 ? 0 : currentPage * pageSize + 1;
   const endIndex =
     total === 0 ? 0 : Math.min((currentPage + 1) * pageSize, total);
+
+  const sortedUsers = [...users].sort((a, b) => {
+    const dir = sort.dir === "asc" ? 1 : -1;
+
+    const boolToNum = (val) => (val ? 1 : 0);
+
+    switch (sort.field) {
+      case "email": {
+        const ae = (a.email || "").toLowerCase();
+        const be = (b.email || "").toLowerCase();
+        return ae.localeCompare(be) * dir;
+      }
+      case "trailname": {
+        const at = (a.trailname || "").toLowerCase();
+        const bt = (b.trailname || "").toLowerCase();
+        return at.localeCompare(bt) * dir;
+      }
+      case "role": {
+        // Admins after/before users depending on dir
+        const ar = boolToNum(a.isAdmin);
+        const br = boolToNum(b.isAdmin);
+        if (ar === br) return 0;
+        return (ar - br) * dir;
+      }
+      case "verified": {
+        const av = boolToNum(a.isVerified);
+        const bv = boolToNum(b.isVerified);
+        if (av === bv) return 0;
+        return (av - bv) * dir;
+      }
+      case "lists": {
+        const al = a.listsCount ?? 0;
+        const bl = b.listsCount ?? 0;
+        if (al === bl) return 0;
+        return al > bl ? dir : -dir;
+      }
+      case "lastLoginAt": {
+        const al = a.lastLoginAt ? new Date(a.lastLoginAt).getTime() : 0;
+        const bl = b.lastLoginAt ? new Date(b.lastLoginAt).getTime() : 0;
+        if (al === bl) return 0;
+        return al > bl ? dir : -dir;
+      }
+      case "updatedAt": {
+        const au = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+        const bu = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
+        if (au === bu) return 0;
+        return au > bu ? dir : -dir;
+      }
+      case "createdAt":
+      default: {
+        const ac = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const bc = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        if (ac === bc) return 0;
+        return ac > bc ? dir : -dir;
+      }
+    }
+  });
 
   const handleRefresh = () => {
     loadUsers({ pageOverride: currentPage });
@@ -1579,6 +1677,21 @@ function UsersSection() {
   const handleUserChanged = () => {
     // After update/delete, reload current page with same filters
     loadUsers({ pageOverride: currentPage });
+  };
+
+  const handleQuickVerify = async (userId) => {
+    try {
+      await api.patch(`/admin/users/${userId}`, { isVerified: true });
+      toast.success("User marked as verified.");
+      handleUserChanged();
+    } catch (err) {
+      console.error("Quick verify failed", err);
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to verify user.";
+      toast.error(msg);
+    }
   };
 
   return (
@@ -1713,40 +1826,105 @@ function UsersSection() {
                 <table className="min-w-full text-xs sm:text-sm">
                   <thead className="bg-base-200/80">
                     <tr>
-                      <th className="text-left px-3 py-2 font-semibold">
+                      <th
+                        className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
+                        onClick={() => handleSort("email")}
+                      >
                         Email
+                        {sort.field === "email" && (
+                          <span className="ml-1 text-[10px]">
+                            {sort.dir === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
                       </th>
-                      <th className="text-left px-3 py-2 font-semibold">
+                      <th
+                        className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
+                        onClick={() => handleSort("trailname")}
+                      >
                         Trailname
+                        {sort.field === "trailname" && (
+                          <span className="ml-1 text-[10px]">
+                            {sort.dir === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
                       </th>
-                      <th className="text-left px-3 py-2 font-semibold">
+                      <th
+                        className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
+                        onClick={() => handleSort("role")}
+                      >
                         Role
+                        {sort.field === "role" && (
+                          <span className="ml-1 text-[10px]">
+                            {sort.dir === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
                       </th>
-                      <th className="text-left px-3 py-2 font-semibold">
+                      <th
+                        className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
+                        onClick={() => handleSort("verified")}
+                      >
                         Verified
+                        {sort.field === "verified" && (
+                          <span className="ml-1 text-[10px]">
+                            {sort.dir === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
                       </th>
-                      <th className="text-right px-3 py-2 font-semibold">
+                      <th
+                        className="text-right px-3 py-2 font-semibold cursor-pointer select-none"
+                        onClick={() => handleSort("lists")}
+                      >
                         Lists
+                        {sort.field === "lists" && (
+                          <span className="ml-1 text-[10px]">
+                            {sort.dir === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
                       </th>
-                      <th className="text-left px-3 py-2 font-semibold">
+                      <th
+                        className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
+                        onClick={() => handleSort("createdAt")}
+                      >
                         Created
+                        {sort.field === "createdAt" && (
+                          <span className="ml-1 text-[10px]">
+                            {sort.dir === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
+                      </th>
+                      <th
+                        className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
+                        onClick={() => handleSort("lastLoginAt")}
+                      >
+                        Last login
+                        {sort.field === "lastLoginAt" && (
+                          <span className="ml-1 text-[10px]">
+                            {sort.dir === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
                       </th>
                       <th className="text-left px-3 py-2 font-semibold">
-                        Updated
+                        Status
                       </th>
                       <th className="text-right px-3 py-2 font-semibold">
                         Actions
                       </th>
                     </tr>
                   </thead>
+
                   <tbody>
-                    {users.map((u) => (
+                    {sortedUsers.map((u) => (
                       <tr
                         key={u._id}
                         className="border-t border-base-200 hover:bg-base-200/40"
                       >
-                        <td className="px-3 py-2 align-top max-w-[200px] truncate">
-                          {u.email}
+                        <td className="px-3 py-2 align-top max-w-[220px]">
+                          <div className="truncate">{u.email}</div>
+                          {(u.locale || u.currency) && (
+                            <div className="text-[10px] text-primary/70 mt-0.5">
+                              {u.locale || "—"} / {u.currency || "—"}
+                            </div>
+                          )}
                         </td>
                         <td className="px-3 py-2 align-top max-w-[160px] truncate">
                           {u.trailname || "–"}
@@ -1762,14 +1940,25 @@ function UsersSection() {
                           </span>
                         </td>
                         <td className="px-3 py-2 align-top">
-                          <span
-                            className={
-                              "badge badge-xs " +
-                              (u.isVerified ? "badge-success" : "badge-ghost")
-                            }
-                          >
-                            {u.isVerified ? "Verified" : "Unverified"}
-                          </span>
+                          {u.isVerified ? (
+                            <span className="badge badge-xs badge-success">
+                              Verified
+                            </span>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <span className="badge badge-xs badge-ghost">
+                                Unverified
+                              </span>
+                              <button
+                                type="button"
+                                className="btn btn-ghost btn-xs"
+                                onClick={() => handleQuickVerify(u._id)}
+                                title="Mark as verified"
+                              >
+                                Verify
+                              </button>
+                            </div>
+                          )}
                         </td>
                         <td className="px-3 py-2 text-right align-top">
                           {u.listsCount ?? 0}
@@ -1778,7 +1967,17 @@ function UsersSection() {
                           {formatDate(u.createdAt)}
                         </td>
                         <td className="px-3 py-2 align-top text-xs">
-                          {formatDate(u.updatedAt)}
+                          {formatDate(u.lastLoginAt)}
+                        </td>
+                        <td className="px-3 py-2 align-top">
+                          <span
+                            className={
+                              "badge badge-xs " +
+                              (u.isDisabled ? "badge-error" : "badge-success")
+                            }
+                          >
+                            {u.isDisabled ? "Disabled" : "Active"}
+                          </span>
                         </td>
                         <td className="px-3 py-2 text-right align-top">
                           <button

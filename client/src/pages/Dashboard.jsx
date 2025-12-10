@@ -266,6 +266,22 @@ export default function Dashboard() {
     fetchFullData();
   }, [fetchFullData, listId]);
 
+  const handleSelectList = useCallback(
+    (id) => {
+      // clear current list data so the new list can load fresh
+      setFullData({ list: null, categories: [], items: [] });
+
+      if (id) {
+        localStorage.setItem("lastListId", id);
+      } else {
+        localStorage.removeItem("lastListId");
+      }
+
+      navigate(`/dashboard/${id}`);
+    },
+    [navigate]
+  );
+
   // ─── If auth not ready, or (for gear view) our fullData isn't ready ───
   if (!isAuthenticated) {
     return null;
@@ -276,6 +292,7 @@ export default function Dashboard() {
   if (activePane === "gear" && listId && fullData.list === null) {
     return null;
   }
+
   return (
     <div className="flex flex-col h-d-screen overflow-hidden bg-neutral/50 text-primary">
       <TopBar
@@ -298,15 +315,7 @@ export default function Dashboard() {
           isAdmin={isAdmin}
           onOpenForum={() => setActivePane("forum")}
           onShowGearPane={() => setActivePane("gear")}
-          onSelectList={(id) => {
-            setFullData({ list: null, categories: [], items: [] });
-            if (id) {
-              localStorage.setItem("lastListId", id);
-            } else {
-              localStorage.removeItem("lastListId");
-            }
-            navigate(`/dashboard/${id}`);
-          }}
+          onSelectList={handleSelectList}
           onRefresh={fetchFullData}
         />
 

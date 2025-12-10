@@ -65,7 +65,7 @@ router.get("/", async (req, res) => {
         .skip(safeSkip)
         .limit(safeLimit)
         .select(
-          "email trailname isVerified isAdmin createdAt updatedAt locale currency theme marketing"
+          "email trailname isVerified isAdmin isDisabled createdAt updatedAt lastLoginAt locale currency theme marketing"
         )
         .lean(),
       User.countDocuments(query),
@@ -170,6 +170,16 @@ router.patch("/:id", async (req, res) => {
       updates.isAdmin = Boolean(body.isAdmin);
     }
 
+    if (Object.prototype.hasOwnProperty.call(body, "isDisabled")) {
+      const disabled = Boolean(body.isDisabled);
+      updates.isDisabled = disabled;
+
+      // If we're disabling the account, also revoke all refresh tokens
+      if (disabled) {
+        updates.refreshTokens = [];
+      }
+    }
+
     if (Object.keys(updates).length === 0) {
       return res
         .status(400)
@@ -185,7 +195,7 @@ router.patch("/:id", async (req, res) => {
       }
     )
       .select(
-        "email trailname isVerified isAdmin createdAt updatedAt locale currency theme marketing"
+        "email trailname isVerified isAdmin isDisabled createdAt updatedAt lastLoginAt locale currency theme marketing"
       )
       .lean();
 

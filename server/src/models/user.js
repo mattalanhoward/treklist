@@ -16,6 +16,15 @@ const UserSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    // When the user last successfully logged in
+    lastLoginAt: {
+      type: Date,
+    },
+    // If true, this account is blocked from logging in
+    isDisabled: {
+      type: Boolean,
+      default: false,
+    },
     email: {
       type: String,
       required: true,

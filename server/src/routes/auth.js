@@ -257,6 +257,10 @@ router.post("/verify-email", async (req, res) => {
   user.verifyEmailExpires = undefined;
 
   const tokens = issueTokens(user);
+
+  // mark this as a successful login as well
+  user.lastLoginAt = new Date();
+
   await sendTokenResponse(res, user, tokens);
 });
 
@@ -310,17 +314,32 @@ router.post("/login", async (req, res) => {
         .status(400)
         .json({ message: "Email & password are required." });
     }
+
     const user = await User.findOne({ email });
     if (!user || !(await user.validatePassword(password))) {
       return res.status(401).json({ message: "Invalid email or password." });
     }
+
+    // 🔹 NEW: block disabled accounts
+    if (user.isDisabled) {
+      return res.status(403).json({
+        message:
+          "This account has been disabled. Contact support if you think this is a mistake.",
+      });
+    }
+
     if (!user.isVerified) {
       return res
         .status(403)
         .json({ message: "Please verify your email first." });
     }
 
+    // 🔹 Issue tokens as before
     const tokens = issueTokens(user);
+
+    // 🔹 NEW: update lastLoginAt — sendTokenResponse will save the user
+    user.lastLoginAt = new Date();
+
     await sendTokenResponse(res, user, tokens);
   } catch (err) {
     console.error(err);
