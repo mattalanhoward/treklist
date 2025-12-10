@@ -59,7 +59,7 @@ export default function GlobalItemEditModal({
   const currencySymbol = CURRENCY_SYMBOL[currency] || currency;
 
   // affiliate-backed items (Awin)
-  const isAffiliate = Boolean(item?.affiliate?.network === "awin");
+  const isAffiliate = Boolean(item?.affiliate && item.affiliate.network);
 
   // Hydrate when item changes
   useEffect(() => {

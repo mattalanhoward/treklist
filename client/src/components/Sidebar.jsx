@@ -281,13 +281,24 @@ export default function Sidebar({
                       <li key={l._id} className="flex items-center">
                         <button
                           onClick={() => {
+                            // If this list is already active:
+                            if (l._id === currentListId) {
+                              // Just collapse on mobile (nice UX), but don't trigger a re-select.
+                              if (isMobile()) {
+                                setCollapsed(true);
+                              }
+                              return;
+                            }
+
                             // 1) Select the new list
                             onSelectList(l._id);
+
                             // 2) if on mobile, collapse sidebar
                             if (isMobile()) {
                               setCollapsed(true);
                             }
-                            // 3) Persist or clear storage
+
+                            // 3) Persist or clear storage (can actually be left to Dashboard, but harmless here)
                             if (l._id) {
                               localStorage.setItem("lastListId", l._id);
                             } else {
@@ -300,7 +311,6 @@ export default function Sidebar({
                               : "hover:bg-primaryAlt hover:text-neutral"
                           }`}
                         >
-                          {" "}
                           {l.title}
                         </button>
                       </li>
@@ -414,7 +424,12 @@ export default function Sidebar({
               <section className="px-4 py-2 border-t border-base-100">
                 <button
                   type="button"
-                  onClick={onOpenForum}
+                  onClick={() => {
+                    onOpenForum();
+                    if (isMobile()) {
+                      setCollapsed(true);
+                    }
+                  }}
                   className="flex items-center text-primaryAlt font-bold truncate"
                 >
                   Forum

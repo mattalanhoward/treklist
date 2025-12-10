@@ -181,9 +181,6 @@ export default function AccountModal({ isOpen, onClose }) {
                       className="mt-1 block w-full border-gray-300 rounded shadow-sm px-2 py-1 bg-gray-100 text-gray-700 cursor-not-allowed"
                       title={t("accountModal.messages.emailImmutable")}
                     />
-                    <p className="mt-1 text-sm text-gray-500">
-                      {t("accountModal.messages.emailChangeSupport")}
-                    </p>
                   </div>
                   <div>
                     <label className="block font-medium text-gray-700">
