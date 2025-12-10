@@ -44,6 +44,10 @@ function GearCatalogSection() {
     dir: "desc", // "asc" | "desc"
   });
 
+  // pagination
+  const [page, setPage] = useState(0); // 0-based
+  const [pageSize, setPageSize] = useState(25);
+
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState({
     name: "",
@@ -67,7 +71,7 @@ function GearCatalogSection() {
       const { data } = await api.get("/admin/catalog-items", {
         params: {
           isActive: shouldInclude ? "all" : "true",
-          limit: 200,
+          limit: 1000,
         },
       });
       setItems(data.items || []);
@@ -296,6 +300,13 @@ function GearCatalogSection() {
     }
   });
 
+  const totalItems = sortedItems.length;
+  const pageCount = Math.max(1, Math.ceil(totalItems / pageSize));
+  const currentPage = Math.min(page, pageCount - 1);
+  const startIndex = currentPage * pageSize;
+  const endIndex = Math.min(startIndex + pageSize, totalItems);
+  const pageItems = sortedItems.slice(startIndex, endIndex);
+
   return (
     <section className="space-y-4">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
@@ -305,8 +316,7 @@ function GearCatalogSection() {
           </h2>
           <p className="text-xs text-primary/80 max-w-2xl">
             Use this catalog to add affiliate-backed gear items (Amazon now,
-            Awin/Impact later). When users import gear, they&apos;ll see this
-            curated list instead of the full affiliate feeds.
+            Awin/Impact later).
           </p>
         </div>
       </div>
@@ -503,6 +513,9 @@ function GearCatalogSection() {
                       className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
                       placeholder="ASIN, Awin product id..."
                     />
+                    <span className="block text-[11px] text-primary/70">
+                      ASIN (Amazon) / product id (Awin, Impact)
+                    </span>
                   </div>
                 </div>
               </div>
@@ -542,6 +555,7 @@ function GearCatalogSection() {
                 onChange={(e) => {
                   const include = e.target.checked;
                   setShowArchived(include);
+                  setPage(0);
                   loadItems({ includeArchived: include });
                 }}
               />
@@ -588,14 +602,20 @@ function GearCatalogSection() {
                       className="input input-xs input-bordered w-full"
                       placeholder="Search name, brand, category, tags..."
                       value={search}
-                      onChange={(e) => setSearch(e.target.value)}
+                      onChange={(e) => {
+                        setSearch(e.target.value);
+                        setPage(0);
+                      }}
                     />
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <select
                       className="select select-xs select-bordered"
                       value={filterCategory}
-                      onChange={(e) => setFilterCategory(e.target.value)}
+                      onChange={(e) => {
+                        setFilterCategory(e.target.value);
+                        setPage(0);
+                      }}
                     >
                       <option value="all">All categories</option>
                       {categoryOptions.map((cat) => (
@@ -608,7 +628,10 @@ function GearCatalogSection() {
                     <select
                       className="select select-xs select-bordered"
                       value={filterBrand}
-                      onChange={(e) => setFilterBrand(e.target.value)}
+                      onChange={(e) => {
+                        setFilterBrand(e.target.value);
+                        setPage(0);
+                      }}
                     >
                       <option value="all">All brands</option>
                       {brandOptions.map((brand) => (
@@ -621,7 +644,10 @@ function GearCatalogSection() {
                     <select
                       className="select select-xs select-bordered"
                       value={filterNetwork}
-                      onChange={(e) => setFilterNetwork(e.target.value)}
+                      onChange={(e) => {
+                        setFilterNetwork(e.target.value);
+                        setPage(0);
+                      }}
                     >
                       <option value="all">All networks</option>
                       {networkOptions.map((net) => (
@@ -711,7 +737,7 @@ function GearCatalogSection() {
                   </thead>
 
                   <tbody>
-                    {sortedItems.map((item) => {
+                    {pageItems.map((item) => {
                       const id = item._id || item.id;
                       const mainLink = Array.isArray(item.links)
                         ? item.links[0]
@@ -805,6 +831,57 @@ function GearCatalogSection() {
                     })}
                   </tbody>
                 </table>
+                {/* Pagination footer */}
+                <div className="flex items-center justify-between px-3 py-2 border-t border-base-200 text-xs text-primary/80">
+                  <span>
+                    Showing {totalItems === 0 ? 0 : startIndex + 1}
+                    {"–"}
+                    {endIndex} of {totalItems}
+                  </span>
+                  <div className="flex items-center gap-3">
+                    <label className="flex items-center gap-1">
+                      <span>Rows per page</span>
+                      <select
+                        className="select select-xs select-bordered"
+                        value={pageSize}
+                        onChange={(e) => {
+                          const next = Number(e.target.value) || 25;
+                          setPageSize(next);
+                          setPage(0);
+                        }}
+                      >
+                        <option value={10}>10</option>
+                        <option value={25}>25</option>
+                        <option value={50}>50</option>
+                        <option value={100}>100</option>
+                      </select>
+                    </label>
+
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        className="btn btn-ghost btn-xs"
+                        disabled={currentPage === 0}
+                        onClick={() => setPage((p) => Math.max(0, p - 1))}
+                      >
+                        Previous
+                      </button>
+                      <span>
+                        Page {currentPage + 1} of {pageCount}
+                      </span>
+                      <button
+                        type="button"
+                        className="btn btn-ghost btn-xs"
+                        disabled={currentPage >= pageCount - 1}
+                        onClick={() =>
+                          setPage((p) => Math.min(pageCount - 1, p + 1))
+                        }
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </>
             )}
           </>
@@ -1118,10 +1195,6 @@ function AdminView() {
       <header className="flex items-center justify-between px-4 py-3 border-b border-base-300 bg-base-100/90">
         <div>
           <h1 className="text-lg font-semibold text-primary">Admin panel</h1>
-          <p className="text-xs text-primary/70">
-            Internal tools for managing TrekList data. Only visible to admin
-            users.
-          </p>
         </div>
       </header>
 
