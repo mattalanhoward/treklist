@@ -340,10 +340,10 @@ export default function GlobalItemEditModal({
                   <button
                     type="button"
                     aria-label={t(
-                      "globalItemModal.messages.affiliateLinkLockedTitle"
+                      "globalItemModal.messages.affiliatePriceLockedTitle"
                     )}
                     title={t(
-                      "globalItemModal.messages.affiliateLinkLockedBody"
+                      "globalItemModal.messages.affiliatePriceLockedBody"
                     )}
                     className="absolute inset-0 cursor-not-allowed bg-transparent"
                     onClick={(e) => e.preventDefault()}

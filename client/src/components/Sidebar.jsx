@@ -421,7 +421,7 @@ export default function Sidebar({
             <div className="mt-auto">
               {/* Forum (future feature) */}
 
-              <section className="px-4 py-2 border-t border-base-100">
+              {/* <section className="px-4 py-2 border-t border-base-100">
                 <button
                   type="button"
                   onClick={() => {
@@ -434,7 +434,7 @@ export default function Sidebar({
                 >
                   Forum
                 </button>
-              </section>
+              </section> */}
 
               {/* Admin header pinned at the bottom */}
               {isAdmin && (

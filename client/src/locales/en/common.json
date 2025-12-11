@@ -385,6 +385,8 @@
     "messages": {
       "affiliateLinkLockedTitle": "Link is locked",
       "affiliateLinkLockedBody": "Link is set by the merchant for imported items.",
+      "affiliatePriceLockedTitle": "Price is locked",
+      "affiliatePriceLockedBody": "Price is set by the merchant for imported items.",
       "affiliateNote": "Link and price are set by the merchant for imported items.",
       "cancelHintImport": "Pick a product (Import) or switch to Custom."
     },
