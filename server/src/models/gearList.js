@@ -29,6 +29,7 @@ const GearListSchema = new mongoose.Schema(
       default: GEARLIST_SWATCHES[0],
     },
     region: { type: String, default: null },
+    isFeatured: { type: Boolean, default: false },
     isSample: {
       type: Boolean,
       default: false,

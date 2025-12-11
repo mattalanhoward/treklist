@@ -77,13 +77,16 @@ const CatalogItemSchema = new mongoose.Schema(
       default: [],
       index: true,
     },
-
+    priceHint: {
+      type: Number,
+      min: 0,
+      default: null,
+    },
     // Affiliate links for different networks / regions
     links: {
       type: [LinkSchema],
       default: [],
     },
-
     // Which admin created / last owns this catalog item
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,

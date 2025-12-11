@@ -39,6 +39,25 @@ router.get("/:token/full", async (req, res) => {
     return res.status(400).json({ error: "Invalid list" });
   }
 
+  // --- Track views for this share token (best-effort, de-duped) ---
+  try {
+    const now = Date.now();
+    const last =
+      tokenDoc.lastViewedAt instanceof Date
+        ? tokenDoc.lastViewedAt.getTime()
+        : 0;
+
+    // Only count a new view if the last one was > 5s ago
+    if (!last || now - last > 5000) {
+      tokenDoc.viewsCount = (tokenDoc.viewsCount || 0) + 1;
+      tokenDoc.lastViewedAt = new Date(now);
+      await tokenDoc.save();
+    }
+  } catch (err) {
+    console.error("Failed to update share views (full):", err);
+  }
+  // ----------------------------------------------------------------
+
   const [list, categories, items] = await Promise.all([
     GearList.findById(listId)
       .select({ _id: 1, title: 1, region: 1, storeRegion: 1 })
@@ -111,6 +130,24 @@ router.get("/:token/csv", async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(listId)) {
       return res.status(400).type("text/plain").send("Invalid list");
     }
+
+    // --- Track views for this share token (best-effort, de-duped) ---
+    try {
+      const now = Date.now();
+      const last =
+        tokenDoc.lastViewedAt instanceof Date
+          ? tokenDoc.lastViewedAt.getTime()
+          : 0;
+
+      if (!last || now - last > 5000) {
+        tokenDoc.viewsCount = (tokenDoc.viewsCount || 0) + 1;
+        tokenDoc.lastViewedAt = new Date(now);
+        await tokenDoc.save();
+      }
+    } catch (err) {
+      console.error("Failed to update share views (csv):", err);
+    }
+    // ----------------------------------------------------------------
 
     const [list, categories, items] = await Promise.all([
       GearList.findById(listId).select({ _id: 1, title: 1 }).lean(),

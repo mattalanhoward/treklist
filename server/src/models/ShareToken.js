@@ -8,6 +8,9 @@ const ShareTokenSchema = new mongoose.Schema(
     owner: { type: mongoose.Types.ObjectId, ref: "User", required: true },
     // Use revokedAt to represent inactive tokens (null = active)
     revokedAt: { type: Date, default: null, index: true },
+    // --- new fields ---
+    viewsCount: { type: Number, default: 0 },
+    lastViewedAt: { type: Date, default: null },
   },
   {
     timestamps: { createdAt: true, updatedAt: true },
