@@ -230,6 +230,18 @@ export default function Sidebar({
 
         {!collapsed && (
           <div className="h-full flex flex-col overflow-hidden">
+            {/* Admin header pinned at the top */}
+            {isAdmin && (
+              <section className="px-4 py-2 border-t border-base-100">
+                <button
+                  type="button"
+                  onClick={onOpenAdmin}
+                  className="flex items-center text-primaryAlt font-bold truncate"
+                >
+                  Admin
+                </button>
+              </section>
+            )}
             {/* Gear Lists section */}
             <section
               className={
@@ -437,7 +449,7 @@ export default function Sidebar({
               </section> */}
 
               {/* Admin header pinned at the bottom */}
-              {isAdmin && (
+              {/* {isAdmin && (
                 <section className="px-4 py-2 border-t border-base-100">
                   <button
                     type="button"
@@ -447,7 +459,7 @@ export default function Sidebar({
                     Admin
                   </button>
                 </section>
-              )}
+              )} */}
             </div>
           </div>
         )}

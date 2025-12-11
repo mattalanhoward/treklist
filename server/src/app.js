@@ -18,6 +18,7 @@ const affiliatesRouter = require("./routes/affiliates");
 const rateLimit = require("express-rate-limit");
 const adminCatalogItemsRouter = require("./routes/adminCatalogItems");
 const adminUsersRouter = require("./routes/adminUsers");
+const adminPublicListsRouter = require("./routes/adminPublicLists");
 
 const app = express();
 
@@ -98,6 +99,7 @@ app.use("/api/affiliates", authMiddleware, affiliatesRouter); // auth required
 app.use("/api/public/share/", publicShareLimiter);
 app.use("/api/admin/catalog-items", adminCatalogItemsRouter);
 app.use("/api/admin/users", adminUsersRouter);
+app.use("/api/admin/public-lists", adminPublicListsRouter);
 app.use("/api/catalog", require("./routes/catalog"));
 
 // Central error handler

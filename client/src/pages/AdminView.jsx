@@ -738,10 +738,10 @@ function GearCatalogSection() {
                       </th>
                       <th
                         className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
-                        onClick={() => handleSort("weightgrams")}
+                        onClick={() => handleSort("weightGrams")}
                       >
                         Weight
-                        {sort.field === "weightgrams" && (
+                        {sort.field === "weightGrams" && (
                           <span className="ml-1 text-[10px]">
                             {sort.dir === "asc" ? "↑" : "↓"}
                           </span>
@@ -987,12 +987,8 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
     }
     // Normalize priceHint: blank = no price; otherwise must be a number ≥ 0
     let normalizedPriceHint = null;
-    if (
-      form.priceHint !== "" &&
-      form.priceHint !== null &&
-      form.priceHint !== undefined
-    ) {
-      const n = Number(form.priceHint);
+    if (priceHint !== "" && priceHint !== null && priceHint !== undefined) {
+      const n = Number(priceHint);
       if (Number.isNaN(n) || n < 0) {
         toast.error("Price hint must be a non-negative number or left blank.");
         return;
@@ -2109,6 +2105,624 @@ function UsersSection() {
   );
 }
 
+function PublicListsSection() {
+  const [lists, setLists] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(0); // 0-based
+  const [pageSize, setPageSize] = useState(25);
+  const [showListBody, setShowListBody] = useState(true);
+
+  const [sort, setSort] = useState({
+    field: "createdAt", // "title" | "owner" | "views" | "lastViewedAt" | "createdAt"
+    dir: "desc", // "asc" | "desc"
+  });
+
+  const [statusUpdatingId, setStatusUpdatingId] = useState(null);
+  const [featureTogglingId, setFeatureTogglingId] = useState(null);
+  const [listToRevoke, setListToRevoke] = useState(null);
+
+  const loadLists = async ({
+    pageOverride,
+    pageSizeOverride,
+    searchOverride,
+  } = {}) => {
+    const nextPage = pageOverride ?? page;
+    const nextPageSize = pageSizeOverride ?? pageSize;
+    const nextSearch = searchOverride ?? search;
+
+    setLoading(true);
+    setError("");
+    try {
+      const params = {
+        limit: nextPageSize,
+        skip: nextPage * nextPageSize,
+      };
+      if (nextSearch.trim()) {
+        params.q = nextSearch.trim();
+      }
+      const { data } = await api.get("/admin/public-lists", { params });
+      setLists(data.lists || []);
+      setTotal(data.total || 0);
+      setPage(nextPage);
+      setPageSize(nextPageSize);
+    } catch (err) {
+      console.error("Failed to load public lists", err);
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to load public lists.";
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadLists({ pageOverride: 0 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleSort = (field) => {
+    setSort((prev) => {
+      if (prev.field === field) {
+        return {
+          field,
+          dir: prev.dir === "asc" ? "desc" : "asc",
+        };
+      }
+      return {
+        field,
+        dir: "asc",
+      };
+    });
+  };
+
+  const boolToNum = (val) => (val ? 1 : 0);
+
+  const sortedLists = [...lists].sort((a, b) => {
+    const dir = sort.dir === "asc" ? 1 : -1;
+
+    switch (sort.field) {
+      case "title": {
+        const at = (a.title || "").toLowerCase();
+        const bt = (b.title || "").toLowerCase();
+        return at.localeCompare(bt) * dir;
+      }
+      case "owner": {
+        const ae = (a.ownerEmail || "").toLowerCase();
+        const be = (b.ownerEmail || "").toLowerCase();
+        return ae.localeCompare(be) * dir;
+      }
+      case "views": {
+        const av = a.viewsCount ?? 0;
+        const bv = b.viewsCount ?? 0;
+        if (av === bv) return 0;
+        return av > bv ? dir : -dir;
+      }
+      case "lastViewedAt": {
+        const al = a.lastViewedAt ? new Date(a.lastViewedAt).getTime() : 0;
+        const bl = b.lastViewedAt ? new Date(b.lastViewedAt).getTime() : 0;
+        if (al === bl) return 0;
+        return al > bl ? dir : -dir;
+      }
+      case "createdAt":
+      default: {
+        const ac = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const bc = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        if (ac === bc) return 0;
+        return ac > bc ? dir : -dir;
+      }
+    }
+  });
+
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const currentPage = Math.min(page, totalPages - 1);
+  const startIndex = total === 0 ? 0 : currentPage * pageSize + 1;
+  const endIndex =
+    total === 0 ? 0 : Math.min((currentPage + 1) * pageSize, total);
+
+  const formatDate = (val) => {
+    if (!val) return "–";
+    const d = new Date(val);
+    if (Number.isNaN(d.getTime())) return "–";
+    return d.toLocaleDateString();
+  };
+
+  const formatDateTimeShort = (val) => {
+    if (!val) return "–";
+    const d = new Date(val);
+    if (Number.isNaN(d.getTime())) return "–";
+    return d.toLocaleString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
+  const handleRefresh = () => {
+    loadLists({ pageOverride: currentPage });
+  };
+
+  const handleSearchClick = () => {
+    setPage(0);
+    loadLists({ pageOverride: 0 });
+  };
+
+  const handleRevoke = async (list) => {
+    if (!list || !list._id) return;
+    setStatusUpdatingId(list._id);
+    try {
+      await api.post(`/admin/public-lists/${list._id}/revoke`);
+      toast.success("Public link revoked.");
+      setListToRevoke(null);
+      loadLists({ pageOverride: currentPage });
+    } catch (err) {
+      console.error("Failed to revoke public list", err);
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to revoke public list.";
+      toast.error(msg);
+    } finally {
+      setStatusUpdatingId(null);
+    }
+  };
+
+  const handleUnrevoke = async (list) => {
+    if (!list || !list._id) return;
+    setStatusUpdatingId(list._id);
+    try {
+      await api.post(`/admin/public-lists/${list._id}/unrevoke`);
+      toast.success("Public link re-enabled.");
+      loadLists({ pageOverride: currentPage });
+    } catch (err) {
+      console.error("Failed to unrevoke public list", err);
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to re-enable public list.";
+      toast.error(msg);
+    } finally {
+      setStatusUpdatingId(null);
+    }
+  };
+
+  const handleToggleFeatured = async (list) => {
+    if (!list || !list._id) return;
+    setFeatureTogglingId(list._id);
+    try {
+      const next = !boolToNum(list.isFeatured);
+      await api.patch(`/admin/public-lists/${list._id}`, {
+        isFeatured: next,
+      });
+      toast.success(
+        next ? "List marked as featured." : "List unmarked as featured."
+      );
+      loadLists({ pageOverride: currentPage });
+    } catch (err) {
+      console.error("Failed to toggle featured flag", err);
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to update featured flag.";
+      toast.error(msg);
+    } finally {
+      setFeatureTogglingId(null);
+    }
+  };
+
+  const handleCopyLink = (list) => {
+    if (!list || !list.token) {
+      toast.error("No active share link for this list.");
+      return;
+    }
+    const url = `${window.location.origin}/share/${list.token}`;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(
+        () => toast.success("Public link copied to clipboard."),
+        () => {
+          // fallback
+          try {
+            const dummy = document.createElement("textarea");
+            dummy.value = url;
+            document.body.appendChild(dummy);
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+            toast.success("Public link copied to clipboard.");
+          } catch {
+            toast(url);
+          }
+        }
+      );
+    } else {
+      toast(url);
+    }
+  };
+
+  const handleOpenLink = (list) => {
+    if (!list || !list.token) {
+      toast.error("No active share link for this list.");
+      return;
+    }
+    const url = `${window.location.origin}/share/${list.token}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
+  return (
+    <div className="space-y-3">
+      {/* Section header */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-primary flex items-center gap-2">
+          <FaUsers />
+          <span>Public gear lists</span>
+        </h2>
+        <p className="text-xs sm:text-sm text-primary/70 max-w-md text-right">
+          Search and manage shared gear lists. Revoke abused/broken links or
+          flag great lists to feature later.
+        </p>
+      </div>
+
+      {/* List container */}
+      <div className="border border-base-300 rounded-lg bg-base-100/80 overflow-hidden">
+        {/* Header bar */}
+        <div className="flex items-center justify-between px-3 py-2 border-b border-base-200 text-xs text-primary/80">
+          <span>
+            {loading
+              ? "Loading public lists…"
+              : `Public lists: ${total} (page ${
+                  currentPage + 1
+                } of ${totalPages})`}
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleRefresh}
+              disabled={loading}
+              className="btn btn-ghost btn-xs"
+            >
+              Refresh
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowListBody((v) => !v)}
+              className="btn btn-ghost btn-xs"
+              title={showListBody ? "Hide public lists" : "Show public lists"}
+            >
+              {showListBody ? <FaChevronUp /> : <FaChevronDown />}
+            </button>
+          </div>
+        </div>
+
+        {showListBody && (
+          <>
+            {/* Filters / search row */}
+            <div className="px-3 py-2 border-b border-base-200 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between text-xs">
+              <div className="flex-1 flex gap-2">
+                <input
+                  type="text"
+                  className="input input-xs input-bordered w-full"
+                  placeholder="Search by list title, owner email, or share token…"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleSearchClick();
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  className="btn btn-xs btn-secondary"
+                  onClick={handleSearchClick}
+                >
+                  Search
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <select
+                  className="select select-xs select-bordered"
+                  value={pageSize}
+                  onChange={(e) => {
+                    const next = Number(e.target.value) || 25;
+                    setPageSize(next);
+                    setPage(0);
+                    loadLists({
+                      pageOverride: 0,
+                      pageSizeOverride: next,
+                    });
+                  }}
+                >
+                  <option value={10}>10 / page</option>
+                  <option value={25}>25 / page</option>
+                  <option value={50}>50 / page</option>
+                  <option value={100}>100 / page</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Error / empty states */}
+            {error && !loading && (
+              <div className="px-3 py-2 text-xs text-error">{error}</div>
+            )}
+
+            {!error && !loading && lists.length === 0 && (
+              <div className="px-3 py-3 text-xs text-primary/70">
+                No public lists found for the current search.
+              </div>
+            )}
+
+            {/* Table */}
+            {!loading && !error && lists.length > 0 && (
+              <>
+                <table className="min-w-full text-xs sm:text-sm">
+                  <thead className="bg-base-200/80">
+                    <tr>
+                      <th
+                        className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
+                        onClick={() => handleSort("title")}
+                      >
+                        Title
+                        {sort.field === "title" && (
+                          <span className="ml-1 text-[10px]">
+                            {sort.dir === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
+                      </th>
+                      <th
+                        className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
+                        onClick={() => handleSort("owner")}
+                      >
+                        Owner
+                        {sort.field === "owner" && (
+                          <span className="ml-1 text-[10px]">
+                            {sort.dir === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
+                      </th>
+                      <th className="text-left px-3 py-2 font-semibold">
+                        Region
+                      </th>
+                      <th
+                        className="text-right px-3 py-2 font-semibold cursor-pointer select-none"
+                        onClick={() => handleSort("views")}
+                      >
+                        Views
+                        {sort.field === "views" && (
+                          <span className="ml-1 text-[10px]">
+                            {sort.dir === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
+                      </th>
+                      <th
+                        className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
+                        onClick={() => handleSort("lastViewedAt")}
+                      >
+                        Last viewed
+                        {sort.field === "lastViewedAt" && (
+                          <span className="ml-1 text-[10px]">
+                            {sort.dir === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
+                      </th>
+                      <th
+                        className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
+                        onClick={() => handleSort("createdAt")}
+                      >
+                        Created
+                        {sort.field === "createdAt" && (
+                          <span className="ml-1 text-[10px]">
+                            {sort.dir === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
+                      </th>
+                      <th className="text-left px-3 py-2 font-semibold">
+                        Status
+                      </th>
+                      <th className="text-left px-3 py-2 font-semibold">
+                        Featured
+                      </th>
+                      <th className="text-right px-3 py-2 font-semibold">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {sortedLists.map((list) => (
+                      <tr
+                        key={list._id}
+                        className="border-t border-base-200 hover:bg-base-200/40"
+                      >
+                        <td className="px-3 py-2 align-top max-w-[220px]">
+                          <div className="truncate">
+                            {list.title || "(untitled list)"}
+                          </div>
+                          {list.token && list.isActive && (
+                            <div className="text-[10px] text-primary/70 mt-0.5">
+                              Token: {list.token}
+                            </div>
+                          )}
+                        </td>
+                        <td className="px-3 py-2 align-top max-w-[220px]">
+                          <div className="truncate text-xs sm:text-sm">
+                            {list.ownerEmail || "–"}
+                          </div>
+                          {list.ownerTrailname && (
+                            <div className="text-[10px] text-primary/70 mt-0.5">
+                              {list.ownerTrailname}
+                            </div>
+                          )}
+                        </td>
+                        <td className="px-3 py-2 align-top text-xs">
+                          {list.region || "–"}
+                        </td>
+                        <td className="px-3 py-2 align-top text-right text-xs">
+                          {list.viewsCount ?? 0}
+                        </td>
+                        <td className="px-3 py-2 align-top text-xs">
+                          {formatDateTimeShort(list.lastViewedAt)}
+                        </td>
+                        <td className="px-3 py-2 align-top text-xs">
+                          {formatDate(list.createdAt)}
+                        </td>
+                        <td className="px-3 py-2 align-top">
+                          <span
+                            className={
+                              "badge badge-xs " +
+                              (list.isActive ? "badge-success" : "badge-ghost")
+                            }
+                          >
+                            {list.isActive ? "Active" : "Revoked"}
+                          </span>
+                        </td>
+                        <td className="px-3 py-2 align-top">
+                          <span
+                            className={
+                              "badge badge-xs " +
+                              (list.isFeatured
+                                ? "badge-secondary"
+                                : "badge-ghost")
+                            }
+                          >
+                            {list.isFeatured ? "Featured" : "Normal"}
+                          </span>
+                        </td>
+                        <td className="px-3 py-2 align-top text-right">
+                          <div className="inline-flex items-center gap-2 justify-end">
+                            <button
+                              type="button"
+                              className="btn btn-ghost btn-xs"
+                              onClick={() => handleOpenLink(list)}
+                              disabled={!list.token || !list.isActive}
+                              title="Open public link in new tab"
+                            >
+                              Open
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn-ghost btn-xs"
+                              onClick={() => handleCopyLink(list)}
+                              disabled={!list.token || !list.isActive}
+                              title="Copy public link"
+                            >
+                              Copy
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn-ghost btn-xs"
+                              onClick={() => handleToggleFeatured(list)}
+                              disabled={featureTogglingId === list._id}
+                              title={
+                                list.isFeatured
+                                  ? "Unfeature this list"
+                                  : "Mark this list as featured"
+                              }
+                            >
+                              {featureTogglingId === list._id
+                                ? "Saving..."
+                                : list.isFeatured
+                                ? "Unfeature"
+                                : "Feature"}
+                            </button>
+                            {list.isActive ? (
+                              // Active: show Revoke with confirm dialog
+                              <button
+                                type="button"
+                                className="btn btn-xs btn-outline btn-error"
+                                onClick={() => setListToRevoke(list)}
+                                disabled={statusUpdatingId === list._id}
+                                title="Revoke / unpublish this public link"
+                              >
+                                {statusUpdatingId === list._id
+                                  ? "Updating..."
+                                  : "Revoke"}
+                              </button>
+                            ) : (
+                              // Revoked: show Unrevoke, no confirm dialog
+                              <button
+                                type="button"
+                                className="btn btn-xs btn-outline"
+                                onClick={() => handleUnrevoke(list)}
+                                disabled={statusUpdatingId === list._id}
+                                title="Re-enable this public link"
+                              >
+                                {statusUpdatingId === list._id
+                                  ? "Updating..."
+                                  : "Unrevoke"}
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                {/* Pagination footer */}
+                <div className="flex items-center justify-between px-3 py-2 border-t border-base-200 text-xs text-primary/80">
+                  <span>
+                    Showing {startIndex}–{endIndex} of {total}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      className="btn btn-ghost btn-xs"
+                      disabled={currentPage === 0 || loading}
+                      onClick={() =>
+                        loadLists({ pageOverride: currentPage - 1 })
+                      }
+                    >
+                      Previous
+                    </button>
+                    <span>
+                      Page {currentPage + 1} of {totalPages}
+                    </span>
+                    <button
+                      type="button"
+                      className="btn btn-ghost btn-xs"
+                      disabled={currentPage >= totalPages - 1 || loading}
+                      onClick={() =>
+                        loadLists({ pageOverride: currentPage + 1 })
+                      }
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* Revoke confirm dialog */}
+      <ConfirmDialog
+        isOpen={!!listToRevoke}
+        title="Revoke public link?"
+        message={
+          listToRevoke
+            ? `This will revoke the public share link for “${
+                listToRevoke.title || "(untitled list)"
+              }”. Existing visitors will no longer be able to open it.`
+            : ""
+        }
+        confirmText="Revoke link"
+        cancelText="Cancel"
+        onConfirm={() => handleRevoke(listToRevoke)}
+        onCancel={() => setListToRevoke(null)}
+      />
+    </div>
+  );
+}
+
 function AdminView() {
   const [activeTab, setActiveTab] = useState("gear");
 
@@ -2149,17 +2763,7 @@ function AdminView() {
       <main className="flex-1 px-4 py-3 overflow-auto bg-neutral/20">
         {activeTab === "gear" && <GearCatalogSection />}
         {activeTab === "users" && <UsersSection />}
-        {activeTab === "lists" && (
-          <section className="space-y-2">
-            <h2 className="text-base font-semibold text-primary">
-              Public lists
-            </h2>
-            <p className="text-sm text-primary/80">
-              In a later step we&apos;ll show public gear lists and let you
-              revoke problematic ones here.
-            </p>
-          </section>
-        )}
+        {activeTab === "lists" && <PublicListsSection />}
       </main>
     </div>
   );
