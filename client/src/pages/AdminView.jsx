@@ -70,6 +70,7 @@ function GearCatalogSection() {
     linkUrl: "",
     linkMerchantName: "",
     linkExternalId: "",
+    priceHint: "",
   });
 
   const loadItems = async ({ includeArchived } = {}) => {
@@ -130,6 +131,8 @@ function GearCatalogSection() {
               .map((t) => t.trim())
               .filter(Boolean)
           : [],
+        priceHint:
+          form.priceHint === "" ? null : Number(form.priceHint) || null,
         links: [
           {
             network: form.linkNetwork,
@@ -155,6 +158,7 @@ function GearCatalogSection() {
         linkUrl: "",
         linkMerchantName: "",
         linkExternalId: "",
+        priceHint: "",
       }));
       loadItems();
     } catch (err) {
@@ -440,6 +444,24 @@ function GearCatalogSection() {
                       placeholder="3-season, tent, 1p"
                     />
                   </div>
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      Price hint
+                    </label>
+                    <input
+                      type="number"
+                      name="priceHint"
+                      value={form.priceHint}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="Leave blank for now"
+                      min="0"
+                      step="0.01"
+                    />
+                    <span className="block text-[11px] text-primary/70">
+                      Optional; later overwritten by Amazon/Awin pricing.
+                    </span>
+                  </div>
                 </div>
               </div>
 
@@ -716,14 +738,17 @@ function GearCatalogSection() {
                       </th>
                       <th
                         className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
-                        onClick={() => handleSort("weight")}
+                        onClick={() => handleSort("weightgrams")}
                       >
                         Weight
-                        {sort.field === "weight" && (
+                        {sort.field === "weightgrams" && (
                           <span className="ml-1 text-[10px]">
                             {sort.dir === "asc" ? "↑" : "↓"}
                           </span>
                         )}
+                      </th>
+                      <th className="text-right px-3 py-2 font-semibold">
+                        Price
                       </th>
                       <th className="text-left px-3 py-2 font-semibold">
                         Status
@@ -782,6 +807,11 @@ function GearCatalogSection() {
                           <td className="px-3 py-2 text-right align-top">
                             {typeof item.weightGrams === "number"
                               ? `${item.weightGrams} g`
+                              : "–"}
+                          </td>
+                          <td className="px-3 py-2 text-right align-top">
+                            {typeof item.priceHint === "number"
+                              ? item.priceHint.toFixed(2)
                               : "–"}
                           </td>
                           <td className="px-3 py-2 text-left align-top">
@@ -921,6 +951,9 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
   const [tagsInput, setTagsInput] = useState(
     Array.isArray(item.tags) ? item.tags.join(", ") : ""
   );
+  const [priceHint, setPriceHint] = useState(
+    typeof item.priceHint === "number" ? String(item.priceHint) : ""
+  );
 
   const primaryLink =
     Array.isArray(item.links) && item.links[0] ? item.links[0] : {};
@@ -952,6 +985,20 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
       toast.error("Affiliate URL is required.");
       return;
     }
+    // Normalize priceHint: blank = no price; otherwise must be a number ≥ 0
+    let normalizedPriceHint = null;
+    if (
+      form.priceHint !== "" &&
+      form.priceHint !== null &&
+      form.priceHint !== undefined
+    ) {
+      const n = Number(form.priceHint);
+      if (Number.isNaN(n) || n < 0) {
+        toast.error("Price hint must be a non-negative number or left blank.");
+        return;
+      }
+      normalizedPriceHint = n;
+    }
 
     setSaving(true);
     try {
@@ -967,6 +1014,7 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
               .map((t) => t.trim())
               .filter(Boolean)
           : [],
+        priceHint: normalizedPriceHint,
         links: [
           {
             network: linkNetwork,
@@ -1131,6 +1179,24 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
               value={linkUrl}
               onChange={(e) => setLinkUrl(e.target.value)}
             />
+          </div>
+
+          <div className="mt-2">
+            <label className="block text-xs font-medium text-primary mb-1">
+              Price hint (optional)
+            </label>
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              className="input input-sm input-bordered w-full"
+              value={priceHint}
+              onChange={(e) => setPriceHint(e.target.value)}
+              placeholder="Leave blank to show –"
+            />
+            <span className="block text-[11px] text-primary/70 mt-0.5">
+              Used as a fallback display price until we sync live pricing.
+            </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">

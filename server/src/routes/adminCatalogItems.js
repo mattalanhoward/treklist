@@ -51,8 +51,16 @@ router.get("/", async (req, res) => {
 // Create a new catalog item (Amazon-only for now)
 router.post("/", async (req, res) => {
   try {
-    const { name, brand, category, description, weightGrams, tags, links } =
-      req.body || {};
+    const {
+      name,
+      brand,
+      category,
+      description,
+      weightGrams,
+      tags,
+      links,
+      priceHint,
+    } = req.body || {};
 
     if (!name || typeof name !== "string") {
       return res.status(400).json({ message: "Name is required." });
@@ -79,16 +87,40 @@ router.post("/", async (req, res) => {
       });
     }
 
+    // ---- Normalize numeric fields from strings/numbers ----
+    let normalizedWeight = undefined;
+    if (
+      weightGrams !== undefined &&
+      weightGrams !== null &&
+      weightGrams !== ""
+    ) {
+      const n = Number(weightGrams);
+      if (Number.isNaN(n) || n < 0) {
+        return res.status(400).json({ message: "Invalid weightGrams." });
+      }
+      normalizedWeight = n;
+    }
+
+    let normalizedPriceHint = null;
+    if (priceHint !== undefined && priceHint !== null && priceHint !== "") {
+      const n = Number(priceHint);
+      if (Number.isNaN(n) || n < 0) {
+        return res.status(400).json({ message: "Invalid priceHint." });
+      }
+      normalizedPriceHint = n;
+    }
+
     const item = await CatalogItem.create({
       name: name.trim(),
       brand: brand && brand.trim(),
       category: category && category.trim(),
       description: description && description.trim(),
-      weightGrams: typeof weightGrams === "number" ? weightGrams : undefined,
+      weightGrams: normalizedWeight,
       tags: Array.isArray(tags)
         ? tags.filter(Boolean).map((t) => String(t).trim())
         : [],
       links: sanitizedLinks,
+      priceHint: normalizedPriceHint,
       createdBy: req.userId,
     });
 
@@ -113,6 +145,7 @@ router.patch("/:id", async (req, res) => {
       "tags",
       "links",
       "isActive",
+      "priceHint",
     ];
 
     for (const key of allowedFields) {
@@ -121,18 +154,48 @@ router.patch("/:id", async (req, res) => {
       }
     }
 
-    if (updates.name && typeof updates.name === "string") {
+    // Normalize simple strings
+    if (typeof updates.name === "string") {
       updates.name = updates.name.trim();
     }
-    if (updates.brand && typeof updates.brand === "string") {
+    if (typeof updates.brand === "string") {
       updates.brand = updates.brand.trim();
     }
-    if (updates.category && typeof updates.category === "string") {
+    if (typeof updates.category === "string") {
       updates.category = updates.category.trim();
     }
-    if (updates.description && typeof updates.description === "string") {
+    if (typeof updates.description === "string") {
       updates.description = updates.description.trim();
     }
+
+    // Normalize weightGrams if present
+    if (Object.prototype.hasOwnProperty.call(updates, "weightGrams")) {
+      const raw = updates.weightGrams;
+      if (raw === null || raw === "" || typeof raw === "undefined") {
+        updates.weightGrams = undefined;
+      } else {
+        const n = Number(raw);
+        if (Number.isNaN(n) || n < 0) {
+          return res.status(400).json({ message: "Invalid weightGrams." });
+        }
+        updates.weightGrams = n;
+      }
+    }
+
+    // Normalize priceHint if present
+    if (Object.prototype.hasOwnProperty.call(updates, "priceHint")) {
+      const raw = updates.priceHint;
+      if (raw === null || raw === "" || typeof raw === "undefined") {
+        updates.priceHint = null;
+      } else {
+        const n = Number(raw);
+        if (Number.isNaN(n) || n < 0) {
+          return res.status(400).json({ message: "Invalid priceHint." });
+        }
+        updates.priceHint = n;
+      }
+    }
+
     if (Array.isArray(updates.tags)) {
       updates.tags = updates.tags.filter(Boolean).map((t) => String(t).trim());
     }

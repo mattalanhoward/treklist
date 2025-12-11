@@ -329,24 +329,21 @@ export default function GlobalItemEditModal({
                 })}
               </label>
               <div className="relative">
-                <CurrencyInput
-                  value={form.price}
-                  currency={currency}
-                  locale={locale}
-                  onChange={(val) => setForm((f) => ({ ...f, price: val }))}
-                  readOnly={isAffiliate}
-                />
-                {isAffiliate && (
-                  <button
-                    type="button"
-                    aria-label={t(
-                      "globalItemModal.messages.affiliatePriceLockedTitle"
-                    )}
-                    title={t(
-                      "globalItemModal.messages.affiliatePriceLockedBody"
-                    )}
-                    className="absolute inset-0 cursor-not-allowed bg-transparent"
-                    onClick={(e) => e.preventDefault()}
+                {isAffiliate ? (
+                  <>
+                    <div className="mt-0.5 block w-full border border-dashed border-primary/40 rounded px-2 py-1 text-sm text-primary/70 bg-neutralAlt/60">
+                      {/* Show price if we actually have one; otherwise a nice placeholder */}
+                      {form.price !== "" && form.price != null
+                        ? form.price
+                        : t("globalItemModal.messages.affiliatePriceManaged")}
+                    </div>
+                  </>
+                ) : (
+                  <CurrencyInput
+                    value={form.price ?? ""}
+                    currency={currency}
+                    locale={locale}
+                    onChange={(val) => setForm((f) => ({ ...f, price: val }))}
                   />
                 )}
               </div>
