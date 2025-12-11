@@ -232,7 +232,7 @@ export default function Sidebar({
           <div className="h-full flex flex-col overflow-hidden">
             {/* Admin header pinned at the top */}
             {isAdmin && (
-              <section className="px-4 py-2 border-t border-base-100">
+              <section className="px-4 py-2 border-b border-base-100">
                 <button
                   type="button"
                   onClick={onOpenAdmin}

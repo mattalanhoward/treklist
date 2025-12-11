@@ -10,6 +10,7 @@ const authRoutes = require("./routes/auth");
 const gearListRoutes = require("./routes/gearLists");
 const publicShareRoutes = require("./routes/publicShare");
 const authMiddleware = require("./middleware/auth");
+const requireAdmin = require("./middleware/requireAdmin");
 const categoriesRoutes = require("./routes/categories");
 const gearItemRoutes = require("./routes/gearItems");
 const globalItemsRoutes = require("./routes/globalItems");
@@ -97,9 +98,20 @@ app.use("/api/public/share", publicShareRoutes);
 app.use("/api/global/items", authMiddleware, globalItemsRoutes);
 app.use("/api/affiliates", authMiddleware, affiliatesRouter); // auth required
 app.use("/api/public/share/", publicShareLimiter);
-app.use("/api/admin/catalog-items", adminCatalogItemsRouter);
-app.use("/api/admin/users", adminUsersRouter);
-app.use("/api/admin/public-lists", adminPublicListsRouter);
+app.use(
+  "/api/admin/catalog-items",
+  authMiddleware,
+  requireAdmin,
+  adminCatalogItemsRouter
+);
+app.use("/api/admin/users", authMiddleware, requireAdmin, adminUsersRouter);
+app.use(
+  "/api/admin/public-lists",
+  authMiddleware,
+  requireAdmin,
+  adminPublicListsRouter
+);
+
 app.use("/api/catalog", require("./routes/catalog"));
 
 // Central error handler

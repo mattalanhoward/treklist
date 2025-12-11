@@ -77,8 +77,8 @@ router.get("/", async (req, res) => {
       token: t.token,
       isActive: !t.revokedAt, // always true here; we only load revokedAt:null
       isFeatured: Boolean(t.list.isFeatured),
-      viewsCount: null, // placeholder; can be wired to real stats later
-      lastViewedAt: null, // placeholder
+      viewsCount: typeof t.viewsCount === "number" ? t.viewsCount : 0,
+      lastViewedAt: t.lastViewedAt || null,
       createdAt: t.createdAt,
       updatedAt: t.updatedAt,
     }));

@@ -11,6 +11,7 @@ import {
   FaUser,
 } from "react-icons/fa";
 import ConfirmDialog from "../components/ConfirmDialog";
+import { useUserSettings } from "../contexts/UserSettings";
 
 const TABS = [
   { id: "gear", label: "Gear catalog" },
@@ -2725,13 +2726,21 @@ function PublicListsSection() {
 
 function AdminView() {
   const [activeTab, setActiveTab] = useState("gear");
+  const { sidebarCollapsed } = useUserSettings();
 
   return (
     <div className="h-full w-full flex flex-col bg-neutral/40">
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-3 border-b border-base-300 bg-base-100/90">
         <div>
-          <h1 className="text-lg font-semibold text-primary">Admin panel</h1>
+          <h1
+            className={
+              "text-lg font-semibold text-primary" +
+              (sidebarCollapsed ? " pl-6" : "")
+            }
+          >
+            Admin panel
+          </h1>
         </div>
       </header>
 
