@@ -26,17 +26,11 @@ export default function DropdownMenu({ trigger, items, menuWidth = "w-44" }) {
 
       if (!prev && triggerRef.current && typeof window !== "undefined") {
         const rect = triggerRef.current.getBoundingClientRect();
-        const viewportWidth =
-          window.innerWidth || document.documentElement.clientWidth;
 
-        const maxMenuWidth = 260;
-        const left = Math.min(
-          rect.left + window.scrollX,
-          viewportWidth - maxMenuWidth
-        );
+        // Just place menu a bit below the trigger
         const top = rect.bottom + window.scrollY + 4;
 
-        setPosition({ top, left });
+        setPosition({ top });
       }
 
       return next;
@@ -91,7 +85,7 @@ export default function DropdownMenu({ trigger, items, menuWidth = "w-44" }) {
             style={{
               position: "absolute",
               top: position.top,
-              left: position.left,
+              right: 0,
               zIndex: 50,
             }}
             className={`mt-1 rounded shadow-lg border border-base-300 bg-base-100 ${menuWidth}`}
