@@ -14,7 +14,8 @@ import ConfirmDialog from "../components/ConfirmDialog";
 import { useUserSettings } from "../contexts/UserSettings";
 
 const TABS = [
-  { id: "gear", label: "Gear catalog" },
+  { id: "gearCatalog", label: "Gear catalog" },
+  { id: "gearCreate", label: "Add catalog item" },
   { id: "users", label: "Users" },
   { id: "lists", label: "Public lists" },
 ];
@@ -34,7 +35,7 @@ const REGION_OPTIONS = [
   { value: "ca", label: "CA" },
 ];
 
-function GearCatalogSection() {
+function GearCatalogSection({ mode = "both" }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -335,598 +336,604 @@ function GearCatalogSection() {
         </div>
       </div>
 
-      {/* Create form */}
-      <div className="bg-neutralAlt rounded-lg shadow-2xl border border-primary">
-        {/* Form header with collapse toggle */}
-        <div className="flex items-center justify-between px-4 pt-3 pb-2 sm:px-6 border-b border-base-200">
-          <h3 className="text-sm font-semibold text-primary">
-            Add catalog item
-          </h3>
-          <button
-            type="button"
-            onClick={() => setShowCreateForm((v) => !v)}
-            className="btn btn-ghost btn-xs text-primary"
-            title={showCreateForm ? "Hide create form" : "Show create form"}
-          >
-            {showCreateForm ? <FaChevronUp /> : <FaChevronDown />}
-          </button>
-        </div>
-
-        {showCreateForm && (
-          <form
-            onSubmit={handleCreate}
-            className="px-4 py-4 sm:px-6 sm:py-6 space-y-3"
-          >
-            <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
-              {/* LEFT column */}
-              <div className="flex-1 space-y-2">
-                <div>
-                  <label className="block font-medium text-primary mb-0.5">
-                    Item name *
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={form.name}
-                    onChange={handleChange}
-                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                    placeholder="Nemo Hornet OSMO 2P"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <div>
-                    <label className="block font-medium text-primary mb-0.5">
-                      Brand
-                    </label>
-                    <input
-                      type="text"
-                      name="brand"
-                      value={form.brand}
-                      onChange={handleChange}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                      placeholder="Nemo"
-                    />
-                  </div>
-                  <div>
-                    <label className="block font-medium text-primary mb-0.5">
-                      Category
-                    </label>
-                    <input
-                      type="text"
-                      name="category"
-                      value={form.category}
-                      onChange={handleChange}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                      placeholder="shelter / mid-layer / headlamp..."
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block font-medium text-primary mb-0.5">
-                    Description
-                  </label>
-                  <textarea
-                    name="description"
-                    value={form.description}
-                    onChange={handleChange}
-                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary resize-y"
-                    rows={2}
-                    placeholder="Short blurb to help you recognize the item when importing."
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  <div>
-                    <label className="block font-medium text-primary mb-0.5">
-                      Weight (grams)
-                    </label>
-                    <input
-                      type="number"
-                      name="weightGrams"
-                      value={form.weightGrams}
-                      onChange={handleChange}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                      placeholder="1400"
-                      min="0"
-                    />
-                  </div>
-                  <div className="sm:col-span-2">
-                    <label className="block font-medium text-primary mb-0.5">
-                      Tags (comma-separated)
-                    </label>
-                    <input
-                      type="text"
-                      name="tags"
-                      value={form.tags}
-                      onChange={handleChange}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                      placeholder="3-season, tent, 1p"
-                    />
-                  </div>
-                  <div>
-                    <label className="block font-medium text-primary mb-0.5">
-                      Price hint
-                    </label>
-                    <input
-                      type="number"
-                      name="priceHint"
-                      value={form.priceHint}
-                      onChange={handleChange}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                      placeholder="Leave blank for now"
-                      min="0"
-                      step="0.01"
-                    />
-                    <span className="block text-[11px] text-primary/70">
-                      Optional; later overwritten by Amazon/Awin pricing.
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* RIGHT column */}
-              <div className="flex-1 space-y-2">
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="block font-medium text-primary mb-0.5">
-                      Network *
-                    </label>
-                    <select
-                      name="linkNetwork"
-                      value={form.linkNetwork}
-                      onChange={handleChange}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
-                    >
-                      {NETWORK_OPTIONS.map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block font-medium text-primary mb-0.5">
-                      Region
-                    </label>
-                    <select
-                      name="linkRegion"
-                      value={form.linkRegion}
-                      onChange={handleChange}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
-                    >
-                      {REGION_OPTIONS.map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block font-medium text-primary mb-0.5">
-                    Affiliate URL *
-                  </label>
-                  <input
-                    type="url"
-                    name="linkUrl"
-                    value={form.linkUrl}
-                    onChange={handleChange}
-                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                    placeholder="https://www.amazon.com/dp/ASIN/?tag=yourtag-20"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <div>
-                    <label className="block font-medium text-primary mb-0.5">
-                      Merchant name
-                    </label>
-                    <input
-                      type="text"
-                      name="linkMerchantName"
-                      value={form.linkMerchantName}
-                      onChange={handleChange}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                      placeholder="Amazon / Bergfreunde / REI"
-                    />
-                  </div>
-                  <div>
-                    <label className="block font-medium text-primary mb-0.5">
-                      External ID
-                    </label>
-                    <input
-                      type="text"
-                      name="linkExternalId"
-                      value={form.linkExternalId}
-                      onChange={handleChange}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                      placeholder="ASIN, Awin product id..."
-                    />
-                    <span className="block text-[11px] text-primary/70">
-                      ASIN (Amazon) / product id (Awin, Impact)
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-2 pt-3 border-t border-base-200 mt-2">
-              <button
-                type="submit"
-                disabled={creating}
-                className={`px-2 py-1 rounded bg-secondary text-white hover:bg-secondary/80 ${
-                  creating ? "opacity-60 cursor-not-allowed" : ""
-                }`}
-              >
-                {creating ? "Saving..." : "Add to catalog"}
-              </button>
-            </div>
-          </form>
-        )}
-      </div>
-
-      {/* List */}
-      <div className="border border-base-300 rounded-lg bg-base-100/80 overflow-auto">
-        <div className="flex items-center justify-between px-3 py-2 border-b border-base-200 text-xs text-primary/80">
-          <span>
-            {loading
-              ? "Loading catalog items..."
-              : showArchived
-              ? `Catalog items (including archived): ${items.length}`
-              : `Active catalog items: ${items.length}`}
-          </span>
-          <div className="flex items-center gap-2">
-            <label className="flex items-center gap-1 cursor-pointer">
-              <input
-                type="checkbox"
-                className="checkbox checkbox-xs"
-                checked={showArchived}
-                onChange={(e) => {
-                  const include = e.target.checked;
-                  setShowArchived(include);
-                  setPage(0);
-                  loadItems({ includeArchived: include });
-                }}
-              />
-              <span>Show archived</span>
-            </label>
+      {/* Create form (only when not in list-only mode) */}
+      {mode !== "list" && (
+        <div className="bg-neutralAlt rounded-lg shadow-2xl border border-primary">
+          {/* Form header with collapse toggle */}
+          <div className="flex items-center justify-between px-4 pt-3 pb-2 sm:px-6 border-b border-base-200">
+            <h3 className="text-sm font-semibold text-primary">
+              Add catalog item
+            </h3>
             <button
               type="button"
-              onClick={() => loadItems({ includeArchived: showArchived })}
-              disabled={loading}
-              className="btn btn-ghost btn-xs"
+              onClick={() => setShowCreateForm((v) => !v)}
+              className="btn btn-ghost btn-xs text-primary"
+              title={showCreateForm ? "Hide create form" : "Show create form"}
             >
-              Refresh
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowListBody((v) => !v)}
-              className="btn btn-ghost btn-xs"
-              title={showListBody ? "Hide catalog list" : "Show catalog list"}
-            >
-              {showListBody ? <FaChevronUp /> : <FaChevronDown />}
+              {showCreateForm ? <FaChevronUp /> : <FaChevronDown />}
             </button>
           </div>
-        </div>
-        {showListBody && (
-          <>
-            {error && !loading && (
-              <div className="px-3 py-2 text-xs text-error">{error}</div>
-            )}
 
-            {!error && !loading && items.length === 0 && (
-              <div className="px-3 py-3 text-xs text-primary/70">
-                No catalog items yet. Use the form above to add your first
-                affiliate-backed gear item.
-              </div>
-            )}
-
-            {!loading && !error && items.length > 0 && (
-              <>
-                {/* Search + filters row */}
-                <div className="px-3 py-2 border-b border-base-200 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between text-xs">
-                  <div className="flex-1 flex gap-2">
+          {showCreateForm && (
+            <form
+              onSubmit={handleCreate}
+              className="px-4 py-4 sm:px-6 sm:py-6 space-y-3"
+            >
+              <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+                {/* LEFT column */}
+                <div className="flex-1 space-y-2">
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      Item name *
+                    </label>
                     <input
                       type="text"
-                      className="input input-xs input-bordered w-full"
-                      placeholder="Search name, brand, category, tags..."
-                      value={search}
-                      onChange={(e) => {
-                        setSearch(e.target.value);
-                        setPage(0);
-                      }}
+                      name="name"
+                      value={form.name}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="Nemo Hornet OSMO 2P"
                     />
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    <select
-                      className="select select-xs select-bordered"
-                      value={filterCategory}
-                      onChange={(e) => {
-                        setFilterCategory(e.target.value);
-                        setPage(0);
-                      }}
-                    >
-                      <option value="all">All categories</option>
-                      {categoryOptions.map((cat) => (
-                        <option key={cat} value={cat}>
-                          {cat}
-                        </option>
-                      ))}
-                    </select>
 
-                    <select
-                      className="select select-xs select-bordered"
-                      value={filterBrand}
-                      onChange={(e) => {
-                        setFilterBrand(e.target.value);
-                        setPage(0);
-                      }}
-                    >
-                      <option value="all">All brands</option>
-                      {brandOptions.map((brand) => (
-                        <option key={brand} value={brand}>
-                          {brand}
-                        </option>
-                      ))}
-                    </select>
-
-                    <select
-                      className="select select-xs select-bordered"
-                      value={filterNetwork}
-                      onChange={(e) => {
-                        setFilterNetwork(e.target.value);
-                        setPage(0);
-                      }}
-                    >
-                      <option value="all">All networks</option>
-                      {networkOptions.map((net) => (
-                        <option key={net} value={net}>
-                          {net}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <table className="min-w-full text-xs sm:text-sm">
-                  <thead className="bg-base-200/80">
-                    <tr>
-                      <th
-                        className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
-                        onClick={() => handleSort("name")}
-                      >
-                        Name
-                        {sort.field === "name" && (
-                          <span className="ml-1 text-[10px]">
-                            {sort.dir === "asc" ? "↓" : "↑"}
-                          </span>
-                        )}
-                      </th>
-                      <th
-                        className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
-                        onClick={() => handleSort("category")}
-                      >
-                        Category
-                        {sort.field === "category" && (
-                          <span className="ml-1 text-[10px]">
-                            {sort.dir === "asc" ? "↓" : "↑"}
-                          </span>
-                        )}
-                      </th>
-                      <th
-                        className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
-                        onClick={() => handleSort("brand")}
-                      >
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div>
+                      <label className="block font-medium text-primary mb-0.5">
                         Brand
-                        {sort.field === "brand" && (
-                          <span className="ml-1 text-[10px]">
-                            {sort.dir === "asc" ? "↓" : "↑"}
-                          </span>
-                        )}
-                      </th>
-                      <th
-                        className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
-                        onClick={() => handleSort("network")}
-                      >
-                        Network / Region
-                        {sort.field === "network" && (
-                          <span className="ml-1 text-[10px]">
-                            {sort.dir === "asc" ? "↓" : "↑"}
-                          </span>
-                        )}
-                      </th>
-                      <th
-                        className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
-                        onClick={() => handleSort("weightGrams")}
-                      >
-                        Weight
-                        {sort.field === "weightGrams" && (
-                          <span className="ml-1 text-[10px]">
-                            {sort.dir === "asc" ? "↑" : "↓"}
-                          </span>
-                        )}
-                      </th>
-                      <th className="text-right px-3 py-2 font-semibold">
-                        Price
-                      </th>
-                      <th className="text-left px-3 py-2 font-semibold">
-                        Status
-                      </th>
-                      <th
-                        className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
-                        onClick={() => handleSort("updatedAt")}
-                      >
-                        Updated
-                        {sort.field === "updatedAt" && (
-                          <span className="ml-1 text-[10px]">
-                            {sort.dir === "asc" ? "↑" : "↓"}
-                          </span>
-                        )}
-                      </th>
-                      <th className="text-right px-3 py-2 font-semibold">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
+                      </label>
+                      <input
+                        type="text"
+                        name="brand"
+                        value={form.brand}
+                        onChange={handleChange}
+                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                        placeholder="Nemo"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-medium text-primary mb-0.5">
+                        Category
+                      </label>
+                      <input
+                        type="text"
+                        name="category"
+                        value={form.category}
+                        onChange={handleChange}
+                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                        placeholder="shelter / mid-layer / headlamp..."
+                      />
+                    </div>
+                  </div>
 
-                  <tbody>
-                    {pageItems.map((item) => {
-                      const id = item._id || item.id;
-                      const mainLink = Array.isArray(item.links)
-                        ? item.links[0]
-                        : null;
-                      const updated =
-                        item.updatedAt &&
-                        !Number.isNaN(Date.parse(item.updatedAt))
-                          ? new Date(item.updatedAt).toLocaleDateString()
-                          : "–";
-
-                      return (
-                        <tr
-                          key={id}
-                          className={
-                            "border-t border-base-200 hover:bg-base-200/40 " +
-                            (!item.isActive ? "opacity-60" : "")
-                          }
-                        >
-                          <td className="px-3 py-2 align-top">{item.name}</td>
-                          <td className="px-3 py-2 align-top">
-                            {item.category || "–"}
-                          </td>
-                          <td className="px-3 py-2 align-top">
-                            {item.brand || "–"}
-                          </td>
-                          <td className="px-3 py-2 align-top">
-                            {mainLink
-                              ? `${mainLink.network} / ${
-                                  mainLink.region || "global"
-                                }`
-                              : "–"}
-                          </td>
-                          <td className="px-3 py-2 text-right align-top">
-                            {typeof item.weightGrams === "number"
-                              ? `${item.weightGrams} g`
-                              : "–"}
-                          </td>
-                          <td className="px-3 py-2 text-right align-top">
-                            {typeof item.priceHint === "number"
-                              ? item.priceHint.toFixed(2)
-                              : "–"}
-                          </td>
-                          <td className="px-3 py-2 text-left align-top">
-                            <span
-                              className={
-                                "badge badge-xs " +
-                                (item.isActive
-                                  ? "badge-success"
-                                  : "badge-ghost")
-                              }
-                            >
-                              {item.isActive ? "Active" : "Archived"}
-                            </span>
-                          </td>
-                          <td className="px-3 py-2 text-right align-top">
-                            {updated}
-                          </td>
-                          <td className="px-3 py-2 text-right align-top">
-                            <div className="inline-flex items-center gap-2 justify-end">
-                              {/* Edit icon button */}
-                              <button
-                                type="button"
-                                className="btn btn-ghost btn-xs"
-                                onClick={() => setEditingItem(item)}
-                                title="Edit catalog item"
-                              >
-                                <FaEdit />
-                              </button>
-
-                              {/* Archive / Unarchive button */}
-                              <button
-                                type="button"
-                                className={
-                                  "btn btn-xs " +
-                                  (item.isActive
-                                    ? "btn-outline btn-error"
-                                    : "btn-outline")
-                                }
-                                disabled={archivingId === id}
-                                onClick={() =>
-                                  handleArchiveToggle(item, !item.isActive)
-                                }
-                              >
-                                {archivingId === id
-                                  ? item.isActive
-                                    ? "Archiving..."
-                                    : "Unarchiving..."
-                                  : item.isActive
-                                  ? "Archive"
-                                  : "Unarchive"}
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-                {/* Pagination footer */}
-                <div className="flex items-center justify-between px-3 py-2 border-t border-base-200 text-xs text-primary/80">
-                  <span>
-                    Showing {totalItems === 0 ? 0 : startIndex + 1}
-                    {"–"}
-                    {endIndex} of {totalItems}
-                  </span>
-                  <div className="flex items-center gap-3">
-                    <label className="flex items-center gap-1">
-                      <span>Rows per page</span>
-                      <select
-                        className="select select-xs select-bordered"
-                        value={pageSize}
-                        onChange={(e) => {
-                          const next = Number(e.target.value) || 25;
-                          setPageSize(next);
-                          setPage(0);
-                        }}
-                      >
-                        <option value={10}>10</option>
-                        <option value={25}>25</option>
-                        <option value={50}>50</option>
-                        <option value={100}>100</option>
-                      </select>
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      Description
                     </label>
+                    <textarea
+                      name="description"
+                      value={form.description}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary resize-y"
+                      rows={2}
+                      placeholder="Short blurb to help you recognize the item when importing."
+                    />
+                  </div>
 
-                    <div className="flex items-center gap-1">
-                      <button
-                        type="button"
-                        className="btn btn-ghost btn-xs"
-                        disabled={currentPage === 0}
-                        onClick={() => setPage((p) => Math.max(0, p - 1))}
-                      >
-                        Previous
-                      </button>
-                      <span>
-                        Page {currentPage + 1} of {pageCount}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <div>
+                      <label className="block font-medium text-primary mb-0.5">
+                        Weight (grams)
+                      </label>
+                      <input
+                        type="number"
+                        name="weightGrams"
+                        value={form.weightGrams}
+                        onChange={handleChange}
+                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                        placeholder="1400"
+                        min="0"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block font-medium text-primary mb-0.5">
+                        Tags (comma-separated)
+                      </label>
+                      <input
+                        type="text"
+                        name="tags"
+                        value={form.tags}
+                        onChange={handleChange}
+                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                        placeholder="3-season, tent, 1p"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-medium text-primary mb-0.5">
+                        Price hint
+                      </label>
+                      <input
+                        type="number"
+                        name="priceHint"
+                        value={form.priceHint}
+                        onChange={handleChange}
+                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                        placeholder="Leave blank for now"
+                        min="0"
+                        step="0.01"
+                      />
+                      <span className="block text-[11px] text-primary/70">
+                        Optional; later overwritten by Amazon/Awin pricing.
                       </span>
-                      <button
-                        type="button"
-                        className="btn btn-ghost btn-xs"
-                        disabled={currentPage >= pageCount - 1}
-                        onClick={() =>
-                          setPage((p) => Math.min(pageCount - 1, p + 1))
-                        }
-                      >
-                        Next
-                      </button>
                     </div>
                   </div>
                 </div>
-              </>
-            )}
-          </>
-        )}
-      </div>
+
+                {/* RIGHT column */}
+                <div className="flex-1 space-y-2">
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block font-medium text-primary mb-0.5">
+                        Network *
+                      </label>
+                      <select
+                        name="linkNetwork"
+                        value={form.linkNetwork}
+                        onChange={handleChange}
+                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                      >
+                        {NETWORK_OPTIONS.map((opt) => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block font-medium text-primary mb-0.5">
+                        Region
+                      </label>
+                      <select
+                        name="linkRegion"
+                        value={form.linkRegion}
+                        onChange={handleChange}
+                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                      >
+                        {REGION_OPTIONS.map((opt) => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      Affiliate URL *
+                    </label>
+                    <input
+                      type="url"
+                      name="linkUrl"
+                      value={form.linkUrl}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="https://www.amazon.com/dp/ASIN/?tag=yourtag-20"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div>
+                      <label className="block font-medium text-primary mb-0.5">
+                        Merchant name
+                      </label>
+                      <input
+                        type="text"
+                        name="linkMerchantName"
+                        value={form.linkMerchantName}
+                        onChange={handleChange}
+                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                        placeholder="Amazon / Bergfreunde / REI"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-medium text-primary mb-0.5">
+                        External ID
+                      </label>
+                      <input
+                        type="text"
+                        name="linkExternalId"
+                        value={form.linkExternalId}
+                        onChange={handleChange}
+                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                        placeholder="ASIN, Awin product id..."
+                      />
+                      <span className="block text-[11px] text-primary/70">
+                        ASIN (Amazon) / product id (Awin, Impact)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-3 border-t border-base-200 mt-2">
+                <button
+                  type="submit"
+                  disabled={creating}
+                  className={`px-2 py-1 rounded bg-secondary text-white hover:bg-secondary/80 ${
+                    creating ? "opacity-60 cursor-not-allowed" : ""
+                  }`}
+                >
+                  {creating ? "Saving..." : "Add to catalog"}
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+      )}
+
+      {/* List */}
+
+      {/* List (only when not in create-only mode) */}
+      {mode !== "create" && (
+        <div className="border border-base-300 rounded-lg bg-base-100/80 overflow-auto">
+          <div className="flex items-center justify-between px-3 py-2 border-b border-base-200 text-xs text-primary/80">
+            <span>
+              {loading
+                ? "Loading catalog items..."
+                : showArchived
+                ? `Catalog items (including archived): ${items.length}`
+                : `Active catalog items: ${items.length}`}
+            </span>
+            <div className="flex items-center gap-2">
+              <label className="flex items-center gap-1 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-xs"
+                  checked={showArchived}
+                  onChange={(e) => {
+                    const include = e.target.checked;
+                    setShowArchived(include);
+                    setPage(0);
+                    loadItems({ includeArchived: include });
+                  }}
+                />
+                <span>Show archived</span>
+              </label>
+              <button
+                type="button"
+                onClick={() => loadItems({ includeArchived: showArchived })}
+                disabled={loading}
+                className="btn btn-ghost btn-xs"
+              >
+                Refresh
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowListBody((v) => !v)}
+                className="btn btn-ghost btn-xs"
+                title={showListBody ? "Hide catalog list" : "Show catalog list"}
+              >
+                {showListBody ? <FaChevronUp /> : <FaChevronDown />}
+              </button>
+            </div>
+          </div>
+          {showListBody && (
+            <>
+              {error && !loading && (
+                <div className="px-3 py-2 text-xs text-error">{error}</div>
+              )}
+
+              {!error && !loading && items.length === 0 && (
+                <div className="px-3 py-2 text-xs text-primary/70">
+                  No catalog items yet. Use the form above to add your first
+                  affiliate-backed gear item.
+                </div>
+              )}
+
+              {!loading && !error && items.length > 0 && (
+                <>
+                  {/* Search + filters row */}
+                  <div className="px-3 py-2 border-b border-base-200 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between text-xs">
+                    <div className="flex-1 flex gap-2">
+                      <input
+                        type="text"
+                        className="input input-xs input-bordered w-full"
+                        placeholder="Search name, brand, category, tags..."
+                        value={search}
+                        onChange={(e) => {
+                          setSearch(e.target.value);
+                          setPage(0);
+                        }}
+                      />
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <select
+                        className="select select-xs select-bordered"
+                        value={filterCategory}
+                        onChange={(e) => {
+                          setFilterCategory(e.target.value);
+                          setPage(0);
+                        }}
+                      >
+                        <option value="all">All categories</option>
+                        {categoryOptions.map((cat) => (
+                          <option key={cat} value={cat}>
+                            {cat}
+                          </option>
+                        ))}
+                      </select>
+
+                      <select
+                        className="select select-xs select-bordered"
+                        value={filterBrand}
+                        onChange={(e) => {
+                          setFilterBrand(e.target.value);
+                          setPage(0);
+                        }}
+                      >
+                        <option value="all">All brands</option>
+                        {brandOptions.map((brand) => (
+                          <option key={brand} value={brand}>
+                            {brand}
+                          </option>
+                        ))}
+                      </select>
+
+                      <select
+                        className="select select-xs select-bordered"
+                        value={filterNetwork}
+                        onChange={(e) => {
+                          setFilterNetwork(e.target.value);
+                          setPage(0);
+                        }}
+                      >
+                        <option value="all">All networks</option>
+                        {networkOptions.map((net) => (
+                          <option key={net} value={net}>
+                            {net}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <table className="min-w-full text-xs sm:text-sm">
+                    <thead className="bg-base-200/80">
+                      <tr>
+                        <th
+                          className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
+                          onClick={() => handleSort("name")}
+                        >
+                          Name
+                          {sort.field === "name" && (
+                            <span className="ml-1 text-[10px]">
+                              {sort.dir === "asc" ? "↓" : "↑"}
+                            </span>
+                          )}
+                        </th>
+                        <th
+                          className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
+                          onClick={() => handleSort("category")}
+                        >
+                          Category
+                          {sort.field === "category" && (
+                            <span className="ml-1 text-[10px]">
+                              {sort.dir === "asc" ? "↓" : "↑"}
+                            </span>
+                          )}
+                        </th>
+                        <th
+                          className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
+                          onClick={() => handleSort("brand")}
+                        >
+                          Brand
+                          {sort.field === "brand" && (
+                            <span className="ml-1 text-[10px]">
+                              {sort.dir === "asc" ? "↓" : "↑"}
+                            </span>
+                          )}
+                        </th>
+                        <th
+                          className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
+                          onClick={() => handleSort("network")}
+                        >
+                          Network / Region
+                          {sort.field === "network" && (
+                            <span className="ml-1 text-[10px]">
+                              {sort.dir === "asc" ? "↓" : "↑"}
+                            </span>
+                          )}
+                        </th>
+                        <th
+                          className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
+                          onClick={() => handleSort("weightGrams")}
+                        >
+                          Weight
+                          {sort.field === "weightGrams" && (
+                            <span className="ml-1 text-[10px]">
+                              {sort.dir === "asc" ? "↑" : "↓"}
+                            </span>
+                          )}
+                        </th>
+                        <th className="text-right px-3 py-2 font-semibold">
+                          Price
+                        </th>
+                        <th className="text-left px-3 py-2 font-semibold">
+                          Status
+                        </th>
+                        <th
+                          className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
+                          onClick={() => handleSort("updatedAt")}
+                        >
+                          Updated
+                          {sort.field === "updatedAt" && (
+                            <span className="ml-1 text-[10px]">
+                              {sort.dir === "asc" ? "↑" : "↓"}
+                            </span>
+                          )}
+                        </th>
+                        <th className="text-right px-3 py-2 font-semibold">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      {pageItems.map((item) => {
+                        const id = item._id || item.id;
+                        const mainLink = Array.isArray(item.links)
+                          ? item.links[0]
+                          : null;
+                        const updated =
+                          item.updatedAt &&
+                          !Number.isNaN(Date.parse(item.updatedAt))
+                            ? new Date(item.updatedAt).toLocaleDateString()
+                            : "–";
+
+                        return (
+                          <tr
+                            key={id}
+                            className={
+                              "border-t border-base-200 hover:bg-base-200/40 " +
+                              (!item.isActive ? "opacity-60" : "")
+                            }
+                          >
+                            <td className="px-3 py-2 align-top">{item.name}</td>
+                            <td className="px-3 py-2 align-top">
+                              {item.category || "–"}
+                            </td>
+                            <td className="px-3 py-2 align-top">
+                              {item.brand || "–"}
+                            </td>
+                            <td className="px-3 py-2 align-top">
+                              {mainLink
+                                ? `${mainLink.network} / ${
+                                    mainLink.region || "global"
+                                  }`
+                                : "–"}
+                            </td>
+                            <td className="px-3 py-2 text-right align-top">
+                              {typeof item.weightGrams === "number"
+                                ? `${item.weightGrams} g`
+                                : "–"}
+                            </td>
+                            <td className="px-3 py-2 text-right align-top">
+                              {typeof item.priceHint === "number"
+                                ? item.priceHint.toFixed(2)
+                                : "–"}
+                            </td>
+                            <td className="px-3 py-2 text-left align-top">
+                              <span
+                                className={
+                                  "badge badge-xs " +
+                                  (item.isActive
+                                    ? "badge-success"
+                                    : "badge-ghost")
+                                }
+                              >
+                                {item.isActive ? "Active" : "Archived"}
+                              </span>
+                            </td>
+                            <td className="px-3 py-2 text-right align-top">
+                              {updated}
+                            </td>
+                            <td className="px-3 py-2 text-right align-top">
+                              <div className="inline-flex items-center gap-2 justify-end">
+                                {/* Edit icon button */}
+                                <button
+                                  type="button"
+                                  className="btn btn-ghost btn-xs"
+                                  onClick={() => setEditingItem(item)}
+                                  title="Edit catalog item"
+                                >
+                                  <FaEdit />
+                                </button>
+
+                                {/* Archive / Unarchive button */}
+                                <button
+                                  type="button"
+                                  className={
+                                    "btn btn-xs " +
+                                    (item.isActive
+                                      ? "btn-outline btn-error"
+                                      : "btn-outline")
+                                  }
+                                  disabled={archivingId === id}
+                                  onClick={() =>
+                                    handleArchiveToggle(item, !item.isActive)
+                                  }
+                                >
+                                  {archivingId === id
+                                    ? item.isActive
+                                      ? "Archiving..."
+                                      : "Unarchiving..."
+                                    : item.isActive
+                                    ? "Archive"
+                                    : "Unarchive"}
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                  {/* Pagination footer */}
+                  <div className="flex items-center justify-between px-3 py-2 border-t border-base-200 text-xs text-primary/80">
+                    <span>
+                      Showing {totalItems === 0 ? 0 : startIndex + 1}
+                      {"–"}
+                      {endIndex} of {totalItems}
+                    </span>
+                    <div className="flex items-center gap-3">
+                      <label className="flex items-center gap-1">
+                        <span>Rows per page</span>
+                        <select
+                          className="select select-xs select-bordered"
+                          value={pageSize}
+                          onChange={(e) => {
+                            const next = Number(e.target.value) || 25;
+                            setPageSize(next);
+                            setPage(0);
+                          }}
+                        >
+                          <option value={10}>10</option>
+                          <option value={25}>25</option>
+                          <option value={50}>50</option>
+                          <option value={100}>100</option>
+                        </select>
+                      </label>
+
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-xs"
+                          disabled={currentPage === 0}
+                          onClick={() => setPage((p) => Math.max(0, p - 1))}
+                        >
+                          Previous
+                        </button>
+                        <span>
+                          Page {currentPage + 1} of {pageCount}
+                        </span>
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-xs"
+                          disabled={currentPage >= pageCount - 1}
+                          onClick={() =>
+                            setPage((p) => Math.min(pageCount - 1, p + 1))
+                          }
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+            </>
+          )}
+        </div>
+      )}
 
       {editingItem && (
         <EditCatalogItemModal
@@ -1768,7 +1775,7 @@ function UsersSection() {
       </div>
 
       {/* List container */}
-      <div className="border border-base-300 rounded-lg bg-base-100/80 overflow-hidden">
+      <div className="border border-base-300 rounded-lg bg-base-100/80 overflow-x-auto sm:overflow-x-visible">
         {/* Header bar */}
         <div className="flex items-center justify-between px-3 py-2 border-b border-base-200 text-xs text-primary/80">
           <span>
@@ -1878,7 +1885,7 @@ function UsersSection() {
             )}
 
             {!error && !loading && users.length === 0 && (
-              <div className="px-3 py-3 text-xs text-primary/70">
+              <div className="px-3 py-2 text-xs text-primary/70">
                 No users found for the current filters.
               </div>
             )}
@@ -2455,7 +2462,7 @@ function PublicListsSection() {
             )}
 
             {!error && !loading && lists.length === 0 && (
-              <div className="px-3 py-3 text-xs text-primary/70">
+              <div className="px-3 py-2 text-xs text-primary/70">
                 No public lists found for the current search.
               </div>
             )}
@@ -2725,13 +2732,13 @@ function PublicListsSection() {
 }
 
 function AdminView() {
-  const [activeTab, setActiveTab] = useState("gear");
+  const [activeTab, setActiveTab] = useState("gearCatalog");
   const { sidebarCollapsed } = useUserSettings();
 
   return (
     <div className="h-full w-full flex flex-col bg-neutral/40">
       {/* Header */}
-      <header className="flex items-center justify-between px-4 py-3 border-b border-base-300 bg-base-100/90">
+      <header className="flex items-center justify-between px-4 py-2 border-b border-base-300 bg-base-100/90">
         <div>
           <h1
             className={
@@ -2769,8 +2776,9 @@ function AdminView() {
       </div>
 
       {/* Content */}
-      <main className="flex-1 px-4 py-3 overflow-auto bg-neutral/20">
-        {activeTab === "gear" && <GearCatalogSection />}
+      <main className="flex-1 px-4 py-2 overflow-auto bg-neutral/20">
+        {activeTab === "gearCatalog" && <GearCatalogSection mode="list" />}
+        {activeTab === "gearCreate" && <GearCatalogSection mode="create" />}
         {activeTab === "users" && <UsersSection />}
         {activeTab === "lists" && <PublicListsSection />}
       </main>
