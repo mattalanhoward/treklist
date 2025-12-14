@@ -249,7 +249,7 @@ export default function Sidebar({
                 (sidebarGearListsCollapsed ? "" : "h-1/3")
               }
             >
-              <div className="flex items-center mb-2 text-primaryAlt">
+              <div className="flex items-center text-primaryAlt">
                 <button
                   type="button"
                   onClick={onShowGearPane}
@@ -274,7 +274,7 @@ export default function Sidebar({
                 <>
                   <div className="flex mb-3">
                     <input
-                      className="flex-1 rounded-lg py-1 px-2 bg-base-100 text-primary border-primary"
+                      className="flex-1 rounded-lg mt-2 py-1 px-2 bg-base-100 text-primary border-primary"
                       placeholder={t("sidebar.newListPlaceholder")}
                       value={newListTitle}
                       onChange={(e) => setNewListTitle(e.target.value)}
@@ -334,7 +334,7 @@ export default function Sidebar({
 
             {/* Gear Items / Global Items */}
             <section className="flex flex-col flex-1 px-4 py-2 overflow-hidden">
-              <div className="flex items-center mb-2 text-primaryAlt">
+              <div className="flex items-center text-primaryAlt">
                 <button
                   type="button"
                   onClick={onShowGearPane}
@@ -367,7 +367,7 @@ export default function Sidebar({
               {!sidebarMyGearCollapsed && (
                 <>
                   <input
-                    className="w-full rounded-lg py-1 px-2 bg-base-100 text-primary border border-primary mb-3"
+                    className="w-full rounded-lg py-1 px-2 mt-2 bg-base-100 text-primary border border-primary mb-3"
                     placeholder={t("sidebar.searchGearPlaceholder")}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
