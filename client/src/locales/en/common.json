@@ -394,6 +394,41 @@
     "toast": {
       "created": "Global item created!",
       "createFailed": "Failed to create item."
+    },
+    "importTab": {
+      "searchPlaceholder": "Search catalog…",
+      "filters": {
+        "allCategories": "All categories",
+        "allSubcategories": "All subcategories",
+        "allBrands": "All brands"
+      },
+      "badges": {
+        "added": "Added"
+      },
+      "labels": {
+        "unknownBrand": "Unknown",
+        "uncategorized": "Uncategorized"
+      },
+      "states": {
+        "loading": "Loading…",
+        "empty": "No catalog items found"
+      },
+      "buttons": {
+        "import_one": "Import {{count}} item",
+        "import_other": "Import {{count}} items",
+        "importing": "Importing…",
+        "clear": "Clear",
+        "clearTitle": "Clear selection"
+      },
+      "toasts": {
+        "selectAtLeastOne": "Please select at least one item.",
+        "alreadyImported": "Some items are already imported.",
+        "importSuccess": "Imported successfully.",
+        "importFailed": "Import failed."
+      },
+      "errors": {
+        "loadFailed": "Failed to load catalog items."
+      }
     }
   },
   "globalItemEditModal": {
@@ -431,8 +466,8 @@
     },
     "empty": "No items found",
     "buttons": {
-      "add": "Add {{count}} item",
-      "add_plural": "Add {{count}} items",
+      "add_one": "Add {{count}} item",
+      "add_other": "Add {{count}} items",
       "adding": "Adding…"
     },
     "toasts": {

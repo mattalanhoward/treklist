@@ -96,6 +96,18 @@ router.post(
           .json({ message: "Affiliate product not found." });
       }
 
+      const dedupeQuery = {
+        owner: req.userId,
+        "affiliate.network": "awin",
+        "affiliate.region": String(p.region || ""),
+        "affiliate.externalProductId": String(p.externalProductId || ""),
+      };
+
+      // If we don't have a stable key, skip dedupe
+      const canDedupe =
+        dedupeQuery["affiliate.region"] &&
+        dedupeQuery["affiliate.externalProductId"];
+
       // Build the new GlobalItem — price/link always from affiliate product
       const data = {
         owner: req.userId,
@@ -126,8 +138,23 @@ router.post(
         },
       };
 
-      const created = await GlobalItem.create(data);
-      return res.status(201).json(created);
+      if (canDedupe) {
+        const existing = await GlobalItem.findOne(dedupeQuery);
+        if (existing) {
+          return res.status(200).json(existing);
+        }
+      }
+
+      try {
+        const created = await GlobalItem.create(data);
+        return res.status(201).json(created);
+      } catch (err) {
+        if (err?.code === 11000 && canDedupe) {
+          const winner = await GlobalItem.findOne(dedupeQuery);
+          if (winner) return res.status(200).json(winner);
+        }
+        throw err;
+      }
     } catch (err) {
       console.error("Error creating from affiliate product:", err);
       return res
@@ -191,6 +218,7 @@ router.patch("/:id", async (req, res) => {
 
     // Only allow these fields to be updated
     const allowed = [
+      "category",
       "itemType",
       "name",
       "brand",
@@ -257,6 +285,95 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// POST /api/global/items/from-catalog/bulk
+// Bulk import catalog items as GlobalItems (idempotent per owner+productId)
+router.post("/from-catalog/bulk", async (req, res) => {
+  try {
+    const ids = Array.isArray(req.body?.ids) ? req.body.ids : [];
+    const cleanIds = ids.filter((x) => isValidObjectId(x));
+
+    if (cleanIds.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "No valid catalog ids provided." });
+    }
+
+    // Load catalog items (only active)
+    const catalogItems = await CatalogItem.find({
+      _id: { $in: cleanIds },
+      isActive: true,
+    }).lean();
+
+    // Existing imports for this owner
+    const existing = await GlobalItem.find({
+      owner: req.userId,
+      productId: { $in: catalogItems.map((c) => c._id) },
+    })
+      .select("_id productId")
+      .lean();
+
+    const existingSet = new Set(existing.map((g) => String(g.productId)));
+
+    // Prepare upsert operations (idempotent, safe in races due to unique index)
+    const ops = catalogItems
+      .filter((c) => !existingSet.has(String(c._id)))
+      .map((c) => {
+        const primaryLink = Array.isArray(c.links) ? c.links[0] : null;
+
+        const payload = {
+          owner: req.userId,
+          productId: c._id,
+          name: c.name,
+          brand: c.brand,
+          itemType: c.itemType || c.subcategory || c.category || null,
+          description: c.description,
+          weight: c.weightGrams,
+          ...(typeof c.weightGrams === "number" && { weightSource: "catalog" }),
+          tags: c.tags,
+          category: c.category || null,
+          subcategory: c.subcategory || null,
+          link: primaryLink ? primaryLink.url : "",
+          affiliate: primaryLink
+            ? {
+                network: primaryLink.network,
+                region: primaryLink.region || "global",
+                deepLink: primaryLink.url,
+                merchantName: primaryLink.merchantName || "",
+                externalProductId: primaryLink.externalId || "",
+                itemGroupId: c.itemGroupId || undefined,
+              }
+            : undefined,
+        };
+
+        return {
+          updateOne: {
+            filter: { owner: req.userId, productId: c._id },
+            update: { $setOnInsert: payload },
+            upsert: true,
+          },
+        };
+      });
+
+    if (ops.length > 0) {
+      await GlobalItem.bulkWrite(ops, { ordered: false });
+    }
+
+    // Return winners (created + existing) for the requested set
+    const winners = await GlobalItem.find({
+      owner: req.userId,
+      productId: { $in: catalogItems.map((c) => c._id) },
+    }).lean();
+
+    return res.status(200).json({
+      items: winners,
+      catalogIds: catalogItems.map((c) => String(c._id)),
+    });
+  } catch (err) {
+    console.error("POST /global/items/from-catalog/bulk error:", err);
+    return res.status(500).json({ message: "Failed to import catalog items." });
+  }
+});
+
 // POST /api/global/items/from-catalog/:id
 // Create a user-owned GlobalItem cloned from a catalog item
 router.post("/from-catalog/:id", async (req, res) => {
@@ -274,11 +391,16 @@ router.post("/from-catalog/:id", async (req, res) => {
     // Prepare new GlobalItem payload
     const payload = {
       owner: req.userId,
+      productId: catalogItem._id,
       // core fields
       name: catalogItem.name,
       brand: catalogItem.brand,
-      // use catalog category as a reasonable default for itemType
-      itemType: catalogItem.category || null,
+      // prefer the most specific label for the UI
+      itemType:
+        catalogItem.itemType ||
+        catalogItem.subcategory ||
+        catalogItem.category ||
+        null,
       description: catalogItem.description,
       // weight (+ mark it as coming from catalog if present)
       weight: catalogItem.weightGrams,
@@ -286,7 +408,8 @@ router.post("/from-catalog/:id", async (req, res) => {
         weightSource: "catalog",
       }),
       tags: catalogItem.tags,
-
+      category: catalogItem.category || null,
+      subcategory: catalogItem.subcategory || null,
       // old top-level link field used throughout the app
       link: primaryLink ? primaryLink.url : "",
 
@@ -295,15 +418,38 @@ router.post("/from-catalog/:id", async (req, res) => {
         ? {
             network: primaryLink.network,
             region: primaryLink.region || "global",
-            url: primaryLink.url,
-            merchant: primaryLink.merchantName || "",
-            externalId: primaryLink.externalId || "",
+            deepLink: primaryLink.url,
+            merchantName: primaryLink.merchantName || "",
+            externalProductId: primaryLink.externalId || "",
+            itemGroupId: catalogItem.itemGroupId || undefined,
           }
         : undefined,
     };
 
-    const newItem = await GlobalItem.create(payload);
-    return res.status(201).json(newItem);
+    // ✅ Idempotent: if already imported, return existing
+    const existing = await GlobalItem.findOne({
+      owner: req.userId,
+      productId: catalogItem._id,
+    });
+
+    if (existing) {
+      return res.status(200).json(existing);
+    }
+
+    try {
+      const newItem = await GlobalItem.create(payload);
+      return res.status(201).json(newItem);
+    } catch (err) {
+      // If two imports race, unique index may throw E11000; return winner
+      if (err?.code === 11000) {
+        const winner = await GlobalItem.findOne({
+          owner: req.userId,
+          productId: catalogItem._id,
+        });
+        if (winner) return res.status(200).json(winner);
+      }
+      throw err;
+    }
   } catch (err) {
     console.error("POST /global/items/from-catalog error:", err);
     if (err.name === "ValidationError") {

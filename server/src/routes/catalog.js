@@ -8,14 +8,31 @@ const router = express.Router();
 // Public read-only list of active catalog items
 router.get("/items", async (req, res) => {
   try {
-    const { q, category, limit = 100, skip = 0 } = req.query;
+    const {
+      q,
+      category,
+      subcategory,
+      brand,
+      limit = 100,
+      skip = 0,
+    } = req.query;
+
     const query = { isActive: true };
 
     if (category) query.category = category;
+    if (subcategory) query.subcategory = subcategory;
+    if (brand) query.brand = brand;
 
     if (q && q.trim()) {
       const regex = new RegExp(q.trim(), "i");
-      query.$or = [{ name: regex }, { brand: regex }, { tags: regex }];
+      query.$or = [
+        { name: regex },
+        { brand: regex },
+        { tags: regex },
+        { category: regex },
+        { subcategory: regex },
+        { itemType: regex },
+      ];
     }
 
     const items = await CatalogItem.find(query)
@@ -23,7 +40,8 @@ router.get("/items", async (req, res) => {
       .skip(Number(skip))
       .limit(Math.min(Number(limit), 200))
       .select(
-        "name brand category description weightGrams tags links updatedAt"
+        // Include fields Import UI needs
+        "name brand category subcategory itemType description weightGrams tags links updatedAt"
       );
 
     res.json(items);

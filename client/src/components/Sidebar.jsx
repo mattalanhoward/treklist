@@ -26,6 +26,7 @@ export default function Sidebar({
   setCollapsed,
   onOpenAdmin = () => {},
   onOpenForum = () => {},
+  onOpenWishlist = () => {},
   onShowGearPane = () => {},
   isAdmin = false,
 }) {
@@ -429,11 +430,10 @@ export default function Sidebar({
                 />
               )}
             </section>
-            {/* Bottom actions group: Forum (future) + Admin */}
+            {/* Bottom actions group: Forum (future) Wishlist + Admin */}
             <div className="mt-auto">
               {/* Forum (future feature) */}
-
-              {/* <section className="px-4 py-2 border-t border-base-100">
+              <section className="px-4 py-2 border-t border-base-100">
                 <button
                   type="button"
                   onClick={() => {
@@ -446,7 +446,23 @@ export default function Sidebar({
                 >
                   Forum
                 </button>
-              </section> */}
+              </section>
+
+              {/* Wishlist (future feature) */}
+              <section className="px-4 py-2 border-t border-base-100">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onOpenWishlist();
+                    if (isMobile()) {
+                      setCollapsed(true);
+                    }
+                  }}
+                  className="flex items-center text-primaryAlt font-bold truncate"
+                >
+                  Wishlist
+                </button>
+              </section>
 
               {/* Admin header pinned at the bottom */}
               {/* {isAdmin && (

@@ -1,38 +1,51 @@
-// server/src/models/catalogItem.js
 const mongoose = require("mongoose");
 
+// ------------------------------------------------------------
+// LinkSchema → represents ONE affiliate link for ONE region.
+// This stays for backwards compatibility during migration.
+// Later, Offers will replace this, but keep this for now.
+// ------------------------------------------------------------
 const LinkSchema = new mongoose.Schema(
   {
-    // "amazon" | "awin" | "impact" | etc.
+    // Affiliate network providing this link
+    // "amazon" | "awin" | "impact"
     network: {
       type: String,
       required: true,
-      enum: ["amazon", "awin", "impact"],
+      enum: ["amazon", "awin", "impact", "direct"],
     },
-    // Simple region code used by TrekList to route users
-    // e.g. "us", "uk", "de", "eu", "ca", "global"
+
+    // TrekList-internal region routing key
+    // (not necessarily the network’s native region)
+    // e.g. "us", "uk", "eu", "de", "ca", "global"
     region: {
       type: String,
       default: "global",
       index: true,
     },
-    // Full affiliate URL (with tag / tracking params)
+
+    // Full affiliate tracking URL
     url: {
       type: String,
       required: true,
       trim: true,
     },
-    // Optional merchant label: "Amazon", "Bergfreunde", "REI", etc.
+
+    // Merchant display label
+    // e.g., "Amazon", "Bergfreunde", "REI", etc.
     merchantName: {
       type: String,
       trim: true,
     },
-    // External product identifier (ASIN, Awin product id, etc.)
+
+    // External product ID used by the network
+    // e.g. ASIN (Amazon) or ProductId (Awin)
     externalId: {
       type: String,
       trim: true,
     },
-    // Higher = preferred when multiple links match the region
+
+    // Higher = preferred link for this region if duplicates exist
     priority: {
       type: Number,
       default: 0,
@@ -41,53 +54,151 @@ const LinkSchema = new mongoose.Schema(
   { _id: false }
 );
 
+// ------------------------------------------------------------
+// CatalogItemSchema → Canonical product definition in TrekList.
+// This is the ADMIN-curated product model.
+// Everything else (Offers, AffiliateProduct, GlobalItem) maps to this.
+// ------------------------------------------------------------
 const CatalogItemSchema = new mongoose.Schema(
   {
-    // Display name of the gear item ("Nemo Hornet OSMO 2P")
+    // HUMAN DISPLAY NAME (required)
+    // e.g. "Nemo Hornet OSMO 2P Tent"
     name: {
       type: String,
       required: true,
       trim: true,
     },
-    // Optional brand field ("Nemo", "Patagonia")
+
+    // BRAND NAME
+    // e.g. "Nemo", "Patagonia"
     brand: {
       type: String,
       trim: true,
     },
-    // Broad gear category used for filtering in Import tab
-    // e.g. "shelter", "sleeping-bag", "mid-layer", "headlamp"
+
+    // LOWERCASE BRAND for searching / matching
+    brandLC: {
+      type: String,
+      index: true,
+    },
+
+    // MANUFACTURER MODEL NUMBER
+    // Critical for matching across regions/networks.
+    // e.g. "Hornet-2P-OSMO", "BD-620654"
+    modelNumber: {
+      type: String,
+      trim: true,
+    },
+
+    // TOP-LEVEL CATEGORY (TrekList controlled taxonomy)
+    // e.g. "shelter", "sleep-system", "clothing-top", "electronics"
     category: {
       type: String,
       trim: true,
       index: true,
     },
-    // Optional short description for the Import UI
+
+    // OPTIONAL SECONDARY SUBCATEGORY
+    // e.g. under "shelter": "tent", "tarp", "bivy"
+    subcategory: {
+      type: String,
+      trim: true,
+      index: true,
+    },
+
+    // HUMAN-FRIENDLY TYPE LABEL
+    // More specific than category, shown to users.
+    // e.g. "ultralight 2-person tent", "mid-layer fleece"
+    itemType: {
+      type: String,
+      trim: true,
+      index: true,
+    },
+
+    // SHORT DESCRIPTION (admin-curated text)
+    // Do NOT store Amazon text permanently (PAAPI rules)
     description: {
       type: String,
       trim: true,
     },
-    // Base weight in grams (keep it simple & consistent with rest of app)
+
+    // MULTIPLE IMAGE URLs
+    // imageUrls[0] = primary image.
+    imageUrls: {
+      type: [String],
+      default: [],
+    },
+
+    // BASE WEIGHT (grams)
+    // Canonical weight used for gear list import previews.
     weightGrams: {
       type: Number,
       min: 0,
     },
-    // Optional tags to help filter / search
+
+    // TAGS FOR SEARCH / FILTERING
+    // e.g. ["ultralight", "3-season", "freestanding"]
     tags: {
       type: [String],
       default: [],
       index: true,
     },
+
+    // FLEXIBLE ATTRIBUTE BAG (key/value pairs)
+    // Examples:
+    // { capacity: "2P", rvalue: "4.2", liters: "55", lumens: "350" }
+    attributes: {
+      type: Map,
+      of: String,
+      default: undefined,
+    },
+
+    // ADMIN-ESTIMATED PRICE (optional)
+    // Used when importing into user lists as a placeholder.
     priceHint: {
       type: Number,
       min: 0,
       default: null,
     },
-    // Affiliate links for different networks / regions
+
+    // CURRENCY FOR priceHint
+    // e.g. "usd", "eur", "gbp"
+    priceHintCurrency: {
+      type: String,
+      trim: true,
+    },
+
+    // STABLE CROSS-NETWORK PRODUCT ID
+    // Used to unify Amazon + Awin + Impact into one product.
+    // Populated from your ingestion layer if available.
+    itemGroupId: {
+      type: String,
+      trim: true,
+      index: true,
+    },
+
+    // PRIMARY AMAZON IDENTIFIER (optional)
+    // If the product has a canonical ASIN.
+    canonicalAsin: {
+      type: String,
+      trim: true,
+      index: true,
+    },
+
+    // PRIMARY SKU FROM AWIN/IMPACT (optional)
+    canonicalSku: {
+      type: String,
+      trim: true,
+    },
+
+    // LEGACY LINK STORAGE
+    // We will migrate away from this when Offers are fully adopted.
     links: {
       type: [LinkSchema],
       default: [],
     },
-    // Which admin created / last owns this catalog item
+
+    // ADMIN WHO CREATED THIS PRODUCT
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -95,7 +206,7 @@ const CatalogItemSchema = new mongoose.Schema(
       index: true,
     },
 
-    // Soft delete / visibility toggle
+    // VISIBILITY TOGGLE (soft delete)
     isActive: {
       type: Boolean,
       default: true,
@@ -103,8 +214,31 @@ const CatalogItemSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true,
+    timestamps: true, // createdAt, updatedAt
   }
 );
+
+// ------------------------------------------------------------
+// Normalization middleware
+// Ensures consistent stored values & index performance
+// ------------------------------------------------------------
+CatalogItemSchema.pre("save", function normalize(next) {
+  if (this.brand) this.brandLC = String(this.brand).toLowerCase().trim();
+  if (this.category) this.category = this.category.trim();
+  if (this.subcategory) this.subcategory = this.subcategory.trim();
+  if (this.itemType) this.itemType = this.itemType.trim();
+  if (this.itemGroupId !== undefined)
+    this.itemGroupId = String(this.itemGroupId);
+  if (this.canonicalAsin !== undefined)
+    this.canonicalAsin = String(this.canonicalAsin);
+  next();
+});
+
+// ------------------------------------------------------------
+// Helpful indexes for affiliate resolution & search
+// ------------------------------------------------------------
+CatalogItemSchema.index({ itemGroupId: 1 });
+CatalogItemSchema.index({ canonicalAsin: 1 });
+CatalogItemSchema.index({ brandLC: 1, category: 1 });
 
 module.exports = mongoose.model("CatalogItem", CatalogItemSchema);
