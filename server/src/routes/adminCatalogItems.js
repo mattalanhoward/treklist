@@ -224,20 +224,25 @@ router.patch("/:id", async (req, res) => {
 
     if (Object.prototype.hasOwnProperty.call(updates, "priceHintCurrency")) {
       const v = String(updates.priceHintCurrency || "").trim();
-      if (!v)
+      if (!v) {
         updates.$unset = { ...(updates.$unset || {}), priceHintCurrency: 1 };
-      else updates.priceHintCurrency = v.toUpperCase();
+        delete updates.priceHintCurrency;
+      } else updates.priceHintCurrency = v.toUpperCase();
     }
     if (Object.prototype.hasOwnProperty.call(updates, "canonicalAsin")) {
       const v = String(updates.canonicalAsin || "").trim();
-      if (!v) updates.$unset = { ...(updates.$unset || {}), canonicalAsin: 1 };
-      else updates.canonicalAsin = v.toUpperCase();
+      if (!v) {
+        updates.$unset = { ...(updates.$unset || {}), canonicalAsin: 1 };
+        delete updates.canonicalAsin;
+      } else updates.canonicalAsin = v.toUpperCase();
     }
 
     if (Object.prototype.hasOwnProperty.call(updates, "itemGroupId")) {
       const v = String(updates.itemGroupId || "").trim();
-      if (!v) updates.$unset = { ...(updates.$unset || {}), itemGroupId: 1 };
-      else updates.itemGroupId = v;
+      if (!v) {
+        updates.$unset = { ...(updates.$unset || {}), itemGroupId: 1 };
+        delete updates.itemGroupId;
+      } else updates.itemGroupId = v;
     }
 
     // Normalize weightGrams if present

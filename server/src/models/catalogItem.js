@@ -223,13 +223,14 @@ const CatalogItemSchema = new mongoose.Schema(
 // Ensures consistent stored values & index performance
 // ------------------------------------------------------------
 CatalogItemSchema.pre("save", function normalize(next) {
-  if (this.brand) {
-    this.brandLC = String(this.brand).toLowerCase().trim();
-  }
+  if (this.brand) this.brandLC = String(this.brand).toLowerCase().trim();
   if (this.category) this.category = this.category.trim();
   if (this.subcategory) this.subcategory = this.subcategory.trim();
   if (this.itemType) this.itemType = this.itemType.trim();
-  if (this.itemGroupId != null) this.itemGroupId = String(this.itemGroupId);
+  if (this.itemGroupId !== undefined)
+    this.itemGroupId = String(this.itemGroupId);
+  if (this.canonicalAsin !== undefined)
+    this.canonicalAsin = String(this.canonicalAsin);
   next();
 });
 

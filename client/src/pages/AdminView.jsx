@@ -1183,8 +1183,9 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
         imageUrls,
         priceHint: normalizedPriceHint,
         priceHintCurrency: priceHintCurrency.trim() || undefined,
-        canonicalAsin: canonicalAsin.trim() || undefined,
-        itemGroupId: itemGroupId.trim() || undefined,
+        canonicalAsin:
+          canonicalAsin.trim() === "" ? null : canonicalAsin.trim(),
+        itemGroupId: itemGroupId.trim() === "" ? null : itemGroupId.trim(),
         links: [
           {
             network: linkNetwork,
@@ -1216,312 +1217,325 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
     <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-50">
       <form
         onSubmit={handleSubmit}
-        className="
-    bg-neutralAlt rounded-lg shadow-2xl
-    max-w-5xl w-full max-h-[80vh] overflow-y-auto
-    px-4 py-4 sm:px-6 sm:py-6 my-4
-  "
+        className="bg-neutralAlt rounded-lg shadow-2xl border border-primary max-w-5xl w-full max-h-[80vh] overflow-y-auto my-4"
       >
-        {/* Header */}
-        <div className="flex justify-between items-center mb-2 sm:mb-3">
-          <h2 className="text-xl font-semibold text-primary">
+        {/* Header (match create header style) */}
+        <div className="flex items-center justify-between px-4 pt-3 pb-2 sm:px-6 border-b border-base-200">
+          <h2 className="text-sm font-semibold text-primary">
             Edit catalog item
           </h2>
           <button
             type="button"
             onClick={onClose}
             disabled={saving}
-            className="text-error hover:text-error/80"
+            className="btn btn-ghost btn-xs text-error"
+            title="Close"
           >
             <FaTimes />
           </button>
         </div>
 
-        {/* Scrollable content */}
-        <div className="flex-1 overflow-y-auto pr-1">
-          {/* Fields */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
-            {/* Name */}
-            <div>
-              <label className="block font-medium text-primary mb-0.5">
-                Item name *
-              </label>
-              <input
-                className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-
-            {/* Brand */}
-            <div>
-              <label className="block font-medium text-primary mb-0.5">
-                Brand
-              </label>
-              <input
-                className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                value={brand}
-                onChange={(e) => setBrand(e.target.value)}
-              />
-            </div>
-
-            {/* Category */}
-            <div>
-              <label className="block font-medium text-primary mb-0.5">
-                Category
-              </label>
-              <input
-                className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                placeholder="shelter / backpack / headlamp..."
-              />
-            </div>
-
-            {/* Subcategory */}
-            <div>
-              <label className="block font-medium text-primary mb-0.5">
-                Subcategory
-              </label>
-              <input
-                className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                value={subcategory}
-                onChange={(e) => setSubcategory(e.target.value)}
-                placeholder="tent / quilt / stove..."
-              />
-            </div>
-
-            {/* Item type */}
-            <div>
-              <label className="block font-medium text-primary mb-0.5">
-                Item type
-              </label>
-              <input
-                className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                value={itemType}
-                onChange={(e) => setItemType(e.target.value)}
-                placeholder="ultralight 2P tent..."
-              />
-            </div>
-
-            {/* Model number */}
-            <div>
-              <label className="block font-medium text-primary mb-0.5">
-                Model number
-              </label>
-              <input
-                className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                value={modelNumber}
-                onChange={(e) => setModelNumber(e.target.value)}
-                placeholder="Manufacturer model code"
-              />
-            </div>
-
-            {/* Weight */}
-            <div>
-              <label className="block font-medium text-primary mb-0.5">
-                Weight (grams)
-              </label>
-              <input
-                type="number"
-                min="0"
-                className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                value={weightGrams}
-                onChange={(e) => setWeightGrams(e.target.value)}
-              />
-            </div>
-
-            {/* Tags */}
-            <div className="sm:col-span-2 lg:col-span-3">
-              <label className="block font-medium text-primary mb-0.5">
-                Tags (comma-separated)
-              </label>
-              <input
-                className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                value={tagsInput}
-                onChange={(e) => setTagsInput(e.target.value)}
-                placeholder="3-season, tent, 1p"
-              />
-            </div>
-
-            {/* Image URLs */}
-            <div className="sm:col-span-2 lg:col-span-3">
-              <label className="block font-medium text-primary mb-0.5">
-                Image URLs
-              </label>
-              <textarea
-                className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary resize-y"
-                rows={2}
-                value={imageUrlsInput}
-                onChange={(e) => setImageUrlsInput(e.target.value)}
-                placeholder="One URL per line (first is primary)"
-              />
-              <span className="block text-[11px] text-primary/70 mt-0.5">
-                One per line. First will be used as the primary image.
-              </span>
-            </div>
-          </div>
-
-          <div className="mt-2 border-t border-base-200 pt-2 space-y-1">
-            <h3 className="text-sm font-semibold text-primary">
-              Primary affiliate link
-            </h3>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <div className="px-4 py-4 sm:px-6 sm:py-6 space-y-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+            {/* LEFT column (match create) */}
+            <div className="flex-1 space-y-2">
               <div>
-                <label className="block text-xs font-medium text-primary mb-1">
-                  Network
-                </label>
-                <select
-                  className="select select-xs select-bordered w-full"
-                  value={linkNetwork}
-                  onChange={(e) => setLinkNetwork(e.target.value)}
-                >
-                  {NETWORK_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-primary mb-1">
-                  Region
-                </label>
-                <select
-                  className="select select-xs select-bordered w-full"
-                  value={linkRegion}
-                  onChange={(e) => setLinkRegion(e.target.value)}
-                >
-                  {REGION_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium text-primary mb-1">
-                Affiliate URL *
-              </label>
-              <input
-                className="input input-sm input-bordered w-full"
-                value={linkUrl}
-                onChange={(e) => setLinkUrl(e.target.value)}
-              />
-            </div>
-
-            <div className="mt-2">
-              <label className="block text-xs font-medium text-primary mb-1">
-                Price hint (optional)
-              </label>
-              <input
-                type="number"
-                step="0.01"
-                min="0"
-                className="input input-sm input-bordered w-full"
-                value={priceHint}
-                onChange={(e) => setPriceHint(e.target.value)}
-                placeholder="Leave blank to show –"
-              />
-              <span className="block text-[11px] text-primary/70 mt-0.5">
-                Used as a fallback display price until we sync live pricing.
-              </span>
-            </div>
-
-            <div className="mt-2">
-              <label className="block text-xs font-medium text-primary mb-1">
-                Price currency (optional)
-              </label>
-              <input
-                className="input input-sm input-bordered w-full"
-                value={priceHintCurrency}
-                onChange={(e) => setPriceHintCurrency(e.target.value)}
-                placeholder="USD / EUR / GBP"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <div>
-                <label className="block text-xs font-medium text-primary mb-1">
-                  Merchant name
+                <label className="block font-medium text-primary mb-0.5">
+                  Item name *
                 </label>
                 <input
-                  className="input input-sm input-bordered w-full"
-                  value={linkMerchantName}
-                  onChange={(e) => setLinkMerchantName(e.target.value)}
+                  type="text"
+                  className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                 />
               </div>
-              <div className="grid grid-cols-2 gap-2">
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-xs font-medium text-primary mb-1">
-                    External ID
+                  <label className="block font-medium text-primary mb-0.5">
+                    Brand
                   </label>
                   <input
-                    className="input input-sm input-bordered w-full"
-                    value={linkExternalId}
-                    onChange={(e) => setLinkExternalId(e.target.value)}
+                    type="text"
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    value={brand}
+                    onChange={(e) => setBrand(e.target.value)}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-primary mb-1">
-                    Priority
+                  <label className="block font-medium text-primary mb-0.5">
+                    Category
+                  </label>
+                  <input
+                    type="text"
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    placeholder="shelter / mid-layer / headlamp..."
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-1">
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    Subcategory
+                  </label>
+                  <input
+                    type="text"
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    value={subcategory}
+                    onChange={(e) => setSubcategory(e.target.value)}
+                    placeholder="tent / quilt / stove..."
+                  />
+                </div>
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    Item type
+                  </label>
+                  <input
+                    type="text"
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    value={itemType}
+                    onChange={(e) => setItemType(e.target.value)}
+                    placeholder="ultralight 2P tent..."
+                  />
+                </div>
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    Model number
+                  </label>
+                  <input
+                    type="text"
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    value={modelNumber}
+                    onChange={(e) => setModelNumber(e.target.value)}
+                    placeholder="Manufacturer model code"
+                  />
+                </div>
+              </div>
+
+              {/* ✅ Missing field in your current edit UI */}
+              <div>
+                <label className="block font-medium text-primary mb-0.5">
+                  Description
+                </label>
+                <textarea
+                  className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary resize-y"
+                  rows={2}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Short blurb to help you recognize the item when importing."
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    Weight (grams)
                   </label>
                   <input
                     type="number"
-                    className="input input-sm input-bordered w-full"
-                    value={linkPriority}
-                    onChange={(e) => setLinkPriority(e.target.value)}
+                    min="0"
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    value={weightGrams}
+                    onChange={(e) => setWeightGrams(e.target.value)}
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block font-medium text-primary mb-0.5">
+                    Tags (comma-separated)
+                  </label>
+                  <input
+                    type="text"
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    value={tagsInput}
+                    onChange={(e) => setTagsInput(e.target.value)}
+                    placeholder="3-season, tent, 1p"
                   />
                 </div>
               </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    Price hint
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    value={priceHint}
+                    onChange={(e) => setPriceHint(e.target.value)}
+                    placeholder="Leave blank to show –"
+                  />
+                  <span className="block text-[11px] text-primary/70">
+                    Optional; rough expected price.
+                  </span>
+                </div>
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    Price currency
+                  </label>
+                  <input
+                    type="text"
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    value={priceHintCurrency}
+                    onChange={(e) => setPriceHintCurrency(e.target.value)}
+                    placeholder="USD / EUR / GBP"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-2">
+                <label className="block font-medium text-primary mb-0.5">
+                  Image URLs
+                </label>
+                <textarea
+                  className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary resize-y"
+                  rows={2}
+                  value={imageUrlsInput}
+                  onChange={(e) => setImageUrlsInput(e.target.value)}
+                  placeholder="One image URL per line"
+                />
+                <span className="block text-[11px] text-primary/70">
+                  First URL will be used as the primary image.
+                </span>
+              </div>
+            </div>
+
+            {/* RIGHT column (match create) */}
+            <div className="flex-1 space-y-2">
+              {/* <h3 className="text-sm font-semibold text-primary">
+                Primary affiliate link
+              </h3> */}
+
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    Network *
+                  </label>
+                  <select
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                    value={linkNetwork}
+                    onChange={(e) => setLinkNetwork(e.target.value)}
+                  >
+                    {NETWORK_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    Region
+                  </label>
+                  <select
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                    value={linkRegion}
+                    onChange={(e) => setLinkRegion(e.target.value)}
+                  >
+                    {REGION_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-medium text-primary mb-0.5">
+                  Affiliate URL *
+                </label>
+                <input
+                  type="url"
+                  className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                  value={linkUrl}
+                  onChange={(e) => setLinkUrl(e.target.value)}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    Merchant name
+                  </label>
+                  <input
+                    type="text"
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    value={linkMerchantName}
+                    onChange={(e) => setLinkMerchantName(e.target.value)}
+                    placeholder="Amazon / Bergfreunde / REI"
+                  />
+                </div>
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    External ID
+                  </label>
+                  <input
+                    type="text"
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    value={linkExternalId}
+                    onChange={(e) => setLinkExternalId(e.target.value)}
+                    placeholder="ASIN, Awin product id..."
+                  />
+                  <span className="block text-[11px] text-primary/70">
+                    ASIN (Amazon) / product id (Awin, Impact)
+                  </span>
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
                 <div>
-                  <label className="block text-xs font-medium text-primary mb-1">
+                  <label className="block font-medium text-primary mb-0.5">
                     Canonical ASIN (optional)
                   </label>
                   <input
-                    className="input input-sm input-bordered w-full"
+                    type="text"
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
                     value={canonicalAsin}
                     onChange={(e) => setCanonicalAsin(e.target.value)}
                     placeholder="Main ASIN for this product"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-primary mb-1">
+                  <label className="block font-medium text-primary mb-0.5">
                     Item group ID (optional)
                   </label>
                   <input
-                    className="input input-sm input-bordered w-full"
+                    type="text"
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
                     value={itemGroupId}
                     onChange={(e) => setItemGroupId(e.target.value)}
-                    placeholder="Cross-network grouping key"
+                    placeholder="Internal cross-network key"
                   />
-                  <span className="block text-[11px] text-primary/70 mt-0.5">
-                    Used later to match Awin/Impact offers to this product.
+                  <span className="block text-[11px] text-primary/70">
+                    Used to link Awin/Impact offers to this product later.
                   </span>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        {/* Actions */}
-        <div className="mt-3 flex items-center justify-end">
-          <div className="flex space-x-2">
+
+          <div className="flex justify-end gap-2 pt-3 border-t border-base-200 mt-2">
             <button
               type="button"
               onClick={onClose}
               disabled={saving}
-              className="px-2 py-1 bg-neutralAlt rounded hover:bg-neutralAlt/90 text-primary sm:text-base"
+              className="px-2 py-1 rounded bg-neutralAlt text-primary hover:bg-neutralAlt/90"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="px-2 py-1 rounded bg-secondary text-white hover:bg-secondary/80"
+              className={`px-2 py-1 rounded bg-secondary text-white hover:bg-secondary/80 ${
+                saving ? "opacity-60 cursor-not-allowed" : ""
+              }`}
             >
               {saving ? "Saving..." : "Save"}
             </button>
