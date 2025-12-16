@@ -167,12 +167,6 @@ const GlobalItemSchema = new mongoose.Schema(
       ),
       required: false,
     },
-    sourceCatalogItemId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "CatalogItem",
-      default: null,
-      index: true,
-    },
     // Flags that this global item was created by importing from a shared list.
     importedFromShare: {
       type: Boolean,
@@ -190,5 +184,38 @@ GlobalItemSchema.index({ owner: 1 }, { name: "owner_idx" });
 // Already existing index to support bulk updates via GlobalItem
 GlobalItemSchema.index({ productId: 1 });
 GlobalItemSchema.index({ name: 1, owner: 1 });
+
+// ---- Deduping indexes (prevent duplicate imports) ----
+
+// One catalog product per owner
+GlobalItemSchema.index(
+  { owner: 1, productId: 1 },
+  {
+    unique: true,
+    name: "uniq_owner_productId",
+    partialFilterExpression: {
+      productId: { $exists: true, $type: "objectId" },
+    },
+  }
+);
+
+// One affiliate product per owner per region/network (for legacy affiliate-backed global items)
+GlobalItemSchema.index(
+  {
+    owner: 1,
+    "affiliate.network": 1,
+    "affiliate.region": 1,
+    "affiliate.externalProductId": 1,
+  },
+  {
+    unique: true,
+    name: "uniq_owner_affiliate_product",
+    partialFilterExpression: {
+      "affiliate.network": { $exists: true, $type: "string" },
+      "affiliate.region": { $exists: true, $type: "string" },
+      "affiliate.externalProductId": { $exists: true, $type: "string" },
+    },
+  }
+);
 
 module.exports = mongoose.model("GlobalItem", GlobalItemSchema);

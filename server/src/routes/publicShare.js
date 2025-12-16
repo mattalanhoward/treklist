@@ -74,6 +74,7 @@ router.get("/:token/full", async (req, res) => {
         itemType: 1,
         brand: 1,
         name: 1,
+        description: 1,
         weight: 1,
         consumable: 1,
         worn: 1,
@@ -163,6 +164,7 @@ router.get("/:token/csv", async (req, res) => {
           itemType: 1,
           brand: 1,
           name: 1,
+          description: 1,
           weight: 1,
           consumable: 1,
           worn: 1,
@@ -272,9 +274,11 @@ router.post("/:token/copy", auth, async (req, res) => {
       });
       return res.status(401).json({ error: "Unauthorized" });
     }
+
     // create new list for user (idempotent for brief window)
     const copySuffix = " (copy)";
     const lockKey = `${ownerId}:${sourceListId}`;
+
     try {
       const result = await withCopyLock(lockKey, async () => {
         // quick check: did we just create a copy with the same title very recently?
@@ -284,44 +288,190 @@ router.post("/:token/copy", auth, async (req, res) => {
         })
           .sort({ createdAt: -1 })
           .lean();
+
         if (
           existing &&
           Date.now() - new Date(existing.createdAt).getTime() < 5000
         ) {
           return { list: existing, created: false };
         }
+
         const newList = await GearList.create({
           owner: ownerId,
           title: `${srcList.title}${copySuffix}`,
         });
+
         return { list: newList, created: true };
       });
+
       const newList = result.list;
-      // 1) Clone all referenced GlobalItems and build an id map
+
+      // 1) Build a list of referenced GlobalItem ids from the source list
       const globalIds = Array.from(
         new Set(
           srcItems
-            .map((it) => (it.globalItem ? it.globalItem.toString() : null))
+            .map((it) =>
+              it.globalItem?.toString?.() ? it.globalItem.toString() : null
+            )
             .filter(Boolean)
         )
       );
 
+      // map: oldGlobalId -> newOrExistingGlobalId (for this user)
       const oldToNewGlobalId = {};
+
       if (globalIds.length) {
-        const srcGlobals = await GlobalItem.find({ _id: { $in: globalIds } });
+        const srcGlobals = await GlobalItem.find({
+          _id: { $in: globalIds },
+        }).lean();
+
+        // Build keys for dedupe checks
+        const productIds = [];
+        const affiliateKeys = []; // { network, region, externalProductId }
+
         for (const g of srcGlobals) {
-          // clone document for new owner
-          const obj = g.toObject({ depopulate: true });
+          if (g.productId) productIds.push(g.productId.toString());
+          const a = g.affiliate;
+          if (a?.network && a?.region && a?.externalProductId) {
+            affiliateKeys.push({
+              network: a.network,
+              region: a.region,
+              externalProductId: a.externalProductId,
+            });
+          }
+        }
+
+        // Prefetch existing user GlobalItems that match by productId
+        const existingByProductId = new Map();
+        if (productIds.length) {
+          const existing = await GlobalItem.find({
+            owner: ownerId,
+            productId: {
+              $in: productIds.map((id) => new mongoose.Types.ObjectId(id)),
+            },
+          })
+            .select({ _id: 1, productId: 1 })
+            .lean();
+
+          for (const e of existing) {
+            existingByProductId.set(e.productId.toString(), e._id.toString());
+          }
+        }
+
+        // Prefetch existing user GlobalItems that match by affiliate identifiers
+        const existingByAffiliateKey = new Map();
+        if (affiliateKeys.length) {
+          const or = affiliateKeys.map((k) => ({
+            "affiliate.network": k.network,
+            "affiliate.region": k.region,
+            "affiliate.externalProductId": k.externalProductId,
+          }));
+
+          const existing = await GlobalItem.find({
+            owner: ownerId,
+            $or: or,
+          })
+            .select({
+              _id: 1,
+              "affiliate.network": 1,
+              "affiliate.region": 1,
+              "affiliate.externalProductId": 1,
+            })
+            .lean();
+
+          for (const e of existing) {
+            const k = `${e.affiliate.network}::${e.affiliate.region}::${e.affiliate.externalProductId}`;
+            existingByAffiliateKey.set(k, e._id.toString());
+          }
+        }
+
+        // For each source global item:
+        // - reuse existing My Gear item if match exists
+        // - otherwise create it once
+        for (const g of srcGlobals) {
+          const srcId = g._id.toString();
+
+          // 1) Match by productId (best)
+          if (g.productId) {
+            const hit = existingByProductId.get(g.productId.toString());
+            if (hit) {
+              oldToNewGlobalId[srcId] = hit;
+              continue;
+            }
+          }
+
+          // 2) Match by affiliate key (legacy)
+          const a = g.affiliate;
+          if (a?.network && a?.region && a?.externalProductId) {
+            const k = `${a.network}::${a.region}::${a.externalProductId}`;
+            const hit = existingByAffiliateKey.get(k);
+            if (hit) {
+              oldToNewGlobalId[srcId] = hit;
+              continue;
+            }
+          }
+
+          // 3) No match → create new template for this user
+          const obj = { ...g };
           delete obj._id;
           delete obj.createdAt;
           delete obj.updatedAt;
-          // Always assign the new owner
+
           obj.owner = ownerId;
-          const created = await GlobalItem.create({
-            ...obj,
-            importedFromShare: true,
-          });
-          oldToNewGlobalId[g._id.toString()] = created._id;
+
+          try {
+            const created = await GlobalItem.create({
+              ...obj,
+              importedFromShare: true,
+            });
+
+            oldToNewGlobalId[srcId] = created._id.toString();
+
+            // Update maps so subsequent items in same copy reuse it too
+            if (created.productId) {
+              existingByProductId.set(
+                created.productId.toString(),
+                created._id.toString()
+              );
+            }
+            const ca = created.affiliate;
+            if (ca?.network && ca?.region && ca?.externalProductId) {
+              const ck = `${ca.network}::${ca.region}::${ca.externalProductId}`;
+              existingByAffiliateKey.set(ck, created._id.toString());
+            }
+          } catch (err) {
+            // If unique index triggers (race), fetch and reuse winner
+            if (err?.code === 11000) {
+              if (g.productId) {
+                const winner = await GlobalItem.findOne({
+                  owner: ownerId,
+                  productId: g.productId,
+                })
+                  .select({ _id: 1 })
+                  .lean();
+                if (winner) {
+                  oldToNewGlobalId[srcId] = winner._id.toString();
+                  continue;
+                }
+              }
+
+              if (a?.network && a?.region && a?.externalProductId) {
+                const winner = await GlobalItem.findOne({
+                  owner: ownerId,
+                  "affiliate.network": a.network,
+                  "affiliate.region": a.region,
+                  "affiliate.externalProductId": a.externalProductId,
+                })
+                  .select({ _id: 1 })
+                  .lean();
+                if (winner) {
+                  oldToNewGlobalId[srcId] = winner._id.toString();
+                  continue;
+                }
+              }
+            }
+            throw err;
+          }
         }
       }
 
@@ -336,7 +486,7 @@ router.post("/:token/copy", auth, async (req, res) => {
         catIdMap[c._id.toString()] = nc._id;
       }
 
-      // copy items (safer globalItem handling)
+      // copy items (with robust globalItem handling)
       for (const it of srcItems) {
         const payload = {
           gearList: newList._id,
@@ -344,6 +494,7 @@ router.post("/:token/copy", auth, async (req, res) => {
           itemType: it.itemType,
           brand: it.brand,
           name: it.name,
+          description: it.description, // ✅ keep description if present on GearItem
           weight: it.weight,
           consumable: it.consumable,
           worn: it.worn,
@@ -354,15 +505,16 @@ router.post("/:token/copy", auth, async (req, res) => {
           position: it.position,
         };
 
-        // rewire globalItem reference (if present). If your schema requires `globalItem`,
-        // this falls back to the original id if the clone wasn’t created for any reason.
-        if (it.globalItem) {
-          payload.globalItem =
-            oldToNewGlobalId[it.globalItem.toString()] || it.globalItem;
+        const oldId = it.globalItem?.toString?.()
+          ? it.globalItem.toString()
+          : null;
+        if (oldId) {
+          payload.globalItem = oldToNewGlobalId[oldId] || it.globalItem;
         }
 
         await Item.create(payload);
       }
+
       const body = { listId: newList._id.toString() };
       return result.created ? res.status(201).json(body) : res.json(body);
     } catch (e) {

@@ -96,6 +96,18 @@ router.post(
           .json({ message: "Affiliate product not found." });
       }
 
+      const dedupeQuery = {
+        owner: req.userId,
+        "affiliate.network": "awin",
+        "affiliate.region": String(p.region || ""),
+        "affiliate.externalProductId": String(p.externalProductId || ""),
+      };
+
+      // If we don't have a stable key, skip dedupe
+      const canDedupe =
+        dedupeQuery["affiliate.region"] &&
+        dedupeQuery["affiliate.externalProductId"];
+
       // Build the new GlobalItem — price/link always from affiliate product
       const data = {
         owner: req.userId,
@@ -126,8 +138,23 @@ router.post(
         },
       };
 
-      const created = await GlobalItem.create(data);
-      return res.status(201).json(created);
+      if (canDedupe) {
+        const existing = await GlobalItem.findOne(dedupeQuery);
+        if (existing) {
+          return res.status(200).json(existing);
+        }
+      }
+
+      try {
+        const created = await GlobalItem.create(data);
+        return res.status(201).json(created);
+      } catch (err) {
+        if (err?.code === 11000 && canDedupe) {
+          const winner = await GlobalItem.findOne(dedupeQuery);
+          if (winner) return res.status(200).json(winner);
+        }
+        throw err;
+      }
     } catch (err) {
       console.error("Error creating from affiliate product:", err);
       return res
@@ -310,8 +337,30 @@ router.post("/from-catalog/:id", async (req, res) => {
         : undefined,
     };
 
-    const newItem = await GlobalItem.create(payload);
-    return res.status(201).json(newItem);
+    // ✅ Idempotent: if already imported, return existing
+    const existing = await GlobalItem.findOne({
+      owner: req.userId,
+      productId: catalogItem._id,
+    });
+
+    if (existing) {
+      return res.status(200).json(existing);
+    }
+
+    try {
+      const newItem = await GlobalItem.create(payload);
+      return res.status(201).json(newItem);
+    } catch (err) {
+      // If two imports race, unique index may throw E11000; return winner
+      if (err?.code === 11000) {
+        const winner = await GlobalItem.findOne({
+          owner: req.userId,
+          productId: catalogItem._id,
+        });
+        if (winner) return res.status(200).json(winner);
+      }
+      throw err;
+    }
   } catch (err) {
     console.error("POST /global/items/from-catalog error:", err);
     if (err.name === "ValidationError") {
