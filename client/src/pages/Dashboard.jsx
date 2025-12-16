@@ -8,6 +8,7 @@ import Sidebar from "../components/Sidebar";
 import GearListView from "./GearListView";
 import AdminView from "../pages/AdminView";
 import ForumView from "../pages/ForumView";
+import ShoppingListView from "../pages/ShoppingListView";
 import { toast } from "react-hot-toast";
 import { useUserSettings } from "../contexts/UserSettings";
 import { useTranslation } from "react-i18next";
@@ -112,7 +113,7 @@ export default function Dashboard() {
   const { sidebarCollapsed: collapsed, setSidebarCollapsed } =
     useUserSettings();
 
-  // ─── Which main panel is active: "gear" "admin" "forum" ───
+  // ─── Which main panel is active: "gear" "admin" "forum" "shopping" ───
   const [activePane, setActivePane] = useState("gear");
 
   useEffect(() => {
@@ -324,6 +325,7 @@ export default function Dashboard() {
           }}
           isAdmin={isAdmin}
           onOpenForum={() => setActivePane("forum")}
+          onOpenShoppingList={() => setActivePane("shopping")}
           onShowGearPane={() => setActivePane("gear")}
           onSelectList={handleSelectList}
           onRefresh={fetchFullData}
@@ -334,6 +336,8 @@ export default function Dashboard() {
             <AdminView />
           ) : activePane === "forum" ? (
             <ForumView />
+          ) : activePane === "shopping" ? (
+            <ShoppingListView />
           ) : listId ? (
             fullData.list === null ? (
               <div className="h-full flex items-center justify-center text-primary text-sm">

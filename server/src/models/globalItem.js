@@ -167,7 +167,12 @@ const GlobalItemSchema = new mongoose.Schema(
       ),
       required: false,
     },
-
+    sourceCatalogItemId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "CatalogItem",
+      default: null,
+      index: true,
+    },
     // Flags that this global item was created by importing from a shared list.
     importedFromShare: {
       type: Boolean,
