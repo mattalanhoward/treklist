@@ -58,8 +58,43 @@ export default function GlobalItemEditModal({
   };
   const currencySymbol = CURRENCY_SYMBOL[currency] || currency;
 
-  // affiliate-backed items (Awin)
-  const isAffiliate = Boolean(item?.affiliate && item.affiliate.network);
+  // Affiliate-backed items:
+  // - legacy: item.affiliate.network (Awin feed items)
+  // - catalog-linked: item.productId OR globalItem.productId (Amazon/catalog)
+  const [isAffiliateBacked, setIsAffiliateBacked] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function detectAffiliateBacked() {
+      const direct =
+        Boolean(item?.affiliate?.network) || Boolean(item?.productId);
+
+      // In list context, GearItem may only have globalItem id; the GlobalItem can carry productId.
+      if (!direct && item?.globalItem) {
+        try {
+          const res = await api.get(`/global/items/${item.globalItem}`);
+          const g = res?.data;
+          const viaGlobal =
+            Boolean(g?.productId) || Boolean(g?.affiliate?.network);
+
+          if (!cancelled) setIsAffiliateBacked(viaGlobal);
+          return;
+        } catch (e) {
+          // If we can't load it, fail open (treat as editable)
+          if (!cancelled) setIsAffiliateBacked(false);
+          return;
+        }
+      }
+
+      if (!cancelled) setIsAffiliateBacked(direct);
+    }
+
+    detectAffiliateBacked();
+    return () => {
+      cancelled = true;
+    };
+  }, [itemId, item?.globalItem, item?.productId, item?.affiliate?.network]);
 
   // Hydrate when item changes
   useEffect(() => {
@@ -98,9 +133,9 @@ export default function GlobalItemEditModal({
     const parsed = trimmed === "" ? null : parseInput(trimmed);
     if (trimmed !== "" && parsed == null) return t("validation.weightInvalid");
     if (parsed != null && parsed < 0) return t("validation.weightNegative");
-    if (!isAffiliate && form.price !== "" && Number(form.price) < 0)
+    if (!isAffiliateBacked && form.price !== "" && Number(form.price) < 0)
       return t("validation.priceNegative");
-    if (!isAffiliate && form.link && !/^https?:\/\//.test(form.link))
+    if (!isAffiliateBacked && form.link && !/^https?:\/\//.test(form.link))
       return t("validation.urlInvalid");
     return "";
   };
@@ -145,7 +180,7 @@ export default function GlobalItemEditModal({
       };
 
       // Price/Link handling:
-      if (isAffiliate) {
+      if (isAffiliateBacked) {
         // For imported affiliate items, lock price + link
         delete payload.price;
         delete payload.link;
@@ -292,9 +327,9 @@ export default function GlobalItemEditModal({
               label="Link"
               placeholder="tarptent.com"
               required={false}
-              readOnly={isAffiliate}
+              readOnly={isAffiliateBacked}
             />
-            {isAffiliate && (
+            {isAffiliateBacked && (
               <button
                 type="button"
                 aria-label={t(
@@ -329,7 +364,7 @@ export default function GlobalItemEditModal({
                 })}
               </label>
               <div className="relative">
-                {isAffiliate ? (
+                {isAffiliateBacked ? (
                   <>
                     <div className="mt-0.5 block w-full border border-dashed border-primary/40 rounded px-2 py-1 text-sm text-primary/70 bg-neutralAlt/60">
                       {/* Show price if we actually have one; otherwise a nice placeholder */}
@@ -365,7 +400,7 @@ export default function GlobalItemEditModal({
           </div>
         </div>
 
-        {isAffiliate && (
+        {isAffiliateBacked && (
           <p className="mt-2 text-sm text-primary">
             {t("globalItemModal.messages.affiliateNote")}
           </p>
