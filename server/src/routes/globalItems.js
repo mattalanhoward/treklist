@@ -191,6 +191,7 @@ router.patch("/:id", async (req, res) => {
 
     // Only allow these fields to be updated
     const allowed = [
+      "category",
       "itemType",
       "name",
       "brand",
@@ -274,11 +275,16 @@ router.post("/from-catalog/:id", async (req, res) => {
     // Prepare new GlobalItem payload
     const payload = {
       owner: req.userId,
+      productId: catalogItem._id,
       // core fields
       name: catalogItem.name,
       brand: catalogItem.brand,
-      // use catalog category as a reasonable default for itemType
-      itemType: catalogItem.category || null,
+      // prefer the most specific label for the UI
+      itemType:
+        catalogItem.itemType ||
+        catalogItem.subcategory ||
+        catalogItem.category ||
+        null,
       description: catalogItem.description,
       // weight (+ mark it as coming from catalog if present)
       weight: catalogItem.weightGrams,
@@ -286,7 +292,8 @@ router.post("/from-catalog/:id", async (req, res) => {
         weightSource: "catalog",
       }),
       tags: catalogItem.tags,
-
+      category: catalogItem.category || null,
+      subcategory: catalogItem.subcategory || null,
       // old top-level link field used throughout the app
       link: primaryLink ? primaryLink.url : "",
 
@@ -295,9 +302,10 @@ router.post("/from-catalog/:id", async (req, res) => {
         ? {
             network: primaryLink.network,
             region: primaryLink.region || "global",
-            url: primaryLink.url,
-            merchant: primaryLink.merchantName || "",
-            externalId: primaryLink.externalId || "",
+            deepLink: primaryLink.url,
+            merchantName: primaryLink.merchantName || "",
+            externalProductId: primaryLink.externalId || "",
+            itemGroupId: catalogItem.itemGroupId || undefined,
           }
         : undefined,
     };

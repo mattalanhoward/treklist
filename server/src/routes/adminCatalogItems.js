@@ -55,11 +55,18 @@ router.post("/", async (req, res) => {
       name,
       brand,
       category,
+      subcategory,
+      itemType,
+      modelNumber,
       description,
+      imageUrls,
       weightGrams,
       tags,
       links,
       priceHint,
+      priceHintCurrency,
+      canonicalAsin,
+      itemGroupId,
     } = req.body || {};
 
     if (!name || typeof name !== "string") {
@@ -110,17 +117,48 @@ router.post("/", async (req, res) => {
       normalizedPriceHint = n;
     }
 
+    const normalizedImageUrls = Array.isArray(imageUrls)
+      ? imageUrls.map((u) => String(u || "").trim()).filter(Boolean)
+      : typeof imageUrls === "string"
+      ? imageUrls
+          .split(/\r?\n|,/)
+          .map((u) => u.trim())
+          .filter(Boolean)
+      : [];
+
+    const normalizedPriceHintCurrency =
+      typeof priceHintCurrency === "string" && priceHintCurrency.trim()
+        ? priceHintCurrency.trim().toUpperCase()
+        : undefined;
+
+    const normalizedCanonicalAsin =
+      typeof canonicalAsin === "string" && canonicalAsin.trim()
+        ? canonicalAsin.trim().toUpperCase()
+        : undefined;
+
+    const normalizedItemGroupId =
+      typeof itemGroupId === "string" && itemGroupId.trim()
+        ? itemGroupId.trim()
+        : undefined;
+
     const item = await CatalogItem.create({
       name: name.trim(),
       brand: brand && brand.trim(),
       category: category && category.trim(),
+      subcategory: subcategory && subcategory.trim(),
+      itemType: itemType && itemType.trim(),
+      modelNumber: modelNumber && modelNumber.trim(),
       description: description && description.trim(),
+      imageUrls: normalizedImageUrls,
       weightGrams: normalizedWeight,
       tags: Array.isArray(tags)
         ? tags.filter(Boolean).map((t) => String(t).trim())
         : [],
       links: sanitizedLinks,
       priceHint: normalizedPriceHint,
+      priceHintCurrency: normalizedPriceHintCurrency,
+      canonicalAsin: normalizedCanonicalAsin,
+      itemGroupId: normalizedItemGroupId,
       createdBy: req.userId,
     });
 
@@ -140,12 +178,19 @@ router.patch("/:id", async (req, res) => {
       "name",
       "brand",
       "category",
+      "subcategory",
+      "itemType",
+      "modelNumber",
       "description",
+      "imageUrls",
       "weightGrams",
       "tags",
       "links",
       "isActive",
       "priceHint",
+      "priceHintCurrency",
+      "canonicalAsin",
+      "itemGroupId",
     ];
 
     for (const key of allowedFields) {
@@ -164,8 +209,35 @@ router.patch("/:id", async (req, res) => {
     if (typeof updates.category === "string") {
       updates.category = updates.category.trim();
     }
+    if (typeof updates.subcategory === "string") {
+      updates.subcategory = updates.subcategory.trim();
+    }
+    if (typeof updates.itemType === "string") {
+      updates.itemType = updates.itemType.trim();
+    }
+    if (typeof updates.modelNumber === "string") {
+      updates.modelNumber = updates.modelNumber.trim();
+    }
     if (typeof updates.description === "string") {
       updates.description = updates.description.trim();
+    }
+
+    if (Object.prototype.hasOwnProperty.call(updates, "priceHintCurrency")) {
+      const v = String(updates.priceHintCurrency || "").trim();
+      if (!v)
+        updates.$unset = { ...(updates.$unset || {}), priceHintCurrency: 1 };
+      else updates.priceHintCurrency = v.toUpperCase();
+    }
+    if (Object.prototype.hasOwnProperty.call(updates, "canonicalAsin")) {
+      const v = String(updates.canonicalAsin || "").trim();
+      if (!v) updates.$unset = { ...(updates.$unset || {}), canonicalAsin: 1 };
+      else updates.canonicalAsin = v.toUpperCase();
+    }
+
+    if (Object.prototype.hasOwnProperty.call(updates, "itemGroupId")) {
+      const v = String(updates.itemGroupId || "").trim();
+      if (!v) updates.$unset = { ...(updates.$unset || {}), itemGroupId: 1 };
+      else updates.itemGroupId = v;
     }
 
     // Normalize weightGrams if present
@@ -210,11 +282,23 @@ router.patch("/:id", async (req, res) => {
       }));
     }
 
-    const item = await CatalogItem.findByIdAndUpdate(
-      req.params.id,
-      { $set: updates },
-      { new: true }
-    );
+    // Normalize imageUrls if present
+    if (Array.isArray(updates.imageUrls)) {
+      updates.imageUrls = updates.imageUrls
+        .map((u) => String(u || "").trim())
+        .filter(Boolean);
+    }
+
+    // Split operators: $set + $unset (if present)
+    const $set = { ...updates };
+    const $unset = $set.$unset;
+    delete $set.$unset;
+
+    const updateDoc = $unset ? { $set, $unset } : { $set };
+
+    const item = await CatalogItem.findByIdAndUpdate(req.params.id, updateDoc, {
+      new: true,
+    });
 
     if (!item) {
       return res.status(404).json({ message: "Catalog item not found." });
