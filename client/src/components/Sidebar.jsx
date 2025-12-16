@@ -26,7 +26,7 @@ export default function Sidebar({
   setCollapsed,
   onOpenAdmin = () => {},
   onOpenForum = () => {},
-  onOpenShoppingList = () => {},
+  onOpenWishlist = () => {},
   onShowGearPane = () => {},
   isAdmin = false,
 }) {
@@ -430,7 +430,7 @@ export default function Sidebar({
                 />
               )}
             </section>
-            {/* Bottom actions group: Forum (future) Shopping List + Admin */}
+            {/* Bottom actions group: Forum (future) Wishlist + Admin */}
             <div className="mt-auto">
               {/* Forum (future feature) */}
               <section className="px-4 py-2 border-t border-base-100">
@@ -448,19 +448,19 @@ export default function Sidebar({
                 </button>
               </section>
 
-              {/* Shopping List (future feature) */}
+              {/* Wishlist (future feature) */}
               <section className="px-4 py-2 border-t border-base-100">
                 <button
                   type="button"
                   onClick={() => {
-                    onOpenShoppingList();
+                    onOpenWishlist();
                     if (isMobile()) {
                       setCollapsed(true);
                     }
                   }}
                   className="flex items-center text-primaryAlt font-bold truncate"
                 >
-                  Shopping List
+                  Wishlist
                 </button>
               </section>
 
