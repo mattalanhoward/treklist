@@ -8,7 +8,7 @@ import Sidebar from "../components/Sidebar";
 import GearListView from "./GearListView";
 import AdminView from "../pages/AdminView";
 import ForumView from "../pages/ForumView";
-import WishlistView from "../pages/WishListView";
+import WishlistView from "../pages/WishlistView";
 import { toast } from "react-hot-toast";
 import { useUserSettings } from "../contexts/UserSettings";
 import { useTranslation } from "react-i18next";
