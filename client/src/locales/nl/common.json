@@ -395,6 +395,41 @@
     "toast": {
       "created": "Globaal item aangemaakt!",
       "createFailed": "Item kon niet worden aangemaakt."
+    },
+    "importTab": {
+      "searchPlaceholder": "Zoek in catalogus…",
+      "filters": {
+        "allCategories": "Alle categorieën",
+        "allSubcategories": "Alle subcategorieën",
+        "allBrands": "Alle merken"
+      },
+      "badges": {
+        "added": "Al toegevoegd"
+      },
+      "labels": {
+        "unknownBrand": "Onbekend",
+        "uncategorized": "Zonder categorie"
+      },
+      "states": {
+        "loading": "Bezig met laden…",
+        "empty": "Geen catalogusitems gevonden"
+      },
+      "buttons": {
+        "import_one": "Importeer {{count}} item",
+        "import_other": "Importeer {{count}} items",
+        "importing": "Importeren…",
+        "clear": "Wissen",
+        "clearTitle": "Selectie wissen"
+      },
+      "toasts": {
+        "selectAtLeastOne": "Selecteer minimaal één item.",
+        "alreadyImported": "Sommige items zijn al geïmporteerd.",
+        "importSuccess": "Succesvol geïmporteerd.",
+        "importFailed": "Importeren mislukt."
+      },
+      "errors": {
+        "loadFailed": "Catalogusitems laden mislukt."
+      }
     }
   },
   "globalItemEditModal": {
@@ -432,9 +467,9 @@
     },
     "empty": "Geen items gevonden",
     "buttons": {
-      "add": "{{count}} item toevoegen",
-      "add_plural": "{{count}} items toevoegen",
-      "adding": "Items toevoegen…"
+      "add_one": "Voeg {{count}} item toe",
+      "add_other": "Voeg {{count}} items toe",
+      "adding": "Toevoegen…"
     },
     "toasts": {
       "selectAtLeastOne": "Selecteer minimaal één item.",

@@ -14,20 +14,58 @@ import { detectRegion, normalizeRegion } from "../utils/region";
 import { extractWeightGrams } from "../utils/weight";
 
 function ImportCatalogTab({ onImported }) {
+  const { t } = useTranslation("common");
+
+  // catalog results
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [query, setQuery] = useState("");
+
+  // search + filters
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState(searchQuery);
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const [subcategoryFilter, setSubcategoryFilter] = useState("all");
   const [brandFilter, setBrandFilter] = useState("all");
 
-  const loadItems = async () => {
+  // multi-select
+  const [selectedIds, setSelectedIds] = useState(new Set());
+
+  // already-imported (catalogId -> imported)
+  const [importedCatalogIds, setImportedCatalogIds] = useState(new Set());
+
+  // debounce like Sidebar (no search button)
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedSearch(searchQuery), 600);
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
+
+  const loadImported = async () => {
+    try {
+      const { data } = await api.get("/global/items");
+      const set = new Set(
+        (data || [])
+          .map((g) => g.productId)
+          .filter(Boolean)
+          .map((x) => String(x))
+      );
+      setImportedCatalogIds(set);
+    } catch (err) {
+      console.error("Failed to load global items for import dedupe", err);
+      // non-fatal: UI still works, just won't show "Added"
+    }
+  };
+
+  const loadCatalog = async () => {
     setLoading(true);
     setError("");
     try {
       const params = {};
-      if (query) params.q = query;
+      if (debouncedSearch.trim()) params.q = debouncedSearch.trim();
       if (categoryFilter !== "all") params.category = categoryFilter;
+      if (subcategoryFilter !== "all") params.subcategory = subcategoryFilter;
+      if (brandFilter !== "all") params.brand = brandFilter;
 
       const { data } = await api.get("/catalog/items", { params });
       setItems(data || []);
@@ -36,71 +74,129 @@ function ImportCatalogTab({ onImported }) {
       setError(
         err?.response?.data?.message ||
           err?.message ||
-          "Failed to load catalog items."
+          t("globalItemModal.importTab.errors.loadFailed")
       );
     } finally {
       setLoading(false);
     }
   };
 
+  // initial load
   useEffect(() => {
-    loadItems();
+    loadImported();
   }, []);
 
-  const handleImport = async (id) => {
-    try {
-      const { data } = await api.post(`/global/items/from-catalog/${id}`);
-      toast.success("Item imported to your account.");
-      if (onImported) onImported(data);
-    } catch (err) {
-      console.error("Import failed", err);
-      toast.error(
-        err?.response?.data?.message || err?.message || "Import failed."
-      );
-    }
-  };
+  // reload catalog when search/filters change
+  useEffect(() => {
+    loadCatalog();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearch, categoryFilter, subcategoryFilter, brandFilter]);
 
+  // build dropdown options from loaded items (simple + consistent)
   const categories = Array.from(
     new Set(items.map((i) => i.category).filter(Boolean))
+  ).sort();
+
+  const subcategories = Array.from(
+    new Set(
+      items
+        .filter((i) =>
+          categoryFilter === "all" ? true : i.category === categoryFilter
+        )
+        .map((i) => i.subcategory)
+        .filter(Boolean)
+    )
   ).sort();
 
   const brands = Array.from(
     new Set(items.map((i) => i.brand).filter(Boolean))
   ).sort();
 
-  const filteredItems = items.filter((item) => {
-    const catOk = categoryFilter === "all" || item.category === categoryFilter;
-    const brandOk = brandFilter === "all" || item.brand === brandFilter;
-    return catOk && brandOk;
-  });
+  const toggleCheckbox = (catalogId) => {
+    setSelectedIds((prev) => {
+      const copy = new Set(prev);
+      if (copy.has(catalogId)) copy.delete(catalogId);
+      else copy.add(catalogId);
+      return copy;
+    });
+  };
+
+  const handleBulkImport = async () => {
+    if (selectedIds.size === 0) {
+      return toast.error(
+        t("globalItemModal.importTab.toasts.selectAtLeastOne")
+      );
+    }
+
+    // block if user selected already-added items (UX clarity)
+    const already = Array.from(selectedIds).filter((id) =>
+      importedCatalogIds.has(String(id))
+    );
+    if (already.length > 0) {
+      return toast.error(t("globalItemModal.importTab.toasts.alreadyImported"));
+    }
+
+    setSaving(true);
+    try {
+      const ids = Array.from(selectedIds);
+      const { data } = await api.post("/global/items/from-catalog/bulk", {
+        ids,
+      });
+
+      // mark as imported immediately
+      const newlyImported = new Set(importedCatalogIds);
+      (data?.catalogIds || ids).forEach((id) => newlyImported.add(String(id)));
+      setImportedCatalogIds(newlyImported);
+
+      // clear selection
+      setSelectedIds(new Set());
+
+      toast.success(t("globalItemModal.importTab.toasts.importSuccess"));
+
+      // inform parent but DO NOT close modal
+      onImported?.(data?.items || []);
+    } catch (err) {
+      console.error("Bulk import failed", err);
+      toast.error(
+        err?.response?.data?.message ||
+          err?.message ||
+          t("globalItemModal.importTab.toasts.importFailed")
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const importButtonLabel = saving
+    ? t("globalItemModal.importTab.buttons.importing")
+    : t("globalItemModal.importTab.buttons.import", {
+        count: Number(selectedIds.size) || 0,
+      });
 
   return (
-    <div className="space-y-3">
-      <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
-        <div className="flex-1 flex gap-2">
-          <input
-            type="text"
-            placeholder="Search catalog (e.g. tent, jacket)..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            className="input input-sm input-bordered flex-1"
-          />
-          <button
-            type="button"
-            onClick={loadItems}
-            className="btn btn-sm btn-secondary"
-          >
-            Search
-          </button>
-        </div>
+    <div className="flex flex-col h-full">
+      {/* Search + filters */}
+      <div className="flex flex-col gap-2 pb-3">
+        <input
+          type="text"
+          placeholder={t("globalItemModal.importTab.searchPlaceholder")}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="flex-1 border border-primary rounded px-2 py-1 text-primary placeholder:text-primary/50 bg-white"
+        />
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <select
-            className="select select-xs select-bordered"
+            className="border border-primary rounded px-2 py-1 text-primary bg-white"
             value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
+            onChange={(e) => {
+              setCategoryFilter(e.target.value);
+              setSubcategoryFilter("all"); // reset dependent filter
+            }}
           >
-            <option value="all">All categories</option>
+            <option value="all">
+              {t("globalItemModal.importTab.filters.allCategories")}
+            </option>
             {categories.map((cat) => (
               <option key={cat} value={cat}>
                 {cat}
@@ -109,65 +205,139 @@ function ImportCatalogTab({ onImported }) {
           </select>
 
           <select
-            className="select select-xs select-bordered"
+            className="border border-primary rounded px-2 py-1 text-primary bg-white"
+            value={subcategoryFilter}
+            onChange={(e) => setSubcategoryFilter(e.target.value)}
+            disabled={categoryFilter === "all" && subcategories.length === 0}
+          >
+            <option value="all">
+              {t("globalItemModal.importTab.filters.allSubcategories")}
+            </option>
+            {subcategories.map((sub) => (
+              <option key={sub} value={sub}>
+                {sub}
+              </option>
+            ))}
+          </select>
+
+          <select
+            className="border border-primary rounded px-2 py-1 text-primary bg-white"
             value={brandFilter}
             onChange={(e) => setBrandFilter(e.target.value)}
           >
-            <option value="all">All brands</option>
-            {brands.map((brand) => (
-              <option key={brand} value={brand}>
-                {brand}
+            <option value="all">
+              {t("globalItemModal.importTab.filters.allBrands")}
+            </option>
+            {brands.map((b) => (
+              <option key={b} value={b}>
+                {b}
               </option>
             ))}
           </select>
         </div>
       </div>
 
-      {loading && <div className="text-sm text-primary/70">Loading...</div>}
+      {loading && (
+        <div className="text-sm text-primary/70">
+          {t("globalItemModal.importTab.states.loading")}
+        </div>
+      )}
 
       {error && <div className="text-error text-sm">{error}</div>}
 
-      {!loading && !error && items.length === 0 && (
-        <div className="text-sm text-primary/70">
-          No catalog items found. Try adding some in the Admin panel.
-        </div>
-      )}
+      {/* Results list (AddGearItemModal style) */}
+      <div className="flex-1 overflow-y-auto">
+        <ul className="space-y-1">
+          {!loading && !error && items.length === 0 && (
+            <li className="px-2 py-1 text-primary/80">
+              {t("globalItemModal.importTab.states.empty")}
+            </li>
+          )}
 
-      {!loading && !error && items.length > 0 && filteredItems.length === 0 && (
-        <div className="text-sm text-primary/70">
-          No catalog items match these filters.
-        </div>
-      )}
+          {!loading &&
+            !error &&
+            items.length > 0 &&
+            items.map((item) => {
+              const catalogId = String(item._id);
+              const disabled = importedCatalogIds.has(catalogId);
 
-      {!loading && !error && filteredItems.length > 0 && (
-        <div className="space-y-1 max-h-[60vh] overflow-y-auto">
-          {filteredItems.map((item) => (
-            <div
-              key={item._id}
-              className="border border-base-200 bg-base-100 hover:bg-base-200/60 rounded-lg p-2 flex items-center justify-between"
-            >
-              <div>
-                <div className="font-medium text-sm">{item.name}</div>
-                <div className="text-xs text-primary/70">
-                  {item.brand || "Unknown"} · {item.category || "Uncategorized"}
-                </div>
-                {item.links?.[0]?.network && (
-                  <div className="text-[11px] text-secondary">
-                    {item.links[0].network.toUpperCase()}
+              return (
+                <li
+                  key={item._id}
+                  className={`flex items-center px-2 py-1 rounded bg-neutral/20 border border-primary/20 mb-1 ${
+                    disabled
+                      ? "opacity-50 cursor-default"
+                      : "hover:bg-primary/10 cursor-pointer"
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.has(catalogId)}
+                    onChange={() => !disabled && toggleCheckbox(catalogId)}
+                    disabled={disabled || saving}
+                    className="mr-3 h-4 w-4 text-secondary border-primary rounded focus:ring-secondary"
+                  />
+
+                  <div
+                    className="flex-1 select-none"
+                    onClick={() => !disabled && toggleCheckbox(catalogId)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-medium text-primary">
+                          {item.name}
+                        </div>
+                        <div className="text-sm text-primary">
+                          {item.brand ||
+                            t(
+                              "globalItemModal.importTab.labels.unknownBrand"
+                            )}{" "}
+                          —{" "}
+                          {item.itemType ||
+                            item.subcategory ||
+                            item.category ||
+                            t("globalItemModal.importTab.labels.uncategorized")}
+                        </div>
+                      </div>
+
+                      {disabled && (
+                        <span className="text-red-500 text-xs ml-2">
+                          {t("globalItemModal.importTab.badges.added")}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                )}
-              </div>
-              <button
-                type="button"
-                className="btn btn-xs btn-secondary"
-                onClick={() => handleImport(item._id)}
-              >
-                Import
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
+                </li>
+              );
+            })}
+        </ul>
+      </div>
+
+      {/* Actions */}
+      <div className="mt-3 flex justify-end space-x-2">
+        <button
+          type="button"
+          disabled={saving}
+          onClick={() => setSelectedIds(new Set())}
+          className="px-2 py-1 bg-base-100 text-primary rounded"
+          title={t("globalItemModal.importTab.buttons.clearTitle")}
+        >
+          {t("globalItemModal.importTab.buttons.clear")}
+        </button>
+
+        <button
+          type="button"
+          onClick={handleBulkImport}
+          disabled={saving || selectedIds.size === 0}
+          className={`px-2 py-1 bg-primary text-base-100 rounded flex items-center ${
+            saving || selectedIds.size === 0
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:bg-primary/80"
+          }`}
+        >
+          {importButtonLabel}
+        </button>
+      </div>
     </div>
   );
 }
@@ -356,17 +526,17 @@ export default function GlobalItemModal({
     }
   };
 
-  const handleImported = (created) => {
-    // Pass the created GlobalItem back up (gear list page will handle it)
-    if (onCreated) onCreated(created);
-    if (onClose) onClose();
+  const handleImported = (importedItems) => {
+    // Stay open. Just inform parent so Sidebar/My Gear can refresh if needed.
+    // importedItems is an array of GlobalItems returned from bulk import.
+    onCreated?.(importedItems);
   };
 
   return (
     <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-50">
       <form
         onSubmit={handleSubmit}
-        className="bg-neutralAlt rounded-lg shadow-2xl max-w-xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4"
+        className="bg-neutralAlt rounded-lg shadow-2xl max-w-xl w-full sm:h-[80vh] h-[70vh] px-4 py-4 sm:px-6 sm:py-6 my-4 flex flex-col overflow-hidden"
       >
         {/* Header (smaller on phones) */}
         <div className="flex justify-between items-center mb-2 sm:mb-3">
@@ -450,120 +620,72 @@ export default function GlobalItemModal({
           ) : null}
         </div>
 
-        {/* Import tab content */}
-        {/* {tab === "import" && (
-          <div className="">
-            <AffiliateProductPicker
-              region={regionForSearch}
-              onPick={handlePickAffiliate}
-              pageSize={10}
-            />
-          </div>
-        )} */}
-
-        {tab === "import" && <ImportCatalogTab onImported={handleImported} />}
-
-        {/* Grid: only visible on the Custom tab */}
-        {tab === "custom" && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
-            {/* Item Type */}
-            <div>
-              <label className="block font-medium text-primary mb-0.5">
-                {t("globalItemModal.labels.itemType")}
-              </label>
-              <input
-                type="text"
-                placeholder={t("globalItemModal.placeholders.itemType")}
-                required
-                value={itemType}
-                onChange={(e) => setItemType(e.target.value)}
-                className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-              />
+        <div className="flex-1 min-h-0 overflow-hidden flex flex-col">
+          {tab === "import" && (
+            <div className="flex-1 min-h-0 overflow-hidden">
+              <ImportCatalogTab onImported={handleImported} />
             </div>
+          )}
 
-            {/* Name */}
-            <div>
-              <label className="block font-medium text-primary mb-0.5">
-                {t("globalItemModal.labels.name")}
-                <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                placeholder={t("globalItemModal.placeholders.name")}
-                value={name}
-                required
-                onChange={(e) => setName(e.target.value)}
-                className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-              />
-            </div>
+          {/* Grid: only visible on the Custom tab */}
+          {tab === "custom" && (
+            <div className="flex-1 min-h-0 flex flex-col">
+              {" "}
+              {/* top form fields */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
+                {/* Item Type */}
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    {t("globalItemModal.labels.itemType")}
+                  </label>
+                  <input
+                    type="text"
+                    placeholder={t("globalItemModal.placeholders.itemType")}
+                    required
+                    value={itemType}
+                    onChange={(e) => setItemType(e.target.value)}
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                  />
+                </div>
 
-            {/* Brand */}
-            <div>
-              <label className="block font-medium text-primary mb-0.5">
-                {t("globalItemModal.labels.brand")}
-              </label>
-              <input
-                type="text"
-                placeholder={t("globalItemModal.placeholders.brand")}
-                value={brand}
-                onChange={(e) => setBrand(e.target.value)}
-                className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-              />
-            </div>
+                {/* Name */}
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    {t("globalItemModal.labels.name")}
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder={t("globalItemModal.placeholders.name")}
+                    value={name}
+                    required
+                    onChange={(e) => setName(e.target.value)}
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                  />
+                </div>
 
-            {/* Link (locked if affiliate selected) */}
-            <div className="relative">
-              <LinkInput
-                value={link}
-                onChange={setLink}
-                label={t("globalItemModal.labels.link")}
-                placeholder={t("globalItemModal.placeholders.link")}
-                required={false}
-                readOnly={!!affProduct}
-              />
-              {affProduct && (
-                <button
-                  type="button"
-                  aria-label={t(
-                    "globalItemModal.messages.affiliateLinkLockedTitle"
-                  )}
-                  title={t("globalItemModal.messages.affiliateLinkLockedBody")}
-                  className="absolute inset-0 cursor-not-allowed bg-transparent"
-                />
-              )}
-            </div>
+                {/* Brand */}
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    {t("globalItemModal.labels.brand")}
+                  </label>
+                  <input
+                    type="text"
+                    placeholder={t("globalItemModal.placeholders.brand")}
+                    value={brand}
+                    onChange={(e) => setBrand(e.target.value)}
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                  />
+                </div>
 
-            {/* Weight + Price: force flex on all breakpoints */}
-            <div className="flex space-x-1 sm:space-x-2 col-span-1 sm:col-span-2">
-              <div className="flex-1">
-                <label className="block font-medium text-primary mb-0.5">
-                  {t("globalItemModal.labels.weight", { unit: unitLabel })}
-                </label>
-                <input
-                  type="text"
-                  inputMode="decimal"
-                  value={displayWeight}
-                  placeholder={
-                    unitLabel === "g"
-                      ? t("globalItemModal.placeholders.weightGrams")
-                      : t("globalItemModal.placeholders.weightOunces")
-                  }
-                  onChange={(e) => setDisplayWeight(e.target.value)}
-                  className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                />
-              </div>
-              <div className="flex-1">
-                <label className="block font-medium text-primary mb-0.5">
-                  {t("globalItemModal.labels.price", {
-                    currency: currencySymbol,
-                  })}
-                </label>
+                {/* Link */}
                 <div className="relative">
-                  <CurrencyInput
-                    value={price}
-                    currency={currency}
-                    locale={locale}
-                    onChange={(val) => setPrice(val)}
+                  <LinkInput
+                    value={link}
+                    onChange={setLink}
+                    label={t("globalItemModal.labels.link")}
+                    placeholder={t("globalItemModal.placeholders.link")}
+                    required={false}
                     readOnly={!!affProduct}
                   />
                   {affProduct && (
@@ -579,23 +701,71 @@ export default function GlobalItemModal({
                     />
                   )}
                 </div>
+
+                {/* Weight + Price */}
+                <div className="flex space-x-1 sm:space-x-2 col-span-1 sm:col-span-2">
+                  <div className="flex-1">
+                    <label className="block font-medium text-primary mb-0.5">
+                      {t("globalItemModal.labels.weight", { unit: unitLabel })}
+                    </label>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={displayWeight}
+                      placeholder={
+                        unitLabel === "g"
+                          ? t("globalItemModal.placeholders.weightGrams")
+                          : t("globalItemModal.placeholders.weightOunces")
+                      }
+                      onChange={(e) => setDisplayWeight(e.target.value)}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    />
+                  </div>
+
+                  <div className="flex-1">
+                    <label className="block font-medium text-primary mb-0.5">
+                      {t("globalItemModal.labels.price", {
+                        currency: currencySymbol,
+                      })}
+                    </label>
+                    <div className="relative">
+                      <CurrencyInput
+                        value={price}
+                        currency={currency}
+                        locale={locale}
+                        onChange={(val) => setPrice(val)}
+                        readOnly={!!affProduct}
+                      />
+                      {affProduct && (
+                        <button
+                          type="button"
+                          aria-label={t(
+                            "globalItemModal.messages.affiliatePriceLockedTitle"
+                          )}
+                          title={t(
+                            "globalItemModal.messages.affiliatePriceLockedBody"
+                          )}
+                          className="absolute inset-0 cursor-not-allowed bg-transparent"
+                        />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* description fills remaining space */}
+              <div className="mt-2 flex-1 min-h-0 flex flex-col">
+                <label className="block font-medium text-primary mb-0.5">
+                  {t("globalItemModal.labels.description")}
+                </label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="block w-full flex-1 min-h-0 border border-primary rounded px-2 py-1 text-primary resize-none"
+                />
               </div>
             </div>
-
-            {/* Description spans full width */}
-            <div className="sm:col-span-2">
-              <label className="block font-medium text-primary mb-0.5">
-                {t("globalItemModal.labels.description")}
-              </label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                rows={2}
-              />
-            </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* Worn / Consumable (only on Custom tab) */}
         {/* {tab === "custom" && (
