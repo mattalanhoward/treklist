@@ -431,8 +431,7 @@ export default function Sidebar({
               )}
             </section>
             {/* Bottom actions group: Forum (future) Wishlist + Admin */}
-            <div className="mt-auto">
-              {/* Forum (future feature) */}
+            {/* <div className="mt-auto">
               <section className="px-4 py-2 border-t border-base-100">
                 <button
                   type="button"
@@ -448,7 +447,6 @@ export default function Sidebar({
                 </button>
               </section>
 
-              {/* Wishlist (future feature) */}
               <section className="px-4 py-2 border-t border-base-100">
                 <button
                   type="button"
@@ -464,19 +462,8 @@ export default function Sidebar({
                 </button>
               </section>
 
-              {/* Admin header pinned at the bottom */}
-              {/* {isAdmin && (
-                <section className="px-4 py-2 border-t border-base-100">
-                  <button
-                    type="button"
-                    onClick={onOpenAdmin}
-                    className="flex items-center text-primaryAlt font-bold truncate"
-                  >
-                    Admin
-                  </button>
-                </section>
-              )} */}
-            </div>
+          
+            </div> */}
           </div>
         )}
       </div>

@@ -16,10 +16,10 @@ const gearItemRoutes = require("./routes/gearItems");
 const globalItemsRoutes = require("./routes/globalItems");
 const settingsRouter = require("./routes/settings");
 const affiliatesRouter = require("./routes/affiliates");
-const rateLimit = require("express-rate-limit");
 const adminCatalogItemsRouter = require("./routes/adminCatalogItems");
 const adminUsersRouter = require("./routes/adminUsers");
 const adminPublicListsRouter = require("./routes/adminPublicLists");
+const { publicShareLimiter } = require("./middleware/rateLimiters");
 
 const app = express();
 
@@ -70,13 +70,6 @@ const corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization"],
 };
 
-const publicShareLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 min
-  max: 60, // 60 requests/IP/minute (tune for your traffic)
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
 app.use(cors(corsOptions));
 // Preflight
 app.options("*", cors(corsOptions));
@@ -94,10 +87,9 @@ app.use(
   authMiddleware,
   gearItemRoutes
 );
-app.use("/api/public/share", publicShareRoutes);
+app.use("/api/public/share", publicShareLimiter, publicShareRoutes);
 app.use("/api/global/items", authMiddleware, globalItemsRoutes);
 app.use("/api/affiliates", authMiddleware, affiliatesRouter); // auth required
-app.use("/api/public/share/", publicShareLimiter);
 app.use(
   "/api/admin/catalog-items",
   authMiddleware,
