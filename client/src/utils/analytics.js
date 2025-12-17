@@ -2,50 +2,68 @@
 import { loadConsent } from "./cookieConsent";
 
 let analyticsInitialized = false;
+let gtmScriptEl = null;
 
-/**
- * Initialize analytics if:
- * - we're in a browser, and
- * - user has consented to analytics, and
- * - we have a script URL configured.
- *
- * This is intentionally simple and provider-agnostic. For example,
- * with Plausible you can set:
- *   VITE_ANALYTICS_SRC=https://plausible.io/js/script.js
- *   VITE_ANALYTICS_DOMAIN=treklist.co
- */
+const GTM_ID = import.meta.env.VITE_GTM_ID;
+
 export function initAnalytics() {
   if (typeof window === "undefined" || typeof document === "undefined") return;
   if (analyticsInitialized) return;
 
   const consent = loadConsent();
   if (!consent.analytics) return;
+  if (!GTM_ID) return;
 
-  const src = import.meta.env.VITE_ANALYTICS_SRC;
-  if (!src) {
-    if (import.meta.env.DEV) {
-    }
+  // Prevent double-injection
+  if (document.querySelector(`script[data-treklist-gtm="true"]`)) {
     analyticsInitialized = true;
     return;
   }
 
-  // Avoid injecting the script multiple times
-  if (document.querySelector('script[data-treklist-analytics="true"]')) {
-    analyticsInitialized = true;
-    return;
-  }
+  // Initialize dataLayer
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    event: "consent_granted",
+    analytics_storage: "granted",
+  });
 
   const script = document.createElement("script");
-  script.src = src;
-  script.defer = true;
-  script.setAttribute("data-treklist-analytics", "true");
-
-  const domain = import.meta.env.VITE_ANALYTICS_DOMAIN;
-  if (domain) {
-    // For providers like Plausible that support data-domain; harmless otherwise.
-    script.setAttribute("data-domain", domain);
-  }
+  script.src = `https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`;
+  script.async = true;
+  script.setAttribute("data-treklist-gtm", "true");
 
   document.head.appendChild(script);
+  gtmScriptEl = script;
   analyticsInitialized = true;
+}
+
+export function disableAnalytics() {
+  if (typeof window === "undefined") return;
+
+  // Inform GTM / GA consent is revoked
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    event: "consent_revoked",
+    analytics_storage: "denied",
+  });
+
+  // Remove GTM script
+  document
+    .querySelectorAll(`script[data-treklist-gtm="true"]`)
+    .forEach((el) => el.remove());
+
+  // Clear GA cookies (best-effort)
+  document.cookie.split(";").forEach((c) => {
+    const name = c.split("=")[0]?.trim();
+    if (
+      name === "_ga" ||
+      name === "_gid" ||
+      name === "_gat" ||
+      name.startsWith("_ga_")
+    ) {
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;`;
+    }
+  });
+
+  analyticsInitialized = false;
 }

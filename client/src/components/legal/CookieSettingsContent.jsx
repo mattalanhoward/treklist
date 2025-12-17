@@ -5,7 +5,7 @@ import {
   loadConsent,
   saveConsent,
 } from "../../utils/cookieConsent";
-import { initAnalytics } from "../../utils/analytics";
+import { initAnalytics, disableAnalytics } from "../../utils/analytics";
 
 export default function CookieSettingsContent() {
   const [consent, setConsent] = useState(defaultConsent);
@@ -59,7 +59,8 @@ export default function CookieSettingsContent() {
     setConsent(next);
     setSavedAt(next.updatedAt);
     setDirty(false);
-    // Intentionally do NOT call initAnalytics when turning analytics off
+    // If analytics had been enabled previously, actively disable it now
+    disableAnalytics();
   };
 
   const handleSave = () => {
@@ -70,6 +71,8 @@ export default function CookieSettingsContent() {
     // If analytics are enabled via Save, try to load analytics script
     if (next.analytics) {
       initAnalytics();
+    } else {
+      disableAnalytics();
     }
   };
 
