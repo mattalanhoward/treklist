@@ -1,16 +1,14 @@
 // server/src/routes/affiliates.js
 const express = require("express");
 const { query, validationResult } = require("express-validator");
-const rateLimit = require("express-rate-limit");
-const auth = require("../middleware/auth");
 const AffiliateProduct = require("../models/affiliateProduct");
 const GlobalItem = require("../models/globalItem");
 const MerchantOffer = require("../models/merchantOffer");
+const { searchLimiter, resolveLimiter } = require("../middleware/rateLimiters");
+
+// Note: auth is enforced at mount-level in app.js (/api/affiliates)
 
 const router = express.Router();
-
-// Protect all affiliate endpoints
-router.use(auth);
 
 // --- Simple in-memory TTL cache for resolve-link (no extra deps)
 // Key: `${itemGroupId}|${region}`
@@ -35,22 +33,6 @@ function cacheSet(key, val, ttlMs) {
   }
   RESOLVE_CACHE.set(key, { val, exp: Date.now() + ttlMs });
 }
-
-// Gentle per-IP limiter (defense-in-depth; you already limit other routes)
-const resolveLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  max: 120, // plenty for a page render
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
-// Rate limit: 90 req / 5 min per IP for product search
-const searchLimiter = rateLimit({
-  windowMs: 5 * 60 * 1000,
-  max: 90,
-  standardHeaders: true,
-  legacyHeaders: false,
-});
 
 // Small helpers
 function escapeRegex(s) {

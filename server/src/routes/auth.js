@@ -16,6 +16,15 @@ const JWT_EXP = process.env.JWT_EXP || "7d";
 const REFRESH_TOKEN_EXP_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 const isProd = process.env.NODE_ENV === "production";
 
+const {
+  registerLimiter,
+  forgotPasswordLimiter,
+  forgotPasswordEmailLimiter,
+  resendVerificationLimiter,
+  resendVerificationEmailLimiter,
+  loginLimiter,
+} = require("../middleware/rateLimiters");
+
 // Cross-site compatible cookie in prod (SameSite=None; Secure)
 const REFRESH_COOKIE_OPTS = {
   httpOnly: true,
@@ -153,20 +162,42 @@ router.get("/me", authenticate, async (req, res) => {
 });
 
 // Forgot password
-router.post("/forgot-password", async (req, res) => {
-  const { email } = req.body;
-  const user = await User.findOne({ email });
-  if (!user) return res.status(404).json({ message: "Email not found." });
+router.post(
+  "/forgot-password",
+  forgotPasswordLimiter,
+  forgotPasswordEmailLimiter,
+  async (req, res) => {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ message: "Email is required." });
+    }
 
-  const token = crypto.randomBytes(20).toString("hex");
-  const resetExpSec = Number(process.env.RESET_TOKEN_EXP) || 3600; // default 1h
-  user.resetPasswordToken = token;
-  user.resetPasswordExpires = Date.now() + resetExpSec * 1000;
-  await user.save();
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const user = await User.findOne({
+      email: normalizedEmail,
+    });
 
-  await sendPasswordResetEmail(email, token);
-  res.json({ message: "Password reset email sent." });
-});
+    // Always respond the same to avoid email enumeration
+    if (!user) {
+      return res.json({
+        message:
+          "If an account exists for that email, you’ll receive a password reset email shortly.",
+      });
+    }
+
+    const token = crypto.randomBytes(20).toString("hex");
+    const resetExpSec = Number(process.env.RESET_TOKEN_EXP) || 3600; // default 1h
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = Date.now() + resetExpSec * 1000;
+    await user.save();
+
+    await sendPasswordResetEmail(normalizedEmail, token);
+    return res.json({
+      message:
+        "If an account exists for that email, you’ll receive a password reset email shortly.",
+    });
+  }
+);
 
 // Reset password
 router.post("/reset-password", async (req, res) => {
@@ -186,7 +217,7 @@ router.post("/reset-password", async (req, res) => {
 });
 
 // Register
-router.post("/register", async (req, res) => {
+router.post("/register", registerLimiter, async (req, res) => {
   try {
     const { email, trailname, password, acceptTerms, marketingOptIn, next } =
       req.body;
@@ -265,48 +296,63 @@ router.post("/verify-email", async (req, res) => {
 });
 
 // Resend verification email
-router.post("/resend-verification", async (req, res) => {
-  try {
-    const { email } = req.body;
+router.post(
+  "/resend-verification",
+  resendVerificationLimiter,
+  resendVerificationEmailLimiter,
+  async (req, res) => {
+    try {
+      const { email } = req.body;
 
-    if (!email) {
-      return res.status(400).json({ message: "Email is required." });
-    }
+      if (!email) {
+        return res.status(400).json({ message: "Email is required." });
+      }
 
-    const user = await User.findOne({ email });
-    if (!user) {
-      // Your existing code (forgot-password / register) already leaks
-      // existence, so we can be explicit here too.
-      return res.status(404).json({ message: "User not found." });
-    }
+      const normalizedEmail = String(email).trim().toLowerCase();
+      const user = await User.findOne({
+        email: normalizedEmail,
+      });
+      // Avoid email enumeration: respond generically even if not found
+      if (!user) {
+        return res.json({
+          message:
+            "If an account exists for that email and it is not verified, you’ll receive a verification email shortly.",
+        });
+      }
 
-    if (user.isVerified) {
+      // If already verified, still respond generically (avoid leaks)
+      if (user.isVerified) {
+        return res.json({
+          message:
+            "If an account exists for that email and it is not verified, you’ll receive a verification email shortly.",
+        });
+      }
+
+      // Generate a fresh verification token and expiration
+      const verifyToken = crypto.randomBytes(20).toString("hex");
+      user.verifyEmailToken = verifyToken;
+      user.verifyEmailExpires = Date.now() + 24 * 60 * 60 * 1000; // 24h
+
+      await user.save();
+
+      // We don't need a `next` param here; the user is already in the flow.
+      await sendVerificationEmail(user.email, verifyToken, null);
+
+      return res.json({
+        message:
+          "If an account exists for that email and it is not verified, you’ll receive a verification email shortly.",
+      });
+    } catch (err) {
+      console.error("Error in /auth/resend-verification:", err);
       return res
-        .status(400)
-        .json({ message: "This email has already been verified." });
+        .status(500)
+        .json({ message: "Could not resend verification email." });
     }
-
-    // Generate a fresh verification token and expiration
-    const verifyToken = crypto.randomBytes(20).toString("hex");
-    user.verifyEmailToken = verifyToken;
-    user.verifyEmailExpires = Date.now() + 24 * 60 * 60 * 1000; // 24h
-
-    await user.save();
-
-    // We don't need a `next` param here; the user is already in the flow.
-    await sendVerificationEmail(user.email, verifyToken, null);
-
-    return res.json({ message: "Verification email resent." });
-  } catch (err) {
-    console.error("Error in /auth/resend-verification:", err);
-    return res
-      .status(500)
-      .json({ message: "Could not resend verification email." });
   }
-});
+);
 
 // Login
-router.post("/login", async (req, res) => {
+router.post("/login", loginLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -392,5 +438,5 @@ router.post("/logout", async (req, res) => {
   }
 });
 
+router.authenticate = authenticate;
 module.exports = router;
-module.exports.authenticate = authenticate;
