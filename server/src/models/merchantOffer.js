@@ -128,12 +128,24 @@ MerchantOfferSchema.pre("save", function normalize(next) {
 // Indexes
 // ---------------------------------------------------------------------
 
-// Unique per network + region + merchant + external product
+// ✅ Resolved offers: unique per product + merchant + region + network
+MerchantOfferSchema.index(
+  { productId: 1, network: 1, region: 1, merchantId: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      productId: { $exists: true, $type: "objectId" },
+    },
+  }
+);
+
+// ✅ Unresolved offers (ingestion): unique per network + region + merchant + externalProductId
 MerchantOfferSchema.index(
   { network: 1, region: 1, merchantId: 1, externalProductId: 1 },
   {
     unique: true,
     partialFilterExpression: {
+      productId: { $exists: false }, // important: don't store null for productId
       externalProductId: { $exists: true, $type: "string", $ne: "" },
     },
   }

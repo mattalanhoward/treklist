@@ -162,15 +162,11 @@ export default function GlobalItemEditModal({
         quantity,
       };
 
-      // Link handling:
-      if (isAffiliateBacked) {
-        // For imported affiliate items, lock link
-        delete payload.link;
+      // Link is ONLY for custom items (non-affiliate-backed)
+      if (!isAffiliateBacked) {
+        const trimmedLink = (form.link || "").trim();
+        payload.link = trimmedLink === "" ? null : trimmedLink;
       }
-
-      // Link: allow clearing
-      const trimmedLink = (form.link || "").trim();
-      payload.link = trimmedLink === "" ? null : trimmedLink;
 
       let updatedSomething = false;
       let touchedGlobal = false;

@@ -24,7 +24,6 @@ const NETWORK_OPTIONS = [
   { value: "amazon", label: "Amazon" },
   { value: "awin", label: "Awin" },
   { value: "impact", label: "Impact" },
-  { value: "direct", label: "Direct (brand affiliate)" },
 ];
 
 const REGION_OPTIONS = [
@@ -32,9 +31,39 @@ const REGION_OPTIONS = [
   { value: "us", label: "US" },
   { value: "uk", label: "UK" },
   { value: "de", label: "DE" },
-  { value: "eu", label: "EU" },
+  { value: "fr", label: "FR" },
+  { value: "it", label: "IT" },
+  { value: "es", label: "ES" },
+  { value: "nl", label: "NL" },
   { value: "ca", label: "CA" },
+  { value: "se", label: "SE" },
+  { value: "pl", label: "PL" },
 ];
+
+const blankOffer = () => ({
+  network: "amazon",
+  region: "global",
+  url: "",
+  merchantName: "",
+  externalId: "",
+  priority: 10,
+});
+
+function extractAsinFromAmazonUrl(url) {
+  try {
+    const u = new URL(url);
+    const p = u.pathname || "";
+    const m =
+      p.match(/\/dp\/([A-Z0-9]{10})(?:[/?]|$)/i) ||
+      p.match(/\/gp\/product\/([A-Z0-9]{10})(?:[/?]|$)/i);
+    return m ? m[1].toUpperCase() : null;
+  } catch {
+    return null;
+  }
+}
+
+const getPrimaryOffer = (f) =>
+  Array.isArray(f?.offers) && f.offers[0] ? f.offers[0] : blankOffer();
 
 function GearCatalogSection({ mode = "both" }) {
   const [items, setItems] = useState([]);
@@ -60,27 +89,6 @@ function GearCatalogSection({ mode = "both" }) {
 
   const [creating, setCreating] = useState(false);
 
-  // Keep these here so this snippet is self-contained.
-  const NETWORK_OPTIONS = [
-    { value: "amazon", label: "Amazon" },
-    { value: "awin", label: "Awin" },
-    { value: "impact", label: "Impact" },
-  ];
-
-  const REGION_OPTIONS = [
-    { value: "global", label: "Global" },
-    { value: "us", label: "US" },
-    { value: "uk", label: "UK" },
-    { value: "de", label: "DE" },
-    { value: "fr", label: "FR" },
-    { value: "it", label: "IT" },
-    { value: "es", label: "ES" },
-    { value: "nl", label: "NL" },
-    { value: "ca", label: "CA" },
-    { value: "se", label: "SE" },
-    { value: "pl", label: "PL" },
-  ];
-
   const [form, setForm] = useState({
     name: "",
     brand: "",
@@ -101,19 +109,10 @@ function GearCatalogSection({ mode = "both" }) {
     canonicalAsin: "",
     itemGroupId: "",
 
-    amazonAsinLookup: "",
     amazonMarketplace: "us",
 
-    links: [
-      {
-        network: "amazon",
-        region: "global",
-        url: "",
-        merchantName: "",
-        externalId: "",
-        priority: 10,
-      },
-    ],
+    // IMPORTANT: this UI uses offers[] (not links[])
+    offers: [blankOffer()],
   });
 
   const loadItems = async ({ includeArchived } = {}) => {
@@ -127,7 +126,7 @@ function GearCatalogSection({ mode = "both" }) {
           limit: 1000,
         },
       });
-      setItems(data.items || []);
+      setItems(data?.items || []);
     } catch (err) {
       console.error("Failed to load CatalogItems", err);
       const msg =
@@ -153,40 +152,48 @@ function GearCatalogSection({ mode = "both" }) {
     }));
   };
 
-  const blankOffer = () => ({
-    network: "amazon",
-    region: "global",
-    url: "",
-    merchantName: "",
-    externalId: "",
-    priority: 10,
-  });
-
-  const getPrimaryOffer = (f) =>
-    Array.isArray(f.links) && f.links[0] ? f.links[0] : blankOffer();
-
   const updateOffer = (idx, key, value) => {
     setForm((prev) => {
-      const links = Array.isArray(prev.links) ? [...prev.links] : [];
-      while (links.length <= idx) links.push(blankOffer());
-      links[idx] = { ...links[idx], [key]: value };
-      return { ...prev, links };
+      const offers = Array.isArray(prev.offers) ? [...prev.offers] : [];
+      while (offers.length <= idx) offers.push(blankOffer());
+
+      const next = { ...offers[idx], [key]: value };
+
+      // ✅ If Amazon URL pasted, fill externalId automatically (if empty)
+      if (key === "url") {
+        const net = String(next.network || "").toLowerCase();
+        if (net === "amazon") {
+          const asin = extractAsinFromAmazonUrl(String(value || ""));
+          if (asin && !String(next.externalId || "").trim()) {
+            next.externalId = asin;
+          }
+          if (!String(next.merchantName || "").trim()) {
+            next.merchantName = "Amazon";
+          }
+        }
+      }
+
+      offers[idx] = next;
+      return { ...prev, offers };
     });
   };
 
   const addOffer = () => {
     setForm((prev) => ({
       ...prev,
-      links: [...(Array.isArray(prev.links) ? prev.links : []), blankOffer()],
+      offers: [
+        ...(Array.isArray(prev.offers) ? prev.offers : []),
+        blankOffer(),
+      ],
     }));
   };
 
   const removeOffer = (idx) => {
     setForm((prev) => {
-      const links = Array.isArray(prev.links) ? [...prev.links] : [];
-      links.splice(idx, 1);
+      const offers = Array.isArray(prev.offers) ? [...prev.offers] : [];
+      offers.splice(idx, 1);
       // keep at least one offer
-      return { ...prev, links: links.length ? links : prev.links };
+      return { ...prev, offers: offers.length ? offers : [blankOffer()] };
     });
   };
 
@@ -194,12 +201,14 @@ function GearCatalogSection({ mode = "both" }) {
     e.preventDefault();
 
     if (!form.name.trim()) return toast.error("Name is required.");
-    if (!Array.isArray(form.links) || form.links.length === 0)
+
+    if (!Array.isArray(form.offers) || form.offers.length === 0) {
       return toast.error("At least one offer is required.");
+    }
 
     if (
-      form.links.some(
-        (l) => !String(l.network || "").trim() || !String(l.url || "").trim()
+      form.offers.some(
+        (o) => !String(o.network || "").trim() || !String(o.url || "").trim()
       )
     ) {
       return toast.error("Each offer must have a network and URL.");
@@ -253,15 +262,21 @@ function GearCatalogSection({ mode = "both" }) {
         imageUrls,
         canonicalAsin: form.canonicalAsin.trim() || undefined,
         itemGroupId: form.itemGroupId.trim() || undefined,
-        links: form.links.map((l) => ({
-          network: String(l.network || "").trim(),
-          region: String(l.region || "global").trim(),
-          url: String(l.url || "").trim(),
-          merchantName: l.merchantName
-            ? String(l.merchantName).trim()
+        offers: form.offers.map((o) => ({
+          network: String(o.network || "")
+            .trim()
+            .toLowerCase(),
+          region: String(o.region || "global")
+            .trim()
+            .toLowerCase(),
+          deepLink: String(o.url || "").trim(), // send deepLink
+          merchantName: o.merchantName
+            ? String(o.merchantName).trim()
             : undefined,
-          externalId: l.externalId ? String(l.externalId).trim() : undefined,
-          priority: Number(l.priority) || 0,
+          externalProductId: o.externalId
+            ? String(o.externalId).trim()
+            : undefined,
+          priority: Number(o.priority) || 0,
         })),
       };
 
@@ -289,7 +304,7 @@ function GearCatalogSection({ mode = "both" }) {
         itemGroupId: "",
         amazonAsinLookup: "",
         amazonMarketplace: "us",
-        links: [blankOffer()],
+        offers: [blankOffer()],
       });
 
       loadItems({ includeArchived: showArchived });
@@ -343,16 +358,14 @@ function GearCatalogSection({ mode = "both" }) {
           : fallbackUrl;
 
       setForm((prev) => {
-        const nextLinks = Array.isArray(prev.links)
-          ? [...prev.links]
-          : [blankOffer()];
-        if (!nextLinks[0]) nextLinks[0] = blankOffer();
+        const nextOffers = Array.isArray(prev.offers) ? [...prev.offers] : [];
+        if (!nextOffers[0]) nextOffers[0] = blankOffer();
 
-        nextLinks[0] = {
-          ...nextLinks[0],
+        nextOffers[0] = {
+          ...nextOffers[0],
           network: "amazon",
           url: nextLinkUrl,
-          merchantName: nextLinks[0].merchantName || "Amazon",
+          merchantName: nextOffers[0].merchantName || "Amazon",
           externalId: asin,
         };
 
@@ -414,6 +427,21 @@ function GearCatalogSection({ mode = "both" }) {
     }
   };
 
+  const getPrimaryItemOffer = (item) => {
+    const offer =
+      (Array.isArray(item?.offers) && item.offers[0]) ||
+      (Array.isArray(item?.links) && item.links[0]) ||
+      null;
+
+    // normalize deepLink/url to one "url" field if you ever need it
+    if (!offer) return null;
+
+    return {
+      ...offer,
+      url: String(offer.deepLink || offer.url || "").trim(),
+    };
+  };
+
   const handleArchiveToggle = async (item, nextIsActive) => {
     setArchivingId(item._id);
     try {
@@ -455,9 +483,7 @@ function GearCatalogSection({ mode = "both" }) {
 
   const networkOptions = useMemo(() => {
     const nets = items
-      .map((i) =>
-        Array.isArray(i.links) && i.links[0] ? i.links[0].network : null
-      )
+      .map((i) => getPrimaryItemOffer(i)?.network || null)
       .filter(Boolean);
     return Array.from(new Set(nets)).sort();
   }, [items]);
@@ -465,9 +491,8 @@ function GearCatalogSection({ mode = "both" }) {
   const filteredItems = useMemo(() => {
     const q = search.trim().toLowerCase();
     return items.filter((item) => {
-      const mainLink =
-        Array.isArray(item.links) && item.links[0] ? item.links[0] : null;
-      const itemNetwork = mainLink?.network || "";
+      const mainOffer = getPrimaryItemOffer(item);
+      const itemNetwork = mainOffer?.network || "";
 
       const searchMatches =
         !q ||
@@ -497,10 +522,8 @@ function GearCatalogSection({ mode = "both" }) {
     const dir = sort.dir === "asc" ? 1 : -1;
 
     return filteredItems.slice().sort((a, b) => {
-      const mainLinkA =
-        Array.isArray(a.links) && a.links[0] ? a.links[0] : null;
-      const mainLinkB =
-        Array.isArray(b.links) && b.links[0] ? b.links[0] : null;
+      const mainOfferA = getPrimaryItemOffer(a);
+      const mainOfferB = getPrimaryItemOffer(b);
 
       switch (sort.field) {
         case "name": {
@@ -519,8 +542,8 @@ function GearCatalogSection({ mode = "both" }) {
           return ba.localeCompare(bb) * dir;
         }
         case "network": {
-          const na = (mainLinkA?.network || "").toLowerCase();
-          const nb = (mainLinkB?.network || "").toLowerCase();
+          const na = (mainOfferA?.network || "").toLowerCase();
+          const nb = (mainOfferB?.network || "").toLowerCase();
           return na.localeCompare(nb) * dir;
         }
         case "weightGrams": {
@@ -594,7 +617,7 @@ function GearCatalogSection({ mode = "both" }) {
                 Add catalog item
               </h3>
               <p className="text-[11px] text-primary/70">
-                Flow: Basics → Offer → (Optional) Amazon Prefill → Media & Specs
+                Flow: (Optional) Amazon Prefill → Basics → Media & Specs → Offer
                 → Save
               </p>
             </div>
@@ -613,12 +636,98 @@ function GearCatalogSection({ mode = "both" }) {
               onSubmit={handleCreate}
               className="px-4 py-4 sm:px-6 sm:py-6 space-y-5"
             >
-              {/* 1) BASICS */}
-              <div className="space-y-3">
+              {/* 1) AMAZON PREFILL (only if network is amazon) */}
+              {primaryNetwork === "amazon" && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-xs font-semibold text-primary/80">
+                        Amazon prefill (optional)
+                      </div>
+                      <div className="text-[11px] text-primary/70">
+                        Pulls name/brand/description/images. You must rewrite
+                        the description.
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleAmazonLookup}
+                      disabled={creating}
+                      className={`px-2 py-1 rounded bg-secondary text-white hover:bg-secondary/80 ${
+                        creating ? "opacity-60 cursor-not-allowed" : ""
+                      }`}
+                      title="Fetch product data by ASIN"
+                    >
+                      {creating ? "Fetching..." : "Fetch from Amazon"}
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <div className="sm:col-span-2">
+                      <label className="block font-medium text-primary mb-0.5">
+                        ASIN
+                      </label>
+                      <input
+                        type="text"
+                        name="amazonAsinLookup"
+                        value={form.amazonAsinLookup}
+                        onChange={handleChange}
+                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                        placeholder="B0XXXXXXXX"
+                        maxLength={10}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-medium text-primary mb-0.5">
+                        Marketplace
+                      </label>
+                      <select
+                        name="amazonMarketplace"
+                        value={form.amazonMarketplace}
+                        onChange={handleChange}
+                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                      >
+                        <option value="us">US</option>
+                        <option value="uk">UK</option>
+                        <option value="de">DE</option>
+                        <option value="fr">FR</option>
+                        <option value="it">IT</option>
+                        <option value="es">ES</option>
+                        <option value="nl">NL</option>
+                        <option value="ca">CA</option>
+                        <option value="se">SE</option>
+                        <option value="pl">PL</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {form.amazonDescriptionNeedsRewrite && (
+                    <div className="rounded border border-warning/50 bg-warning/10 p-2 text-xs text-primary">
+                      <div className="font-semibold mb-1">Important</div>
+                      <div className="text-primary/80">
+                        This description was pulled from Amazon. Rewrite it in
+                        your own words before saving.
+                      </div>
+                      <label className="mt-2 flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          name="amazonDescriptionConfirmed"
+                          checked={form.amazonDescriptionConfirmed}
+                          onChange={handleChange}
+                          className="checkbox checkbox-xs"
+                        />
+                        <span>I confirm I rewrote the description.</span>
+                      </label>
+                    </div>
+                  )}
+                </div>
+              )}
+              {/* 2) BASICS */}
+              <div className="space-y-3 border-t border-base-200 pt-4">
                 <div className="text-xs font-semibold text-primary/80">
                   Basics
                 </div>
-
                 <div>
                   <label className="block font-medium text-primary mb-0.5">
                     Item name *
@@ -632,7 +741,6 @@ function GearCatalogSection({ mode = "both" }) {
                     placeholder="Nemo Hornet OSMO 2P"
                   />
                 </div>
-
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   <div>
                     <label className="block font-medium text-primary mb-0.5">
@@ -676,7 +784,6 @@ function GearCatalogSection({ mode = "both" }) {
                     />
                   </div>
                 </div>
-
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <div>
                     <label className="block font-medium text-primary mb-0.5">
@@ -708,7 +815,128 @@ function GearCatalogSection({ mode = "both" }) {
                 </div>
               </div>
 
-              {/* 2) PRIMARY OFFER */}
+              {/* 3) MEDIA & SPECS */}
+              <div className="space-y-3 border-t border-base-200 pt-4">
+                <div className="text-xs font-semibold text-primary/80">
+                  Media & specs
+                </div>
+
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    Description
+                  </label>
+                  <textarea
+                    name="description"
+                    value={form.description}
+                    onChange={handleChange}
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary resize-y"
+                    rows={3}
+                    placeholder="Short blurb to help you recognize the item when importing."
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      Weight (grams)
+                    </label>
+                    <input
+                      type="number"
+                      name="weightGrams"
+                      value={form.weightGrams}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="1400"
+                      min="0"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="block font-medium text-primary mb-0.5">
+                      Dimensions
+                    </label>
+                    <div className="grid grid-cols-4 gap-2">
+                      <input
+                        type="number"
+                        name="dimLength"
+                        value={form.dimLength}
+                        onChange={handleChange}
+                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                        placeholder="L"
+                        min="0"
+                        step="0.1"
+                      />
+                      <input
+                        type="number"
+                        name="dimWidth"
+                        value={form.dimWidth}
+                        onChange={handleChange}
+                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                        placeholder="W"
+                        min="0"
+                        step="0.1"
+                      />
+                      <input
+                        type="number"
+                        name="dimHeight"
+                        value={form.dimHeight}
+                        onChange={handleChange}
+                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                        placeholder="H"
+                        min="0"
+                        step="0.1"
+                      />
+                      <select
+                        name="dimUnit"
+                        value={form.dimUnit}
+                        onChange={handleChange}
+                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                      >
+                        <option value="cm">cm</option>
+                        <option value="in">in</option>
+                      </select>
+                    </div>
+                    <span className="block text-[11px] text-primary/70">
+                      Optional. Stored as L × W × H.
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      Tags (comma-separated)
+                    </label>
+                    <input
+                      type="text"
+                      name="tags"
+                      value={form.tags}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="3-season, tent, 1p"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      Image URLs
+                    </label>
+                    <textarea
+                      name="imageUrlsText"
+                      value={form.imageUrlsText}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary resize-y"
+                      rows={2}
+                      placeholder="One image URL per line"
+                    />
+                    <span className="block text-[11px] text-primary/70">
+                      First URL will be used as the primary image.
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* 4) PRIMARY OFFER */}
               <div className="space-y-3 border-t border-base-200 pt-4">
                 <div className="flex items-center justify-between">
                   <div>
@@ -836,14 +1064,14 @@ function GearCatalogSection({ mode = "both" }) {
                 </div>
               </div>
 
-              {/* Additional offers */}
-              {Array.isArray(form.links) && form.links.length > 1 && (
+              {/* 5) Additional offers */}
+              {Array.isArray(form.offers) && form.offers.length > 1 && (
                 <div className="space-y-2 border-t border-base-200 pt-4">
                   <div className="text-xs font-semibold text-primary/80">
                     Additional offers
                   </div>
 
-                  {form.links.slice(1).map((offer, i) => {
+                  {form.offers.slice(1).map((offer, i) => {
                     const idx = i + 1;
                     return (
                       <div
@@ -972,213 +1200,6 @@ function GearCatalogSection({ mode = "both" }) {
                   })}
                 </div>
               )}
-
-              {/* 3) AMAZON PREFILL (only if network is amazon) */}
-              {primaryNetwork === "amazon" && (
-                <div className="space-y-3 border-t border-base-200 pt-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="text-xs font-semibold text-primary/80">
-                        Amazon prefill (optional)
-                      </div>
-                      <div className="text-[11px] text-primary/70">
-                        Pulls name/brand/description/images. You must rewrite
-                        the description.
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={handleAmazonLookup}
-                      className="btn btn-xs btn-outline"
-                      disabled={creating}
-                      title="Fetch product data by ASIN"
-                    >
-                      Fetch from Amazon
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    <div className="sm:col-span-2">
-                      <label className="block font-medium text-primary mb-0.5">
-                        ASIN
-                      </label>
-                      <input
-                        type="text"
-                        name="amazonAsinLookup"
-                        value={form.amazonAsinLookup}
-                        onChange={handleChange}
-                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                        placeholder="B0XXXXXXXX"
-                        maxLength={10}
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block font-medium text-primary mb-0.5">
-                        Marketplace
-                      </label>
-                      <select
-                        name="amazonMarketplace"
-                        value={form.amazonMarketplace}
-                        onChange={handleChange}
-                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
-                      >
-                        <option value="us">US</option>
-                        <option value="uk">UK</option>
-                        <option value="de">DE</option>
-                        <option value="fr">FR</option>
-                        <option value="it">IT</option>
-                        <option value="es">ES</option>
-                        <option value="nl">NL</option>
-                        <option value="ca">CA</option>
-                        <option value="se">SE</option>
-                        <option value="pl">PL</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  {form.amazonDescriptionNeedsRewrite && (
-                    <div className="rounded border border-warning/50 bg-warning/10 p-2 text-xs text-primary">
-                      <div className="font-semibold mb-1">Important</div>
-                      <div className="text-primary/80">
-                        This description was pulled from Amazon. Rewrite it in
-                        your own words before saving.
-                      </div>
-                      <label className="mt-2 flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          name="amazonDescriptionConfirmed"
-                          checked={form.amazonDescriptionConfirmed}
-                          onChange={handleChange}
-                          className="checkbox checkbox-xs"
-                        />
-                        <span>I confirm I rewrote the description.</span>
-                      </label>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* 4) MEDIA & SPECS */}
-              <div className="space-y-3 border-t border-base-200 pt-4">
-                <div className="text-xs font-semibold text-primary/80">
-                  Media & specs
-                </div>
-
-                <div>
-                  <label className="block font-medium text-primary mb-0.5">
-                    Description
-                  </label>
-                  <textarea
-                    name="description"
-                    value={form.description}
-                    onChange={handleChange}
-                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary resize-y"
-                    rows={3}
-                    placeholder="Short blurb to help you recognize the item when importing."
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  <div>
-                    <label className="block font-medium text-primary mb-0.5">
-                      Weight (grams)
-                    </label>
-                    <input
-                      type="number"
-                      name="weightGrams"
-                      value={form.weightGrams}
-                      onChange={handleChange}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                      placeholder="1400"
-                      min="0"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="block font-medium text-primary mb-0.5">
-                      Dimensions
-                    </label>
-                    <div className="grid grid-cols-4 gap-2">
-                      <input
-                        type="number"
-                        name="dimLength"
-                        value={form.dimLength}
-                        onChange={handleChange}
-                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                        placeholder="L"
-                        min="0"
-                        step="0.1"
-                      />
-                      <input
-                        type="number"
-                        name="dimWidth"
-                        value={form.dimWidth}
-                        onChange={handleChange}
-                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                        placeholder="W"
-                        min="0"
-                        step="0.1"
-                      />
-                      <input
-                        type="number"
-                        name="dimHeight"
-                        value={form.dimHeight}
-                        onChange={handleChange}
-                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                        placeholder="H"
-                        min="0"
-                        step="0.1"
-                      />
-                      <select
-                        name="dimUnit"
-                        value={form.dimUnit}
-                        onChange={handleChange}
-                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
-                      >
-                        <option value="cm">cm</option>
-                        <option value="in">in</option>
-                      </select>
-                    </div>
-                    <span className="block text-[11px] text-primary/70">
-                      Optional. Stored as L × W × H.
-                    </span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <div>
-                    <label className="block font-medium text-primary mb-0.5">
-                      Tags (comma-separated)
-                    </label>
-                    <input
-                      type="text"
-                      name="tags"
-                      value={form.tags}
-                      onChange={handleChange}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                      placeholder="3-season, tent, 1p"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-medium text-primary mb-0.5">
-                      Image URLs
-                    </label>
-                    <textarea
-                      name="imageUrlsText"
-                      value={form.imageUrlsText}
-                      onChange={handleChange}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary resize-y"
-                      rows={2}
-                      placeholder="One image URL per line"
-                    />
-                    <span className="block text-[11px] text-primary/70">
-                      First URL will be used as the primary image.
-                    </span>
-                  </div>
-                </div>
-              </div>
 
               {/* 5) IDS */}
               <div className="space-y-3 border-t border-base-200 pt-4">
@@ -1396,9 +1417,7 @@ function GearCatalogSection({ mode = "both" }) {
                     <tbody>
                       {pageItems.map((item) => {
                         const id = item._id || item.id;
-                        const mainLink = Array.isArray(item.links)
-                          ? item.links[0]
-                          : null;
+                        const mainOffer = getPrimaryItemOffer(item);
 
                         const updated =
                           item.updatedAt &&
@@ -1422,9 +1441,9 @@ function GearCatalogSection({ mode = "both" }) {
                               {item.brand || "–"}
                             </td>
                             <td className="px-3 py-2 align-top">
-                              {mainLink
-                                ? `${mainLink.network} / ${
-                                    mainLink.region || "global"
+                              {mainOffer
+                                ? `${mainOffer.network} / ${
+                                    mainOffer.region || "global"
                                   }`
                                 : "–"}
                             </td>
@@ -1559,32 +1578,41 @@ function GearCatalogSection({ mode = "both" }) {
 
 function EditCatalogItemModal({ item, onClose, onSaved }) {
   const [saving, setSaving] = useState(false);
-
   const [form, setForm] = useState(() => {
     const dims = item?.dimensions || {};
-    const links =
-      Array.isArray(item?.links) && item.links.length
-        ? item.links.map((l) => ({
-            network: String(l.network || "amazon").trim(),
-            region: String(l.region || "global").trim(),
-            url: String(l.url || "").trim(),
-            merchantName: l.merchantName ? String(l.merchantName).trim() : "",
-            externalId: l.externalId ? String(l.externalId).trim() : "",
+
+    // ✅ NEW: prefer item.offers (MerchantOffer docs), fallback to legacy item.links
+    const rawOffers =
+      Array.isArray(item?.offers) && item.offers.length
+        ? item.offers
+        : Array.isArray(item?.links) && item.links.length
+        ? item.links
+        : [];
+
+    const offers =
+      rawOffers.length > 0
+        ? rawOffers.map((o) => ({
+            network: String(o.network || "amazon")
+              .trim()
+              .toLowerCase(),
+            region: String(o.region || "global")
+              .trim()
+              .toLowerCase(),
+            // MerchantOffer uses deepLink; legacy uses url
+            url: String(o.deepLink || o.url || "").trim(),
+            merchantName: o.merchantName ? String(o.merchantName).trim() : "",
+            // MerchantOffer uses externalProductId; legacy uses externalId
+            externalId: o.externalProductId
+              ? String(o.externalProductId).trim()
+              : o.externalId
+              ? String(o.externalId).trim()
+              : "",
             priority:
-              typeof l.priority === "number"
-                ? l.priority
-                : Number(l.priority) || 0,
+              typeof o.priority === "number"
+                ? o.priority
+                : Number(o.priority) || 0,
           }))
-        : [
-            {
-              network: "amazon",
-              region: "global",
-              url: "",
-              merchantName: "",
-              externalId: "",
-              priority: 10,
-            },
-          ];
+        : [blankOffer()];
 
     return {
       name: item?.name || "",
@@ -1613,18 +1641,21 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
       canonicalAsin: item?.canonicalAsin || "",
       itemGroupId: item?.itemGroupId || "",
 
-      // Amazon lookup helpers (only used when you click "Fetch from Amazon")
+      // Amazon lookup helpers
       amazonAsinLookup:
         item?.canonicalAsin ||
-        (links?.[0]?.network === "amazon" ? links?.[0]?.externalId : "") ||
+        (offers?.[0]?.network === "amazon" ? offers?.[0]?.externalId : "") ||
         "",
-      amazonMarketplace: "us",
 
       // compliance guardrails (only enforced after lookup)
       amazonDescriptionNeedsRewrite: false,
       amazonDescriptionConfirmed: false,
 
-      links,
+      amazonMarketplace:
+        marketplaceFromAmazonUrlClient(offers?.[0]?.url || "") || "us",
+
+      // ✅ NEW: state is offers (not links)
+      offers,
     };
   });
 
@@ -1637,67 +1668,80 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
   };
 
   const getPrimaryOffer = (f) =>
-    Array.isArray(f.links) && f.links[0]
-      ? f.links[0]
-      : {
-          network: "amazon",
-          region: "global",
-          url: "",
-          merchantName: "",
-          externalId: "",
-          priority: 10,
-        };
+    Array.isArray(f.offers) && f.offers[0] ? f.offers[0] : blankOffer();
 
   const updateOffer = (idx, key, value) => {
     setForm((prev) => {
-      const links = Array.isArray(prev.links) ? [...prev.links] : [];
-      while (links.length <= idx) {
-        links.push({
-          network: "amazon",
-          region: "global",
-          url: "",
-          merchantName: "",
-          externalId: "",
-          priority: 10,
-        });
+      const offers = Array.isArray(prev.offers) ? [...prev.offers] : [];
+      while (offers.length <= idx) offers.push(blankOffer());
+
+      const next = { ...offers[idx], [key]: value };
+
+      // ✅ If Amazon URL pasted, fill externalId automatically (if empty)
+      if (key === "url") {
+        const net = String(next.network || "").toLowerCase();
+        if (net === "amazon") {
+          const asin = extractAsinFromAmazonUrl(String(value || ""));
+          if (asin) {
+            next.externalId = asin; // always sync to URL
+          }
+          if (!String(next.merchantName || "").trim()) {
+            next.merchantName = "Amazon";
+          }
+        }
       }
-      links[idx] = { ...links[idx], [key]: value };
-      return { ...prev, links };
+
+      offers[idx] = next;
+      return { ...prev, offers };
     });
   };
 
   const addOffer = () => {
     setForm((prev) => ({
       ...prev,
-      links: [
-        ...(Array.isArray(prev.links) ? prev.links : []),
-        {
-          network: "amazon",
-          region: "global",
-          url: "",
-          merchantName: "",
-          externalId: "",
-          priority: 10,
-        },
+      offers: [
+        ...(Array.isArray(prev.offers) ? prev.offers : []),
+        blankOffer(),
       ],
     }));
   };
 
   const removeOffer = (idx) => {
     setForm((prev) => {
-      const links = Array.isArray(prev.links) ? [...prev.links] : [];
-      links.splice(idx, 1);
-      return { ...prev, links: links.length ? links : prev.links };
+      const offers = Array.isArray(prev.offers) ? [...prev.offers] : [];
+      offers.splice(idx, 1);
+      return { ...prev, offers: offers.length ? offers : prev.offers };
     });
   };
 
+  function marketplaceFromAmazonUrlClient(url) {
+    try {
+      const host = new URL(url).hostname
+        .toLowerCase()
+        .replace(/^smile\./, "")
+        .replace(/^www\./, "");
+      if (host === "amazon.com") return "us";
+      if (host === "amazon.co.uk") return "uk";
+      if (host === "amazon.de") return "de";
+      if (host === "amazon.fr") return "fr";
+      if (host === "amazon.it") return "it";
+      if (host === "amazon.es") return "es";
+      if (host === "amazon.nl") return "nl";
+      if (host === "amazon.ca") return "ca";
+      if (host === "amazon.se") return "se";
+      if (host === "amazon.pl") return "pl";
+      return "us";
+    } catch {
+      return "us";
+    }
+  }
   const handleAmazonLookup = async () => {
     if (getPrimaryOffer(form).network !== "amazon") {
       toast.error("Switch Network to Amazon to use ASIN lookup.");
       return;
     }
 
-    const asin = String(form.amazonAsinLookup || "")
+    const asin = String(getPrimaryOffer(form).externalId || "")
       .trim()
       .toUpperCase();
     if (!/^[A-Z0-9]{10}$/.test(asin)) {
@@ -1722,92 +1766,87 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
       const prefill = data?.prefill || {};
       const offer = data?.offer || {};
 
-      const fallbackUrl = `https://www.amazon.com/dp/${asin}`;
+      const AMAZON_BASE_BY_MP = {
+        us: "https://www.amazon.com",
+        uk: "https://www.amazon.co.uk",
+        de: "https://www.amazon.de",
+        fr: "https://www.amazon.fr",
+        it: "https://www.amazon.it",
+        es: "https://www.amazon.es",
+        nl: "https://www.amazon.nl",
+        ca: "https://www.amazon.ca",
+        se: "https://www.amazon.se",
+        pl: "https://www.amazon.pl",
+      };
+
+      const mp = String(form.amazonMarketplace || "us").toLowerCase();
+      const base = AMAZON_BASE_BY_MP[mp] || AMAZON_BASE_BY_MP.us;
+      const fallbackUrl = `${base}/dp/${asin}`;
       const nextLinkUrl =
         typeof offer.deepLink === "string" && offer.deepLink.trim()
           ? offer.deepLink.trim()
           : fallbackUrl;
 
-      setForm((prev) => ({
-        ...prev,
-        // core fields
-        name: typeof prefill.name === "string" ? prefill.name : prev.name,
-        brand: typeof prefill.brand === "string" ? prefill.brand : prev.brand,
-        description:
-          typeof prefill.description === "string"
-            ? prefill.description
-            : prev.description,
-        modelNumber:
-          typeof prefill.modelNumber === "string"
-            ? prefill.modelNumber
-            : prev.modelNumber,
+      setForm((prev) => {
+        const nextOffers = Array.isArray(prev.offers)
+          ? [...prev.offers]
+          : [blankOffer()];
+        if (!nextOffers[0]) nextOffers[0] = blankOffer();
 
-        weightGrams:
-          typeof prefill.weightGrams === "number"
-            ? String(prefill.weightGrams)
-            : prev.weightGrams,
+        nextOffers[0] = {
+          ...nextOffers[0],
+          network: "amazon",
+          url: nextLinkUrl,
+          merchantName: nextOffers[0].merchantName || "Amazon",
+          externalId: asin,
+        };
 
-        dimLength:
-          prefill?.dimensions &&
-          typeof prefill.dimensions.length === "number" &&
-          prefill.dimensions.length > 0
-            ? String(prefill.dimensions.length)
-            : prev.dimLength,
-        dimWidth:
-          prefill?.dimensions &&
-          typeof prefill.dimensions.width === "number" &&
-          prefill.dimensions.width > 0
-            ? String(prefill.dimensions.width)
-            : prev.dimWidth,
-        dimHeight:
-          prefill?.dimensions &&
-          typeof prefill.dimensions.height === "number" &&
-          prefill.dimensions.height > 0
-            ? String(prefill.dimensions.height)
-            : prev.dimHeight,
-        dimUnit:
-          prefill?.dimensions &&
-          typeof prefill.dimensions.unit === "string" &&
-          prefill.dimensions.unit.trim()
-            ? prefill.dimensions.unit.trim().toLowerCase()
-            : prev.dimUnit,
-
-        // images (use first image)
-        imageUrlsText:
-          Array.isArray(prefill.imageUrls) && prefill.imageUrls.length
-            ? String(prefill.imageUrls[0])
-            : prev.imageUrlsText,
-
-        // identifiers
-        canonicalAsin: asin,
-
-        // links: update primary offer
-        links: (() => {
-          const links = Array.isArray(prev.links) ? [...prev.links] : [];
-          if (!links[0]) {
-            links[0] = {
-              network: "amazon",
-              region: "global",
-              url: "",
-              merchantName: "",
-              externalId: "",
-              priority: 10,
-            };
-          }
-          links[0] = {
-            ...links[0],
-            network: "amazon",
-            url: nextLinkUrl,
-            merchantName: links[0].merchantName || "Amazon",
-            externalId: asin,
-          };
-          return links;
-        })(),
-
-        // compliance guardrails
-        amazonDescriptionNeedsRewrite: true,
-        amazonDescriptionConfirmed: false,
-      }));
+        return {
+          ...prev,
+          name: typeof prefill.name === "string" ? prefill.name : prev.name,
+          brand: typeof prefill.brand === "string" ? prefill.brand : prev.brand,
+          description:
+            typeof prefill.description === "string"
+              ? prefill.description
+              : prev.description,
+          modelNumber:
+            typeof prefill.modelNumber === "string"
+              ? prefill.modelNumber
+              : prev.modelNumber,
+          weightGrams:
+            typeof prefill.weightGrams === "number"
+              ? String(prefill.weightGrams)
+              : prev.weightGrams,
+          dimLength:
+            typeof prefill?.dimensions?.length === "number" &&
+            prefill.dimensions.length > 0
+              ? String(prefill.dimensions.length)
+              : prev.dimLength,
+          dimWidth:
+            typeof prefill?.dimensions?.width === "number" &&
+            prefill.dimensions.width > 0
+              ? String(prefill.dimensions.width)
+              : prev.dimWidth,
+          dimHeight:
+            typeof prefill?.dimensions?.height === "number" &&
+            prefill.dimensions.height > 0
+              ? String(prefill.dimensions.height)
+              : prev.dimHeight,
+          dimUnit:
+            typeof prefill?.dimensions?.unit === "string" &&
+            prefill.dimensions.unit.trim()
+              ? prefill.dimensions.unit.trim().toLowerCase()
+              : prev.dimUnit,
+          imageUrlsText:
+            Array.isArray(prefill.imageUrls) && prefill.imageUrls.length
+              ? String(prefill.imageUrls[0])
+              : prev.imageUrlsText,
+          canonicalAsin: asin,
+          offers: nextOffers,
+          amazonDescriptionNeedsRewrite: true,
+          amazonDescriptionConfirmed: false,
+        };
+      });
 
       toast.success(
         "Amazon data loaded. Please review and rewrite description."
@@ -1827,18 +1866,21 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
       toast.error("Name is required.");
       return;
     }
-    if (!Array.isArray(form.links) || form.links.length === 0) {
+
+    if (!Array.isArray(form.offers) || form.offers.length === 0) {
       toast.error("At least one offer is required.");
       return;
     }
+
     if (
-      form.links.some(
-        (l) => !String(l.network || "").trim() || !String(l.url || "").trim()
+      form.offers.some(
+        (o) => !String(o.network || "").trim() || !String(o.url || "").trim()
       )
     ) {
       toast.error("Each offer must have a network and URL.");
       return;
     }
+
     if (
       getPrimaryOffer(form).network === "amazon" &&
       form.amazonDescriptionNeedsRewrite &&
@@ -1887,24 +1929,28 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
           : [],
         imageUrls,
 
-        // Keep your previous "clearable" behavior for edit:
         canonicalAsin:
           form.canonicalAsin.trim() === "" ? null : form.canonicalAsin.trim(),
         itemGroupId:
           form.itemGroupId.trim() === "" ? null : form.itemGroupId.trim(),
 
-        links: form.links.map((l) => ({
-          network: String(l.network || "").trim(),
-          region: String(l.region || "global").trim(),
-          url: String(l.url || "").trim(),
-          merchantName: l.merchantName
-            ? String(l.merchantName).trim()
+        // ✅ IMPORTANT: send offers (server reads offers + supports url/deepLink)
+        offers: form.offers.map((o) => ({
+          network: String(o.network || "")
+            .trim()
+            .toLowerCase(),
+          region: String(o.region || "global")
+            .trim()
+            .toLowerCase(),
+          // server accepts deepLink OR url; sending deepLink is cleanest
+          deepLink: String(o.url || "").trim(),
+          merchantName: o.merchantName
+            ? String(o.merchantName).trim()
             : undefined,
-          externalId: l.externalId ? String(l.externalId).trim() : undefined,
-          priority:
-            typeof l.priority === "number"
-              ? l.priority
-              : Number(l.priority) || 0,
+          externalProductId: o.externalId
+            ? String(o.externalId).trim()
+            : undefined,
+          priority: Number(o.priority) || 0,
         })),
       };
 
@@ -1923,13 +1969,15 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
     }
   };
 
+  const primaryNetwork = getPrimaryOffer(form).network;
+
   return (
     <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-50">
       <form
         onSubmit={handleSubmit}
         className="bg-neutralAlt rounded-lg shadow-2xl border border-primary max-w-5xl w-full max-h-[80vh] overflow-y-auto my-4"
       >
-        {/* Header (same vibe as create) */}
+        {/* Header */}
         <div className="flex items-center justify-between px-4 pt-3 pb-2 sm:px-6 border-b border-base-200">
           <h2 className="text-sm font-semibold text-primary">
             Edit catalog item
@@ -1947,7 +1995,7 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
 
         <div className="px-4 py-4 sm:px-6 sm:py-6 space-y-3">
           <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
-            {/* LEFT column (match create flow) */}
+            {/* LEFT */}
             <div className="flex-1 space-y-2">
               <div>
                 <label className="block font-medium text-primary mb-0.5">
@@ -2044,7 +2092,7 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                   rows={2}
                   placeholder="Short blurb to help you recognize the item when importing."
                 />
-                {getPrimaryOffer(form).network === "amazon" &&
+                {primaryNetwork === "amazon" &&
                   form.amazonDescriptionNeedsRewrite && (
                     <div className="mt-2 rounded border border-warning/50 bg-warning/10 p-2 text-xs text-primary">
                       <div className="font-semibold mb-1">Important</div>
@@ -2164,7 +2212,7 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
               </div>
             </div>
 
-            {/* RIGHT column (same as create) */}
+            {/* RIGHT */}
             <div className="flex-1 space-y-2">
               <div className="flex items-center justify-between">
                 <div className="text-sm font-semibold text-primary">Offers</div>
@@ -2222,8 +2270,10 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                   <input
                     type="text"
                     name="amazonAsinLookup"
-                    value={form.amazonAsinLookup}
-                    onChange={handleChange}
+                    value={getPrimaryOffer(form).externalId || ""}
+                    onChange={(e) =>
+                      updateOffer(0, "externalId", e.target.value)
+                    }
                     className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
                     placeholder="B0XXXXXXXX"
                     maxLength={10}
@@ -2237,9 +2287,13 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                     Marketplace
                   </label>
                   <select
-                    name="amazonMarketplace"
-                    value={form.amazonMarketplace}
-                    onChange={handleChange}
+                    value={form.amazonMarketplace || "us"}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        amazonMarketplace: e.target.value,
+                      }))
+                    }
                     className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
                   >
                     <option value="us">US</option>
@@ -2260,17 +2314,21 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                 <button
                   type="button"
                   onClick={handleAmazonLookup}
-                  className="btn btn-xs btn-outline"
                   disabled={
                     saving || getPrimaryOffer(form).network !== "amazon"
                   }
+                  className={`px-2 py-1 rounded bg-secondary text-white hover:bg-secondary/80 ${
+                    saving || getPrimaryOffer(form).network !== "amazon"
+                      ? "opacity-60 cursor-not-allowed"
+                      : ""
+                  }`}
                   title={
                     getPrimaryOffer(form).network !== "amazon"
                       ? "Set Network to Amazon to use lookup"
                       : "Fetch product data by ASIN"
                   }
                 >
-                  Fetch from Amazon
+                  {saving ? "Fetching..." : "Fetch from Amazon"}
                 </button>
               </div>
 
@@ -2373,10 +2431,10 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                 </div>
               </div>
 
-              {/* Additional offers (same UI as create) */}
-              {Array.isArray(form.links) && form.links.length > 1 && (
+              {/* Additional offers */}
+              {Array.isArray(form.offers) && form.offers.length > 1 && (
                 <div className="mt-2 space-y-2">
-                  {form.links.slice(1).map((offer, i) => {
+                  {form.offers.slice(1).map((offer, i) => {
                     const idx = i + 1;
                     return (
                       <div

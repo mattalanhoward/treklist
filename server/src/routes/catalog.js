@@ -1,6 +1,7 @@
 // server/src/routes/catalog.js
 const express = require("express");
 const CatalogItem = require("../models/catalogItem");
+const MerchantOffer = require("../models/merchantOffer");
 
 const auth = require("../middleware/auth");
 const User = require("../models/user");
@@ -52,34 +53,40 @@ router.get("/items", auth, async (req, res) => {
       ];
     }
 
-    // ✅ Region enforcement:
-    // Only return items that have at least one link for user's region OR global.
-    // (CatalogItem has region per link, not per item.)
-    query.links = {
-      $elemMatch: { region: { $in: ["global", userRegion] } },
-    };
+    const offerProductIds = await MerchantOffer.distinct("productId", {
+      region: { $in: ["global", userRegion] },
+      productId: { $ne: null },
+    });
 
-    // IMPORTANT: use .lean() so API returns plain JSON (client expects item.name, not _doc.name)
+    query._id = { $in: offerProductIds };
+
     const items = await CatalogItem.find(query)
       .sort({ updatedAt: -1 })
       .lean()
       .skip(Number(skip))
       .limit(Math.min(Number(limit), 200))
       .select(
-        // Include fields Import UI needs
-        "name brand category subcategory itemType description weightGrams tags links updatedAt"
+        "name brand category subcategory itemType description weightGrams tags updatedAt"
       );
 
-    // ✅ Trim links so UI cannot show irrelevant regions
-    const safeItems = (items || []).map((it) => {
-      const links = Array.isArray(it.links) ? it.links : [];
-      return {
-        ...it,
-        links: links.filter(
-          (l) => l?.region === "global" || l?.region === userRegion
-        ),
-      };
-    });
+    const offers = await MerchantOffer.find({
+      productId: { $in: items.map((i) => i._id) },
+      region: { $in: ["global", userRegion] },
+    }).lean();
+
+    const offersByProduct = new Map();
+    for (const o of offers) {
+      const key = String(o.productId);
+      if (!offersByProduct.has(key)) offersByProduct.set(key, []);
+      offersByProduct.get(key).push(o);
+    }
+
+    const safeItems = items.map((it) => ({
+      ...it,
+      offers: (offersByProduct.get(String(it._id)) || []).sort(
+        (a, b) => (b.priority || 0) - (a.priority || 0)
+      ),
+    }));
 
     res.json(safeItems);
   } catch (err) {

@@ -32,6 +32,104 @@ function marketplaceFromAmazonUrl(url) {
   }
 }
 
+function slugifyMerchantId(network, merchantName) {
+  const base = (merchantName || "unknown")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+  return `${network}-${base || "unknown"}`;
+}
+
+function deriveAmazonMerchantIdFromDeepLink(deepLink) {
+  const marketplace = marketplaceFromAmazonUrl(deepLink);
+  return marketplace ? `amazon-${marketplace}` : "amazon-unknown";
+}
+
+function extractAmazonAsinFromUrl(url) {
+  try {
+    const u = new URL(url);
+    const path = u.pathname || "";
+
+    // Common Amazon patterns:
+    // /dp/ASIN
+    // /gp/product/ASIN
+    // /.../dp/ASIN
+    const m =
+      path.match(/\/dp\/([A-Z0-9]{10})(?:[/?]|$)/i) ||
+      path.match(/\/gp\/product\/([A-Z0-9]{10})(?:[/?]|$)/i);
+
+    return m ? m[1].toUpperCase() : null;
+  } catch {
+    return null;
+  }
+}
+
+function sanitizeOffers(rawOffers, { fallbackAsin, fallbackItemGroupId } = {}) {
+  const offers = Array.isArray(rawOffers) ? rawOffers : [];
+
+  return offers
+    .map((o) => {
+      const network = String(o.network || "")
+        .trim()
+        .toLowerCase();
+      const region = String(o.region || "global")
+        .trim()
+        .toLowerCase();
+      const deepLink = String(o.deepLink || o.url || "").trim(); // allow client sending url
+      const merchantName = o.merchantName
+        ? String(o.merchantName).trim()
+        : undefined;
+
+      let externalProductIdRaw =
+        o.externalProductId ?? o.externalId ?? undefined;
+
+      // ✅ Amazon: if missing, try to parse ASIN from deepLink
+      if (!externalProductIdRaw && network === "amazon" && deepLink) {
+        externalProductIdRaw = extractAmazonAsinFromUrl(deepLink);
+      }
+
+      // fallback last
+      if (!externalProductIdRaw)
+        externalProductIdRaw = fallbackAsin ?? undefined;
+
+      const externalProductId =
+        externalProductIdRaw != null && String(externalProductIdRaw).trim()
+          ? String(externalProductIdRaw).trim()
+          : undefined;
+
+      let merchantId =
+        o.merchantId != null && String(o.merchantId).trim()
+          ? String(o.merchantId).trim()
+          : undefined;
+
+      if (!merchantId) {
+        if (network === "amazon")
+          merchantId = deriveAmazonMerchantIdFromDeepLink(deepLink);
+        else merchantId = slugifyMerchantId(network, merchantName);
+      }
+
+      const priority = Number.isFinite(o.priority)
+        ? o.priority
+        : Number(o.priority) || 0;
+
+      return {
+        network,
+        region,
+        merchantId,
+        merchantName,
+        externalProductId,
+        deepLink,
+        priority,
+        itemGroupId:
+          o.itemGroupId != null && String(o.itemGroupId).trim()
+            ? String(o.itemGroupId).trim()
+            : fallbackItemGroupId,
+      };
+    })
+    .filter((o) => o.network && o.deepLink);
+}
+
 function normalizeDimensions(raw) {
   // raw can be: undefined (ignore), null (clear), or an object
   if (raw === undefined) return { dimensions: undefined, clear: false };
@@ -114,10 +212,24 @@ router.get("/", async (req, res) => {
       .skip(Number(skip) || 0)
       .limit(Math.min(Number(limit) || 100, 200)); // guard against silly limits
 
+    const ids = items.map((i) => i._id);
+    const offers = await MerchantOffer.find({ productId: { $in: ids } }).lean();
+    const offersByProduct = new Map();
+    for (const o of offers) {
+      const key = String(o.productId);
+      if (!offersByProduct.has(key)) offersByProduct.set(key, []);
+      offersByProduct.get(key).push(o);
+    }
+
     const total = await CatalogItem.countDocuments(query);
 
     res.json({
-      items,
+      items: items.map((it) => ({
+        ...it.toObject(),
+        offers: (offersByProduct.get(String(it._id)) || []).sort(
+          (a, b) => (b.priority || 0) - (a.priority || 0)
+        ),
+      })),
       total,
     });
   } catch (err) {
@@ -142,7 +254,7 @@ router.post("/", async (req, res) => {
       weightGrams,
       dimensions,
       tags,
-      links,
+      offers,
       canonicalAsin,
       itemGroupId,
     } = req.body || {};
@@ -151,24 +263,31 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ message: "Name is required." });
     }
 
-    if (!Array.isArray(links) || links.length === 0) {
+    const rawOffers = Array.isArray(offers)
+      ? offers
+      : Array.isArray(req.body?.links)
+      ? req.body.links
+      : [];
+    if (!Array.isArray(rawOffers) || rawOffers.length === 0) {
       return res
         .status(400)
-        .json({ message: "At least one affiliate link is required." });
+        .json({ message: "At least one offer is required." });
     }
 
-    const sanitizedLinks = links.map((link) => ({
-      network: link.network,
-      region: link.region || "global",
-      url: (link.url || "").trim(),
-      merchantName: link.merchantName || undefined,
-      externalId: link.externalId || undefined,
-      priority: typeof link.priority === "number" ? link.priority : 0,
-    }));
+    const sanitizedOffers = sanitizeOffers(rawOffers, {
+      fallbackAsin:
+        typeof canonicalAsin === "string" && canonicalAsin.trim()
+          ? canonicalAsin.trim().toUpperCase()
+          : undefined,
+      fallbackItemGroupId:
+        typeof itemGroupId === "string" && itemGroupId.trim()
+          ? itemGroupId.trim()
+          : undefined,
+    });
 
-    if (sanitizedLinks.some((l) => !l.network || !l.url)) {
+    if (sanitizedOffers.length === 0) {
       return res.status(400).json({
-        message: "Each link must have a network and url.",
+        message: "Each offer must have a network and deepLink/url.",
       });
     }
 
@@ -224,69 +343,36 @@ router.post("/", async (req, res) => {
       tags: Array.isArray(tags)
         ? tags.filter(Boolean).map((t) => String(t).trim())
         : [],
-      links: sanitizedLinks,
       canonicalAsin: normalizedCanonicalAsin,
       itemGroupId: normalizedItemGroupId,
       createdBy: req.userId,
     });
 
-    // Also upsert MerchantOffer rows from legacy links[]
-    // This keeps your system "Offers-first" while still storing links for backwards compat.
-    const offerOps = sanitizedLinks.map((l) => {
-      const network = String(l.network || "")
-        .trim()
-        .toLowerCase();
-      const region = String(l.region || "global")
-        .trim()
-        .toLowerCase();
-      const deepLink = String(l.url || "").trim();
-      const merchantName = l.merchantName
-        ? String(l.merchantName).trim()
-        : undefined;
-      const externalProductId = l.externalId
-        ? String(l.externalId).trim()
-        : normalizedCanonicalAsin || undefined;
-
-      // Prefer stable merchantId when we can
-      // - Amazon: if region matches a marketplace code, use `amazon-us`, `amazon-uk`, etc.
-      // - Otherwise fall back to `${network}-${merchantName || "unknown"}`
-      let merchantId;
-      if (network === "amazon") {
-        const marketplace = marketplaceFromAmazonUrl(deepLink);
-        merchantId = marketplace ? `amazon-${marketplace}` : "amazon-unknown";
-      } else {
-        merchantId = `${network}-${(merchantName || "unknown")
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/(^-|-$)/g, "")}`;
-      }
-
-      return {
-        updateOne: {
-          filter: {
-            network,
-            region,
-            merchantId,
-            externalProductId: externalProductId || deepLink, // last-resort uniqueness fallback
-          },
-          update: {
-            $set: {
-              network,
-              region,
-              merchantId,
-              merchantName:
-                merchantName || (network === "amazon" ? "Amazon" : undefined),
-              productId: item._id,
-              itemGroupId: normalizedItemGroupId,
-              externalProductId: externalProductId || undefined,
-              deepLink,
-              priority: typeof l.priority === "number" ? l.priority : 0,
-            },
-          },
-          upsert: true,
+    const offerOps = sanitizedOffers.map((o) => ({
+      updateOne: {
+        filter: {
+          productId: item._id,
+          network: o.network,
+          region: o.region,
+          merchantId: o.merchantId,
         },
-      };
-    });
+        update: {
+          $set: {
+            network: o.network,
+            region: o.region,
+            merchantId: o.merchantId,
+            merchantName:
+              o.merchantName || (o.network === "amazon" ? "Amazon" : undefined),
+            productId: item._id,
+            itemGroupId: o.itemGroupId || normalizedItemGroupId,
+            externalProductId: o.externalProductId, // data, not identity
+            deepLink: o.deepLink,
+            priority: o.priority,
+          },
+        },
+        upsert: true,
+      },
+    }));
 
     if (offerOps.length) {
       // unordered so one bad op doesn't block others
@@ -317,7 +403,7 @@ router.patch("/:id", async (req, res) => {
       "weightGrams",
       "dimensions",
       "tags",
-      "links",
+      "offers",
       "isActive",
       "canonicalAsin",
       "itemGroupId",
@@ -396,18 +482,34 @@ router.patch("/:id", async (req, res) => {
       }
     }
 
+    let incomingOffers;
+    if (Object.prototype.hasOwnProperty.call(req.body, "offers")) {
+      const normalizedCanonicalAsin = Object.prototype.hasOwnProperty.call(
+        updates,
+        "canonicalAsin"
+      )
+        ? typeof updates.canonicalAsin === "string" &&
+          updates.canonicalAsin.trim()
+          ? updates.canonicalAsin.trim().toUpperCase()
+          : undefined
+        : undefined;
+
+      incomingOffers = sanitizeOffers(req.body.offers, {
+        fallbackAsin: normalizedCanonicalAsin,
+        fallbackItemGroupId:
+          typeof updates.itemGroupId === "string" && updates.itemGroupId.trim()
+            ? updates.itemGroupId.trim()
+            : undefined,
+      });
+    }
+
+    // Never store offers on CatalogItem doc (offers live in MerchantOffer)
+    if (Object.prototype.hasOwnProperty.call(updates, "offers")) {
+      delete updates.offers;
+    }
+
     if (Array.isArray(updates.tags)) {
       updates.tags = updates.tags.filter(Boolean).map((t) => String(t).trim());
-    }
-    if (Array.isArray(updates.links)) {
-      updates.links = updates.links.map((link) => ({
-        network: link.network,
-        region: link.region || "global",
-        url: (link.url || "").trim(),
-        merchantName: link.merchantName || undefined,
-        externalId: link.externalId || undefined,
-        priority: typeof link.priority === "number" ? link.priority : 0,
-      }));
     }
 
     // Normalize imageUrls if present
@@ -432,7 +534,30 @@ router.patch("/:id", async (req, res) => {
       return res.status(404).json({ message: "Catalog item not found." });
     }
 
-    res.json(item);
+    if (incomingOffers) {
+      await MerchantOffer.deleteMany({ productId: item._id });
+
+      if (incomingOffers.length) {
+        await MerchantOffer.insertMany(
+          incomingOffers.map((o) => ({
+            network: o.network,
+            region: o.region,
+            merchantId: o.merchantId,
+            merchantName:
+              o.merchantName || (o.network === "amazon" ? "Amazon" : undefined),
+            productId: item._id,
+            itemGroupId: o.itemGroupId || item.itemGroupId,
+            externalProductId: o.externalProductId,
+            deepLink: o.deepLink,
+            priority: o.priority,
+          })),
+          { ordered: false }
+        );
+      }
+    }
+
+    const offers = await MerchantOffer.find({ productId: item._id }).lean();
+    return res.json({ ...item.toObject(), offers });
   } catch (err) {
     console.error(`PATCH /api/admin/catalog-items/${req.params.id} error`, err);
     res.status(500).json({ message: "Failed to update catalog item." });

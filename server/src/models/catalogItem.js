@@ -1,60 +1,6 @@
 const mongoose = require("mongoose");
 
 // ------------------------------------------------------------
-// LinkSchema → represents ONE affiliate link for ONE region.
-// This stays for backwards compatibility during migration.
-// Later, Offers will replace this, but keep this for now.
-// ------------------------------------------------------------
-const LinkSchema = new mongoose.Schema(
-  {
-    // Affiliate network providing this link
-    // "amazon" | "awin" | "impact"
-    network: {
-      type: String,
-      required: true,
-      enum: ["amazon", "awin", "impact", "direct"],
-    },
-
-    // TrekList-internal region routing key
-    // (not necessarily the network’s native region)
-    // e.g. "us", "uk", "eu", "de", "ca", "global"
-    region: {
-      type: String,
-      default: "global",
-      index: true,
-    },
-
-    // Full affiliate tracking URL
-    url: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-
-    // Merchant display label
-    // e.g., "Amazon", "Bergfreunde", "REI", etc.
-    merchantName: {
-      type: String,
-      trim: true,
-    },
-
-    // External product ID used by the network
-    // e.g. ASIN (Amazon) or ProductId (Awin)
-    externalId: {
-      type: String,
-      trim: true,
-    },
-
-    // Higher = preferred link for this region if duplicates exist
-    priority: {
-      type: Number,
-      default: 0,
-    },
-  },
-  { _id: false }
-);
-
-// ------------------------------------------------------------
 // CatalogItemSchema → Canonical product definition in TrekList.
 // This is the ADMIN-curated product model.
 // Everything else (Offers, AffiliateProduct, GlobalItem) maps to this.
@@ -190,13 +136,6 @@ const CatalogItemSchema = new mongoose.Schema(
     canonicalSku: {
       type: String,
       trim: true,
-    },
-
-    // LEGACY LINK STORAGE
-    // We will migrate away from this when Offers are fully adopted.
-    links: {
-      type: [LinkSchema],
-      default: [],
     },
 
     // ADMIN WHO CREATED THIS PRODUCT

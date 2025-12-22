@@ -11,11 +11,12 @@ const { searchLimiter, resolveLimiter } = require("../middleware/rateLimiters");
 const router = express.Router();
 
 // --- Simple in-memory TTL cache for resolve-link (no extra deps)
-// Key: `${itemGroupId}|${region}`
+// Key: `${key}|${region}` where key is productId or legacy group id
 const RESOLVE_CACHE = new Map();
 const MAX_CACHE_ENTRIES = 1000;
 const TTL_EXACT_MS = 6 * 60 * 60 * 1000; // 6h
 const TTL_FALLBACK_MS = 15 * 60 * 1000; // 15m
+
 function cacheGet(key) {
   const e = RESOLVE_CACHE.get(key);
   if (!e) return null;
@@ -25,6 +26,7 @@ function cacheGet(key) {
   }
   return e.val;
 }
+
 function cacheSet(key, val, ttlMs) {
   if (RESOLVE_CACHE.size >= MAX_CACHE_ENTRIES) {
     const firstKey = RESOLVE_CACHE.keys().next().value;
@@ -42,6 +44,16 @@ function normalizeBrandKey(brand) {
   return String(brand || "")
     .toLowerCase()
     .trim();
+}
+
+// MerchantOffer.region uses internal lowercase (uk/us/nl/...)
+// Incoming APIs often use ISO-ish (GB/US/NL/...)
+function normalizeOfferRegion(r) {
+  const x = String(r || "")
+    .trim()
+    .toLowerCase();
+  if (x === "gb") return "uk";
+  return x; // us/nl/de/fr/it/ca/uk...
 }
 
 /**
@@ -81,6 +93,8 @@ router.get(
         itemType = "",
         limit = 50,
       } = req.query;
+
+      // AffiliateProduct.region is stored as "GB"/"US"/...
       region = String(region).toUpperCase();
 
       const match = { network: "awin", region };
@@ -237,6 +251,13 @@ router.get(
  * GET /api/affiliates/awin/resolve-link
  * ?globalItemId=<id>&region=GB   (preferred)
  * or ?itemGroupId=<group>&region=GB
+ *
+ * Returns: { link, region, network, merchantId, merchantName, source }
+ *
+ * New model:
+ * - catalog-backed GlobalItem: resolve via GlobalItem.productId -> MerchantOffer.productId
+ * - legacy affiliate-backed: resolve via itemGroupId/externalProductId if present
+ * - custom items: optional fallback to GlobalItem.link (custom-only)
  */
 router.get(
   "/awin/resolve-link",
@@ -253,22 +274,32 @@ router.get(
         .status(400)
         .json({ error: { code: "BAD_QUERY", details: errors.array() } });
     }
+
     try {
       let { region, globalItemId, itemGroupId } = req.query;
-      region = String(region).toUpperCase();
+      const offerRegion = normalizeOfferRegion(region);
 
-      let group = itemGroupId || null;
-      let original = null;
+      let group = itemGroupId || null; // legacy: itemGroupId / externalProductId
+      let originalLink = null; // custom items only
+      let productId = null; // catalog-backed path
 
       if (globalItemId) {
         const gi = await GlobalItem.findOne({
           _id: globalItemId,
           owner: req.userId,
         }).lean();
-        if (!gi)
-          return res.status(404).json({ message: "Global item not found." });
 
-        original = { link: gi.link, region: gi?.affiliate?.region || null };
+        if (!gi) {
+          return res.status(404).json({ message: "Global item not found." });
+        }
+
+        // Custom items may still have link (custom-only now)
+        originalLink = gi.link || null;
+
+        // Catalog-backed items resolve via CatalogItem id
+        productId = gi.productId ? String(gi.productId) : null;
+
+        // Legacy affiliate-backed items resolve via stored affiliate ids
         group =
           group ||
           gi?.affiliate?.itemGroupId ||
@@ -276,13 +307,28 @@ router.get(
           null;
       }
 
-      if (!group) {
+      // If caller gave us a globalItemId, a custom item is valid input.
+      // Custom items don’t resolve via MerchantOffer — they use their own link.
+      if (globalItemId && !productId && !group) {
+        if (originalLink) {
+          return res.json({
+            link: originalLink,
+            region: offerRegion,
+            network: "custom",
+            source: "custom-link",
+          });
+        }
+        return res.status(404).json({ message: "No link available." });
+      }
+
+      // If they did NOT pass a globalItemId, we need an itemGroupId (legacy path)
+      if (!globalItemId && !group) {
         return res
           .status(400)
           .json({ message: "Missing itemGroupId or globalItemId." });
       }
 
-      const cacheKey = `${group}|${region}`;
+      const cacheKey = `${productId || group}|${offerRegion}`;
       const cached = cacheGet(cacheKey);
       if (cached) {
         if (process.env.NODE_ENV !== "production")
@@ -292,33 +338,73 @@ router.get(
       if (process.env.NODE_ENV !== "production")
         console.log("resolve-link cache MISS", cacheKey);
 
-      const mo = await MerchantOffer.findOne({
-        network: "awin",
-        itemGroupId: String(group),
-        region: String(region),
-      })
-        .sort({ updatedAt: -1 })
-        .lean();
+      // 1) Preferred: MerchantOffer by CatalogItem productId (region first, then global)
+      let mo = null;
 
-      if (mo?.awDeepLink) {
+      if (productId) {
+        mo = await MerchantOffer.findOne({
+          productId,
+          region: offerRegion,
+        })
+          .sort({ priority: -1, updatedAt: -1 })
+          .lean();
+
+        if (!mo) {
+          mo = await MerchantOffer.findOne({
+            productId,
+            region: "global",
+          })
+            .sort({ priority: -1, updatedAt: -1 })
+            .lean();
+        }
+      }
+
+      // 2) Fallback: legacy MerchantOffer by itemGroupId/externalProductId (region first, then global)
+      if (!mo && group) {
+        mo = await MerchantOffer.findOne({
+          region: offerRegion,
+          $or: [
+            { itemGroupId: String(group) },
+            { externalProductId: String(group) },
+          ],
+        })
+          .sort({ priority: -1, updatedAt: -1 })
+          .lean();
+
+        if (!mo) {
+          mo = await MerchantOffer.findOne({
+            region: "global",
+            $or: [
+              { itemGroupId: String(group) },
+              { externalProductId: String(group) },
+            ],
+          })
+            .sort({ priority: -1, updatedAt: -1 })
+            .lean();
+        }
+      }
+
+      // MerchantOffer deeplink field is deepLink
+      if (mo?.deepLink) {
         const payload = {
-          link: mo.awDeepLink,
+          link: mo.deepLink,
           region: mo.region,
-          network: mo.network,
-          merchantId: mo.merchantId,
-          merchantName: mo.merchantName,
-          source: "exact-region",
+          network: mo.network || "awin",
+          merchantId: mo.merchantId || null,
+          merchantName: mo.merchantName || null,
+          source: "offer",
         };
         cacheSet(cacheKey, payload, TTL_EXACT_MS);
         return res.json(payload);
       }
 
-      if (original?.link) {
+      // 3) Custom-item fallback: stored GlobalItem.link (if you still keep it for custom items)
+      if (originalLink) {
         const payload = {
-          link: original.link,
-          region: original.region,
-          network: "awin",
-          source: "fallback-original",
+          link: originalLink,
+          region: offerRegion,
+          network: "custom",
+          source: "custom-link",
         };
         cacheSet(cacheKey, payload, TTL_FALLBACK_MS);
         return res.json(payload);
@@ -336,7 +422,10 @@ router.get(
  * GET /api/affiliates/resolve
  * Query: itemId=<globalItemId>&region=<nl|us|gb|fr|it|ca|de>
  * Returns: { merchant, deeplink, source: "offer" | "product" } | null
- * NOTE: This is now a "resolve deeplink" endpoint.
+ *
+ * New behavior:
+ * - catalog-backed GlobalItem: resolve via MerchantOffer by productId + region/global
+ * - legacy affiliate-backed GlobalItem (awin): resolve via MerchantOffer or AffiliateProduct by itemGroupId/externalProductId
  */
 router.get(
   "/resolve",
@@ -347,6 +436,7 @@ router.get(
   async (req, res) => {
     try {
       const { itemId, region } = req.query;
+
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res
@@ -354,49 +444,101 @@ router.get(
           .json({ error: { code: "BAD_QUERY", details: errors.array() } });
       }
 
-      const REGION = String(region).toUpperCase();
+      const offerRegion = normalizeOfferRegion(region); // uk/us/nl...
+      const productRegion = String(region).toUpperCase(); // GB/US/NL... for AffiliateProduct
 
-      const item = await GlobalItem.findById(itemId).lean();
-      if (!item || !item.affiliate || item.affiliate.network !== "awin") {
-        return res.json(null);
-      }
-
-      const groupId =
-        item.affiliate.itemGroupId ||
-        item.affiliate.productId ||
-        item.affiliate.groupId;
-      if (!groupId) return res.json(null);
-
-      // 1) Try a region-matched merchant offer (most recently updated first)
-      const offer = await MerchantOffer.findOne({
-        network: "awin",
-        itemGroupId: String(groupId),
-        region: REGION,
-      })
-        .sort({ updatedAt: -1 })
-        .lean();
-
-      if (offer) {
-        return res.json({
-          merchant: offer.merchantName || offer.merchantId || null,
-          deeplink: offer.awDeepLink || null,
-          source: "offer",
-        });
-      }
-
-      // 2) Fallback to a region-matched product record
-      const prod = await AffiliateProduct.findOne({
-        network: "awin",
-        itemGroupId: String(groupId),
-        region: REGION,
+      // Owner-scoped to avoid leaking resolution for other users’ ids
+      const item = await GlobalItem.findOne({
+        _id: itemId,
+        owner: req.userId,
       }).lean();
+      if (!item) return res.json(null);
 
-      if (prod) {
-        return res.json({
-          merchant: prod.merchantName || prod.brand || null,
-          deeplink: prod.awDeepLink || null,
-          source: "product",
-        });
+      // 1) Catalog-backed path: GlobalItem.productId -> MerchantOffer.productId
+      if (item.productId) {
+        let offer = await MerchantOffer.findOne({
+          productId: String(item.productId),
+          region: offerRegion,
+        })
+          .sort({ priority: -1, updatedAt: -1 })
+          .lean();
+
+        if (!offer) {
+          offer = await MerchantOffer.findOne({
+            productId: String(item.productId),
+            region: "global",
+          })
+            .sort({ priority: -1, updatedAt: -1 })
+            .lean();
+        }
+
+        if (offer?.deepLink) {
+          return res.json({
+            merchant: offer.merchantName || offer.merchantId || null,
+            deeplink: offer.deepLink,
+            source: "offer",
+          });
+        }
+      }
+
+      // 2) Legacy affiliate-backed path (if any remain)
+      if (item?.affiliate?.network === "awin") {
+        const groupId =
+          item.affiliate.itemGroupId ||
+          item.affiliate.externalProductId ||
+          null;
+
+        if (!groupId) return res.json(null);
+
+        let offer = await MerchantOffer.findOne({
+          network: "awin",
+          region: offerRegion,
+          $or: [
+            { itemGroupId: String(groupId) },
+            { externalProductId: String(groupId) },
+          ],
+        })
+          .sort({ priority: -1, updatedAt: -1 })
+          .lean();
+
+        if (!offer) {
+          offer = await MerchantOffer.findOne({
+            network: "awin",
+            region: "global",
+            $or: [
+              { itemGroupId: String(groupId) },
+              { externalProductId: String(groupId) },
+            ],
+          })
+            .sort({ priority: -1, updatedAt: -1 })
+            .lean();
+        }
+
+        if (offer?.deepLink) {
+          return res.json({
+            merchant: offer.merchantName || offer.merchantId || null,
+            deeplink: offer.deepLink,
+            source: "offer",
+          });
+        }
+
+        // Fallback to AffiliateProduct (still uses uppercase region + awDeepLink)
+        const prod = await AffiliateProduct.findOne({
+          network: "awin",
+          region: productRegion,
+          $or: [
+            { itemGroupId: String(groupId) },
+            { externalProductId: String(groupId) },
+          ],
+        }).lean();
+
+        if (prod?.awDeepLink) {
+          return res.json({
+            merchant: prod.merchantName || prod.brand || null,
+            deeplink: prod.awDeepLink,
+            source: "product",
+          });
+        }
       }
 
       return res.json(null);

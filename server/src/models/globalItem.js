@@ -69,6 +69,17 @@ const GlobalItemSchema = new mongoose.Schema(
       type: String,
     },
 
+    // Affiliate metadata (present when this GlobalItem is merchant-managed)
+    affiliate: {
+      network: { type: String, trim: true },
+      region: { type: String, trim: true },
+      merchantId: { type: String, trim: true },
+      merchantName: { type: String, trim: true },
+      externalProductId: { type: String, trim: true },
+      deepLink: { type: String, trim: true },
+      itemGroupId: { type: String, trim: true },
+    },
+
     // Base weight in grams. This may be:
     // - copied from CatalogItem.weightGrams
     // - entered by the user
