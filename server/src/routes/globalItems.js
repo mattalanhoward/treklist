@@ -445,8 +445,8 @@ router.post("/from-catalog/bulk", async (req, res) => {
           category: c.category || null,
           subcategory: c.subcategory || null,
 
-          // Keep the existing GlobalItem.link field as the "default click-through"
-          link: resolved ? resolved.deepLink : "",
+          // link is ONLY for custom items; catalog-backed resolves via MerchantOffer
+          link: null,
 
           // Affiliate metadata for routing / immutability rules
           affiliate: resolved
@@ -537,7 +537,8 @@ router.post("/from-catalog/:id", async (req, res) => {
       tags: catalogItem.tags,
       category: catalogItem.category || null,
       subcategory: catalogItem.subcategory || null,
-      link: primaryOffer ? primaryOffer.deepLink : "",
+      // link is ONLY for custom items; catalog-backed resolves via MerchantOffer
+      link: null,
       // affiliate metadata for future routing
       affiliate: primaryOffer
         ? {

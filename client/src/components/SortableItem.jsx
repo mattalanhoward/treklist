@@ -38,14 +38,38 @@ export default function SortableItem({
   const weightText = useWeight(item.weight);
   const itemKey = `item-${catId}-${item._id}`;
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const { region: userRegion } = useUserSettings();
 
-  // choose link per priority: user link > resolved deeplink > none
-  const finalLink = item.link || null;
+  const canResolve = Boolean(
+    item?.globalItem || item?.productId || item?.affiliate?.network
+  );
+  const showCart = Boolean(item?.link) || canResolve;
 
-  const CartIconLink = ({ href, className = "" }) =>
-    href ? (
+  const CartIconLink = ({ className = "" }) =>
+    showCart ? (
       <AffiliateGateLink
-        href={href}
+        // Custom items only: direct link
+        href={item.link || null}
+        // Affiliate/catalog-backed: resolve via MerchantOffer at click time
+        getHref={
+          canResolve
+            ? async () => {
+                const globalItemId = item?.globalItem || item?._id;
+                const region = (userRegion || "us").toUpperCase();
+
+                try {
+                  const res = await api.get(
+                    `/affiliates/offers/resolve-link?globalItemId=${globalItemId}&region=${region}`
+                  );
+                  return res?.data?.link || null;
+                } catch (e) {
+                  // If resolver 404s, treat as no link
+                  if (e?.response?.status === 404) return null;
+                  return null;
+                }
+              }
+            : undefined
+        }
         context="private"
         className={className}
         title={t("gearList.items.openProductPageTitle")}
@@ -304,7 +328,7 @@ export default function SortableItem({
               itemId={item._id}
               fetchItems={fetchItems}
             />
-            <CartIconLink href={finalLink} />
+            <CartIconLink />
           </div>
         </div>
       </div>
@@ -378,7 +402,7 @@ export default function SortableItem({
 
           {/* 9) Cart */}
           <div className="justify-self-center">
-            <CartIconLink href={finalLink} />
+            <CartIconLink />
           </div>
 
           {/* 10) Actions menu (desktop list) */}
@@ -472,7 +496,7 @@ export default function SortableItem({
                 itemId={item._id}
                 fetchItems={fetchItems}
               />
-              <CartIconLink href={finalLink} />
+              <CartIconLink />
             </div>
           </div>
         </div>
