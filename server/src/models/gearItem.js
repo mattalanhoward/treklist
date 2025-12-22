@@ -88,13 +88,6 @@ const GearItemSchema = new mongoose.Schema(
       type: Number, // grams
     },
 
-    // Snapshot price in the list's "home" currency (usually USD or EUR).
-    // This is NOT the live affiliate price; that's on MerchantOffer.
-    // Think of this as "what this cost me / what I expect it to cost".
-    price: {
-      type: Number, // price in your chosen canonical currency
-    },
-
     // Direct URL for this item in this list.
     // Usually copied from GlobalItem.link or a resolved offer deepLink,
     // but can be overridden by the user if allowed.

@@ -4,14 +4,12 @@ import api from "../services/api";
 import { FaTimes } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import CurrencyInput from "../components/CurrencyInput";
 import LinkInput from "../components/LinkInput";
 import { useUnit } from "../hooks/useUnit";
 import { useWeightInput } from "../hooks/useWeightInput";
 // import AffiliateProductPicker from "./AffiliateProductPicker";
 import { useUserSettings } from "../contexts/UserSettings";
 import { detectRegion, normalizeRegion } from "../utils/region";
-import { extractWeightGrams } from "../utils/weight";
 
 function ImportCatalogTab({ onImported }) {
   const { t } = useTranslation("common");
@@ -353,7 +351,6 @@ export default function GlobalItemModal({
   const [name, setName] = useState("");
   const [brand, setBrand] = useState("");
   const [description, setDescription] = useState("");
-  const [price, setPrice] = useState("");
   const [link, setLink] = useState("");
   const [worn, setWorn] = useState(false);
   const [consumable, setConsumable] = useState(false);
@@ -385,15 +382,13 @@ export default function GlobalItemModal({
     return "";
   };
 
-  // When a product is picked, prefill the visible fields and lock price/link
+  // When a product is picked, prefill the visible fields and lock link
   // function handlePickAffiliate(p) {
   //   setAffProduct(p);
   //   setTab("custom");
   //   setName(p?.name || "");
   //   setBrand(p?.brand || p?.merchantName || "");
   //   setDescription(p?.description || "");
-  //   // keep price as a number for CurrencyInput; empty string otherwise
-  //   setPrice(typeof p?.price === "number" ? p.price : "");
   //   setLink(p?.awDeepLink || "");
   //   const derived =
   //     deriveItemTypeFromCategoryPath(p?.categoryPath) ||
@@ -415,21 +410,6 @@ export default function GlobalItemModal({
   //     setWeightSource("heuristic");
   //   }
   // }
-
-  // Region: prefer user setting, then browser, always normalized to ISO-2
-  // Region/Currency/Locale from settings
-  const { region: settingsRegion, currency, locale } = useUserSettings();
-  const CURRENCY_SYMBOL = {
-    USD: "$",
-    EUR: "€",
-    GBP: "£",
-    CAD: "C$",
-    AUD: "A$",
-    CHF: "CHF",
-    SEK: "kr",
-  };
-  const currencySymbol = CURRENCY_SYMBOL[currency] || "";
-  const regionForSearch = normalizeRegion(settingsRegion || detectRegion());
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -462,7 +442,7 @@ export default function GlobalItemModal({
       let created;
 
       if (selectedAffiliate?._id) {
-        // Affiliate-backed: server controls price/link; we send only overrides
+        // Affiliate-backed: server controls link; we send only overrides
         const payload = {
           affiliateProductId: selectedAffiliate._id,
           name: name.trim(),
@@ -482,7 +462,7 @@ export default function GlobalItemModal({
           .post("/global/items/from-affiliate", payload)
           .then((r) => r.data);
       } else {
-        // Custom item: same as your original flow (price/link allowed)
+        // Custom item: same as your original flow (link allowed)
         const payload = { category, name: name.trim() };
         if (itemType.trim()) payload.itemType = itemType.trim();
         if (brand.trim()) payload.brand = brand.trim();
@@ -490,18 +470,6 @@ export default function GlobalItemModal({
         if (typeof grams === "number") {
           payload.weight = grams;
           if (weightSource === "heuristic") payload.weightSource = "heuristic";
-        }
-
-        if (price === "" || price == null) {
-          payload.price = null; // clearing the field sends null
-        } else {
-          const p = Number(price);
-          if (Number.isNaN(p) || p < 0) {
-            toast.error(t("validation.priceInvalid"));
-            setLoading(false);
-            return;
-          }
-          payload.price = p; // keep 0 if entered
         }
 
         if (link.trim()) payload.link = link.trim();
@@ -601,7 +569,6 @@ export default function GlobalItemModal({
                   setBrand("");
                   setDescription("");
                   setDisplayWeight(""); // clears the visible weight input
-                  setPrice("");
                   setLink("");
                   setWorn(false);
                   setConsumable(false);
@@ -702,7 +669,7 @@ export default function GlobalItemModal({
                   )}
                 </div>
 
-                {/* Weight + Price */}
+                {/* Weight */}
                 <div className="flex space-x-1 sm:space-x-2 col-span-1 sm:col-span-2">
                   <div className="flex-1">
                     <label className="block font-medium text-primary mb-0.5">
@@ -720,35 +687,6 @@ export default function GlobalItemModal({
                       onChange={(e) => setDisplayWeight(e.target.value)}
                       className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
                     />
-                  </div>
-
-                  <div className="flex-1">
-                    <label className="block font-medium text-primary mb-0.5">
-                      {t("globalItemModal.labels.price", {
-                        currency: currencySymbol,
-                      })}
-                    </label>
-                    <div className="relative">
-                      <CurrencyInput
-                        value={price}
-                        currency={currency}
-                        locale={locale}
-                        onChange={(val) => setPrice(val)}
-                        readOnly={!!affProduct}
-                      />
-                      {affProduct && (
-                        <button
-                          type="button"
-                          aria-label={t(
-                            "globalItemModal.messages.affiliatePriceLockedTitle"
-                          )}
-                          title={t(
-                            "globalItemModal.messages.affiliatePriceLockedBody"
-                          )}
-                          className="absolute inset-0 cursor-not-allowed bg-transparent"
-                        />
-                      )}
-                    </div>
                   </div>
                 </div>
               </div>

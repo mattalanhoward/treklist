@@ -1,5 +1,13 @@
-require('dotenv').config();
-const app = require('./app');
+require("dotenv").config();
+
+console.log("CWD:", process.cwd());
+console.log(
+  "AMAZON_PAAPI_MOCK:",
+  JSON.stringify(process.env.AMAZON_PAAPI_MOCK)
+);
+
+const app = require("./app");
+const mongoose = require("mongoose");
 
 const PORT = process.env.PORT || 5001;
 

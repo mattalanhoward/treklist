@@ -108,7 +108,7 @@ router.post(
         dedupeQuery["affiliate.region"] &&
         dedupeQuery["affiliate.externalProductId"];
 
-      // Build the new GlobalItem — price/link always from affiliate product
+      // Build the new GlobalItem — link always from affiliate product
       const data = {
         owner: req.userId,
         name: req.body.name ?? p.name,
@@ -122,7 +122,6 @@ router.post(
         quantity: Number.isFinite(req.body.quantity)
           ? Number(req.body.quantity)
           : 1,
-        price: p.price ?? null,
         link: p.awDeepLink,
         // keep whatever category model you use today; skip if not applicable
         category: req.body.category ?? null,
@@ -206,13 +205,9 @@ router.patch("/:id", async (req, res) => {
     }
 
     const isAffiliate = current.affiliate && current.affiliate.network;
-    if (
-      isAffiliate &&
-      (Object.prototype.hasOwnProperty.call(req.body, "price") ||
-        Object.prototype.hasOwnProperty.call(req.body, "link"))
-    ) {
+    if (isAffiliate && Object.prototype.hasOwnProperty.call(req.body, "link")) {
       return res.status(400).json({
-        message: "price and link are immutable for affiliate-backed items.",
+        message: "Link is immutable for affiliate-backed items.",
       });
     }
 
@@ -224,7 +219,6 @@ router.patch("/:id", async (req, res) => {
       "brand",
       "description",
       "weight",
-      "price",
       "link",
     ];
 
@@ -252,7 +246,6 @@ router.patch("/:id", async (req, res) => {
       brand: updated.brand,
       description: updated.description,
       weight: updated.weight,
-      price: updated.price,
       link: updated.link,
     };
 

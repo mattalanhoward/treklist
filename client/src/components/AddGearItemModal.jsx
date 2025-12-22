@@ -133,7 +133,6 @@ export default function AddGearItemModal({
               name: sel.name,
               description: sel.description,
               weight: sel.weight,
-              price: sel.price,
               link: sel.link,
               worn: sel.worn,
               consumable: sel.consumable,

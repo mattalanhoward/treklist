@@ -1,14 +1,93 @@
 // server/src/routes/adminCatalogItems.js
 const express = require("express");
 const CatalogItem = require("../models/catalogItem");
-const requireAdmin = require("../middleware/requireAdmin");
-// Adjust this path if your auth middleware lives somewhere else:
-const auth = require("../middleware/auth");
+const MerchantOffer = require("../models/merchantOffer");
 
 const router = express.Router();
 
-// All routes below require auth + admin
-router.use(auth, requireAdmin);
+const ALLOWED_DIM_UNITS = new Set(["cm", "in"]);
+
+function marketplaceFromAmazonUrl(url) {
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+
+    // normalize
+    const h = host.replace(/^smile\./, "").replace(/^www\./, "");
+
+    // match common Amazon domains
+    if (h === "amazon.com") return "us";
+    if (h === "amazon.co.uk") return "uk";
+    if (h === "amazon.de") return "de";
+    if (h === "amazon.fr") return "fr";
+    if (h === "amazon.it") return "it";
+    if (h === "amazon.es") return "es";
+    if (h === "amazon.nl") return "nl";
+    if (h === "amazon.ca") return "ca";
+    if (h === "amazon.se") return "se";
+    if (h === "amazon.pl") return "pl";
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function normalizeDimensions(raw) {
+  // raw can be: undefined (ignore), null (clear), or an object
+  if (raw === undefined) return { dimensions: undefined, clear: false };
+  if (raw === null) return { dimensions: null, clear: true };
+
+  if (typeof raw !== "object" || Array.isArray(raw)) {
+    return { error: "Invalid dimensions format." };
+  }
+
+  const lengthRaw = raw.length;
+  const widthRaw = raw.width;
+  const heightRaw = raw.height;
+  const unitRaw = raw.unit;
+
+  const hasAny =
+    (lengthRaw !== undefined && lengthRaw !== "" && lengthRaw !== null) ||
+    (widthRaw !== undefined && widthRaw !== "" && widthRaw !== null) ||
+    (heightRaw !== undefined && heightRaw !== "" && heightRaw !== null);
+
+  if (!hasAny) {
+    // treat “all blank” as “clear”
+    return { dimensions: null, clear: true };
+  }
+
+  const toNum = (v) => {
+    if (v === undefined || v === null || v === "") return undefined;
+    const n = Number(v);
+    if (Number.isNaN(n) || n < 0) return "__INVALID__";
+    return n;
+  };
+
+  const length = toNum(lengthRaw);
+  const width = toNum(widthRaw);
+  const height = toNum(heightRaw);
+  if (
+    length === "__INVALID__" ||
+    width === "__INVALID__" ||
+    height === "__INVALID__"
+  ) {
+    return {
+      error: "Dimensions length/width/height must be non-negative numbers.",
+    };
+  }
+
+  const unit = String(unitRaw || "cm")
+    .trim()
+    .toLowerCase();
+  if (!ALLOWED_DIM_UNITS.has(unit)) {
+    return { error: 'Dimensions unit must be "cm" or "in".' };
+  }
+
+  return {
+    dimensions: { length, width, height, unit },
+    clear: false,
+  };
+}
 
 // GET /api/admin/catalog-items
 // Basic list endpoint with optional filters
@@ -61,10 +140,9 @@ router.post("/", async (req, res) => {
       description,
       imageUrls,
       weightGrams,
+      dimensions,
       tags,
       links,
-      priceHint,
-      priceHintCurrency,
       canonicalAsin,
       itemGroupId,
     } = req.body || {};
@@ -108,15 +186,6 @@ router.post("/", async (req, res) => {
       normalizedWeight = n;
     }
 
-    let normalizedPriceHint = null;
-    if (priceHint !== undefined && priceHint !== null && priceHint !== "") {
-      const n = Number(priceHint);
-      if (Number.isNaN(n) || n < 0) {
-        return res.status(400).json({ message: "Invalid priceHint." });
-      }
-      normalizedPriceHint = n;
-    }
-
     const normalizedImageUrls = Array.isArray(imageUrls)
       ? imageUrls.map((u) => String(u || "").trim()).filter(Boolean)
       : typeof imageUrls === "string"
@@ -125,11 +194,6 @@ router.post("/", async (req, res) => {
           .map((u) => u.trim())
           .filter(Boolean)
       : [];
-
-    const normalizedPriceHintCurrency =
-      typeof priceHintCurrency === "string" && priceHintCurrency.trim()
-        ? priceHintCurrency.trim().toUpperCase()
-        : undefined;
 
     const normalizedCanonicalAsin =
       typeof canonicalAsin === "string" && canonicalAsin.trim()
@@ -141,6 +205,11 @@ router.post("/", async (req, res) => {
         ? itemGroupId.trim()
         : undefined;
 
+    const dimNorm = normalizeDimensions(dimensions);
+    if (dimNorm?.error) {
+      return res.status(400).json({ message: dimNorm.error });
+    }
+
     const item = await CatalogItem.create({
       name: name.trim(),
       brand: brand && brand.trim(),
@@ -151,16 +220,78 @@ router.post("/", async (req, res) => {
       description: description && description.trim(),
       imageUrls: normalizedImageUrls,
       weightGrams: normalizedWeight,
+      dimensions: dimNorm.clear ? undefined : dimNorm.dimensions,
       tags: Array.isArray(tags)
         ? tags.filter(Boolean).map((t) => String(t).trim())
         : [],
       links: sanitizedLinks,
-      priceHint: normalizedPriceHint,
-      priceHintCurrency: normalizedPriceHintCurrency,
       canonicalAsin: normalizedCanonicalAsin,
       itemGroupId: normalizedItemGroupId,
       createdBy: req.userId,
     });
+
+    // Also upsert MerchantOffer rows from legacy links[]
+    // This keeps your system "Offers-first" while still storing links for backwards compat.
+    const offerOps = sanitizedLinks.map((l) => {
+      const network = String(l.network || "")
+        .trim()
+        .toLowerCase();
+      const region = String(l.region || "global")
+        .trim()
+        .toLowerCase();
+      const deepLink = String(l.url || "").trim();
+      const merchantName = l.merchantName
+        ? String(l.merchantName).trim()
+        : undefined;
+      const externalProductId = l.externalId
+        ? String(l.externalId).trim()
+        : normalizedCanonicalAsin || undefined;
+
+      // Prefer stable merchantId when we can
+      // - Amazon: if region matches a marketplace code, use `amazon-us`, `amazon-uk`, etc.
+      // - Otherwise fall back to `${network}-${merchantName || "unknown"}`
+      let merchantId;
+      if (network === "amazon") {
+        const marketplace = marketplaceFromAmazonUrl(deepLink);
+        merchantId = marketplace ? `amazon-${marketplace}` : "amazon-unknown";
+      } else {
+        merchantId = `${network}-${(merchantName || "unknown")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/(^-|-$)/g, "")}`;
+      }
+
+      return {
+        updateOne: {
+          filter: {
+            network,
+            region,
+            merchantId,
+            externalProductId: externalProductId || deepLink, // last-resort uniqueness fallback
+          },
+          update: {
+            $set: {
+              network,
+              region,
+              merchantId,
+              merchantName:
+                merchantName || (network === "amazon" ? "Amazon" : undefined),
+              productId: item._id,
+              itemGroupId: normalizedItemGroupId,
+              externalProductId: externalProductId || undefined,
+              deepLink,
+              priority: typeof l.priority === "number" ? l.priority : 0,
+            },
+          },
+          upsert: true,
+        },
+      };
+    });
+
+    if (offerOps.length) {
+      // unordered so one bad op doesn't block others
+      await MerchantOffer.bulkWrite(offerOps, { ordered: false });
+    }
 
     res.status(201).json(item);
   } catch (err) {
@@ -184,11 +315,10 @@ router.patch("/:id", async (req, res) => {
       "description",
       "imageUrls",
       "weightGrams",
+      "dimensions",
       "tags",
       "links",
       "isActive",
-      "priceHint",
-      "priceHintCurrency",
       "canonicalAsin",
       "itemGroupId",
     ];
@@ -222,13 +352,20 @@ router.patch("/:id", async (req, res) => {
       updates.description = updates.description.trim();
     }
 
-    if (Object.prototype.hasOwnProperty.call(updates, "priceHintCurrency")) {
-      const v = String(updates.priceHintCurrency || "").trim();
-      if (!v) {
-        updates.$unset = { ...(updates.$unset || {}), priceHintCurrency: 1 };
-        delete updates.priceHintCurrency;
-      } else updates.priceHintCurrency = v.toUpperCase();
+    // Normalize dimensions if present (allow clearing)
+    if (Object.prototype.hasOwnProperty.call(updates, "dimensions")) {
+      const dimNorm = normalizeDimensions(updates.dimensions);
+      if (dimNorm?.error) {
+        return res.status(400).json({ message: dimNorm.error });
+      }
+      if (dimNorm.clear) {
+        updates.$unset = { ...(updates.$unset || {}), dimensions: 1 };
+        delete updates.dimensions;
+      } else {
+        updates.dimensions = dimNorm.dimensions;
+      }
     }
+
     if (Object.prototype.hasOwnProperty.call(updates, "canonicalAsin")) {
       const v = String(updates.canonicalAsin || "").trim();
       if (!v) {
@@ -256,20 +393,6 @@ router.patch("/:id", async (req, res) => {
           return res.status(400).json({ message: "Invalid weightGrams." });
         }
         updates.weightGrams = n;
-      }
-    }
-
-    // Normalize priceHint if present
-    if (Object.prototype.hasOwnProperty.call(updates, "priceHint")) {
-      const raw = updates.priceHint;
-      if (raw === null || raw === "" || typeof raw === "undefined") {
-        updates.priceHint = null;
-      } else {
-        const n = Number(raw);
-        if (Number.isNaN(n) || n < 0) {
-          return res.status(400).json({ message: "Invalid priceHint." });
-        }
-        updates.priceHint = n;
       }
     }
 

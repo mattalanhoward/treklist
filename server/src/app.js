@@ -17,6 +17,7 @@ const globalItemsRoutes = require("./routes/globalItems");
 const settingsRouter = require("./routes/settings");
 const affiliatesRouter = require("./routes/affiliates");
 const adminCatalogItemsRouter = require("./routes/adminCatalogItems");
+const adminAmazon = require("./routes/adminAmazon");
 const adminUsersRouter = require("./routes/adminUsers");
 const adminPublicListsRouter = require("./routes/adminPublicLists");
 const { publicShareLimiter } = require("./middleware/rateLimiters");
@@ -96,6 +97,7 @@ app.use(
   requireAdmin,
   adminCatalogItemsRouter
 );
+app.use("/api/admin/amazon", authMiddleware, requireAdmin, adminAmazon);
 app.use("/api/admin/users", authMiddleware, requireAdmin, adminUsersRouter);
 app.use(
   "/api/admin/public-lists",

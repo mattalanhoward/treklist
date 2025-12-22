@@ -72,9 +72,7 @@ export default function TermsContent() {
 
       <ul className="list-disc pl-6 space-y-1">
         <li>Create and manage gear lists and categories.</li>
-        <li>
-          Store item information such as weight, price, and personal notes.
-        </li>
+        <li>Store item information such as weight and personal notes.</li>
         <li>Generate packing checklists and printable views.</li>
         <li>Create read-only public share links or embedded views.</li>
       </ul>
@@ -305,7 +303,7 @@ export default function TermsContent() {
       </p>
 
       <ul className="list-disc pl-6 space-y-1">
-        <li>Checking the accuracy of item weights and prices.</li>
+        <li>Checking the accuracy of item weights.</li>
         <li>Making sure your gear is safe and suitable for your trip.</li>
         <li>Making your own safety decisions in the outdoors.</li>
       </ul>

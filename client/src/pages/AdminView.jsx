@@ -1,5 +1,5 @@
 // client/src/pages/AdminView.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import api from "../services/api";
 import { toast } from "react-hot-toast";
 import {
@@ -42,6 +42,7 @@ function GearCatalogSection({ mode = "both" }) {
   const [error, setError] = useState("");
   const [editingItem, setEditingItem] = useState(null);
   const [archivingId, setArchivingId] = useState(null);
+
   const [showArchived, setShowArchived] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(true);
   const [showListBody, setShowListBody] = useState(true);
@@ -51,37 +52,68 @@ function GearCatalogSection({ mode = "both" }) {
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterBrand, setFilterBrand] = useState("all");
   const [filterNetwork, setFilterNetwork] = useState("all");
-  const [sort, setSort] = useState({
-    field: "updatedAt",
-    dir: "desc", // "asc" | "desc"
-  });
+  const [sort, setSort] = useState({ field: "updatedAt", dir: "desc" });
 
-  // pagination
-  const [page, setPage] = useState(0); // 0-based
+  // Pagination
+  const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(25);
 
   const [creating, setCreating] = useState(false);
+
+  // Keep these here so this snippet is self-contained.
+  const NETWORK_OPTIONS = [
+    { value: "amazon", label: "Amazon" },
+    { value: "awin", label: "Awin" },
+    { value: "impact", label: "Impact" },
+  ];
+
+  const REGION_OPTIONS = [
+    { value: "global", label: "Global" },
+    { value: "us", label: "US" },
+    { value: "uk", label: "UK" },
+    { value: "de", label: "DE" },
+    { value: "fr", label: "FR" },
+    { value: "it", label: "IT" },
+    { value: "es", label: "ES" },
+    { value: "nl", label: "NL" },
+    { value: "ca", label: "CA" },
+    { value: "se", label: "SE" },
+    { value: "pl", label: "PL" },
+  ];
+
   const [form, setForm] = useState({
     name: "",
     brand: "",
     category: "",
-    subcategory: "", // NEW: more specific grouping (e.g. tent, tarp)
-    itemType: "", // NEW: human-facing type label
-    modelNumber: "", // NEW: manufacturer model number
+    subcategory: "",
+    itemType: "",
+    modelNumber: "",
     description: "",
+    amazonDescriptionNeedsRewrite: false,
+    amazonDescriptionConfirmed: false,
     weightGrams: "",
+    dimLength: "",
+    dimWidth: "",
+    dimHeight: "",
+    dimUnit: "cm",
     tags: "",
-    imageUrlsText: "", // NEW: textarea input → array on save
-    priceHint: "",
-    priceHintCurrency: "", // NEW: e.g. USD / EUR / GBP
-    canonicalAsin: "", // NEW: main ASIN for this product
-    itemGroupId: "", // NEW: internal group key across networks
+    imageUrlsText: "",
+    canonicalAsin: "",
+    itemGroupId: "",
 
-    linkNetwork: "amazon",
-    linkRegion: "global",
-    linkUrl: "",
-    linkMerchantName: "",
-    linkExternalId: "",
+    amazonAsinLookup: "",
+    amazonMarketplace: "us",
+
+    links: [
+      {
+        network: "amazon",
+        region: "global",
+        url: "",
+        merchantName: "",
+        externalId: "",
+        priority: 10,
+      },
+    ],
   });
 
   const loadItems = async ({ includeArchived } = {}) => {
@@ -110,22 +142,75 @@ function GearCatalogSection({ mode = "both" }) {
 
   useEffect(() => {
     loadItems();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const blankOffer = () => ({
+    network: "amazon",
+    region: "global",
+    url: "",
+    merchantName: "",
+    externalId: "",
+    priority: 10,
+  });
+
+  const getPrimaryOffer = (f) =>
+    Array.isArray(f.links) && f.links[0] ? f.links[0] : blankOffer();
+
+  const updateOffer = (idx, key, value) => {
+    setForm((prev) => {
+      const links = Array.isArray(prev.links) ? [...prev.links] : [];
+      while (links.length <= idx) links.push(blankOffer());
+      links[idx] = { ...links[idx], [key]: value };
+      return { ...prev, links };
+    });
+  };
+
+  const addOffer = () => {
+    setForm((prev) => ({
+      ...prev,
+      links: [...(Array.isArray(prev.links) ? prev.links : []), blankOffer()],
+    }));
+  };
+
+  const removeOffer = (idx) => {
+    setForm((prev) => {
+      const links = Array.isArray(prev.links) ? [...prev.links] : [];
+      links.splice(idx, 1);
+      // keep at least one offer
+      return { ...prev, links: links.length ? links : prev.links };
+    });
   };
 
   const handleCreate = async (e) => {
     e.preventDefault();
-    if (!form.name.trim()) {
-      toast.error("Name is required.");
-      return;
+
+    if (!form.name.trim()) return toast.error("Name is required.");
+    if (!Array.isArray(form.links) || form.links.length === 0)
+      return toast.error("At least one offer is required.");
+
+    if (
+      form.links.some(
+        (l) => !String(l.network || "").trim() || !String(l.url || "").trim()
+      )
+    ) {
+      return toast.error("Each offer must have a network and URL.");
     }
-    if (!form.linkUrl.trim()) {
-      toast.error("Affiliate URL is required.");
-      return;
+
+    if (
+      getPrimaryOffer(form).network === "amazon" &&
+      form.amazonDescriptionNeedsRewrite &&
+      !form.amazonDescriptionConfirmed
+    ) {
+      return toast.error("Please confirm you rewrote the Amazon description.");
     }
 
     setCreating(true);
@@ -146,6 +231,19 @@ function GearCatalogSection({ mode = "both" }) {
         modelNumber: form.modelNumber.trim() || undefined,
         description: form.description.trim() || undefined,
         weightGrams: form.weightGrams ? Number(form.weightGrams) : undefined,
+        dimensions:
+          form.dimLength || form.dimWidth || form.dimHeight
+            ? {
+                length:
+                  form.dimLength === "" ? undefined : Number(form.dimLength),
+                width: form.dimWidth === "" ? undefined : Number(form.dimWidth),
+                height:
+                  form.dimHeight === "" ? undefined : Number(form.dimHeight),
+                unit: String(form.dimUnit || "cm")
+                  .trim()
+                  .toLowerCase(),
+              }
+            : undefined,
         tags: form.tags
           ? form.tags
               .split(",")
@@ -153,27 +251,24 @@ function GearCatalogSection({ mode = "both" }) {
               .filter(Boolean)
           : [],
         imageUrls,
-        priceHint:
-          form.priceHint === "" ? null : Number(form.priceHint) || null,
-        priceHintCurrency: form.priceHintCurrency.trim() || undefined,
         canonicalAsin: form.canonicalAsin.trim() || undefined,
         itemGroupId: form.itemGroupId.trim() || undefined,
-        links: [
-          {
-            network: form.linkNetwork,
-            region: form.linkRegion || "global",
-            url: form.linkUrl.trim(),
-            merchantName: form.linkMerchantName.trim() || undefined,
-            externalId: form.linkExternalId.trim() || undefined,
-            priority: 10,
-          },
-        ],
+        links: form.links.map((l) => ({
+          network: String(l.network || "").trim(),
+          region: String(l.region || "global").trim(),
+          url: String(l.url || "").trim(),
+          merchantName: l.merchantName
+            ? String(l.merchantName).trim()
+            : undefined,
+          externalId: l.externalId ? String(l.externalId).trim() : undefined,
+          priority: Number(l.priority) || 0,
+        })),
       };
 
       await api.post("/admin/catalog-items", payload);
       toast.success("Catalog item created.");
-      setForm((prev) => ({
-        ...prev,
+
+      setForm({
         name: "",
         brand: "",
         category: "",
@@ -181,18 +276,23 @@ function GearCatalogSection({ mode = "both" }) {
         itemType: "",
         modelNumber: "",
         description: "",
+        amazonDescriptionNeedsRewrite: false,
+        amazonDescriptionConfirmed: false,
         weightGrams: "",
+        dimLength: "",
+        dimWidth: "",
+        dimHeight: "",
+        dimUnit: "cm",
         tags: "",
         imageUrlsText: "",
-        priceHint: "",
-        priceHintCurrency: "",
         canonicalAsin: "",
         itemGroupId: "",
-        linkUrl: "",
-        linkMerchantName: "",
-        linkExternalId: "",
-      }));
-      loadItems();
+        amazonAsinLookup: "",
+        amazonMarketplace: "us",
+        links: [blankOffer()],
+      });
+
+      loadItems({ includeArchived: showArchived });
     } catch (err) {
       console.error("Failed to create CatalogItem", err);
       const msg =
@@ -202,6 +302,115 @@ function GearCatalogSection({ mode = "both" }) {
       toast.error(msg);
     } finally {
       setCreating(false);
+    }
+  };
+
+  const handleAmazonLookup = async () => {
+    if (getPrimaryOffer(form).network !== "amazon") {
+      toast.error("Switch Network to Amazon to use ASIN lookup.");
+      return;
+    }
+
+    const asin = String(form.amazonAsinLookup || "")
+      .trim()
+      .toUpperCase();
+    if (!/^[A-Z0-9]{10}$/.test(asin)) {
+      toast.error("Enter a valid 10-character ASIN.");
+      return;
+    }
+
+    const marketplace = String(form.amazonMarketplace || "us")
+      .trim()
+      .toLowerCase();
+    const region = String(getPrimaryOffer(form).region || "global")
+      .trim()
+      .toLowerCase();
+
+    try {
+      const { data } = await api.post("/admin/amazon/lookup", {
+        asin,
+        marketplace,
+        region,
+      });
+
+      const prefill = data?.prefill || {};
+      const offer = data?.offer || {};
+
+      const fallbackUrl = `https://www.amazon.com/dp/${asin}`;
+      const nextLinkUrl =
+        typeof offer.deepLink === "string" && offer.deepLink.trim()
+          ? offer.deepLink.trim()
+          : fallbackUrl;
+
+      setForm((prev) => {
+        const nextLinks = Array.isArray(prev.links)
+          ? [...prev.links]
+          : [blankOffer()];
+        if (!nextLinks[0]) nextLinks[0] = blankOffer();
+
+        nextLinks[0] = {
+          ...nextLinks[0],
+          network: "amazon",
+          url: nextLinkUrl,
+          merchantName: nextLinks[0].merchantName || "Amazon",
+          externalId: asin,
+        };
+
+        return {
+          ...prev,
+          name: typeof prefill.name === "string" ? prefill.name : prev.name,
+          brand: typeof prefill.brand === "string" ? prefill.brand : prev.brand,
+          description:
+            typeof prefill.description === "string"
+              ? prefill.description
+              : prev.description,
+          modelNumber:
+            typeof prefill.modelNumber === "string"
+              ? prefill.modelNumber
+              : prev.modelNumber,
+          weightGrams:
+            typeof prefill.weightGrams === "number"
+              ? String(prefill.weightGrams)
+              : prev.weightGrams,
+          dimLength:
+            typeof prefill?.dimensions?.length === "number" &&
+            prefill.dimensions.length > 0
+              ? String(prefill.dimensions.length)
+              : prev.dimLength,
+          dimWidth:
+            typeof prefill?.dimensions?.width === "number" &&
+            prefill.dimensions.width > 0
+              ? String(prefill.dimensions.width)
+              : prev.dimWidth,
+          dimHeight:
+            typeof prefill?.dimensions?.height === "number" &&
+            prefill.dimensions.height > 0
+              ? String(prefill.dimensions.height)
+              : prev.dimHeight,
+          dimUnit:
+            typeof prefill?.dimensions?.unit === "string" &&
+            prefill.dimensions.unit.trim()
+              ? prefill.dimensions.unit.trim().toLowerCase()
+              : prev.dimUnit,
+          imageUrlsText:
+            Array.isArray(prefill.imageUrls) && prefill.imageUrls.length
+              ? String(prefill.imageUrls[0])
+              : prev.imageUrlsText,
+          canonicalAsin: asin,
+          links: nextLinks,
+          amazonDescriptionNeedsRewrite: true,
+          amazonDescriptionConfirmed: false,
+        };
+      });
+
+      toast.success(
+        "Amazon data loaded. Please review and rewrite description."
+      );
+    } catch (err) {
+      console.error("Amazon lookup failed", err);
+      const msg =
+        err?.response?.data?.message || err?.message || "Amazon lookup failed.";
+      toast.error(msg);
     }
   };
 
@@ -229,129 +438,113 @@ function GearCatalogSection({ mode = "both" }) {
 
   const handleEditSaved = () => {
     setEditingItem(null);
-    loadItems();
+    loadItems({ includeArchived: showArchived });
   };
 
-  // Build filter options from loaded items
-  const categoryOptions = Array.from(
-    new Set(items.map((i) => i.category).filter(Boolean))
-  ).sort();
+  // ---- Derived (memoized) ----
+  const categoryOptions = useMemo(
+    () =>
+      Array.from(new Set(items.map((i) => i.category).filter(Boolean))).sort(),
+    [items]
+  );
 
-  const brandOptions = Array.from(
-    new Set(items.map((i) => i.brand).filter(Boolean))
-  ).sort();
+  const brandOptions = useMemo(
+    () => Array.from(new Set(items.map((i) => i.brand).filter(Boolean))).sort(),
+    [items]
+  );
 
-  const networkOptions = Array.from(
-    new Set(
-      items
-        .map((i) =>
-          Array.isArray(i.links) && i.links[0] ? i.links[0].network : null
-        )
-        .filter(Boolean)
-    )
-  ).sort();
+  const networkOptions = useMemo(() => {
+    const nets = items
+      .map((i) =>
+        Array.isArray(i.links) && i.links[0] ? i.links[0].network : null
+      )
+      .filter(Boolean);
+    return Array.from(new Set(nets)).sort();
+  }, [items]);
 
-  // Filter items client-side based on search + filters
-  const filteredItems = items.filter((item) => {
+  const filteredItems = useMemo(() => {
     const q = search.trim().toLowerCase();
+    return items.filter((item) => {
+      const mainLink =
+        Array.isArray(item.links) && item.links[0] ? item.links[0] : null;
+      const itemNetwork = mainLink?.network || "";
 
-    const mainLink =
-      Array.isArray(item.links) && item.links[0] ? item.links[0] : null;
-    const itemNetwork = mainLink?.network || "";
+      const searchMatches =
+        !q ||
+        [
+          item.name,
+          item.brand,
+          item.category,
+          item.subcategory,
+          item.itemType,
+          item.modelNumber,
+          (item.tags || []).join(" "),
+        ]
+          .filter(Boolean)
+          .some((field) => String(field).toLowerCase().includes(q));
 
-    // Search matches on name, brand, category, tags
-    const searchMatches =
-      !q ||
-      [
-        item.name,
-        item.brand,
-        item.category,
-        item.subcategory,
-        item.itemType,
-        item.modelNumber,
-        (item.tags || []).join(" "),
-      ]
-        .filter(Boolean)
-        .some((field) => String(field).toLowerCase().includes(q));
+      const categoryMatches =
+        filterCategory === "all" || item.category === filterCategory;
+      const brandMatches = filterBrand === "all" || item.brand === filterBrand;
+      const networkMatches =
+        filterNetwork === "all" || itemNetwork === filterNetwork;
 
-    const categoryMatches =
-      filterCategory === "all" || item.category === filterCategory;
-
-    const brandMatches = filterBrand === "all" || item.brand === filterBrand;
-
-    const networkMatches =
-      filterNetwork === "all" || itemNetwork === filterNetwork;
-
-    return searchMatches && categoryMatches && brandMatches && networkMatches;
-  });
-
-  // Sort handler
-  const handleSort = (field) => {
-    setSort((prev) => {
-      if (prev.field === field) {
-        // Same column: flip direction
-        return {
-          field,
-          dir: prev.dir === "asc" ? "desc" : "asc",
-        };
-      }
-      // New column: default to ascending
-      return {
-        field,
-        dir: "asc",
-      };
+      return searchMatches && categoryMatches && brandMatches && networkMatches;
     });
-  };
+  }, [items, search, filterCategory, filterBrand, filterNetwork]);
 
-  // Apply sorting
-  const sortedItems = filteredItems.slice().sort((a, b) => {
+  const sortedItems = useMemo(() => {
     const dir = sort.dir === "asc" ? 1 : -1;
 
-    const mainLinkA = Array.isArray(a.links) && a.links[0] ? a.links[0] : null;
-    const mainLinkB = Array.isArray(b.links) && b.links[0] ? b.links[0] : null;
+    return filteredItems.slice().sort((a, b) => {
+      const mainLinkA =
+        Array.isArray(a.links) && a.links[0] ? a.links[0] : null;
+      const mainLinkB =
+        Array.isArray(b.links) && b.links[0] ? b.links[0] : null;
 
-    switch (sort.field) {
-      case "name": {
-        const na = (a.name || "").toLowerCase();
-        const nb = (b.name || "").toLowerCase();
-        return na.localeCompare(nb) * dir;
+      switch (sort.field) {
+        case "name": {
+          const na = (a.name || "").toLowerCase();
+          const nb = (b.name || "").toLowerCase();
+          return na.localeCompare(nb) * dir;
+        }
+        case "category": {
+          const ca = (a.category || "").toLowerCase();
+          const cb = (b.category || "").toLowerCase();
+          return ca.localeCompare(cb) * dir;
+        }
+        case "brand": {
+          const ba = (a.brand || "").toLowerCase();
+          const bb = (b.brand || "").toLowerCase();
+          return ba.localeCompare(bb) * dir;
+        }
+        case "network": {
+          const na = (mainLinkA?.network || "").toLowerCase();
+          const nb = (mainLinkB?.network || "").toLowerCase();
+          return na.localeCompare(nb) * dir;
+        }
+        case "weightGrams": {
+          const wa =
+            typeof a.weightGrams === "number"
+              ? a.weightGrams
+              : Number.POSITIVE_INFINITY;
+          const wb =
+            typeof b.weightGrams === "number"
+              ? b.weightGrams
+              : Number.POSITIVE_INFINITY;
+          if (wa === wb) return 0;
+          return wa > wb ? dir : -dir;
+        }
+        case "updatedAt":
+        default: {
+          const ta = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+          const tb = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
+          if (ta === tb) return 0;
+          return ta > tb ? dir : -dir;
+        }
       }
-      case "category": {
-        const ca = (a.category || "").toLowerCase();
-        const cb = (b.category || "").toLowerCase();
-        return ca.localeCompare(cb) * dir;
-      }
-      case "brand": {
-        const ba = (a.brand || "").toLowerCase();
-        const bb = (b.brand || "").toLowerCase();
-        return ba.localeCompare(bb) * dir;
-      }
-      case "network": {
-        const na = (mainLinkA?.network || "").toLowerCase();
-        const nb = (mainLinkB?.network || "").toLowerCase();
-        return na.localeCompare(nb) * dir;
-      }
-      case "weightGrams": {
-        const wa =
-          typeof a.weightGrams === "number"
-            ? a.weightGrams
-            : Number.POSITIVE_INFINITY;
-        const wb =
-          typeof b.weightGrams === "number"
-            ? b.weightGrams
-            : Number.POSITIVE_INFINITY;
-        if (wa === wb) return 0;
-        return wa > wb ? dir : -dir;
-      }
-      case "updatedAt":
-      default: {
-        const ta = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
-        const tb = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
-        if (ta === tb) return 0;
-        return ta > tb ? dir : -dir;
-      }
-    }
-  });
+    });
+  }, [filteredItems, sort]);
 
   const totalItems = sortedItems.length;
   const pageCount = Math.max(1, Math.ceil(totalItems / pageSize));
@@ -360,28 +553,51 @@ function GearCatalogSection({ mode = "both" }) {
   const endIndex = Math.min(startIndex + pageSize, totalItems);
   const pageItems = sortedItems.slice(startIndex, endIndex);
 
+  const sortArrow = (field) => {
+    if (sort.field !== field) return null;
+    return (
+      <span className="ml-1 text-[10px]">{sort.dir === "asc" ? "↑" : "↓"}</span>
+    );
+  };
+
+  const handleSort = (field) => {
+    setSort((prev) => {
+      if (prev.field === field)
+        return { field, dir: prev.dir === "asc" ? "desc" : "asc" };
+      return { field, dir: "asc" };
+    });
+  };
+
+  const primaryNetwork = getPrimaryOffer(form).network;
+
   return (
     <section className="space-y-4">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+      {/* Header */}
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h2 className="text-base font-semibold text-primary">
             Gear catalog (admin-curated)
           </h2>
           <p className="text-xs text-primary/80 max-w-2xl">
-            Use this catalog to add affiliate-backed gear items (Amazon now,
-            Awin/Impact later).
+            Add affiliate-backed catalog items (Amazon now, Awin/Impact later).
           </p>
         </div>
       </div>
 
-      {/* Create form (only when not in list-only mode) */}
+      {/* CREATE */}
       {mode !== "list" && (
-        <div className="bg-neutralAlt rounded-lg shadow-2xl border border-primary">
-          {/* Form header with collapse toggle */}
-          <div className="flex items-center justify-between px-4 pt-3 pb-2 sm:px-6 border-b border-base-200">
-            <h3 className="text-sm font-semibold text-primary">
-              Add catalog item
-            </h3>
+        <div className="bg-neutralAlt rounded-lg shadow-2xl border border-primary overflow-hidden">
+          {/* Create header */}
+          <div className="flex items-center justify-between px-4 py-3 sm:px-6 border-b border-base-200">
+            <div>
+              <h3 className="text-sm font-semibold text-primary">
+                Add catalog item
+              </h3>
+              <p className="text-[11px] text-primary/70">
+                Flow: Basics → Offer → (Optional) Amazon Prefill → Media & Specs
+                → Save
+              </p>
+            </div>
             <button
               type="button"
               onClick={() => setShowCreateForm((v) => !v)}
@@ -395,171 +611,557 @@ function GearCatalogSection({ mode = "both" }) {
           {showCreateForm && (
             <form
               onSubmit={handleCreate}
-              className="px-4 py-4 sm:px-6 sm:py-6 space-y-3"
+              className="px-4 py-4 sm:px-6 sm:py-6 space-y-5"
             >
-              <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
-                {/* LEFT column */}
-                <div className="flex-1 space-y-2">
+              {/* 1) BASICS */}
+              <div className="space-y-3">
+                <div className="text-xs font-semibold text-primary/80">
+                  Basics
+                </div>
+
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    Item name *
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={form.name}
+                    onChange={handleChange}
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    placeholder="Nemo Hornet OSMO 2P"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   <div>
                     <label className="block font-medium text-primary mb-0.5">
-                      Item name *
+                      Brand
                     </label>
                     <input
                       type="text"
-                      name="name"
-                      value={form.name}
+                      name="brand"
+                      value={form.brand}
                       onChange={handleChange}
                       className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                      placeholder="Nemo Hornet OSMO 2P"
+                      placeholder="Nemo"
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <div>
-                      <label className="block font-medium text-primary mb-0.5">
-                        Brand
-                      </label>
-                      <input
-                        type="text"
-                        name="brand"
-                        value={form.brand}
-                        onChange={handleChange}
-                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                        placeholder="Nemo"
-                      />
-                    </div>
-                    <div>
-                      <label className="block font-medium text-primary mb-0.5">
-                        Category
-                      </label>
-                      <input
-                        type="text"
-                        name="category"
-                        value={form.category}
-                        onChange={handleChange}
-                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                        placeholder="shelter / mid-layer / headlamp..."
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-1">
-                    <div>
-                      <label className="block font-medium text-primary mb-0.5">
-                        Subcategory
-                      </label>
-                      <input
-                        type="text"
-                        name="subcategory"
-                        value={form.subcategory}
-                        onChange={handleChange}
-                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                        placeholder="tent / quilt / stove..."
-                      />
-                    </div>
-                    <div>
-                      <label className="block font-medium text-primary mb-0.5">
-                        Item type
-                      </label>
-                      <input
-                        type="text"
-                        name="itemType"
-                        value={form.itemType}
-                        onChange={handleChange}
-                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                        placeholder="ultralight 2P tent..."
-                      />
-                    </div>
-                    <div>
-                      <label className="block font-medium text-primary mb-0.5">
-                        Model number
-                      </label>
-                      <input
-                        type="text"
-                        name="modelNumber"
-                        value={form.modelNumber}
-                        onChange={handleChange}
-                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                        placeholder="Manufacturer model code"
-                      />
-                    </div>
-                  </div>
                   <div>
                     <label className="block font-medium text-primary mb-0.5">
-                      Description
+                      Category
                     </label>
-                    <textarea
-                      name="description"
-                      value={form.description}
+                    <input
+                      type="text"
+                      name="category"
+                      value={form.category}
                       onChange={handleChange}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary resize-y"
-                      rows={2}
-                      placeholder="Short blurb to help you recognize the item when importing."
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="shelter / mid-layer / headlamp..."
                     />
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      Subcategory
+                    </label>
+                    <input
+                      type="text"
+                      name="subcategory"
+                      value={form.subcategory}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="tent / quilt / stove..."
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      Item type
+                    </label>
+                    <input
+                      type="text"
+                      name="itemType"
+                      value={form.itemType}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="ultralight 2P tent..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      Model number
+                    </label>
+                    <input
+                      type="text"
+                      name="modelNumber"
+                      value={form.modelNumber}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="Manufacturer model code"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* 2) PRIMARY OFFER */}
+              <div className="space-y-3 border-t border-base-200 pt-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-xs font-semibold text-primary/80">
+                      Primary offer
+                    </div>
+                    <div className="text-[11px] text-primary/70">
+                      This is the default link shown when users import this
+                      item.
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={addOffer}
+                    className="btn btn-ghost btn-xs text-primary"
+                  >
+                    + Add offer
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
+                  <div className="sm:col-span-2">
+                    <label className="block font-medium text-primary mb-0.5">
+                      Affiliate URL *
+                    </label>
+                    <input
+                      type="url"
+                      value={getPrimaryOffer(form).url || ""}
+                      onChange={(e) => updateOffer(0, "url", e.target.value)}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="https://www.amazon.com/dp/ASIN/?tag=yourtag-20"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      Network *
+                    </label>
+                    <select
+                      value={getPrimaryOffer(form).network}
+                      onChange={(e) =>
+                        updateOffer(0, "network", e.target.value)
+                      }
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                    >
+                      {NETWORK_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      Region
+                    </label>
+                    <select
+                      value={getPrimaryOffer(form).region || "global"}
+                      onChange={(e) => updateOffer(0, "region", e.target.value)}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                    >
+                      {REGION_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      Merchant name
+                    </label>
+                    <input
+                      type="text"
+                      value={getPrimaryOffer(form).merchantName || ""}
+                      onChange={(e) =>
+                        updateOffer(0, "merchantName", e.target.value)
+                      }
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="Amazon / Bergfreunde / REI"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      External ID
+                    </label>
+                    <input
+                      type="text"
+                      value={getPrimaryOffer(form).externalId || ""}
+                      onChange={(e) =>
+                        updateOffer(0, "externalId", e.target.value)
+                      }
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="ASIN, Awin product id..."
+                    />
+                    <span className="block text-[11px] text-primary/70">
+                      ASIN (Amazon) / product id (Awin, Impact)
+                    </span>
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      Link priority
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      step="1"
+                      value={Number(getPrimaryOffer(form).priority ?? 10)}
+                      onChange={(e) =>
+                        updateOffer(0, "priority", Number(e.target.value) || 0)
+                      }
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="10"
+                    />
+                    <span className="block text-[11px] text-primary/70">
+                      Higher wins if multiple links exist for a region.
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Additional offers */}
+              {Array.isArray(form.links) && form.links.length > 1 && (
+                <div className="space-y-2 border-t border-base-200 pt-4">
+                  <div className="text-xs font-semibold text-primary/80">
+                    Additional offers
+                  </div>
+
+                  {form.links.slice(1).map((offer, i) => {
+                    const idx = i + 1;
+                    return (
+                      <div
+                        key={idx}
+                        className="border border-primary/40 rounded p-2 bg-neutralAlt/40"
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="text-xs text-primary/80">
+                            Offer #{idx + 1}
+                          </div>
+                          <button
+                            type="button"
+                            className="btn btn-ghost btn-xs text-error"
+                            onClick={() => removeOffer(idx)}
+                            title="Remove offer"
+                          >
+                            <FaTimes />
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
+                          <div>
+                            <label className="block font-medium text-primary mb-0.5">
+                              Network *
+                            </label>
+                            <select
+                              value={offer.network || "amazon"}
+                              onChange={(e) =>
+                                updateOffer(idx, "network", e.target.value)
+                              }
+                              className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                            >
+                              {NETWORK_OPTIONS.map((opt) => (
+                                <option key={opt.value} value={opt.value}>
+                                  {opt.label}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="block font-medium text-primary mb-0.5">
+                              Region
+                            </label>
+                            <select
+                              value={offer.region || "global"}
+                              onChange={(e) =>
+                                updateOffer(idx, "region", e.target.value)
+                              }
+                              className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                            >
+                              {REGION_OPTIONS.map((opt) => (
+                                <option key={opt.value} value={opt.value}>
+                                  {opt.label}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <div className="sm:col-span-2">
+                            <label className="block font-medium text-primary mb-0.5">
+                              Affiliate URL *
+                            </label>
+                            <input
+                              type="url"
+                              value={offer.url || ""}
+                              onChange={(e) =>
+                                updateOffer(idx, "url", e.target.value)
+                              }
+                              className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-2">
+                          <div>
+                            <label className="block font-medium text-primary mb-0.5">
+                              Merchant name
+                            </label>
+                            <input
+                              type="text"
+                              value={offer.merchantName || ""}
+                              onChange={(e) =>
+                                updateOffer(idx, "merchantName", e.target.value)
+                              }
+                              className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block font-medium text-primary mb-0.5">
+                              External ID
+                            </label>
+                            <input
+                              type="text"
+                              value={offer.externalId || ""}
+                              onChange={(e) =>
+                                updateOffer(idx, "externalId", e.target.value)
+                              }
+                              className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block font-medium text-primary mb-0.5">
+                              Link priority
+                            </label>
+                            <input
+                              type="number"
+                              min="0"
+                              step="1"
+                              value={Number(offer.priority ?? 10)}
+                              onChange={(e) =>
+                                updateOffer(
+                                  idx,
+                                  "priority",
+                                  Number(e.target.value) || 0
+                                )
+                              }
+                              className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* 3) AMAZON PREFILL (only if network is amazon) */}
+              {primaryNetwork === "amazon" && (
+                <div className="space-y-3 border-t border-base-200 pt-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-xs font-semibold text-primary/80">
+                        Amazon prefill (optional)
+                      </div>
+                      <div className="text-[11px] text-primary/70">
+                        Pulls name/brand/description/images. You must rewrite
+                        the description.
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleAmazonLookup}
+                      className="btn btn-xs btn-outline"
+                      disabled={creating}
+                      title="Fetch product data by ASIN"
+                    >
+                      Fetch from Amazon
+                    </button>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    <div>
-                      <label className="block font-medium text-primary mb-0.5">
-                        Weight (grams)
-                      </label>
-                      <input
-                        type="number"
-                        name="weightGrams"
-                        value={form.weightGrams}
-                        onChange={handleChange}
-                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                        placeholder="1400"
-                        min="0"
-                      />
-                    </div>
                     <div className="sm:col-span-2">
                       <label className="block font-medium text-primary mb-0.5">
-                        Tags (comma-separated)
+                        ASIN
                       </label>
                       <input
                         type="text"
-                        name="tags"
-                        value={form.tags}
+                        name="amazonAsinLookup"
+                        value={form.amazonAsinLookup}
                         onChange={handleChange}
                         className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                        placeholder="3-season, tent, 1p"
+                        placeholder="B0XXXXXXXX"
+                        maxLength={10}
                       />
                     </div>
+
                     <div>
                       <label className="block font-medium text-primary mb-0.5">
-                        Price hint
+                        Marketplace
                       </label>
-                      <input
-                        type="number"
-                        name="priceHint"
-                        value={form.priceHint}
+                      <select
+                        name="amazonMarketplace"
+                        value={form.amazonMarketplace}
                         onChange={handleChange}
-                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                        placeholder="Leave blank for now"
-                        min="0"
-                        step="0.01"
-                      />
-                      <span className="block text-[11px] text-primary/70">
-                        Optional; rough expected price.
-                      </span>
-                    </div>
-                    <div>
-                      <label className="block font-medium text-primary mb-0.5">
-                        Price currency
-                      </label>
-                      <input
-                        type="text"
-                        name="priceHintCurrency"
-                        value={form.priceHintCurrency}
-                        onChange={handleChange}
-                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                        placeholder="USD / EUR / GBP"
-                      />
+                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                      >
+                        <option value="us">US</option>
+                        <option value="uk">UK</option>
+                        <option value="de">DE</option>
+                        <option value="fr">FR</option>
+                        <option value="it">IT</option>
+                        <option value="es">ES</option>
+                        <option value="nl">NL</option>
+                        <option value="ca">CA</option>
+                        <option value="se">SE</option>
+                        <option value="pl">PL</option>
+                      </select>
                     </div>
                   </div>
 
-                  <div className="mt-2">
+                  {form.amazonDescriptionNeedsRewrite && (
+                    <div className="rounded border border-warning/50 bg-warning/10 p-2 text-xs text-primary">
+                      <div className="font-semibold mb-1">Important</div>
+                      <div className="text-primary/80">
+                        This description was pulled from Amazon. Rewrite it in
+                        your own words before saving.
+                      </div>
+                      <label className="mt-2 flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          name="amazonDescriptionConfirmed"
+                          checked={form.amazonDescriptionConfirmed}
+                          onChange={handleChange}
+                          className="checkbox checkbox-xs"
+                        />
+                        <span>I confirm I rewrote the description.</span>
+                      </label>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* 4) MEDIA & SPECS */}
+              <div className="space-y-3 border-t border-base-200 pt-4">
+                <div className="text-xs font-semibold text-primary/80">
+                  Media & specs
+                </div>
+
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    Description
+                  </label>
+                  <textarea
+                    name="description"
+                    value={form.description}
+                    onChange={handleChange}
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary resize-y"
+                    rows={3}
+                    placeholder="Short blurb to help you recognize the item when importing."
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      Weight (grams)
+                    </label>
+                    <input
+                      type="number"
+                      name="weightGrams"
+                      value={form.weightGrams}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="1400"
+                      min="0"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="block font-medium text-primary mb-0.5">
+                      Dimensions
+                    </label>
+                    <div className="grid grid-cols-4 gap-2">
+                      <input
+                        type="number"
+                        name="dimLength"
+                        value={form.dimLength}
+                        onChange={handleChange}
+                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                        placeholder="L"
+                        min="0"
+                        step="0.1"
+                      />
+                      <input
+                        type="number"
+                        name="dimWidth"
+                        value={form.dimWidth}
+                        onChange={handleChange}
+                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                        placeholder="W"
+                        min="0"
+                        step="0.1"
+                      />
+                      <input
+                        type="number"
+                        name="dimHeight"
+                        value={form.dimHeight}
+                        onChange={handleChange}
+                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                        placeholder="H"
+                        min="0"
+                        step="0.1"
+                      />
+                      <select
+                        name="dimUnit"
+                        value={form.dimUnit}
+                        onChange={handleChange}
+                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                      >
+                        <option value="cm">cm</option>
+                        <option value="in">in</option>
+                      </select>
+                    </div>
+                    <span className="block text-[11px] text-primary/70">
+                      Optional. Stored as L × W × H.
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      Tags (comma-separated)
+                    </label>
+                    <input
+                      type="text"
+                      name="tags"
+                      value={form.tags}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="3-season, tent, 1p"
+                    />
+                  </div>
+
+                  <div>
                     <label className="block font-medium text-primary mb-0.5">
                       Image URLs
                     </label>
@@ -576,127 +1178,28 @@ function GearCatalogSection({ mode = "both" }) {
                     </span>
                   </div>
                 </div>
+              </div>
 
-                {/* RIGHT column */}
-                <div className="flex-1 space-y-2">
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="block font-medium text-primary mb-0.5">
-                        Network *
-                      </label>
-                      <select
-                        name="linkNetwork"
-                        value={form.linkNetwork}
-                        onChange={handleChange}
-                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
-                      >
-                        {NETWORK_OPTIONS.map((opt) => (
-                          <option key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block font-medium text-primary mb-0.5">
-                        Region
-                      </label>
-                      <select
-                        name="linkRegion"
-                        value={form.linkRegion}
-                        onChange={handleChange}
-                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
-                      >
-                        {REGION_OPTIONS.map((opt) => (
-                          <option key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block font-medium text-primary mb-0.5">
-                      Affiliate URL *
-                    </label>
-                    <input
-                      type="url"
-                      name="linkUrl"
-                      value={form.linkUrl}
-                      onChange={handleChange}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                      placeholder="https://www.amazon.com/dp/ASIN/?tag=yourtag-20"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <div>
-                      <label className="block font-medium text-primary mb-0.5">
-                        Merchant name
-                      </label>
-                      <input
-                        type="text"
-                        name="linkMerchantName"
-                        value={form.linkMerchantName}
-                        onChange={handleChange}
-                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                        placeholder="Amazon / Bergfreunde / REI"
-                      />
-                    </div>
-                    <div>
-                      <label className="block font-medium text-primary mb-0.5">
-                        External ID
-                      </label>
-                      <input
-                        type="text"
-                        name="linkExternalId"
-                        value={form.linkExternalId}
-                        onChange={handleChange}
-                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                        placeholder="ASIN, Awin product id..."
-                      />
-                      <span className="block text-[11px] text-primary/70">
-                        ASIN (Amazon) / product id (Awin, Impact)
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
-                    <div>
-                      <label className="block font-medium text-primary mb-0.5">
-                        Canonical ASIN (optional)
-                      </label>
-                      <input
-                        type="text"
-                        name="canonicalAsin"
-                        value={form.canonicalAsin}
-                        onChange={handleChange}
-                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                        placeholder="Main ASIN for this product"
-                      />
-                    </div>
-                    <div>
-                      <label className="block font-medium text-primary mb-0.5">
-                        Item group ID (optional)
-                      </label>
-                      <input
-                        type="text"
-                        name="itemGroupId"
-                        value={form.itemGroupId}
-                        onChange={handleChange}
-                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                        placeholder="Internal cross-network key"
-                      />
-                      <span className="block text-[11px] text-primary/70">
-                        Used to link Awin/Impact offers to this product later.
-                      </span>
-                    </div>
-                  </div>
+              {/* 5) IDS */}
+              <div className="space-y-3 border-t border-base-200 pt-4">
+                <div className="text-xs font-semibold text-primary/80">IDs</div>
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    Canonical ASIN (optional)
+                  </label>
+                  <input
+                    type="text"
+                    name="canonicalAsin"
+                    value={form.canonicalAsin}
+                    onChange={handleChange}
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    placeholder="Main ASIN for this product"
+                  />
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-base-200 mt-2">
+              {/* Submit */}
+              <div className="flex justify-end gap-2 pt-3 border-t border-base-200">
                 <button
                   type="submit"
                   disabled={creating}
@@ -712,11 +1215,10 @@ function GearCatalogSection({ mode = "both" }) {
         </div>
       )}
 
-      {/* List */}
-
-      {/* List (only when not in create-only mode) */}
+      {/* LIST */}
       {mode !== "create" && (
         <div className="border border-base-300 rounded-lg bg-base-100/80 overflow-auto">
+          {/* List header */}
           <div className="flex items-center justify-between px-3 py-2 border-b border-base-200 text-xs text-primary/80">
             <span>
               {loading
@@ -740,6 +1242,7 @@ function GearCatalogSection({ mode = "both" }) {
                 />
                 <span>Show archived</span>
               </label>
+
               <button
                 type="button"
                 onClick={() => loadItems({ includeArchived: showArchived })}
@@ -748,6 +1251,7 @@ function GearCatalogSection({ mode = "both" }) {
               >
                 Refresh
               </button>
+
               <button
                 type="button"
                 onClick={() => setShowListBody((v) => !v)}
@@ -758,6 +1262,7 @@ function GearCatalogSection({ mode = "both" }) {
               </button>
             </div>
           </div>
+
           {showListBody && (
             <>
               {error && !loading && (
@@ -773,7 +1278,7 @@ function GearCatalogSection({ mode = "both" }) {
 
               {!loading && !error && items.length > 0 && (
                 <>
-                  {/* Search + filters row */}
+                  {/* Filters */}
                   <div className="px-3 py-2 border-b border-base-200 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between text-xs">
                     <div className="flex-1 flex gap-2">
                       <input
@@ -787,6 +1292,7 @@ function GearCatalogSection({ mode = "both" }) {
                         }}
                       />
                     </div>
+
                     <div className="flex flex-wrap gap-2">
                       <select
                         className="select select-xs select-bordered"
@@ -837,6 +1343,8 @@ function GearCatalogSection({ mode = "both" }) {
                       </select>
                     </div>
                   </div>
+
+                  {/* Table */}
                   <table className="min-w-full text-xs sm:text-sm">
                     <thead className="bg-base-200/80">
                       <tr>
@@ -844,73 +1352,40 @@ function GearCatalogSection({ mode = "both" }) {
                           className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
                           onClick={() => handleSort("name")}
                         >
-                          Name
-                          {sort.field === "name" && (
-                            <span className="ml-1 text-[10px]">
-                              {sort.dir === "asc" ? "↓" : "↑"}
-                            </span>
-                          )}
+                          Name {sortArrow("name")}
                         </th>
                         <th
                           className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
                           onClick={() => handleSort("category")}
                         >
-                          Category
-                          {sort.field === "category" && (
-                            <span className="ml-1 text-[10px]">
-                              {sort.dir === "asc" ? "↓" : "↑"}
-                            </span>
-                          )}
+                          Category {sortArrow("category")}
                         </th>
                         <th
                           className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
                           onClick={() => handleSort("brand")}
                         >
-                          Brand
-                          {sort.field === "brand" && (
-                            <span className="ml-1 text-[10px]">
-                              {sort.dir === "asc" ? "↓" : "↑"}
-                            </span>
-                          )}
+                          Brand {sortArrow("brand")}
                         </th>
                         <th
                           className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
                           onClick={() => handleSort("network")}
                         >
-                          Network / Region
-                          {sort.field === "network" && (
-                            <span className="ml-1 text-[10px]">
-                              {sort.dir === "asc" ? "↓" : "↑"}
-                            </span>
-                          )}
+                          Network / Region {sortArrow("network")}
                         </th>
                         <th
-                          className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
+                          className="text-right px-3 py-2 font-semibold cursor-pointer select-none"
                           onClick={() => handleSort("weightGrams")}
                         >
-                          Weight
-                          {sort.field === "weightGrams" && (
-                            <span className="ml-1 text-[10px]">
-                              {sort.dir === "asc" ? "↑" : "↓"}
-                            </span>
-                          )}
-                        </th>
-                        <th className="text-right px-3 py-2 font-semibold">
-                          Price
+                          Weight {sortArrow("weightGrams")}
                         </th>
                         <th className="text-left px-3 py-2 font-semibold">
                           Status
                         </th>
                         <th
-                          className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
+                          className="text-right px-3 py-2 font-semibold cursor-pointer select-none"
                           onClick={() => handleSort("updatedAt")}
                         >
-                          Updated
-                          {sort.field === "updatedAt" && (
-                            <span className="ml-1 text-[10px]">
-                              {sort.dir === "asc" ? "↑" : "↓"}
-                            </span>
-                          )}
+                          Updated {sortArrow("updatedAt")}
                         </th>
                         <th className="text-right px-3 py-2 font-semibold">
                           Actions
@@ -924,6 +1399,7 @@ function GearCatalogSection({ mode = "both" }) {
                         const mainLink = Array.isArray(item.links)
                           ? item.links[0]
                           : null;
+
                         const updated =
                           item.updatedAt &&
                           !Number.isNaN(Date.parse(item.updatedAt))
@@ -957,11 +1433,6 @@ function GearCatalogSection({ mode = "both" }) {
                                 ? `${item.weightGrams} g`
                                 : "–"}
                             </td>
-                            <td className="px-3 py-2 text-right align-top">
-                              {typeof item.priceHint === "number"
-                                ? item.priceHint.toFixed(2)
-                                : "–"}
-                            </td>
                             <td className="px-3 py-2 text-left align-top">
                               <span
                                 className={
@@ -979,7 +1450,6 @@ function GearCatalogSection({ mode = "both" }) {
                             </td>
                             <td className="px-3 py-2 text-right align-top">
                               <div className="inline-flex items-center gap-2 justify-end">
-                                {/* Edit icon button */}
                                 <button
                                   type="button"
                                   className="btn btn-ghost btn-xs"
@@ -989,7 +1459,6 @@ function GearCatalogSection({ mode = "both" }) {
                                   <FaEdit />
                                 </button>
 
-                                {/* Archive / Unarchive button */}
                                 <button
                                   type="button"
                                   className={
@@ -1018,16 +1487,17 @@ function GearCatalogSection({ mode = "both" }) {
                       })}
                     </tbody>
                   </table>
-                  {/* Pagination footer */}
+
+                  {/* Pagination */}
                   <div className="flex items-center justify-between px-3 py-2 border-t border-base-200 text-xs text-primary/80">
                     <span>
-                      Showing {totalItems === 0 ? 0 : startIndex + 1}
-                      {"–"}
-                      {endIndex} of {totalItems}
+                      Showing {totalItems === 0 ? 0 : startIndex + 1}–{endIndex}{" "}
+                      of {totalItems}
                     </span>
+
                     <div className="flex items-center gap-3">
                       <label className="flex items-center gap-1">
-                        <span>Rows per page</span>
+                        <span>Rows</span>
                         <select
                           className="select select-xs select-bordered"
                           value={pageSize}
@@ -1090,112 +1560,352 @@ function GearCatalogSection({ mode = "both" }) {
 function EditCatalogItemModal({ item, onClose, onSaved }) {
   const [saving, setSaving] = useState(false);
 
-  const [name, setName] = useState(item.name || "");
-  const [brand, setBrand] = useState(item.brand || "");
-  const [category, setCategory] = useState(item.category || "");
-  const [description, setDescription] = useState(item.description || "");
-  const [weightGrams, setWeightGrams] = useState(
-    typeof item.weightGrams === "number" ? String(item.weightGrams) : ""
-  );
-  const [tagsInput, setTagsInput] = useState(
-    Array.isArray(item.tags) ? item.tags.join(", ") : ""
-  );
-  const [priceHint, setPriceHint] = useState(
-    typeof item.priceHint === "number" ? String(item.priceHint) : ""
-  );
-  const [modelNumber, setModelNumber] = useState(item.modelNumber || "");
-  const [subcategory, setSubcategory] = useState(item.subcategory || "");
-  const [itemType, setItemType] = useState(item.itemType || "");
-  const [imageUrlsInput, setImageUrlsInput] = useState(
-    Array.isArray(item.imageUrls) ? item.imageUrls.join("\n") : ""
-  );
-  const [priceHintCurrency, setPriceHintCurrency] = useState(
-    item.priceHintCurrency || ""
-  );
-  const [canonicalAsin, setCanonicalAsin] = useState(item.canonicalAsin || "");
-  const [itemGroupId, setItemGroupId] = useState(item.itemGroupId || "");
+  const [form, setForm] = useState(() => {
+    const dims = item?.dimensions || {};
+    const links =
+      Array.isArray(item?.links) && item.links.length
+        ? item.links.map((l) => ({
+            network: String(l.network || "amazon").trim(),
+            region: String(l.region || "global").trim(),
+            url: String(l.url || "").trim(),
+            merchantName: l.merchantName ? String(l.merchantName).trim() : "",
+            externalId: l.externalId ? String(l.externalId).trim() : "",
+            priority:
+              typeof l.priority === "number"
+                ? l.priority
+                : Number(l.priority) || 0,
+          }))
+        : [
+            {
+              network: "amazon",
+              region: "global",
+              url: "",
+              merchantName: "",
+              externalId: "",
+              priority: 10,
+            },
+          ];
 
-  const primaryLink =
-    Array.isArray(item.links) && item.links[0] ? item.links[0] : {};
+    return {
+      name: item?.name || "",
+      brand: item?.brand || "",
+      category: item?.category || "",
+      subcategory: item?.subcategory || "",
+      itemType: item?.itemType || "",
+      modelNumber: item?.modelNumber || "",
+      description: item?.description || "",
 
-  const [linkNetwork, setLinkNetwork] = useState(
-    primaryLink.network || "amazon"
-  );
-  const [linkRegion, setLinkRegion] = useState(primaryLink.region || "global");
-  const [linkUrl, setLinkUrl] = useState(primaryLink.url || "");
-  const [linkMerchantName, setLinkMerchantName] = useState(
-    primaryLink.merchantName || ""
-  );
-  const [linkExternalId, setLinkExternalId] = useState(
-    primaryLink.externalId || ""
-  );
-  const [linkPriority, setLinkPriority] = useState(
-    typeof primaryLink.priority === "number"
-      ? String(primaryLink.priority)
-      : "10"
-  );
+      weightGrams:
+        typeof item?.weightGrams === "number" ? String(item.weightGrams) : "",
+      dimLength: typeof dims.length === "number" ? String(dims.length) : "",
+      dimWidth: typeof dims.width === "number" ? String(dims.width) : "",
+      dimHeight: typeof dims.height === "number" ? String(dims.height) : "",
+      dimUnit:
+        typeof dims.unit === "string" && dims.unit.trim()
+          ? dims.unit.trim().toLowerCase()
+          : "cm",
+
+      tags: Array.isArray(item?.tags) ? item.tags.join(", ") : "",
+      imageUrlsText: Array.isArray(item?.imageUrls)
+        ? item.imageUrls.join("\n")
+        : "",
+
+      canonicalAsin: item?.canonicalAsin || "",
+      itemGroupId: item?.itemGroupId || "",
+
+      // Amazon lookup helpers (only used when you click "Fetch from Amazon")
+      amazonAsinLookup:
+        item?.canonicalAsin ||
+        (links?.[0]?.network === "amazon" ? links?.[0]?.externalId : "") ||
+        "",
+      amazonMarketplace: "us",
+
+      // compliance guardrails (only enforced after lookup)
+      amazonDescriptionNeedsRewrite: false,
+      amazonDescriptionConfirmed: false,
+
+      links,
+    };
+  });
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const getPrimaryOffer = (f) =>
+    Array.isArray(f.links) && f.links[0]
+      ? f.links[0]
+      : {
+          network: "amazon",
+          region: "global",
+          url: "",
+          merchantName: "",
+          externalId: "",
+          priority: 10,
+        };
+
+  const updateOffer = (idx, key, value) => {
+    setForm((prev) => {
+      const links = Array.isArray(prev.links) ? [...prev.links] : [];
+      while (links.length <= idx) {
+        links.push({
+          network: "amazon",
+          region: "global",
+          url: "",
+          merchantName: "",
+          externalId: "",
+          priority: 10,
+        });
+      }
+      links[idx] = { ...links[idx], [key]: value };
+      return { ...prev, links };
+    });
+  };
+
+  const addOffer = () => {
+    setForm((prev) => ({
+      ...prev,
+      links: [
+        ...(Array.isArray(prev.links) ? prev.links : []),
+        {
+          network: "amazon",
+          region: "global",
+          url: "",
+          merchantName: "",
+          externalId: "",
+          priority: 10,
+        },
+      ],
+    }));
+  };
+
+  const removeOffer = (idx) => {
+    setForm((prev) => {
+      const links = Array.isArray(prev.links) ? [...prev.links] : [];
+      links.splice(idx, 1);
+      return { ...prev, links: links.length ? links : prev.links };
+    });
+  };
+
+  const handleAmazonLookup = async () => {
+    if (getPrimaryOffer(form).network !== "amazon") {
+      toast.error("Switch Network to Amazon to use ASIN lookup.");
+      return;
+    }
+
+    const asin = String(form.amazonAsinLookup || "")
+      .trim()
+      .toUpperCase();
+    if (!/^[A-Z0-9]{10}$/.test(asin)) {
+      toast.error("Enter a valid 10-character ASIN.");
+      return;
+    }
+
+    const marketplace = String(form.amazonMarketplace || "us")
+      .trim()
+      .toLowerCase();
+    const region = String(getPrimaryOffer(form).region || "global")
+      .trim()
+      .toLowerCase();
+
+    try {
+      const { data } = await api.post("/admin/amazon/lookup", {
+        asin,
+        marketplace,
+        region,
+      });
+
+      const prefill = data?.prefill || {};
+      const offer = data?.offer || {};
+
+      const fallbackUrl = `https://www.amazon.com/dp/${asin}`;
+      const nextLinkUrl =
+        typeof offer.deepLink === "string" && offer.deepLink.trim()
+          ? offer.deepLink.trim()
+          : fallbackUrl;
+
+      setForm((prev) => ({
+        ...prev,
+        // core fields
+        name: typeof prefill.name === "string" ? prefill.name : prev.name,
+        brand: typeof prefill.brand === "string" ? prefill.brand : prev.brand,
+        description:
+          typeof prefill.description === "string"
+            ? prefill.description
+            : prev.description,
+        modelNumber:
+          typeof prefill.modelNumber === "string"
+            ? prefill.modelNumber
+            : prev.modelNumber,
+
+        weightGrams:
+          typeof prefill.weightGrams === "number"
+            ? String(prefill.weightGrams)
+            : prev.weightGrams,
+
+        dimLength:
+          prefill?.dimensions &&
+          typeof prefill.dimensions.length === "number" &&
+          prefill.dimensions.length > 0
+            ? String(prefill.dimensions.length)
+            : prev.dimLength,
+        dimWidth:
+          prefill?.dimensions &&
+          typeof prefill.dimensions.width === "number" &&
+          prefill.dimensions.width > 0
+            ? String(prefill.dimensions.width)
+            : prev.dimWidth,
+        dimHeight:
+          prefill?.dimensions &&
+          typeof prefill.dimensions.height === "number" &&
+          prefill.dimensions.height > 0
+            ? String(prefill.dimensions.height)
+            : prev.dimHeight,
+        dimUnit:
+          prefill?.dimensions &&
+          typeof prefill.dimensions.unit === "string" &&
+          prefill.dimensions.unit.trim()
+            ? prefill.dimensions.unit.trim().toLowerCase()
+            : prev.dimUnit,
+
+        // images (use first image)
+        imageUrlsText:
+          Array.isArray(prefill.imageUrls) && prefill.imageUrls.length
+            ? String(prefill.imageUrls[0])
+            : prev.imageUrlsText,
+
+        // identifiers
+        canonicalAsin: asin,
+
+        // links: update primary offer
+        links: (() => {
+          const links = Array.isArray(prev.links) ? [...prev.links] : [];
+          if (!links[0]) {
+            links[0] = {
+              network: "amazon",
+              region: "global",
+              url: "",
+              merchantName: "",
+              externalId: "",
+              priority: 10,
+            };
+          }
+          links[0] = {
+            ...links[0],
+            network: "amazon",
+            url: nextLinkUrl,
+            merchantName: links[0].merchantName || "Amazon",
+            externalId: asin,
+          };
+          return links;
+        })(),
+
+        // compliance guardrails
+        amazonDescriptionNeedsRewrite: true,
+        amazonDescriptionConfirmed: false,
+      }));
+
+      toast.success(
+        "Amazon data loaded. Please review and rewrite description."
+      );
+    } catch (err) {
+      console.error("Amazon lookup failed", err);
+      const msg =
+        err?.response?.data?.message || err?.message || "Amazon lookup failed.";
+      toast.error(msg);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name.trim()) {
+
+    if (!form.name.trim()) {
       toast.error("Name is required.");
       return;
     }
-    if (!linkUrl.trim()) {
-      toast.error("Affiliate URL is required.");
+    if (!Array.isArray(form.links) || form.links.length === 0) {
+      toast.error("At least one offer is required.");
       return;
     }
-    // Normalize priceHint: blank = no price; otherwise must be a number ≥ 0
-    let normalizedPriceHint = null;
-    if (priceHint !== "" && priceHint !== null && priceHint !== undefined) {
-      const n = Number(priceHint);
-      if (Number.isNaN(n) || n < 0) {
-        toast.error("Price hint must be a non-negative number or left blank.");
-        return;
-      }
-      normalizedPriceHint = n;
+    if (
+      form.links.some(
+        (l) => !String(l.network || "").trim() || !String(l.url || "").trim()
+      )
+    ) {
+      toast.error("Each offer must have a network and URL.");
+      return;
+    }
+    if (
+      getPrimaryOffer(form).network === "amazon" &&
+      form.amazonDescriptionNeedsRewrite &&
+      !form.amazonDescriptionConfirmed
+    ) {
+      toast.error("Please confirm you rewrote the Amazon description.");
+      return;
     }
 
     setSaving(true);
     try {
-      const imageUrls = imageUrlsInput
-        ? imageUrlsInput
+      const imageUrls = form.imageUrlsText
+        ? form.imageUrlsText
             .split(/\r?\n|,/)
             .map((u) => u.trim())
             .filter(Boolean)
         : [];
 
       const payload = {
-        name: name.trim(),
-        brand: brand.trim() || undefined,
-        category: category.trim() || undefined,
-        subcategory: subcategory.trim() || undefined,
-        itemType: itemType.trim() || undefined,
-        modelNumber: modelNumber.trim() || undefined,
-        description: description.trim() || undefined,
-        weightGrams: weightGrams ? Number(weightGrams) : undefined,
-        tags: tagsInput
-          ? tagsInput
+        name: form.name.trim(),
+        brand: form.brand.trim() || undefined,
+        category: form.category.trim() || undefined,
+        subcategory: form.subcategory.trim() || undefined,
+        itemType: form.itemType.trim() || undefined,
+        modelNumber: form.modelNumber.trim() || undefined,
+        description: form.description.trim() || undefined,
+        weightGrams: form.weightGrams ? Number(form.weightGrams) : undefined,
+        dimensions:
+          form.dimLength || form.dimWidth || form.dimHeight
+            ? {
+                length:
+                  form.dimLength === "" ? undefined : Number(form.dimLength),
+                width: form.dimWidth === "" ? undefined : Number(form.dimWidth),
+                height:
+                  form.dimHeight === "" ? undefined : Number(form.dimHeight),
+                unit: String(form.dimUnit || "cm")
+                  .trim()
+                  .toLowerCase(),
+              }
+            : undefined,
+        tags: form.tags
+          ? form.tags
               .split(",")
               .map((t) => t.trim())
               .filter(Boolean)
           : [],
         imageUrls,
-        priceHint: normalizedPriceHint,
-        priceHintCurrency: priceHintCurrency.trim() || undefined,
+
+        // Keep your previous "clearable" behavior for edit:
         canonicalAsin:
-          canonicalAsin.trim() === "" ? null : canonicalAsin.trim(),
-        itemGroupId: itemGroupId.trim() === "" ? null : itemGroupId.trim(),
-        links: [
-          {
-            network: linkNetwork,
-            region: linkRegion || "global",
-            url: linkUrl.trim(),
-            merchantName: linkMerchantName.trim() || undefined,
-            externalId: linkExternalId.trim() || undefined,
-            priority: linkPriority === "" ? 0 : Number(linkPriority) || 0,
-          },
-        ],
+          form.canonicalAsin.trim() === "" ? null : form.canonicalAsin.trim(),
+        itemGroupId:
+          form.itemGroupId.trim() === "" ? null : form.itemGroupId.trim(),
+
+        links: form.links.map((l) => ({
+          network: String(l.network || "").trim(),
+          region: String(l.region || "global").trim(),
+          url: String(l.url || "").trim(),
+          merchantName: l.merchantName
+            ? String(l.merchantName).trim()
+            : undefined,
+          externalId: l.externalId ? String(l.externalId).trim() : undefined,
+          priority:
+            typeof l.priority === "number"
+              ? l.priority
+              : Number(l.priority) || 0,
+        })),
       };
 
       await api.patch(`/admin/catalog-items/${item._id}`, payload);
@@ -1219,7 +1929,7 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
         onSubmit={handleSubmit}
         className="bg-neutralAlt rounded-lg shadow-2xl border border-primary max-w-5xl w-full max-h-[80vh] overflow-y-auto my-4"
       >
-        {/* Header (match create header style) */}
+        {/* Header (same vibe as create) */}
         <div className="flex items-center justify-between px-4 pt-3 pb-2 sm:px-6 border-b border-base-200">
           <h2 className="text-sm font-semibold text-primary">
             Edit catalog item
@@ -1237,7 +1947,7 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
 
         <div className="px-4 py-4 sm:px-6 sm:py-6 space-y-3">
           <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
-            {/* LEFT column (match create) */}
+            {/* LEFT column (match create flow) */}
             <div className="flex-1 space-y-2">
               <div>
                 <label className="block font-medium text-primary mb-0.5">
@@ -1245,9 +1955,10 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                 </label>
                 <input
                   type="text"
+                  name="name"
+                  value={form.name}
+                  onChange={handleChange}
                   className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
                 />
               </div>
 
@@ -1258,9 +1969,10 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                   </label>
                   <input
                     type="text"
+                    name="brand"
+                    value={form.brand}
+                    onChange={handleChange}
                     className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                    value={brand}
-                    onChange={(e) => setBrand(e.target.value)}
                   />
                 </div>
                 <div>
@@ -1269,9 +1981,10 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                   </label>
                   <input
                     type="text"
+                    name="category"
+                    value={form.category}
+                    onChange={handleChange}
                     className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
                     placeholder="shelter / mid-layer / headlamp..."
                   />
                 </div>
@@ -1284,9 +1997,10 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                   </label>
                   <input
                     type="text"
+                    name="subcategory"
+                    value={form.subcategory}
+                    onChange={handleChange}
                     className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                    value={subcategory}
-                    onChange={(e) => setSubcategory(e.target.value)}
                     placeholder="tent / quilt / stove..."
                   />
                 </div>
@@ -1296,9 +2010,10 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                   </label>
                   <input
                     type="text"
+                    name="itemType"
+                    value={form.itemType}
+                    onChange={handleChange}
                     className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                    value={itemType}
-                    onChange={(e) => setItemType(e.target.value)}
                     placeholder="ultralight 2P tent..."
                   />
                 </div>
@@ -1308,26 +2023,47 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                   </label>
                   <input
                     type="text"
+                    name="modelNumber"
+                    value={form.modelNumber}
+                    onChange={handleChange}
                     className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                    value={modelNumber}
-                    onChange={(e) => setModelNumber(e.target.value)}
                     placeholder="Manufacturer model code"
                   />
                 </div>
               </div>
 
-              {/* ✅ Missing field in your current edit UI */}
               <div>
                 <label className="block font-medium text-primary mb-0.5">
                   Description
                 </label>
                 <textarea
+                  name="description"
+                  value={form.description}
+                  onChange={handleChange}
                   className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary resize-y"
                   rows={2}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
                   placeholder="Short blurb to help you recognize the item when importing."
                 />
+                {getPrimaryOffer(form).network === "amazon" &&
+                  form.amazonDescriptionNeedsRewrite && (
+                    <div className="mt-2 rounded border border-warning/50 bg-warning/10 p-2 text-xs text-primary">
+                      <div className="font-semibold mb-1">Important</div>
+                      <div className="text-primary/80">
+                        This description was pulled from Amazon. Rewrite it in
+                        your own words before saving.
+                      </div>
+                      <label className="mt-2 flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          name="amazonDescriptionConfirmed"
+                          checked={form.amazonDescriptionConfirmed}
+                          onChange={handleChange}
+                          className="checkbox checkbox-xs"
+                        />
+                        <span>I confirm I rewrote the description.</span>
+                      </label>
+                    </div>
+                  )}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -1337,54 +2073,75 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                   </label>
                   <input
                     type="number"
-                    min="0"
+                    name="weightGrams"
+                    value={form.weightGrams}
+                    onChange={handleChange}
                     className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                    value={weightGrams}
-                    onChange={(e) => setWeightGrams(e.target.value)}
+                    min="0"
                   />
                 </div>
+
+                <div className="sm:col-span-2">
+                  <label className="block font-medium text-primary mb-0.5">
+                    Dimensions
+                  </label>
+                  <div className="grid grid-cols-4 gap-2">
+                    <input
+                      type="number"
+                      name="dimLength"
+                      value={form.dimLength}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="L"
+                      min="0"
+                      step="0.1"
+                    />
+                    <input
+                      type="number"
+                      name="dimWidth"
+                      value={form.dimWidth}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="W"
+                      min="0"
+                      step="0.1"
+                    />
+                    <input
+                      type="number"
+                      name="dimHeight"
+                      value={form.dimHeight}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="H"
+                      min="0"
+                      step="0.1"
+                    />
+                    <select
+                      name="dimUnit"
+                      value={form.dimUnit}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                    >
+                      <option value="cm">cm</option>
+                      <option value="in">in</option>
+                    </select>
+                  </div>
+                  <span className="block text-[11px] text-primary/70">
+                    Optional. Stored as L × W × H.
+                  </span>
+                </div>
+
                 <div className="sm:col-span-2">
                   <label className="block font-medium text-primary mb-0.5">
                     Tags (comma-separated)
                   </label>
                   <input
                     type="text"
+                    name="tags"
+                    value={form.tags}
+                    onChange={handleChange}
                     className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                    value={tagsInput}
-                    onChange={(e) => setTagsInput(e.target.value)}
                     placeholder="3-season, tent, 1p"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <div>
-                  <label className="block font-medium text-primary mb-0.5">
-                    Price hint
-                  </label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                    value={priceHint}
-                    onChange={(e) => setPriceHint(e.target.value)}
-                    placeholder="Leave blank to show –"
-                  />
-                  <span className="block text-[11px] text-primary/70">
-                    Optional; rough expected price.
-                  </span>
-                </div>
-                <div>
-                  <label className="block font-medium text-primary mb-0.5">
-                    Price currency
-                  </label>
-                  <input
-                    type="text"
-                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                    value={priceHintCurrency}
-                    onChange={(e) => setPriceHintCurrency(e.target.value)}
-                    placeholder="USD / EUR / GBP"
                   />
                 </div>
               </div>
@@ -1394,10 +2151,11 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                   Image URLs
                 </label>
                 <textarea
+                  name="imageUrlsText"
+                  value={form.imageUrlsText}
+                  onChange={handleChange}
                   className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary resize-y"
                   rows={2}
-                  value={imageUrlsInput}
-                  onChange={(e) => setImageUrlsInput(e.target.value)}
                   placeholder="One image URL per line"
                 />
                 <span className="block text-[11px] text-primary/70">
@@ -1406,21 +2164,29 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
               </div>
             </div>
 
-            {/* RIGHT column (match create) */}
+            {/* RIGHT column (same as create) */}
             <div className="flex-1 space-y-2">
-              {/* <h3 className="text-sm font-semibold text-primary">
-                Primary affiliate link
-              </h3> */}
+              <div className="flex items-center justify-between">
+                <div className="text-sm font-semibold text-primary">Offers</div>
+                <button
+                  type="button"
+                  onClick={addOffer}
+                  className="btn btn-ghost btn-xs text-primary"
+                >
+                  + Add offer
+                </button>
+              </div>
 
+              {/* Primary offer */}
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block font-medium text-primary mb-0.5">
                     Network *
                   </label>
                   <select
+                    value={getPrimaryOffer(form).network}
+                    onChange={(e) => updateOffer(0, "network", e.target.value)}
                     className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
-                    value={linkNetwork}
-                    onChange={(e) => setLinkNetwork(e.target.value)}
                   >
                     {NETWORK_OPTIONS.map((opt) => (
                       <option key={opt.value} value={opt.value}>
@@ -1434,9 +2200,9 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                     Region
                   </label>
                   <select
+                    value={getPrimaryOffer(form).region || "global"}
+                    onChange={(e) => updateOffer(0, "region", e.target.value)}
                     className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
-                    value={linkRegion}
-                    onChange={(e) => setLinkRegion(e.target.value)}
                   >
                     {REGION_OPTIONS.map((opt) => (
                       <option key={opt.value} value={opt.value}>
@@ -1447,15 +2213,77 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                 </div>
               </div>
 
+              {/* Amazon ASIN lookup */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-1">
+                <div className="sm:col-span-2">
+                  <label className="block font-medium text-primary mb-0.5">
+                    ASIN
+                  </label>
+                  <input
+                    type="text"
+                    name="amazonAsinLookup"
+                    value={form.amazonAsinLookup}
+                    onChange={handleChange}
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    placeholder="B0XXXXXXXX"
+                    maxLength={10}
+                  />
+                  <span className="block text-[11px] text-primary/70">
+                    Enter an Amazon ASIN to prefill this item.
+                  </span>
+                </div>
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    Marketplace
+                  </label>
+                  <select
+                    name="amazonMarketplace"
+                    value={form.amazonMarketplace}
+                    onChange={handleChange}
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                  >
+                    <option value="us">US</option>
+                    <option value="uk">UK</option>
+                    <option value="de">DE</option>
+                    <option value="fr">FR</option>
+                    <option value="it">IT</option>
+                    <option value="es">ES</option>
+                    <option value="nl">NL</option>
+                    <option value="ca">CA</option>
+                    <option value="se">SE</option>
+                    <option value="pl">PL</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleAmazonLookup}
+                  className="btn btn-xs btn-outline"
+                  disabled={
+                    saving || getPrimaryOffer(form).network !== "amazon"
+                  }
+                  title={
+                    getPrimaryOffer(form).network !== "amazon"
+                      ? "Set Network to Amazon to use lookup"
+                      : "Fetch product data by ASIN"
+                  }
+                >
+                  Fetch from Amazon
+                </button>
+              </div>
+
               <div>
                 <label className="block font-medium text-primary mb-0.5">
                   Affiliate URL *
                 </label>
                 <input
                   type="url"
+                  value={getPrimaryOffer(form).url || ""}
+                  onChange={(e) => updateOffer(0, "url", e.target.value)}
                   className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                  value={linkUrl}
-                  onChange={(e) => setLinkUrl(e.target.value)}
+                  placeholder="https://www.amazon.com/dp/ASIN/?tag=yourtag-20"
                 />
               </div>
 
@@ -1466,9 +2294,11 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                   </label>
                   <input
                     type="text"
+                    value={getPrimaryOffer(form).merchantName || ""}
+                    onChange={(e) =>
+                      updateOffer(0, "merchantName", e.target.value)
+                    }
                     className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                    value={linkMerchantName}
-                    onChange={(e) => setLinkMerchantName(e.target.value)}
                     placeholder="Amazon / Bergfreunde / REI"
                   />
                 </div>
@@ -1478,15 +2308,37 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                   </label>
                   <input
                     type="text"
+                    value={getPrimaryOffer(form).externalId || ""}
+                    onChange={(e) =>
+                      updateOffer(0, "externalId", e.target.value)
+                    }
                     className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                    value={linkExternalId}
-                    onChange={(e) => setLinkExternalId(e.target.value)}
                     placeholder="ASIN, Awin product id..."
                   />
                   <span className="block text-[11px] text-primary/70">
                     ASIN (Amazon) / product id (Awin, Impact)
                   </span>
                 </div>
+              </div>
+
+              <div>
+                <label className="block font-medium text-primary mb-0.5">
+                  Link priority
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  step="1"
+                  value={Number(getPrimaryOffer(form).priority ?? 10)}
+                  onChange={(e) =>
+                    updateOffer(0, "priority", Number(e.target.value) || 0)
+                  }
+                  className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                  placeholder="10"
+                />
+                <span className="block text-[11px] text-primary/70">
+                  Higher wins if multiple links exist for a region.
+                </span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
@@ -1496,9 +2348,10 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                   </label>
                   <input
                     type="text"
+                    name="canonicalAsin"
+                    value={form.canonicalAsin}
+                    onChange={handleChange}
                     className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                    value={canonicalAsin}
-                    onChange={(e) => setCanonicalAsin(e.target.value)}
                     placeholder="Main ASIN for this product"
                   />
                 </div>
@@ -1508,9 +2361,10 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                   </label>
                   <input
                     type="text"
+                    name="itemGroupId"
+                    value={form.itemGroupId}
+                    onChange={handleChange}
                     className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                    value={itemGroupId}
-                    onChange={(e) => setItemGroupId(e.target.value)}
                     placeholder="Internal cross-network key"
                   />
                   <span className="block text-[11px] text-primary/70">
@@ -1518,6 +2372,136 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                   </span>
                 </div>
               </div>
+
+              {/* Additional offers (same UI as create) */}
+              {Array.isArray(form.links) && form.links.length > 1 && (
+                <div className="mt-2 space-y-2">
+                  {form.links.slice(1).map((offer, i) => {
+                    const idx = i + 1;
+                    return (
+                      <div
+                        key={idx}
+                        className="border border-primary/40 rounded p-2 bg-neutralAlt/40"
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="text-xs text-primary/80">
+                            Additional offer #{idx + 1}
+                          </div>
+                          <button
+                            type="button"
+                            className="btn btn-ghost btn-xs text-error"
+                            onClick={() => removeOffer(idx)}
+                            title="Remove offer"
+                          >
+                            <FaTimes />
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <label className="block font-medium text-primary mb-0.5">
+                              Network *
+                            </label>
+                            <select
+                              value={offer.network || "amazon"}
+                              onChange={(e) =>
+                                updateOffer(idx, "network", e.target.value)
+                              }
+                              className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                            >
+                              {NETWORK_OPTIONS.map((opt) => (
+                                <option key={opt.value} value={opt.value}>
+                                  {opt.label}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block font-medium text-primary mb-0.5">
+                              Region
+                            </label>
+                            <select
+                              value={offer.region || "global"}
+                              onChange={(e) =>
+                                updateOffer(idx, "region", e.target.value)
+                              }
+                              className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                            >
+                              {REGION_OPTIONS.map((opt) => (
+                                <option key={opt.value} value={opt.value}>
+                                  {opt.label}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+
+                        <div className="mt-2">
+                          <label className="block font-medium text-primary mb-0.5">
+                            Affiliate URL *
+                          </label>
+                          <input
+                            type="url"
+                            value={offer.url || ""}
+                            onChange={(e) =>
+                              updateOffer(idx, "url", e.target.value)
+                            }
+                            className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+                          <div>
+                            <label className="block font-medium text-primary mb-0.5">
+                              Merchant name
+                            </label>
+                            <input
+                              type="text"
+                              value={offer.merchantName || ""}
+                              onChange={(e) =>
+                                updateOffer(idx, "merchantName", e.target.value)
+                              }
+                              className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                            />
+                          </div>
+                          <div>
+                            <label className="block font-medium text-primary mb-0.5">
+                              External ID
+                            </label>
+                            <input
+                              type="text"
+                              value={offer.externalId || ""}
+                              onChange={(e) =>
+                                updateOffer(idx, "externalId", e.target.value)
+                              }
+                              className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                            />
+                          </div>
+                          <div>
+                            <label className="block font-medium text-primary mb-0.5">
+                              Link priority
+                            </label>
+                            <input
+                              type="number"
+                              min="0"
+                              step="1"
+                              value={Number(offer.priority ?? 10)}
+                              onChange={(e) =>
+                                updateOffer(
+                                  idx,
+                                  "priority",
+                                  Number(e.target.value) || 0
+                                )
+                              }
+                              className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
 
@@ -2270,9 +3254,9 @@ function UsersSection() {
                       >
                         <td className="px-3 py-2 align-top max-w-[220px]">
                           <div className="truncate">{u.email}</div>
-                          {(u.locale || u.currency) && (
+                          {u.locale && (
                             <div className="text-[10px] text-primary/70 mt-0.5">
-                              {u.locale || "—"} / {u.currency || "—"}
+                              {u.locale}
                             </div>
                           )}
                         </td>

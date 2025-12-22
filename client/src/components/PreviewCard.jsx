@@ -19,8 +19,6 @@ export default function PreviewCard({ item, viewMode, isPreview }) {
 
   const weightText =
     item.weight != null && item.weight !== "" ? `${item.weight} g` : "";
-  const priceText =
-    item.price != null && item.price !== "" ? `${item.price}` : "—";
   const qty = item.quantity ?? 1;
 
   // ─────────── LIST MODE PREVIEW ───────────
@@ -49,11 +47,10 @@ export default function PreviewCard({ item, viewMode, isPreview }) {
             </span>
           </div>
 
-          {/* Row 2: left (weight+price) · right (🍴 👕 qty 🛒) */}
+          {/* Row 2: left (weight) · right (🍴 👕 qty 🛒) */}
           <div className="row-start-2 col-span-2 grid grid-cols-[1fr_auto] items-center">
             <div className="grid grid-cols-[70px_75px] text-primary">
               <span className="tabular-nums text-left">{weightText}</span>
-              <span className="tabular-nums text-left">{priceText}</span>
             </div>
             <div className="flex items-center gap-3">
               <FaUtensils
@@ -101,11 +98,6 @@ export default function PreviewCard({ item, viewMode, isPreview }) {
           {/* 4) Weight */}
           <div className="justify-self-end tabular-nums text-primary w-[96px] text-right">
             {weightText}
-          </div>
-
-          {/* 5) Price */}
-          <div className="justify-self-end tabular-nums text-primary w-[112px] text-right">
-            {priceText}
           </div>
 
           {/* 6) Consumable */}
@@ -172,7 +164,6 @@ export default function PreviewCard({ item, viewMode, isPreview }) {
         <div className="row-start-2 col-span-2 grid grid-cols-[1fr_auto] items-center">
           <div className="grid grid-cols-[70px_75px] text-primary">
             <span className="tabular-nums text-left">{weightText}</span>
-            <span className="tabular-nums text-left">{priceText}</span>
           </div>
           <div className="flex items-center gap-3">
             <FaUtensils
@@ -219,14 +210,11 @@ export default function PreviewCard({ item, viewMode, isPreview }) {
           </div>
         </div>
 
-        {/* Row 3: left (weight+price) — right (🍴 👕 qty 🛒) */}
+        {/* Row 3: left (weight) — right (🍴 👕 qty 🛒) */}
         <div className="grid grid-cols-[1fr_auto] items-center">
           <div className="flex items-center space-x-3">
             <span className="text-sm text-primary tabular-nums">
               {weightText}
-            </span>
-            <span className="text-sm text-primary tabular-nums">
-              {priceText}
             </span>
           </div>
           <div className="grid grid-cols-[16px_16px_auto_16px] items-center justify-end gap-x-3">

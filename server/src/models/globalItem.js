@@ -87,13 +87,6 @@ const GlobalItemSchema = new mongoose.Schema(
       index: true,
     },
 
-    // Snapshot price on the global item (for user’s reference).
-    // This is NOT your canonical pricing; that lives on MerchantOffer.
-    price: {
-      type: Number,
-      required: false,
-    },
-
     // Optional direct link if this item is custom or the user wants
     // a non-catalog / non-affiliate URL.
     link: {
@@ -118,55 +111,6 @@ const GlobalItemSchema = new mongoose.Schema(
       default: 1,
     },
 
-    // Affiliate info is now considered "legacy" / custom override.
-    // For catalog-backed items, you’ll normally resolve offers via:
-    //   productId → CatalogItem → MerchantOffer
-    affiliate: {
-      type: new mongoose.Schema(
-        {
-          // Affiliate network ("awin", "amazon", "impact")
-          network: {
-            type: String,
-            enum: ["awin", "amazon", "impact"],
-            required: true,
-          },
-
-          // Network-specific merchant identifier (e.g., Awin advertiser id)
-          merchantId: { type: String },
-
-          // Merchant display name ("Amazon", "Bergfreunde", etc.)
-          merchantName: { type: String },
-
-          // Source region for this affiliate link (e.g., "GB", "US").
-          // For catalog-backed items, user routing should use MerchantOffer.region instead.
-          region: { type: String },
-
-          // External product ID from the network (ASIN, Awin product id, etc.)
-          externalProductId: { type: String },
-
-          // The canonical deep link that was stored on this item.
-          // For new catalog-backed flows, prefer MerchantOffer.deepLink.
-          deepLink: { type: String },
-
-          // Stable group id used to correlate offers across regions for this item.
-          // This mirrors CatalogItem.itemGroupId / MerchantOffer.itemGroupId when used.
-          itemGroupId: { type: String },
-
-          // Optional alternate links for other regions/merchants.
-          // Legacy structure from the earlier design.
-          alternates: [
-            {
-              region: String,
-              deepLink: String,
-              merchantId: String,
-              externalProductId: String,
-            },
-          ],
-        },
-        { _id: false }
-      ),
-      required: false,
-    },
     // Flags that this global item was created by importing from a shared list.
     importedFromShare: {
       type: Boolean,

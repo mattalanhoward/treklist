@@ -12,7 +12,6 @@ const router = express.Router();
 
 // --- Simple in-memory TTL cache for resolve-link (no extra deps)
 // Key: `${itemGroupId}|${region}`
-// --- Simple in-memory TTL cache for resolve-link
 const RESOLVE_CACHE = new Map();
 const MAX_CACHE_ENTRIES = 1000;
 const TTL_EXACT_MS = 6 * 60 * 60 * 1000; // 6h
@@ -66,7 +65,6 @@ router.get(
     query("limit").optional().isInt({ min: 1, max: 200 }),
   ],
   async (req, res) => {
-    // validate
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res
@@ -99,7 +97,6 @@ router.get(
         { $match: match },
         {
           $facet: {
-            // Brands: group by stable key brandLC, expose "value" as the proper-cased brand
             brands: [
               { $match: { brandLC: { $type: "string", $ne: "" } } },
               {
@@ -113,7 +110,6 @@ router.get(
               { $sort: { count: -1, value: 1 } },
               { $limit: Number(limit) },
             ],
-            // Item types: already denormalized
             itemTypes: [
               { $match: { itemType: { $type: "string", $ne: "" } } },
               { $group: { _id: "$itemType", count: { $sum: 1 } } },
@@ -145,11 +141,9 @@ router.get(
  *  - itemType?: string (exact on denormalized itemType)
  *  - category?: string (substring match against categoryPath for legacy UIs)
  *  - q?: string (regex search in name/description; safe w/o text index)
- *  - minPrice?: number
- *  - maxPrice?: number
  *  - page?: number (default 1)
  *  - limit?: number (default 24, max 50)
- *  - sort?: "relevance" | "-updated" | "price" | "-price" (relevance behaves same as -updated here)
+ *  - sort?: string ("relevance" | "-updated")
  */
 router.get(
   "/awin/products",
@@ -161,14 +155,11 @@ router.get(
     query("itemType").optional().isString().trim(),
     query("category").optional().isString().trim(),
     query("q").optional().isString().trim(),
-    query("minPrice").optional().isFloat({ min: 0 }),
-    query("maxPrice").optional().isFloat({ min: 0 }),
     query("page").optional().isInt({ min: 1 }),
     query("limit").optional().isInt({ min: 1, max: 50 }),
     query("sort").optional().isString().trim(),
   ],
   async (req, res) => {
-    // validate
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res
@@ -184,8 +175,6 @@ router.get(
         itemType = "",
         category = "",
         q = "",
-        minPrice,
-        maxPrice,
         page = 1,
         limit = 24,
         sort = q ? "relevance" : "-updated",
@@ -211,14 +200,6 @@ router.get(
         and.push({ categoryPath: new RegExp(escapeRegex(category), "i") });
       }
 
-      // price range
-      if (minPrice != null || maxPrice != null) {
-        const p = {};
-        if (minPrice != null) p.$gte = Number(minPrice);
-        if (maxPrice != null) p.$lte = Number(maxPrice);
-        filter.price = p;
-      }
-
       // safe regex search; avoids requiring a text index
       if (q && q.trim()) {
         const rx = new RegExp(escapeRegex(q.trim()), "i");
@@ -227,12 +208,9 @@ router.get(
 
       if (and.length) filter.$and = and;
 
-      // simple sorts (no textScore since we're using regex)
+      // simple sorts
       const sortSpec = {};
-      if (sort === "price") sortSpec.price = 1;
-      else if (sort === "-price") sortSpec.price = -1;
-      else if (sort === "-updated" || sort === "relevance")
-        sortSpec.updatedAt = -1;
+      if (sort === "-updated" || sort === "relevance") sortSpec.updatedAt = -1;
       else sortSpec.updatedAt = -1;
 
       const total = await AffiliateProduct.countDocuments(filter);
@@ -289,6 +267,7 @@ router.get(
         }).lean();
         if (!gi)
           return res.status(404).json({ message: "Global item not found." });
+
         original = { link: gi.link, region: gi?.affiliate?.region || null };
         group =
           group ||
@@ -356,8 +335,8 @@ router.get(
 /**
  * GET /api/affiliates/resolve
  * Query: itemId=<globalItemId>&region=<nl|us|gb|fr|it|ca|de>
- * Returns: { amount, currency, merchant, deeplink, source: "offer" | "product" } | null
- * Note: This route is auth-protected by router.use(auth); change if you want it public.
+ * Returns: { merchant, deeplink, source: "offer" | "product" } | null
+ * NOTE: This is now a "resolve deeplink" endpoint.
  */
 router.get(
   "/resolve",
@@ -374,7 +353,7 @@ router.get(
           .status(400)
           .json({ error: { code: "BAD_QUERY", details: errors.array() } });
       }
-      // At this point itemId/region are present per validator; normalize:
+
       const REGION = String(region).toUpperCase();
 
       const item = await GlobalItem.findById(itemId).lean();
@@ -388,19 +367,17 @@ router.get(
         item.affiliate.groupId;
       if (!groupId) return res.json(null);
 
-      // 1) Try a region-matched merchant offer (cheapest first)
+      // 1) Try a region-matched merchant offer (most recently updated first)
       const offer = await MerchantOffer.findOne({
         network: "awin",
         itemGroupId: String(groupId),
         region: REGION,
       })
-        .sort({ price: 1 })
+        .sort({ updatedAt: -1 })
         .lean();
 
       if (offer) {
         return res.json({
-          amount: offer.price,
-          currency: offer.currency,
           merchant: offer.merchantName || offer.merchantId || null,
           deeplink: offer.awDeepLink || null,
           source: "offer",
@@ -414,10 +391,8 @@ router.get(
         region: REGION,
       }).lean();
 
-      if (prod && typeof prod.price === "number") {
+      if (prod) {
         return res.json({
-          amount: prod.price,
-          currency: prod.currency,
           merchant: prod.merchantName || prod.brand || null,
           deeplink: prod.awDeepLink || null,
           source: "product",
@@ -429,7 +404,7 @@ router.get(
       console.error("GET /affiliates/resolve error:", err);
       return res
         .status(500)
-        .json({ message: "Failed to resolve affiliate price." });
+        .json({ message: "Failed to resolve affiliate deeplink." });
     }
   }
 );

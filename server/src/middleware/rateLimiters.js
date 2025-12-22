@@ -1,5 +1,5 @@
 // server/src/middleware/rateLimiters.js
-const rateLimit = require("express-rate-limit");
+const { rateLimit, ipKeyGenerator } = require("express-rate-limit");
 
 const isTest = process.env.NODE_ENV === "test";
 
@@ -59,7 +59,7 @@ const forgotPasswordEmailLimiter = makeLimiter({
   message: "Too many password reset requests for this email. Try again later.",
   keyGenerator: (req) => {
     const e = normalizeEmail(req.body?.email);
-    return e ? `fp_email:${e}` : `fp_ip:${req.ip}`;
+    return e ? `fp_email:${e}` : `fp_ip:${ipKeyGenerator(req.ip)}`;
   },
 });
 
@@ -69,7 +69,7 @@ const resendVerificationEmailLimiter = makeLimiter({
   message: "Too many resend requests for this email. Try again later.",
   keyGenerator: (req) => {
     const e = normalizeEmail(req.body?.email);
-    return e ? `rv_email:${e}` : `rv_ip:${req.ip}`;
+    return e ? `rv_email:${e}` : `rv_ip:${ipKeyGenerator(req.ip)}`;
   },
 });
 

@@ -14,8 +14,6 @@
     "nameRequired": "Naam is verplicht.",
     "weightInvalid": "Vul een geldig gewicht in.",
     "weightNegative": "Gewicht kan niet negatief zijn.",
-    "priceInvalid": "Vul een geldige prijs in.",
-    "priceNegative": "Prijs kan niet negatief zijn.",
     "urlInvalid": "Link moet een geldige URL zijn."
   },
   "confirm": {
@@ -372,7 +370,6 @@
       "brand": "Merk",
       "link": "Link",
       "weight": "Gewicht ({{unit}})",
-      "price": "Prijs ({{currency}})",
       "description": "Omschrijving"
     },
     "placeholders": {
@@ -386,10 +383,7 @@
     "messages": {
       "affiliateLinkLockedTitle": "Link is vergrendeld",
       "affiliateLinkLockedBody": "De link wordt ingesteld door de aanbieder voor geïmporteerde items.",
-      "affiliatePriceLockedTitle": "Prijs is vergrendeld",
-      "affiliatePriceLockedBody": "Prijs wordt ingesteld door de aanbieder voor geïmporteerde items.",
-      "affiliatePriceManaged": "Beheerd door de verkoper",
-      "affiliateNote": "Link en prijs worden ingesteld door de aanbieder voor geïmporteerde items.",
+      "affiliateNote": "Link is ingesteld door de aanbieder voor geïmporteerde items.",
       "cancelHintImport": "Kies een product (Importeren) of schakel over naar Aangepast."
     },
     "toast": {

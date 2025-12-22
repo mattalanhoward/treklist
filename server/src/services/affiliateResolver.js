@@ -10,8 +10,6 @@ const { buildRegionPreferenceChain } = require("../utils/regionPrefs");
  * @param {string} [params.userRegion="global"] - e.g. "us", "uk", "nl", "de"
  * @returns {Promise<null | {
  *   deepLink: string,
- *   price?: number,
- *   currency?: string,
  *   merchantName?: string,
  *   network: string,
  *   region: string
@@ -27,18 +25,12 @@ async function resolveOfferForProduct({ productId, userRegion = "global" }) {
     const offers = await MerchantOffer.find({
       productId,
       region,
-    })
-      .sort({ priority: -1, price: 1 }) // higher priority first, then cheaper
-      .limit(1)
-      .lean()
-      .exec();
+    });
 
     if (offers && offers.length > 0) {
       const offer = offers[0];
       return {
         deepLink: offer.deepLink,
-        price: offer.price,
-        currency: offer.currency,
         merchantName: offer.merchantName,
         network: offer.network,
         region: offer.region,

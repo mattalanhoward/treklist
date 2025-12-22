@@ -94,24 +94,6 @@ const MerchantOfferSchema = new mongoose.Schema(
       trim: true,
     },
 
-    // Currency code: "USD", "EUR", "GBP", etc.
-    currency: {
-      type: String,
-      trim: true,
-    },
-
-    // Latest known price (optional — some merchants do not expose price)
-    price: {
-      type: Number,
-      min: 0,
-    },
-
-    // When did we last fetch this price?
-    // Required for Amazon PAAPI (24 hour caching rule)
-    priceLastFetchedAt: {
-      type: Date,
-    },
-
     // Preferred offer selector
     // Example:
     //  - priority: 10 → “use this offer over others in the same region”
@@ -127,14 +109,17 @@ const MerchantOfferSchema = new mongoose.Schema(
 // Normalization middleware
 // ---------------------------------------------------------------------
 MerchantOfferSchema.pre("save", function normalize(next) {
-  // Normalize region to lowercase (your internal routing standard)
   if (this.region) this.region = String(this.region).toLowerCase();
 
-  // Normalize string IDs
   if (this.itemGroupId != null) this.itemGroupId = String(this.itemGroupId);
   if (this.merchantId != null) this.merchantId = String(this.merchantId);
-  if (this.externalProductId != null)
-    this.externalProductId = String(this.externalProductId);
+
+  if (this.externalProductId != null) {
+    this.externalProductId = String(this.externalProductId).trim();
+    if (this.network === "amazon") {
+      this.externalProductId = this.externalProductId.toUpperCase();
+    }
+  }
 
   next();
 });
@@ -146,7 +131,12 @@ MerchantOfferSchema.pre("save", function normalize(next) {
 // Unique per network + region + merchant + external product
 MerchantOfferSchema.index(
   { network: 1, region: 1, merchantId: 1, externalProductId: 1 },
-  { unique: true }
+  {
+    unique: true,
+    partialFilterExpression: {
+      externalProductId: { $exists: true, $type: "string", $ne: "" },
+    },
+  }
 );
 
 // Efficient region → product → offers lookup
@@ -154,8 +144,5 @@ MerchantOfferSchema.index({ productId: 1, region: 1 });
 
 // itemGroupId fallback (before productId is known)
 MerchantOfferSchema.index({ network: 1, itemGroupId: 1, region: 1 });
-
-// Cheapest-first sorting for your /affiliate/resolve service
-MerchantOfferSchema.index({ productId: 1, region: 1, price: 1 });
 
 module.exports = mongoose.model("MerchantOffer", MerchantOfferSchema);

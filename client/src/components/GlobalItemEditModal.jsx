@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import api from "../services/api";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import CurrencyInput from "../components/CurrencyInput";
 import LinkInput from "../components/LinkInput";
 import ConfirmDialog from "./ConfirmDialog";
 import { useUnit } from "../hooks/useUnit";
@@ -28,7 +27,6 @@ export default function GlobalItemEditModal({
     brand: "",
     description: "",
     weight: "",
-    price: "",
     link: "",
   });
 
@@ -45,18 +43,6 @@ export default function GlobalItemEditModal({
 
   const itemId = item ? item._id : null;
   const isListContext = context === "list" || (!!listId && !!catId);
-
-  const { currency, locale } = useUserSettings();
-  const CURRENCY_SYMBOL = {
-    USD: "$",
-    EUR: "€",
-    GBP: "£",
-    CAD: "C$",
-    AUD: "A$",
-    CHF: "CHF",
-    SEK: "kr",
-  };
-  const currencySymbol = CURRENCY_SYMBOL[currency] || currency;
 
   // Affiliate-backed items:
   // - legacy: item.affiliate.network (Awin feed items)
@@ -107,7 +93,6 @@ export default function GlobalItemEditModal({
       brand: item.brand || "",
       description: item.description || "",
       weight: initialGrams,
-      price: item.price ?? "", // keep empty string if none
       link: item.link || "",
     });
     setWorn(!!item.worn);
@@ -133,8 +118,6 @@ export default function GlobalItemEditModal({
     const parsed = trimmed === "" ? null : parseInput(trimmed);
     if (trimmed !== "" && parsed == null) return t("validation.weightInvalid");
     if (parsed != null && parsed < 0) return t("validation.weightNegative");
-    if (!isAffiliateBacked && form.price !== "" && Number(form.price) < 0)
-      return t("validation.priceNegative");
     if (!isAffiliateBacked && form.link && !/^https?:\/\//.test(form.link))
       return t("validation.urlInvalid");
     return "";
@@ -179,24 +162,15 @@ export default function GlobalItemEditModal({
         quantity,
       };
 
-      // Price/Link handling:
+      // Link handling:
       if (isAffiliateBacked) {
-        // For imported affiliate items, lock price + link
-        delete payload.price;
+        // For imported affiliate items, lock link
         delete payload.link;
-      } else {
-        // Price: allow clearing to null
-        if (form.price === "" || form.price == null) {
-          payload.price = null;
-        } else {
-          const p = Number(form.price);
-          if (!Number.isNaN(p)) payload.price = p; // keep 0 if they typed 0
-        }
-
-        // Link: allow clearing
-        const trimmedLink = (form.link || "").trim();
-        payload.link = trimmedLink === "" ? null : trimmedLink;
       }
+
+      // Link: allow clearing
+      const trimmedLink = (form.link || "").trim();
+      payload.link = trimmedLink === "" ? null : trimmedLink;
 
       let updatedSomething = false;
       let touchedGlobal = false;
@@ -342,7 +316,7 @@ export default function GlobalItemEditModal({
             )}
           </div>
 
-          {/* Weight + Price */}
+          {/* Weight */}
           <div className="flex space-x-1 sm:space-x-2 col-span-1 sm:col-span-2">
             <div className="flex-1">
               <label className="block font-medium text-primary mb-0.5">
@@ -355,33 +329,6 @@ export default function GlobalItemEditModal({
                 onChange={(e) => setDisplayWeight(e.target.value)}
                 className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
               />
-            </div>
-
-            <div className="flex-1 relative">
-              <label className="block font-medium text-primary mb-0.5">
-                {t("globalItemModal.labels.price", {
-                  currency: currencySymbol,
-                })}
-              </label>
-              <div className="relative">
-                {isAffiliateBacked ? (
-                  <>
-                    <div className="mt-0.5 block w-full border border-dashed border-primary/40 rounded px-2 py-1 text-sm text-primary/70 bg-neutralAlt/60">
-                      {/* Show price if we actually have one; otherwise a nice placeholder */}
-                      {form.price !== "" && form.price != null
-                        ? form.price
-                        : t("globalItemModal.messages.affiliatePriceManaged")}
-                    </div>
-                  </>
-                ) : (
-                  <CurrencyInput
-                    value={form.price ?? ""}
-                    currency={currency}
-                    locale={locale}
-                    onChange={(val) => setForm((f) => ({ ...f, price: val }))}
-                  />
-                )}
-              </div>
             </div>
           </div>
 

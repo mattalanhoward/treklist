@@ -14,8 +14,6 @@ const { resolveOfferForProduct } = require("./affiliateResolver");
  * @param {string} [params.userRegion="global"]
  * @returns {Promise<null | {
  *   deepLink: string,
- *   price?: number,
- *   currency?: string,
  *   merchantName?: string,
  *   network?: string,
  *   region?: string,

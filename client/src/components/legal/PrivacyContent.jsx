@@ -85,14 +85,13 @@ export default function PrivacyContent() {
           hashed form only), and optional trail name or display name.
         </li>
         <li>
-          <strong>Profile &amp; settings</strong> – preferred language and
-          currency, weight units, theme, email communication preferences, and
-          other app settings.
+          <strong>Profile &amp; settings</strong> – preferred language, weight
+          units, theme, email communication preferences, and other app settings.
         </li>
         <li>
           <strong>Gear lists &amp; content</strong> – names of your lists and
-          categories, items you add (e.g. item names, weights, prices, notes)
-          and background images you select or upload.
+          categories, items you add (e.g. item names, weights, notes) and
+          background images you select or upload.
         </li>
         <li>
           <strong>Support communication</strong> – messages you send us via
