@@ -14,8 +14,6 @@
     "nameRequired": "Name is required.",
     "weightInvalid": "Enter a valid weight.",
     "weightNegative": "Weight cannot be negative.",
-    "priceInvalid": "Enter a valid price.",
-    "priceNegative": "Price cannot be negative.",
     "urlInvalid": "Link must be a valid URL."
   },
   "confirm": {
@@ -371,7 +369,6 @@
       "brand": "Brand",
       "link": "Link",
       "weight": "Weight ({{unit}})",
-      "price": "Price ({{currency}})",
       "description": "Description"
     },
     "placeholders": {
@@ -385,10 +382,7 @@
     "messages": {
       "affiliateLinkLockedTitle": "Link is locked",
       "affiliateLinkLockedBody": "Link is set by the merchant for imported items.",
-      "affiliatePriceLockedTitle": "Price is locked",
-      "affiliatePriceLockedBody": "Price is set by the merchant for imported items.",
-      "affiliatePriceManaged": "Managed by merchant",
-      "affiliateNote": "Link and price are set by the merchant for imported items.",
+      "affiliateNote": "Link is set by the merchant for imported items.",
       "cancelHintImport": "Pick a product (Import) or switch to Custom."
     },
     "toast": {

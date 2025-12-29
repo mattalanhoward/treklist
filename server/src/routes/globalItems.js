@@ -8,11 +8,34 @@ const { body, validationResult } = require("express-validator");
 const mongoose = require("mongoose");
 const { isValidObjectId } = mongoose;
 const CatalogItem = require("../models/catalogItem");
+const User = require("../models/user");
+const MerchantOffer = require("../models/merchantOffer");
 
 const router = express.Router();
 
 // Protect all routes
 router.use(auth);
+
+function pickBestOffer(offers, userRegion) {
+  const list = Array.isArray(offers) ? offers : [];
+  const scored = list
+    .map((o) => {
+      const region = String(o.region || "global").toLowerCase();
+      const regionScore =
+        region === userRegion ? 2 : region === "global" ? 1 : 0;
+      const priority = Number(o.priority) || 0;
+      return { o, regionScore, priority };
+    })
+    .filter((x) => x.regionScore > 0);
+
+  scored.sort((a, b) => {
+    if (a.regionScore !== b.regionScore) return b.regionScore - a.regionScore;
+    if (a.priority !== b.priority) return b.priority - a.priority;
+    return 0;
+  });
+
+  return scored[0]?.o || null;
+}
 
 // GET /api/global/items
 router.get("/", async (req, res) => {
@@ -108,7 +131,7 @@ router.post(
         dedupeQuery["affiliate.region"] &&
         dedupeQuery["affiliate.externalProductId"];
 
-      // Build the new GlobalItem — price/link always from affiliate product
+      // Build the new GlobalItem — link always from affiliate product
       const data = {
         owner: req.userId,
         name: req.body.name ?? p.name,
@@ -122,7 +145,6 @@ router.post(
         quantity: Number.isFinite(req.body.quantity)
           ? Number(req.body.quantity)
           : 1,
-        price: p.price ?? null,
         link: p.awDeepLink,
         // keep whatever category model you use today; skip if not applicable
         category: req.body.category ?? null,
@@ -205,15 +227,17 @@ router.patch("/:id", async (req, res) => {
       return res.status(404).json({ message: "Global item not found." });
     }
 
-    const isAffiliate = current.affiliate && current.affiliate.network;
+    // Affiliate-backed if linked to CatalogItem (productId) OR legacy affiliate metadata exists
+    const isAffiliateBacked =
+      Boolean(current.productId) || Boolean(current?.affiliate?.network);
+
+    // Link is custom-only now: ignore it for affiliate-backed items (don’t 400)
     if (
-      isAffiliate &&
-      (Object.prototype.hasOwnProperty.call(req.body, "price") ||
-        Object.prototype.hasOwnProperty.call(req.body, "link"))
+      isAffiliateBacked &&
+      Object.prototype.hasOwnProperty.call(req.body, "link")
     ) {
-      return res.status(400).json({
-        message: "price and link are immutable for affiliate-backed items.",
-      });
+      // ignore silently
+      delete req.body.link;
     }
 
     // Only allow these fields to be updated
@@ -224,7 +248,6 @@ router.patch("/:id", async (req, res) => {
       "brand",
       "description",
       "weight",
-      "price",
       "link",
     ];
 
@@ -252,7 +275,6 @@ router.patch("/:id", async (req, res) => {
       brand: updated.brand,
       description: updated.description,
       weight: updated.weight,
-      price: updated.price,
       link: updated.link,
     };
 
@@ -298,16 +320,76 @@ router.post("/from-catalog/bulk", async (req, res) => {
         .json({ message: "No valid catalog ids provided." });
     }
 
+    // ---- Region (secure, from user profile) ----
+    // NOTE: requires: const User = require("../models/user");
+    const user = await User.findById(req.userId).select("region").lean();
+
+    const normalizeRegion = (region) => {
+      if (!region) return "global";
+      const r = String(region).trim().toLowerCase();
+      if (r === "netherlands") return "nl";
+      if (r === "united states" || r === "usa") return "us";
+      if (r.length === 2) return r;
+      return r;
+    };
+
+    const userRegion = normalizeRegion(user?.region);
+
     // Load catalog items (only active)
     const catalogItems = await CatalogItem.find({
       _id: { $in: cleanIds },
       isActive: true,
     }).lean();
 
+    const catalogIds = catalogItems.map((c) => c._id);
+
+    // ---- Load MerchantOffers for these products for user's region + global ----
+    const offers = await MerchantOffer.find({
+      productId: { $in: catalogIds },
+      region: { $in: ["global", userRegion] },
+    }).lean();
+
+    const offersByProductId = new Map();
+    for (const o of offers) {
+      const key = String(o.productId);
+      const arr = offersByProductId.get(key) || [];
+      arr.push(o);
+      offersByProductId.set(key, arr);
+    }
+
+    const pickBestOffer = (list) => {
+      if (!Array.isArray(list) || list.length === 0) return null;
+
+      // Prefer user's region over global, then higher priority.
+      // If still tied, prefer most recently updated/created.
+      return list.slice().sort((a, b) => {
+        const aRegionScore = a.region === userRegion ? 2 : 1; // global=1
+        const bRegionScore = b.region === userRegion ? 2 : 1;
+
+        if (aRegionScore !== bRegionScore) return bRegionScore - aRegionScore;
+
+        const ap = typeof a.priority === "number" ? a.priority : 0;
+        const bp = typeof b.priority === "number" ? b.priority : 0;
+        if (ap !== bp) return bp - ap;
+
+        const at = a.updatedAt
+          ? new Date(a.updatedAt).getTime()
+          : a.createdAt
+          ? new Date(a.createdAt).getTime()
+          : 0;
+        const bt = b.updatedAt
+          ? new Date(b.updatedAt).getTime()
+          : b.createdAt
+          ? new Date(b.createdAt).getTime()
+          : 0;
+        return bt - at;
+      })[0];
+    };
+
     // Existing imports for this owner
     const existing = await GlobalItem.find({
       owner: req.userId,
-      productId: { $in: catalogItems.map((c) => c._id) },
+      productId: { $in: catalogIds },
     })
       .select("_id productId")
       .lean();
@@ -318,7 +400,37 @@ router.post("/from-catalog/bulk", async (req, res) => {
     const ops = catalogItems
       .filter((c) => !existingSet.has(String(c._id)))
       .map((c) => {
-        const primaryLink = Array.isArray(c.links) ? c.links[0] : null;
+        const bestOffer = pickBestOffer(
+          offersByProductId.get(String(c._id)) || []
+        );
+
+        const resolved = bestOffer
+          ? {
+              network: bestOffer.network,
+              region: bestOffer.region || "global",
+              deepLink: bestOffer.deepLink,
+              merchantId: bestOffer.merchantId,
+              merchantName: bestOffer.merchantName || "",
+              externalProductId: bestOffer.externalProductId || "",
+              itemGroupId: bestOffer.itemGroupId || c.itemGroupId || undefined,
+              priority:
+                typeof bestOffer.priority === "number" ? bestOffer.priority : 0,
+            }
+          : legacyPrimaryLink
+          ? {
+              network: legacyPrimaryLink.network,
+              region: legacyPrimaryLink.region || "global",
+              deepLink: legacyPrimaryLink.url,
+              merchantId: undefined, // legacy didn’t have stable merchantId
+              merchantName: legacyPrimaryLink.merchantName || "",
+              externalProductId: legacyPrimaryLink.externalId || "",
+              itemGroupId: c.itemGroupId || undefined,
+              priority:
+                typeof legacyPrimaryLink.priority === "number"
+                  ? legacyPrimaryLink.priority
+                  : 0,
+            }
+          : null;
 
         const payload = {
           owner: req.userId,
@@ -332,15 +444,20 @@ router.post("/from-catalog/bulk", async (req, res) => {
           tags: c.tags,
           category: c.category || null,
           subcategory: c.subcategory || null,
-          link: primaryLink ? primaryLink.url : "",
-          affiliate: primaryLink
+
+          // link is ONLY for custom items; catalog-backed resolves via MerchantOffer
+          link: null,
+
+          // Affiliate metadata for routing / immutability rules
+          affiliate: resolved
             ? {
-                network: primaryLink.network,
-                region: primaryLink.region || "global",
-                deepLink: primaryLink.url,
-                merchantName: primaryLink.merchantName || "",
-                externalProductId: primaryLink.externalId || "",
-                itemGroupId: c.itemGroupId || undefined,
+                network: resolved.network,
+                region: resolved.region,
+                deepLink: resolved.deepLink,
+                merchantId: resolved.merchantId,
+                merchantName: resolved.merchantName,
+                externalProductId: resolved.externalProductId,
+                itemGroupId: resolved.itemGroupId,
               }
             : undefined,
         };
@@ -361,7 +478,7 @@ router.post("/from-catalog/bulk", async (req, res) => {
     // Return winners (created + existing) for the requested set
     const winners = await GlobalItem.find({
       owner: req.userId,
-      productId: { $in: catalogItems.map((c) => c._id) },
+      productId: { $in: catalogIds },
     }).lean();
 
     return res.status(200).json({
@@ -384,9 +501,19 @@ router.post("/from-catalog/:id", async (req, res) => {
       return res.status(404).json({ message: "Catalog item not found." });
     }
 
-    const primaryLink = Array.isArray(catalogItem.links)
-      ? catalogItem.links[0]
-      : null;
+    // choose best offer (region-aware)
+    const user = await User.findById(req.userId).select("region").lean();
+    const userRegion = (user?.region || "global")
+      .toString()
+      .trim()
+      .toLowerCase();
+
+    const offers = await MerchantOffer.find({
+      productId: catalogItem._id,
+      region: { $in: ["global", userRegion] },
+    }).lean();
+
+    const primaryOffer = pickBestOffer(offers, userRegion);
 
     // Prepare new GlobalItem payload
     const payload = {
@@ -410,18 +537,19 @@ router.post("/from-catalog/:id", async (req, res) => {
       tags: catalogItem.tags,
       category: catalogItem.category || null,
       subcategory: catalogItem.subcategory || null,
-      // old top-level link field used throughout the app
-      link: primaryLink ? primaryLink.url : "",
-
+      // link is ONLY for custom items; catalog-backed resolves via MerchantOffer
+      link: null,
       // affiliate metadata for future routing
-      affiliate: primaryLink
+      affiliate: primaryOffer
         ? {
-            network: primaryLink.network,
-            region: primaryLink.region || "global",
-            deepLink: primaryLink.url,
-            merchantName: primaryLink.merchantName || "",
-            externalProductId: primaryLink.externalId || "",
-            itemGroupId: catalogItem.itemGroupId || undefined,
+            network: primaryOffer.network,
+            region: primaryOffer.region || "global",
+            deepLink: primaryOffer.deepLink,
+            merchantName: primaryOffer.merchantName || "",
+            merchantId: primaryOffer.merchantId || "",
+            externalProductId: primaryOffer.externalProductId || "",
+            itemGroupId:
+              primaryOffer.itemGroupId || catalogItem.itemGroupId || undefined,
           }
         : undefined,
     };

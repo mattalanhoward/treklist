@@ -33,18 +33,9 @@ export default function GearListDetailsModal({
   const [showConfirmClose, setShowConfirmClose] = useState(false);
   const [isDirty, setDirty] = useState(false);
 
-  // Pull locale and currency code from user settings
-  const { locale, currency } = useUserSettings();
+  // Pull locale from user settings
+  const { locale } = useUserSettings();
   const dfnsLocale = dateFnsLocales[locale] || dateFnsLocales["en-US"];
-
-  // Intl.NumberFormat requires an ISO currency code (e.g. "EUR"), not a symbol
-  const currencyCodeMap = { $: "USD", "€": "EUR", "£": "GBP" };
-  const currencyCode = currencyCodeMap[currency] || currency;
-  const formattedCost = new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency: currencyCode,
-    minimumFractionDigits: 0,
-  }).format(totalCost || 0);
 
   // initialize form when list changes
   useEffect(() => {
@@ -230,13 +221,6 @@ export default function GearListDetailsModal({
 
           {/* Stats */}
           <div className="md:col-span-2 flex flex-wrap items-baseline gap-x-6 gap-y-2 text-primary">
-            <p className="flex items-baseline gap-1">
-              <span className="font-medium">
-                {t("gearListDetailsModal.stats.totalCost")}{" "}
-              </span>
-              <span className="font-semibold">{formattedCost}</span>
-            </p>
-
             <p className="flex items-baseline gap-1">
               <span className="font-medium">
                 {t("gearListDetailsModal.stats.itemsCount")}{" "}

@@ -37,51 +37,6 @@ export function detectRegion(preferredRegion) {
   return langMap[lang] || "GB";
 }
 
-/**
- * Map a normalized ISO-2 region code to a display currency.
- * Keep this intentionally small and opinionated for your current focus (US/EU).
- * Default fallback: EUR (safer for your current EU-first audience).
- */
-export function currencyForRegion(region) {
-  if (!region) return "EUR";
-  const r = String(region).toUpperCase();
-  // Direct mappings first
-  const MAP = {
-    US: "USD",
-    GB: "GBP",
-    UK: "GBP", // just in case
-    CA: "CAD",
-    AU: "AUD",
-    CH: "CHF",
-  };
-  if (MAP[r]) return MAP[r];
-  // Broad EU (most EU countries → EUR)
-  const EUR_SET = new Set([
-    "NL",
-    "DE",
-    "FR",
-    "IT",
-    "ES",
-    "PT",
-    "BE",
-    "AT",
-    "IE",
-    "FI",
-    "EE",
-    "LV",
-    "LT",
-    "LU",
-    "MT",
-    "SI",
-    "SK",
-    "CY",
-    "GR",
-  ]);
-  if (EUR_SET.has(r)) return "EUR";
-  // Default fallback
-  return "EUR";
-}
-
 // Map messy labels to ISO alpha-2 we use everywhere
 export function normalizeRegion(code) {
   const k = String(code || "")

@@ -161,12 +161,8 @@ export default function GearListView({
   // flatten ALL items into one array
   const allItems = Object.values(itemsMap).flat();
 
-  // count & cost
+  // count
   const itemsCount = allItems.length;
-  const totalCost = allItems.reduce(
-    (sum, i) => sum + (parseFloat(i.price) || 0) * (i.quantity || 1),
-    0
-  );
 
   // split them into the four buckets
   const baseItems = allItems.filter((i) => !i.worn && !i.consumable);
@@ -1314,7 +1310,6 @@ export default function GearListView({
         list={list}
         breakdowns={breakdowns}
         itemsCount={itemsCount}
-        totalCost={totalCost}
         onRefresh={onRefresh}
         onRefreshSidebar={fetchLists}
       />

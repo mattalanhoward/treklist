@@ -152,7 +152,6 @@ export default function Sidebar({
           name: item.name,
           description: item.description,
           weight: item.weight,
-          price: item.price,
           link: item.link,
           worn: item.worn,
           consumable: item.consumable,

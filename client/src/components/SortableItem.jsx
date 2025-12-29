@@ -15,8 +15,6 @@ import {
 } from "react-icons/fa";
 import AffiliateGateLink from "./AffiliateGateLink";
 import { useWeight } from "../hooks/useWeight";
-import { useResolvedPrice } from "../hooks/useResolvedPrice";
-import { formatCurrency } from "../utils/formatCurrency";
 import DropdownMenu from "./DropdownMenu";
 import GlobalItemEditModal from "./GlobalItemEditModal";
 import { useTranslation } from "react-i18next";
@@ -35,51 +33,43 @@ export default function SortableItem({
   onItemUpdated,
 }) {
   const { t } = useTranslation("common");
-  const { currency, locale } = useUserSettings();
-  const resolved = useResolvedPrice(item); // {amount,currency,merchant,deeplink,source} | null
   const [wornLocal, setWornLocal] = useState(item.worn);
   const [consumableLocal, setConsumableLocal] = useState(item.consumable);
   const weightText = useWeight(item.weight);
   const itemKey = `item-${catId}-${item._id}`;
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const { region: userRegion } = useUserSettings();
 
-  // Decide price once:
-  // Custom price: always in user's currency.
-  const hasCustomPrice =
-    item?.price !== null && item?.price !== undefined && item?.price !== "";
+  const canResolve = Boolean(
+    item?.globalItem || item?.productId || item?.affiliate?.network
+  );
+  const showCart = Boolean(item?.link) || canResolve;
 
-  const hasResolved = resolved && typeof resolved.amount === "number";
-  const resolvedMatchesUser =
-    hasResolved &&
-    resolved.currency &&
-    resolved.currency === (currency || "EUR");
-
-  // Only show resolved amount when its currency matches user selection.
-  const chosenAmount = hasCustomPrice
-    ? Number(item.price)
-    : resolvedMatchesUser
-    ? Number(resolved.amount)
-    : null;
-
-  // We format everything we show with the user's currency symbol.
-  const chosenCurrency = currency || "EUR";
-
-  const priceText = useMemo(() => {
-    if (chosenAmount == null || chosenAmount <= 0) return "—";
-    return formatCurrency(chosenAmount, {
-      currency: chosenCurrency,
-      locale,
-      symbolOnly: true,
-    });
-  }, [chosenAmount, chosenCurrency, locale]);
-
-  // choose link per priority: user link > resolved deeplink > none
-  const finalLink = item.link || resolved?.deeplink || null;
-
-  const CartIconLink = ({ href, className = "" }) =>
-    href ? (
+  const CartIconLink = ({ className = "" }) =>
+    showCart ? (
       <AffiliateGateLink
-        href={href}
+        // Custom items only: direct link
+        href={item.link || null}
+        // Affiliate/catalog-backed: resolve via MerchantOffer at click time
+        getHref={
+          canResolve
+            ? async () => {
+                const globalItemId = item?.globalItem || item?._id;
+                const region = (userRegion || "us").toUpperCase();
+
+                try {
+                  const res = await api.get(
+                    `/affiliates/offers/resolve-link?globalItemId=${globalItemId}&region=${region}`
+                  );
+                  return res?.data?.link || null;
+                } catch (e) {
+                  // If resolver 404s, treat as no link
+                  if (e?.response?.status === 404) return null;
+                  return null;
+                }
+              }
+            : undefined
+        }
         context="private"
         className={className}
         title={t("gearList.items.openProductPageTitle")}
@@ -305,12 +295,11 @@ export default function SortableItem({
             items={mobileMenuItems}
           />
         </div>
-        {/* Row 2: left (weight + price) · right (Buy · icons · qty) */}
+        {/* Row 2: left (weight) · right (Buy · icons · qty) */}
         <div className="row-start-2 col-span-2 grid grid-cols-[1fr_auto] items-center">
           {/* Left group (fixed column sizes) */}
           <div className="grid grid-cols-[70px_75px] text-primary">
             <span className="tabular-nums text-left">{weightText}</span>
-            <span className="tabular-nums text-left">{priceText}</span>
           </div>
 
           {/* Right group (mobile): 🍴 | 👕 | qty | 🛒 */}
@@ -339,7 +328,7 @@ export default function SortableItem({
               itemId={item._id}
               fetchItems={fetchItems}
             />
-            <CartIconLink href={finalLink} />
+            <CartIconLink />
           </div>
         </div>
       </div>
@@ -373,11 +362,6 @@ export default function SortableItem({
           {/* 4) Weight (fixed width, right-aligned, tabular nums) */}
           <div className="justify-self-end tabular-nums text-primary w-[96px] text-right">
             {weightText}
-          </div>
-
-          {/* 5) Price (fixed width, right-aligned, tabular nums) */}
-          <div className="justify-self-end tabular-nums text-primary w-[112px] text-right">
-            {priceText}
           </div>
 
           {/* 6) Consumable */}
@@ -418,7 +402,7 @@ export default function SortableItem({
 
           {/* 9) Cart */}
           <div className="justify-self-center">
-            <CartIconLink href={finalLink} />
+            <CartIconLink />
           </div>
 
           {/* 10) Actions menu (desktop list) */}
@@ -478,14 +462,11 @@ export default function SortableItem({
               {item.name}
             </div>
           </div>
-          {/* Row 3: Left (weight+price) — Right (🍴 · 👕 · Qty · …) */}
+          {/* Row 3: Left (weight) — Right (🍴 · 👕 · Qty · …) */}
           <div className="grid grid-cols-[1fr_auto] items-center">
             <div className="flex items-center space-x-3">
               <span className="text-sm text-primary tabular-nums">
                 {weightText}
-              </span>
-              <span className="text-sm text-primary tabular-nums">
-                {priceText}
               </span>
             </div>
             <div className="grid grid-cols-[16px_16px_auto_16px] items-center justify-end gap-x-3">
@@ -515,7 +496,7 @@ export default function SortableItem({
                 itemId={item._id}
                 fetchItems={fetchItems}
               />
-              <CartIconLink href={finalLink} />
+              <CartIconLink />
             </div>
           </div>
         </div>

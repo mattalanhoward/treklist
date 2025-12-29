@@ -1,7 +1,7 @@
-// client/src/components/AffiliateGateLink.jsx
 import React from "react";
 import ReactDOM from "react-dom";
 import { useTranslation } from "react-i18next";
+import { toast } from "react-hot-toast";
 
 const DISCLOSURE_PATH = "/legal/affiliate-disclosure";
 const REMEMBER_DAYS = 60;
@@ -23,7 +23,7 @@ function useDisclosureGate(context = "private") {
   const [acknowledged, setAcknowledged] = React.useState(false);
 
   React.useEffect(() => {
-    setReady(true); // avoid SSR/portal hiccups
+    setReady(true);
     const stored = localStorage.getItem(getAckKey(context));
     setAcknowledged(daysSince(stored) < REMEMBER_DAYS);
   }, [context]);
@@ -36,7 +36,7 @@ function useDisclosureGate(context = "private") {
   return { open, setOpen, ready, acknowledged, markAck };
 }
 
-function Modal({ titleId, onClose, onProceed, children }) {
+function Modal({ titleId, onClose, onProceed, children, disableProceed }) {
   const { t } = useTranslation("common");
 
   React.useEffect(() => {
@@ -47,7 +47,6 @@ function Modal({ titleId, onClose, onProceed, children }) {
     return () => document.removeEventListener("keydown", onKey);
   }, [onClose]);
 
-  // simple focus: move to first button on mount
   const firstBtnRef = React.useRef(null);
   React.useEffect(() => {
     firstBtnRef.current?.focus();
@@ -77,14 +76,16 @@ function Modal({ titleId, onClose, onProceed, children }) {
             type="button"
             className="px-3 py-2 rounded-md border border-gray-300 bg-white text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-1"
             onClick={onClose}
+            disabled={disableProceed}
           >
             {t("affiliateGate.modal.cancel")}
           </button>
           <button
             ref={firstBtnRef}
             type="button"
-            className="px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-1"
+            className="px-3 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:opacity-60"
             onClick={onProceed}
+            disabled={disableProceed}
           >
             {t("affiliateGate.modal.continue")}
           </button>
@@ -97,13 +98,15 @@ function Modal({ titleId, onClose, onProceed, children }) {
 
 /**
  * Props:
- * - href (string, required)
- * - context: "private" | "public" (changes wording)
+ * - href (string) optional if getHref is provided
+ * - getHref?: async resolver that returns final href (or null)
+ * - context: "private" | "public"
  * - className, title, ariaLabel
  * - children: usually an icon
  */
 export default function AffiliateGateLink({
   href,
+  getHref,
   context = "private",
   className = "",
   title,
@@ -114,7 +117,38 @@ export default function AffiliateGateLink({
   const { open, setOpen, ready, acknowledged, markAck } =
     useDisclosureGate(context);
 
-  if (!href) {
+  const [resolving, setResolving] = React.useState(false);
+  const pendingOpenRef = React.useRef(false);
+
+  const resolveHref = React.useCallback(async () => {
+    try {
+      if (typeof getHref === "function") {
+        const resolved = await getHref();
+        return resolved || null;
+      }
+      return href || null;
+    } catch (e) {
+      return null;
+    }
+  }, [getHref, href]);
+
+  const openLink = React.useCallback(async () => {
+    if (resolving) return;
+
+    setResolving(true);
+    const finalHref = await resolveHref();
+    setResolving(false);
+
+    if (!finalHref) {
+      toast.error("No link available.");
+      return;
+    }
+
+    window.open(finalHref, "_blank", "noopener,noreferrer");
+  }, [resolveHref, resolving]);
+
+  // If there is neither a raw href nor a resolver, render nothing (invisible placeholder)
+  if (!href && typeof getHref !== "function") {
     return (
       <span
         className={`inline-flex h-5 w-5 align-middle opacity-0 ${className}`}
@@ -123,7 +157,6 @@ export default function AffiliateGateLink({
     );
   }
 
-  // Default copy is now translated, but caller can still override via props
   const effectiveTitle =
     title || t("affiliateGate.button.openProductPageTitle");
   const effectiveAria =
@@ -166,18 +199,29 @@ export default function AffiliateGateLink({
 
   const onClick = (e) => {
     e.preventDefault();
+
+    // If already acknowledged, resolve + open immediately
     if (acknowledged) {
-      window.open(href, "_blank", "noopener,noreferrer");
+      openLink();
       return;
     }
+
+    // Otherwise open modal; we'll resolve only after they proceed
+    pendingOpenRef.current = true;
     setOpen(true);
   };
 
-  const proceed = () => {
+  const proceed = async () => {
     markAck();
     setOpen(false);
+
     // small delay to let modal unmount smoothly
-    setTimeout(() => window.open(href, "_blank", "noopener,noreferrer"), 40);
+    setTimeout(() => {
+      if (pendingOpenRef.current) {
+        pendingOpenRef.current = false;
+        openLink();
+      }
+    }, 40);
   };
 
   const titleId = React.useId();
@@ -189,7 +233,8 @@ export default function AffiliateGateLink({
         onClick={onClick}
         title={effectiveTitle}
         aria-label={effectiveAria}
-        className={`inline-flex items-center justify-center h-5 w-5 align-middle text-secondary hover:text-secondary/70 ${className}`}
+        disabled={resolving}
+        className={`inline-flex items-center justify-center h-5 w-5 align-middle text-secondary hover:text-secondary/70 disabled:opacity-60 ${className}`}
       >
         {children}
       </button>
@@ -199,6 +244,7 @@ export default function AffiliateGateLink({
           titleId={titleId}
           onClose={() => setOpen(false)}
           onProceed={proceed}
+          disableProceed={resolving}
         >
           <p className="mb-2">{text}</p>
         </Modal>

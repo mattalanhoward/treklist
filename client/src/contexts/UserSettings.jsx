@@ -7,7 +7,6 @@ import React, {
 } from "react";
 import api from "../services/api";
 import useAuth from "../hooks/useAuth";
-import { currencyForRegion } from "../utils/region";
 import i18n from "../i18n";
 
 const SettingsCtx = createContext();
@@ -63,8 +62,6 @@ export function SettingsProvider({ children }) {
 
   // Derived BCP-47 locale (always language-REGION)
   const locale = `${language}-${region.toUpperCase()}`;
-  // NEW: currency is always derived from region
-  const currency = currencyForRegion(region);
 
   // ─── DOM side effects (theme) + mirror to localStorage ───
   useEffect(() => {
@@ -212,7 +209,6 @@ export function SettingsProvider({ children }) {
         // values
         weightUnit,
         theme,
-        currency,
         language,
         region,
         locale,

@@ -79,7 +79,6 @@ router.get("/:token/full", async (req, res) => {
         consumable: 1,
         worn: 1,
         quantity: 1,
-        price: 1,
         affiliate: 1,
         link: 1,
         position: 1,
@@ -110,7 +109,6 @@ router.get("/:token/full", async (req, res) => {
       consumable: !!i.consumable,
       worn: !!i.worn,
       qty: i.quantity ?? 1,
-      price: typeof i.price === "number" ? i.price : null,
       affiliate: i.affiliate || null,
       link: i.link || null,
     })),
@@ -169,7 +167,6 @@ router.get("/:token/csv", async (req, res) => {
           consumable: 1,
           worn: 1,
           quantity: 1,
-          price: 1,
           affiliate: 1,
           link: 1,
           position: 1,
@@ -191,7 +188,6 @@ router.get("/:token/csv", async (req, res) => {
       Consumable: i.consumable ? "Yes" : "",
       Worn: i.worn ? "Yes" : "",
       Qty: i.quantity ?? 1,
-      "Price (USD)": typeof i.price === "number" ? i.price : "",
       Link: (i.affiliate && i.affiliate.url) || i.link || "",
     }));
 
@@ -205,7 +201,6 @@ router.get("/:token/csv", async (req, res) => {
         Consumable: "",
         Worn: "",
         Qty: "",
-        "Price (USD)": "",
         Link: "",
       }
     );
@@ -499,7 +494,6 @@ router.post("/:token/copy", auth, async (req, res) => {
           consumable: it.consumable,
           worn: it.worn,
           quantity: it.quantity,
-          price: it.price,
           affiliate: it.affiliate,
           link: it.link,
           position: it.position,
