@@ -62,6 +62,28 @@ function extractAsinFromAmazonUrl(url) {
   }
 }
 
+function marketplaceFromAmazonUrlClient(url) {
+  try {
+    const host = new URL(url).hostname
+      .toLowerCase()
+      .replace(/^smile\./, "")
+      .replace(/^www\./, "");
+    if (host === "amazon.com") return "us";
+    if (host === "amazon.co.uk") return "uk";
+    if (host === "amazon.de") return "de";
+    if (host === "amazon.fr") return "fr";
+    if (host === "amazon.it") return "it";
+    if (host === "amazon.es") return "es";
+    if (host === "amazon.nl") return "nl";
+    if (host === "amazon.ca") return "ca";
+    if (host === "amazon.se") return "se";
+    if (host === "amazon.pl") return "pl";
+    return "us";
+  } catch {
+    return "us";
+  }
+}
+
 const getPrimaryOffer = (f) =>
   Array.isArray(f?.offers) && f.offers[0] ? f.offers[0] : blankOffer();
 
@@ -108,6 +130,11 @@ function GearCatalogSection({ mode = "both" }) {
     imageUrlsText: "",
     canonicalAsin: "",
     itemGroupId: "",
+
+    // Prefill controls (decoupled from offer network)
+    prefillSource: "amazon", // "amazon" | "none" (future: "rei", etc)
+    prefillOverwrite: false,
+    amazonAsinLookup: "",
 
     amazonMarketplace: "us",
 
@@ -302,6 +329,8 @@ function GearCatalogSection({ mode = "both" }) {
         imageUrlsText: "",
         canonicalAsin: "",
         itemGroupId: "",
+        prefillSource: "amazon",
+        prefillOverwrite: false,
         amazonAsinLookup: "",
         amazonMarketplace: "us",
         offers: [blankOffer()],
@@ -321,8 +350,8 @@ function GearCatalogSection({ mode = "both" }) {
   };
 
   const handleAmazonLookup = async () => {
-    if (getPrimaryOffer(form).network !== "amazon") {
-      toast.error("Switch Network to Amazon to use ASIN lookup.");
+    if (String(form.prefillSource || "none") !== "amazon") {
+      toast.error("Set Prefill source to Amazon to use ASIN lookup.");
       return;
     }
 
@@ -351,68 +380,119 @@ function GearCatalogSection({ mode = "both" }) {
       const prefill = data?.prefill || {};
       const offer = data?.offer || {};
 
-      const fallbackUrl = `https://www.amazon.com/dp/${asin}`;
+      const AMAZON_BASE_BY_MP = {
+        us: "https://www.amazon.com",
+        uk: "https://www.amazon.co.uk",
+        de: "https://www.amazon.de",
+        fr: "https://www.amazon.fr",
+        it: "https://www.amazon.it",
+        es: "https://www.amazon.es",
+        nl: "https://www.amazon.nl",
+        ca: "https://www.amazon.ca",
+        se: "https://www.amazon.se",
+        pl: "https://www.amazon.pl",
+      };
+      const base = AMAZON_BASE_BY_MP[marketplace] || AMAZON_BASE_BY_MP.us;
+      const fallbackUrl = `${base}/dp/${asin}`;
       const nextLinkUrl =
         typeof offer.deepLink === "string" && offer.deepLink.trim()
           ? offer.deepLink.trim()
           : fallbackUrl;
 
       setForm((prev) => {
+        const overwrite = Boolean(prev.prefillOverwrite);
+        const pick = (current, next) => {
+          const nextVal =
+            typeof next === "string" ? next.trim() : next ?? undefined;
+          if (nextVal == null || nextVal === "") return current;
+          if (overwrite) return nextVal;
+          return String(current || "").trim() ? current : nextVal;
+        };
         const nextOffers = Array.isArray(prev.offers) ? [...prev.offers] : [];
         if (!nextOffers[0]) nextOffers[0] = blankOffer();
 
-        nextOffers[0] = {
-          ...nextOffers[0],
-          network: "amazon",
-          url: nextLinkUrl,
-          merchantName: nextOffers[0].merchantName || "Amazon",
-          externalId: asin,
-        };
+        // Prefill should NOT clobber offers unless overwrite=true or offer is empty
+        const primary = nextOffers[0] || blankOffer();
+        const primaryUrlEmpty = !String(primary.url || "").trim();
+        const primaryIdEmpty = !String(primary.externalId || "").trim();
+        if (overwrite || primaryUrlEmpty) {
+          primary.url = nextLinkUrl;
+        }
+        if (overwrite || primaryIdEmpty) {
+          primary.externalId = asin;
+        }
+        if (!String(primary.merchantName || "").trim()) {
+          primary.merchantName = "Amazon";
+        }
+        // Important: do NOT force network = "amazon" here (decoupled)
+        nextOffers[0] = { ...primary };
+
+        const nextDescription = pick(
+          prev.description,
+          typeof prefill.description === "string" ? prefill.description : ""
+        );
+        const descriptionApplied =
+          nextDescription !== prev.description &&
+          typeof prefill.description === "string" &&
+          prefill.description.trim().length > 0;
 
         return {
           ...prev,
-          name: typeof prefill.name === "string" ? prefill.name : prev.name,
-          brand: typeof prefill.brand === "string" ? prefill.brand : prev.brand,
-          description:
-            typeof prefill.description === "string"
-              ? prefill.description
-              : prev.description,
-          modelNumber:
-            typeof prefill.modelNumber === "string"
-              ? prefill.modelNumber
-              : prev.modelNumber,
+          name: pick(prev.name, prefill.name),
+          brand: pick(prev.brand, prefill.brand),
+          description: nextDescription,
+          modelNumber: pick(prev.modelNumber, prefill.modelNumber),
           weightGrams:
             typeof prefill.weightGrams === "number"
-              ? String(prefill.weightGrams)
+              ? overwrite || !String(prev.weightGrams || "").trim()
+                ? String(prefill.weightGrams)
+                : prev.weightGrams
               : prev.weightGrams,
           dimLength:
             typeof prefill?.dimensions?.length === "number" &&
             prefill.dimensions.length > 0
-              ? String(prefill.dimensions.length)
+              ? overwrite || !String(prev.dimLength || "").trim()
+                ? String(prefill.dimensions.length)
+                : prev.dimLength
               : prev.dimLength,
           dimWidth:
             typeof prefill?.dimensions?.width === "number" &&
             prefill.dimensions.width > 0
-              ? String(prefill.dimensions.width)
+              ? overwrite || !String(prev.dimWidth || "").trim()
+                ? String(prefill.dimensions.width)
+                : prev.dimWidth
               : prev.dimWidth,
           dimHeight:
             typeof prefill?.dimensions?.height === "number" &&
             prefill.dimensions.height > 0
-              ? String(prefill.dimensions.height)
+              ? overwrite || !String(prev.dimHeight || "").trim()
+                ? String(prefill.dimensions.height)
+                : prev.dimHeight
               : prev.dimHeight,
           dimUnit:
             typeof prefill?.dimensions?.unit === "string" &&
             prefill.dimensions.unit.trim()
-              ? prefill.dimensions.unit.trim().toLowerCase()
+              ? overwrite || !String(prev.dimUnit || "").trim()
+                ? prefill.dimensions.unit.trim().toLowerCase()
+                : prev.dimUnit
               : prev.dimUnit,
           imageUrlsText:
             Array.isArray(prefill.imageUrls) && prefill.imageUrls.length
-              ? String(prefill.imageUrls[0])
+              ? overwrite || !String(prev.imageUrlsText || "").trim()
+                ? String(prefill.imageUrls[0])
+                : prev.imageUrlsText
               : prev.imageUrlsText,
-          canonicalAsin: asin,
-          links: nextLinks,
-          amazonDescriptionNeedsRewrite: true,
-          amazonDescriptionConfirmed: false,
+          canonicalAsin:
+            overwrite || !String(prev.canonicalAsin || "").trim()
+              ? asin
+              : prev.canonicalAsin,
+          offers: nextOffers,
+          amazonDescriptionNeedsRewrite: descriptionApplied
+            ? true
+            : prev.amazonDescriptionNeedsRewrite,
+          amazonDescriptionConfirmed: descriptionApplied
+            ? false
+            : prev.amazonDescriptionConfirmed,
         };
       });
 
@@ -636,8 +716,38 @@ function GearCatalogSection({ mode = "both" }) {
               onSubmit={handleCreate}
               className="px-4 py-4 sm:px-6 sm:py-6 space-y-5"
             >
-              {/* 1) AMAZON PREFILL (only if network is amazon) */}
-              {primaryNetwork === "amazon" && (
+              {/* 0) PREFILL SOURCE (decoupled from offers) */}
+              <div className="space-y-2">
+                <div className="text-xs font-semibold text-primary/80">
+                  Prefill source
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 items-start">
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      Source
+                    </label>
+                    <select
+                      name="prefillSource"
+                      value={form.prefillSource || "none"}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                    >
+                      <option value="none">None</option>
+                      <option value="amazon">Amazon</option>
+                      <option value="rei" disabled>
+                        REI (soon)
+                      </option>
+                    </select>
+                  </div>
+
+                  <div className="sm:col-span-2 text-[11px] text-primary/70 mt-6 sm:mt-0">
+                    Prefill should be used mainly during creation; edits are
+                    usually manual unless you’re refreshing stale specs.
+                  </div>
+                </div>
+              </div>
+              {/* 1) AMAZON PREFILL (decoupled from offer network) */}
+              {String(form.prefillSource || "none") === "amazon" && (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div>
@@ -661,6 +771,17 @@ function GearCatalogSection({ mode = "both" }) {
                       {creating ? "Fetching..." : "Fetch from Amazon"}
                     </button>
                   </div>
+
+                  <label className="flex items-center gap-2 text-xs text-primary">
+                    <input
+                      type="checkbox"
+                      name="prefillOverwrite"
+                      checked={Boolean(form.prefillOverwrite)}
+                      onChange={handleChange}
+                      className="checkbox checkbox-xs"
+                    />
+                    <span>Overwrite existing fields when applying prefill</span>
+                  </label>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <div className="sm:col-span-2">
@@ -1651,6 +1772,10 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
       amazonDescriptionNeedsRewrite: false,
       amazonDescriptionConfirmed: false,
 
+      // Prefill controls (decoupled from offer network)
+      prefillSource: "amazon", // "amazon" | "none" (future: "rei", etc)
+      prefillOverwrite: false,
+
       amazonMarketplace:
         marketplaceFromAmazonUrlClient(offers?.[0]?.url || "") || "us",
 
@@ -1714,30 +1839,9 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
     });
   };
 
-  function marketplaceFromAmazonUrlClient(url) {
-    try {
-      const host = new URL(url).hostname
-        .toLowerCase()
-        .replace(/^smile\./, "")
-        .replace(/^www\./, "");
-      if (host === "amazon.com") return "us";
-      if (host === "amazon.co.uk") return "uk";
-      if (host === "amazon.de") return "de";
-      if (host === "amazon.fr") return "fr";
-      if (host === "amazon.it") return "it";
-      if (host === "amazon.es") return "es";
-      if (host === "amazon.nl") return "nl";
-      if (host === "amazon.ca") return "ca";
-      if (host === "amazon.se") return "se";
-      if (host === "amazon.pl") return "pl";
-      return "us";
-    } catch {
-      return "us";
-    }
-  }
   const handleAmazonLookup = async () => {
-    if (getPrimaryOffer(form).network !== "amazon") {
-      toast.error("Switch Network to Amazon to use ASIN lookup.");
+    if (String(form.prefillSource || "none") !== "amazon") {
+      toast.error("Set Prefill source to Amazon to use ASIN lookup.");
       return;
     }
 
@@ -1788,63 +1892,95 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
           : fallbackUrl;
 
       setForm((prev) => {
+        const overwrite = Boolean(prev.prefillOverwrite);
+        const pick = (current, next) => {
+          const nextVal =
+            typeof next === "string" ? next.trim() : next ?? undefined;
+          if (nextVal == null || nextVal === "") return current;
+          if (overwrite) return nextVal;
+          return String(current || "").trim() ? current : nextVal;
+        };
         const nextOffers = Array.isArray(prev.offers)
           ? [...prev.offers]
           : [blankOffer()];
         if (!nextOffers[0]) nextOffers[0] = blankOffer();
+        // Prefill should NOT clobber offers unless overwrite=true or offer is empty
+        const primary = nextOffers[0] || blankOffer();
+        const primaryUrlEmpty = !String(primary.url || "").trim();
+        const primaryIdEmpty = !String(primary.externalId || "").trim();
+        if (overwrite || primaryUrlEmpty) primary.url = nextLinkUrl;
+        if (overwrite || primaryIdEmpty) primary.externalId = asin;
+        if (!String(primary.merchantName || "").trim())
+          primary.merchantName = "Amazon";
+        // Important: do NOT force network = "amazon" here (decoupled)
+        nextOffers[0] = { ...primary };
 
-        nextOffers[0] = {
-          ...nextOffers[0],
-          network: "amazon",
-          url: nextLinkUrl,
-          merchantName: nextOffers[0].merchantName || "Amazon",
-          externalId: asin,
-        };
+        const nextDescription = pick(
+          prev.description,
+          typeof prefill.description === "string" ? prefill.description : ""
+        );
+        const descriptionApplied =
+          nextDescription !== prev.description &&
+          typeof prefill.description === "string" &&
+          prefill.description.trim().length > 0;
 
         return {
           ...prev,
-          name: typeof prefill.name === "string" ? prefill.name : prev.name,
-          brand: typeof prefill.brand === "string" ? prefill.brand : prev.brand,
-          description:
-            typeof prefill.description === "string"
-              ? prefill.description
-              : prev.description,
-          modelNumber:
-            typeof prefill.modelNumber === "string"
-              ? prefill.modelNumber
-              : prev.modelNumber,
+          name: pick(prev.name, prefill.name),
+          brand: pick(prev.brand, prefill.brand),
+          description: nextDescription,
+          modelNumber: pick(prev.modelNumber, prefill.modelNumber),
           weightGrams:
             typeof prefill.weightGrams === "number"
-              ? String(prefill.weightGrams)
+              ? overwrite || !String(prev.weightGrams || "").trim()
+                ? String(prefill.weightGrams)
+                : prev.weightGrams
               : prev.weightGrams,
           dimLength:
             typeof prefill?.dimensions?.length === "number" &&
             prefill.dimensions.length > 0
-              ? String(prefill.dimensions.length)
+              ? overwrite || !String(prev.dimLength || "").trim()
+                ? String(prefill.dimensions.length)
+                : prev.dimLength
               : prev.dimLength,
           dimWidth:
             typeof prefill?.dimensions?.width === "number" &&
             prefill.dimensions.width > 0
-              ? String(prefill.dimensions.width)
+              ? overwrite || !String(prev.dimWidth || "").trim()
+                ? String(prefill.dimensions.width)
+                : prev.dimWidth
               : prev.dimWidth,
           dimHeight:
             typeof prefill?.dimensions?.height === "number" &&
             prefill.dimensions.height > 0
-              ? String(prefill.dimensions.height)
+              ? overwrite || !String(prev.dimHeight || "").trim()
+                ? String(prefill.dimensions.height)
+                : prev.dimHeight
               : prev.dimHeight,
           dimUnit:
             typeof prefill?.dimensions?.unit === "string" &&
             prefill.dimensions.unit.trim()
-              ? prefill.dimensions.unit.trim().toLowerCase()
+              ? overwrite || !String(prev.dimUnit || "").trim()
+                ? prefill.dimensions.unit.trim().toLowerCase()
+                : prev.dimUnit
               : prev.dimUnit,
           imageUrlsText:
             Array.isArray(prefill.imageUrls) && prefill.imageUrls.length
-              ? String(prefill.imageUrls[0])
+              ? overwrite || !String(prev.imageUrlsText || "").trim()
+                ? String(prefill.imageUrls[0])
+                : prev.imageUrlsText
               : prev.imageUrlsText,
-          canonicalAsin: asin,
+          canonicalAsin:
+            overwrite || !String(prev.canonicalAsin || "").trim()
+              ? asin
+              : prev.canonicalAsin,
           offers: nextOffers,
-          amazonDescriptionNeedsRewrite: true,
-          amazonDescriptionConfirmed: false,
+          amazonDescriptionNeedsRewrite: descriptionApplied
+            ? true
+            : prev.amazonDescriptionNeedsRewrite,
+          amazonDescriptionConfirmed: descriptionApplied
+            ? false
+            : prev.amazonDescriptionConfirmed,
         };
       });
 
@@ -1997,6 +2133,10 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
           <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
             {/* LEFT */}
             <div className="flex-1 space-y-2">
+              <div className="text-sm font-semibold text-primary">
+                Item Details
+              </div>
+
               <div>
                 <label className="block font-medium text-primary mb-0.5">
                   Item name *
@@ -2210,6 +2350,119 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                   First URL will be used as the primary image.
                 </span>
               </div>
+              {/* Prefill source selector (decoupled from offers) */}
+              <div className="space-y-2">
+                <div className="text-xs font-semibold text-primary/80">
+                  Prefill source
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 items-start">
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      Source
+                    </label>
+                    <select
+                      name="prefillSource"
+                      value={form.prefillSource || "none"}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                    >
+                      <option value="none">None</option>
+                      <option value="amazon">Amazon</option>
+                      <option value="rei" disabled>
+                        REI (soon)
+                      </option>
+                    </select>
+                  </div>
+
+                  <div className="sm:col-span-2 text-[11px] text-primary/70 mt-6 sm:mt-0">
+                    Use prefill when you need to refresh specs. Most edits
+                    should be manual to avoid overwriting curated fields.
+                  </div>
+                </div>
+              </div>
+              {/* Amazon ASIN lookup */}
+              {String(form.prefillSource || "none") === "amazon" && (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-1">
+                  {" "}
+                  <div className="sm:col-span-2">
+                    <label className="block font-medium text-primary mb-0.5">
+                      ASIN
+                    </label>
+                    <input
+                      type="text"
+                      name="amazonAsinLookup"
+                      value={getPrimaryOffer(form).externalId || ""}
+                      onChange={(e) =>
+                        updateOffer(0, "externalId", e.target.value)
+                      }
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="B0XXXXXXXX"
+                      maxLength={10}
+                    />
+                    <span className="block text-[11px] text-primary/70">
+                      Enter an Amazon ASIN to prefill this item.
+                    </span>
+                  </div>
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      Marketplace
+                    </label>
+                    <select
+                      value={form.amazonMarketplace || "us"}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          amazonMarketplace: e.target.value,
+                        }))
+                      }
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                    >
+                      <option value="us">US</option>
+                      <option value="uk">UK</option>
+                      <option value="de">DE</option>
+                      <option value="fr">FR</option>
+                      <option value="it">IT</option>
+                      <option value="es">ES</option>
+                      <option value="nl">NL</option>
+                      <option value="ca">CA</option>
+                      <option value="se">SE</option>
+                      <option value="pl">PL</option>
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleAmazonLookup}
+                  disabled={
+                    saving || String(form.prefillSource || "none") !== "amazon"
+                  }
+                  className={`px-2 py-1 rounded bg-secondary text-white hover:bg-secondary/80 ${
+                    saving || String(form.prefillSource || "none") !== "amazon"
+                      ? "opacity-60 cursor-not-allowed"
+                      : ""
+                  }`}
+                  title={
+                    String(form.prefillSource || "none") !== "amazon"
+                      ? "Set Prefill source to Amazon to use lookup"
+                      : "Fetch product data by ASIN"
+                  }
+                >
+                  {saving ? "Fetching..." : "Fetch from Amazon"}
+                </button>
+              </div>
+              <label className="flex items-center gap-2 text-xs text-primary mt-2">
+                <input
+                  type="checkbox"
+                  name="prefillOverwrite"
+                  checked={Boolean(form.prefillOverwrite)}
+                  onChange={handleChange}
+                  className="checkbox checkbox-xs"
+                />
+                <span>Overwrite existing fields when applying prefill</span>
+              </label>
             </div>
 
             {/* RIGHT */}
@@ -2259,77 +2512,6 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                     ))}
                   </select>
                 </div>
-              </div>
-
-              {/* Amazon ASIN lookup */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-1">
-                <div className="sm:col-span-2">
-                  <label className="block font-medium text-primary mb-0.5">
-                    ASIN
-                  </label>
-                  <input
-                    type="text"
-                    name="amazonAsinLookup"
-                    value={getPrimaryOffer(form).externalId || ""}
-                    onChange={(e) =>
-                      updateOffer(0, "externalId", e.target.value)
-                    }
-                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                    placeholder="B0XXXXXXXX"
-                    maxLength={10}
-                  />
-                  <span className="block text-[11px] text-primary/70">
-                    Enter an Amazon ASIN to prefill this item.
-                  </span>
-                </div>
-                <div>
-                  <label className="block font-medium text-primary mb-0.5">
-                    Marketplace
-                  </label>
-                  <select
-                    value={form.amazonMarketplace || "us"}
-                    onChange={(e) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        amazonMarketplace: e.target.value,
-                      }))
-                    }
-                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
-                  >
-                    <option value="us">US</option>
-                    <option value="uk">UK</option>
-                    <option value="de">DE</option>
-                    <option value="fr">FR</option>
-                    <option value="it">IT</option>
-                    <option value="es">ES</option>
-                    <option value="nl">NL</option>
-                    <option value="ca">CA</option>
-                    <option value="se">SE</option>
-                    <option value="pl">PL</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="flex justify-end">
-                <button
-                  type="button"
-                  onClick={handleAmazonLookup}
-                  disabled={
-                    saving || getPrimaryOffer(form).network !== "amazon"
-                  }
-                  className={`px-2 py-1 rounded bg-secondary text-white hover:bg-secondary/80 ${
-                    saving || getPrimaryOffer(form).network !== "amazon"
-                      ? "opacity-60 cursor-not-allowed"
-                      : ""
-                  }`}
-                  title={
-                    getPrimaryOffer(form).network !== "amazon"
-                      ? "Set Network to Amazon to use lookup"
-                      : "Fetch product data by ASIN"
-                  }
-                >
-                  {saving ? "Fetching..." : "Fetch from Amazon"}
-                </button>
               </div>
 
               <div>
