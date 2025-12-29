@@ -55,14 +55,14 @@ function DashboardEmptyState({ hasLists, onCreateSampleList, creatingSample }) {
               <span className="font-semibold">
                 {t("sidebar.gearListsTitle")}
               </span>{" "}
-              — {t("dashboard.empty.howOrganizedGearLists")}
+              - {t("dashboard.empty.howOrganizedGearLists")}
             </li>
             <li>
               <span className="font-semibold">{t("sidebar.myGearTitle")}</span>{" "}
-              — {t("dashboard.empty.howOrganizedMyGear")}
+              - {t("dashboard.empty.howOrganizedMyGear")}
             </li>
             <li>
-              <span className="font-semibold">Pack stats</span> —{" "}
+              <span className="font-semibold">Pack stats</span> -{" "}
               {t("dashboard.empty.howOrganizedPackStats")}
             </li>
           </ul>
