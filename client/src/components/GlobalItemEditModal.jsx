@@ -7,8 +7,8 @@ import LinkInput from "../components/LinkInput";
 import ConfirmDialog from "./ConfirmDialog";
 import { useUnit } from "../hooks/useUnit";
 import { useWeightInput } from "../hooks/useWeightInput";
-import { useUserSettings } from "../contexts/UserSettings";
 import { FaTimes } from "react-icons/fa";
+import ImageCarousel from "./ImageCarousel";
 
 export default function GlobalItemEditModal({
   item,
@@ -40,6 +40,9 @@ export default function GlobalItemEditModal({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [resolvedProductId, setResolvedProductId] = useState(null);
+  const [catalogImages, setCatalogImages] = useState([]);
+  const [loadingImages, setLoadingImages] = useState(false);
 
   const itemId = item ? item._id : null;
   const isListContext = context === "list" || (!!listId && !!catId);
@@ -48,6 +51,12 @@ export default function GlobalItemEditModal({
   // - legacy: item.affiliate.network (Awin feed items)
   // - catalog-linked: item.productId OR globalItem.productId (Amazon/catalog)
   const [isAffiliateBacked, setIsAffiliateBacked] = useState(false);
+  const isCustom = !isAffiliateBacked;
+
+  // Only show the image column for imported/catalog-backed items.
+  // If there are no images, hide the whole column to avoid an empty box.
+  const showImagesDesktop =
+    isAffiliateBacked && (loadingImages || catalogImages.length > 0);
 
   useEffect(() => {
     let cancelled = false;
@@ -81,6 +90,70 @@ export default function GlobalItemEditModal({
       cancelled = true;
     };
   }, [itemId, item?.globalItem, item?.productId, item?.affiliate?.network]);
+
+  // Resolve CatalogItem productId so we can fetch imageUrls
+  useEffect(() => {
+    let cancelled = false;
+
+    async function resolve() {
+      // If item already has productId (GearItem can have it)
+      if (item?.productId) {
+        if (!cancelled) setResolvedProductId(String(item.productId));
+        return;
+      }
+
+      // If we are in list context and only have globalItem id, load GlobalItem and read productId
+      if (item?.globalItem) {
+        try {
+          const res = await api.get(`/global/items/${item.globalItem}`);
+          const g = res?.data;
+          const pid = g?.productId ? String(g.productId) : null;
+          if (!cancelled) setResolvedProductId(pid);
+          return;
+        } catch {
+          if (!cancelled) setResolvedProductId(null);
+          return;
+        }
+      }
+
+      if (!cancelled) setResolvedProductId(null);
+    }
+
+    resolve();
+    return () => {
+      cancelled = true;
+    };
+  }, [itemId, item?.productId, item?.globalItem]);
+
+  // Fetch catalog images
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      if (!resolvedProductId) {
+        setCatalogImages([]);
+        return;
+      }
+
+      setLoadingImages(true);
+      try {
+        const res = await api.get(`/catalog/items/${resolvedProductId}`);
+        const urls = Array.isArray(res?.data?.imageUrls)
+          ? res.data.imageUrls
+          : [];
+        if (!cancelled) setCatalogImages(urls);
+      } catch {
+        if (!cancelled) setCatalogImages([]);
+      } finally {
+        if (!cancelled) setLoadingImages(false);
+      }
+    }
+
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [resolvedProductId]);
 
   // Hydrate when item changes
   useEffect(() => {
@@ -226,7 +299,10 @@ export default function GlobalItemEditModal({
     <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-50">
       <form
         onSubmit={handleSave}
-        className="bg-neutralAlt rounded-lg shadow-2xl max-w-xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4"
+        className={
+          "bg-neutralAlt rounded-lg shadow-2xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 " +
+          (isCustom ? "max-w-xl" : "max-w-3xl")
+        }
       >
         {/* Header */}
         <div className="flex justify-between items-center mb-2 sm:mb-3">
@@ -246,107 +322,187 @@ export default function GlobalItemEditModal({
         </div>
 
         {error && <div className="text-error mb-2">{error}</div>}
+        {/* LAYOUT SWITCH:
+            - Custom items => old grid layout (like your screenshot)
+            - Imported items => 2-column layout + carousel
+        */}
+        {isCustom ? (
+          <>
+            {/* Old layout (custom items) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
+              {/* Item Type */}
+              <div>
+                <label className="block font-medium text-primary mb-0.5">
+                  {t("globalItemModal.labels.itemType")}
+                </label>
+                <input
+                  name="itemType"
+                  value={form.itemType}
+                  onChange={handleChange}
+                  className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                />
+              </div>
 
-        {/* Fields */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
-          {/* Item Type */}
-          <div>
-            <label className="block font-medium text-primary mb-0.5">
-              {t("globalItemModal.labels.itemType")}
-            </label>
-            <input
-              name="itemType"
-              value={form.itemType}
-              onChange={handleChange}
-              className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-            />
-          </div>
+              {/* Name */}
+              <div>
+                <label className="block font-medium text-primary mb-0.5">
+                  {t("globalItemModal.labels.name")}
+                  <span className="text-red-500">*</span>
+                </label>
+                <input
+                  name="name"
+                  value={form.name}
+                  onChange={handleChange}
+                  className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                />
+              </div>
 
-          {/* Name */}
-          <div>
-            <label className="block font-medium text-primary mb-0.5">
-              {t("globalItemModal.labels.name")}
-              <span className="text-red-500">*</span>
-            </label>
-            <input
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-            />
-          </div>
+              {/* Brand */}
+              <div>
+                <label className="block font-medium text-primary mb-0.5">
+                  {t("globalItemModal.labels.brand")}
+                </label>
+                <input
+                  name="brand"
+                  value={form.brand}
+                  onChange={handleChange}
+                  className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                />
+              </div>
 
-          {/* Brand */}
-          <div>
-            <label className="block font-medium text-primary mb-0.5">
-              {t("globalItemModal.labels.brand")}
-            </label>
-            <input
-              name="brand"
-              value={form.brand}
-              onChange={handleChange}
-              className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-            />
-          </div>
+              {/* Link (custom only) */}
+              <div>
+                <LinkInput
+                  value={form.link}
+                  onChange={(newLink) =>
+                    setForm((f) => ({ ...f, link: newLink }))
+                  }
+                  label="Link"
+                  placeholder="tarptent.com"
+                  required={false}
+                />
+              </div>
 
-          {/* Link (locked for affiliate-backed) */}
-          <div className="relative">
-            <LinkInput
-              value={form.link}
-              onChange={(newLink) => setForm((f) => ({ ...f, link: newLink }))}
-              label="Link"
-              placeholder="tarptent.com"
-              required={false}
-              readOnly={isAffiliateBacked}
-            />
-            {isAffiliateBacked && (
-              <button
-                type="button"
-                aria-label={t(
-                  "globalItemModal.messages.affiliateLinkLockedTitle"
-                )}
-                title={t("globalItemModal.messages.affiliateLinkLockedBody")}
-                className="absolute inset-0 cursor-not-allowed bg-transparent"
-                onClick={(e) => e.preventDefault()}
-              />
-            )}
-          </div>
+              {/* Weight */}
+              <div className="flex space-x-1 sm:space-x-2 col-span-1 sm:col-span-2">
+                <div className="flex-1">
+                  <label className="block font-medium text-primary mb-0.5">
+                    {t("globalItemModal.labels.weight", { unit: unitLabel })}
+                  </label>
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    value={displayWeight}
+                    onChange={(e) => setDisplayWeight(e.target.value)}
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                  />
+                </div>
+              </div>
 
-          {/* Weight */}
-          <div className="flex space-x-1 sm:space-x-2 col-span-1 sm:col-span-2">
-            <div className="flex-1">
+              {/* Description */}
+              <div className="sm:col-span-2">
+                <label className="block font-medium text-primary mb-0.5">
+                  {t("globalItemModal.labels.description")}
+                </label>
+                <textarea
+                  name="description"
+                  value={form.description}
+                  onChange={handleChange}
+                  className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                  rows={2}
+                />
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Imported layout (2 columns + carousel) */}
+            <div className="sm:flex sm:gap-6">
+              {/* Left */}
+              <div className="sm:flex-1">
+                <div className="space-y-3">
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      {t("globalItemModal.labels.itemType")}
+                    </label>
+                    <input
+                      name="itemType"
+                      value={form.itemType}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      {t("globalItemModal.labels.name")}
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      name="name"
+                      value={form.name}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      {t("globalItemModal.labels.brand")}
+                    </label>
+                    <input
+                      name="brand"
+                      value={form.brand}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    />
+                  </div>
+
+                  {/* Link hidden entirely for imported items */}
+
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      {t("globalItemModal.labels.weight", { unit: unitLabel })}
+                    </label>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={displayWeight}
+                      onChange={(e) => setDisplayWeight(e.target.value)}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Right (desktop only) */}
+              {showImagesDesktop && (
+                <div className="mt-6 hidden sm:block sm:w-72">
+                  <ImageCarousel
+                    images={catalogImages}
+                    alt={`${form.brand ? form.brand + " " : ""}${
+                      form.name || ""
+                    }`}
+                    loading={loadingImages}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Bottom description full width */}
+            <div className="mt-2">
               <label className="block font-medium text-primary mb-0.5">
-                {t("globalItemModal.labels.weight", { unit: unitLabel })}
+                {t("globalItemModal.labels.description")}
               </label>
-              <input
-                type="text"
-                inputMode="decimal"
-                value={displayWeight}
-                onChange={(e) => setDisplayWeight(e.target.value)}
+              <textarea
+                name="description"
+                value={form.description}
+                onChange={handleChange}
                 className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                rows={4}
               />
             </div>
-          </div>
-
-          {/* Description */}
-          <div className="sm:col-span-2">
-            <label className="block font-medium text-primary mb-0.5">
-              {t("globalItemModal.labels.description")}
-            </label>
-            <textarea
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-              rows={2}
-            />
-          </div>
-        </div>
-
-        {isAffiliateBacked && (
-          <p className="mt-2 text-sm text-primary">
-            {t("globalItemModal.messages.affiliateNote")}
-          </p>
+          </>
         )}
 
         {/* Actions */}

@@ -1,5 +1,7 @@
 // server/src/routes/catalog.js
 const express = require("express");
+const mongoose = require("mongoose");
+const { isValidObjectId } = mongoose;
 const CatalogItem = require("../models/catalogItem");
 const MerchantOffer = require("../models/merchantOffer");
 
@@ -17,6 +19,48 @@ function normalizeRegion(region) {
   if (r.length === 2) return r;
   return r; // fallback (still works if your DB stores "nl", "us", etc.)
 }
+
+// GET /api/catalog/items/:id
+// Fetch one catalog item (includes imageUrls) — auth required
+router.get("/items/:id", auth, async (req, res) => {
+  const user = await User.findById(req.userId).select("region").lean();
+  const userRegion = normalizeRegion(user?.region);
+
+  const { id } = req.params;
+  if (!isValidObjectId(id)) {
+    return res.status(400).json({ message: "Invalid id." });
+  }
+
+  try {
+    // Only allow access if the item has offers for this user (global or user region)
+    const offers = await MerchantOffer.find({
+      productId: id,
+      region: { $in: ["global", userRegion] },
+    }).lean();
+
+    if (!offers || offers.length === 0) {
+      return res.status(404).json({ message: "Catalog item not found." });
+    }
+
+    const item = await CatalogItem.findOne({ _id: id, isActive: true })
+      .lean()
+      .select(
+        "name brand category subcategory itemType description weightGrams tags updatedAt imageUrls"
+      );
+
+    if (!item) {
+      return res.status(404).json({ message: "Catalog item not found." });
+    }
+
+    return res.json({
+      ...item,
+      offers: offers.sort((a, b) => (b.priority || 0) - (a.priority || 0)),
+    });
+  } catch (err) {
+    console.error("GET /api/catalog/items/:id error", err);
+    return res.status(500).json({ message: "Failed to load catalog item." });
+  }
+});
 
 // GET /api/catalog/items
 // Public read-only list of active catalog items
@@ -83,9 +127,16 @@ router.get("/items", auth, async (req, res) => {
 
     const safeItems = items.map((it) => ({
       ...it,
-      offers: (offersByProduct.get(String(it._id)) || []).sort(
-        (a, b) => (b.priority || 0) - (a.priority || 0)
-      ),
+      offers: (offersByProduct.get(String(it._id)) || [])
+        .slice()
+        .sort((a, b) => {
+          const ar = String(a.region || "global").toLowerCase();
+          const br = String(b.region || "global").toLowerCase();
+          const aRegionScore = ar === userRegion ? 2 : ar === "global" ? 1 : 0;
+          const bRegionScore = br === userRegion ? 2 : br === "global" ? 1 : 0;
+          if (aRegionScore !== bRegionScore) return bRegionScore - aRegionScore;
+          return (Number(b.priority) || 0) - (Number(a.priority) || 0);
+        }),
     }));
 
     res.json(safeItems);

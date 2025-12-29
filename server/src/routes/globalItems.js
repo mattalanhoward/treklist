@@ -416,20 +416,6 @@ router.post("/from-catalog/bulk", async (req, res) => {
               priority:
                 typeof bestOffer.priority === "number" ? bestOffer.priority : 0,
             }
-          : legacyPrimaryLink
-          ? {
-              network: legacyPrimaryLink.network,
-              region: legacyPrimaryLink.region || "global",
-              deepLink: legacyPrimaryLink.url,
-              merchantId: undefined, // legacy didn’t have stable merchantId
-              merchantName: legacyPrimaryLink.merchantName || "",
-              externalProductId: legacyPrimaryLink.externalId || "",
-              itemGroupId: c.itemGroupId || undefined,
-              priority:
-                typeof legacyPrimaryLink.priority === "number"
-                  ? legacyPrimaryLink.priority
-                  : 0,
-            }
           : null;
 
         const payload = {

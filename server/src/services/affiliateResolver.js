@@ -22,13 +22,10 @@ async function resolveOfferForProduct({ productId, userRegion = "global" }) {
 
   // Try regions in order until we find offers
   for (const region of regions) {
-    const offers = await MerchantOffer.find({
-      productId,
-      region,
-    });
-
-    if (offers && offers.length > 0) {
-      const offer = offers[0];
+    const offer = await MerchantOffer.findOne({ productId, region })
+      .sort({ priority: -1, updatedAt: -1, createdAt: -1 })
+      .lean();
+    if (offer) {
       return {
         deepLink: offer.deepLink,
         merchantName: offer.merchantName,
