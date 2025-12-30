@@ -418,6 +418,19 @@ export default function GlobalItemEditModal({
           <>
             {/* Imported layout (2 columns + carousel) */}
             <div className="sm:flex sm:gap-6">
+              {isAffiliateBacked &&
+                (loadingImages || catalogImages.length > 0) && (
+                  <div className="sm:hidden mt-2">
+                    <ImageCarousel
+                      images={catalogImages}
+                      alt={`${form.brand ? form.brand + " " : ""}${
+                        form.name || ""
+                      }`}
+                      loading={loadingImages}
+                      heightClass="h-40"
+                    />
+                  </div>
+                )}
               {/* Left */}
               <div className="sm:flex-1">
                 <div className="space-y-3">

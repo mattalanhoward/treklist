@@ -232,7 +232,7 @@
       "defaultImages": "Default images",
       "colors": "Colors",
       "viewEditDetails": "View / edit details",
-      "viewAsChecklist": "View as checklist",
+      "viewAsChecklist": "Checklist",
       "copyList": "Copy list",
       "shareList": "Share list",
       "deleteList": "Delete list"
@@ -426,8 +426,8 @@
     }
   },
   "globalItemEditModal": {
-    "titleGlobal": "Edit global item",
-    "titleList": "Edit gear item",
+    "titleGlobal": "Item Details",
+    "titleList": "Item Details",
     "buttons": {
       "delete": "Delete item",
       "saving": "Saving…"
