@@ -112,7 +112,7 @@ const CatalogItemSchema = new mongoose.Schema(
     attributes: {
       type: Map,
       of: String,
-      default: undefined,
+      default: {},
     },
 
     // STABLE CROSS-NETWORK PRODUCT ID
