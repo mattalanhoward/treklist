@@ -7,6 +7,7 @@ export default function ImageCarousel({
   alt = "",
   className = "",
   loading = false,
+  heightClass = "h-60",
 }) {
   const safeImages = useMemo(() => {
     return (Array.isArray(images) ? images : []).filter(Boolean);
@@ -53,7 +54,12 @@ export default function ImageCarousel({
   if (loading) {
     return (
       <div
-        className={"w-full h-60 rounded bg-white/30 animate-pulse " + className}
+        className={
+          "w-full " +
+          heightClass +
+          " rounded bg-white/30 animate-pulse " +
+          className
+        }
       />
     );
   }
@@ -62,14 +68,17 @@ export default function ImageCarousel({
     return (
       <div
         className={
-          "w-full h-60 rounded bg-white/30 flex items-center justify-center text-primary text-sm " +
+          "w-full " +
+          heightClass +
+          " rounded bg-white/30 flex items-center justify-center text-primary text-sm " +
           className
         }
       />
     );
   }
 
-  const current = safeImages[Math.min(index, safeImages.length - 1)];
+  const clampedIndex = Math.min(index, safeImages.length - 1);
+  const current = safeImages[clampedIndex];
   const isCurrentLoaded = loadedSet.has(current);
 
   const goPrev = () =>
@@ -80,7 +89,13 @@ export default function ImageCarousel({
 
   return (
     <div className={"w-full " + className}>
-      <div className="relative w-full h-60 rounded overflow-hidden flex items-center justify-center">
+      <div
+        className={
+          "relative w-full " +
+          heightClass +
+          " rounded overflow-hidden flex items-center justify-center"
+        }
+      >
         {!isCurrentLoaded && (
           <div className="absolute inset-0 animate-pulse bg-white/20" />
         )}
@@ -101,7 +116,7 @@ export default function ImageCarousel({
                 type="button"
                 onClick={goPrev}
                 aria-label="Previous image"
-                className="rounded p-2 text-primary hover:bg-neutralAlt/30 "
+                className="rounded p-2 text-primary hover:bg-neutralAlt/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary"
               >
                 <FaChevronLeft />
               </button>
@@ -112,7 +127,7 @@ export default function ImageCarousel({
                 type="button"
                 onClick={goNext}
                 aria-label="Next image"
-                className="rounded p-2 text-primary hover:bg-neutralAlt/30 "
+                className="rounded p-2 text-primary hover:bg-neutralAlt/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary"
               >
                 <FaChevronRight />
               </button>
@@ -120,7 +135,7 @@ export default function ImageCarousel({
           </>
         )}
 
-        {/* Dots (overlay at bottom-center) - add border back */}
+        {/* Dots (overlay at bottom-center) */}
         {showNav && (
           <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 bg-neutralAlt/70 border border-primary rounded-full px-2 py-1">
             {safeImages.map((_, i) => (
@@ -131,7 +146,7 @@ export default function ImageCarousel({
                 aria-label={`Show image ${i + 1}`}
                 className={
                   "h-2 w-2 rounded-full " +
-                  (i === index
+                  (i === clampedIndex
                     ? "bg-primary"
                     : "bg-transparent opacity-60 border border-primary")
                 }

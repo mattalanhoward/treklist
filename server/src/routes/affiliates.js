@@ -277,14 +277,13 @@ async function resolveBestOfferLink(req, res) {
           : null);
     }
 
-    // Need either a catalog productId OR legacy group identifier
-    if (!productId && !group) {
-      return res.status(400).json({
-        message: "No resolvable key (productId/itemGroupId) for this item.",
-      });
+    // If it's a custom item, it may only have originalLink (no productId/group)
+    if (!productId && !group && !originalLink) {
+      return res.status(404).json({ message: "No link available." });
     }
 
-    const key = productId || group;
+    // Cache key must never be null; for custom-only items use the globalItemId
+    const key = productId || group || `gi:${globalItemId}`;
     const cacheKey = `${key}|${offerRegion}`;
 
     // DEV: do NOT cache, or priority updates will look "broken"
