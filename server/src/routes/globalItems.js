@@ -16,6 +16,25 @@ const router = express.Router();
 // Protect all routes
 router.use(auth);
 
+function sanitizeAttributes(input) {
+  if (!input || typeof input !== "object" || Array.isArray(input)) return {};
+  const out = {};
+
+  for (const [k, v] of Object.entries(input)) {
+    const key = String(k || "").trim();
+    if (!key) continue;
+    if (key.length > 40) continue;
+
+    const val = v == null ? "" : String(v).trim();
+    if (!val) continue; // drop empty values
+    if (val.length > 120) continue;
+
+    out[key] = val;
+  }
+
+  return out;
+}
+
 function pickBestOffer(offers, userRegion) {
   const list = Array.isArray(offers) ? offers : [];
   const scored = list
@@ -187,60 +206,106 @@ router.post(
 );
 
 // POST /api/global/items
-router.post("/", async (req, res) => {
-  try {
-    const { category, name } = req.body;
-    if (!name) {
-      return res.status(400).json({ message: "Name is required." });
+router.post(
+  "/",
+  [
+    body("name").isString().isLength({ min: 1, max: 200 }).trim(),
+    body("brand").optional().isString().isLength({ max: 120 }).trim(),
+    body("description").optional().isString().isLength({ max: 5000 }).trim(),
+    body("category").optional().isString().isLength({ max: 120 }).trim(),
+    body("itemType").optional().isString().isLength({ max: 120 }).trim(),
+    body("weight").optional().isFloat({ min: 0 }),
+    body("link").optional().isString().isLength({ max: 2000 }).trim(),
+
+    // ✅ A) attributes validator
+    body("attributes")
+      .optional()
+      .custom((v) => {
+        if (typeof v !== "object" || Array.isArray(v)) {
+          throw new Error("attributes must be an object");
+        }
+        return true;
+      }),
+
+    body("worn").optional().isBoolean(),
+    body("consumable").optional().isBoolean(),
+    body("quantity").optional().isInt({ min: 1, max: 999 }),
+    body("weightSource")
+      .optional()
+      .isIn(["user", "heuristic", "scraped", "catalog", "verified"]),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res
+        .status(400)
+        .json({ message: "Invalid payload", errors: errors.array() });
     }
-    const allowedSources = [
-      "user",
-      "heuristic",
-      "scraped",
-      "catalog",
-      "verified",
-    ];
-    const body = { ...req.body };
-    if (
-      typeof body.weightSource === "string" &&
-      !allowedSources.includes(body.weightSource)
-    ) {
-      delete body.weightSource;
+
+    try {
+      const allowedSources = [
+        "user",
+        "heuristic",
+        "scraped",
+        "catalog",
+        "verified",
+      ];
+
+      const bodyIn = { ...req.body };
+
+      // keep your existing weightSource cleanup
+      if (
+        typeof bodyIn.weightSource === "string" &&
+        !allowedSources.includes(bodyIn.weightSource)
+      ) {
+        delete bodyIn.weightSource;
+      }
+
+      // ✅ B) sanitize attributes before saving
+      if (Object.prototype.hasOwnProperty.call(bodyIn, "attributes")) {
+        bodyIn.attributes = sanitizeAttributes(bodyIn.attributes);
+      }
+
+      const newItem = await GlobalItem.create({ owner: req.userId, ...bodyIn });
+      res.status(201).json(newItem);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: err.message });
     }
-    const newItem = await GlobalItem.create({ owner: req.userId, ...body });
-    res.status(201).json(newItem);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: err.message });
   }
-});
+);
 
 // PATCH /api/global/items/:id — update template & cascade to GearItem instances
 router.patch("/:id", async (req, res) => {
   try {
-    // Load first to enforce immutability for affiliate-backed items
     const current = await GlobalItem.findOne({
       _id: req.params.id,
       owner: req.userId,
     });
+
     if (!current) {
       return res.status(404).json({ message: "Global item not found." });
     }
 
-    // Affiliate-backed if linked to CatalogItem (productId) OR legacy affiliate metadata exists
     const isAffiliateBacked =
       Boolean(current.productId) || Boolean(current?.affiliate?.network);
 
-    // Link is custom-only now: ignore it for affiliate-backed items (don’t 400)
-    if (
-      isAffiliateBacked &&
-      Object.prototype.hasOwnProperty.call(req.body, "link")
-    ) {
-      // ignore silently
-      delete req.body.link;
+    // Lock fields for imported items (catalog/affiliate-backed)
+    if (isAffiliateBacked) {
+      const IMMUTABLE_IMPORTED = ["name", "brand", "description", "itemType"];
+
+      for (const k of IMMUTABLE_IMPORTED) {
+        if (Object.prototype.hasOwnProperty.call(req.body, k)) {
+          delete req.body[k];
+        }
+      }
+
+      // Link is custom-only
+      if (Object.prototype.hasOwnProperty.call(req.body, "link")) {
+        delete req.body.link;
+      }
     }
 
-    // Only allow these fields to be updated
     const allowed = [
       "category",
       "itemType",
@@ -251,6 +316,11 @@ router.patch("/:id", async (req, res) => {
       "link",
     ];
 
+    // Extra safety: ignore silently if sent anyway
+    if (Object.prototype.hasOwnProperty.call(req.body, "attributes")) {
+      delete req.body.attributes;
+    }
+
     const updates = {};
     for (const key of allowed) {
       if (Object.prototype.hasOwnProperty.call(req.body, key)) {
@@ -258,12 +328,16 @@ router.patch("/:id", async (req, res) => {
       }
     }
 
-    // Update master template
+    if (Object.prototype.hasOwnProperty.call(updates, "attributes")) {
+      updates.attributes = sanitizeAttributes(updates.attributes);
+    }
+
     const updated = await GlobalItem.findOneAndUpdate(
       { _id: req.params.id, owner: req.userId },
       { $set: updates },
       { new: true }
     );
+
     if (!updated) {
       return res.status(404).json({ message: "Global item not found." });
     }
@@ -275,8 +349,13 @@ router.patch("/:id", async (req, res) => {
       brand: updated.brand,
       description: updated.description,
       weight: updated.weight,
-      link: updated.link,
+      attributes: updated.attributes,
     };
+
+    // Only cascade link for custom items
+    if (!isAffiliateBacked) {
+      cascade.link = updated.link;
+    }
 
     await GearItem.updateMany({ globalItem: req.params.id }, { $set: cascade });
 

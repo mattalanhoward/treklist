@@ -69,6 +69,14 @@ const GlobalItemSchema = new mongoose.Schema(
       type: String,
     },
 
+    // Flexible specs (user-editable). Examples:
+    // { capacityLiters: "24", lumens: "450", maxLengthCm: "140" }
+    attributes: {
+      type: Map,
+      of: String,
+      default: {},
+    },
+
     // Affiliate metadata (present when this GlobalItem is merchant-managed)
     affiliate: {
       network: { type: String, trim: true },
