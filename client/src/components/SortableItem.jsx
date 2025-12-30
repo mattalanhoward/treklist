@@ -40,21 +40,28 @@ export default function SortableItem({
   const [detailsOpen, setDetailsOpen] = useState(false);
   const { region: userRegion } = useUserSettings();
 
+  // If the item has a direct link (custom item), we should NOT call resolver.
+  const hasDirectLink = Boolean(item?.link);
+
+  // Resolver works when we have a GlobalItem id to resolve from.
+  // In list context, GearItem.globalItem exists (required by schema).
   const canResolve = Boolean(
     item?.globalItem || item?.productId || item?.affiliate?.network
   );
-  const showCart = Boolean(item?.link) || canResolve;
+
+  // Show cart if we can open *some* link (direct or resolvable)
+  const showCart = hasDirectLink || canResolve;
 
   const CartIconLink = ({ className = "" }) =>
     showCart ? (
       <AffiliateGateLink
-        // Custom items only: direct link
-        href={item.link || null}
-        // Affiliate/catalog-backed: resolve via MerchantOffer at click time
+        // ✅ Custom items: direct link only
+        href={hasDirectLink ? item.link : null}
+        // ✅ Imported/merchant-backed: only resolve when there is NO direct link
         getHref={
-          canResolve
+          !hasDirectLink && canResolve
             ? async () => {
-                const globalItemId = item?.globalItem || item?._id;
+                const globalItemId = item?.globalItem || item?._id; // gearItem.globalItem in list context
                 const region = (userRegion || "us").toUpperCase();
 
                 try {
@@ -63,7 +70,6 @@ export default function SortableItem({
                   );
                   return res?.data?.link || null;
                 } catch (e) {
-                  // If resolver 404s, treat as no link
                   if (e?.response?.status === 404) return null;
                   return null;
                 }
