@@ -505,6 +505,7 @@ router.post("/from-catalog/bulk", async (req, res) => {
           itemType: c.itemType || c.subcategory || c.category || null,
           description: c.description,
           weight: c.weightGrams,
+          attributes: sanitizeAttributes(c.attributes),
           ...(typeof c.weightGrams === "number" && { weightSource: "catalog" }),
           tags: c.tags,
           category: c.category || null,
@@ -594,6 +595,7 @@ router.post("/from-catalog/:id", async (req, res) => {
         catalogItem.category ||
         null,
       description: catalogItem.description,
+      attributes: sanitizeAttributes(catalogItem.attributes),
       // weight (+ mark it as coming from catalog if present)
       weight: catalogItem.weightGrams,
       ...(typeof catalogItem.weightGrams === "number" && {
