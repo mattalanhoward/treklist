@@ -139,7 +139,7 @@ export default function ImageCarousel({
 
       {/* Dots (below image) */}
       {showNav && (
-        <div className="mt-2 flex justify-center">
+        <div className="flex justify-center">
           <div className="flex items-center justify-center gap-2 bg-neutralAlt/70 border border-primary rounded-full px-2 py-1">
             {safeImages.map((_, i) => (
               <button

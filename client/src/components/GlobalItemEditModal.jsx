@@ -52,7 +52,6 @@ export default function GlobalItemEditModal({
   const [globalTemplate, setGlobalTemplate] = useState(null);
   const [loadingGlobal, setLoadingGlobal] = useState(false);
 
-  const [resolvedProductId, setResolvedProductId] = useState(null);
   const [catalogImages, setCatalogImages] = useState([]);
   const [loadingImages, setLoadingImages] = useState(false);
 
@@ -66,17 +65,80 @@ export default function GlobalItemEditModal({
     return isListContext ? item?.globalItem || null : item?._id || null;
   }, [isListContext, item]);
 
+  // Prefer the fetched global template when present; otherwise use item
+  const template = useMemo(() => {
+    return globalTemplate || item || null;
+  }, [globalTemplate, item]);
+
+  const resolvedProductId = useMemo(() => {
+    const pid = item?.productId
+      ? String(item.productId)
+      : template?.productId
+      ? String(template.productId)
+      : null;
+
+    return pid || null;
+  }, [item?.productId, template?.productId]);
+
+  // Do we need the GlobalItem fetch to know the mode?
+  const needsTemplateToDecide = useMemo(() => {
+    if (!isListContext) return false;
+    // If editing from a gearlist card, item is GearItem and usually lacks affiliate/productId
+    const hasEnoughOnItem =
+      Boolean(item?.affiliate?.network) || Boolean(item?.productId);
+    return Boolean(globalId) && !hasEnoughOnItem;
+  }, [isListContext, globalId, item?.affiliate?.network, item?.productId]);
+
+  // prevents stale template from previous item causing wrong fields briefly
+  useEffect(() => {
+    setGlobalTemplate(null);
+  }, [globalId]);
+
+  // While we wait on the global template ONLY to decide imported vs custom,
+  // render the custom layout immediately (no skeleton / no width jump),
+  // but disable editing + saving until resolved.
+  const isResolvingMode =
+    Boolean(item) && needsTemplateToDecide && !globalTemplate;
+
+  const resolvedViewMode = useMemo(() => {
+    if (!item) return "loading";
+    const direct =
+      Boolean(item?.affiliate?.network) || Boolean(item?.productId);
+    const viaTemplate =
+      Boolean(globalTemplate?.productId) ||
+      Boolean(globalTemplate?.affiliate?.network);
+    return direct || viaTemplate ? "imported" : "custom";
+  }, [
+    itemId,
+    item?.affiliate?.network,
+    item?.productId,
+    globalTemplate?.productId,
+    globalTemplate?.affiliate?.network,
+  ]);
+
+  const viewMode = isResolvingMode ? "custom" : resolvedViewMode;
+
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
+      // Only relevant for imported items
+      if (viewMode !== "imported") {
+        setCatalogImages([]);
+        setPrimaryOffer(null);
+        setLoadingImages(false);
+        return;
+      }
+
       if (!resolvedProductId) {
         setCatalogImages([]);
         setPrimaryOffer(null);
+        setLoadingImages(false);
         return;
       }
 
       setLoadingImages(true);
+
       try {
         const res = await api.get(`/catalog/items/${resolvedProductId}`);
         const data = res?.data || {};
@@ -84,7 +146,6 @@ export default function GlobalItemEditModal({
         const urls = Array.isArray(data.imageUrls) ? data.imageUrls : [];
         if (!cancelled) setCatalogImages(urls);
 
-        // v1: just pick highest priority (or first) offer
         const offers = Array.isArray(data.offers) ? data.offers : [];
         const best = offers
           .slice()
@@ -107,7 +168,7 @@ export default function GlobalItemEditModal({
     return () => {
       cancelled = true;
     };
-  }, [resolvedProductId]);
+  }, [resolvedProductId, viewMode]);
 
   // --- single global fetch (cached) used for:
   //     - affiliate-backed detection
@@ -117,19 +178,19 @@ export default function GlobalItemEditModal({
     let cancelled = false;
 
     async function loadGlobal() {
-      // If we don't have a separate global id (sidebar/global view), don't fetch.
-      // (In that case, `item` itself is the global template already.)
       if (!isListContext || !globalId) {
         setGlobalTemplate(null);
+        setLoadingGlobal(false);
         return;
       }
 
-      setLoadingGlobal(true);
-      const data = await fetchGlobalItemCached(globalId);
-
-      if (!cancelled) {
-        setGlobalTemplate(data);
-        setLoadingGlobal(false);
+      setGlobalTemplate(null);
+      setLoadingGlobal(true); // important: mark as loading immediately
+      try {
+        const data = await fetchGlobalItemCached(globalId);
+        if (!cancelled) setGlobalTemplate(data);
+      } finally {
+        if (!cancelled) setLoadingGlobal(false);
       }
     }
 
@@ -138,11 +199,6 @@ export default function GlobalItemEditModal({
       cancelled = true;
     };
   }, [isListContext, globalId]);
-
-  // Prefer the fetched global template when present; otherwise use item
-  const template = useMemo(() => {
-    return globalTemplate || item || null;
-  }, [globalTemplate, item]);
 
   // Affiliate-backed if:
   // - direct on the item (sometimes GearItem carries affiliate/productId)
@@ -155,43 +211,50 @@ export default function GlobalItemEditModal({
     return direct || viaTemplate;
   }, [item, template]);
 
-  const isCustom = !isAffiliateBacked;
+  const isCustom = viewMode === "custom";
+  const isImported = viewMode === "imported";
+  const disableEdits = saving || isResolvingMode;
 
-  // Resolve productId for catalog images from:
-  // - item.productId if present
-  // - else template.productId (global template)
-  useEffect(() => {
-    const pid = item?.productId
-      ? String(item.productId)
-      : template?.productId
-      ? String(template.productId)
-      : null;
-
-    setResolvedProductId(pid);
-  }, [item?.productId, template?.productId]);
-
-  // Only show image column for imported items when we actually have images (or are loading)
-  const showImagesDesktop = useMemo(() => {
-    return isAffiliateBacked && (loadingImages || catalogImages.length > 0);
-  }, [isAffiliateBacked, loadingImages, catalogImages.length]);
-
-  // Hydrate when item changes
+  // Hydrate list-editable fields from the *item* (GearItem can override these)
   useEffect(() => {
     if (!item) return;
     const initialGrams = item.weight ?? "";
-    setForm({
+    setForm((prev) => ({
+      ...prev,
       category: item.category || "",
-      itemType: item.itemType || "",
-      name: item.name || "",
-      brand: item.brand || "",
-      description: item.description || "",
       weight: initialGrams,
-      link: item.link || "",
-    });
+      // NOTE: imported read-only fields are handled in the effect below
+      ...(viewMode === "custom"
+        ? {
+            itemType: item.itemType || "",
+            name: item.name || "",
+            brand: item.brand || "",
+            description: item.description || "",
+            link: item.link || "",
+          }
+        : null),
+    }));
     setWorn(!!item.worn);
     setConsumable(!!item.consumable);
     setQuantity(item.quantity || 1);
-  }, [itemId]);
+  }, [itemId, viewMode, item]);
+
+  // Hydrate imported read-only fields from the *template* (GlobalItem)
+  // This removes the “— then values appear” snap.
+  useEffect(() => {
+    if (!item) return;
+    if (!isImported) return;
+    if (!template) return;
+
+    setForm((prev) => ({
+      ...prev,
+      itemType: template.itemType || "",
+      name: template.name || "",
+      brand: template.brand || "",
+      description: template.description || "",
+      link: template.link || "",
+    }));
+  }, [isImported, template, itemId, item]);
 
   // Recalc display weight when unit or item changes
   useEffect(() => {
@@ -207,7 +270,7 @@ export default function GlobalItemEditModal({
 
   const validate = () => {
     // only enforce name for custom items (imported is read-only anyway)
-    if (!isAffiliateBacked && !form.name.trim())
+    if (viewMode === "custom" && !form.name.trim())
       return t("validation.nameRequired");
 
     const trimmed = String(displayWeight ?? "").trim();
@@ -216,7 +279,7 @@ export default function GlobalItemEditModal({
     if (trimmed !== "" && parsed == null) return t("validation.weightInvalid");
     if (parsed != null && parsed < 0) return t("validation.weightNegative");
 
-    if (!isAffiliateBacked && form.link && !/^https?:\/\//.test(form.link)) {
+    if (viewMode === "custom" && form.link && !/^https?:\/\//.test(form.link)) {
       return t("validation.urlInvalid");
     }
 
@@ -226,6 +289,11 @@ export default function GlobalItemEditModal({
   // Step 1: validate -> open confirm
   const handleSave = (e) => {
     e.preventDefault();
+    if (isResolvingMode) {
+      // Avoid saving while mode is unknown (prevents editing imported items accidentally)
+      toast.error("Still loading item details…");
+      return;
+    }
     const err = validate();
     if (err) {
       setError(err);
@@ -259,7 +327,7 @@ export default function GlobalItemEditModal({
       const globalPayload = { ...basePayload };
 
       // Editable on custom items only (global template edits)
-      if (!isAffiliateBacked) {
+      if (viewMode === "custom") {
         globalPayload.itemType = form.itemType;
         globalPayload.name = form.name.trim();
         globalPayload.brand = form.brand.trim();
@@ -332,15 +400,18 @@ export default function GlobalItemEditModal({
 
   // Imported-only specs come from the GLOBAL TEMPLATE (so it works from GearItem too)
   const importedSpecs = useMemo(() => {
-    if (!isAffiliateBacked) return null;
+    if (viewMode !== "imported") return null;
     const attrs = template?.attributes;
     if (!attrs || typeof attrs !== "object" || Array.isArray(attrs))
       return null;
+
     const entries = Object.entries(attrs).filter(
       ([k, v]) => String(k || "").trim() && String(v ?? "").trim()
     );
     return entries.length ? entries : null;
-  }, [isAffiliateBacked, template]);
+  }, [viewMode, template]);
+
+  const modalWidthClass = viewMode === "custom" ? "max-w-xl" : "max-w-3xl";
 
   return (
     <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-50">
@@ -348,7 +419,8 @@ export default function GlobalItemEditModal({
         onSubmit={handleSave}
         className={
           "bg-neutralAlt rounded-lg shadow-2xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 " +
-          (isCustom ? "max-w-xl" : "max-w-3xl")
+          "max-h-[90vh] overflow-y-auto " +
+          modalWidthClass
         }
       >
         {/* Header */}
@@ -368,9 +440,21 @@ export default function GlobalItemEditModal({
           </button>
         </div>
 
+        {/* {isResolvingMode && (
+          <div className="mb-2 text-xs text-primary/60">
+            Loading item details…
+          </div>
+        )} */}
+
         {error && <div className="text-error mb-2">{error}</div>}
 
-        {isCustom ? (
+        {viewMode === "loading" ? (
+          <div className="py-8 px-3">
+            {/* <div className="text-primary/70 text-sm">Loading item details…</div> */}
+            <div className="mt-4 h-24 bg-white/60 rounded" />
+            <div className="mt-3 h-24 bg-white/60 rounded" />
+          </div>
+        ) : isCustom ? (
           <>
             {/* Custom items layout (no specs shown, editable) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -382,6 +466,7 @@ export default function GlobalItemEditModal({
                   name="itemType"
                   value={form.itemType}
                   onChange={handleChange}
+                  // disabled={disableEdits}
                   className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
                 />
               </div>
@@ -395,6 +480,7 @@ export default function GlobalItemEditModal({
                   name="name"
                   value={form.name}
                   onChange={handleChange}
+                  // disabled={disableEdits}
                   className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
                 />
               </div>
@@ -407,6 +493,7 @@ export default function GlobalItemEditModal({
                   name="brand"
                   value={form.brand}
                   onChange={handleChange}
+                  // disabled={disableEdits}
                   className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
                 />
               </div>
@@ -419,6 +506,7 @@ export default function GlobalItemEditModal({
                   }
                   label="Link"
                   placeholder="tarptent.com"
+                  // disabled={disableEdits}
                   required={false}
                 />
               </div>
@@ -433,6 +521,7 @@ export default function GlobalItemEditModal({
                     inputMode="decimal"
                     value={displayWeight}
                     onChange={(e) => setDisplayWeight(e.target.value)}
+                    // disabled={disableEdits}
                     className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
                   />
                 </div>
@@ -446,6 +535,7 @@ export default function GlobalItemEditModal({
                   name="description"
                   value={form.description}
                   onChange={handleChange}
+                  // disabled={disableEdits}
                   className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
                   rows={2}
                 />
@@ -545,24 +635,33 @@ export default function GlobalItemEditModal({
                 </div>
 
                 {/* Optional: tiny hint while loading global template in list context */}
-                {isListContext && loadingGlobal && (
+                {/* {isListContext && loadingGlobal && (
                   <div className="mt-2 text-xs text-primary/60">
                     Loading item details…
                   </div>
-                )}
+                )} */}
               </div>
 
               {/* Right (desktop only) */}
-              {showImagesDesktop && (
+              {isImported && (
                 <div className="hidden sm:flex items-center justify-center">
-                  <div className="bg-white py-4 px-2 w-full max-w-md">
-                    <ImageCarousel
-                      images={catalogImages}
-                      alt={`${form.brand ? form.brand + " " : ""}${
-                        form.name || ""
-                      }`}
-                      loading={loadingImages}
-                    />
+                  <div className="bg-white py-2 px-2 w-full max-w-md">
+                    {/* Lock the media area height so the modal never grows when carousel/dots load */}
+                    <div className="h-[260px] w-full overflow-hidden flex items-center justify-center">
+                      {loadingImages ? (
+                        <div className="h-full w-full bg-neutralAlt/40 rounded animate-pulse" />
+                      ) : catalogImages?.length ? (
+                        <ImageCarousel
+                          images={catalogImages}
+                          alt={`${form.brand ? form.brand + " " : ""}${
+                            form.name || ""
+                          }`}
+                          loading={false}
+                        />
+                      ) : (
+                        <div className="h-full w-full bg-neutralAlt/20 rounded" />
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
@@ -573,7 +672,8 @@ export default function GlobalItemEditModal({
               <label className="block font-semibold text-primary mb-1">
                 {t("globalItemModal.labels.description")}
               </label>
-              <div className="text-primary/90 whitespace-pre-line leading-6">
+              <div className="text-primary/90 whitespace-pre-line leading-6 min-h-[120px] max-h-[160px] overflow-y-auto pr-2">
+                {" "}
                 {form.description || "—"}
               </div>
             </div>
@@ -587,7 +687,7 @@ export default function GlobalItemEditModal({
               <button
                 type="button"
                 onClick={() => setDeleteConfirmOpen(true)}
-                disabled={saving}
+                disabled={saving || isResolvingMode}
                 className="px-2 py-1 bg-error text-neutral font-semibold rounded-md shadow hover:bg-error/80 focus:outline-none focus:ring-2 focus:ring-error transition"
               >
                 {t("globalItemEditModal.buttons.delete")}
@@ -595,13 +695,25 @@ export default function GlobalItemEditModal({
             )}
 
             {/* BUY button (imported items only) */}
-            {!isCustom && primaryOffer?.deepLink && (
-              <ButtonLink href={primaryOffer.deepLink}>
-                {primaryOffer.merchantName
-                  ? primaryOffer.merchantName
-                  : "Product Page"}
-              </ButtonLink>
-            )}
+            {!isCustom &&
+              (primaryOffer?.deepLink ? (
+                <ButtonLink href={primaryOffer.deepLink}>
+                  {primaryOffer.merchantName
+                    ? primaryOffer.merchantName
+                    : "Product Page"}
+                </ButtonLink>
+              ) : // Reserve space so the button doesn’t “pop in” later
+              // Only show placeholder if we expect an offer (imported + has productId)
+              resolvedProductId ? (
+                <button
+                  type="button"
+                  disabled
+                  className="px-2 py-1 bg-primary/10 text-primary/60 rounded-md shadow"
+                  style={{ minWidth: 110 }} // keep layout stable
+                >
+                  Loading…
+                </button>
+              ) : null)}
           </div>
           <div className="flex space-x-2">
             <button

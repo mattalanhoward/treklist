@@ -9,6 +9,7 @@ export default function LinkInput({
   name = "link",
   placeholder = "",
   required = false,
+  disabled = false,
 }) {
   const { t } = useTranslation("common");
   const [error, setError] = useState("");
@@ -80,6 +81,7 @@ export default function LinkInput({
         value={value}
         onChange={handleChange}
         onBlur={normalizeAndValidate}
+        disabled={disabled}
         aria-invalid={!!error}
         aria-describedby={errorId}
         className={
