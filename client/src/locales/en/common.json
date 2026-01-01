@@ -697,13 +697,13 @@
   "affiliateDisclosure": {
     "label": "Disclosure:",
     "public": {
-      "bodyPrefix": "This page includes affiliate links (EU & US). If you buy through a link,",
-      "actor": "TrekList or the list owner",
+      "bodyPrefix": "This page may include affiliate links (EU & US). If you buy through a link,",
+      "actor": "TrekList or the list owner ",
       "bodySuffix": "may earn a commission at no extra cost to you."
     },
     "private": {
-      "bodyPrefix": "This page includes affiliate links (EU & US). If you buy through a link,",
-      "actor": "TrekList",
+      "bodyPrefix": "This page may include affiliate links (EU & US). If you buy through a link,",
+      "actor": "TrekList ",
       "bodySuffix": "may earn a commission at no extra cost to you."
     },
     "amazon": "As an Amazon Associate, I earn from qualifying purchases."
