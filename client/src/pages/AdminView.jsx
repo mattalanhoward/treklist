@@ -87,6 +87,42 @@ function marketplaceFromAmazonUrlClient(url) {
 const getPrimaryOffer = (f) =>
   Array.isArray(f?.offers) && f.offers[0] ? f.offers[0] : blankOffer();
 
+function parseAttributesText(text) {
+  const out = {};
+  const raw = String(text || "")
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter(Boolean);
+
+  for (const line of raw) {
+    // allow "key: value" (preferred) or "key=value"
+    const idx = line.includes(":") ? line.indexOf(":") : line.indexOf("=");
+    if (idx === -1) continue;
+
+    const k = line.slice(0, idx).trim();
+    const v = line.slice(idx + 1).trim();
+    if (!k || !v) continue;
+    out[k] = v;
+  }
+
+  return Object.keys(out).length ? out : undefined;
+}
+
+function attributesToText(attributes) {
+  if (!attributes) return "";
+  // Mongoose Map can come back as plain object already, but normalize anyway
+  const obj =
+    attributes instanceof Map
+      ? Object.fromEntries(attributes.entries())
+      : attributes;
+
+  if (!obj || typeof obj !== "object") return "";
+  return Object.entries(obj)
+    .filter(([k, v]) => String(k || "").trim() && String(v ?? "").trim())
+    .map(([k, v]) => `${k}: ${v}`)
+    .join("\n");
+}
+
 function GearCatalogSection({ mode = "both" }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -130,6 +166,7 @@ function GearCatalogSection({ mode = "both" }) {
     imageUrlsText: "",
     canonicalAsin: "",
     itemGroupId: "",
+    attributesText: "",
 
     // Prefill controls (decoupled from offer network)
     prefillSource: "amazon", // "amazon" | "none" (future: "rei", etc)
@@ -249,6 +286,8 @@ function GearCatalogSection({ mode = "both" }) {
       return toast.error("Please confirm you rewrote the Amazon description.");
     }
 
+    const attributes = parseAttributesText(form.attributesText);
+
     setCreating(true);
     try {
       const imageUrls = form.imageUrlsText
@@ -266,6 +305,7 @@ function GearCatalogSection({ mode = "both" }) {
         itemType: form.itemType.trim() || undefined,
         modelNumber: form.modelNumber.trim() || undefined,
         description: form.description.trim() || undefined,
+        attributes,
         weightGrams: form.weightGrams ? Number(form.weightGrams) : undefined,
         dimensions:
           form.dimLength || form.dimWidth || form.dimHeight
@@ -334,6 +374,7 @@ function GearCatalogSection({ mode = "both" }) {
         amazonAsinLookup: "",
         amazonMarketplace: "us",
         offers: [blankOffer()],
+        attributesText: "",
       });
 
       loadItems({ includeArchived: showArchived });
@@ -849,20 +890,9 @@ function GearCatalogSection({ mode = "both" }) {
                 <div className="text-xs font-semibold text-primary/80">
                   Basics
                 </div>
-                <div>
-                  <label className="block font-medium text-primary mb-0.5">
-                    Item name *
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={form.name}
-                    onChange={handleChange}
-                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                    placeholder="Nemo Hornet OSMO 2P"
-                  />
-                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  {/* Row 1 */}
                   <div>
                     <label className="block font-medium text-primary mb-0.5">
                       Brand
@@ -877,6 +907,35 @@ function GearCatalogSection({ mode = "both" }) {
                     />
                   </div>
 
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      Item name *
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={form.name}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="Nemo Hornet OSMO 2P"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      Model number
+                    </label>
+                    <input
+                      type="text"
+                      name="modelNumber"
+                      value={form.modelNumber}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="Manufacturer model code"
+                    />
+                  </div>
+
+                  {/* Row 2 */}
                   <div>
                     <label className="block font-medium text-primary mb-0.5">
                       Category
@@ -904,8 +963,7 @@ function GearCatalogSection({ mode = "both" }) {
                       placeholder="tent / quilt / stove..."
                     />
                   </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+
                   <div>
                     <label className="block font-medium text-primary mb-0.5">
                       Item type
@@ -917,20 +975,6 @@ function GearCatalogSection({ mode = "both" }) {
                       onChange={handleChange}
                       className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
                       placeholder="ultralight 2P tent..."
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-medium text-primary mb-0.5">
-                      Model number
-                    </label>
-                    <input
-                      type="text"
-                      name="modelNumber"
-                      value={form.modelNumber}
-                      onChange={handleChange}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                      placeholder="Manufacturer model code"
                     />
                   </div>
                 </div>
@@ -954,6 +998,24 @@ function GearCatalogSection({ mode = "both" }) {
                     rows={3}
                     placeholder="Short blurb to help you recognize the item when importing."
                   />
+                </div>
+
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    Attributes (one per line)
+                  </label>
+                  <textarea
+                    name="attributesText"
+                    value={form.attributesText || ""}
+                    onChange={handleChange}
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary resize-y"
+                    rows={3}
+                    placeholder={`Capacity (L): 24\nGender / Fit: Women\nSuspension: AirSpeed`}
+                  />
+                  <span className="block text-[11px] text-primary/70">
+                    Format: <code>Key: Value</code> (or <code>Key=Value</code>).
+                    Stored in CatalogItem.attributes.
+                  </span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -1492,43 +1554,64 @@ function GearCatalogSection({ mode = "both" }) {
                       <tr>
                         <th
                           className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
+                          onClick={() => handleSort("brand")}
+                        >
+                          Brand {sortArrow("brand")}
+                        </th>
+
+                        <th
+                          className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
                           onClick={() => handleSort("name")}
                         >
                           Name {sortArrow("name")}
                         </th>
+
                         <th
                           className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
                           onClick={() => handleSort("category")}
                         >
                           Category {sortArrow("category")}
                         </th>
+
                         <th
                           className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
-                          onClick={() => handleSort("brand")}
+                          onClick={() => handleSort("subcategory")}
                         >
-                          Brand {sortArrow("brand")}
+                          Subcategory {sortArrow("subcategory")}
                         </th>
+
+                        <th
+                          className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
+                          onClick={() => handleSort("itemType")}
+                        >
+                          Item type {sortArrow("itemType")}
+                        </th>
+
                         <th
                           className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
                           onClick={() => handleSort("network")}
                         >
                           Network / Region {sortArrow("network")}
                         </th>
+
                         <th
                           className="text-right px-3 py-2 font-semibold cursor-pointer select-none"
                           onClick={() => handleSort("weightGrams")}
                         >
                           Weight {sortArrow("weightGrams")}
                         </th>
+
                         <th className="text-left px-3 py-2 font-semibold">
                           Status
                         </th>
+
                         <th
                           className="text-right px-3 py-2 font-semibold cursor-pointer select-none"
                           onClick={() => handleSort("updatedAt")}
                         >
                           Updated {sortArrow("updatedAt")}
                         </th>
+
                         <th className="text-right px-3 py-2 font-semibold">
                           Actions
                         </th>
@@ -1554,13 +1637,20 @@ function GearCatalogSection({ mode = "both" }) {
                               (!item.isActive ? "opacity-60" : "")
                             }
                           >
+                            <td className="px-3 py-2 align-top">
+                              {item.brand || "–"}
+                            </td>
                             <td className="px-3 py-2 align-top">{item.name}</td>
                             <td className="px-3 py-2 align-top">
                               {item.category || "–"}
                             </td>
                             <td className="px-3 py-2 align-top">
-                              {item.brand || "–"}
+                              {item.subcategory || "–"}
                             </td>
+                            <td className="px-3 py-2 align-top">
+                              {item.itemType || "–"}
+                            </td>
+
                             <td className="px-3 py-2 align-top">
                               {mainOffer
                                 ? `${mainOffer.network} / ${
@@ -1568,11 +1658,13 @@ function GearCatalogSection({ mode = "both" }) {
                                   }`
                                 : "–"}
                             </td>
+
                             <td className="px-3 py-2 text-right align-top">
                               {typeof item.weightGrams === "number"
                                 ? `${item.weightGrams} g`
                                 : "–"}
                             </td>
+
                             <td className="px-3 py-2 text-left align-top">
                               <span
                                 className={
@@ -1585,9 +1677,11 @@ function GearCatalogSection({ mode = "both" }) {
                                 {item.isActive ? "Active" : "Archived"}
                               </span>
                             </td>
+
                             <td className="px-3 py-2 text-right align-top">
                               {updated}
                             </td>
+
                             <td className="px-3 py-2 text-right align-top">
                               <div className="inline-flex items-center gap-2 justify-end">
                                 <button
@@ -1743,7 +1837,7 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
       itemType: item?.itemType || "",
       modelNumber: item?.modelNumber || "",
       description: item?.description || "",
-
+      attributesText: attributesToText(item?.attributes),
       weightGrams:
         typeof item?.weightGrams === "number" ? String(item.weightGrams) : "",
       dimLength: typeof dims.length === "number" ? String(dims.length) : "",
@@ -1998,6 +2092,8 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const attributes = parseAttributesText(form.attributesText);
+
     if (!form.name.trim()) {
       toast.error("Name is required.");
       return;
@@ -2043,6 +2139,7 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
         itemType: form.itemType.trim() || undefined,
         modelNumber: form.modelNumber.trim() || undefined,
         description: form.description.trim() || undefined,
+        attributes,
         weightGrams: form.weightGrams ? Number(form.weightGrams) : undefined,
         dimensions:
           form.dimLength || form.dimWidth || form.dimHeight
@@ -2137,20 +2234,21 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                 Item Details
               </div>
 
-              <div>
-                <label className="block font-medium text-primary mb-0.5">
-                  Item name *
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={form.name}
-                  onChange={handleChange}
-                  className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                />
-              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                {/* Row 1 */}
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    Item name *
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={form.name}
+                    onChange={handleChange}
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                  />
+                </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div>
                   <label className="block font-medium text-primary mb-0.5">
                     Brand
@@ -2163,6 +2261,22 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                     className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
                   />
                 </div>
+
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    Model number
+                  </label>
+                  <input
+                    type="text"
+                    name="modelNumber"
+                    value={form.modelNumber}
+                    onChange={handleChange}
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    placeholder="Manufacturer model code"
+                  />
+                </div>
+
+                {/* Row 2 */}
                 <div>
                   <label className="block font-medium text-primary mb-0.5">
                     Category
@@ -2176,9 +2290,7 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                     placeholder="shelter / mid-layer / headlamp..."
                   />
                 </div>
-              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-1">
                 <div>
                   <label className="block font-medium text-primary mb-0.5">
                     Subcategory
@@ -2192,6 +2304,7 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                     placeholder="tent / quilt / stove..."
                   />
                 </div>
+
                 <div>
                   <label className="block font-medium text-primary mb-0.5">
                     Item type
@@ -2203,19 +2316,6 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                     onChange={handleChange}
                     className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
                     placeholder="ultralight 2P tent..."
-                  />
-                </div>
-                <div>
-                  <label className="block font-medium text-primary mb-0.5">
-                    Model number
-                  </label>
-                  <input
-                    type="text"
-                    name="modelNumber"
-                    value={form.modelNumber}
-                    onChange={handleChange}
-                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                    placeholder="Manufacturer model code"
                   />
                 </div>
               </div>
@@ -2252,6 +2352,24 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                       </label>
                     </div>
                   )}
+              </div>
+
+              <div>
+                <label className="block font-medium text-primary mb-0.5">
+                  Attributes (one per line)
+                </label>
+                <textarea
+                  name="attributesText"
+                  value={form.attributesText || ""}
+                  onChange={handleChange}
+                  className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary resize-y"
+                  rows={3}
+                  placeholder={`Capacity (L): 24\nGender / Fit: Women\nSuspension: AirSpeed`}
+                />
+                <span className="block text-[11px] text-primary/70">
+                  Format: <code>Key: Value</code> (or <code>Key=Value</code>).
+                  Stored in CatalogItem.attributes.
+                </span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">

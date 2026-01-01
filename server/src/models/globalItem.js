@@ -30,19 +30,8 @@ const GlobalItemSchema = new mongoose.Schema(
       index: true,
     },
 
-    // High-level category string (same general idea as CatalogItem.category)
-    // e.g. "shelter", "sleep-system", "clothing-top"
-    category: {
-      type: String,
-      trim: true,
-      default: null,
-    },
-
-    subcategory: {
-      type: String,
-      trim: true,
-      default: null,
-    },
+    catalogCategory: { type: String, trim: true, default: null },
+    catalogSubcategory: { type: String, trim: true, default: null },
 
     // Brand label as stored on this global item.
     // May mirror CatalogItem.brand or be user-custom text.
