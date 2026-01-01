@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
 import api from "../services/api";
 import PropTypes from "prop-types";
+import { clearGlobalItemCache } from "../services/globalItemCache";
 
 export const AuthContext = createContext({
   user: null,
@@ -48,6 +49,7 @@ export function AuthProvider({ children }) {
         })
         .catch((err) => {
           console.error("Failed to fetch current user:", err);
+          clearGlobalItemCache();
           setUser(null);
           setToken(null);
         });
@@ -88,6 +90,8 @@ export function AuthProvider({ children }) {
     } catch (err) {
       console.error("Logout failed", err);
     } finally {
+      clearGlobalItemCache();
+      setUser(null);
       setToken(null);
       setLoading(false);
     }

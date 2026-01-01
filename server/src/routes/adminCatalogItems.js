@@ -1,7 +1,11 @@
 // server/src/routes/adminCatalogItems.js
 const express = require("express");
+const mongoose = require("mongoose");
 const CatalogItem = require("../models/catalogItem");
 const MerchantOffer = require("../models/merchantOffer");
+const GlobalItem = require("../models/globalItem");
+const GearItem = require("../models/gearItem");
+// const SortableItem = require("../models/sortableItem"); // <- if you have this model
 
 const router = express.Router();
 
@@ -10,11 +14,7 @@ const ALLOWED_DIM_UNITS = new Set(["cm", "in"]);
 function marketplaceFromAmazonUrl(url) {
   try {
     const host = new URL(url).hostname.toLowerCase();
-
-    // normalize
     const h = host.replace(/^smile\./, "").replace(/^www\./, "");
-
-    // match common Amazon domains
     if (h === "amazon.com") return "us";
     if (h === "amazon.co.uk") return "uk";
     if (h === "amazon.de") return "de";
@@ -25,7 +25,6 @@ function marketplaceFromAmazonUrl(url) {
     if (h === "amazon.ca") return "ca";
     if (h === "amazon.se") return "se";
     if (h === "amazon.pl") return "pl";
-
     return null;
   } catch {
     return null;
@@ -50,15 +49,9 @@ function extractAmazonAsinFromUrl(url) {
   try {
     const u = new URL(url);
     const path = u.pathname || "";
-
-    // Common Amazon patterns:
-    // /dp/ASIN
-    // /gp/product/ASIN
-    // /.../dp/ASIN
     const m =
       path.match(/\/dp\/([A-Z0-9]{10})(?:[/?]|$)/i) ||
       path.match(/\/gp\/product\/([A-Z0-9]{10})(?:[/?]|$)/i);
-
     return m ? m[1].toUpperCase() : null;
   } catch {
     return null;
@@ -76,7 +69,7 @@ function sanitizeOffers(rawOffers, { fallbackAsin, fallbackItemGroupId } = {}) {
       const region = String(o.region || "global")
         .trim()
         .toLowerCase();
-      const deepLink = String(o.deepLink || o.url || "").trim(); // allow client sending url
+      const deepLink = String(o.deepLink || o.url || "").trim();
       const merchantName = o.merchantName
         ? String(o.merchantName).trim()
         : undefined;
@@ -84,12 +77,9 @@ function sanitizeOffers(rawOffers, { fallbackAsin, fallbackItemGroupId } = {}) {
       let externalProductIdRaw =
         o.externalProductId ?? o.externalId ?? undefined;
 
-      // ✅ Amazon: if missing, try to parse ASIN from deepLink
       if (!externalProductIdRaw && network === "amazon" && deepLink) {
         externalProductIdRaw = extractAmazonAsinFromUrl(deepLink);
       }
-
-      // fallback last
       if (!externalProductIdRaw)
         externalProductIdRaw = fallbackAsin ?? undefined;
 
@@ -131,7 +121,6 @@ function sanitizeOffers(rawOffers, { fallbackAsin, fallbackItemGroupId } = {}) {
 }
 
 function normalizeDimensions(raw) {
-  // raw can be: undefined (ignore), null (clear), or an object
   if (raw === undefined) return { dimensions: undefined, clear: false };
   if (raw === null) return { dimensions: null, clear: true };
 
@@ -149,10 +138,7 @@ function normalizeDimensions(raw) {
     (widthRaw !== undefined && widthRaw !== "" && widthRaw !== null) ||
     (heightRaw !== undefined && heightRaw !== "" && heightRaw !== null);
 
-  if (!hasAny) {
-    // treat “all blank” as “clear”
-    return { dimensions: null, clear: true };
-  }
+  if (!hasAny) return { dimensions: null, clear: true };
 
   const toNum = (v) => {
     if (v === undefined || v === null || v === "") return undefined;
@@ -164,6 +150,7 @@ function normalizeDimensions(raw) {
   const length = toNum(lengthRaw);
   const width = toNum(widthRaw);
   const height = toNum(heightRaw);
+
   if (
     length === "__INVALID__" ||
     width === "__INVALID__" ||
@@ -181,26 +168,18 @@ function normalizeDimensions(raw) {
     return { error: 'Dimensions unit must be "cm" or "in".' };
   }
 
-  return {
-    dimensions: { length, width, height, unit },
-    clear: false,
-  };
+  return { dimensions: { length, width, height, unit }, clear: false };
 }
 
 // GET /api/admin/catalog-items
-// Basic list endpoint with optional filters
 router.get("/", async (req, res) => {
   try {
     const { q, category, isActive = "true", limit = 100, skip = 0 } = req.query;
 
     const query = {};
-
     if (isActive === "true") query.isActive = true;
     if (isActive === "false") query.isActive = false;
-
-    if (category) {
-      query.category = category;
-    }
+    if (category) query.category = category;
 
     if (q && q.trim()) {
       const regex = new RegExp(q.trim(), "i");
@@ -210,9 +189,11 @@ router.get("/", async (req, res) => {
     const items = await CatalogItem.find(query)
       .sort({ updatedAt: -1 })
       .skip(Number(skip) || 0)
-      .limit(Math.min(Number(limit) || 100, 200)); // guard against silly limits
+      .limit(Math.min(Number(limit) || 100, 200))
+      .lean();
 
     const ids = items.map((i) => i._id);
+
     const offers = await MerchantOffer.find({ productId: { $in: ids } }).lean();
     const offersByProduct = new Map();
     for (const o of offers) {
@@ -225,7 +206,7 @@ router.get("/", async (req, res) => {
 
     res.json({
       items: items.map((it) => ({
-        ...it.toObject(),
+        ...it,
         offers: (offersByProduct.get(String(it._id)) || []).sort(
           (a, b) => (b.priority || 0) - (a.priority || 0)
         ),
@@ -239,7 +220,6 @@ router.get("/", async (req, res) => {
 });
 
 // POST /api/admin/catalog-items
-// Create a new catalog item (Amazon-only for now)
 router.post("/", async (req, res) => {
   try {
     const {
@@ -257,6 +237,7 @@ router.post("/", async (req, res) => {
       offers,
       canonicalAsin,
       itemGroupId,
+      attributes,
     } = req.body || {};
 
     if (!name || typeof name !== "string") {
@@ -268,6 +249,7 @@ router.post("/", async (req, res) => {
       : Array.isArray(req.body?.links)
       ? req.body.links
       : [];
+
     if (!Array.isArray(rawOffers) || rawOffers.length === 0) {
       return res
         .status(400)
@@ -286,12 +268,11 @@ router.post("/", async (req, res) => {
     });
 
     if (sanitizedOffers.length === 0) {
-      return res.status(400).json({
-        message: "Each offer must have a network and deepLink/url.",
-      });
+      return res
+        .status(400)
+        .json({ message: "Each offer must have a network and deepLink/url." });
     }
 
-    // ---- Normalize numeric fields from strings/numbers ----
     let normalizedWeight = undefined;
     if (
       weightGrams !== undefined &&
@@ -325,18 +306,22 @@ router.post("/", async (req, res) => {
         : undefined;
 
     const dimNorm = normalizeDimensions(dimensions);
-    if (dimNorm?.error) {
-      return res.status(400).json({ message: dimNorm.error });
-    }
+    if (dimNorm?.error) return res.status(400).json({ message: dimNorm.error });
 
     const item = await CatalogItem.create({
       name: name.trim(),
-      brand: brand && brand.trim(),
-      category: category && category.trim(),
-      subcategory: subcategory && subcategory.trim(),
-      itemType: itemType && itemType.trim(),
-      modelNumber: modelNumber && modelNumber.trim(),
-      description: description && description.trim(),
+      brand: brand && String(brand).trim(),
+      category: category && String(category).trim(),
+      subcategory: subcategory && String(subcategory).trim(),
+      itemType: itemType && String(itemType).trim(),
+      modelNumber: modelNumber && String(modelNumber).trim(),
+      description: description && String(description).trim(),
+      attributes:
+        attributes &&
+        typeof attributes === "object" &&
+        !Array.isArray(attributes)
+          ? attributes
+          : undefined,
       imageUrls: normalizedImageUrls,
       weightGrams: normalizedWeight,
       dimensions: dimNorm.clear ? undefined : dimNorm.dimensions,
@@ -365,7 +350,7 @@ router.post("/", async (req, res) => {
               o.merchantName || (o.network === "amazon" ? "Amazon" : undefined),
             productId: item._id,
             itemGroupId: o.itemGroupId || normalizedItemGroupId,
-            externalProductId: o.externalProductId, // data, not identity
+            externalProductId: o.externalProductId,
             deepLink: o.deepLink,
             priority: o.priority,
           },
@@ -374,10 +359,8 @@ router.post("/", async (req, res) => {
       },
     }));
 
-    if (offerOps.length) {
-      // unordered so one bad op doesn't block others
+    if (offerOps.length)
       await MerchantOffer.bulkWrite(offerOps, { ordered: false });
-    }
 
     res.status(201).json(item);
   } catch (err) {
@@ -387,7 +370,6 @@ router.post("/", async (req, res) => {
 });
 
 // PATCH /api/admin/catalog-items/:id
-// Update an existing catalog item
 router.patch("/:id", async (req, res) => {
   try {
     const updates = {};
@@ -399,11 +381,12 @@ router.patch("/:id", async (req, res) => {
       "itemType",
       "modelNumber",
       "description",
+      "attributes",
       "imageUrls",
       "weightGrams",
       "dimensions",
       "tags",
-      "offers",
+      "offers", // handled separately
       "isActive",
       "canonicalAsin",
       "itemGroupId",
@@ -415,35 +398,24 @@ router.patch("/:id", async (req, res) => {
       }
     }
 
-    // Normalize simple strings
-    if (typeof updates.name === "string") {
-      updates.name = updates.name.trim();
-    }
-    if (typeof updates.brand === "string") {
-      updates.brand = updates.brand.trim();
-    }
-    if (typeof updates.category === "string") {
+    if (typeof updates.name === "string") updates.name = updates.name.trim();
+    if (typeof updates.brand === "string") updates.brand = updates.brand.trim();
+    if (typeof updates.category === "string")
       updates.category = updates.category.trim();
-    }
-    if (typeof updates.subcategory === "string") {
+    if (typeof updates.subcategory === "string")
       updates.subcategory = updates.subcategory.trim();
-    }
-    if (typeof updates.itemType === "string") {
+    if (typeof updates.itemType === "string")
       updates.itemType = updates.itemType.trim();
-    }
-    if (typeof updates.modelNumber === "string") {
+    if (typeof updates.modelNumber === "string")
       updates.modelNumber = updates.modelNumber.trim();
-    }
-    if (typeof updates.description === "string") {
+    if (typeof updates.description === "string")
       updates.description = updates.description.trim();
-    }
 
-    // Normalize dimensions if present (allow clearing)
+    // Dimensions (allow clear)
     if (Object.prototype.hasOwnProperty.call(updates, "dimensions")) {
       const dimNorm = normalizeDimensions(updates.dimensions);
-      if (dimNorm?.error) {
+      if (dimNorm?.error)
         return res.status(400).json({ message: dimNorm.error });
-      }
       if (dimNorm.clear) {
         updates.$unset = { ...(updates.$unset || {}), dimensions: 1 };
         delete updates.dimensions;
@@ -452,23 +424,29 @@ router.patch("/:id", async (req, res) => {
       }
     }
 
+    // canonicalAsin (allow clear)
     if (Object.prototype.hasOwnProperty.call(updates, "canonicalAsin")) {
       const v = String(updates.canonicalAsin || "").trim();
       if (!v) {
         updates.$unset = { ...(updates.$unset || {}), canonicalAsin: 1 };
         delete updates.canonicalAsin;
-      } else updates.canonicalAsin = v.toUpperCase();
+      } else {
+        updates.canonicalAsin = v.toUpperCase();
+      }
     }
 
+    // itemGroupId (allow clear)
     if (Object.prototype.hasOwnProperty.call(updates, "itemGroupId")) {
       const v = String(updates.itemGroupId || "").trim();
       if (!v) {
         updates.$unset = { ...(updates.$unset || {}), itemGroupId: 1 };
         delete updates.itemGroupId;
-      } else updates.itemGroupId = v;
+      } else {
+        updates.itemGroupId = v;
+      }
     }
 
-    // Normalize weightGrams if present
+    // weightGrams
     if (Object.prototype.hasOwnProperty.call(updates, "weightGrams")) {
       const raw = updates.weightGrams;
       if (raw === null || raw === "" || typeof raw === "undefined") {
@@ -482,20 +460,26 @@ router.patch("/:id", async (req, res) => {
       }
     }
 
+    // tags
+    if (Array.isArray(updates.tags)) {
+      updates.tags = updates.tags.filter(Boolean).map((t) => String(t).trim());
+    }
+
+    // imageUrls
+    if (Array.isArray(updates.imageUrls)) {
+      updates.imageUrls = updates.imageUrls
+        .map((u) => String(u || "").trim())
+        .filter(Boolean);
+    }
+
+    // Offers → MerchantOffer
     let incomingOffers;
     if (Object.prototype.hasOwnProperty.call(req.body, "offers")) {
-      const normalizedCanonicalAsin = Object.prototype.hasOwnProperty.call(
-        updates,
-        "canonicalAsin"
-      )
-        ? typeof updates.canonicalAsin === "string" &&
-          updates.canonicalAsin.trim()
-          ? updates.canonicalAsin.trim().toUpperCase()
-          : undefined
-        : undefined;
-
       incomingOffers = sanitizeOffers(req.body.offers, {
-        fallbackAsin: normalizedCanonicalAsin,
+        fallbackAsin:
+          typeof updates.canonicalAsin === "string" && updates.canonicalAsin
+            ? updates.canonicalAsin
+            : undefined,
         fallbackItemGroupId:
           typeof updates.itemGroupId === "string" && updates.itemGroupId.trim()
             ? updates.itemGroupId.trim()
@@ -503,23 +487,10 @@ router.patch("/:id", async (req, res) => {
       });
     }
 
-    // Never store offers on CatalogItem doc (offers live in MerchantOffer)
-    if (Object.prototype.hasOwnProperty.call(updates, "offers")) {
+    // Never store offers on CatalogItem
+    if (Object.prototype.hasOwnProperty.call(updates, "offers"))
       delete updates.offers;
-    }
 
-    if (Array.isArray(updates.tags)) {
-      updates.tags = updates.tags.filter(Boolean).map((t) => String(t).trim());
-    }
-
-    // Normalize imageUrls if present
-    if (Array.isArray(updates.imageUrls)) {
-      updates.imageUrls = updates.imageUrls
-        .map((u) => String(u || "").trim())
-        .filter(Boolean);
-    }
-
-    // Split operators: $set + $unset (if present)
     const $set = { ...updates };
     const $unset = $set.$unset;
     delete $set.$unset;
@@ -529,11 +500,69 @@ router.patch("/:id", async (req, res) => {
     const item = await CatalogItem.findByIdAndUpdate(req.params.id, updateDoc, {
       new: true,
     });
-
-    if (!item) {
+    if (!item)
       return res.status(404).json({ message: "Catalog item not found." });
+
+    // --- Sync GlobalItem templates (GlobalItem.category is a STRING in your app, so it's safe) ---
+    await GlobalItem.updateMany(
+      { productId: item._id },
+      {
+        $set: {
+          name: item.name,
+          brand: item.brand,
+          itemType: item.itemType || item.subcategory || item.category || null,
+          description: item.description || "",
+          catalogCategory: item.category || null,
+          catalogSubcategory: item.subcategory || null,
+          tags: Array.isArray(item.tags) ? item.tags : [],
+          attributes: item.attributes || {},
+        },
+      }
+    );
+
+    // Find global template ids tied to this product
+    const globals = await GlobalItem.find({ productId: item._id })
+      .select("_id")
+      .lean();
+    const globalIds = globals.map((g) => g._id);
+
+    // --- Sync GearItems in lists ---
+    // IMPORTANT: GearItem.category is likely ObjectId -> do NOT set it from a string like "Shelter"
+    let gearItemSyncResult = null;
+
+    if (globalIds.length) {
+      const syncSet = {
+        name: item.name,
+        brand: item.brand,
+        itemType: item.itemType || item.subcategory || item.category || null,
+        description: item.description || "",
+        tags: Array.isArray(item.tags) ? item.tags : [],
+        attributes: item.attributes || {},
+      };
+
+      gearItemSyncResult = await GearItem.updateMany(
+        {
+          $or: [
+            { globalItem: { $in: globalIds } },
+            { globalItemId: { $in: globalIds } },
+            { productId: item._id },
+            { catalogItemId: item._id },
+            { sourceProductId: item._id },
+          ],
+        },
+        { $set: syncSet }
+      );
+
+      // If you have SortableItem, sync it too (same caution re: category)
+      /*
+      await SortableItem.updateMany(
+        { globalItem: { $in: globalIds } },
+        { $set: syncSet }
+      );
+      */
     }
 
+    // Replace MerchantOffers if provided
     if (incomingOffers) {
       await MerchantOffer.deleteMany({ productId: item._id });
 
@@ -542,7 +571,9 @@ router.patch("/:id", async (req, res) => {
           incomingOffers.map((o) => ({
             network: o.network,
             region: o.region,
-            merchantId: o.merchantId,
+            merchantId:
+              o.merchantId ||
+              (o.network === "amazon" ? "amazon-us" : o.network),
             merchantName:
               o.merchantName || (o.network === "amazon" ? "Amazon" : undefined),
             productId: item._id,
@@ -557,15 +588,25 @@ router.patch("/:id", async (req, res) => {
     }
 
     const offers = await MerchantOffer.find({ productId: item._id }).lean();
-    return res.json({ ...item.toObject(), offers });
+    offers.sort((a, b) => (b.priority || 0) - (a.priority || 0));
+
+    return res.json({
+      item: item.toObject(),
+      offers,
+      synced: {
+        gearItemsMatched: gearItemSyncResult?.matchedCount ?? null,
+        gearItemsModified: gearItemSyncResult?.modifiedCount ?? null,
+      },
+    });
   } catch (err) {
-    console.error(`PATCH /api/admin/catalog-items/${req.params.id} error`, err);
-    res.status(500).json({ message: "Failed to update catalog item." });
+    console.error("PATCH /api/admin/catalog-items/:id error", err);
+    return res.status(500).json({
+      message: err?.message || "Failed to update catalog item.",
+    });
   }
 });
 
 // PATCH /api/admin/catalog-items/:id/archive
-// Soft-delete / toggle visibility
 router.patch("/:id/archive", async (req, res) => {
   try {
     const { isActive } = req.body || {};
@@ -577,9 +618,8 @@ router.patch("/:id/archive", async (req, res) => {
       { new: true }
     );
 
-    if (!item) {
+    if (!item)
       return res.status(404).json({ message: "Catalog item not found." });
-    }
 
     res.json(item);
   } catch (err) {

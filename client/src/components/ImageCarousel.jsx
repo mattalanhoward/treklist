@@ -89,6 +89,7 @@ export default function ImageCarousel({
 
   return (
     <div className={"w-full " + className}>
+      {/* Image frame */}
       <div
         className={
           "relative w-full " +
@@ -134,10 +135,12 @@ export default function ImageCarousel({
             </div>
           </>
         )}
+      </div>
 
-        {/* Dots (overlay at bottom-center) */}
-        {showNav && (
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 bg-neutralAlt/70 border border-primary rounded-full px-2 py-1">
+      {/* Dots (below image) */}
+      {showNav && (
+        <div className="mt-2 flex justify-center">
+          <div className="flex items-center justify-center gap-2 bg-neutralAlt/70 border border-primary rounded-full px-2 py-1">
             {safeImages.map((_, i) => (
               <button
                 key={i}
@@ -153,8 +156,8 @@ export default function ImageCarousel({
               />
             ))}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -87,6 +87,42 @@ function marketplaceFromAmazonUrlClient(url) {
 const getPrimaryOffer = (f) =>
   Array.isArray(f?.offers) && f.offers[0] ? f.offers[0] : blankOffer();
 
+function parseAttributesText(text) {
+  const out = {};
+  const raw = String(text || "")
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter(Boolean);
+
+  for (const line of raw) {
+    // allow "key: value" (preferred) or "key=value"
+    const idx = line.includes(":") ? line.indexOf(":") : line.indexOf("=");
+    if (idx === -1) continue;
+
+    const k = line.slice(0, idx).trim();
+    const v = line.slice(idx + 1).trim();
+    if (!k || !v) continue;
+    out[k] = v;
+  }
+
+  return Object.keys(out).length ? out : undefined;
+}
+
+function attributesToText(attributes) {
+  if (!attributes) return "";
+  // Mongoose Map can come back as plain object already, but normalize anyway
+  const obj =
+    attributes instanceof Map
+      ? Object.fromEntries(attributes.entries())
+      : attributes;
+
+  if (!obj || typeof obj !== "object") return "";
+  return Object.entries(obj)
+    .filter(([k, v]) => String(k || "").trim() && String(v ?? "").trim())
+    .map(([k, v]) => `${k}: ${v}`)
+    .join("\n");
+}
+
 function GearCatalogSection({ mode = "both" }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -130,6 +166,7 @@ function GearCatalogSection({ mode = "both" }) {
     imageUrlsText: "",
     canonicalAsin: "",
     itemGroupId: "",
+    attributesText: "",
 
     // Prefill controls (decoupled from offer network)
     prefillSource: "amazon", // "amazon" | "none" (future: "rei", etc)
@@ -249,6 +286,8 @@ function GearCatalogSection({ mode = "both" }) {
       return toast.error("Please confirm you rewrote the Amazon description.");
     }
 
+    const attributes = parseAttributesText(form.attributesText);
+
     setCreating(true);
     try {
       const imageUrls = form.imageUrlsText
@@ -266,6 +305,7 @@ function GearCatalogSection({ mode = "both" }) {
         itemType: form.itemType.trim() || undefined,
         modelNumber: form.modelNumber.trim() || undefined,
         description: form.description.trim() || undefined,
+        attributes,
         weightGrams: form.weightGrams ? Number(form.weightGrams) : undefined,
         dimensions:
           form.dimLength || form.dimWidth || form.dimHeight
@@ -334,6 +374,7 @@ function GearCatalogSection({ mode = "both" }) {
         amazonAsinLookup: "",
         amazonMarketplace: "us",
         offers: [blankOffer()],
+        attributesText: "",
       });
 
       loadItems({ includeArchived: showArchived });
@@ -954,6 +995,24 @@ function GearCatalogSection({ mode = "both" }) {
                     rows={3}
                     placeholder="Short blurb to help you recognize the item when importing."
                   />
+                </div>
+
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    Attributes (one per line)
+                  </label>
+                  <textarea
+                    name="attributesText"
+                    value={form.attributesText || ""}
+                    onChange={handleChange}
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary resize-y"
+                    rows={3}
+                    placeholder={`Capacity (L): 24\nGender / Fit: Women\nSuspension: AirSpeed`}
+                  />
+                  <span className="block text-[11px] text-primary/70">
+                    Format: <code>Key: Value</code> (or <code>Key=Value</code>).
+                    Stored in CatalogItem.attributes.
+                  </span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -1743,7 +1802,7 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
       itemType: item?.itemType || "",
       modelNumber: item?.modelNumber || "",
       description: item?.description || "",
-
+      attributesText: attributesToText(item?.attributes),
       weightGrams:
         typeof item?.weightGrams === "number" ? String(item.weightGrams) : "",
       dimLength: typeof dims.length === "number" ? String(dims.length) : "",
@@ -1998,6 +2057,8 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const attributes = parseAttributesText(form.attributesText);
+
     if (!form.name.trim()) {
       toast.error("Name is required.");
       return;
@@ -2043,6 +2104,7 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
         itemType: form.itemType.trim() || undefined,
         modelNumber: form.modelNumber.trim() || undefined,
         description: form.description.trim() || undefined,
+        attributes,
         weightGrams: form.weightGrams ? Number(form.weightGrams) : undefined,
         dimensions:
           form.dimLength || form.dimWidth || form.dimHeight
@@ -2252,6 +2314,24 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                       </label>
                     </div>
                   )}
+              </div>
+
+              <div>
+                <label className="block font-medium text-primary mb-0.5">
+                  Attributes (one per line)
+                </label>
+                <textarea
+                  name="attributesText"
+                  value={form.attributesText || ""}
+                  onChange={handleChange}
+                  className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary resize-y"
+                  rows={3}
+                  placeholder={`Capacity (L): 24\nGender / Fit: Women\nSuspension: AirSpeed`}
+                />
+                <span className="block text-[11px] text-primary/70">
+                  Format: <code>Key: Value</code> (or <code>Key=Value</code>).
+                  Stored in CatalogItem.attributes.
+                </span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">

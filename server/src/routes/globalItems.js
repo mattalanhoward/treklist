@@ -293,13 +293,11 @@ router.patch("/:id", async (req, res) => {
     // Lock fields for imported items (catalog/affiliate-backed)
     if (isAffiliateBacked) {
       const IMMUTABLE_IMPORTED = ["name", "brand", "description", "itemType"];
-
       for (const k of IMMUTABLE_IMPORTED) {
         if (Object.prototype.hasOwnProperty.call(req.body, k)) {
           delete req.body[k];
         }
       }
-
       // Link is custom-only
       if (Object.prototype.hasOwnProperty.call(req.body, "link")) {
         delete req.body.link;
@@ -316,7 +314,7 @@ router.patch("/:id", async (req, res) => {
       "link",
     ];
 
-    // Extra safety: ignore silently if sent anyway
+    // Ignore attributes in this endpoint (you said you don't want it editable here)
     if (Object.prototype.hasOwnProperty.call(req.body, "attributes")) {
       delete req.body.attributes;
     }
@@ -328,8 +326,34 @@ router.patch("/:id", async (req, res) => {
       }
     }
 
-    if (Object.prototype.hasOwnProperty.call(updates, "attributes")) {
-      updates.attributes = sanitizeAttributes(updates.attributes);
+    // ---- Weight validation + weightSource logic ----
+    if (Object.prototype.hasOwnProperty.call(updates, "weight")) {
+      const raw = updates.weight;
+
+      let nextWeight = null;
+      if (raw === "" || raw === undefined) nextWeight = null;
+      else if (raw === null) nextWeight = null;
+      else {
+        const n = Number(raw);
+        if (!Number.isFinite(n) || n < 0) {
+          return res.status(400).json({ message: "Invalid weight." });
+        }
+        nextWeight = n;
+      }
+
+      // Only change weightSource if weight actually changes
+      const currWeight = current.weight ?? null;
+      const same =
+        (currWeight === null && nextWeight === null) ||
+        (typeof currWeight === "number" &&
+          typeof nextWeight === "number" &&
+          currWeight === nextWeight);
+
+      updates.weight = nextWeight;
+
+      if (!same) {
+        updates.weightSource = "user";
+      }
     }
 
     const updated = await GlobalItem.findOneAndUpdate(
@@ -508,8 +532,8 @@ router.post("/from-catalog/bulk", async (req, res) => {
           attributes: sanitizeAttributes(c.attributes),
           ...(typeof c.weightGrams === "number" && { weightSource: "catalog" }),
           tags: c.tags,
-          category: c.category || null,
-          subcategory: c.subcategory || null,
+          catalogCategory: c.category || null,
+          catalogSubcategory: c.subcategory || null,
 
           // link is ONLY for custom items; catalog-backed resolves via MerchantOffer
           link: null,

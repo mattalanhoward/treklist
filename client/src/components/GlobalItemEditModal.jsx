@@ -9,33 +9,11 @@ import { useUnit } from "../hooks/useUnit";
 import { useWeightInput } from "../hooks/useWeightInput";
 import { FaTimes } from "react-icons/fa";
 import ImageCarousel from "./ImageCarousel";
-
-// --- simple module-level cache so StrictMode remounts don't double-fetch ---
-const GLOBAL_ITEM_CACHE = new Map(); // id -> { data } OR { promise }
-
-async function fetchGlobalItemCached(id) {
-  if (!id) return null;
-
-  const cached = GLOBAL_ITEM_CACHE.get(id);
-  if (cached?.data) return cached.data;
-  if (cached?.promise) return await cached.promise;
-
-  const promise = api
-    .get(`/global/items/${id}`)
-    .then((res) => res?.data || null)
-    .catch(() => null)
-    .finally(() => {
-      const entry = GLOBAL_ITEM_CACHE.get(id);
-      // leave data if set; otherwise clear
-      if (entry && !entry.data) GLOBAL_ITEM_CACHE.delete(id);
-    });
-
-  GLOBAL_ITEM_CACHE.set(id, { promise });
-
-  const data = await promise;
-  if (data) GLOBAL_ITEM_CACHE.set(id, { data });
-  return data;
-}
+import ButtonLink from "./ui/ButtonLink";
+import {
+  fetchGlobalItemCached,
+  invalidateGlobalItemCache,
+} from "../services/globalItemCache";
 
 export default function GlobalItemEditModal({
   item,
@@ -80,12 +58,56 @@ export default function GlobalItemEditModal({
 
   const itemId = item ? item._id : null;
   const isListContext = context === "list" || (!!listId && !!catId);
+  const [primaryOffer, setPrimaryOffer] = useState(null);
 
   // In list context, GearItem may only have globalItem id.
   const globalId = useMemo(() => {
     if (!item) return null;
     return isListContext ? item?.globalItem || null : item?._id || null;
   }, [isListContext, item]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      if (!resolvedProductId) {
+        setCatalogImages([]);
+        setPrimaryOffer(null);
+        return;
+      }
+
+      setLoadingImages(true);
+      try {
+        const res = await api.get(`/catalog/items/${resolvedProductId}`);
+        const data = res?.data || {};
+
+        const urls = Array.isArray(data.imageUrls) ? data.imageUrls : [];
+        if (!cancelled) setCatalogImages(urls);
+
+        // v1: just pick highest priority (or first) offer
+        const offers = Array.isArray(data.offers) ? data.offers : [];
+        const best = offers
+          .slice()
+          .sort(
+            (a, b) => (Number(b.priority) || 0) - (Number(a.priority) || 0)
+          )[0];
+
+        if (!cancelled) setPrimaryOffer(best || null);
+      } catch {
+        if (!cancelled) {
+          setCatalogImages([]);
+          setPrimaryOffer(null);
+        }
+      } finally {
+        if (!cancelled) setLoadingImages(false);
+      }
+    }
+
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [resolvedProductId]);
 
   // --- single global fetch (cached) used for:
   //     - affiliate-backed detection
@@ -147,36 +169,6 @@ export default function GlobalItemEditModal({
 
     setResolvedProductId(pid);
   }, [item?.productId, template?.productId]);
-
-  // Fetch catalog images
-  useEffect(() => {
-    let cancelled = false;
-
-    async function load() {
-      if (!resolvedProductId) {
-        setCatalogImages([]);
-        return;
-      }
-
-      setLoadingImages(true);
-      try {
-        const res = await api.get(`/catalog/items/${resolvedProductId}`);
-        const urls = Array.isArray(res?.data?.imageUrls)
-          ? res.data.imageUrls
-          : [];
-        if (!cancelled) setCatalogImages(urls);
-      } catch {
-        if (!cancelled) setCatalogImages([]);
-      } finally {
-        if (!cancelled) setLoadingImages(false);
-      }
-    }
-
-    load();
-    return () => {
-      cancelled = true;
-    };
-  }, [resolvedProductId]);
 
   // Only show image column for imported items when we actually have images (or are loading)
   const showImagesDesktop = useMemo(() => {
@@ -250,35 +242,50 @@ export default function GlobalItemEditModal({
     setError("");
 
     try {
-      const payload = {
-        category: form.category,
-        weight:
-          String(displayWeight ?? "").trim() === ""
-            ? null
-            : parseInput(displayWeight),
+      const weightValue =
+        String(displayWeight ?? "").trim() === ""
+          ? null
+          : parseInput(displayWeight);
+
+      // Shared fields that are safe for BOTH endpoints
+      const basePayload = {
+        weight: weightValue,
         worn,
         consumable,
         quantity,
       };
 
-      // Editable on custom items only
+      // ---- GLOBAL TEMPLATE payload (NEVER send list-category IDs here) ----
+      const globalPayload = { ...basePayload };
+
+      // Editable on custom items only (global template edits)
       if (!isAffiliateBacked) {
-        payload.itemType = form.itemType;
-        payload.name = form.name.trim();
-        payload.brand = form.brand.trim();
-        payload.description = form.description.trim();
+        globalPayload.itemType = form.itemType;
+        globalPayload.name = form.name.trim();
+        globalPayload.brand = form.brand.trim();
+        globalPayload.description = form.description.trim();
 
         const trimmedLink = (form.link || "").trim();
-        payload.link = trimmedLink === "" ? null : trimmedLink;
+        globalPayload.link = trimmedLink === "" ? null : trimmedLink;
+
+        // If later you add a taxonomy picker for GlobalItem, this should be:
+        // globalPayload.catalogCategory = form.catalogCategory;
+        // globalPayload.catalogSubcategory = form.catalogSubcategory;
       }
+
+      // ---- LIST ITEM payload (GearItem) ----
+      // category here is the list Category ObjectId (moving columns), which is valid
+      const listPayload = { ...basePayload };
 
       let updatedSomething = false;
       let touchedGlobal = false;
 
-      // 1) Update the GLOBAL template if we know its id
+      // 1) Update GLOBAL template
       if (globalId) {
         try {
-          await api.patch(`/global/items/${globalId}`, payload);
+          await api.patch(`/global/items/${globalId}`, globalPayload);
+          invalidateGlobalItemCache(globalId);
+
           updatedSomething = true;
           touchedGlobal = true;
 
@@ -286,18 +293,17 @@ export default function GlobalItemEditModal({
             window.dispatchEvent(new CustomEvent("global-items:updated"));
           }
         } catch (err) {
-          // In list context, a 404 here just means the global template is gone.
           if (!(isListContext && err.response?.status === 404)) {
             throw err;
           }
         }
       }
 
-      // 2) Update the LIST item when editing from a gear-list card
+      // 2) Update LIST item (GearItem row)
       if (isListContext) {
         await api.patch(
           `/dashboard/${listId}/categories/${catId}/items/${item._id}`,
-          payload
+          listPayload
         );
         updatedSomething = true;
       }
@@ -449,8 +455,8 @@ export default function GlobalItemEditModal({
         ) : (
           <>
             {/* Imported layout (locked fields + images + specs display-only) */}
-            <div className="sm:flex gap-2">
-              {isAffiliateBacked &&
+            <div className="sm:grid sm:grid-cols-2 sm:gap-6">
+              {/* {isAffiliateBacked &&
                 (loadingImages || catalogImages.length > 0) && (
                   <div className="sm:hidden mt-2">
                     <ImageCarousel
@@ -462,85 +468,81 @@ export default function GlobalItemEditModal({
                       heightClass="h-40"
                     />
                   </div>
-                )}
+                )} */}
 
               <div className="sm:flex-1">
-                <div className="space-y-3">
-                  <div>
-                    <label className="block font-medium text-primary mb-0.5">
-                      {t("globalItemModal.labels.itemType")}
-                    </label>
-                    <input
-                      name="itemType"
-                      value={form.itemType}
-                      readOnly
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt/40 opacity-80 cursor-not-allowed"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-medium text-primary mb-0.5">
-                      {t("globalItemModal.labels.name")}
-                      <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      name="name"
-                      value={form.name}
-                      readOnly
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt/40 opacity-80 cursor-not-allowed"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-medium text-primary mb-0.5">
-                      {t("globalItemModal.labels.brand")}
-                    </label>
-                    <input
-                      name="brand"
-                      value={form.brand}
-                      readOnly
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt/40 opacity-80 cursor-not-allowed"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-medium text-primary mb-0.5">
-                      {t("globalItemModal.labels.weight", { unit: unitLabel })}
-                    </label>
-                    <input
-                      type="text"
-                      inputMode="decimal"
-                      value={displayWeight}
-                      onChange={(e) => setDisplayWeight(e.target.value)}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                    />
-                  </div>
-                </div>
-
-                {/* Imported-only Specs (display-only, pulled from global template so it works from GearItem) */}
-                {importedSpecs && (
-                  <div className="mt-3">
-                    <label className="block font-medium text-primary mb-1">
-                      Specs
-                    </label>
-
-                    <div className="border border-primary rounded">
-                      {importedSpecs.map(([k, v]) => (
-                        <div
-                          key={k}
-                          className="grid grid-cols-[1fr_1fr] gap-2 px-2 py-1 border-b border-primary last:border-b-0 text-sm"
-                        >
-                          <div className="text-primary font-medium truncate">
-                            {k}
-                          </div>
-                          <div className="text-primary/90 truncate text-right">
-                            {String(v)}
-                          </div>
-                        </div>
-                      ))}
+                {/* “Details” list (label on left, value on right) */}
+                <div className="rounded overflow-hidden">
+                  {/* Item Type */}
+                  <div className="grid grid-cols-[140px_1fr] gap-3 items-center px-3 py-1">
+                    <div className="text-primary font-semibold">
+                      {t("globalItemModal.labels.itemType")}:
+                    </div>
+                    <div className="text-primary break-words">
+                      {form.itemType || "—"}
                     </div>
                   </div>
-                )}
+
+                  {/* Name */}
+                  <div className="grid grid-cols-[140px_1fr] gap-3 items-center px-3 py-1">
+                    <div className="text-primary font-semibold">
+                      {t("globalItemModal.labels.name")}:
+                    </div>
+                    <div className="text-primary break-words">
+                      {form.name || "—"}
+                    </div>
+                  </div>
+
+                  {/* Brand */}
+                  <div className="grid grid-cols-[140px_1fr] gap-3 items-center px-3 py-1">
+                    <div className="text-primary font-semibold">
+                      {t("globalItemModal.labels.brand")}:
+                    </div>
+                    <div className="text-primary break-words">
+                      {form.brand || "—"}
+                    </div>
+                  </div>
+
+                  {/* Weight (editable) — first row after name/brand */}
+                  <div
+                    className={
+                      "grid grid-cols-[140px_1fr] gap-3 items-center px-3 "
+                    }
+                  >
+                    <div className="text-primary font-semibold">
+                      {t("globalItemModal.labels.weight", { unit: unitLabel })}:
+                    </div>
+                    <div className="">
+                      <input
+                        type="text"
+                        inputMode="decimal"
+                        value={displayWeight}
+                        onChange={(e) => setDisplayWeight(e.target.value)}
+                        className="w-full max-w-[220px] text-primary bg-white text-left px-2"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Imported-only specs (display-only) — no header */}
+                  {importedSpecs &&
+                    importedSpecs.map(([k, v], idx) => (
+                      <div
+                        key={k}
+                        className={
+                          "grid grid-cols-[140px_1fr] gap-3 items-center px-3 py-1 "
+                        }
+                      >
+                        <div className="text-primary font-semibold truncate">
+                          {k}:
+                        </div>
+                        <div className="text-primary break-words">
+                          {v == null || String(v).trim() === ""
+                            ? "—"
+                            : String(v)}
+                        </div>
+                      </div>
+                    ))}
+                </div>
 
                 {/* Optional: tiny hint while loading global template in list context */}
                 {isListContext && loadingGlobal && (
@@ -550,47 +552,57 @@ export default function GlobalItemEditModal({
                 )}
               </div>
 
+              {/* Right (desktop only) */}
               {showImagesDesktop && (
-                <div className="mt-6 hidden sm:block sm:w-72">
-                  <ImageCarousel
-                    images={catalogImages}
-                    alt={`${form.brand ? form.brand + " " : ""}${
-                      form.name || ""
-                    }`}
-                    loading={loadingImages}
-                  />
+                <div className="hidden sm:flex items-center justify-center">
+                  <div className="bg-white py-4 px-2 w-full max-w-md">
+                    <ImageCarousel
+                      images={catalogImages}
+                      alt={`${form.brand ? form.brand + " " : ""}${
+                        form.name || ""
+                      }`}
+                      loading={loadingImages}
+                    />
+                  </div>
                 </div>
               )}
             </div>
 
-            <div className="mt-2">
-              <label className="block font-medium text-primary mb-0.5">
+            {/* Description (label above, plain text, not textarea) */}
+            <div className="mt-4 mb-6 px-3">
+              <label className="block font-semibold text-primary mb-1">
                 {t("globalItemModal.labels.description")}
               </label>
-              <textarea
-                name="description"
-                value={form.description}
-                readOnly
-                className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt/40 opacity-80 cursor-not-allowed"
-                rows={4}
-              />
+              <div className="text-primary/90 whitespace-pre-line leading-6">
+                {form.description || "—"}
+              </div>
             </div>
           </>
         )}
 
         {/* Actions */}
-        <div className="mt-3 flex items-center justify-end">
-          {allowDelete && (
-            <button
-              type="button"
-              onClick={() => setDeleteConfirmOpen(true)}
-              disabled={saving}
-              className="mr-auto px-2 py-1 bg-error text-neutral font-semibold rounded-md shadow hover:bg-error/80 focus:outline-none focus:ring-2 focus:ring-error transition"
-            >
-              {t("globalItemEditModal.buttons.delete")}
-            </button>
-          )}
+        <div className="mt-3 flex justify-between">
+          <div className="flex space-x-2">
+            {allowDelete && (
+              <button
+                type="button"
+                onClick={() => setDeleteConfirmOpen(true)}
+                disabled={saving}
+                className="px-2 py-1 bg-error text-neutral font-semibold rounded-md shadow hover:bg-error/80 focus:outline-none focus:ring-2 focus:ring-error transition"
+              >
+                {t("globalItemEditModal.buttons.delete")}
+              </button>
+            )}
 
+            {/* BUY button (imported items only) */}
+            {!isCustom && primaryOffer?.deepLink && (
+              <ButtonLink href={primaryOffer.deepLink}>
+                {primaryOffer.merchantName
+                  ? primaryOffer.merchantName
+                  : "Product Page"}
+              </ButtonLink>
+            )}
+          </div>
           <div className="flex space-x-2">
             <button
               type="button"
