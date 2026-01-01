@@ -619,7 +619,7 @@ export default function GlobalItemEditModal({
                       <div
                         key={k}
                         className={
-                          "grid grid-cols-[140px_1fr] gap-3 items-center px-3 py-1 "
+                          "grid grid-cols-[140px_1fr] gap-3 items-start px-3 py-1 "
                         }
                       >
                         <div className="text-primary font-semibold truncate">
