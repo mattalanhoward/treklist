@@ -1,7 +1,7 @@
 // src/components/GlobalItemModal.jsx
 import React, { useState, useEffect } from "react";
 import api from "../services/api";
-import { FaTimes } from "react-icons/fa";
+import { FaTimes, FaInfoCircle } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import LinkInput from "../components/LinkInput";
@@ -10,9 +10,19 @@ import { useWeightInput } from "../hooks/useWeightInput";
 // import AffiliateProductPicker from "./AffiliateProductPicker";
 import { useUserSettings } from "../contexts/UserSettings";
 import { detectRegion, normalizeRegion } from "../utils/region";
+import CatalogItemPreviewModal from "./CatalogItemPreviewModal";
 
 function ImportCatalogTab({ onImported }) {
   const { t } = useTranslation("common");
+
+  // preview modal state
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewId, setPreviewId] = useState(null);
+  const [previewItem, setPreviewItem] = useState(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [previewError, setPreviewError] = useState("");
+  const [detailsCache, setDetailsCache] = useState({});
+  const [previewImporting, setPreviewImporting] = useState(false);
 
   // catalog results
   const [items, setItems] = useState([]);
@@ -76,6 +86,46 @@ function ImportCatalogTab({ onImported }) {
       );
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handlePreviewImport = async () => {
+    const catalogId = previewId ? String(previewId) : null;
+    if (!catalogId) return;
+
+    if (importedCatalogIds.has(catalogId)) {
+      return toast.error(t("globalItemModal.importTab.toasts.alreadyImported"));
+    }
+
+    setPreviewImporting(true);
+    try {
+      const { data } = await api.post("/global/items/from-catalog/bulk", {
+        ids: [catalogId],
+      });
+
+      // mark as imported immediately
+      setImportedCatalogIds((prev) => {
+        const copy = new Set(prev);
+        copy.add(catalogId);
+        return copy;
+      });
+
+      toast.success(t("globalItemModal.importTab.toasts.importSuccess"));
+
+      // inform parent so Sidebar/My Gear can refresh if needed
+      onImported?.(data?.items || []);
+
+      // optional: keep modal open (button disables + badge shows)
+      // setPreviewOpen(false);
+    } catch (err) {
+      console.error("Preview import failed", err);
+      toast.error(
+        err?.response?.data?.message ||
+          err?.message ||
+          t("globalItemModal.importTab.toasts.importFailed")
+      );
+    } finally {
+      setPreviewImporting(false);
     }
   };
 
@@ -170,6 +220,35 @@ function ImportCatalogTab({ onImported }) {
     : t("globalItemModal.importTab.buttons.import", {
         count: Number(selectedIds.size) || 0,
       });
+
+  const openPreview = async (catalogId) => {
+    setPreviewId(catalogId);
+    setPreviewOpen(true);
+    setPreviewError("");
+
+    // cached?
+    if (detailsCache[catalogId]) {
+      setPreviewItem(detailsCache[catalogId]);
+      return;
+    }
+
+    setPreviewLoading(true);
+    try {
+      const { data } = await api.get(`/catalog/items/${catalogId}`);
+      setDetailsCache((prev) => ({ ...prev, [catalogId]: data }));
+      setPreviewItem(data);
+    } catch (err) {
+      console.error("Failed to load catalog item details", err);
+      setPreviewItem(null);
+      setPreviewError(
+        err?.response?.data?.message ||
+          err?.message ||
+          "Failed to load details."
+      );
+    } finally {
+      setPreviewLoading(false);
+    }
+  };
 
   return (
     <div className="flex flex-col h-full">
@@ -298,11 +377,26 @@ function ImportCatalogTab({ onImported }) {
                         </div>
                       </div>
 
-                      {disabled && (
-                        <span className="text-red-500 text-xs ml-2">
-                          {t("globalItemModal.importTab.badges.added")}
-                        </span>
-                      )}
+                      <div className="flex items-center gap-2">
+                        {disabled && (
+                          <span className="text-red-500 text-xs">
+                            {t("globalItemModal.importTab.badges.added")}
+                          </span>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation(); // don't toggle checkbox
+                            openPreview(catalogId);
+                          }}
+                          className="p-2 text-primary hover:bg-primary/10 rounded"
+                          aria-label={t("catalogPreview.buttons.viewDetails")}
+                          title={t("catalogPreview.buttons.viewDetails")}
+                        >
+                          <FaInfoCircle />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </li>
@@ -310,6 +404,19 @@ function ImportCatalogTab({ onImported }) {
             })}
         </ul>
       </div>
+
+      <CatalogItemPreviewModal
+        isOpen={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        item={previewItem}
+        loading={previewLoading}
+        error={previewError}
+        alreadyImported={
+          previewId ? importedCatalogIds.has(String(previewId)) : false
+        }
+        onImport={handlePreviewImport}
+        importing={previewImporting}
+      />
 
       {/* Actions */}
       <div className="mt-3 flex justify-end space-x-2">

@@ -32,23 +32,48 @@ router.get("/items/:id", auth, async (req, res) => {
   }
 
   try {
-    // Only allow access if the item has offers for this user (global or user region)
-    const offers = await MerchantOffer.find({
-      productId: id,
-      region: { $in: ["global", userRegion] },
-    }).lean();
-
-    if (!offers || offers.length === 0) {
-      return res.status(404).json({ message: "Catalog item not found." });
-    }
-
     const item = await CatalogItem.findOne({ _id: id, isActive: true })
       .lean()
       .select(
-        "name brand category subcategory itemType description weightGrams tags updatedAt imageUrls"
+        [
+          "name",
+          "brand",
+          "brandLC",
+          "modelNumber",
+          "category",
+          "subcategory",
+          "itemType",
+          "description",
+          "imageUrls",
+          "weightGrams",
+          "externalIds",
+          "dimensions",
+          "tags",
+          "attributes",
+          "itemGroupId",
+          "canonicalAsin",
+          "canonicalSku",
+          "createdAt",
+          "updatedAt",
+        ].join(" ")
       );
 
     if (!item) {
+      return res.status(404).json({ message: "Catalog item not found." });
+    }
+
+    // Only allow access if the item has offers for this user (global or user region)
+    const offers = await MerchantOffer.find({
+      productId: item._id,
+      region: { $in: ["global", userRegion] },
+    })
+
+      .select(
+        "network region merchantId merchantName deepLink priority externalProductId updatedAt productId"
+      )
+      .lean();
+
+    if (!offers || offers.length === 0) {
       return res.status(404).json({ message: "Catalog item not found." });
     }
 
@@ -122,7 +147,17 @@ router.get("/items", auth, async (req, res) => {
     for (const o of offers) {
       const key = String(o.productId);
       if (!offersByProduct.has(key)) offersByProduct.set(key, []);
-      offersByProduct.get(key).push(o);
+      offersByProduct.get(key).push({
+        _id: o._id,
+        network: o.network,
+        region: o.region,
+        merchantId: o.merchantId,
+        merchantName: o.merchantName,
+        deepLink: o.deepLink,
+        priority: o.priority,
+        externalProductId: o.externalProductId,
+        updatedAt: o.updatedAt,
+      });
     }
 
     const safeItems = items.map((it) => ({

@@ -425,6 +425,18 @@
       }
     }
   },
+  "catalogPreview": {
+    "titleFallback": "Catalog item",
+    "badges": { "alreadyAdded": "Already added" },
+    "buttons": {
+      "viewDetails": "View details",
+      "import": "Add to My Gear",
+      "importing": "Adding…"
+    },
+    "messages": {
+      "alreadyAdded": "This item is already in My Gear."
+    }
+  },
   "globalItemEditModal": {
     "titleGlobal": "Item Details",
     "titleList": "Item Details",
