@@ -60,7 +60,13 @@ export default function GlobalItemEditModal({
   const [loadingImageAsset, setLoadingImageAsset] = useState(false);
 
   const itemId = item ? item._id : null;
-  const isListContext = context === "list" || (!!listId && !!catId);
+  const isListContext = useMemo(() => {
+    return (
+      context === "list" || (!!listId && !!catId) || Boolean(item?.globalItem)
+    );
+  }, [context, listId, catId, item?.globalItem]);
+
+  const [catalogLoadedFor, setCatalogLoadedFor] = useState(null);
 
   // In list context, GearItem may only have globalItem id.
   const globalId = useMemo(() => {
@@ -82,6 +88,10 @@ export default function GlobalItemEditModal({
 
     return pid || null;
   }, [item?.productId, template?.productId]);
+
+  useEffect(() => {
+    setCatalogLoadedFor(null);
+  }, [resolvedProductId]);
 
   // Do we need the GlobalItem fetch to know the mode?
   const needsTemplateToDecide = useMemo(() => {
@@ -193,6 +203,7 @@ export default function GlobalItemEditModal({
         }
       } finally {
         if (!cancelled) setLoadingImages(false);
+        setCatalogLoadedFor(resolvedProductId);
       }
     }
 
@@ -437,11 +448,7 @@ export default function GlobalItemEditModal({
     !item ||
     viewMode === "loading" ||
     isResolvingMode ||
-    loadingGlobal ||
-    (isImported &&
-      resolvedProductId &&
-      loadingImages &&
-      catalogImages.length === 0);
+    (isImported && resolvedProductId && catalogLoadedFor !== resolvedProductId);
 
   const modalWidthClass = isCustom
     ? "max-w-xl"
