@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import ImageCarousel from "./ImageCarousel";
@@ -21,9 +21,60 @@ export default function CatalogItemPreviewModal({
   const unit = useUnit();
   const { unitLabel, formatInput } = useWeightInput(unit);
 
+  const [loadingImages, setLoadingImages] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
+
   const catalogImages = useMemo(() => {
-    return Array.isArray(item?.imageUrls) ? item.imageUrls : [];
-  }, [item?.imageUrls]);
+    const urls = Array.isArray(item?.imageUrls) ? item.imageUrls : [];
+    return urls
+      .filter((u) => typeof u === "string" && u.trim())
+      .filter((u) => /^https?:\/\//i.test(u.trim()));
+  }, [item?._id, item?.imageUrls]);
+
+  const hasImages = catalogImages.length > 0;
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setImageFailed(false);
+  }, [isOpen, item?._id]);
+
+  // When item changes, assume images need to load again (if any exist)
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (!hasImages) {
+      setLoadingImages(false);
+      setImageFailed(false);
+      return;
+    }
+
+    setImageFailed(false);
+    setLoadingImages(true);
+
+    let cancelled = false;
+    const img = new Image();
+
+    img.onload = () => {
+      if (!cancelled) setLoadingImages(false);
+    };
+
+    img.onerror = () => {
+      if (!cancelled) {
+        setLoadingImages(false);
+        setImageFailed(true);
+      }
+    };
+
+    img.src = catalogImages[0];
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, item?._id, hasImages, catalogImages]);
+
+  const showImageBlock = hasImages && !imageFailed;
+
+  const modalWidthClass = showImageBlock ? "max-w-3xl" : "max-w-xl";
 
   const primaryOffer = useMemo(() => {
     const offers = Array.isArray(item?.offers) ? item.offers : [];
@@ -56,16 +107,24 @@ export default function CatalogItemPreviewModal({
 
   if (!isOpen) return null;
 
+  // Avoid the “blank modal” flash: if we're open but item isn't ready yet,
+  // show a full-screen spinner overlay instead of rendering the panel.
+  const isPending = loading || (!item && !error);
+  if (isPending) {
+    return (
+      <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-[60]">
+        <div className="h-10 w-10 rounded-full border-2 border-white/40 border-t-white animate-spin" />
+      </div>
+    );
+  }
+
   // NOTE: z-index slightly higher than GlobalItemModal so it sits above it.
   // Style/layout matches GlobalItemEditModal imported layout.
   return (
     <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-[60]">
       <div
-        className={
-          "bg-white rounded-lg shadow-2xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 " +
-          "max-h-[90vh] overflow-y-auto " +
-          "max-w-3xl"
-        }
+        className={`bg-white rounded-lg shadow-2xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 overflow-y-auto
+    ${modalWidthClass}`}
       >
         {/* Header */}
         <div className="flex justify-between items-center mb-2 sm:mb-3">
@@ -94,17 +153,14 @@ export default function CatalogItemPreviewModal({
 
         {error && <div className="text-error mb-2">{error}</div>}
 
-        {loading ? (
-          <div className="py-8 px-3">
-            <div className="mt-4 h-24 bg-white/60 rounded" />
-            <div className="mt-3 h-24 bg-white/60 rounded" />
-          </div>
-        ) : !item ? (
-          <div className="py-8 px-3 text-primary/70 text-sm">—</div>
-        ) : (
+        {
           <>
             {/* Imported layout (locked fields + images + specs display-only) */}
-            <div className="sm:grid sm:grid-cols-2 sm:gap-6">
+            <div
+              className={`sm:grid sm:gap-6 ${
+                showImageBlock ? "sm:grid-cols-2" : "sm:grid-cols-1"
+              }`}
+            >
               <div className="sm:flex-1">
                 {/* “Details” list (label on left, value on right) */}
                 <div className="rounded overflow-hidden">
@@ -171,26 +227,26 @@ export default function CatalogItemPreviewModal({
                     ))}
                 </div>
               </div>
-
               {/* Right (desktop only) */}
-              <div className="hidden sm:flex items-center justify-center">
-                <div className="bg-white py-2 px-2 w-full max-w-md">
-                  {/* Lock the media area height so the modal never grows when carousel/dots load */}
-                  <div className="h-[260px] w-full overflow-hidden flex items-center justify-center">
-                    {catalogImages?.length ? (
-                      <ImageCarousel
-                        images={catalogImages}
-                        alt={`${item.brand ? item.brand + " " : ""}${
-                          item.name || ""
-                        }`}
-                        loading={false}
-                      />
-                    ) : (
-                      <div className="h-full w-full bg-neutralAlt/20 rounded" />
-                    )}
+              {showImageBlock && (
+                <div className="hidden sm:flex items-center justify-center">
+                  <div className="bg-white py-2 px-2 w-full max-w-md">
+                    <div className="h-[260px] w-full overflow-hidden flex items-center justify-center">
+                      {loadingImages ? (
+                        <div className="h-10 w-10 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+                      ) : (
+                        <ImageCarousel
+                          images={catalogImages}
+                          alt={`${item.brand ? item.brand + " " : ""}${
+                            item.name || ""
+                          }`}
+                          loading={false}
+                        />
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Description (label above, plain text, not textarea) */}
@@ -198,12 +254,12 @@ export default function CatalogItemPreviewModal({
               <label className="block font-semibold text-primary mb-1">
                 {t("globalItemModal.labels.description")}
               </label>
-              <div className="text-primary/90 whitespace-pre-line leading-6 min-h-[120px] max-h-[160px] overflow-y-auto pr-2">
+              <div className="text-primary/90 whitespace-pre-line leading-6 min-h-[60px] max-h-[160px] overflow-y-auto pr-2">
                 {item.description || "—"}
               </div>
             </div>
           </>
-        )}
+        }
 
         {/* Actions (match layout: left = Buy, right = Close) */}
         <div className="mt-3 flex justify-between">

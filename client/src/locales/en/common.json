@@ -731,10 +731,10 @@
       "openProductPageAria": "Open product page (paid link)"
     },
     "public": {
-      "body": "TrekList is a free tool made possible through affiliate links. When you purchase gear using these links, TrekList or the list owner may earn a small commission — at no extra cost to you. Your support helps keep the project running and free for everyone."
+      "body": "TrekList is a free tool made possible through affiliate links. When you purchase gear using these links, TrekList or the list owner may earn a small commission at no extra cost to you. Your support helps keep the project running and free for everyone."
     },
     "private": {
-      "body": "TrekList is a free service supported by affiliate links. If you decide to buy something after clicking, TrekList may earn a small commission — at no extra cost to you. Every purchase helps support the project and future updates."
+      "body": "TrekList is a free service supported by affiliate links. If you decide to buy something after clicking, TrekList may earn a small commission at no extra cost to you. Every purchase helps support the project and future updates."
     },
     "common": {
       "amazonAssociate": "As an Amazon Associate, I earn from qualifying purchases.",
