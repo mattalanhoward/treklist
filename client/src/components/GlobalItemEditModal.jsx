@@ -418,7 +418,7 @@ export default function GlobalItemEditModal({
       <form
         onSubmit={handleSave}
         className={
-          "bg-neutralAlt rounded-lg shadow-2xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 " +
+          "bg-white rounded-lg shadow-2xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 " +
           "max-h-[90vh] overflow-y-auto " +
           modalWidthClass
         }

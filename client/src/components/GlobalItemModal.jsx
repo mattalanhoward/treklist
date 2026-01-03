@@ -262,9 +262,9 @@ function ImportCatalogTab({ onImported }) {
           className="flex-1 border border-primary rounded px-2 py-1 text-primary placeholder:text-primary/50 bg-white"
         />
 
-        <div className="flex gap-2 flex-wrap">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 w-full">
           <select
-            className="border border-primary rounded px-2 py-1 text-primary bg-white"
+            className="w-full border border-primary rounded px-2 py-1 text-primary bg-white"
             value={categoryFilter}
             onChange={(e) => {
               setCategoryFilter(e.target.value);
@@ -280,7 +280,6 @@ function ImportCatalogTab({ onImported }) {
               </option>
             ))}
           </select>
-
           <select
             className="border border-primary rounded px-2 py-1 text-primary bg-white"
             value={subcategoryFilter}
@@ -296,7 +295,6 @@ function ImportCatalogTab({ onImported }) {
               </option>
             ))}
           </select>
-
           <select
             className="border border-primary rounded px-2 py-1 text-primary bg-white"
             value={brandFilter}
@@ -611,7 +609,7 @@ export default function GlobalItemModal({
     <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-50">
       <form
         onSubmit={handleSubmit}
-        className="bg-neutralAlt rounded-lg shadow-2xl max-w-xl w-full sm:h-[80vh] h-[70vh] px-4 py-4 sm:px-6 sm:py-6 my-4 flex flex-col overflow-hidden"
+        className="bg-neutralAlt rounded-lg shadow-2xl max-w-2xl w-full sm:h-[80vh] h-[70vh] px-4 py-4 sm:px-6 sm:py-6 my-4 flex flex-col overflow-hidden"
       >
         {/* Header (smaller on phones) */}
         <div className="flex justify-between items-center mb-2 sm:mb-3">
