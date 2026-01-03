@@ -426,6 +426,18 @@
       }
     }
   },
+  "catalogPreview": {
+    "titleFallback": "Catalogusitem",
+    "badges": { "alreadyAdded": "Al toegevoegd" },
+    "buttons": {
+      "viewDetails": "Bekijk details",
+      "import": "Toevoegen aan My Gear",
+      "importing": "Toevoegen…"
+    },
+    "messages": {
+      "alreadyAdded": "Dit item staat al in My Gear."
+    }
+  },
   "globalItemEditModal": {
     "titleGlobal": "Globaal item bewerken",
     "titleList": "Uitrustingsitem bewerken",
