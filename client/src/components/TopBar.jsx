@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import DropdownMenu from "./DropdownMenu";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
-import logo from "../assets/images/logo.png";
+import logo from "../assets/images/treklist_horizontal.png";
 import { useUserSettings } from "../contexts/UserSettings";
 import AccountModal from "./AccountModal";
 import ViewToggle from "./ViewToggle";
@@ -78,7 +78,6 @@ export default function TopBar({ title, openSettings }) {
       <div className="flex items-center justify-between px-2 py-2">
         <div className="flex items-center space-x-3">
           <img src={logo} alt={t("app.name")} className="h-8" />
-          <h1 className="text-xl font-semibold">{title}</h1>
         </div>
 
         <div className="flex items-center print:hidden">
