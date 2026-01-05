@@ -10,6 +10,7 @@ import usePageTitle from "../hooks/usePageTitle";
 
 // helper to build share path safely
 const sharePath = (token) => (token ? `/share/${token}/` : null);
+
 // Featured list tokens from env (rotate without code changes)
 const FEATURED_TOKENS = {
   av1: import.meta.env.VITE_SHARE_AV1_TOKEN,
@@ -20,31 +21,25 @@ const FEATURED_TOKENS = {
   gr20: import.meta.env.VITE_SHARE_GR20_TOKEN,
 };
 
-// Cloudinary responsive hero image URLs
-const heroOspreySources = {
-  768: "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_768/v1754767083/gear-list-hero-images/hero-hiker-blue-osprey_nm7lte.jpg",
-  1280: "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1280/v1754767083/gear-list-hero-images/hero-hiker-blue-osprey_nm7lte.jpg",
-  1920: "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1920/v1754767083/gear-list-hero-images/hero-hiker-blue-osprey_nm7lte.jpg",
+// ---- Landing hero (single image) ----
+
+// We'll generate responsive sizes by only changing the width.
+const CLOUDINARY_CLOUD_NAME = "treklist";
+const cloudinaryHeroUrl = (publicIdWithVersion, width) =>
+  `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_${width}/${publicIdWithVersion}`;
+
+const LANDING_HERO_PUBLIC_ID_WITH_VERSION =
+  "v1754767080/gear-list-hero-images/hero-hiker-cinque-torri_hpe3lz";
+
+const heroSources = {
+  768: cloudinaryHeroUrl(LANDING_HERO_PUBLIC_ID_WITH_VERSION, 768),
+  1280: cloudinaryHeroUrl(LANDING_HERO_PUBLIC_ID_WITH_VERSION, 1280),
+  1920: cloudinaryHeroUrl(LANDING_HERO_PUBLIC_ID_WITH_VERSION, 1920),
 };
 
-const heroHikingSources = {
-  768: "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_768/v1754767189/gear-list-hero-images/hero-hiker-ridgeline_v7twmc.jpg",
-  1280: "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1280/v1754767189/gear-list-hero-images/hero-hiker-ridgeline_v7twmc.jpg",
-  1920: "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1920/v1754767189/gear-list-hero-images/hero-hiker-ridgeline_v7twmc.jpg",
-};
+const heroAlt = "Hiker at Cinque Torri in the Dolomites";
 
-const heroHMGSources = {
-  768: "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_768/v1754767189/gear-list-hero-images/hero-hmg-mountains_xn6aso.jpg",
-  1280: "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1280/v1754767189/gear-list-hero-images/hero-hmg-mountains_xn6aso.jpg",
-  1920: "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1920/v1754767189/gear-list-hero-images/hero-hmg-mountains_xn6aso.jpg",
-};
-
-const heroTentSources = {
-  768: "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_768/v1754767080/gear-list-hero-images/hero-tent_ijvmku.jpg",
-  1280: "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1280/v1754767080/gear-list-hero-images/hero-tent_ijvmku.jpg",
-  1920: "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1920/v1754767080/gear-list-hero-images/hero-tent_ijvmku.jpg",
-};
-
+// --- Icons / UI helpers ---
 const CheckIcon = (props) => (
   <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" {...props}>
     <path
@@ -110,27 +105,43 @@ const Bullet = ({ title, text, color = "text-blue-600" }) => (
 
 export default function Landing() {
   usePageTitle("Pack Smart. Travel Light.");
-  // Hero image carousel
-  const heroImages = [
-    { alt: "Hiker with blue Osprey pack", sources: heroOspreySources },
-    { alt: "Hiker on alpine ridgeline", sources: heroHikingSources },
-    { alt: "HMG pack in the mountains", sources: heroHMGSources },
-    { alt: "Tent in the mountains", sources: heroTentSources },
-  ];
 
+  // Preload hero for faster first paint
   useEffect(() => {
-    const preload = (url) => {
-      const img = new Image();
-      img.src = url;
-    };
-    preload(heroImages[0].sources[1920]); // first slide
-
-    setTimeout(() => {
-      heroImages.slice(1).forEach((img) => preload(img.sources[1280]));
-    }, 1500);
+    const img = new Image();
+    img.src = heroSources[1920];
   }, []);
 
-  const [current, setCurrent] = useState(0);
+  /*
+    --- HERO CAROUSEL (commented out for now) ---
+    If you want it back later, restore these blocks:
+      - heroImages array
+      - current state + interval effect
+      - dots JSX in the header
+
+    // Cloudinary responsive hero image URLs
+    const heroOspreySources = { ... };
+    const heroHikingSources = { ... };
+    const heroHMGSources = { ... };
+    const herocinquetorriSources = { ... };
+
+    const heroImages = [
+      { alt: "Hiker with blue Osprey pack", sources: heroOspreySources },
+      { alt: "Hiker on alpine ridgeline", sources: heroHikingSources },
+      { alt: "HMG pack in the mountains", sources: heroHMGSources },
+      { alt: "Hiker at Cinque Torri", sources: herocinquetorriSources },
+    ];
+
+    const [current, setCurrent] = useState(0);
+
+    useEffect(() => {
+      const timer = setInterval(() => {
+        setCurrent((prev) => (prev + 1) % heroImages.length);
+      }, 5000);
+      return () => clearInterval(timer);
+    }, []);
+  */
+
   const [authOpen, setAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState("login"); // 'login' | 'register'
 
@@ -179,13 +190,6 @@ export default function Landing() {
     setAuthOpen(false);
   };
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % heroImages.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
-
   return (
     <div className="relative flex flex-col min-h-screen bg-white text-gray-800">
       <PublicHeader
@@ -195,37 +199,38 @@ export default function Landing() {
         onRegister={() => openAuth("register")}
       />
 
-      {/* Hero Carousel */}
+      {/* Hero (single image) */}
       <header className="relative h-screen flex flex-col items-center justify-center">
         {/* Background image + overlay */}
         <picture>
           <source
             srcSet={`
-      ${heroImages[current].sources[768]} 768w,
-      ${heroImages[current].sources[1280]} 1280w,
-      ${heroImages[current].sources[1920]} 1920w
-    `}
+              ${heroSources[768]} 768w,
+              ${heroSources[1280]} 1280w,
+              ${heroSources[1920]} 1920w
+            `}
             sizes="100vw"
             type="image/jpeg"
           />
           <img
-            src={heroImages[current].sources[1920]}
-            alt={heroImages[current].alt}
+            src={heroSources[1920]}
+            alt={heroAlt}
             className="absolute inset-0 h-full w-full object-cover"
-            loading={current === 0 ? "eager" : "lazy"}
-            fetchpriority={current === 0 ? "high" : "auto"}
+            loading="eager"
+            fetchpriority="high"
             decoding="async"
           />
         </picture>
-        <div className="absolute inset-0 bg-black/40"></div>
+
+        <div className="absolute inset-0 bg-black/30"></div>
 
         {/* Foreground content */}
         <div className="relative z-20 text-center px-4">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 drop-shadow-[0_2px_10px_rgba(0,0,0,0.55)]">
             Pack Smart. Travel Light.
           </h1>
-          <p className="max-w-2xl text-white mb-8">
-            Build, share, and check off your gear lists—designed for
+          <p className="max-w-2xl text-white text-xl mb-8 drop-shadow-[0_2px_10px_rgba(0,0,0,0.55)]">
+            Build, share, and check off your gear lists. Designed for
             long-distance hikers, weekenders, and hut to hut trekkers exploring
             Europe and beyond.
           </p>
@@ -237,19 +242,22 @@ export default function Landing() {
           </button>
         </div>
 
-        {/* Dots */}
-        <div className="absolute bottom-10 flex space-x-2 z-20">
-          {heroImages.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrent(idx)}
-              className={`w-3 h-3 rounded-full transition-opacity duration-300 ${
-                idx === current ? "bg-white opacity-100" : "bg-white opacity-50"
-              }`}
-            />
-          ))}
-        </div>
+        {/*
+          --- HERO CAROUSEL DOTS (commented out) ---
+          <div className="absolute bottom-10 flex space-x-2 z-20">
+            {heroImages.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrent(idx)}
+                className={`w-3 h-3 rounded-full transition-opacity duration-300 ${
+                  idx === current ? "bg-white opacity-100" : "bg-white opacity-50"
+                }`}
+              />
+            ))}
+          </div>
+        */}
       </header>
+
       {/* Brand Partners
       <section className="py-12 px-6 flex flex-wrap justify-center items-center gap-8 bg-gray-50">
         {[
@@ -267,28 +275,27 @@ export default function Landing() {
         ))}
       </section> */}
 
-      {/* Screenshot + Features */}
       {/* ===== Section A: Image (phones) -> Text ===== */}
-
       <section
         id="features"
         aria-labelledby="features-mobile"
-        className="mx-auto max-w-7xl px-6 py-12 md:py-16 lg:py-20 pb-24 md:pb-28 lg:pb-32" // extra bottom space
+        className="mx-auto max-w-7xl px-6 py-12 md:py-16 lg:py-20 pb-24 md:pb-28 lg:pb-32"
       >
         <h2 className="text-center text-3xl font-bold mb-4">Features</h2>
+
         <div
           className="
-      grid items-center gap-10 md:gap-16
-      md:[grid-template-columns:420px_minmax(0,1fr)]
-      lg:[grid-template-columns:520px_minmax(0,1fr)]
-    "
+            grid items-center gap-10 md:gap-16
+            md:[grid-template-columns:420px_minmax(0,1fr)]
+            lg:[grid-template-columns:520px_minmax(0,1fr)]
+          "
         >
           {/* Phones (single phone on mobile, overlap on md+) */}
           <div
             className="
-    relative mx-auto md:mx-0 w-full max-w-[520px]
-    h-auto md:h-[440px] lg:h-[520px]
-  "
+              relative mx-auto md:mx-0 w-full max-w-[520px]
+              h-auto md:h-[440px] lg:h-[520px]
+            "
           >
             <div className="flex justify-center md:block">
               {/* back/left phone — hidden on small screens */}
@@ -322,6 +329,7 @@ export default function Landing() {
             <p className="text-center md:text-left mt-3 text-slate-600">
               Mobile first UX — add, edit, and reorder without friction.
             </p>
+
             <ul className="mt-8 space-y-6">
               <Bullet
                 title="Mobile-first design"
@@ -361,6 +369,7 @@ export default function Landing() {
             <p className="text-center md:text-left mt-3 text-slate-600">
               Plan, budget, and fine-tune your kit.
             </p>
+
             <ul className="mt-8 space-y-6">
               <Bullet
                 title="Drag between categories"
@@ -464,6 +473,7 @@ export default function Landing() {
                 </div>
               </>
             );
+
             return isInternal ? (
               <Link
                 key={title}
@@ -517,6 +527,7 @@ export default function Landing() {
 
       {/* Footer (public view) */}
       <FooterLegal variant="dark" containerWidth="max-w-4xl" />
+
       <AuthModal
         isOpen={authOpen}
         defaultMode={authMode}

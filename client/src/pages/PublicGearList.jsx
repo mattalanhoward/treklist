@@ -580,7 +580,7 @@ export default function PublicGearList() {
                       <div
                         key={it.id || it._id}
                         className="grid items-center text-sm
-                  grid-cols-[120px,minmax(260px,1fr),96px,112px,24px,24px,48px,24px]
+                  grid-cols-[160px,minmax(260px,1fr),96px,24px,24px,24px,48px]
                   gap-x-2 bg-base-100 px-3 py-2 rounded shadow"
                       >
                         {/* 1) Item type */}
@@ -595,7 +595,7 @@ export default function PublicGearList() {
                         </div>
 
                         {/* 3) Weight (right-aligned, tabular) */}
-                        <div className="justify-self-end tabular-nums text-primary w-[96px] text-right">
+                        <div className="justify-self-end tabular-nums text-primary w-[96px] text-right pr-2">
                           {fmtWeight(g, unit)}
                         </div>
 
