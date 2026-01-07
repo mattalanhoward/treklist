@@ -1,21 +1,71 @@
 /* src/themes.css */
 
-/* default “desert” palette */
+/* default palette (app base) */
 :root {
-  --color-primary-rgb: 22, 58, 40; /* Forest Green: Card Headings / Category Header Text / Buttons */
-  --color-primaryAlt-rgb: 224, 178, 81; /* Mustard Yellow */
-  --color-secondary-rgb: 22, 58, 40; /* Forest Green: Secondary Text */
-  --color-secondaryAlt-rgb: 253, 247, 228; /* Creamy Ivory: Secondary Alternative Text */
-  --color-accent-rgb: 224, 178, 81; /* Mustard Yellow */
-  --color-neutral-rgb: 23, 43, 77; /* Midnight Navy: Blue Category BG */
-  --color-neutralAlt-rgb: 253, 247, 228; /* Creamy Ivory: Card BG */
-  --color-error-rgb: 231, 111, 81; /* Vibrant Coral Red: */
-  --color-base-100-rgb: 253, 247, 228; /* Creamy Ivory: Card BG */
-  --color-base-100Alt-rgb: 253, 247, 228; /* Creamy Ivory: Card BG */
+  --color-primary-rgb: 23, 43, 77; /* Navy blue: Card Headings / Category Header Text / Buttons */
+  --color-primaryAlt-rgb: 23, 43, 77; /* Navy blue: Same as primary */
+  --color-secondary-rgb: 68, 84, 111; /* Steel blue: Secondary Text */
+  --color-secondaryAlt-rgb: 68, 84, 111; /* Steel blue: Same as secondary */
+  --color-accent-rgb: 12, 102, 228; /* Electric blue: accent */
+  --color-neutral-rgb: 241, 242, 244; /* Light gray: Category BG / Topbar BG */
+  --color-neutralAlt-rgb: 241, 242, 244; /* Light gray: Category BG / Topbar BG */
+  --color-error-rgb: 239, 68, 68; /* Vivid red: error */
+  --color-base-100-rgb: 255, 255, 255; /* Pure white: Card Background */
+  --color-base-100Alt-rgb: 255, 255, 255; /* Pure white: Card Background */
 }
 
-/* desert theme */
+/* ============================================================
+   DESERT (ACTIVE)
+   ============================================================ */
 .theme-desert {
+  --color-primary-rgb: 53, 92, 63; /* #355C3F — Yucca Olive: Primary buttons / headings */
+  --color-primaryAlt-rgb: 92, 141, 105; /* #5C8D69 — Agave Hover: Primary hover */
+  --color-secondary-rgb: 32, 87, 132; /* #205584 — Desert Sky: Links / secondary accents */
+  --color-secondaryAlt-rgb: 240, 201, 142; /* #F0C98E — Sand Dune: Secondary alt / light bg */
+  --color-accent-rgb: 154, 34, 20; /* #9A2214 — Canyon Red: Accent / badges */
+  --color-neutral-rgb: 33, 37, 41; /* #212529 — Volcanic Rock: Headers / category BG */
+  --color-neutralAlt-rgb: 250, 238, 221; /* #FAEEDD — Soft Sand: Card BG */
+  --color-error-rgb: 201, 59, 44; /* #C93B2C — Burnt Error: Error state */
+  --color-base-100-rgb: 253, 248, 239; /* #FDF8EF — Clean Sand: App background */
+  --color-base-100Alt-rgb: 240, 201, 142; /* #F0C98E — Sand Dune: Alt surfaces */
+}
+
+/* ============================================================
+   DESERT (OPTION A) — Mojave Sky
+   ============================================================ */
+.theme-desert-mojaveSky {
+  --color-primary-rgb: 46, 94, 66; /* #2E5E42 — Desert Yucca: Primary buttons / headings */
+  --color-primaryAlt-rgb: 75, 135, 104; /* #4B8768 — Agave Green: Primary hover */
+  --color-secondary-rgb: 20, 96, 156; /* #14609C — Sky Blue: Links / secondary accents */
+  --color-secondaryAlt-rgb: 234, 204, 143; /* #EACC8F — Sun Sand: Secondary alt / light bg */
+  --color-accent-rgb: 140, 30, 24; /* #8C1E18 — Deep Red Rock: Accent / badges */
+  --color-neutral-rgb: 40, 45, 52; /* #282D34 — Dark Rock: Headers / category BG */
+  --color-neutralAlt-rgb: 245, 232, 209; /* #F5E8D1 — Cream Sand: Card BG */
+  --color-error-rgb: 199, 55, 45; /* #C7372D — Desert Error: Error state */
+  --color-base-100-rgb: 252, 247, 238; /* #FCF7EE — Light Sand: App background */
+  --color-base-100Alt-rgb: 245, 232, 209; /* #F5E8D1 — Cream Sand: Alt surfaces */
+}
+
+/* ============================================================
+   DESERT (OPTION B) — Sonoran Bold
+   ============================================================ */
+.theme-desert-sonoranBold {
+  --color-primary-rgb: 60, 86, 62; /* #3C563E — Yucca Green: Primary buttons / headings */
+  --color-primaryAlt-rgb: 87, 140, 112; /* #578C70 — Agave Mint: Primary hover / subtle highlights */
+  --color-secondary-rgb: 12, 66, 110; /* #0C426E — Big-Sky Blue: Links / secondary accents */
+  --color-secondaryAlt-rgb: 248, 225, 179; /* #F8E1B3 — Warm Sand: Secondary alt / light bg */
+  --color-accent-rgb: 162, 46, 38; /* #A22E26 — Red Rock: Badges / emphasis */
+  --color-neutral-rgb: 52, 58, 64; /* #343A40 — Basalt Rock: Category BG / nav */
+  --color-neutralAlt-rgb: 248, 225, 179; /* #F8E1B3 — Warm Sand: Card BG */
+  --color-error-rgb: 185, 53, 45; /* #B9352D — Canyon Error: Error state */
+  --color-base-100-rgb: 252, 244, 231; /* #FCF4E7 — Pale Sand: App background */
+  --color-base-100Alt-rgb: 248, 225, 179; /* #F8E1B3 — Warm Sand: Alt surfaces */
+}
+
+/* ============================================================
+   DESERT (OPTION C) — Desert v2 (legacy)
+   ============================================================ */
+.theme-desert-v2 {
   --color-primary-rgb: 22, 58, 40; /* Forest Green: Card Headings / Category Header Text / Buttons */
   --color-primaryAlt-rgb: 224, 178, 81; /* Mustard Yellow */
   --color-secondary-rgb: 22, 58, 40; /* Forest Green: Secondary Text */
@@ -23,12 +73,65 @@
   --color-accent-rgb: 224, 178, 81; /* Mustard Yellow */
   --color-neutral-rgb: 23, 43, 77; /* Midnight Navy: Blue Category BG */
   --color-neutralAlt-rgb: 253, 247, 228; /* Creamy Ivory: Card BG */
-  --color-error-rgb: 231, 111, 81; /* Vibrant Coral Red: */
+  --color-error-rgb: 231, 111, 81; /* Vibrant Coral Red */
   --color-base-100-rgb: 253, 247, 228; /* Creamy Ivory: Card BG */
   --color-base-100Alt-rgb: 253, 247, 228; /* Creamy Ivory: Card BG */
 }
 
-/* alpine theme v4 */
+/* ============================================================
+   DESERT (OPTION 1) — Sky Primary
+   Blue leads (buttons/headings), green supports, red rock pops
+   ============================================================ */
+.theme-desert-skyPrimary {
+  --color-primary-rgb: 32, 87, 132; /* #205584 — Desert Sky: Buttons / headings */
+  --color-primaryAlt-rgb: 12, 66, 110; /* #0C426E — Deep Sky: Hover / active */
+  --color-secondary-rgb: 53, 92, 63; /* #355C3F — Yucca Olive: Secondary text */
+  --color-secondaryAlt-rgb: 240, 201, 142; /* #F0C98E — Sand Dune: Soft alt text/surfaces */
+  --color-accent-rgb: 154, 34, 20; /* #9A2214 — Canyon Red: Badges / emphasis */
+  --color-neutral-rgb: 24, 34, 52; /* #182234 — Blue Rock: Column/header surfaces (more blue) */
+  --color-neutralAlt-rgb: 250, 238, 221; /* #FAEEDD — Soft Sand: Card BG */
+  --color-error-rgb: 201, 59, 44; /* #C93B2C — Burnt Error */
+  --color-base-100-rgb: 253, 248, 239; /* #FDF8EF — Clean Sand: App background */
+  --color-base-100Alt-rgb: 250, 238, 221; /* #FAEEDD — Soft Sand: Alt background */
+}
+
+/* ============================================================
+   DESERT (OPTION 2) — Big Sky + Navy
+   Brighter sky blue, navy neutral, keeps desert warmth
+   ============================================================ */
+.theme-desert-bigSky {
+  --color-primary-rgb: 20, 96, 156; /* #14609C — Big Sky Blue: Buttons / headings */
+  --color-primaryAlt-rgb: 23, 43, 77; /* #172B4D — Navy Dusk: Hover / active */
+  --color-secondary-rgb: 46, 94, 66; /* #2E5E42 — Desert Yucca: Secondary text */
+  --color-secondaryAlt-rgb: 234, 204, 143; /* #EACC8F — Sun Sand: Alt */
+  --color-accent-rgb: 140, 30, 24; /* #8C1E18 — Deep Red Rock: Accent */
+  --color-neutral-rgb: 23, 43, 77; /* #172B4D — Navy: Category BG / topbar surfaces */
+  --color-neutralAlt-rgb: 245, 232, 209; /* #F5E8D1 — Cream Sand: Card BG */
+  --color-error-rgb: 199, 55, 45; /* #C7372D — Desert Error */
+  --color-base-100-rgb: 252, 247, 238; /* #FCF7EE — Light Sand */
+  --color-base-100Alt-rgb: 245, 232, 209; /* #F5E8D1 — Cream Sand */
+}
+
+/* ============================================================
+   DESERT (OPTION 3) — Dusk Canyon
+   More dramatic: deeper blues in surfaces, green is supporting, red rock strong
+   ============================================================ */
+.theme-desert-duskCanyon {
+  --color-primary-rgb: 12, 66, 110; /* #0C426E — Deep Sky: Buttons / headings */
+  --color-primaryAlt-rgb: 24, 34, 52; /* #182234 — Night Rock: Hover / active */
+  --color-secondary-rgb: 92, 141, 105; /* #5C8D69 — Agave: Secondary text / subtle */
+  --color-secondaryAlt-rgb: 248, 225, 179; /* #F8E1B3 — Warm Sand: Alt */
+  --color-accent-rgb: 162, 46, 38; /* #A22E26 — Red Rock: Accent / badges */
+  --color-neutral-rgb: 16, 33, 56; /* #102138 — Deep Blue Slate: Column/header surfaces */
+  --color-neutralAlt-rgb: 250, 238, 221; /* #FAEEDD — Soft Sand: Card BG */
+  --color-error-rgb: 201, 59, 44; /* #C93B2C — Error */
+  --color-base-100-rgb: 253, 248, 239; /* #FDF8EF — Clean Sand */
+  --color-base-100Alt-rgb: 248, 225, 179; /* #F8E1B3 — Warm Sand */
+}
+
+/* ============================================================
+   ALPINE
+   ============================================================ */
 .theme-alpine {
   --color-primary-rgb: 40, 50, 60; /* Charcoal Grey: Card Headings / Category Header Text / Buttons */
   --color-primaryAlt-rgb: 40, 50, 60; /* Charcoal Grey: Same as primary */
@@ -42,7 +145,9 @@
   --color-base-100Alt-rgb: 245, 242, 238; /* Light Mist: Card Background */
 }
 
-/* forest theme v1 */
+/* ============================================================
+   FOREST
+   ============================================================ */
 .theme-forest {
   --color-primary-rgb: 34, 59, 34; /* Dark Pine: Card Headings / Category Header Text / Buttons */
   --color-primaryAlt-rgb: 34, 59, 34; /* Dark Pine: Same as primary */
@@ -56,19 +161,9 @@
   --color-base-100Alt-rgb: 230, 234, 228; /* Pale Leaf: Card Background */
 }
 
-/* forest theme v2 */
-/* .theme-forest { */
-/*  --color-primary-rgb: 30, 50, 30;           Deep Fir: Card Headings / Category Header Text / Buttons */
-/*  --color-primaryAlt-rgb: 30, 50, 30;        Deep Fir: Same as primary */
-/*  --color-secondary-rgb: 90, 125, 70;        Fern Green: Secondary Text */
-/*  --color-secondaryAlt-rgb: 90, 125, 70;     Fern Green: Secondary Alternative Text */
-/*  --color-accent-rgb: 210, 180, 120;         Warm Bark: Accent */
-/*  --color-neutral-rgb: 255, 255, 255;        Pure White: Category BG / Topbar BG */
-/*  --color-error-rgb: 231, 111, 81;           Coral Red: Error */
-/*  --color-base-100-rgb: 245, 248, 244;       Misty Fog: Card Background */
-/* } */
-
-/* snow theme v5 */
+/* ============================================================
+   SNOW
+   ============================================================ */
 .theme-snow {
   --color-primary-rgb: 45, 60, 75; /* Slate Blue: Card Headings / Category Header Text / Buttons */
   --color-primaryAlt-rgb: 45, 60, 75; /* Slate Blue: Same as primary */
@@ -82,7 +177,9 @@
   --color-base-100Alt-rgb: 245, 248, 250; /* Soft White: Card Background */
 }
 
-/* ocean */
+/* ============================================================
+   OCEAN
+   ============================================================ */
 .theme-ocean {
   --color-primary-rgb: 30, 58, 138; /* Deep navy */
   --color-primaryAlt-rgb: 30, 58, 138; /* Deep navy */
@@ -96,7 +193,9 @@
   --color-base-100Alt-rgb: 224, 242, 254; /* Pale blue */
 }
 
-/* theme-light */
+/* ============================================================
+   LIGHT
+   ============================================================ */
 .theme-light {
   --color-primary-rgb: 23, 43, 77; /* Navy blue: Card Headings / Category Header Text / Buttons */
   --color-primaryAlt-rgb: 23, 43, 77; /* Navy blue: Same as primary */
@@ -110,7 +209,9 @@
   --color-base-100Alt-rgb: 255, 255, 255; /* Pure white: Card Background */
 }
 
-/* theme-dark */
+/* ============================================================
+   DARK
+   ============================================================ */
 .theme-dark {
   --color-primary-rgb: 182, 194, 207; /* Dusty blue: Card Headings / Category Header Text / Buttons */
   --color-primaryAlt-rgb: 182, 194, 207; /* Dusty blue: Same as primary */
@@ -124,25 +225,29 @@
   --color-base-100Alt-rgb: 34, 39, 43; /* Charcoal gray: Card BG */
 }
 
-/*Trello Dark 
+/* ============================================================
+   Notes / references
+   ============================================================
+
+Trello Dark
 rgb(16, 18, 4) Category Background
 rgb(34, 39, 43) Card Background
-rgb(182, 194, 207) Card Text 
+rgb(182, 194, 207) Card Text
 rgb(182, 194, 207) Card Header Text
-rgb(40, 46, 51) Dropdown Background 
-rgb(182, 194, 207) Dropdown Text 
+rgb(40, 46, 51) Dropdown Background
+rgb(182, 194, 207) Dropdown Text
 rgb(87, 157, 255) Blue Button
 
 Trello Light
-rgb(241, 242, 244) Category Background 
-rgb(255, 255, 255) Card Background 
-rgb(23, 43, 77) Card Text 
+rgb(241, 242, 244) Category Background
+rgb(255, 255, 255) Card Background
+rgb(23, 43, 77) Card Text
 rgb(23, 43, 77) Card Header Text
-rgb(255, 255, 255) Dropdown Background 
-rgb(23, 43, 77) Dropdown Text 
+rgb(255, 255, 255) Dropdown Background
+rgb(23, 43, 77) Dropdown Text
 
 rgb(68, 84, 111) + icon / "Add a card"
-rgb(12, 102, 228) Blue Button 
-rgb(255, 255, 255) Blue Button Text 
+rgb(12, 102, 228) Blue Button
+rgb(255, 255, 255) Blue Button Text
 
 */

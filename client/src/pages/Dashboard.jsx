@@ -12,17 +12,19 @@ import WishlistView from "../pages/WishlistView";
 import { toast } from "react-hot-toast";
 import { useUserSettings } from "../contexts/UserSettings";
 import { useTranslation } from "react-i18next";
+import Spinner from "../components/ui/Spinner";
 
-function DashboardEmptyState({ hasLists, onCreateSampleList, creatingSample }) {
+function DashboardEmptyState({
+  hasLists,
+  listsLoading,
+  onCreateSampleList,
+  creatingSample,
+}) {
   const { t } = useTranslation("common");
-  // If we DO have lists but no listId, the redirect effect is about to run.
-  // Show a simple loading message instead of the full welcome card.
-  if (hasLists) {
-    return (
-      <div className="h-full flex items-center justify-center text-primary text-sm">
-        {t("dashboard.loadingLists")}
-      </div>
-    );
+  // While lists are loading (or we already have lists and redirect is about to run),
+  // don’t flash the welcome/empty state.
+  if (listsLoading || hasLists) {
+    return <Spinner centered label={t("dashboard.loadingLists")} />;
   }
 
   // True first-time / zero-list state
@@ -130,13 +132,17 @@ export default function Dashboard() {
 
   // ─── Lists state & fetchLists fn ───
   const [lists, setLists] = useState([]);
+  const [listsLoading, setListsLoading] = useState(true);
   const fetchLists = useCallback(async () => {
     try {
+      setListsLoading(true);
       const { data } = await api.get("/dashboard");
       setLists(data);
     } catch (err) {
       console.error("Failed to fetch lists", err);
       toast.error(t("dashboard.toasts.loadListsFailed"));
+    } finally {
+      setListsLoading(false);
     }
   }, [t]);
 
@@ -180,8 +186,9 @@ export default function Dashboard() {
 
   // load lists on mount
   useEffect(() => {
+    if (!isAuthenticated) return;
     fetchLists();
-  }, [fetchLists]);
+  }, [fetchLists, isAuthenticated]);
 
   // ─── Redirect logic ───
   useEffect(() => {
@@ -264,8 +271,9 @@ export default function Dashboard() {
 
   // load on mount—and whenever listId changes
   useEffect(() => {
+    if (!isAuthenticated) return;
     fetchFullData();
-  }, [fetchFullData, listId]);
+  }, [fetchFullData, listId, isAuthenticated]);
 
   // const handleSelectList = useCallback(
   //   (id) => {
@@ -340,9 +348,7 @@ export default function Dashboard() {
             <WishlistView />
           ) : listId ? (
             fullData.list === null ? (
-              <div className="h-full flex items-center justify-center text-primary text-sm">
-                {t("dashboard.loadingLists")}
-              </div>
+              <Spinner centered label={t("dashboard.loadingLists")} />
             ) : (
               <GearListView
                 listId={listId}
@@ -359,6 +365,7 @@ export default function Dashboard() {
           ) : (
             <DashboardEmptyState
               hasLists={lists.length > 0}
+              listsLoading={listsLoading}
               onCreateSampleList={handleCreateSampleList}
               creatingSample={creatingSample}
             />

@@ -10,6 +10,7 @@ import { useWeightInput } from "../hooks/useWeightInput";
 import { FaTimes } from "react-icons/fa";
 import ImageCarousel from "./ImageCarousel";
 import ButtonLink from "./ui/ButtonLink";
+import Spinner from "../components/ui/Spinner";
 import {
   fetchGlobalItemCached,
   invalidateGlobalItemCache,
@@ -459,7 +460,7 @@ export default function GlobalItemEditModal({
   return (
     <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-[60]">
       {showFullscreenSpinner ? (
-        <div className="h-10 w-10 rounded-full border-2 border-white/40 border-t-white animate-spin" />
+        <Spinner tone="white" />
       ) : (
         <form
           onSubmit={handleSave}
@@ -657,7 +658,7 @@ export default function GlobalItemEditModal({
                     <div className="bg-white py-2 px-2 w-full max-w-md">
                       <div className="h-[260px] w-full overflow-hidden flex items-center justify-center">
                         {loadingImages || loadingImageAsset ? (
-                          <div className="h-10 w-10 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+                          <Spinner />
                         ) : (
                           <ImageCarousel
                             images={safeCatalogImages}

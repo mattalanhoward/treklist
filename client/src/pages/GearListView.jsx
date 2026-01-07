@@ -1,6 +1,6 @@
 // src/pages/GearListView.jsx
 import React, { useState, useEffect, useCallback } from "react";
-import { FaPlus, FaEllipsisH, FaCheck, FaSpinner } from "react-icons/fa";
+import { FaPlus, FaEllipsisH, FaCheck } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { DragOverlay, closestCorners, pointerWithin } from "@dnd-kit/core";
@@ -28,6 +28,7 @@ import { defaultBackgrounds } from "../config/defaultBackgrounds";
 import ShareModal from "../components/ShareModal";
 import MoveItemModal from "../components/MoveItemModal";
 import { useTranslation } from "react-i18next";
+import Spinner from "../components/ui/Spinner";
 
 export default function GearListView({
   listId,
@@ -889,7 +890,7 @@ export default function GearListView({
       {/* 1) full-page spinner overlay */}
       {isUploading && (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <FaSpinner className="animate-spin text-white text-4xl" />
+          <Spinner tone="white" />{" "}
         </div>
       )}
       <div className="w-full bg-base-100 bg-opacity-80">

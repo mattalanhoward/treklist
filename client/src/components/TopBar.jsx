@@ -17,7 +17,7 @@ const themes = [
   { name: "alpine", color: "#172b4d" }, // default
   { name: "desert", color: "#E0B251" },
   { name: "light", color: "#ffffff" },
-  { name: "dark", color: "#0f172a" },
+  // { name: "dark", color: "#0f172a" },
 ];
 
 export default function TopBar({ title, openSettings }) {

@@ -20,7 +20,7 @@ export function SettingsProvider({ children }) {
     () => localStorage.getItem("weightUnit") || "g"
   );
   const [theme, setTheme] = useState(
-    () => localStorage.getItem("theme") || "alpine"
+    () => localStorage.getItem("theme") || "light"
   );
   const [language, setLanguage] = useState(() => {
     // Prefer an explicit stored choice
@@ -96,16 +96,15 @@ export function SettingsProvider({ children }) {
 
   useEffect(() => {
     localStorage.setItem("theme", theme);
+
     const root = document.documentElement;
-    root.classList.remove(
-      "theme-forest",
-      "theme-desert",
-      "theme-alpine",
-      "theme-snow",
-      "theme-ocean",
-      "theme-dark",
-      "theme-light"
-    );
+
+    // remove any previous theme-* class (future-proof)
+    [...root.classList].forEach((cls) => {
+      if (cls.startsWith("theme-")) root.classList.remove(cls);
+    });
+
+    // apply current theme
     root.classList.add(`theme-${theme}`);
   }, [theme]);
 
