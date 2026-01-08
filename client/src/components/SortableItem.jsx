@@ -338,12 +338,11 @@ export default function SortableItem({
           </div>
         </div>
       </div>
-
       {/* ========== DESKTOP LIST MODE (single row) ========== */}
       {isListMode && (
         <div
           className="hidden xl:grid items-center text-sm
-      grid-cols-[32px,120px,minmax(260px,1fr),96px,112px,24px,24px,48px,24px,24px] gap-x-2"
+      grid-cols-[32px,160px,minmax(260px,1fr),96px,24px,24px,24px,48px,24px] gap-x-2"
         >
           {/* 1) Drag */}
           <div
@@ -429,7 +428,6 @@ export default function SortableItem({
           </div>
         </div>
       )}
-
       {/* ========== DESKTOP COLUMN MODE (3 rows) ========== */}
       {!isListMode && (
         <div className="hidden sm:grid bg-base-100 px-2 grid-rows-[auto_auto_auto]">
