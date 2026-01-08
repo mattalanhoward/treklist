@@ -11,6 +11,7 @@ import { useWeightInput } from "../hooks/useWeightInput";
 import { useUserSettings } from "../contexts/UserSettings";
 import { detectRegion, normalizeRegion } from "../utils/region";
 import CatalogItemPreviewModal from "./CatalogItemPreviewModal";
+import Spinner from "../components/ui/Spinner";
 
 function ImportCatalogTab({ onImported }) {
   const { t } = useTranslation("common");
@@ -313,9 +314,10 @@ function ImportCatalogTab({ onImported }) {
       </div>
 
       {loading && (
-        <div className="text-sm text-primary/70">
-          {t("globalItemModal.importTab.states.loading")}
-        </div>
+        <Spinner
+          centered
+          label={t("globalItemModal.importTab.states.loading")}
+        />
       )}
 
       {error && <div className="text-error text-sm">{error}</div>}
