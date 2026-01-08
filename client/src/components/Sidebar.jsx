@@ -212,9 +212,7 @@ export default function Sidebar({
         <button
           onClick={() => setCollapsed((c) => !c)}
           className={
-            // top offset is ALWAYS 0.3rem mobile / 0.4rem desktop
-            `absolute top-[0.3rem] sm:top-[0.4rem] text-primaryAlt hover:text-primaryAlt/80 p-1 transform ` +
-            // only right/translate changes when collapsed vs open
+            `absolute z-50 top-[0.3rem] sm:top-[0.4rem] text-primaryAlt hover:text-primaryAlt/80 p-1 transform ` +
             (collapsed ? "right-[-1rem] translate-x-full" : "right-4")
           }
         >
