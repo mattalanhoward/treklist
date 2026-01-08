@@ -89,13 +89,6 @@ export default function Sidebar({
     fetchGlobalItems(debouncedSearch);
   }, [debouncedSearch]);
 
-  // ─── Auto‐select first list if none is selected ───
-  useEffect(() => {
-    if (!currentListId && lists.length > 0) {
-      onSelectList(lists[0]._id);
-    }
-  }, [lists, currentListId, onSelectList]);
-
   // === Gear‐list CRUD ===
 
   const createList = async () => {
@@ -308,13 +301,6 @@ export default function Sidebar({
                             // 2) if on mobile, collapse sidebar
                             if (isMobile()) {
                               setCollapsed(true);
-                            }
-
-                            // 3) Persist or clear storage (can actually be left to Dashboard, but harmless here)
-                            if (l._id) {
-                              localStorage.setItem("lastListId", l._id);
-                            } else {
-                              localStorage.removeItem("lastListId");
                             }
                           }}
                           className={`flex-1 text-left py-1 px-2 rounded-lg whitespace-nowrap overflow-hidden truncate ${

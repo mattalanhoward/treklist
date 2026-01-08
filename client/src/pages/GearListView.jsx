@@ -63,8 +63,8 @@ export default function GearListView({
   const [isUploading, setIsUploading] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   // ⚡️ Optimistic UI for background color
-  const [bgColor, setBgColor] = useState(list.backgroundColor);
-  const [bgImage, setBgImage] = useState(list.backgroundImageUrl);
+  const [bgColor, setBgColor] = useState(list.backgroundColor || "");
+  const [bgImage, setBgImage] = useState(list.backgroundImageUrl || "");
   const [customBackgrounds, setCustomBackgrounds] = useState([]);
   const [shareOpen, setShareOpen] = useState(false);
   const closeShare = () => setShareOpen(false);
@@ -90,8 +90,13 @@ export default function GearListView({
 
   // keep local bgImage in sync with whatever the server says
   useEffect(() => {
-    setBgImage(list.backgroundImageUrl);
+    setBgImage(list.backgroundImageUrl || "");
   }, [list.backgroundImageUrl]);
+
+  // keep local bgColor in sync with whatever the server says
+  useEffect(() => {
+    setBgColor(list.backgroundColor || "");
+  }, [list.backgroundColor]);
 
   // hydrate custom images from the server's history (cross-device)
   useEffect(() => {
@@ -862,21 +867,23 @@ export default function GearListView({
   const overlay = "linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3))";
 
   // Dynamic style based on list prefs, with gradient on top of color
-  const bgstyle =
-    bgImage || list.backgroundImageUrl
-      ? {
-          // no overlay when using an image
-          backgroundImage: `url(${bgImage || list.backgroundImageUrl})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }
-      : bgColor
-      ? {
-          // when using only a color, you can keep your overlay if you like:
-          backgroundColor: bgColor,
-          backgroundImage: overlay,
-        }
-      : {};
+  const effectiveBgImage = bgImage || list.backgroundImageUrl || "";
+  const effectiveBgColor = bgColor || list.backgroundColor || "";
+
+  const bgstyle = effectiveBgImage
+    ? {
+        // no overlay when using an image
+        backgroundImage: `url(${effectiveBgImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }
+    : effectiveBgColor
+    ? {
+        // when using only a color, you can keep your overlay if you like:
+        backgroundColor: effectiveBgColor,
+        backgroundImage: overlay,
+      }
+    : {};
 
   const headerPadding =
     viewMode === "list"

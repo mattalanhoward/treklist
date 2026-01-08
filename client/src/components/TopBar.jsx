@@ -242,11 +242,11 @@ export default function TopBar({ title, openSettings }) {
                 className: "mb-2",
                 label: t("topbar.logout"),
                 onClick: async () => {
+                  await logout();
                   navigate("/", {
                     replace: true,
                     state: { reason: "manual" },
                   });
-                  await logout();
                 },
               },
             ]}

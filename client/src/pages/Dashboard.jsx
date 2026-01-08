@@ -23,8 +23,18 @@ function DashboardEmptyState({
   const { t } = useTranslation("common");
   // While lists are loading (or we already have lists and redirect is about to run),
   // don’t flash the welcome/empty state.
-  if (listsLoading || hasLists) {
+  if (listsLoading) {
     return <Spinner centered label={t("dashboard.loadingLists")} />;
+  }
+
+  // If we have lists and we're not loading, the redirect effect should
+  // immediately navigate. But if something goes wrong, don't trap them on a spinner.
+  if (hasLists) {
+    return (
+      <div className="h-full flex items-center justify-center text-primary text-sm">
+        {t("dashboard.loadingLists")}
+      </div>
+    );
   }
 
   // True first-time / zero-list state
@@ -190,24 +200,30 @@ export default function Dashboard() {
     fetchLists();
   }, [fetchLists, isAuthenticated]);
 
+  useEffect(() => {
+    if (!listId) return;
+    localStorage.setItem("lastListId", listId);
+  }, [listId]);
+
   // ─── Redirect logic ───
   useEffect(() => {
+    if (!isAuthenticated) return;
+    if (listsLoading) return;
     if (listId) return;
-    // if there are no lists at all, stay on the "root" path (no listId)
     if (lists.length === 0) return;
 
     const ids = lists.map((l) => l._id);
-
-    // 2) try lastListId from localStorage
     const stored = localStorage.getItem("lastListId");
+
+    console.log("[dashboard redirect]", { stored, ids });
+
     if (stored && ids.includes(stored)) {
       navigate(`/dashboard/${stored}`, { replace: true });
       return;
     }
 
-    // 3) fallback to first list
     navigate(`/dashboard/${ids[0]}`, { replace: true });
-  }, [lists, listId, navigate]);
+  }, [lists, listId, navigate, listsLoading, isAuthenticated]);
 
   // ─── viewMode persistence ───
   const { viewMode, setViewMode } = useUserSettings();
@@ -293,15 +309,7 @@ export default function Dashboard() {
 
   const handleSelectList = useCallback(
     (id) => {
-      // ❌ don't clear fullData here; let the old list stay until the new one loads
-      // setFullData({ list: null, categories: [], items: [] });
-
-      if (id) {
-        localStorage.setItem("lastListId", id);
-      } else {
-        localStorage.removeItem("lastListId");
-      }
-
+      if (!id) return; // optional safety
       navigate(`/dashboard/${id}`);
     },
     [navigate]
