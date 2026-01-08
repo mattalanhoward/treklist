@@ -1,5 +1,5 @@
 // src/pages/Dashboard.jsx
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import api from "../services/api";
 import { useParams, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
@@ -143,6 +143,8 @@ export default function Dashboard() {
   // ─── Lists state & fetchLists fn ───
   const [lists, setLists] = useState([]);
   const [listsLoading, setListsLoading] = useState(true);
+  const [fullLoading, setFullLoading] = useState(false);
+  const fullReqIdRef = useRef(0);
   const fetchLists = useCallback(async () => {
     try {
       setListsLoading(true);
@@ -231,33 +233,45 @@ export default function Dashboard() {
   // fetch /api/dashboard/:listId/full
   const fetchFullData = useCallback(async () => {
     if (!listId) return;
+
+    const reqId = ++fullReqIdRef.current;
+    setFullLoading(true);
+
     try {
       const { data } = await api.get(`/dashboard/${listId}/full`);
+
+      // If listId changed while request was in flight, ignore this response
+      if (fullReqIdRef.current !== reqId) return;
+
       setFullData({
         list: data.list,
         categories: data.categories,
         items: data.items,
       });
     } catch (err) {
+      // If listId changed while request was in flight, ignore this error UI
+      if (fullReqIdRef.current !== reqId) return;
+
       console.error("Failed to fetch full data", err);
 
       const status = err?.response?.status;
 
       if (status === 404) {
-        // This list no longer exists (e.g. it was deleted)
         toast.error(t("dashboard.toasts.listGone"));
 
-        // Clear stale lastListId if it was pointing at this deleted list
         const stored = localStorage.getItem("lastListId");
         if (stored === listId) {
           localStorage.removeItem("lastListId");
         }
 
-        // Redirect to a safe dashboard path; the redirect logic will pick a valid list
         navigate("/dashboard", { replace: true });
       } else {
-        // Other errors (network, 500, etc.)
         toast.error(t("dashboard.toasts.loadListFailed"));
+      }
+    } finally {
+      // Only clear loading if this is the latest request
+      if (fullReqIdRef.current === reqId) {
+        setFullLoading(false);
       }
     }
   }, [listId, navigate, t]);
@@ -347,7 +361,15 @@ export default function Dashboard() {
           onRefresh={fetchFullData}
         />
 
-        <main className="flex-1 overflow-hidden">
+        <main className="relative flex-1 overflow-hidden">
+          {activePane === "gear" &&
+            listId &&
+            fullLoading &&
+            fullData.list !== null && (
+              <div className="absolute inset-0 z-50 bg-base-100/40 backdrop-blur-[1px] flex items-center justify-center">
+                <Spinner />
+              </div>
+            )}
           {activePane === "admin" && isAdmin ? (
             <AdminView />
           ) : activePane === "forum" ? (
