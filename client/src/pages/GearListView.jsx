@@ -28,7 +28,9 @@ import { defaultBackgrounds } from "../config/defaultBackgrounds";
 import ShareModal from "../components/ShareModal";
 import MoveItemModal from "../components/MoveItemModal";
 import { useTranslation } from "react-i18next";
-import Spinner from "../components/ui/Spinner";
+import { cldTransformUrl } from "../utils/cloudinary";
+import { downscaleToTargetBytes } from "../utils/imageProcessing";
+import { uploadBackgroundToCloudinary } from "../services/cloudinaryUpload";
 
 export default function GearListView({
   listId,
@@ -65,17 +67,143 @@ export default function GearListView({
   // ⚡️ Optimistic UI for background color
   const [bgColor, setBgColor] = useState(list.backgroundColor || "");
   const [bgImage, setBgImage] = useState(list.backgroundImageUrl || "");
-  const [customBackgrounds, setCustomBackgrounds] = useState([]);
   const [shareOpen, setShareOpen] = useState(false);
   const closeShare = () => setShareOpen(false);
   const [busy, setBusy] = React.useState(false);
   const [moveItemTarget, setMoveItemTarget] = useState(null); // { catId, item }
+  const [bgPreviewUrl, setBgPreviewUrl] = useState("");
+  const [uploadPct, setUploadPct] = useState(0);
+  const [customBgUrl, setCustomBgUrl] = useState(
+    list.customBackground?.url || ""
+  );
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
-  const MAX_CUSTOM_BACKGROUNDS = 7;
+  // Delivery URLs (raw immediately, transformed once confirmed load)
+  const [bgDeliveryUrl, setBgDeliveryUrl] = useState("");
+  const [tileDeliveryUrl, setTileDeliveryUrl] = useState("");
 
-  // ─────────────────────────────────────────────────────────────
-  // Preload dropdown thumbnails so they appear instantly on open
-  // ─────────────────────────────────────────────────────────────
+  // Prevent "stale list prop" from overwriting optimistic background changes.
+  // We keep showing the optimistic value until the server (list prop) catches up.
+  const pendingBgRef = React.useRef({
+    bgColor: null, // string | null (null = no pending)
+    bgImage: null, // string | null
+    customBgUrl: null, // string | null
+  });
+
+  const justUploadedRef = React.useRef(false);
+
+  useEffect(() => {
+    // clear pending state when switching lists
+    pendingBgRef.current = { bgColor: null, bgImage: null, customBgUrl: null };
+    justUploadedRef.current = false;
+  }, [listId]);
+
+  const BG_TRANSFORM = "f_auto,q_auto,w_2000";
+  const THUMB_TRANSFORM = "f_auto,q_auto,w_200,h_200,c_fill";
+
+  const preloadImage = useCallback((src) => {
+    return new Promise((resolve, reject) => {
+      if (!src) return resolve();
+      const img = new Image();
+      img.decoding = "async";
+      img.onload = () => resolve();
+      img.onerror = reject;
+      img.src = src;
+    });
+  }, []);
+
+  const isTransientUrl = (url) =>
+    !url || url.startsWith("blob:") || url.startsWith("data:");
+
+  // Background delivery URL: start with raw, then upgrade to transformed when available.
+  useEffect(() => {
+    let cancelled = false;
+
+    const raw = bgPreviewUrl || bgImage || "";
+    if (!raw) {
+      setBgDeliveryUrl("");
+      return;
+    }
+
+    // Always show raw immediately so we never go blank.
+    setBgDeliveryUrl(raw);
+
+    // Don’t attempt transforms for blob/data previews.
+    if (isTransientUrl(raw)) return;
+
+    if (justUploadedRef.current) return;
+    const transformed = cldTransformUrl(raw, BG_TRANSFORM);
+    if (!transformed || transformed === raw) return;
+
+    const delays = [0, 800, 1800, 3500, 6500]; // retry for ~12s total
+
+    (async () => {
+      for (let i = 0; i < delays.length; i++) {
+        if (cancelled) return;
+        if (delays[i]) await new Promise((r) => setTimeout(r, delays[i]));
+        try {
+          await preloadImage(transformed);
+          if (cancelled) return;
+          setBgDeliveryUrl(transformed);
+          return;
+        } catch {
+          // keep raw; retry a few times
+          if (cancelled) return;
+          setBgDeliveryUrl(raw);
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [bgPreviewUrl, bgImage, preloadImage]);
+
+  // Custom tile delivery URL: start with raw, then upgrade to transformed when available.
+  useEffect(() => {
+    let cancelled = false;
+
+    const raw = bgPreviewUrl || customBgUrl || "";
+    if (!raw) {
+      setTileDeliveryUrl("");
+      return;
+    }
+
+    // Always show raw immediately so tile never goes blank.
+    setTileDeliveryUrl(raw);
+
+    if (isTransientUrl(raw)) return;
+
+    if (justUploadedRef.current) return;
+    const transformed = cldTransformUrl(raw, BG_TRANSFORM);
+    if (!transformed || transformed === raw) return;
+
+    const delays = [0, 800, 1800, 3500, 6500];
+
+    (async () => {
+      for (let i = 0; i < delays.length; i++) {
+        if (cancelled) return;
+        if (delays[i]) await new Promise((r) => setTimeout(r, delays[i]));
+        try {
+          await preloadImage(transformed);
+          if (cancelled) return;
+          setTileDeliveryUrl(transformed);
+          return;
+        } catch {
+          if (cancelled) return;
+          setTileDeliveryUrl(raw);
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [bgPreviewUrl, customBgUrl, preloadImage]);
+
+  const MAX_SIZE = 25 * 1024 * 1024; // 25 MB
+  const navigate = useNavigate();
+
   const preloadBackgroundThumbs = useCallback(() => {
     if (typeof window !== "undefined" && window.__pp_bg_preloaded) return;
     if (typeof window !== "undefined") window.__pp_bg_preloaded = true;
@@ -88,50 +216,36 @@ export default function GearListView({
     } catch {}
   }, []);
 
-  // keep local bgImage in sync with whatever the server says
-  useEffect(() => {
-    setBgImage(list.backgroundImageUrl || "");
-  }, [list.backgroundImageUrl]);
-
-  // keep local bgColor in sync with whatever the server says
-  useEffect(() => {
-    setBgColor(list.backgroundColor || "");
-  }, [list.backgroundColor]);
-
-  // hydrate custom images from the server's history (cross-device)
-  useEffect(() => {
-    const history = Array.isArray(list.backgroundImageHistory)
-      ? list.backgroundImageHistory
-      : [];
-
-    const nonDefault = history.filter(
-      (url) =>
-        typeof url === "string" &&
-        url.trim().length > 0 &&
-        !defaultBackgrounds.some((bg) => bg.url === url)
-    );
-
-    // Dedupe while preserving order
-    const deduped = [];
-    for (const url of nonDefault) {
-      if (!deduped.includes(url)) deduped.push(url);
-    }
-
-    setCustomBackgrounds(deduped.slice(0, MAX_CUSTOM_BACKGROUNDS));
-  }, [list.backgroundImageHistory]);
-
   useEffect(() => setTitleText(list.title), [list.title]);
 
-  // Kick off preload shortly after mount, so the first open feels instant
+  // keep local bgImage in sync with server (but don't stomp during upload)
   useEffect(() => {
-    preloadBackgroundThumbs();
-  }, [preloadBackgroundThumbs]);
+    const serverUrl = list.backgroundImageUrl || "";
+    const pending = pendingBgRef.current.bgImage;
+    if (pending != null && serverUrl !== pending) return; // ignore stale props
+    if (pending != null && serverUrl === pending)
+      pendingBgRef.current.bgImage = null;
+    setBgImage(serverUrl);
+  }, [list.backgroundImageUrl, isUploading]);
 
-  // For delete‐list confirmation:
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  useEffect(() => {
+    const serverColor = list.backgroundColor || "";
+    const pending = pendingBgRef.current.bgColor;
+    if (pending != null && serverColor !== pending) return;
+    if (pending != null && serverColor === pending)
+      pendingBgRef.current.bgColor = null;
+    setBgColor(serverColor);
+  }, [list.backgroundColor]);
 
-  const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
-  const navigate = useNavigate();
+  useEffect(() => {
+    if (isUploading) return;
+    const serverCustom = list.customBackground?.url || "";
+    const pending = pendingBgRef.current.customBgUrl;
+    if (pending != null && serverCustom !== pending) return;
+    if (pending != null && serverCustom === pending)
+      pendingBgRef.current.customBgUrl = null;
+    setCustomBgUrl(serverCustom);
+  }, [list.customBackground?.url, isUploading]);
 
   // NEW: auto-group every time `items` changes
   useEffect(() => {
@@ -758,73 +872,148 @@ export default function GearListView({
 
   const handleImageUpload = async (e) => {
     e.stopPropagation();
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
 
     if (file.size > MAX_SIZE) {
       toast.error(t("gearList.toasts.imageTooLargeUnder5MB"));
+      e.target.value = "";
       return;
     }
-    const fd = new FormData();
-    fd.append("image", file);
+
+    // 1) Instant preview (no waiting)
+    const preview = URL.createObjectURL(file);
+    setBgPreviewUrl(preview);
 
     setIsUploading(true);
+    setUploadPct(0);
+
     try {
-      await api.patch(`/dashboard/${listId}/preferences/image`, fd);
-      toast.success(t("gearList.toasts.backgroundImageUpdated"));
-      await onRefresh();
+      // 2) Downscale/compress on client (big performance win)
+      const { blob, mime } = await downscaleToTargetBytes(file, {
+        maxSize: 3000,
+        quality: 0.78,
+        maxBytes: 1_500_000,
+      });
+
+      console.log("bg upload bytes", {
+        original: file.size,
+        processed: blob.size,
+        ratio: (blob.size / file.size).toFixed(2),
+      });
+
+      const ext = mime === "image/webp" ? "webp" : "jpg";
+      const filename = `bg-${Date.now()}.${ext}`;
+
+      // 3) Direct upload to Cloudinary
+      const { secureUrl, publicId } = await uploadBackgroundToCloudinary({
+        blob,
+        filename,
+        onProgress: setUploadPct,
+      });
+
+      // 4) Persist to your DB (this is what you were stuck on)
+      const { data } = await api.patch(
+        `/dashboard/${listId}/preferences/image-direct`,
+        { imageUrl: secureUrl, publicId }
+      );
+
+      // 5) Preload the transformed delivery URL so swap is smooth
+      // Otherwise you get a blank frame while the remote image decodes.
+      await preloadImage(secureUrl).catch(() => {});
+
+      // 6) Swap from preview → Cloudinary URL, clear preview
+      pendingBgRef.current.bgColor = ""; // we're clearing color
+      pendingBgRef.current.bgImage = secureUrl; // optimistic background image
+      pendingBgRef.current.customBgUrl = secureUrl; // optimistic custom tile
+      setBgColor(""); // avoid any flash/overlay conflicts
+      setBgImage(secureUrl);
+      setCustomBgUrl(secureUrl);
+      setBgPreviewUrl(""); // stop using blob preview once saved
+      setUploadPct(100);
+      justUploadedRef.current = true;
+      await onRefresh?.();
     } catch (err) {
-      if (err.response?.status === 413) {
-        toast.error(t("gearList.toasts.imageTooLargeExplicit"));
-      } else {
-        toast.error(err.message || t("gearList.toasts.imageUploadFailed"));
-      }
+      console.error("Background upload failed:", err);
+      toast.error(err.message || t("gearList.toasts.imageUploadFailed"));
+
+      // Roll back preview on failure
+      pendingBgRef.current = {
+        bgColor: null,
+        bgImage: null,
+        customBgUrl: null,
+      };
+      setBgPreviewUrl("");
     } finally {
       setIsUploading(false);
+
+      // clean up preview object URL
+      try {
+        URL.revokeObjectURL(preview);
+      } catch {}
+
+      // allow selecting the same file again
+      if (e?.target) e.target.value = "";
     }
   };
 
   const handleColorSelect = async (color) => {
-    // 1️⃣ stash old value
-    const previous = bgColor;
+    const prevColor = bgColor;
+    const prevImage = bgImage;
 
-    // 2️⃣ flip it immediately
+    // ✅ instant UI
+    pendingBgRef.current.bgColor = color;
+    pendingBgRef.current.bgImage = ""; // we're clearing the image
+    setBgPreviewUrl("");
+    setBgImage(""); // IMPORTANT: clear active image immediately
     setBgColor(color);
 
     try {
-      // 3️⃣ send to server
       await api.patch(`/dashboard/${listId}/preferences`, {
         backgroundColor: color,
       });
-      // toast.success("Background updated");
-      // 4️⃣ optional full re‑sync
-      onRefresh();
+      onRefresh?.();
     } catch (err) {
-      // 5️⃣ revert on failure
-      setBgColor(previous);
+      // rollback
+      pendingBgRef.current = {
+        bgColor: null,
+        bgImage: null,
+        customBgUrl: null,
+      };
+      setBgColor(prevColor);
+      setBgImage(prevImage);
       toast.error(err.message || t("gearList.toasts.backgroundUpdateFailed"));
     }
   };
 
   // user picks one of the background images (default or custom)
   const handleBackgroundSelect = async (url) => {
-    // 1️⃣ Keep the old value so we can roll back on failure
+    setBgPreviewUrl("");
     const previousImage = bgImage;
+    const previousColor = bgColor;
 
-    // 2️⃣ Optimistically update the UI
+    // ✅ instant UI
+    pendingBgRef.current.bgColor = "";
+    pendingBgRef.current.bgImage = url;
+    setBgColor(""); // prevents flash
     setBgImage(url);
 
+    // best-effort preload (don't block UI)
+    preloadImage(cldTransformUrl(url, BG_TRANSFORM)).catch(() => {});
+
     try {
-      // 3️⃣ Send the change to the server
       await api.patch(`/dashboard/${listId}/preferences`, {
         backgroundImageUrl: url,
       });
-      // toast.success("Background updated");
-      // 4️⃣ (Optional) re‑fetch any other updated data
-      onRefresh();
+      onRefresh?.();
     } catch (error) {
-      // 5️⃣ Roll back if something goes wrong
+      pendingBgRef.current = {
+        bgColor: null,
+        bgImage: null,
+        customBgUrl: null,
+      };
       setBgImage(previousImage);
+      setBgColor(previousColor);
       toast.error(error.message || t("gearList.toasts.backgroundUpdateFailed"));
     }
   };
@@ -866,9 +1055,13 @@ export default function GearListView({
   // Gradient overlay definition
   const overlay = "linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3))";
 
-  // Dynamic style based on list prefs, with gradient on top of color
-  const effectiveBgImage = bgImage || list.backgroundImageUrl || "";
-  const effectiveBgColor = bgColor || list.backgroundColor || "";
+  const effectiveBgImageRaw = bgPreviewUrl || bgImage || "";
+  const effectiveBgImage = bgDeliveryUrl || effectiveBgImageRaw;
+  const effectiveBgColor = bgColor || "";
+
+  const tileSrc = bgPreviewUrl || customBgUrl;
+  const tileBg = tileDeliveryUrl || tileSrc;
+  const canSelectCustom = !!customBgUrl && !isUploading;
 
   const bgstyle = effectiveBgImage
     ? {
@@ -894,12 +1087,6 @@ export default function GearListView({
 
   return (
     <div style={bgstyle} className="flex flex-col h-full overflow-hidden">
-      {/* 1) full-page spinner overlay */}
-      {isUploading && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <Spinner tone="white" />{" "}
-        </div>
-      )}
       <div className="w-full bg-base-100 bg-opacity-80">
         <div
           className={[
@@ -973,31 +1160,48 @@ export default function GearListView({
                       {t("gearList.menu.background")}{" "}
                     </div>
 
-                    {/* My images + upload tile */}
+                    {/* Current image + upload tile */}
                     <p className="text-sm text-primary/80 mb-1">
-                      {t("gearList.menu.myImages")}
+                      {t("gearList.menu.customImage")}
                     </p>
+                    {isUploading && (
+                      <p className="text-xs text-primary/70 mt-1">
+                        Uploading… {uploadPct}%
+                      </p>
+                    )}
                     <div className="grid grid-cols-4 gap-2 mt-1 mx-auto w-full max-w-xs">
-                      {customBackgrounds.map((url) => (
+                      {tileSrc && (
                         <button
-                          key={url}
-                          onClick={() => handleBackgroundSelect(url)}
+                          type="button"
+                          onClick={() => {
+                            if (!canSelectCustom) return;
+                            handleBackgroundSelect(customBgUrl);
+                          }}
+                          disabled={!canSelectCustom}
                           className={
                             `w-10 h-10 bg-cover bg-center rounded ` +
-                            (bgImage === url
+                            (bgImage === customBgUrl
                               ? "ring-2 ring-secondary"
-                              : "ring-1 ring-transparent hover:ring-gray-300")
+                              : "ring-1 ring-transparent hover:ring-gray-300") +
+                            (!canSelectCustom
+                              ? " opacity-60 cursor-not-allowed"
+                              : "")
                           }
-                          style={{ backgroundImage: `url(${url})` }}
+                          style={{
+                            backgroundImage: `url(${tileBg})`,
+                          }}
+                          title={
+                            customBgUrl
+                              ? "My uploaded background"
+                              : "Uploading..."
+                          }
                         />
-                      ))}
+                      )}
 
-                      {/* Upload tile */}
                       <label
                         className={
                           `w-10 h-10 rounded border border-dashed border-primary/60
-             flex items-center justify-center text-primary/60 text-xl
-             cursor-pointer ` +
+     flex items-center justify-center text-primary/60 text-xl cursor-pointer ` +
                           (isUploading ? "opacity-50 cursor-not-allowed" : "")
                         }
                       >
@@ -1027,7 +1231,12 @@ export default function GearListView({
                               ? "ring-2 ring-secondary"
                               : "ring-1 ring-transparent hover:ring-gray-300")
                           }
-                          style={{ backgroundImage: `url(${url})` }}
+                          style={{
+                            backgroundImage: `url(${cldTransformUrl(
+                              url,
+                              THUMB_TRANSFORM
+                            )})`,
+                          }}
                         />
                       ))}
                     </div>

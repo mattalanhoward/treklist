@@ -7,6 +7,7 @@ const Item = require("../models/gearItem");
 const Category = require("../models/category");
 const Share = require("../models/ShareToken");
 const GlobalItem = require("../models/globalItem");
+const cloudinary = require("../config/cloudinary");
 const { v4: uuidv4 } = require("uuid");
 const upload = require("../middleware/upload");
 const {
@@ -194,27 +195,19 @@ router.patch("/:listId/preferences", async (req, res, next) => {
     const { listId } = req.params;
     const { backgroundColor, backgroundImageUrl } = req.body;
 
-    const list = await GearList.findOne({
-      _id: listId,
-      owner: req.userId,
-    });
+    const list = await GearList.findOne({ _id: listId, owner: req.userId });
+    if (!list) return res.status(404).json({ message: "List not found" });
 
-    if (!list) {
-      return res.status(404).json({ message: "List not found" });
-    }
-
-    // Color-only update: clear image
+    // Color update: clear ACTIVE image only (do not delete customBackground)
     if (backgroundColor !== undefined) {
       list.backgroundColor = backgroundColor;
       list.backgroundImageUrl = null;
     }
 
-    // Image update (default or previously uploaded)
+    // Image update (default OR custom): set ACTIVE image only
     if (backgroundImageUrl) {
       list.backgroundImageUrl = backgroundImageUrl;
       list.backgroundColor = null;
-      // ⛔️ Do NOT touch backgroundImageHistory here.
-      // We only track user uploads in /preferences/image.
     }
 
     await list.save();
@@ -224,7 +217,7 @@ router.patch("/:listId/preferences", async (req, res, next) => {
         _id: list._id,
         backgroundColor: list.backgroundColor,
         backgroundImageUrl: list.backgroundImageUrl,
-        backgroundImageHistory: list.backgroundImageHistory,
+        customBackground: list.customBackground,
       },
     });
   } catch (err) {
@@ -232,55 +225,46 @@ router.patch("/:listId/preferences", async (req, res, next) => {
   }
 });
 
-// PATCH /api/dashboard/:listId/preferences/image
-router.patch(
-  "/:listId/preferences/image",
-  upload.single("image"),
-  async (req, res, next) => {
-    try {
-      if (!req.file) {
-        return res.status(400).json({ message: "No file uploaded" });
-      }
+router.patch("/:listId/preferences/image-direct", async (req, res, next) => {
+  try {
+    const { listId } = req.params;
+    const { imageUrl, publicId } = req.body;
 
-      const { listId } = req.params;
-      const imageUrl = req.file.path; // from Cloudinary / storage
-
-      const list = await GearList.findOne({
-        _id: listId,
-        owner: req.userId,
-      });
-
-      if (!list) {
-        return res.status(404).json({ message: "List not found" });
-      }
-
-      list.backgroundImageUrl = imageUrl;
-      list.backgroundColor = null;
-
-      const MAX_HISTORY = 7;
-      const history = Array.isArray(list.backgroundImageHistory)
-        ? list.backgroundImageHistory
-        : [];
-
-      if (!history.includes(imageUrl)) {
-        const next = [...history, imageUrl];
-        list.backgroundImageHistory =
-          next.length > MAX_HISTORY
-            ? next.slice(next.length - MAX_HISTORY)
-            : next;
-      }
-
-      await list.save();
-
-      return res.json({
-        imageUrl,
-        backgroundImageHistory: list.backgroundImageHistory,
-      });
-    } catch (err) {
-      next(err);
+    if (!imageUrl || typeof imageUrl !== "string") {
+      return res.status(400).json({ message: "imageUrl is required" });
     }
+
+    const list = await GearList.findOne({ _id: listId, owner: req.userId });
+    if (!list) return res.status(404).json({ message: "List not found" });
+
+    const oldPublicId = list.customBackground?.publicId || null;
+
+    // Set ACTIVE background
+    list.backgroundImageUrl = imageUrl;
+    list.backgroundColor = null;
+
+    // Set SAVED custom background tile
+    list.customBackground = {
+      url: imageUrl,
+      publicId: publicId || null,
+      updatedAt: new Date(),
+    };
+
+    await list.save();
+
+    // Best-effort delete old custom asset (only if it exists and differs)
+    if (oldPublicId && oldPublicId !== publicId) {
+      cloudinary.uploader.destroy(oldPublicId).catch(() => {});
+    }
+
+    return res.json({
+      imageUrl: list.backgroundImageUrl,
+      customBackground: list.customBackground,
+    });
+  } catch (err) {
+    next(err);
   }
-);
+});
 
 // POST /api/dashboard/sample-list
 // Create (or reuse) a sample gear list for the current user.

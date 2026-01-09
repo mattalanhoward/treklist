@@ -334,6 +334,9 @@ export default function Dashboard() {
     return null;
   }
 
+  const isSwitchingLists =
+    fullLoading && fullData.list?._id && fullData.list._id !== listId;
+
   return (
     <div className="flex flex-col h-d-screen overflow-hidden bg-neutral/50 text-primary">
       <TopBar
@@ -362,14 +365,11 @@ export default function Dashboard() {
         />
 
         <main className="relative flex-1 overflow-hidden">
-          {activePane === "gear" &&
-            listId &&
-            fullLoading &&
-            fullData.list !== null && (
-              <div className="absolute inset-0 z-50 bg-base-100/40 backdrop-blur-[1px] flex items-center justify-center">
-                <Spinner />
-              </div>
-            )}
+          {activePane === "gear" && listId && isSwitchingLists && (
+            <div className="absolute inset-0 z-50 bg-base-100/40 backdrop-blur-[1px] flex items-center justify-center">
+              <Spinner />
+            </div>
+          )}
           {activePane === "admin" && isAdmin ? (
             <AdminView />
           ) : activePane === "forum" ? (
