@@ -31,6 +31,7 @@ import { useTranslation } from "react-i18next";
 import { cldTransformUrl } from "../utils/cloudinary";
 import { downscaleToTargetBytes } from "../utils/imageProcessing";
 import { uploadBackgroundToCloudinary } from "../services/cloudinaryUpload";
+import Spinner from "../components/ui/Spinner";
 
 export default function GearListView({
   listId,
@@ -91,6 +92,7 @@ export default function GearListView({
 
   const [moveItemTarget, setMoveItemTarget] = useState(null); // { catId, item }
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [isDeletingList, setIsDeletingList] = useState(false);
 
   // Prevent "stale list prop" from overwriting optimistic background changes.
   // We keep showing the optimistic value until the server (list prop) catches up.
@@ -955,6 +957,9 @@ export default function GearListView({
       // toast.success(t("gearList.toasts.listDeleted"));
     } catch (err) {
       toast.error(err.message || t("gearList.toasts.listDeleteFailed"));
+    } finally {
+      setIsDeletingList(false);
+      setConfirmDeleteOpen(false);
     }
   };
 
@@ -991,7 +996,10 @@ export default function GearListView({
       : "pl-0 sm:pl-6";
 
   return (
-    <div style={bgstyle} className="flex flex-col h-full overflow-hidden">
+    <div
+      style={bgstyle}
+      className="relative flex flex-col h-full overflow-hidden"
+    >
       <div className="w-full bg-base-100 bg-opacity-80">
         <div
           className={[
@@ -999,6 +1007,16 @@ export default function GearListView({
             headerPadding,
           ].join(" ")}
         >
+          {isDeletingList && (
+            <div className="absolute inset-0 z-50 bg-black/40 cursor-wait">
+              <Spinner
+                centered
+                tone="white"
+                size="lg"
+                label={t("gearList.deletingListLabel") || "Deleting list…"}
+              />
+            </div>
+          )}
           {/* Title + stats, inline-editable */}
           <div className="flex-1 flex items-center justify-center space-x-8 sm:flex-none sm:justify-start">
             {isEditingTitle ? (
