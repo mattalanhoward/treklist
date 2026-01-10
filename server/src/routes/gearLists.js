@@ -7,6 +7,7 @@ const Item = require("../models/gearItem");
 const Category = require("../models/category");
 const Share = require("../models/ShareToken");
 const GlobalItem = require("../models/globalItem");
+const cloudinary = require("../config/cloudinary");
 const { v4: uuidv4 } = require("uuid");
 const upload = require("../middleware/upload");
 const {
@@ -15,16 +16,6 @@ const {
 } = require("../utils/share");
 
 const router = express.Router();
-
-/**
- * Public route: resolve a share token back to its listId
- * GET /api/dashboard/share/:token
- */
-router.get("/share/:token", async (req, res) => {
-  const share = await Share.findOne({ token: req.params.token });
-  if (!share) return res.status(404).json({ error: "Invalid token" });
-  res.json({ listId: share.list.toString() });
-});
 
 // All routes below here require auth
 router.use(auth);
@@ -194,27 +185,19 @@ router.patch("/:listId/preferences", async (req, res, next) => {
     const { listId } = req.params;
     const { backgroundColor, backgroundImageUrl } = req.body;
 
-    const list = await GearList.findOne({
-      _id: listId,
-      owner: req.userId,
-    });
+    const list = await GearList.findOne({ _id: listId, owner: req.userId });
+    if (!list) return res.status(404).json({ message: "List not found" });
 
-    if (!list) {
-      return res.status(404).json({ message: "List not found" });
-    }
-
-    // Color-only update: clear image
+    // Color update: clear ACTIVE image only (do not delete customBackground)
     if (backgroundColor !== undefined) {
       list.backgroundColor = backgroundColor;
       list.backgroundImageUrl = null;
     }
 
-    // Image update (default or previously uploaded)
+    // Image update (default OR custom): set ACTIVE image only
     if (backgroundImageUrl) {
       list.backgroundImageUrl = backgroundImageUrl;
       list.backgroundColor = null;
-      // ⛔️ Do NOT touch backgroundImageHistory here.
-      // We only track user uploads in /preferences/image.
     }
 
     await list.save();
@@ -224,7 +207,7 @@ router.patch("/:listId/preferences", async (req, res, next) => {
         _id: list._id,
         backgroundColor: list.backgroundColor,
         backgroundImageUrl: list.backgroundImageUrl,
-        backgroundImageHistory: list.backgroundImageHistory,
+        customBackground: list.customBackground,
       },
     });
   } catch (err) {
@@ -232,55 +215,46 @@ router.patch("/:listId/preferences", async (req, res, next) => {
   }
 });
 
-// PATCH /api/dashboard/:listId/preferences/image
-router.patch(
-  "/:listId/preferences/image",
-  upload.single("image"),
-  async (req, res, next) => {
-    try {
-      if (!req.file) {
-        return res.status(400).json({ message: "No file uploaded" });
-      }
+router.patch("/:listId/preferences/image-direct", async (req, res, next) => {
+  try {
+    const { listId } = req.params;
+    const { imageUrl, publicId } = req.body;
 
-      const { listId } = req.params;
-      const imageUrl = req.file.path; // from Cloudinary / storage
-
-      const list = await GearList.findOne({
-        _id: listId,
-        owner: req.userId,
-      });
-
-      if (!list) {
-        return res.status(404).json({ message: "List not found" });
-      }
-
-      list.backgroundImageUrl = imageUrl;
-      list.backgroundColor = null;
-
-      const MAX_HISTORY = 7;
-      const history = Array.isArray(list.backgroundImageHistory)
-        ? list.backgroundImageHistory
-        : [];
-
-      if (!history.includes(imageUrl)) {
-        const next = [...history, imageUrl];
-        list.backgroundImageHistory =
-          next.length > MAX_HISTORY
-            ? next.slice(next.length - MAX_HISTORY)
-            : next;
-      }
-
-      await list.save();
-
-      return res.json({
-        imageUrl,
-        backgroundImageHistory: list.backgroundImageHistory,
-      });
-    } catch (err) {
-      next(err);
+    if (!imageUrl || typeof imageUrl !== "string") {
+      return res.status(400).json({ message: "imageUrl is required" });
     }
+
+    const list = await GearList.findOne({ _id: listId, owner: req.userId });
+    if (!list) return res.status(404).json({ message: "List not found" });
+
+    const oldPublicId = list.customBackground?.publicId || null;
+
+    // Set ACTIVE background
+    list.backgroundImageUrl = imageUrl;
+    list.backgroundColor = null;
+
+    // Set SAVED custom background tile
+    list.customBackground = {
+      url: imageUrl,
+      publicId: publicId || null,
+      updatedAt: new Date(),
+    };
+
+    await list.save();
+
+    // Best-effort delete old custom asset (only if it exists and differs)
+    if (oldPublicId && oldPublicId !== publicId) {
+      cloudinary.uploader.destroy(oldPublicId).catch(() => {});
+    }
+
+    return res.json({
+      imageUrl: list.backgroundImageUrl,
+      customBackground: list.customBackground,
+    });
+  } catch (err) {
+    next(err);
   }
-);
+});
 
 // POST /api/dashboard/sample-list
 // Create (or reuse) a sample gear list for the current user.
@@ -456,36 +430,64 @@ router.post("/sample-list", async (req, res) => {
 // POST /api/dashboard/:listId/copy
 router.post("/:listId/copy", async (req, res) => {
   try {
-    // 1) Find original list
+    const { listId } = req.params;
+
+    // 1) Find original list (lean to avoid mongoose doc overhead)
     const orig = await GearList.findOne({
-      _id: req.params.listId,
+      _id: listId,
       owner: req.userId,
-    });
+    }).lean();
+
     if (!orig) return res.status(404).json({ error: "List not found" });
 
-    // 2) Clone the GearList document (new title + same region)
+    // 2) Create the new list
     const copy = await GearList.create({
       owner: req.userId,
       title: `Copy of ${orig.title}`,
       region: orig.region || null,
+      // If you want to copy these too, uncomment:
+      // backgroundColor: orig.backgroundColor || "",
+      // backgroundImageUrl: orig.backgroundImageUrl || "",
+      // customBackground: orig.customBackground || undefined,
+      // backgroundImageHistory: orig.backgroundImageHistory || [],
     });
 
-    // 3) Clone categories + items
-    const cats = await Category.find({ gearList: orig._id });
-    for (const c of cats) {
-      const newCat = await Category.create({
-        gearList: copy._id,
-        title: c.title,
-        position: c.position,
-      });
-      const its = await Item.find({ gearList: orig._id, category: c._id });
-      for (const i of its) {
-        await Item.create({
-          // REQUIRED fields from the original:
+    // 3) Read all categories once
+    const cats = await Category.find({ gearList: orig._id })
+      .sort({ position: 1 })
+      .lean();
+
+    // 4) Bulk insert categories for the new list
+    const newCatDocs = cats.map((c) => ({
+      gearList: copy._id,
+      title: c.title,
+      position: c.position,
+    }));
+
+    const insertedCats = newCatDocs.length
+      ? await Category.insertMany(newCatDocs)
+      : [];
+
+    // 5) Map oldCatId -> newCatId (insertMany preserves input order)
+    const catIdMap = new Map();
+    for (let i = 0; i < cats.length; i++) {
+      catIdMap.set(String(cats[i]._id), insertedCats[i]._id);
+    }
+
+    // 6) Read all items once (no per-category query)
+    const items = await Item.find({ gearList: orig._id }).lean();
+
+    // 7) Bulk insert items for the new list
+    const newItemDocs = items
+      .map((i) => {
+        const newCatId = catIdMap.get(String(i.category));
+        if (!newCatId) return null; // safety guard if orphaned item
+
+        return {
           globalItem: i.globalItem,
           name: i.name,
           gearList: copy._id,
-          category: newCat._id,
+          category: newCatId,
           brand: i.brand,
           itemType: i.itemType,
           description: i.description,
@@ -495,8 +497,12 @@ router.post("/:listId/copy", async (req, res) => {
           consumable: i.consumable,
           quantity: i.quantity,
           position: i.position,
-        });
-      }
+        };
+      })
+      .filter(Boolean);
+
+    if (newItemDocs.length) {
+      await Item.insertMany(newItemDocs);
     }
 
     return res.json({ list: copy });

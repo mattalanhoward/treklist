@@ -107,6 +107,7 @@ app.use(
 );
 
 app.use("/api/catalog", require("./routes/catalog"));
+app.use("/api/uploads", require("./routes/uploads"));
 
 // Central error handler
 app.use((err, req, res, next) => {

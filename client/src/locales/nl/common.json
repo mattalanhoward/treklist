@@ -228,7 +228,7 @@
       "listOptionsA11y": "Lijstopties",
       "headerPreferences": "Lijstinstellingen",
       "background": "Achtergrond",
-      "myImages": "Mijn afbeeldingen",
+      "customImage": "Aangepaste afbeelding",
       "defaultImages": "Standaardafbeeldingen",
       "colors": "Kleuren",
       "viewEditDetails": "Details bekijken/bewerken",
@@ -271,7 +271,7 @@
 
       "backgroundUpdateFailed": "Achtergrond kon niet worden bijgewerkt.",
       "backgroundImageUpdated": "Achtergrondafbeelding bijgewerkt.",
-      "imageTooLargeUnder5MB": "Afbeelding moet kleiner zijn dan 5 MB.",
+      "imageTooLarge": "Afbeelding moet kleiner zijn dan 25 MB.",
       "imageTooLargeExplicit": "Afbeelding is te groot. Upload een bestand kleiner dan 5 MB.",
       "imageUploadFailed": "Afbeelding uploaden mislukt.",
 

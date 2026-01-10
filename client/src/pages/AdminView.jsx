@@ -24,6 +24,7 @@ const NETWORK_OPTIONS = [
   { value: "amazon", label: "Amazon" },
   { value: "awin", label: "Awin" },
   { value: "impact", label: "Impact" },
+  { value: "direct", label: "Direct / Brand (no network)" },
 ];
 
 const REGION_OPTIONS = [

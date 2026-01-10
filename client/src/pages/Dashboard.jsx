@@ -1,5 +1,5 @@
 // src/pages/Dashboard.jsx
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import api from "../services/api";
 import { useParams, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
@@ -12,11 +12,23 @@ import WishlistView from "../pages/WishlistView";
 import { toast } from "react-hot-toast";
 import { useUserSettings } from "../contexts/UserSettings";
 import { useTranslation } from "react-i18next";
+import Spinner from "../components/ui/Spinner";
 
-function DashboardEmptyState({ hasLists, onCreateSampleList, creatingSample }) {
+function DashboardEmptyState({
+  hasLists,
+  listsLoading,
+  onCreateSampleList,
+  creatingSample,
+}) {
   const { t } = useTranslation("common");
-  // If we DO have lists but no listId, the redirect effect is about to run.
-  // Show a simple loading message instead of the full welcome card.
+  // While lists are loading (or we already have lists and redirect is about to run),
+  // don’t flash the welcome/empty state.
+  if (listsLoading) {
+    return <Spinner centered label={t("dashboard.loadingLists")} />;
+  }
+
+  // If we have lists and we're not loading, the redirect effect should
+  // immediately navigate. But if something goes wrong, don't trap them on a spinner.
   if (hasLists) {
     return (
       <div className="h-full flex items-center justify-center text-primary text-sm">
@@ -130,13 +142,19 @@ export default function Dashboard() {
 
   // ─── Lists state & fetchLists fn ───
   const [lists, setLists] = useState([]);
+  const [listsLoading, setListsLoading] = useState(true);
+  const [fullLoading, setFullLoading] = useState(false);
+  const fullReqIdRef = useRef(0);
   const fetchLists = useCallback(async () => {
     try {
+      setListsLoading(true);
       const { data } = await api.get("/dashboard");
       setLists(data);
     } catch (err) {
       console.error("Failed to fetch lists", err);
       toast.error(t("dashboard.toasts.loadListsFailed"));
+    } finally {
+      setListsLoading(false);
     }
   }, [t]);
 
@@ -180,27 +198,34 @@ export default function Dashboard() {
 
   // load lists on mount
   useEffect(() => {
+    if (!isAuthenticated) return;
     fetchLists();
-  }, [fetchLists]);
+  }, [fetchLists, isAuthenticated]);
+
+  useEffect(() => {
+    if (!listId) return;
+    localStorage.setItem("lastListId", listId);
+  }, [listId]);
 
   // ─── Redirect logic ───
   useEffect(() => {
+    if (!isAuthenticated) return;
+    if (listsLoading) return;
     if (listId) return;
-    // if there are no lists at all, stay on the "root" path (no listId)
     if (lists.length === 0) return;
 
     const ids = lists.map((l) => l._id);
-
-    // 2) try lastListId from localStorage
     const stored = localStorage.getItem("lastListId");
+
+    console.log("[dashboard redirect]", { stored, ids });
+
     if (stored && ids.includes(stored)) {
       navigate(`/dashboard/${stored}`, { replace: true });
       return;
     }
 
-    // 3) fallback to first list
     navigate(`/dashboard/${ids[0]}`, { replace: true });
-  }, [lists, listId, navigate]);
+  }, [lists, listId, navigate, listsLoading, isAuthenticated]);
 
   // ─── viewMode persistence ───
   const { viewMode, setViewMode } = useUserSettings();
@@ -208,33 +233,45 @@ export default function Dashboard() {
   // fetch /api/dashboard/:listId/full
   const fetchFullData = useCallback(async () => {
     if (!listId) return;
+
+    const reqId = ++fullReqIdRef.current;
+    setFullLoading(true);
+
     try {
       const { data } = await api.get(`/dashboard/${listId}/full`);
+
+      // If listId changed while request was in flight, ignore this response
+      if (fullReqIdRef.current !== reqId) return;
+
       setFullData({
         list: data.list,
         categories: data.categories,
         items: data.items,
       });
     } catch (err) {
+      // If listId changed while request was in flight, ignore this error UI
+      if (fullReqIdRef.current !== reqId) return;
+
       console.error("Failed to fetch full data", err);
 
       const status = err?.response?.status;
 
       if (status === 404) {
-        // This list no longer exists (e.g. it was deleted)
         toast.error(t("dashboard.toasts.listGone"));
 
-        // Clear stale lastListId if it was pointing at this deleted list
         const stored = localStorage.getItem("lastListId");
         if (stored === listId) {
           localStorage.removeItem("lastListId");
         }
 
-        // Redirect to a safe dashboard path; the redirect logic will pick a valid list
         navigate("/dashboard", { replace: true });
       } else {
-        // Other errors (network, 500, etc.)
         toast.error(t("dashboard.toasts.loadListFailed"));
+      }
+    } finally {
+      // Only clear loading if this is the latest request
+      if (fullReqIdRef.current === reqId) {
+        setFullLoading(false);
       }
     }
   }, [listId, navigate, t]);
@@ -264,8 +301,9 @@ export default function Dashboard() {
 
   // load on mount—and whenever listId changes
   useEffect(() => {
+    if (!isAuthenticated) return;
     fetchFullData();
-  }, [fetchFullData, listId]);
+  }, [fetchFullData, listId, isAuthenticated]);
 
   // const handleSelectList = useCallback(
   //   (id) => {
@@ -285,15 +323,7 @@ export default function Dashboard() {
 
   const handleSelectList = useCallback(
     (id) => {
-      // ❌ don't clear fullData here; let the old list stay until the new one loads
-      // setFullData({ list: null, categories: [], items: [] });
-
-      if (id) {
-        localStorage.setItem("lastListId", id);
-      } else {
-        localStorage.removeItem("lastListId");
-      }
-
+      if (!id) return; // optional safety
       navigate(`/dashboard/${id}`);
     },
     [navigate]
@@ -303,6 +333,9 @@ export default function Dashboard() {
   if (!isAuthenticated) {
     return null;
   }
+
+  const isSwitchingLists =
+    fullLoading && fullData.list?._id && fullData.list._id !== listId;
 
   return (
     <div className="flex flex-col h-d-screen overflow-hidden bg-neutral/50 text-primary">
@@ -331,7 +364,12 @@ export default function Dashboard() {
           onRefresh={fetchFullData}
         />
 
-        <main className="flex-1 overflow-hidden">
+        <main className="relative flex-1 overflow-hidden">
+          {activePane === "gear" && listId && isSwitchingLists && (
+            <div className="absolute inset-0 z-50 bg-base-100/40 backdrop-blur-[1px] flex items-center justify-center">
+              <Spinner />
+            </div>
+          )}
           {activePane === "admin" && isAdmin ? (
             <AdminView />
           ) : activePane === "forum" ? (
@@ -340,9 +378,7 @@ export default function Dashboard() {
             <WishlistView />
           ) : listId ? (
             fullData.list === null ? (
-              <div className="h-full flex items-center justify-center text-primary text-sm">
-                {t("dashboard.loadingLists")}
-              </div>
+              <Spinner centered label={t("dashboard.loadingLists")} />
             ) : (
               <GearListView
                 listId={listId}
@@ -359,6 +395,7 @@ export default function Dashboard() {
           ) : (
             <DashboardEmptyState
               hasLists={lists.length > 0}
+              listsLoading={listsLoading}
               onCreateSampleList={handleCreateSampleList}
               creatingSample={creatingSample}
             />

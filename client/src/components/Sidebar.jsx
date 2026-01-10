@@ -89,13 +89,6 @@ export default function Sidebar({
     fetchGlobalItems(debouncedSearch);
   }, [debouncedSearch]);
 
-  // ─── Auto‐select first list if none is selected ───
-  useEffect(() => {
-    if (!currentListId && lists.length > 0) {
-      onSelectList(lists[0]._id);
-    }
-  }, [lists, currentListId, onSelectList]);
-
   // === Gear‐list CRUD ===
 
   const createList = async () => {
@@ -219,9 +212,7 @@ export default function Sidebar({
         <button
           onClick={() => setCollapsed((c) => !c)}
           className={
-            // top offset is ALWAYS 0.3rem mobile / 0.4rem desktop
-            `absolute top-[0.3rem] sm:top-[0.4rem] text-primaryAlt hover:text-primaryAlt/80 p-1 transform ` +
-            // only right/translate changes when collapsed vs open
+            `absolute z-50 top-[0.3rem] sm:top-[0.4rem] text-primaryAlt hover:text-primaryAlt/80 p-1 transform ` +
             (collapsed ? "right-[-1rem] translate-x-full" : "right-4")
           }
         >
@@ -308,13 +299,6 @@ export default function Sidebar({
                             // 2) if on mobile, collapse sidebar
                             if (isMobile()) {
                               setCollapsed(true);
-                            }
-
-                            // 3) Persist or clear storage (can actually be left to Dashboard, but harmless here)
-                            if (l._id) {
-                              localStorage.setItem("lastListId", l._id);
-                            } else {
-                              localStorage.removeItem("lastListId");
                             }
                           }}
                           className={`flex-1 text-left py-1 px-2 rounded-lg whitespace-nowrap overflow-hidden truncate ${

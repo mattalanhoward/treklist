@@ -130,7 +130,8 @@ router.get("/items", auth, async (req, res) => {
     query._id = { $in: offerProductIds };
 
     const items = await CatalogItem.find(query)
-      .sort({ updatedAt: -1 })
+      .collation({ locale: "en", strength: 2 })
+      .sort({ brand: 1, name: 1 })
       .lean()
       .skip(Number(skip))
       .limit(Math.min(Number(limit), 200))

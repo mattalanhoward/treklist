@@ -11,9 +11,9 @@ export default function usePageTitle(title) {
     if (typeof document === "undefined") return;
 
     if (title) {
-      document.title = `${title} - TrekList.co`;
+      document.title = `${title} - TrekList`;
     } else {
-      document.title = "TrekList.co";
+      document.title = "TrekList";
     }
   }, [title]);
 }

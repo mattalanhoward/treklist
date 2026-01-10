@@ -11,6 +11,7 @@ import { useWeightInput } from "../hooks/useWeightInput";
 import { useUserSettings } from "../contexts/UserSettings";
 import { detectRegion, normalizeRegion } from "../utils/region";
 import CatalogItemPreviewModal from "./CatalogItemPreviewModal";
+import Spinner from "../components/ui/Spinner";
 
 function ImportCatalogTab({ onImported }) {
   const { t } = useTranslation("common");
@@ -313,9 +314,10 @@ function ImportCatalogTab({ onImported }) {
       </div>
 
       {loading && (
-        <div className="text-sm text-primary/70">
-          {t("globalItemModal.importTab.states.loading")}
-        </div>
+        <Spinner
+          centered
+          label={t("globalItemModal.importTab.states.loading")}
+        />
       )}
 
       {error && <div className="text-error text-sm">{error}</div>}
@@ -486,35 +488,6 @@ export default function GlobalItemModal({
     }
     return "";
   };
-
-  // When a product is picked, prefill the visible fields and lock link
-  // function handlePickAffiliate(p) {
-  //   setAffProduct(p);
-  //   setTab("custom");
-  //   setName(p?.name || "");
-  //   setBrand(p?.brand || p?.merchantName || "");
-  //   setDescription(p?.description || "");
-  //   setLink(p?.awDeepLink || "");
-  //   const derived =
-  //     deriveItemTypeFromCategoryPath(p?.categoryPath) ||
-  //     deriveItemTypeFromCategoryPath(p?.category) ||
-  //     deriveItemTypeFromCategoryPath(p?.categories);
-  //   if (derived) setItemType(derived);
-
-  //   // Prefill weight from name/description if present
-  //   const grams = extractWeightGrams(
-  //     [p?.name, p?.description].filter(Boolean).join(" ")
-  //   );
-  //   if (grams != null) {
-  //     if (unitLabel === "g") {
-  //       setDisplayWeight(String(grams));
-  //     } else {
-  //       const oz = Math.round((grams / 28.349523125) * 10) / 10; // 1 decimal
-  //       setDisplayWeight(String(oz));
-  //     }
-  //     setWeightSource("heuristic");
-  //   }
-  // }
 
   const handleSubmit = async (e) => {
     e.preventDefault();

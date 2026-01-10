@@ -2,6 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import logo from "../assets/images/treklist_horizontal.png";
 
 /**
  * Public (logged-out) header used on Landing and legal pages.
@@ -23,7 +24,7 @@ export default function PublicHeader({
 }) {
   const { t } = useTranslation("common");
 
-  const base = "w-full flex items-center justify-between px-6 py-4 z-30";
+  const base = "w-full flex items-center justify-between px-6 py-2 z-30";
 
   const variantClasses =
     variant === "overlay"
@@ -37,7 +38,7 @@ export default function PublicHeader({
         to="/"
         className="text-2xl text-white font-semibold tracking-tight hover:underline"
       >
-        TrekList.co
+        <img src={logo} alt={t("app.name")} className="h-8" />
       </Link>
 
       {/* Section links (landing only) */}
