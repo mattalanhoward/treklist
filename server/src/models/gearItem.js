@@ -126,15 +126,25 @@ const GearItemSchema = new mongoose.Schema(
   }
 );
 
-// Index globalItem for efficient bulk updates (already present in your code)
-GearItemSchema.index({ globalItem: 1 });
+/**
+ * INDEXES
+ *
+ * IMPORTANT:
+ * - Don’t add manual single-field indexes that duplicate `index: true`
+ *   in the schema fields above (Mongo will reject duplicates).
+ */
 
-// Slightly more structured indexes for common queries:
-// - All items in a list ordered by position
-GearItemSchema.index({ gearList: 1, position: 1 });
+// ✅ Most important for:
+// - rendering dashboards grouped by category
+// - fetching category items in sorted order
+// - copy-list route queries per category (when you add .sort({ position: 1 }))
+GearItemSchema.index(
+  { gearList: 1, category: 1, position: 1 },
+  { name: "list_category_position" }
+);
 
-// - All items for a given product across lists (analytics / bulk updates)
-GearItemSchema.index({ productId: 1 });
+// ✅ Useful for pages that load “all items in a list” sorted by position
+GearItemSchema.index({ gearList: 1, position: 1 }, { name: "list_position" });
 
 module.exports =
   mongoose.models.GearItem || mongoose.model("GearItem", GearItemSchema);

@@ -430,36 +430,64 @@ router.post("/sample-list", async (req, res) => {
 // POST /api/dashboard/:listId/copy
 router.post("/:listId/copy", async (req, res) => {
   try {
-    // 1) Find original list
+    const { listId } = req.params;
+
+    // 1) Find original list (lean to avoid mongoose doc overhead)
     const orig = await GearList.findOne({
-      _id: req.params.listId,
+      _id: listId,
       owner: req.userId,
-    });
+    }).lean();
+
     if (!orig) return res.status(404).json({ error: "List not found" });
 
-    // 2) Clone the GearList document (new title + same region)
+    // 2) Create the new list
     const copy = await GearList.create({
       owner: req.userId,
       title: `Copy of ${orig.title}`,
       region: orig.region || null,
+      // If you want to copy these too, uncomment:
+      // backgroundColor: orig.backgroundColor || "",
+      // backgroundImageUrl: orig.backgroundImageUrl || "",
+      // customBackground: orig.customBackground || undefined,
+      // backgroundImageHistory: orig.backgroundImageHistory || [],
     });
 
-    // 3) Clone categories + items
-    const cats = await Category.find({ gearList: orig._id });
-    for (const c of cats) {
-      const newCat = await Category.create({
-        gearList: copy._id,
-        title: c.title,
-        position: c.position,
-      });
-      const its = await Item.find({ gearList: orig._id, category: c._id });
-      for (const i of its) {
-        await Item.create({
-          // REQUIRED fields from the original:
+    // 3) Read all categories once
+    const cats = await Category.find({ gearList: orig._id })
+      .sort({ position: 1 })
+      .lean();
+
+    // 4) Bulk insert categories for the new list
+    const newCatDocs = cats.map((c) => ({
+      gearList: copy._id,
+      title: c.title,
+      position: c.position,
+    }));
+
+    const insertedCats = newCatDocs.length
+      ? await Category.insertMany(newCatDocs)
+      : [];
+
+    // 5) Map oldCatId -> newCatId (insertMany preserves input order)
+    const catIdMap = new Map();
+    for (let i = 0; i < cats.length; i++) {
+      catIdMap.set(String(cats[i]._id), insertedCats[i]._id);
+    }
+
+    // 6) Read all items once (no per-category query)
+    const items = await Item.find({ gearList: orig._id }).lean();
+
+    // 7) Bulk insert items for the new list
+    const newItemDocs = items
+      .map((i) => {
+        const newCatId = catIdMap.get(String(i.category));
+        if (!newCatId) return null; // safety guard if orphaned item
+
+        return {
           globalItem: i.globalItem,
           name: i.name,
           gearList: copy._id,
-          category: newCat._id,
+          category: newCatId,
           brand: i.brand,
           itemType: i.itemType,
           description: i.description,
@@ -469,8 +497,12 @@ router.post("/:listId/copy", async (req, res) => {
           consumable: i.consumable,
           quantity: i.quantity,
           position: i.position,
-        });
-      }
+        };
+      })
+      .filter(Boolean);
+
+    if (newItemDocs.length) {
+      await Item.insertMany(newItemDocs);
     }
 
     return res.json({ list: copy });
