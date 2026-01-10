@@ -44,43 +44,53 @@ export default function GearListView({
   collapsed,
 }) {
   const { t } = useTranslation("common");
+  const navigate = useNavigate();
+
   const [editingCatId, setEditingCatId] = useState(null);
   const [addingNewCat, setAddingNewCat] = useState(false);
   const [newCatName, setNewCatName] = useState("");
   const [showAddModalCat, setShowAddModalCat] = useState(null);
   const [activeItem, setActiveItem] = useState(null);
   const [activeCategory, setActiveCategory] = useState(null);
+
   // State to control the “delete item” confirmation dialog:
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingDelete, setPendingDelete] = useState({
     catId: null,
     itemId: null,
   });
+
   const [confirmCatOpen, setConfirmCatOpen] = useState(false);
   const [pendingDeleteCatId, setPendingDeleteCatId] = useState(null);
+
   const [itemsMap, setItemsMap] = useState({});
+
   // For inline‐title editing:
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [titleText, setTitleText] = useState(list.title);
+
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadPct, setUploadPct] = useState(0);
+
   const [showDetailsModal, setShowDetailsModal] = useState(false);
-  // ⚡️ Optimistic UI for background color
+
+  // Optimistic UI for background color/image
   const [bgColor, setBgColor] = useState(list.backgroundColor || "");
   const [bgImage, setBgImage] = useState(list.backgroundImageUrl || "");
-  const [shareOpen, setShareOpen] = useState(false);
-  const closeShare = () => setShareOpen(false);
-  const [busy, setBusy] = React.useState(false);
-  const [moveItemTarget, setMoveItemTarget] = useState(null); // { catId, item }
+
+  // Blob preview (ONLY used to prevent any flash during upload swap)
   const [bgPreviewUrl, setBgPreviewUrl] = useState("");
-  const [uploadPct, setUploadPct] = useState(0);
+  const bgPreviewUrlRef = React.useRef("");
+
   const [customBgUrl, setCustomBgUrl] = useState(
     list.customBackground?.url || ""
   );
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
-  // Delivery URLs (raw immediately, transformed once confirmed load)
-  const [bgDeliveryUrl, setBgDeliveryUrl] = useState("");
-  const [tileDeliveryUrl, setTileDeliveryUrl] = useState("");
+  const [shareOpen, setShareOpen] = useState(false);
+  const closeShare = () => setShareOpen(false);
+
+  const [moveItemTarget, setMoveItemTarget] = useState(null); // { catId, item }
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 
   // Prevent "stale list prop" from overwriting optimistic background changes.
   // We keep showing the optimistic value until the server (list prop) catches up.
@@ -90,16 +100,33 @@ export default function GearListView({
     customBgUrl: null, // string | null
   });
 
-  const justUploadedRef = React.useRef(false);
+  // Upload request token: if user switches lists mid-upload, ignore results.
+  const uploadReqIdRef = React.useRef(0);
+
+  const THUMB_TRANSFORM = "f_auto,q_auto,w_200,h_200,c_fill";
+
+  const clearBgPreview = useCallback(() => {
+    setBgPreviewUrl("");
+    const u = bgPreviewUrlRef.current;
+    if (u) {
+      try {
+        URL.revokeObjectURL(u);
+      } catch {}
+      bgPreviewUrlRef.current = "";
+    }
+  }, []);
 
   useEffect(() => {
-    // clear pending state when switching lists
+    // Switching lists should cancel any in-flight upload UI and clear pending optimistics
     pendingBgRef.current = { bgColor: null, bgImage: null, customBgUrl: null };
-    justUploadedRef.current = false;
-  }, [listId]);
+    uploadReqIdRef.current += 1; // invalidates any in-flight async steps
 
-  const BG_TRANSFORM = "f_auto,q_auto,w_2000";
-  const THUMB_TRANSFORM = "f_auto,q_auto,w_200,h_200,c_fill";
+    setIsUploading(false);
+    setUploadPct(0);
+
+    // clear any active blob preview (and revoke it)
+    clearBgPreview();
+  }, [listId, clearBgPreview]);
 
   const preloadImage = useCallback((src) => {
     return new Promise((resolve, reject) => {
@@ -112,97 +139,7 @@ export default function GearListView({
     });
   }, []);
 
-  const isTransientUrl = (url) =>
-    !url || url.startsWith("blob:") || url.startsWith("data:");
-
-  // Background delivery URL: start with raw, then upgrade to transformed when available.
-  useEffect(() => {
-    let cancelled = false;
-
-    const raw = bgPreviewUrl || bgImage || "";
-    if (!raw) {
-      setBgDeliveryUrl("");
-      return;
-    }
-
-    // Always show raw immediately so we never go blank.
-    setBgDeliveryUrl(raw);
-
-    // Don’t attempt transforms for blob/data previews.
-    if (isTransientUrl(raw)) return;
-
-    if (justUploadedRef.current) return;
-    const transformed = cldTransformUrl(raw, BG_TRANSFORM);
-    if (!transformed || transformed === raw) return;
-
-    const delays = [0, 800, 1800, 3500, 6500]; // retry for ~12s total
-
-    (async () => {
-      for (let i = 0; i < delays.length; i++) {
-        if (cancelled) return;
-        if (delays[i]) await new Promise((r) => setTimeout(r, delays[i]));
-        try {
-          await preloadImage(transformed);
-          if (cancelled) return;
-          setBgDeliveryUrl(transformed);
-          return;
-        } catch {
-          // keep raw; retry a few times
-          if (cancelled) return;
-          setBgDeliveryUrl(raw);
-        }
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [bgPreviewUrl, bgImage, preloadImage]);
-
-  // Custom tile delivery URL: start with raw, then upgrade to transformed when available.
-  useEffect(() => {
-    let cancelled = false;
-
-    const raw = bgPreviewUrl || customBgUrl || "";
-    if (!raw) {
-      setTileDeliveryUrl("");
-      return;
-    }
-
-    // Always show raw immediately so tile never goes blank.
-    setTileDeliveryUrl(raw);
-
-    if (isTransientUrl(raw)) return;
-
-    if (justUploadedRef.current) return;
-    const transformed = cldTransformUrl(raw, BG_TRANSFORM);
-    if (!transformed || transformed === raw) return;
-
-    const delays = [0, 800, 1800, 3500, 6500];
-
-    (async () => {
-      for (let i = 0; i < delays.length; i++) {
-        if (cancelled) return;
-        if (delays[i]) await new Promise((r) => setTimeout(r, delays[i]));
-        try {
-          await preloadImage(transformed);
-          if (cancelled) return;
-          setTileDeliveryUrl(transformed);
-          return;
-        } catch {
-          if (cancelled) return;
-          setTileDeliveryUrl(raw);
-        }
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [bgPreviewUrl, customBgUrl, preloadImage]);
-
   const MAX_SIZE = 25 * 1024 * 1024; // 25 MB
-  const navigate = useNavigate();
 
   const preloadBackgroundThumbs = useCallback(() => {
     if (typeof window !== "undefined" && window.__pp_bg_preloaded) return;
@@ -218,36 +155,42 @@ export default function GearListView({
 
   useEffect(() => setTitleText(list.title), [list.title]);
 
-  // keep local bgImage in sync with server (but don't stomp during upload)
+  // Keep local bgImage in sync with server (but don't stomp pending optimistic values)
   useEffect(() => {
     const serverUrl = list.backgroundImageUrl || "";
     const pending = pendingBgRef.current.bgImage;
+
     if (pending != null && serverUrl !== pending) return; // ignore stale props
     if (pending != null && serverUrl === pending)
       pendingBgRef.current.bgImage = null;
+
     setBgImage(serverUrl);
-  }, [list.backgroundImageUrl, isUploading]);
+  }, [list.backgroundImageUrl]);
 
   useEffect(() => {
     const serverColor = list.backgroundColor || "";
     const pending = pendingBgRef.current.bgColor;
+
     if (pending != null && serverColor !== pending) return;
     if (pending != null && serverColor === pending)
       pendingBgRef.current.bgColor = null;
+
     setBgColor(serverColor);
   }, [list.backgroundColor]);
 
   useEffect(() => {
-    if (isUploading) return;
+    if (isUploading) return; // avoid stomping while upload is in-flight
     const serverCustom = list.customBackground?.url || "";
     const pending = pendingBgRef.current.customBgUrl;
+
     if (pending != null && serverCustom !== pending) return;
     if (pending != null && serverCustom === pending)
       pendingBgRef.current.customBgUrl = null;
+
     setCustomBgUrl(serverCustom);
   }, [list.customBackground?.url, isUploading]);
 
-  // NEW: auto-group every time `items` changes
+  // Auto-group every time `items` changes
   useEffect(() => {
     const map = {};
     items.forEach((it) => {
@@ -257,10 +200,9 @@ export default function GearListView({
     setItemsMap(map);
   }, [items]);
 
-  // right after itemsMap state + useEffect that groups items
   const fetchItems = useCallback(
     async (catId) => {
-      if (!catId) return; // guard against accidental calls with no cat
+      if (!catId) return;
       const { data } = await api.get(
         `/dashboard/${listId}/categories/${catId}/items`
       );
@@ -269,59 +211,27 @@ export default function GearListView({
     [listId]
   );
 
-  // Use the parent’s onRefresh to re-fetch the whole payload
   const refreshListAfterEdit = useCallback(() => {
-    if (typeof onRefresh === "function") {
-      onRefresh();
-    }
+    if (typeof onRefresh === "function") onRefresh();
   }, [onRefresh]);
 
-  const stats = React.useMemo(() => computeStats(itemsMap), [itemsMap]);
-
-  // flatten ALL items into one array
-  const allItems = Object.values(itemsMap).flat();
-
-  // count
-  const itemsCount = allItems.length;
-
-  // split them into the four buckets
-  const baseItems = allItems.filter((i) => !i.worn && !i.consumable);
-  const wornItems = allItems.filter((i) => i.worn);
-  const consumableItems = allItems.filter((i) => i.consumable);
-  // “total” is just everything
-  const totalItems = allItems;
-
-  // build the breakdowns object
-  const breakdowns = {
-    base: baseItems,
-    worn: wornItems,
-    consumable: consumableItems,
-    total: totalItems,
-  };
-
-  function computeStats(itemsMap) {
+  function computeStats(itemsMapArg) {
     let baseWeight = 0;
     let wornWeight = 0;
     let consumableWeight = 0;
 
-    Object.values(itemsMap)
+    Object.values(itemsMapArg)
       .flat()
       .forEach((item) => {
         const w = item.weight || 0;
         const qty = item.quantity || 1;
 
         if (item.consumable) {
-          // all of these go into consumableWeight
           consumableWeight += w * qty;
         } else if (item.worn) {
-          // exactly one counts as “worn”
           wornWeight += w;
-          // extras go back into base
-          if (qty > 1) {
-            baseWeight += w * (qty - 1);
-          }
+          if (qty > 1) baseWeight += w * (qty - 1);
         } else {
-          // pure base items
           baseWeight += w * qty;
         }
       });
@@ -334,7 +244,24 @@ export default function GearListView({
     };
   }
 
-  // Lifted‐up handlers for SortableItem
+  const stats = React.useMemo(() => computeStats(itemsMap), [itemsMap]);
+
+  // flatten ALL items into one array
+  const allItems = Object.values(itemsMap).flat();
+  const itemsCount = allItems.length;
+
+  const baseItems = allItems.filter((i) => !i.worn && !i.consumable);
+  const wornItems = allItems.filter((i) => i.worn);
+  const consumableItems = allItems.filter((i) => i.consumable);
+
+  const breakdowns = {
+    base: baseItems,
+    worn: wornItems,
+    consumable: consumableItems,
+    total: allItems,
+  };
+
+  // Lifted-up handlers for SortableItem
   const handleToggleWorn = useCallback((catId, itemId, newWorn) => {
     setItemsMap((m) => ({
       ...m,
@@ -355,7 +282,7 @@ export default function GearListView({
 
   const handleQuantityChange = useCallback(
     async (catId, itemId, newQty) => {
-      // 1) Optimistic update
+      // Optimistic
       setItemsMap((m) => ({
         ...m,
         [catId]: m[catId].map((i) =>
@@ -364,18 +291,12 @@ export default function GearListView({
       }));
 
       try {
-        // 2) Patch the server
         await api.patch(
           `/dashboard/${listId}/categories/${catId}/items/${itemId}`,
-          {
-            quantity: newQty,
-          }
+          { quantity: newQty }
         );
-
-        // 3) Re-fetch the full list so totalWeight (and any other derived data) is correct
         await fetchItems(catId);
       } catch (err) {
-        // 4) Rollback on error
         toast.error(err.message || t("gearList.toasts.quantityUpdateFailed"));
         fetchItems(catId);
       }
@@ -384,7 +305,6 @@ export default function GearListView({
   );
 
   const handleDeleteClick = (catId, itemId) => {
-    // Open the dialog, storing which catId/itemId is about to be deleted
     setPendingDelete({ catId, itemId });
     setConfirmOpen(true);
   };
@@ -396,13 +316,12 @@ export default function GearListView({
         `/dashboard/${listId}/categories/${catId}/items/${itemId}`
       );
       fetchItems(catId);
-      toast.success(t("gearList.toasts.itemDeleted"));
+      // toast.success(t("gearList.toasts.itemDeleted"));
     } catch (err) {
       toast.error(
         err.response?.data?.message || t("gearList.toasts.itemDeleteFailed")
       );
     } finally {
-      // Close the confirmation dialog (regardless of success/failure)
       setConfirmOpen(false);
       setPendingDelete({ catId: null, itemId: null });
     }
@@ -418,7 +337,7 @@ export default function GearListView({
     [categories, pendingDeleteCatId]
   );
 
-  // — add category —
+  // Add category
   const confirmAddCat = async () => {
     const title = newCatName.trim();
     if (!title) {
@@ -430,16 +349,13 @@ export default function GearListView({
         title,
         position: categories.length,
       });
-      // pull it down again
       await onRefresh();
 
-      // ✅ reset input state so the next "New Category" starts blank
       setNewCatName("");
       setAddingNewCat(false);
 
-      toast.success(t("gearList.toasts.categoryAdded"));
+      // toast.success(t("gearList.toasts.categoryAdded"));
     } catch (err) {
-      // show the error message from the thrown Error
       toast.error(err.message || t("gearList.toasts.categoryAddFailed"));
     }
   };
@@ -448,6 +364,7 @@ export default function GearListView({
     setNewCatName("");
     setAddingNewCat(false);
   };
+
   const handleDeleteCatClick = (catId) => {
     setPendingDeleteCatId(catId);
     setConfirmCatOpen(true);
@@ -457,11 +374,8 @@ export default function GearListView({
     const catId = pendingDeleteCatId;
     try {
       await api.delete(`/dashboard/${listId}/categories/${catId}`);
-
-      // re-sync our entire `fullData` (including categories & items)
       await onRefresh();
-
-      toast.success(t("gearList.toasts.categoryDeleted"));
+      // toast.success(t("gearList.toasts.categoryDeleted"));
     } catch (err) {
       console.error(err);
       toast.error(
@@ -478,7 +392,7 @@ export default function GearListView({
     setPendingDeleteCatId(null);
   };
 
-  // — edit category name inline —
+  // Edit category name inline
   const editCat = async (id, title) => {
     const newTitle = title.trim();
     if (!newTitle) {
@@ -486,12 +400,10 @@ export default function GearListView({
       return;
     }
 
-    // 🛑 If the title hasn’t actually changed, do nothing
     const currentCat =
       Array.isArray(categories) && categories.find((c) => c._id === id);
 
     if (currentCat && currentCat.title.trim() === newTitle) {
-      // Just exit edit mode, no API call, no toast
       setEditingCatId(null);
       return;
     }
@@ -500,10 +412,9 @@ export default function GearListView({
       await api.patch(`/dashboard/${listId}/categories/${id}`, {
         title: newTitle,
       });
-      // re-pull the entire payload (list, cats, items)
       await onRefresh();
       setEditingCatId(null);
-      toast.success(t("gearList.toasts.categoryRenamed"));
+      // toast.success(t("gearList.toasts.categoryRenamed"));
     } catch (err) {
       toast.error(
         err.response?.data?.message || t("gearList.toasts.categoryRenameFailed")
@@ -514,30 +425,26 @@ export default function GearListView({
   const handleDragEnd = async ({ active, over }) => {
     if (!over) return;
 
-    // ─── CATEGORY REORDER ───
+    // CATEGORY REORDER
     if (active.id.startsWith("cat-") && over.id.startsWith("cat-")) {
       const oldIndex = categories.findIndex(
         (c) => `cat-${c._id}` === active.id
       );
       const newIndex = categories.findIndex((c) => `cat-${c._id}` === over.id);
       if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
-        // Build the new ordered array
         const reordered = arrayMove(categories, oldIndex, newIndex).map(
           (catObj, idx) => ({ ...catObj, position: idx })
         );
-
-        // Delegate to Dashboard: optimistic UI + persist
         await onReorderCategories(categories, reordered);
       }
       return;
     }
 
-    // ─── ITEM REORDER WITHIN SAME CATEGORY ───
+    // ITEM REORDER WITHIN SAME CATEGORY
     if (active.id.startsWith("item-") && over.id.startsWith("item-")) {
       const [, sourceCatId, sourceItemId] = active.id.split("-");
       const [, destCatId, destItemId] = over.id.split("-");
 
-      // same-category reorder
       if (sourceCatId === destCatId) {
         const oldArray = itemsMap[sourceCatId] || [];
         const oldIndex = oldArray.findIndex((i) => i._id === sourceItemId);
@@ -547,15 +454,12 @@ export default function GearListView({
             (it, idx) => ({ ...it, position: idx })
           );
 
-          // update UI immediately
           setItemsMap((m) => ({ ...m, [sourceCatId]: reordered }));
 
-          // persist each item’s new position
           for (let i = 0; i < reordered.length; i++) {
             const it = reordered[i];
-            if (
-              it.position !== oldArray.find((x) => x._id === it._id).position
-            ) {
+            const oldIt = oldArray.find((x) => x._id === it._id);
+            if (oldIt && it.position !== oldIt.position) {
               await api.patch(
                 `/dashboard/${listId}/categories/${sourceCatId}/items/${it._id}`,
                 { position: i }
@@ -566,7 +470,7 @@ export default function GearListView({
         return;
       }
 
-      // ─── ITEM MOVED TO A DIFFERENT CATEGORY ───
+      // ITEM MOVED TO A DIFFERENT CATEGORY
       const sourceArr = itemsMap[sourceCatId] || [];
       const destArr = itemsMap[destCatId] || [];
       const removedIdx = sourceArr.findIndex((i) => i._id === sourceItemId);
@@ -577,6 +481,7 @@ export default function GearListView({
         const newSource = sourceArr
           .filter((i) => i._id !== sourceItemId)
           .map((it, idx) => ({ ...it, position: idx }));
+
         const newDest = [
           ...destArr.slice(0, insertedIdx),
           movedItem,
@@ -586,13 +491,13 @@ export default function GearListView({
           position: idx,
           category: it._id === movedItem._id ? destCatId : it.category,
         }));
+
         setItemsMap((m) => ({
           ...m,
           [sourceCatId]: newSource,
           [destCatId]: newDest,
         }));
 
-        // 1) update moved item's category + position
         await api.patch(
           `/dashboard/${listId}/categories/${sourceCatId}/items/${sourceItemId}`,
           {
@@ -600,24 +505,25 @@ export default function GearListView({
             position: newDest.find((i) => i._id === sourceItemId).position,
           }
         );
-        // 2) reindex source siblings
+
         for (let i = 0; i < newSource.length; i++) {
           const it = newSource[i];
-          if (
-            it.position !== sourceArr.find((x) => x._id === it._id).position
-          ) {
+          const oldIt = sourceArr.find((x) => x._id === it._id);
+          if (oldIt && it.position !== oldIt.position) {
             await api.patch(
               `/dashboard/${listId}/categories/${sourceCatId}/items/${it._id}`,
               { position: i }
             );
           }
         }
-        // 3) reindex dest siblings
+
         for (let i = 0; i < newDest.length; i++) {
           const it = newDest[i];
+          const oldIt = destArr.find((x) => x._id === it._id);
           if (
             it._id !== sourceItemId &&
-            it.position !== destArr.find((x) => x._id === it._id).position
+            oldIt &&
+            it.position !== oldIt.position
           ) {
             await api.patch(
               `/dashboard/${listId}/categories/${destCatId}/items/${it._id}`,
@@ -629,7 +535,7 @@ export default function GearListView({
       return;
     }
 
-    // ─── DROP INTO EMPTY CATEGORY ───
+    // DROP INTO EMPTY CATEGORY
     if (active.id.startsWith("item-") && over.id.startsWith("cat-")) {
       const [, sourceCatId, sourceItemId] = active.id.split("-");
       const destCatId = over.id.replace("cat-", "");
@@ -644,18 +550,19 @@ export default function GearListView({
       const newSource = sourceArr
         .filter((i) => i._id !== sourceItemId)
         .map((it, idx) => ({ ...it, position: idx }));
+
       const newDest = [...destArr, movedItem].map((it, idx) => ({
         ...it,
         position: idx,
         category: it._id === movedItem._id ? destCatId : it.category,
       }));
+
       setItemsMap((m) => ({
         ...m,
         [sourceCatId]: newSource,
         [destCatId]: newDest,
       }));
 
-      // persist
       await api.patch(
         `/dashboard/${listId}/categories/${sourceCatId}/items/${sourceItemId}`,
         {
@@ -663,9 +570,11 @@ export default function GearListView({
           position: newDest.length - 1,
         }
       );
+
       for (let i = 0; i < newSource.length; i++) {
         const it = newSource[i];
-        if (it.position !== sourceArr.find((x) => x._id === it._id).position) {
+        const oldIt = sourceArr.find((x) => x._id === it._id);
+        if (oldIt && it.position !== oldIt.position) {
           await api.patch(
             `/dashboard/${listId}/categories/${sourceCatId}/items/${it._id}`,
             { position: i }
@@ -676,57 +585,38 @@ export default function GearListView({
   };
 
   const handleDragStart = ({ active }) => {
-    // 1) Item‐drag preview
     if (active.id.startsWith("item-")) {
       const [, catId, itemId] = active.id.split("-");
       const itemArray = itemsMap[catId] || [];
       const found = itemArray.find((i) => i._id === itemId);
-      if (found) {
-        setActiveItem({ catId, item: found });
-      }
-
-      // 2) Category‐drag preview
+      if (found) setActiveItem({ catId, item: found });
     } else if (active.id.startsWith("cat-")) {
       const catId = active.id.replace(/^cat-/, "");
       const foundCat = categories.find((c) => c._id === catId);
-      if (foundCat) {
-        setActiveCategory(foundCat);
-      }
+      if (foundCat) setActiveCategory(foundCat);
     }
   };
 
   const axisModifier = (args) => {
     const { active, transform } = args;
 
-    // 1) If there's no active draggable, or if it's an item, just return the raw transform:
-    if (!active || !active.id || active.id.startsWith("item-")) {
+    if (!active || !active.id || active.id.startsWith("item-"))
       return transform;
-    }
 
-    // 2) If we're in column mode and dragging a category, lock X:
     if (viewMode === "column" && active.id.startsWith("cat-")) {
       return restrictToHorizontalAxis(args);
     }
 
-    // 3) If we're in list mode and dragging a category, lock Y:
     if (viewMode === "list" && active.id.startsWith("cat-")) {
       return restrictToVerticalAxis(args);
     }
 
-    // 4) Otherwise, no change:
     return transform;
   };
 
-  // 1) Custom collision detector
   const collisionDetectionStrategy = (args) => {
     const { active } = args;
-
-    // if it's a gear item, use closest-corners
-    if (active && active.id?.startsWith("item-")) {
-      return closestCorners(args);
-    }
-
-    // otherwise (categories) use pointerWithin (or whatever you prefer)
+    if (active && active.id?.startsWith("item-")) return closestCorners(args);
     return pointerWithin(args);
   };
 
@@ -746,14 +636,13 @@ export default function GearListView({
 
     const movedItem = sourceArr[removedIdx];
 
-    // ─── SAME-CATEGORY REORDER ───
+    // SAME-CATEGORY REORDER
     if (fromCatId === toCatId) {
       const oldArray = sourceArr;
       const safeIndex = Math.max(
         0,
         Math.min(positionIndex, oldArray.length - 1)
       );
-
       if (safeIndex === removedIdx) return;
 
       const reordered = arrayMove(oldArray, removedIdx, safeIndex).map(
@@ -781,7 +670,7 @@ export default function GearListView({
       return;
     }
 
-    // ─── CROSS-CATEGORY MOVE ───
+    // CROSS-CATEGORY MOVE
     const newSource = sourceArr
       .filter((i) => i._id !== itemId)
       .map((it, idx) => ({ ...it, position: idx }));
@@ -806,7 +695,6 @@ export default function GearListView({
     }));
 
     try {
-      // 1) update moved item category + position
       await api.patch(
         `/dashboard/${listId}/categories/${fromCatId}/items/${itemId}`,
         {
@@ -815,7 +703,6 @@ export default function GearListView({
         }
       );
 
-      // 2) reindex source siblings
       for (let i = 0; i < newSource.length; i++) {
         const it = newSource[i];
         const oldItem = sourceArr.find((x) => x._id === it._id);
@@ -827,16 +714,10 @@ export default function GearListView({
         );
       }
 
-      // 3) reindex dest siblings
       for (let i = 0; i < newDest.length; i++) {
         const it = newDest[i];
         const oldItem = destArr.find((x) => x._id === it._id);
-        if (
-          !oldItem ||
-          it._id === itemId || // moved item already handled
-          oldItem.position === i
-        )
-          continue;
+        if (!oldItem || it._id === itemId || oldItem.position === i) continue;
 
         await api.patch(
           `/dashboard/${listId}/categories/${toCatId}/items/${it._id}`,
@@ -855,11 +736,12 @@ export default function GearListView({
     const trimmed = titleText.trim();
     if (!trimmed) {
       setTitleText(list.title);
-      return setIsEditingTitle(false);
+      setIsEditingTitle(false);
+      return;
     }
     try {
       await api.patch(`/dashboard/${listId}`, { title: trimmed });
-      toast.success(t("gearList.toasts.listRenamed"));
+      // toast.success(t("gearList.toasts.listRenamed"));
       onRefresh();
       fetchLists();
     } catch (err) {
@@ -870,88 +752,109 @@ export default function GearListView({
     }
   };
 
+  /**
+   * Flash-free upload behavior:
+   * - Show blob preview immediately (so user sees it instantly).
+   * - Upload + persist in background.
+   * - Set bgImage/customBgUrl to secureUrl right away, BUT keep blob preview active.
+   * - Preload secureUrl; only then clear preview → seamless swap, no extra flashes.
+   * - NO transformed URL swap here (that was causing the post-100% flashes).
+   */
   const handleImageUpload = async (e) => {
     e.stopPropagation();
     const file = e.target.files?.[0];
     if (!file) return;
 
     if (file.size > MAX_SIZE) {
-      toast.error(t("gearList.toasts.imageTooLargeUnder5MB"));
-      e.target.value = "";
+      toast.error(t("gearList.toasts.imageTooLarge"));
+      if (e?.target) e.target.value = "";
       return;
     }
 
-    // 1) Instant preview (no waiting)
-    const preview = URL.createObjectURL(file);
-    setBgPreviewUrl(preview);
+    const reqId = ++uploadReqIdRef.current;
+
+    // Create blob preview and KEEP it until secureUrl is preloaded
+    const previewUrl = URL.createObjectURL(file);
+    bgPreviewUrlRef.current = previewUrl;
+    setBgPreviewUrl(previewUrl);
 
     setIsUploading(true);
     setUploadPct(0);
 
     try {
-      // 2) Downscale/compress on client (big performance win)
+      // Downscale/compress on client
       const { blob, mime } = await downscaleToTargetBytes(file, {
         maxSize: 3000,
         quality: 0.78,
         maxBytes: 1_500_000,
       });
 
-      console.log("bg upload bytes", {
-        original: file.size,
-        processed: blob.size,
-        ratio: (blob.size / file.size).toFixed(2),
-      });
-
       const ext = mime === "image/webp" ? "webp" : "jpg";
       const filename = `bg-${Date.now()}.${ext}`;
 
-      // 3) Direct upload to Cloudinary
+      // Direct upload to Cloudinary
       const { secureUrl, publicId } = await uploadBackgroundToCloudinary({
         blob,
         filename,
         onProgress: setUploadPct,
       });
 
-      // 4) Persist to your DB (this is what you were stuck on)
-      const { data } = await api.patch(
-        `/dashboard/${listId}/preferences/image-direct`,
-        { imageUrl: secureUrl, publicId }
-      );
+      // If user switched lists mid-upload, ignore results
+      if (uploadReqIdRef.current !== reqId) return;
 
-      // 5) Preload the transformed delivery URL so swap is smooth
-      // Otherwise you get a blank frame while the remote image decodes.
-      await preloadImage(secureUrl).catch(() => {});
+      // Persist to DB
+      await api.patch(`/dashboard/${listId}/preferences/image-direct`, {
+        imageUrl: secureUrl,
+        publicId,
+      });
 
-      // 6) Swap from preview → Cloudinary URL, clear preview
-      pendingBgRef.current.bgColor = ""; // we're clearing color
-      pendingBgRef.current.bgImage = secureUrl; // optimistic background image
-      pendingBgRef.current.customBgUrl = secureUrl; // optimistic custom tile
-      setBgColor(""); // avoid any flash/overlay conflicts
+      // Mark optimistic targets (prevents stale props from stomping)
+      pendingBgRef.current.bgColor = "";
+      pendingBgRef.current.bgImage = secureUrl;
+      pendingBgRef.current.customBgUrl = secureUrl;
+
+      // Update state now, but preview still "wins" for rendering until we clear it.
+      setBgColor("");
       setBgImage(secureUrl);
       setCustomBgUrl(secureUrl);
-      setBgPreviewUrl(""); // stop using blob preview once saved
-      setUploadPct(100);
-      justUploadedRef.current = true;
-      await onRefresh?.();
+
+      // Kick a refresh, but DON'T await it (keeps UI snappy)
+      onRefresh?.();
+
+      // Preload the final url; only then clear preview (no flash)
+      // If it takes a while, user still sees the preview (not a spinner).
+      (async () => {
+        const delays = [0, 400, 900, 1600, 2600]; // ~5.5s total
+        for (let i = 0; i < delays.length; i++) {
+          if (uploadReqIdRef.current !== reqId) return;
+          if (delays[i]) await new Promise((r) => setTimeout(r, delays[i]));
+          try {
+            await preloadImage(secureUrl);
+            if (uploadReqIdRef.current !== reqId) return;
+            clearBgPreview(); // <- the actual swap happens here
+            return;
+          } catch {
+            // retry while keeping preview visible
+          }
+        }
+        // If it still hasn't loaded, leave preview up (no flash),
+        // but the list is saved; next navigation/refresh will show the Cloudinary URL.
+        // (We purposely do NOT clear preview here to avoid blanking the bg.)
+      })();
     } catch (err) {
       console.error("Background upload failed:", err);
       toast.error(err.message || t("gearList.toasts.imageUploadFailed"));
 
-      // Roll back preview on failure
       pendingBgRef.current = {
         bgColor: null,
         bgImage: null,
         customBgUrl: null,
       };
-      setBgPreviewUrl("");
+
+      // Clear preview (and revoke) on failure
+      clearBgPreview();
     } finally {
-      setIsUploading(false);
-
-      // clean up preview object URL
-      try {
-        URL.revokeObjectURL(preview);
-      } catch {}
-
+      if (uploadReqIdRef.current === reqId) setIsUploading(false);
       // allow selecting the same file again
       if (e?.target) e.target.value = "";
     }
@@ -961,11 +864,13 @@ export default function GearListView({
     const prevColor = bgColor;
     const prevImage = bgImage;
 
-    // ✅ instant UI
     pendingBgRef.current.bgColor = color;
-    pendingBgRef.current.bgImage = ""; // we're clearing the image
-    setBgPreviewUrl("");
-    setBgImage(""); // IMPORTANT: clear active image immediately
+    pendingBgRef.current.bgImage = ""; // clearing active image
+
+    // If we were showing a blob preview, stop it now (color should win)
+    clearBgPreview();
+
+    setBgImage("");
     setBgColor(color);
 
     try {
@@ -974,7 +879,6 @@ export default function GearListView({
       });
       onRefresh?.();
     } catch (err) {
-      // rollback
       pendingBgRef.current = {
         bgColor: null,
         bgImage: null,
@@ -988,18 +892,20 @@ export default function GearListView({
 
   // user picks one of the background images (default or custom)
   const handleBackgroundSelect = async (url) => {
-    setBgPreviewUrl("");
+    // stop any upload preview (explicit selection should win)
+    clearBgPreview();
+
     const previousImage = bgImage;
     const previousColor = bgColor;
 
-    // ✅ instant UI
     pendingBgRef.current.bgColor = "";
     pendingBgRef.current.bgImage = url;
-    setBgColor(""); // prevents flash
+
+    setBgColor("");
     setBgImage(url);
 
-    // best-effort preload (don't block UI)
-    preloadImage(cldTransformUrl(url, BG_TRANSFORM)).catch(() => {});
+    // Best-effort preload (don’t block UI)
+    preloadImage(url).catch(() => {});
 
     try {
       await api.patch(`/dashboard/${listId}/preferences`, {
@@ -1022,8 +928,8 @@ export default function GearListView({
   const handleCopyList = async () => {
     try {
       const { data } = await api.post(`/dashboard/${listId}/copy`);
-      toast.success(t("gearList.toasts.listCopied"));
-      fetchLists(); // refresh sidebar (you’ll need to pass fetchLists in as a prop)
+      // toast.success(t("gearList.toasts.listCopied"));
+      fetchLists();
       localStorage.setItem("lastListId", data.list._id);
       navigate(`/dashboard/${data.list._id}`);
     } catch (err) {
@@ -1043,10 +949,10 @@ export default function GearListView({
   const actuallyDeleteList = async () => {
     try {
       await api.delete(`/dashboard/${listId}`);
-      toast.success(t("gearList.toasts.listDeleted"));
       fetchLists();
       cancelDeleteList();
       navigate("/dashboard");
+      // toast.success(t("gearList.toasts.listDeleted"));
     } catch (err) {
       toast.error(err.message || t("gearList.toasts.listDeleteFailed"));
     }
@@ -1055,24 +961,23 @@ export default function GearListView({
   // Gradient overlay definition
   const overlay = "linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3))";
 
-  const effectiveBgImageRaw = bgPreviewUrl || bgImage || "";
-  const effectiveBgImage = bgDeliveryUrl || effectiveBgImageRaw;
+  // Preview always wins while it's present (prevents any flash during swap)
+  const effectiveBgImage = bgPreviewUrl || bgImage || "";
   const effectiveBgColor = bgColor || "";
 
-  const tileSrc = bgPreviewUrl || customBgUrl;
-  const tileBg = tileDeliveryUrl || tileSrc;
+  // Tile uses preview while uploading so the user sees their image instantly
+  const tileBg = bgPreviewUrl || customBgUrl || "";
+
   const canSelectCustom = !!customBgUrl && !isUploading;
 
   const bgstyle = effectiveBgImage
     ? {
-        // no overlay when using an image
         backgroundImage: `url(${effectiveBgImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }
     : effectiveBgColor
     ? {
-        // when using only a color, you can keep your overlay if you like:
         backgroundColor: effectiveBgColor,
         backgroundImage: overlay,
       }
@@ -1126,10 +1031,11 @@ export default function GearListView({
                   consumable={stats.consumableWeight}
                   total={stats.totalWeight}
                   breakdowns={breakdowns}
-                />{" "}
+                />
               </>
             )}
           </div>
+
           {/* Ellipsis menu */}
           <DropdownMenu
             trigger={
@@ -1151,7 +1057,6 @@ export default function GearListView({
                   </div>
                 ),
               },
-
               {
                 key: "bg-presets",
                 render: () => (
@@ -1160,17 +1065,18 @@ export default function GearListView({
                       {t("gearList.menu.background")}{" "}
                     </div>
 
-                    {/* Current image + upload tile */}
                     <p className="text-sm text-primary/80 mb-1">
                       {t("gearList.menu.customImage")}
                     </p>
+
                     {isUploading && (
                       <p className="text-xs text-primary/70 mt-1">
                         Uploading… {uploadPct}%
                       </p>
                     )}
+
                     <div className="grid grid-cols-4 gap-2 mt-1 mx-auto w-full max-w-xs">
-                      {tileSrc && (
+                      {(bgPreviewUrl || customBgUrl) && (
                         <button
                           type="button"
                           onClick={() => {
@@ -1201,7 +1107,7 @@ export default function GearListView({
                       <label
                         className={
                           `w-10 h-10 rounded border border-dashed border-primary/60
-     flex items-center justify-center text-primary/60 text-xl cursor-pointer ` +
+flex items-center justify-center text-primary/60 text-xl cursor-pointer ` +
                           (isUploading ? "opacity-50 cursor-not-allowed" : "")
                         }
                       >
@@ -1247,11 +1153,10 @@ export default function GearListView({
                 key: "color-swatches",
                 render: () => (
                   <div onClick={(e) => e.stopPropagation()}>
-                    {/* Header */}
                     <p className="mt-3 text-sm text-primary/80 mb-1">
                       {t("gearList.menu.colors")}
                     </p>
-                    {/* Swatches Grid */}
+
                     <div className="grid grid-cols-4 gap-2 place-items-center mt-2">
                       {swatches.map(({ key, value, class: cls }) => (
                         <div key={key} className="relative group">
@@ -1263,24 +1168,13 @@ export default function GearListView({
                               <FaCheck className="text-white text-sm" />
                             )}
                           </button>
-                          {/* tooltip */}
+
                           <span
                             className="
-         absolute 
-         bottom-full 
-         left-1/2 
-         transform -translate-x-1/2 
-         mb-1 
-         px-2 py-0.5 
-         text-sm 
-         text-white 
-         bg-black bg-opacity-75 
-         rounded 
-         opacity-0 
-         pointer-events-none 
-         group-hover:opacity-100 
-         transition-opacity
-       "
+absolute bottom-full left-1/2 transform -translate-x-1/2
+mb-1 px-2 py-0.5 text-sm text-white bg-black bg-opacity-75 rounded
+opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
+"
                           >
                             {key}
                           </span>
@@ -1313,7 +1207,6 @@ export default function GearListView({
                 key: "sharelist",
                 label: t("gearList.menu.shareList"),
                 onClick: () => setShareOpen(true),
-                disabled: busy,
               },
               {
                 key: "delete",
@@ -1328,7 +1221,7 @@ export default function GearListView({
 
       <ShareModal listId={listId} isOpen={shareOpen} onClose={closeShare} />
 
-      {/* ───── Wrap everything in one DndContextWrapper ───── */}
+      {/* Wrap everything in one DndContextWrapper */}
       <DndContextWrapper
         items={categories.map((c) => `cat-${c._id}`)}
         strategy={
@@ -1339,7 +1232,6 @@ export default function GearListView({
         onDragStart={handleDragStart}
         onDragEnd={(event) => {
           handleDragEnd(event);
-          // clear previews after dropAnimation
           setTimeout(() => {
             setActiveItem(null);
             setActiveCategory(null);
@@ -1377,31 +1269,24 @@ export default function GearListView({
                 key={cat._id}
                 category={cat}
                 items={itemsMap[cat._id] || []}
-                /* editing a category */
                 editingCatId={editingCatId}
                 setEditingCatId={setEditingCatId}
                 onEditCat={(newTitle) => editCat(cat._id, newTitle)}
-                /* delete a category */
                 onDeleteCategory={handleDeleteCatClick}
-                /* “Add Item” modal */
                 showAddModalCat={showAddModalCat}
                 setShowAddModalCat={setShowAddModalCat}
-                /* re-loading an individual category */
                 fetchItems={fetchItems}
                 listId={listId}
-                /* item-level actions */
                 onDeleteItem={handleDeleteClick}
                 onToggleWorn={handleToggleWorn}
                 onToggleConsumable={handleToggleConsumable}
                 onQuantityChange={handleQuantityChange}
-                /* move item */
                 onMoveItem={(catId, item) => setMoveItemTarget({ catId, item })}
-                /* layout */
                 viewMode={viewMode}
                 onItemUpdated={refreshListAfterEdit}
               />
             ))}
-            {/* Add New Category button */}
+
             <div className="px-4 mt-4">
               {addingNewCat ? (
                 <input
@@ -1422,7 +1307,7 @@ export default function GearListView({
               ) : (
                 <button
                   onClick={() => {
-                    setNewCatName(""); // ✅ ensure fresh start
+                    setNewCatName("");
                     setAddingNewCat(true);
                   }}
                   className="p-2 w-full border border-secondary rounded flex items-center justify-center space-x-2 bg-base-100 text-primary hover:bg-base-100/80"
@@ -1430,7 +1315,7 @@ export default function GearListView({
                   <FaPlus />
                   <span className="text-sm">
                     {t("gearList.addCategory.button")}
-                  </span>{" "}
+                  </span>
                 </button>
               )}
             </div>
@@ -1442,34 +1327,27 @@ export default function GearListView({
                 key={cat._id}
                 category={cat}
                 items={itemsMap[cat._id] || []}
-                /* editing a category */
                 editingCatId={editingCatId}
                 setEditingCatId={setEditingCatId}
                 onEditCat={(newTitle) => editCat(cat._id, newTitle)}
-                /* delete a category */
                 onDeleteCategory={handleDeleteCatClick}
-                /* “Add Item” modal */
                 showAddModalCat={showAddModalCat}
                 setShowAddModalCat={setShowAddModalCat}
-                /* re-loading an individual category */
                 fetchItems={fetchItems}
                 listId={listId}
-                /* item-level actions */
                 onDeleteItem={handleDeleteClick}
                 onToggleWorn={handleToggleWorn}
                 onToggleConsumable={handleToggleConsumable}
                 onQuantityChange={handleQuantityChange}
-                /* move item */
                 onMoveItem={(catId, item) => setMoveItemTarget({ catId, item })}
-                /* layout */
                 viewMode={viewMode}
                 onItemUpdated={refreshListAfterEdit}
               />
             ))}
-            {/* Add New Category column */}
+
             <div className="snap-center flex-shrink-0 mt-0 mb-0 w-90 sm:w-64 flex flex-col h-full px-2">
               {addingNewCat ? (
-                <div className="">
+                <div>
                   <input
                     autoFocus
                     value={newCatName}

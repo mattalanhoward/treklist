@@ -17,16 +17,6 @@ const {
 
 const router = express.Router();
 
-/**
- * Public route: resolve a share token back to its listId
- * GET /api/dashboard/share/:token
- */
-router.get("/share/:token", async (req, res) => {
-  const share = await Share.findOne({ token: req.params.token });
-  if (!share) return res.status(404).json({ error: "Invalid token" });
-  res.json({ listId: share.list.toString() });
-});
-
 // All routes below here require auth
 router.use(auth);
 

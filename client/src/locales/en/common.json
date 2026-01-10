@@ -271,7 +271,7 @@
 
       "backgroundUpdateFailed": "Could not update background.",
       "backgroundImageUpdated": "Background image updated.",
-      "imageTooLargeUnder5MB": "Image must be smaller than 5 MB.",
+      "imageTooLarge": "Please choose an image under 25MB.",
       "imageTooLargeExplicit": "Image is too large. Please upload a file under 5 MB.",
       "imageUploadFailed": "Image upload failed.",
 
