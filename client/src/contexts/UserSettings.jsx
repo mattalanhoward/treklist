@@ -8,9 +8,11 @@ import React, {
 import api from "../services/api";
 import useAuth from "../hooks/useAuth";
 import i18n from "../i18n";
+import { detectRegion, normalizeRegion } from "../utils/region";
 
 const SettingsCtx = createContext();
 const SUPPORTED_LANGS = ["en", "nl"];
+const SUPPORTED_REGIONS = ["nl", "us", "ca", "gb", "de", "fr", "it"];
 
 export function SettingsProvider({ children }) {
   const { isAuthenticated } = useAuth();
@@ -34,9 +36,22 @@ export function SettingsProvider({ children }) {
     // Fallback
     return "en";
   });
-  const [region, setRegion] = useState(() =>
-    (localStorage.getItem("region") || "nl").toLowerCase()
-  );
+  const [region, setRegion] = useState(() => {
+    // 1) Prefer explicit stored choice (normalize -> ISO -> lowercase)
+    const stored = normalizeRegion(localStorage.getItem("region"));
+    if (stored) {
+      const lc = stored.toLowerCase();
+      if (SUPPORTED_REGIONS.includes(lc)) return lc;
+    }
+
+    // 2) Auto-detect on first visit
+    const detected = normalizeRegion(detectRegion());
+    const detectedLc = detected ? detected.toLowerCase() : "";
+    if (SUPPORTED_REGIONS.includes(detectedLc)) return detectedLc;
+
+    // 3) Safe fallback (must be supported everywhere)
+    return "gb";
+  });
   const [viewMode, setViewMode] = useState(
     () => localStorage.getItem("viewMode") || "column"
   );
@@ -89,9 +104,15 @@ export function SettingsProvider({ children }) {
   }, [language]);
 
   useEffect(() => {
-    const lc = (region || "").toLowerCase();
-    if (lc !== region) setRegion(lc); // normalize
-    localStorage.setItem("region", lc);
+    const normalized = normalizeRegion(region);
+    const lc = (normalized || "").toLowerCase();
+    const safe = SUPPORTED_REGIONS.includes(lc) ? lc : "gb";
+
+    if (safe !== region) {
+      setRegion(safe);
+      return;
+    }
+    localStorage.setItem("region", safe);
   }, [region]);
 
   useEffect(() => {
