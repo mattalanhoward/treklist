@@ -336,7 +336,7 @@ export default function Landing() {
               Built for Your Next Adventure
             </h2>
             <p className="text-center md:text-left mt-3 text-slate-600">
-              Plan, budget, and fine-tune your kit.
+              Plan, organize, and fine-tune your kit.
             </p>
 
             <ul className="mt-8 space-y-6">
