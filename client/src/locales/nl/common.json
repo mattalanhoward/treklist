@@ -237,25 +237,20 @@
       "shareList": "Lijst delen",
       "deleteList": "Lijst verwijderen"
     },
-
     "confirm": {
       "removeItemTitle": "Dit item verwijderen?",
       "removeItemConfirm": "Item verwijderen",
-
       "deleteCategoryTitle": "‘{{title}}’ verwijderen?",
       "deleteCategoryTitleGeneric": "Deze categorie verwijderen?",
       "deleteCategoryMessage": "Items in deze categorie blijven in je lijst maar worden verplaatst naar ‘Unsorted’.",
       "deleteCategoryConfirm": "Categorie verwijderen",
-
       "deleteListTitle": "‘{{title}}’ verwijderen?",
       "deleteListMessage": "Hiermee verwijder je deze lijst en alle items daarin permanent.",
       "deleteListConfirm": "Lijst verwijderen"
     },
-
     "toasts": {
       "itemDeleted": "Item verwijderd",
       "itemDeleteFailed": "Item kon niet worden verwijderd.",
-
       "categoryNameEmpty": "Categorienaam mag niet leeg zijn.",
       "categoryAdded": "Categorie toegevoegd",
       "categoryAddFailed": "Categorie kon niet worden toegevoegd.",
@@ -263,28 +258,21 @@
       "categoryDeleteFailed": "Categorie kon niet worden verwijderd.",
       "categoryRenamed": "Categorie hernoemd",
       "categoryRenameFailed": "Categorie kon niet worden hernoemd.",
-
       "quantityUpdateFailed": "Aantal kon niet worden bijgewerkt.",
-
       "listRenamed": "Lijst hernoemd",
       "listRenameFailed": "Lijst kon niet worden hernoemd.",
-
       "backgroundUpdateFailed": "Achtergrond kon niet worden bijgewerkt.",
       "backgroundImageUpdated": "Achtergrondafbeelding bijgewerkt.",
       "imageTooLarge": "Afbeelding moet kleiner zijn dan 25 MB.",
       "imageTooLargeExplicit": "Afbeelding is te groot. Upload een bestand kleiner dan 5 MB.",
       "imageUploadFailed": "Afbeelding uploaden mislukt.",
-
       "listCopied": "Lijst gekopieerd",
       "listCopyFailed": "Lijst kon niet worden gekopieerd.",
-
       "listDeleted": "Lijst verwijderd",
       "listDeleteFailed": "Lijst kon niet worden verwijderd.",
-
       "toggleWornFailed": "Status 'gedragen' kon niet worden bijgewerkt.",
       "toggleConsumableFailed": "Status 'verbruikbaar' kon niet worden bijgewerkt."
     },
-
     "addCategory": {
       "button": "Categorie toevoegen",
       "inlinePlaceholder": "Nieuwe categorienaam",
@@ -671,34 +659,28 @@
   },
   "publicList": {
     "documentTitleSuffix": "Openbare uitrustingslijst",
-
     "status": {
       "loading": "Laden…"
     },
-
     "errors": {
       "loadFailed": "Lijst kon niet worden geladen",
       "copyFailedAlert": "Deze lijst kon niet worden gekopieerd."
     },
-
     "stats": {
       "base": "Basisgewicht",
       "worn": "Gedragen gewicht",
       "consumable": "Verbruiksgewicht",
       "total": "Totaalgewicht"
     },
-
     "cta": {
       "ariaLabel": "Pas deze lijst aan in TrekList",
       "labelDesktop": "Deze lijst aanpassen",
       "labelMobile": "Deze lijst aanpassen"
     },
-
     "categories": {
       "uncategorized": "Zonder categorie",
       "untitled": "Categorie"
     },
-
     "item": {
       "consumable": "Verbruikbaar",
       "worn": "Gedragen",
@@ -740,6 +722,110 @@
     "common": {
       "amazonAssociate": "Als Amazon-partner verdien ik aan gekwalificeerde aankopen.",
       "learnMore": "Meer informatie"
+    }
+  },
+  "landing": {
+    "pageTitle": "Slim inpakken. Licht reizen.",
+    "hero": {
+      "title": "Slim inpakken. Licht reizen.",
+      "subtitle": "Maak een paklijst, zie direct je totale gewicht en pak met vertrouwen. Ontworpen voor langeafstandstochten, weekendtrips en hut tot hut trekkings in Europa en daarbuiten.",
+      "cta": "Gratis starten"
+    },
+    "images": {
+      "heroAlt": "Hiker bij Cinque Torri in de Dolomieten",
+      "mobileSidebarAlt": "TrekList mobiele weergave met paklijsten en Mijn uitrusting zoeken",
+      "mobileColumnAlt": "TrekList mobiele categorie kolommen",
+      "desktopAlt": "TrekList desktop weergave met meerdere categorieën in kolommen"
+    },
+    "features": {
+      "sectionTitle": "Functies",
+      "mobile": {
+        "title": "Gemaakt voor het pad",
+        "subtitle": "Mobiel eerst. Voeg toe, bewerk en herorden zonder gedoe.",
+        "bullets": {
+          "mobileFirst": {
+            "title": "Mobiel ontwerp",
+            "text": "Maak en bewerk paklijsten onderweg."
+          },
+          "catalogCustom": {
+            "title": "Catalogus en eigen items",
+            "text": "Importeer bekende items uit de catalogus, of voeg je eigen uitrusting toe met gewicht, notities en een link."
+          },
+          "weightTotals": {
+            "title": "Slimme gewichtstotalen",
+            "text": "Basis, gedragen en verbruikbaar in realtime."
+          },
+          "quickAdd": {
+            "title": "Snel toevoegen en zoeken",
+            "text": "Vind uitrusting snel en bewerk overal."
+          },
+          "checklist": {
+            "title": "Pak checklist",
+            "text": "Met één tik afvinken en een nette PDF export."
+          }
+        }
+      },
+      "desktop": {
+        "title": "Gemaakt om te plannen",
+        "subtitle": "Kolomweergave of lijstweergave, kies wat bij je past.",
+        "bullets": {
+          "drag": {
+            "title": "Sleep tussen categorieën",
+            "text": "Verplaats items terwijl je je uitrusting bijstelt."
+          },
+          "share": {
+            "title": "Deel links",
+            "text": "Deel alleen lezen pagina’s voor forums, vrienden of planning."
+          },
+          "embed": {
+            "title": "Insluiten",
+            "text": "Zet je paklijst in je posts."
+          }
+        }
+      }
+    },
+    "recommended": {
+      "title": "Aanbevolen paklijsten",
+      "subtitle": "Bekijk samengestelde paklijsten voor de bekendste langeafstandsroutes van Europa. Bekijk direct, of pas aan en sla op in je account.",
+      "cards": {
+        "viewCta": "Bekijk paklijst",
+        "ariaOpen": "Open {{title}} paklijst",
+        "av1": {
+          "title": "Alta Via 1",
+          "alt": "Alta Via 1 paklijst in de Dolomieten, Italië"
+        },
+        "camino": {
+          "title": "Camino de Santiago",
+          "alt": "Camino de Santiago paklijst voor wandelen door Spanje"
+        },
+        "tmb": {
+          "title": "Tour du Mont Blanc",
+          "alt": "Tour du Mont Blanc paklijst"
+        },
+        "whw": {
+          "title": "West Highland Way",
+          "alt": "West Highland Way paklijst"
+        },
+        "kungsleden": {
+          "title": "Kungsleden",
+          "alt": "Kungsleden paklijst"
+        },
+        "gr20": {
+          "title": "GR20 Corsica",
+          "alt": "GR20 paklijst"
+        }
+      }
+    },
+    "howItWorks": {
+      "title": "Hoe TrekList werkt",
+      "paragraph": "Ik heb TrekList gemaakt omdat ik voor grote tochten alles uitstalde, bleef twijfelen, en toch het gevoel had dat ik dat ene belangrijke ding vergat. TrekList is gratis te gebruiken, en wordt ondersteund door optionele affiliate links. Als je via een link iets koopt, helpt dat om de hosting te betalen, het project te verbeteren, en dat betekent oprecht veel voor mij.",
+      "signature": "Tall Joe"
+    },
+    "finalCta": {
+      "title": "Klaar om slimmer in te pakken voor je volgende trip?",
+      "subtitle": "Maak een paklijst voor je volgende tocht, stel je uitrusting bij, en loop de deur uit met het gevoel dat je niets vergeten bent.",
+      "primary": "Start je gratis paklijst",
+      "secondary": "Bekijk een voorbeeldlijst"
     }
   }
 }

@@ -53,6 +53,9 @@ export default function PublicHeader({
           >
             {t("publicHeader.nav.recommendedGearList")}
           </a>
+          <a href="#howItWorks" className="hover:underline text-gray-800">
+            {t("publicHeader.nav.howItWorks")}
+          </a>
         </div>
       )}
 

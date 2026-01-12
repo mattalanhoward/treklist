@@ -1,7 +1,8 @@
 // Landing.jsx - Public landing page for TrekList
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import mobileSidebarScreenshot from "../assets/images/screen-shots/treklist-mobile-sidebar.png";
 import mobileColumnScreenshot from "../assets/images/screen-shots/treklist-column-mobile.png";
 import desktopColumnScreenshot from "../assets/images/screen-shots/treklist-column-desktop-1.png";
@@ -38,8 +39,6 @@ const heroSources = {
   1280: cloudinaryHeroUrl(LANDING_HERO_PUBLIC_ID_WITH_VERSION, 1280),
   1920: cloudinaryHeroUrl(LANDING_HERO_PUBLIC_ID_WITH_VERSION, 1920),
 };
-
-const heroAlt = "Hiker at Cinque Torri in the Dolomites";
 
 // --- Icons / UI helpers ---
 const CheckIcon = (props) => (
@@ -106,7 +105,8 @@ const Bullet = ({ title, text, color = "text-blue-600" }) => (
 );
 
 export default function Landing() {
-  usePageTitle("Pack Smart. Travel Light.");
+  const { t } = useTranslation("common");
+  usePageTitle(t("landing.pageTitle"));
 
   // Preload hero for faster first paint
   useEffect(() => {
@@ -114,43 +114,13 @@ export default function Landing() {
     img.src = heroSources[1920];
   }, []);
 
-  /*
-    --- HERO CAROUSEL (commented out for now) ---
-    If you want it back later, restore these blocks:
-      - heroImages array
-      - current state + interval effect
-      - dots JSX in the header
-
-    // Cloudinary responsive hero image URLs
-    const heroOspreySources = { ... };
-    const heroHikingSources = { ... };
-    const heroHMGSources = { ... };
-    const herocinquetorriSources = { ... };
-
-    const heroImages = [
-      { alt: "Hiker with blue Osprey pack", sources: heroOspreySources },
-      { alt: "Hiker on alpine ridgeline", sources: heroHikingSources },
-      { alt: "HMG pack in the mountains", sources: heroHMGSources },
-      { alt: "Hiker at Cinque Torri", sources: herocinquetorriSources },
-    ];
-
-    const [current, setCurrent] = useState(0);
-
-    useEffect(() => {
-      const timer = setInterval(() => {
-        setCurrent((prev) => (prev + 1) % heroImages.length);
-      }, 5000);
-      return () => clearInterval(timer);
-    }, []);
-  */
-
   const [authOpen, setAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState("login"); // 'login' | 'register'
 
   const location = useLocation();
   const navigate = useNavigate();
 
-  // NEW: auto-open modal when routed to /auth/register or /auth/login,
+  // auto-open modal when routed to /auth/register or /auth/login,
   // or when arriving with a ?next= param (share → auth flow).
   useEffect(() => {
     const path = location.pathname;
@@ -192,6 +162,55 @@ export default function Landing() {
     setAuthOpen(false);
   };
 
+  const cards = useMemo(
+    () => [
+      {
+        key: "av1",
+        title: t("landing.recommended.cards.av1.title"),
+        img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1752432593/gear-list-landing/gear-list-alta-via-1.jpg",
+        alt: t("landing.recommended.cards.av1.alt"),
+        link: sharePath(FEATURED_TOKENS.av1) ?? "/gearlist/alta-via-1",
+      },
+      {
+        key: "camino",
+        title: t("landing.recommended.cards.camino.title"),
+        img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1752415040/gear-list-landing/gear-list-camino-de-santiago.jpg",
+        alt: t("landing.recommended.cards.camino.alt"),
+        link:
+          sharePath(FEATURED_TOKENS.camino) ?? "/gearlist/camino-de-santiago",
+      },
+      {
+        key: "tmb",
+        title: t("landing.recommended.cards.tmb.title"),
+        img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1752609809/gear-list-landing/gear-list-tour-du-mont-blanc.jpg",
+        alt: t("landing.recommended.cards.tmb.alt"),
+        link: sharePath(FEATURED_TOKENS.tmb) ?? "/gearlist/tour-du-mont-blanc",
+      },
+      {
+        key: "whw",
+        title: t("landing.recommended.cards.whw.title"),
+        img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1754772966/gear-list-landing/gear-list-west-highland-way.jpg",
+        alt: t("landing.recommended.cards.whw.alt"),
+        link: sharePath(FEATURED_TOKENS.whw) ?? "/gearlist/west-highland-way",
+      },
+      {
+        key: "kungsleden",
+        title: t("landing.recommended.cards.kungsleden.title"),
+        img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1754772965/gear-list-landing/gear-list-kungsleden.jpg",
+        alt: t("landing.recommended.cards.kungsleden.alt"),
+        link: sharePath(FEATURED_TOKENS.kungsleden) ?? "/gearlist/kungsleden",
+      },
+      {
+        key: "gr20",
+        title: t("landing.recommended.cards.gr20.title"),
+        img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1754772963/gear-list-landing/gear-list-gr20.jpg",
+        alt: t("landing.recommended.cards.gr20.alt"),
+        link: sharePath(FEATURED_TOKENS.gr20) ?? "/gearlist/gr20-corsica",
+      },
+    ],
+    [t]
+  );
+
   return (
     <div className="relative flex flex-col min-h-screen bg-white text-gray-800">
       <PublicHeader
@@ -216,7 +235,7 @@ export default function Landing() {
           />
           <img
             src={heroSources[1920]}
-            alt={heroAlt}
+            alt={t("landing.images.heroAlt")}
             className="absolute inset-0 h-full w-full object-cover"
             loading="eager"
             fetchpriority="high"
@@ -229,28 +248,31 @@ export default function Landing() {
         {/* Foreground content */}
         <div className="relative z-20 text-center px-4">
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 drop-shadow-[0_2px_10px_rgba(0,0,0,0.55)]">
-            Pack Smart. Travel Light.
+            {t("landing.hero.title")}
           </h1>
+
           <p className="max-w-2xl text-white text-xl mb-8 drop-shadow-[0_2px_10px_rgba(0,0,0,0.55)]">
-            Build, share, and check off your gear lists. Designed for
-            long-distance hikers, weekenders, and hut to hut trekkers exploring
-            Europe and beyond.
+            {t("landing.hero.subtitle")}
           </p>
+
           <button
             onClick={() => openAuth("register")}
             className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-full hover:opacity-90 transition"
           >
-            Start Your List
+            {t("landing.hero.cta")}
           </button>
         </div>
       </header>
+
       {/* ===== Section A: Image (phones) -> Text ===== */}
       <section
         id="features"
         aria-labelledby="features-mobile"
         className="mx-auto max-w-7xl px-6 py-12 md:py-16 lg:py-20 pb-24 md:pb-28 lg:pb-32"
       >
-        <h2 className="text-center text-3xl font-bold mb-4">Features</h2>
+        <h2 className="text-center text-3xl font-bold mb-4">
+          {t("landing.features.sectionTitle")}
+        </h2>
 
         <div
           className="
@@ -271,7 +293,7 @@ export default function Landing() {
               <div className="hidden md:block md:absolute md:left-0 md:top-0 z-10">
                 <IPhoneFrame
                   src={mobileSidebarScreenshot}
-                  alt="TrekList mobile view showing gear lists and My Gear search"
+                  alt={t("landing.images.mobileSidebarAlt")}
                   className="mx-0 w-[200px] sm:w-[220px] md:w-[240px] lg:w-[280px]"
                 />
               </div>
@@ -280,7 +302,7 @@ export default function Landing() {
               <div className="relative md:absolute md:top-8 md:left-16 lg:left-[14rem] z-20">
                 <IPhoneFrame
                   src={mobileColumnScreenshot}
-                  alt="TrekList mobile category columns"
+                  alt={t("landing.images.mobileColumnAlt")}
                   className="mx-0 w-[200px] sm:w-[220px] md:w-[240px] lg:w-[280px]"
                 />
               </div>
@@ -293,28 +315,32 @@ export default function Landing() {
               id="features-mobile"
               className="text-center md:text-left text-3xl font-bold text-slate-900"
             >
-              Built for the Trek
+              {t("landing.features.mobile.title")}
             </h2>
             <p className="text-center md:text-left mt-3 text-slate-600">
-              Mobile first UX — add, edit, and reorder without friction.
+              {t("landing.features.mobile.subtitle")}
             </p>
 
             <ul className="mt-8 space-y-6">
               <Bullet
-                title="Mobile-first design"
-                text="Create and edit gear lists on the go."
+                title={t("landing.features.mobile.bullets.mobileFirst.title")}
+                text={t("landing.features.mobile.bullets.mobileFirst.text")}
               />
               <Bullet
-                title="Smart weight totals"
-                text="Base, worn, consumables in real time."
+                title={t("landing.features.mobile.bullets.catalogCustom.title")}
+                text={t("landing.features.mobile.bullets.catalogCustom.text")}
               />
               <Bullet
-                title="Quick add & search"
-                text="Find gear fast, edit from anywhere."
+                title={t("landing.features.mobile.bullets.weightTotals.title")}
+                text={t("landing.features.mobile.bullets.weightTotals.text")}
               />
               <Bullet
-                title="Packing checklist"
-                text="One-tap packing, clean PDF export."
+                title={t("landing.features.mobile.bullets.quickAdd.title")}
+                text={t("landing.features.mobile.bullets.quickAdd.text")}
+              />
+              <Bullet
+                title={t("landing.features.mobile.bullets.checklist.title")}
+                text={t("landing.features.mobile.bullets.checklist.text")}
               />
             </ul>
           </div>
@@ -333,26 +359,26 @@ export default function Landing() {
               id="features-desktop"
               className="text-center md:text-left text-3xl font-bold text-slate-900"
             >
-              Built for Your Next Adventure
+              {t("landing.features.desktop.title")}
             </h2>
             <p className="text-center md:text-left mt-3 text-slate-600">
-              Plan, organize, and fine-tune your kit.
+              {t("landing.features.desktop.subtitle")}
             </p>
 
             <ul className="mt-8 space-y-6">
               <Bullet
-                title="Drag between categories"
-                text="Kanban-style columns or traditional list view for planning."
+                title={t("landing.features.desktop.bullets.drag.title")}
+                text={t("landing.features.desktop.bullets.drag.text")}
                 color="text-emerald-600"
               />
               <Bullet
-                title="Public share links"
-                text="Read-only pages for forums/blogs."
+                title={t("landing.features.desktop.bullets.share.title")}
+                text={t("landing.features.desktop.bullets.share.text")}
                 color="text-emerald-600"
               />
               <Bullet
-                title="Embeds"
-                text="Drop your list into posts."
+                title={t("landing.features.desktop.bullets.embed.title")}
+                text={t("landing.features.desktop.bullets.embed.text")}
                 color="text-emerald-600"
               />
             </ul>
@@ -362,7 +388,7 @@ export default function Landing() {
           <div className="order-1 md:order-2">
             <BrowserMock
               src={desktopColumnScreenshot}
-              alt="TrekList desktop view with multiple gear categories in columns"
+              alt={t("landing.images.desktopAlt")}
             />
           </div>
         </div>
@@ -373,59 +399,20 @@ export default function Landing() {
         id="recommendedGearList"
         className="py-16 px-6 bg-white text-center"
       >
-        <h2 className="text-3xl font-bold mb-8">Recommended Gear Lists</h2>
+        <h2 className="text-3xl font-bold mb-8">
+          {t("landing.recommended.title")}
+        </h2>
         <p className="max-w-2xl mx-auto text-gray-700 mb-12">
-          Explore our curated gear lists for Europe’s most iconic long-distance
-          trails. View them instantly, or customize and save them to your
-          account.
+          {t("landing.recommended.subtitle")}
         </p>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto">
-          {[
-            {
-              title: "Alta Via 1",
-              img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1752432593/gear-list-landing/gear-list-alta-via-1.jpg",
-              alt: "Alta Via 1 gear list in the Dolomites, Italy",
-              link: sharePath(FEATURED_TOKENS.av1) ?? "/gearlist/alta-via-1",
-            },
-            {
-              title: "Camino de Santiago",
-              img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1752415040/gear-list-landing/gear-list-camino-de-santiago.jpg",
-              alt: "Camino de Santiago gear list for walking across Spain",
-              link:
-                sharePath(FEATURED_TOKENS.camino) ??
-                "/gearlist/camino-de-santiago",
-            },
-            {
-              title: "Tour du Mont Blanc",
-              img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1752609809/gear-list-landing/gear-list-tour-du-mont-blanc.jpg",
-              alt: "Tour du Mont Blanc gear list",
-              link:
-                sharePath(FEATURED_TOKENS.tmb) ??
-                "/gearlist/tour-du-mont-blanc",
-            },
-            {
-              title: "West Highland Way",
-              img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1754772966/gear-list-landing/gear-list-west-highland-way.jpg",
-              alt: "West Highland Way gear list",
-              link:
-                sharePath(FEATURED_TOKENS.whw) ?? "/gearlist/west-highland-way",
-            },
-            {
-              title: "Kungsleden",
-              img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1754772965/gear-list-landing/gear-list-kungsleden.jpg",
-              alt: "Kungsleden gear list",
-              link:
-                sharePath(FEATURED_TOKENS.kungsleden) ?? "/gearlist/kungsleden",
-            },
-            {
-              title: "GR20 Corsica",
-              img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1754772963/gear-list-landing/gear-list-gr20.jpg",
-              alt: "GR20 gear list",
-              link: sharePath(FEATURED_TOKENS.gr20) ?? "/gearlist/gr20-corsica",
-            },
-          ].map(({ title, img, alt, link }) => {
+          {cards.map(({ key, title, img, alt, link }) => {
             const isInternal = typeof link === "string" && link.startsWith("/");
+            const ariaLabel = t("landing.recommended.cards.ariaOpen", {
+              title,
+            });
+
             const CardInner = (
               <>
                 <img
@@ -439,7 +426,7 @@ export default function Landing() {
                 <div className="absolute bottom-0 left-0 right-0 p-4 text-left">
                   <h3 className="text-xl font-bold text-white">{title}</h3>
                   <span className="inline-block mt-2 text-sm font-medium text-white bg-blue-600 px-3 py-1 rounded-full">
-                    View Gear List
+                    {t("landing.recommended.cards.viewCta")}
                   </span>
                 </div>
               </>
@@ -447,18 +434,18 @@ export default function Landing() {
 
             return isInternal ? (
               <Link
-                key={title}
+                key={key}
                 to={link}
-                aria-label={`Open ${title} gear list`}
+                aria-label={ariaLabel}
                 className="relative group overflow-hidden rounded-xl shadow-md aspect-[4/3] transition"
               >
                 {CardInner}
               </Link>
             ) : (
               <a
-                key={title}
+                key={key}
                 href={link}
-                aria-label={`Open ${title} gear list`}
+                aria-label={ariaLabel}
                 className="relative group overflow-hidden rounded-xl shadow-md aspect-[4/3] transition"
               >
                 {CardInner}
@@ -468,15 +455,29 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* How it Works / Free + affiliate-funded */}
+      <section id="howItWorks" className="py-16 px-6 bg-slate-50 text-center">
+        <div className="mx-auto max-w-3xl">
+          <h2 className="text-3xl font-bold mb-4">
+            {t("landing.howItWorks.title")}
+          </h2>
+          <p className="text-gray-700 text-lg leading-relaxed">
+            {t("landing.howItWorks.paragraph")}
+          </p>
+          <p className="mt-4 text-gray-500 text-sm">
+            {t("landing.howItWorks.signature")}
+          </p>
+        </div>
+      </section>
+
       {/* === Final CTA Band === */}
       <section className="py-16 px-6 bg-slate-900 text-white">
         <div className="mx-auto max-w-4xl text-center">
           <h2 className="text-3xl font-bold mb-4">
-            Ready to pack smarter for your next trip?
+            {t("landing.finalCta.title")}
           </h2>
           <p className="max-w-2xl mx-auto text-slate-200 mb-8">
-            Start a gear list for your upcoming trek, fine-tune your kit, and
-            walk out the door knowing you haven’t forgotten anything.
+            {t("landing.finalCta.subtitle")}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <button
@@ -484,13 +485,13 @@ export default function Landing() {
               onClick={() => openAuth("register")}
               className="inline-flex items-center justify-center rounded-full bg-blue-500 px-7 py-2.5 text-sm font-semibold text-white hover:bg-blue-600 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-400 focus-visible:ring-offset-slate-900"
             >
-              Start your free gear list
+              {t("landing.finalCta.primary")}
             </button>
             <Link
               to={sharePath(FEATURED_TOKENS.av1) || "/gearlist/alta-via-1"}
               className="inline-flex items-center justify-center rounded-full border border-slate-400 px-6 py-2.5 text-sm font-semibold text-slate-100 hover:bg-slate-800 hover:border-slate-300 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-200 focus-visible:ring-offset-slate-900"
             >
-              Preview an example list
+              {t("landing.finalCta.secondary")}
             </Link>
           </div>
         </div>
@@ -505,7 +506,7 @@ export default function Landing() {
         onClose={closeAuth}
         onAuthed={() => {
           closeAuth();
-          // honor ?next=... if present
+          // honor ?next=... if present (avoid open redirects)
           const params = new URLSearchParams(location.search);
           const rawNext = params.get("next");
           const next = rawNext && rawNext.startsWith("/") ? rawNext : null;
