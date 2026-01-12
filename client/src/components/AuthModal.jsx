@@ -5,6 +5,7 @@ import { FaTimes } from "react-icons/fa";
 import useAuth from "../hooks/useAuth";
 import api from "../services/api";
 import { toast } from "react-hot-toast";
+import { useUserSettings } from "../contexts/UserSettings";
 import { useTranslation } from "react-i18next";
 
 export default function AuthModal({
@@ -29,6 +30,7 @@ export default function AuthModal({
   const [marketingOptIn, setMarketingOptIn] = useState(false);
 
   const { login, hydrateFromStorage } = useAuth();
+  const { region, language } = useUserSettings();
   const firstFieldRef = useRef(null);
   const { t } = useTranslation("common");
 
@@ -118,6 +120,9 @@ export default function AuthModal({
     }
 
     setLoading(true);
+    const safeRegion = String(region || "gb").toLowerCase();
+    const safeLanguage = String(language || "en").toLowerCase();
+    const locale = `${safeLanguage}-${safeRegion.toUpperCase()}`;
     try {
       await api.post("/auth/register", {
         email,
@@ -126,6 +131,9 @@ export default function AuthModal({
         acceptTerms,
         marketingOptIn,
         next,
+        region: safeRegion,
+        language: safeLanguage,
+        locale,
       });
       // No toast here; we switch into the "Check your email" step instead.
       setMode("verify");

@@ -2,27 +2,16 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/src/assets/logo.png" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
 
-    <!-- Preload AVIF -->
-    <link
-      rel="preload"
-      as="image"
-      type="image/avif"
-      href="https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1920/v1754767083/gear-list-hero-images/hero-hiker-blue-osprey_nm7lte.jpg"
-    />
+    <!-- Faster Cloudinary connection setup -->
 
-    <!-- Preload WebP -->
-    <link
-      rel="preload"
-      as="image"
-      type="image/webp"
-      href="https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1920/v1754767083/gear-list-hero-images/hero-hiker-blue-osprey_nm7lte.jpg"
-    />
+    <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
+    <link rel="dns-prefetch" href="https://res.cloudinary.com" />
 
     <title>TrekList</title>
   </head>

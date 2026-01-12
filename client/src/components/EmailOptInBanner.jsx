@@ -6,6 +6,9 @@ import { useTranslation } from "react-i18next";
 
 const DISMISS_KEY = "email_updates_banner_dismissed_v1";
 
+const SIGNUP_BANNER_DELAY_DAYS = 14;
+const SIGNUP_BANNER_DELAY_MS = SIGNUP_BANNER_DELAY_DAYS * 24 * 60 * 60 * 1000;
+
 export default function EmailOptInBanner() {
   const { t } = useTranslation("common");
   const { isAuthenticated } = useAuth();
@@ -16,6 +19,7 @@ export default function EmailOptInBanner() {
   useEffect(() => {
     if (!isAuthenticated) {
       setVisible(false);
+      setCheckedSettings(false);
       return;
     }
 
@@ -38,7 +42,13 @@ export default function EmailOptInBanner() {
           data.marketing && typeof data.marketing.optedIn === "boolean"
             ? data.marketing.optedIn
             : false;
-        setVisible(!optedIn);
+        // Delay showing banner for newly created accounts to avoid redundancy
+        const createdAtMs = data?.createdAt ? Date.parse(data.createdAt) : NaN;
+        const isNewAccount =
+          Number.isFinite(createdAtMs) &&
+          Date.now() - createdAtMs < SIGNUP_BANNER_DELAY_MS;
+
+        setVisible(!optedIn && !isNewAccount);
       })
       .catch((err) => {
         console.error("EmailOptInBanner /settings error:", err);
@@ -62,7 +72,9 @@ export default function EmailOptInBanner() {
   const handleAccept = async () => {
     setLoading(true);
     try {
-      await api.patch("/settings", { marketing: { optedIn: true } });
+      await api.patch("/settings", {
+        marketing: { optedIn: true, optedInSource: "banner" },
+      });
       setVisible(false);
       try {
         window.localStorage.setItem(DISMISS_KEY, "1");

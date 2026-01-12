@@ -1,8 +1,10 @@
+// Landing.jsx - Public landing page for TrekList
+
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import mobileSidebarScreenshot from "../assets/images/treklist-mobile-sidebar.png";
-import mobileColumnScreenshot from "../assets/images/treklist-column-mobile.png";
-import desktopColumnScreenshot from "../assets/images/treklist-column-desktop-1.png";
+import mobileSidebarScreenshot from "../assets/images/screen-shots/treklist-mobile-sidebar.png";
+import mobileColumnScreenshot from "../assets/images/screen-shots/treklist-column-mobile.png";
+import desktopColumnScreenshot from "../assets/images/screen-shots/treklist-column-desktop-1.png";
 import AuthModal from "../components/AuthModal";
 import FooterLegal from "../components/FooterLegal";
 import PublicHeader from "../components/PublicHeader";
@@ -241,40 +243,7 @@ export default function Landing() {
             Start Your List
           </button>
         </div>
-
-        {/*
-          --- HERO CAROUSEL DOTS (commented out) ---
-          <div className="absolute bottom-10 flex space-x-2 z-20">
-            {heroImages.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setCurrent(idx)}
-                className={`w-3 h-3 rounded-full transition-opacity duration-300 ${
-                  idx === current ? "bg-white opacity-100" : "bg-white opacity-50"
-                }`}
-              />
-            ))}
-          </div>
-        */}
       </header>
-
-      {/* Brand Partners
-      <section className="py-12 px-6 flex flex-wrap justify-center items-center gap-8 bg-gray-50">
-        {[
-          "https://cdn.shopify.com/s/files/1/0173/1185/files/hyperlite-logo.svg",
-          "https://www.zpacks.com/cdn/shop/files/zpacks_logo_black.svg",
-          "https://www.osprey.com/media/wysiwyg/Footer/osprey-logo.svg",
-          // "https://assets.bever.nl/logos/bever_logo.svg",
-        ].map((src) => (
-          <img
-            key={src}
-            src={src}
-            alt="Partner logo"
-            className="h-12 grayscale hover:grayscale-0 transition"
-          />
-        ))}
-      </section> */}
-
       {/* ===== Section A: Image (phones) -> Text ===== */}
       <section
         id="features"
@@ -367,7 +336,7 @@ export default function Landing() {
               Built for Your Next Adventure
             </h2>
             <p className="text-center md:text-left mt-3 text-slate-600">
-              Plan, budget, and fine-tune your kit.
+              Plan, organize, and fine-tune your kit.
             </p>
 
             <ul className="mt-8 space-y-6">
@@ -415,13 +384,13 @@ export default function Landing() {
           {[
             {
               title: "Alta Via 1",
-              img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1752432593/gear-list-backgrounds/docilcoaiwytxccqcc4c.jpg",
+              img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1752432593/gear-list-landing/gear-list-alta-via-1.jpg",
               alt: "Alta Via 1 gear list in the Dolomites, Italy",
               link: sharePath(FEATURED_TOKENS.av1) ?? "/gearlist/alta-via-1",
             },
             {
               title: "Camino de Santiago",
-              img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1752415040/gear-list-backgrounds/foqdt3vgogiubrizfe0s.jpg",
+              img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1752415040/gear-list-landing/gear-list-camino-de-santiago.jpg",
               alt: "Camino de Santiago gear list for walking across Spain",
               link:
                 sharePath(FEATURED_TOKENS.camino) ??
@@ -429,7 +398,7 @@ export default function Landing() {
             },
             {
               title: "Tour du Mont Blanc",
-              img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1752609809/gear-list-backgrounds/u726utxdhmmmk5p6npuz.jpg",
+              img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1752609809/gear-list-landing/gear-list-tour-du-mont-blanc.jpg",
               alt: "Tour du Mont Blanc gear list",
               link:
                 sharePath(FEATURED_TOKENS.tmb) ??
@@ -437,21 +406,21 @@ export default function Landing() {
             },
             {
               title: "West Highland Way",
-              img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1754772966/gear-list-landing/gear-list-west-highland-way_d8d7bq.jpg",
+              img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1754772966/gear-list-landing/gear-list-west-highland-way.jpg",
               alt: "West Highland Way gear list",
               link:
                 sharePath(FEATURED_TOKENS.whw) ?? "/gearlist/west-highland-way",
             },
             {
               title: "Kungsleden",
-              img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1754772965/gear-list-landing/gear-list-kungsleden_yultsg.jpg",
+              img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1754772965/gear-list-landing/gear-list-kungsleden.jpg",
               alt: "Kungsleden gear list",
               link:
                 sharePath(FEATURED_TOKENS.kungsleden) ?? "/gearlist/kungsleden",
             },
             {
               title: "GR20 Corsica",
-              img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1754772963/gear-list-landing/gear-list-gr20_azn4uu.jpg",
+              img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1754772963/gear-list-landing/gear-list-gr20.jpg",
               alt: "GR20 gear list",
               link: sharePath(FEATURED_TOKENS.gr20) ?? "/gearlist/gr20-corsica",
             },
@@ -462,6 +431,8 @@ export default function Landing() {
                 <img
                   src={img}
                   alt={alt}
+                  loading="lazy"
+                  decoding="async"
                   className="absolute inset-0 h-full w-full object-cover"
                 />
                 <div className="absolute inset-0 bg-black/35 group-hover:bg-black/45 transition" />

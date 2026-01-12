@@ -13,6 +13,23 @@ router.use(cookieParser());
 
 // ---- Config & constants ----
 const JWT_EXP = process.env.JWT_EXP || "7d";
+const SUPPORTED_REGIONS = ["nl", "us", "ca", "gb", "de", "fr", "it"];
+const SUPPORTED_LANGS = ["en", "nl"];
+
+function normalizeRegionInput(r) {
+  const v = String(r || "")
+    .trim()
+    .toLowerCase();
+  if (!v) return "";
+  if (v === "us") return "us";
+  return v;
+}
+function normalizeLangInput(l) {
+  return String(l || "")
+    .trim()
+    .toLowerCase();
+}
+
 const REFRESH_TOKEN_EXP_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 const isProd = process.env.NODE_ENV === "production";
 
@@ -221,7 +238,9 @@ router.post("/register", registerLimiter, async (req, res) => {
   try {
     const { email, trailname, password, acceptTerms, marketingOptIn, next } =
       req.body;
-
+    const normalizedEmail = String(email || "")
+      .trim()
+      .toLowerCase();
     if (!email || !password) {
       return res.status(400).json({
         message: "Email & password are required.",
@@ -241,11 +260,30 @@ router.post("/register", registerLimiter, async (req, res) => {
     }
 
     const user = new User({
-      email,
+      email: normalizedEmail,
       // trailname is optional; only set it if provided
       ...(trailname ? { trailname } : {}),
       isVerified: false,
     });
+
+    // Optional client-provided prefs (first-visit detection)
+    const regionIn = normalizeRegionInput(req.body.region);
+    const langIn = normalizeLangInput(req.body.language);
+    if (SUPPORTED_REGIONS.includes(regionIn)) user.region = regionIn;
+    if (SUPPORTED_LANGS.includes(langIn)) user.language = langIn;
+
+    // Prefer explicit locale if valid, else derive from language+region
+    const localeIn = String(req.body.locale || "").trim();
+    const derivedLocale = `${user.language || "en"}-${String(
+      user.region || "nl"
+    ).toUpperCase()}`;
+
+    // Only accept client locale if it matches the final chosen language/region
+    if (/^[a-z]{2}-[A-Z]{2}$/.test(localeIn) && localeIn === derivedLocale) {
+      user.locale = localeIn;
+    } else {
+      user.locale = derivedLocale;
+    }
 
     // Optional marketing consent at registration
     if (marketingOptIn) {

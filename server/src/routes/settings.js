@@ -20,6 +20,7 @@ router.get("/", async (req, res) => {
     const {
       email,
       trailname,
+      createdAt,
       viewMode,
       locale,
       theme,
@@ -35,6 +36,7 @@ router.get("/", async (req, res) => {
     res.json({
       email,
       trailname,
+      createdAt,
       viewMode,
       locale,
       theme,
@@ -46,7 +48,7 @@ router.get("/", async (req, res) => {
       sidebarMyGearCollapsed: !!sidebarMyGearCollapsed,
       marketing: {
         // always return a boolean; treat missing doc as false
-        optedIn: marketing?.optedIn || false,
+        optedIn: Boolean(marketing?.optedIn),
       },
     });
   } catch (err) {
@@ -111,7 +113,10 @@ router.patch("/", async (req, res) => {
         // user is opting in now
         user.marketing.optedIn = true;
         user.marketing.optedInAt = new Date();
-        user.marketing.optedInSource = "settings";
+        const src = String(marketingUpdate.optedInSource || "settings");
+        user.marketing.optedInSource = ["settings", "banner"].includes(src)
+          ? src
+          : "settings";
       } else if (!nextOptIn && prevOptIn) {
         // user is opting out
         user.marketing.optedIn = false;

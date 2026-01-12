@@ -2,7 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import logo from "../assets/images/treklist_horizontal.png";
+import logo from "../assets/images/media-kit/treklist_horizontal.png";
 
 /**
  * Public (logged-out) header used on Landing and legal pages.
@@ -52,9 +52,6 @@ export default function PublicHeader({
             className="hover:underline text-gray-800"
           >
             {t("publicHeader.nav.recommendedGearList")}
-          </a>
-          <a href="#how-it-works" className="hover:underline text-gray-800">
-            {t("publicHeader.nav.howItWorks")}
           </a>
         </div>
       )}

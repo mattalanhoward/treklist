@@ -226,7 +226,10 @@ export default function Sidebar({
               <section className="px-4 py-2 border-b border-base-100">
                 <button
                   type="button"
-                  onClick={onOpenAdmin}
+                  onClick={() => {
+                    onOpenAdmin();
+                    if (isMobile()) setCollapsed(true);
+                  }}
                   className="flex items-center text-primaryAlt font-bold truncate"
                 >
                   Admin
