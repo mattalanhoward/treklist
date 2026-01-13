@@ -21,7 +21,11 @@
   },
   "language": {
     "english": "Engels",
-    "dutch": "Nederlands"
+    "dutch": "Nederlands",
+    "german": "Duits",
+    "french": "Frans",
+    "italian": "Italiaans",
+    "spanish": "Spaans"
   },
   "topbar": {
     "accountHeader": "Account",
@@ -729,7 +733,7 @@
     "hero": {
       "title": "Slim inpakken. Licht reizen.",
       "subtitle": "Maak een paklijst, zie direct je totale gewicht en pak met vertrouwen. Ontworpen voor langeafstandstochten, weekendtrips en hut tot hut trekkings in Europa en daarbuiten.",
-      "cta": "Gratis starten"
+      "cta": "Begin je Paklijst"
     },
     "images": {
       "heroAlt": "Hiker bij Cinque Torri in de Dolomieten",

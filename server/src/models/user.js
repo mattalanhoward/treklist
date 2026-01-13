@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
+const SUPPORTED_LANGS = ["en", "nl", "de", "fr", "it", "es"];
+const SUPPORTED_REGIONS = ["nl", "us", "ca", "gb", "de", "fr", "it"];
+
 const UserSchema = new mongoose.Schema(
   {
     // Optional marketing / email-updates preferences
@@ -51,14 +54,23 @@ const UserSchema = new mongoose.Schema(
     sidebarGearListsCollapsed: { type: Boolean, default: false },
     sidebarMyGearCollapsed: { type: Boolean, default: false },
     viewMode: { type: String, enum: ["column", "list"], default: "column" },
-    locale: { type: String, default: "en-NL" },
     theme: { type: String, default: "light" },
     weightUnit: { type: String, enum: ["g", "oz"], default: "g" },
-    language: { type: String, default: "en" },
+    language: {
+      type: String,
+      enum: SUPPORTED_LANGS,
+      default: "en",
+    },
+
     region: {
       type: String,
-      enum: ["nl", "us", "ca", "gb", "de", "fr", "it"],
-      default: "nl",
+      enum: SUPPORTED_REGIONS,
+      default: "us", // optional: us is a “safe fallback everywhere”
+    },
+
+    locale: {
+      type: String,
+      default: "en-US", // optional: match your fallback region
     },
   },
   {

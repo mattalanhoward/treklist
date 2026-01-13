@@ -21,7 +21,11 @@
   },
   "language": {
     "english": "English",
-    "dutch": "Nederlands"
+    "dutch": "Nederlands",
+    "german": "Deutsch",
+    "french": "Français",
+    "italian": "Italiano",
+    "spanish": "Español"
   },
   "topbar": {
     "accountHeader": "Account",
@@ -729,7 +733,7 @@
     "hero": {
       "title": "Pack Smart. Travel Light.",
       "subtitle": "Build a gear list, see your total weight instantly, and pack with confidence. Designed for long distance hikes, weekend trips, and hut to hut treks across Europe and beyond.",
-      "cta": "Start free"
+      "cta": "Start Your List"
     },
     "images": {
       "heroAlt": "Hiker at Cinque Torri in the Dolomites",

@@ -14,7 +14,7 @@ router.use(cookieParser());
 // ---- Config & constants ----
 const JWT_EXP = process.env.JWT_EXP || "7d";
 const SUPPORTED_REGIONS = ["nl", "us", "ca", "gb", "de", "fr", "it"];
-const SUPPORTED_LANGS = ["en", "nl"];
+const SUPPORTED_LANGS = ["en", "nl", "de", "fr", "it", "es"];
 
 function normalizeRegionInput(r) {
   const v = String(r || "")

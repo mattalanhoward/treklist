@@ -191,6 +191,10 @@ export default function TopBar({ title, openSettings }) {
                     >
                       <option value="en">{t("language.english")}</option>
                       <option value="nl">{t("language.dutch")}</option>
+                      <option value="de">{t("language.german")}</option>
+                      <option value="fr">{t("language.french")}</option>
+                      <option value="it">{t("language.italian")}</option>
+                      <option value="es">{t("language.spanish")}</option>
                     </select>
                   </div>
                 ),
