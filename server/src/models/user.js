@@ -8,11 +8,8 @@ const UserSchema = new mongoose.Schema(
   {
     // Optional marketing / email-updates preferences
     marketing: {
-      // Has the user explicitly opted in to product / feature updates?
       optedIn: { type: Boolean, default: false },
-      // When they last opted in (for basic GDPR hygiene / audit trail)
       optedInAt: { type: Date },
-      // Where the opt-in came from: "register", "settings", "banner", etc.
       optedInSource: { type: String },
     },
     refreshTokens: {
@@ -65,12 +62,12 @@ const UserSchema = new mongoose.Schema(
     region: {
       type: String,
       enum: SUPPORTED_REGIONS,
-      default: "us", // optional: us is a “safe fallback everywhere”
+      default: "us",
     },
 
     locale: {
       type: String,
-      default: "en-US", // optional: match your fallback region
+      default: "en-US",
     },
   },
   {

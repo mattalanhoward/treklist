@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import DropdownMenu from "./DropdownMenu";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
-import logo from "../../public/brand/treklist_horizontal.png";
+import logo from "../assets/images/media-kit/treklist_horizontal.png";
 import { useUserSettings } from "../contexts/UserSettings";
 import AccountModal from "./AccountModal";
 import ViewToggle from "./ViewToggle";
