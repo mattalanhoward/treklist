@@ -25,8 +25,8 @@ export default function StatWithDetails({
     // just render the static stat – no popover, no hover / click
     return (
       <div className="flex items-center space-x-1">
-        <Icon className="text-base" />
-        <span className="text-sm">{displayValue}</span>{" "}
+        <Icon className={`text-base ${colorClass || ""}`} />
+        <span className="text-sm text-primary">{displayValue}</span>{" "}
       </div>
     );
   }
@@ -37,10 +37,10 @@ export default function StatWithDetails({
       <Popover.Trigger asChild>
         <div
           title={label}
-          className={`flex items-center space-x-1 cursor-help ${colorClass}`}
+          className={`flex items-center space-x-1 cursor-help`}
         >
-          <Icon className="w-4 h-4" />
-          <span>{displayValue}</span>
+          <Icon className={`w-4 h-4 ${colorClass || ""}`} />
+          <span className="text-primary">{displayValue}</span>
         </div>
       </Popover.Trigger>
 
