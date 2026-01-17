@@ -186,27 +186,27 @@ export default function Landing() {
         alt: t("landing.recommended.cards.tmb.alt"),
         link: sharePath(FEATURED_TOKENS.tmb) ?? "/gearlist/tour-du-mont-blanc",
       },
-      {
-        key: "whw",
-        title: t("landing.recommended.cards.whw.title"),
-        img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1754772966/gear-list-landing/gear-list-west-highland-way.jpg",
-        alt: t("landing.recommended.cards.whw.alt"),
-        link: sharePath(FEATURED_TOKENS.whw) ?? "/gearlist/west-highland-way",
-      },
-      {
-        key: "kungsleden",
-        title: t("landing.recommended.cards.kungsleden.title"),
-        img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1754772965/gear-list-landing/gear-list-kungsleden.jpg",
-        alt: t("landing.recommended.cards.kungsleden.alt"),
-        link: sharePath(FEATURED_TOKENS.kungsleden) ?? "/gearlist/kungsleden",
-      },
-      {
-        key: "gr20",
-        title: t("landing.recommended.cards.gr20.title"),
-        img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1754772963/gear-list-landing/gear-list-gr20.jpg",
-        alt: t("landing.recommended.cards.gr20.alt"),
-        link: sharePath(FEATURED_TOKENS.gr20) ?? "/gearlist/gr20-corsica",
-      },
+      // {
+      //   key: "whw",
+      //   title: t("landing.recommended.cards.whw.title"),
+      //   img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1754772966/gear-list-landing/gear-list-west-highland-way.jpg",
+      //   alt: t("landing.recommended.cards.whw.alt"),
+      //   link: sharePath(FEATURED_TOKENS.whw) ?? "/gearlist/west-highland-way",
+      // },
+      // {
+      //   key: "kungsleden",
+      //   title: t("landing.recommended.cards.kungsleden.title"),
+      //   img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1754772965/gear-list-landing/gear-list-kungsleden.jpg",
+      //   alt: t("landing.recommended.cards.kungsleden.alt"),
+      //   link: sharePath(FEATURED_TOKENS.kungsleden) ?? "/gearlist/kungsleden",
+      // },
+      // {
+      //   key: "gr20",
+      //   title: t("landing.recommended.cards.gr20.title"),
+      //   img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1754772963/gear-list-landing/gear-list-gr20.jpg",
+      //   alt: t("landing.recommended.cards.gr20.alt"),
+      //   link: sharePath(FEATURED_TOKENS.gr20) ?? "/gearlist/gr20-corsica",
+      // },
     ],
     [t]
   );
@@ -471,7 +471,7 @@ export default function Landing() {
       </section>
 
       {/* === Final CTA Band === */}
-      <section className="py-16 px-6 bg-slate-900 text-white">
+      {/* <section className="py-16 px-6 bg-slate-900 text-white">
         <div className="mx-auto max-w-4xl text-center">
           <h2 className="text-3xl font-bold mb-4">
             {t("landing.finalCta.title")}
@@ -495,7 +495,7 @@ export default function Landing() {
             </Link>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Footer (public view) */}
       <FooterLegal variant="dark" containerWidth="max-w-4xl" />
