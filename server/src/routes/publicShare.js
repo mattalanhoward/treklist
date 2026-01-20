@@ -6,6 +6,7 @@ const GearList = require("../models/gearList");
 const Category = require("../models/category");
 const Item = require("../models/gearItem");
 const GlobalItem = require("../models/globalItem");
+const { resolveOfferForProduct } = require("../services/affiliateResolver");
 
 const router = express.Router();
 const auth = require("../middleware/auth");
@@ -70,6 +71,7 @@ router.get("/:token/full", async (req, res) => {
       .sort({ position: 1 })
       .select({
         _id: 1,
+        globalItem: 1,
         category: 1,
         itemType: 1,
         brand: 1,
@@ -87,6 +89,94 @@ router.get("/:token/full", async (req, res) => {
   ]);
 
   if (!list) return res.status(404).json({ error: "List not found" });
+  // --- Resolve missing buy links for catalog-backed items (best-effort) ---
+  const globalItemIds = [
+    ...new Set(items.map((i) => i.globalItem?.toString()).filter(Boolean)),
+  ];
+
+  const globalItems = globalItemIds.length
+    ? await GlobalItem.find({ _id: { $in: globalItemIds } })
+        .select({ _id: 1, productId: 1, link: 1, affiliate: 1 })
+        .lean()
+    : [];
+
+  const globalById = new Map(globalItems.map((g) => [g._id.toString(), g]));
+
+  // Memoize resolver calls so we don't spam DB
+  const offerCache = new Map();
+  async function getOffer(productId, userRegion) {
+    const key = `${productId.toString()}:${userRegion}`;
+    if (offerCache.has(key)) return offerCache.get(key);
+    const offer = await resolveOfferForProduct({ productId, userRegion });
+    offerCache.set(key, offer || null);
+    return offer || null;
+  }
+
+  const userRegion = (
+    list.storeRegion ||
+    list.region ||
+    "global"
+  ).toLowerCase();
+
+  const resolvedItems = [];
+  for (const i of items) {
+    let link = i.link || null;
+    let affiliate = i.affiliate || null;
+    const hasAffiliateLink =
+      (typeof affiliate === "string" && affiliate) ||
+      affiliate?.deepLink ||
+      affiliate?.url ||
+      affiliate?.awDeepLink;
+
+    if (!link && !hasAffiliateLink && i.globalItem) {
+      const g = globalById.get(i.globalItem.toString());
+      if (g) {
+        // If GlobalItem is custom and has a direct link, use it
+        link = g.link || null;
+
+        // If GlobalItem already has an affiliate deepLink snapshot, prefer it
+        const deep =
+          (typeof g.affiliate === "string" ? g.affiliate : null) ||
+          g.affiliate?.deepLink ||
+          g.affiliate?.awDeepLink ||
+          g.affiliate?.url ||
+          null;
+
+        if (deep) {
+          affiliate = {
+            deepLink: deep,
+            network: g.affiliate?.network,
+            region: g.affiliate?.region,
+            merchantName: g.affiliate?.merchantName,
+          };
+        } else if (g.productId) {
+          const offer = await getOffer(g.productId, userRegion);
+          if (offer?.deepLink) {
+            affiliate = {
+              deepLink: offer.deepLink,
+              network: offer.network,
+              region: offer.region,
+              merchantName: offer.merchantName,
+            };
+          }
+        }
+      }
+    }
+
+    resolvedItems.push({
+      id: i._id.toString(),
+      categoryId: i.category?.toString() || null,
+      itemType: i.itemType || "gear",
+      brand: i.brand || "",
+      name: i.name || "",
+      weight_g: typeof i.weight === "number" ? i.weight : null,
+      consumable: !!i.consumable,
+      worn: !!i.worn,
+      qty: i.quantity ?? 1,
+      affiliate,
+      link,
+    });
+  }
 
   res.json({
     list: {
@@ -99,19 +189,7 @@ router.get("/:token/full", async (req, res) => {
       id: c._id.toString(),
       title: c.title,
     })),
-    items: items.map((i) => ({
-      id: i._id.toString(),
-      categoryId: i.category?.toString() || null,
-      itemType: i.itemType || "gear",
-      brand: i.brand || "",
-      name: i.name || "",
-      weight_g: typeof i.weight === "number" ? i.weight : null,
-      consumable: !!i.consumable,
-      worn: !!i.worn,
-      qty: i.quantity ?? 1,
-      affiliate: i.affiliate || null,
-      link: i.link || null,
-    })),
+    items: resolvedItems,
   });
 });
 
@@ -188,7 +266,7 @@ router.get("/:token/csv", async (req, res) => {
       Consumable: i.consumable ? "Yes" : "",
       Worn: i.worn ? "Yes" : "",
       Qty: i.quantity ?? 1,
-      Link: (i.affiliate && i.affiliate.url) || i.link || "",
+      Link: i.affiliate?.deepLink || i.affiliate?.url || i.link || "",
     }));
 
     const headers = Object.keys(
