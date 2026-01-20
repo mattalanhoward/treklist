@@ -1,5 +1,16 @@
 const mongoose = require("mongoose");
 
+const DimensionsSchema = new mongoose.Schema(
+  {
+    length: { type: Number, min: 0 },
+    width: { type: Number, min: 0 },
+    height: { type: Number, min: 0 },
+    unit: { type: String, enum: ["cm"], default: "cm" },
+    note: { type: String, trim: true },
+  },
+  { _id: false }
+);
+
 // ------------------------------------------------------------
 // CatalogItemSchema → Canonical product definition in TrekList.
 // This is the ADMIN-curated product model.
@@ -92,10 +103,8 @@ const CatalogItemSchema = new mongoose.Schema(
 
     // Physical dimensions (store canonical values you trust)
     dimensions: {
-      length: { type: Number, min: 0 },
-      width: { type: Number, min: 0 },
-      height: { type: Number, min: 0 },
-      unit: { type: String, enum: ["cm", "in"], default: "cm" },
+      type: DimensionsSchema,
+      default: undefined, // prevents empty {} subdocs
     },
 
     // TAGS FOR SEARCH / FILTERING
@@ -175,6 +184,33 @@ CatalogItemSchema.pre("save", function normalize(next) {
     this.externalIds.asin = String(this.externalIds.asin).trim().toUpperCase();
   next();
 });
+
+// - Allow note-only dimensions
+// - Allow partial L/W/H ONLY if note is present
+// - Disallow unit-only with no note and no numbers
+CatalogItemSchema.path("dimensions").validate(function (dims) {
+  if (!dims) return true;
+
+  const hasAnyNum =
+    typeof dims.length === "number" ||
+    typeof dims.width === "number" ||
+    typeof dims.height === "number";
+
+  const hasNote = Boolean(String(dims.note || "").trim());
+
+  // unit-only (or completely empty) is not allowed
+  if (!hasAnyNum && !hasNote) return false;
+
+  const hasAllNums =
+    typeof dims.length === "number" &&
+    typeof dims.width === "number" &&
+    typeof dims.height === "number";
+
+  // partial numbers require a note
+  if (hasAnyNum && !hasAllNums && !hasNote) return false;
+
+  return true;
+}, "Dimensions must include L/W/H, or a note. Partial L/W/H requires a note.");
 
 // ------------------------------------------------------------
 // Helpful indexes for affiliate resolution & search

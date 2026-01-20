@@ -35,6 +35,12 @@ function sanitizeAttributes(input) {
   return out;
 }
 
+function normalizeExternalProductId(v) {
+  if (v === null || v === undefined) return undefined;
+  const s = String(v).trim();
+  return s.length ? s : undefined;
+}
+
 function pickBestOffer(offers, userRegion) {
   const list = Array.isArray(offers) ? offers : [];
   const scored = list
@@ -514,7 +520,9 @@ router.post("/from-catalog/bulk", async (req, res) => {
               deepLink: bestOffer.deepLink,
               merchantId: bestOffer.merchantId,
               merchantName: bestOffer.merchantName || "",
-              externalProductId: bestOffer.externalProductId || "",
+              externalProductId: normalizeExternalProductId(
+                bestOffer.externalProductId
+              ),
               itemGroupId: bestOffer.itemGroupId || c.itemGroupId || undefined,
               priority:
                 typeof bestOffer.priority === "number" ? bestOffer.priority : 0,
@@ -546,7 +554,9 @@ router.post("/from-catalog/bulk", async (req, res) => {
                 deepLink: resolved.deepLink,
                 merchantId: resolved.merchantId,
                 merchantName: resolved.merchantName,
-                externalProductId: resolved.externalProductId,
+                ...(resolved.externalProductId
+                  ? { externalProductId: resolved.externalProductId }
+                  : {}),
                 itemGroupId: resolved.itemGroupId,
               }
             : undefined,
@@ -638,7 +648,13 @@ router.post("/from-catalog/:id", async (req, res) => {
             deepLink: primaryOffer.deepLink,
             merchantName: primaryOffer.merchantName || "",
             merchantId: primaryOffer.merchantId || "",
-            externalProductId: primaryOffer.externalProductId || "",
+            ...(normalizeExternalProductId(primaryOffer.externalProductId)
+              ? {
+                  externalProductId: normalizeExternalProductId(
+                    primaryOffer.externalProductId
+                  ),
+                }
+              : {}),
             itemGroupId:
               primaryOffer.itemGroupId || catalogItem.itemGroupId || undefined,
           }

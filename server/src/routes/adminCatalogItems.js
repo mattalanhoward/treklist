@@ -9,7 +9,7 @@ const GearItem = require("../models/gearItem");
 
 const router = express.Router();
 
-const ALLOWED_DIM_UNITS = new Set(["cm", "in"]);
+const ALLOWED_DIM_UNITS = new Set(["cm"]);
 
 function marketplaceFromAmazonUrl(url) {
   try {
@@ -132,13 +132,18 @@ function normalizeDimensions(raw) {
   const widthRaw = raw.width;
   const heightRaw = raw.height;
   const unitRaw = raw.unit;
+  const noteRaw = raw.note;
 
-  const hasAny =
+  const note =
+    typeof noteRaw === "string" && noteRaw.trim() ? noteRaw.trim() : undefined;
+
+  const hasAnyNum =
     (lengthRaw !== undefined && lengthRaw !== "" && lengthRaw !== null) ||
     (widthRaw !== undefined && widthRaw !== "" && widthRaw !== null) ||
     (heightRaw !== undefined && heightRaw !== "" && heightRaw !== null);
 
-  if (!hasAny) return { dimensions: null, clear: true };
+  // ✅ If no numbers AND no note => clear
+  if (!hasAnyNum && !note) return { dimensions: null, clear: true };
 
   const toNum = (v) => {
     if (v === undefined || v === null || v === "") return undefined;
@@ -161,14 +166,34 @@ function normalizeDimensions(raw) {
     };
   }
 
+  // ✅ cm only (default to cm if missing)
   const unit = String(unitRaw || "cm")
     .trim()
     .toLowerCase();
   if (!ALLOWED_DIM_UNITS.has(unit)) {
-    return { error: 'Dimensions unit must be "cm" or "in".' };
+    return { error: 'Dimensions unit must be "cm".' };
   }
 
-  return { dimensions: { length, width, height, unit }, clear: false };
+  // ✅ If numbers are partial, require note
+  const hasAllNums =
+    length !== undefined && width !== undefined && height !== undefined;
+  if (hasAnyNum && !hasAllNums && !note) {
+    return {
+      error:
+        'Partial dimensions require a note (e.g. "varies by size", "packed", "approximate").',
+    };
+  }
+
+  return {
+    dimensions: {
+      length,
+      width,
+      height,
+      unit: "cm",
+      ...(note ? { note } : {}),
+    },
+    clear: false,
+  };
 }
 
 // GET /api/admin/catalog-items
@@ -499,6 +524,7 @@ router.patch("/:id", async (req, res) => {
 
     const item = await CatalogItem.findByIdAndUpdate(req.params.id, updateDoc, {
       new: true,
+      runValidators: true,
     });
     if (!item)
       return res.status(404).json({ message: "Catalog item not found." });

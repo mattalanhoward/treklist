@@ -162,7 +162,7 @@ function GearCatalogSection({ mode = "both" }) {
     dimLength: "",
     dimWidth: "",
     dimHeight: "",
-    dimUnit: "cm",
+    dimNote: "",
     tags: "",
     imageUrlsText: "",
     canonicalAsin: "",
@@ -309,16 +309,18 @@ function GearCatalogSection({ mode = "both" }) {
         attributes,
         weightGrams: form.weightGrams ? Number(form.weightGrams) : undefined,
         dimensions:
-          form.dimLength || form.dimWidth || form.dimHeight
+          form.dimLength ||
+          form.dimWidth ||
+          form.dimHeight ||
+          String(form.dimNote || "").trim()
             ? {
                 length:
                   form.dimLength === "" ? undefined : Number(form.dimLength),
                 width: form.dimWidth === "" ? undefined : Number(form.dimWidth),
                 height:
                   form.dimHeight === "" ? undefined : Number(form.dimHeight),
-                unit: String(form.dimUnit || "cm")
-                  .trim()
-                  .toLowerCase(),
+                unit: "cm",
+                note: String(form.dimNote || "").trim() || undefined,
               }
             : undefined,
         tags: form.tags
@@ -365,7 +367,7 @@ function GearCatalogSection({ mode = "both" }) {
         dimLength: "",
         dimWidth: "",
         dimHeight: "",
-        dimUnit: "cm",
+        dimNote: "",
         tags: "",
         imageUrlsText: "",
         canonicalAsin: "",
@@ -445,7 +447,7 @@ function GearCatalogSection({ mode = "both" }) {
         const overwrite = Boolean(prev.prefillOverwrite);
         const pick = (current, next) => {
           const nextVal =
-            typeof next === "string" ? next.trim() : next ?? undefined;
+            typeof next === "string" ? next.trim() : (next ?? undefined);
           if (nextVal == null || nextVal === "") return current;
           if (overwrite) return nextVal;
           return String(current || "").trim() ? current : nextVal;
@@ -511,13 +513,6 @@ function GearCatalogSection({ mode = "both" }) {
                 ? String(prefill.dimensions.height)
                 : prev.dimHeight
               : prev.dimHeight,
-          dimUnit:
-            typeof prefill?.dimensions?.unit === "string" &&
-            prefill.dimensions.unit.trim()
-              ? overwrite || !String(prev.dimUnit || "").trim()
-                ? prefill.dimensions.unit.trim().toLowerCase()
-                : prev.dimUnit
-              : prev.dimUnit,
           imageUrlsText:
             Array.isArray(prefill.imageUrls) && prefill.imageUrls.length
               ? overwrite || !String(prev.imageUrlsText || "").trim()
@@ -1070,19 +1065,28 @@ function GearCatalogSection({ mode = "both" }) {
                         min="0"
                         step="0.1"
                       />
-                      <select
-                        name="dimUnit"
-                        value={form.dimUnit}
-                        onChange={handleChange}
-                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
-                      >
-                        <option value="cm">cm</option>
-                        <option value="in">in</option>
-                      </select>
+                      <div className="mt-0.5 w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt flex items-center justify-center">
+                        <span className="text-xs font-semibold tracking-wide">
+                          cm
+                        </span>
+                      </div>
                     </div>
                     <span className="block text-[11px] text-primary/70">
                       Optional. Stored as L × W × H.
                     </span>
+                    <div className="col-span-full">
+                      <label className="block text-xs text-primary">
+                        Dimensions note (optional)
+                      </label>
+                      <input
+                        type="text"
+                        name="dimNote"
+                        value={form.dimNote || ""}
+                        onChange={handleChange}
+                        placeholder='e.g. "Varies by size", "Packed", "Approximate"'
+                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -1429,8 +1433,8 @@ function GearCatalogSection({ mode = "both" }) {
               {loading
                 ? "Loading catalog items..."
                 : showArchived
-                ? `Catalog items (including archived): ${items.length}`
-                : `Active catalog items: ${items.length}`}
+                  ? `Catalog items (including archived): ${items.length}`
+                  : `Active catalog items: ${items.length}`}
             </span>
             <div className="flex items-center gap-2">
               <label className="flex items-center gap-1 cursor-pointer">
@@ -1712,8 +1716,8 @@ function GearCatalogSection({ mode = "both" }) {
                                       ? "Archiving..."
                                       : "Unarchiving..."
                                     : item.isActive
-                                    ? "Archive"
-                                    : "Unarchive"}
+                                      ? "Archive"
+                                      : "Unarchive"}
                                 </button>
                               </div>
                             </td>
@@ -1802,8 +1806,8 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
       Array.isArray(item?.offers) && item.offers.length
         ? item.offers
         : Array.isArray(item?.links) && item.links.length
-        ? item.links
-        : [];
+          ? item.links
+          : [];
 
     const offers =
       rawOffers.length > 0
@@ -1821,8 +1825,8 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
             externalId: o.externalProductId
               ? String(o.externalProductId).trim()
               : o.externalId
-              ? String(o.externalId).trim()
-              : "",
+                ? String(o.externalId).trim()
+                : "",
             priority:
               typeof o.priority === "number"
                 ? o.priority
@@ -1844,10 +1848,7 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
       dimLength: typeof dims.length === "number" ? String(dims.length) : "",
       dimWidth: typeof dims.width === "number" ? String(dims.width) : "",
       dimHeight: typeof dims.height === "number" ? String(dims.height) : "",
-      dimUnit:
-        typeof dims.unit === "string" && dims.unit.trim()
-          ? dims.unit.trim().toLowerCase()
-          : "cm",
+      dimNote: typeof dims.note === "string" ? dims.note : "",
 
       tags: Array.isArray(item?.tags) ? item.tags.join(", ") : "",
       imageUrlsText: Array.isArray(item?.imageUrls)
@@ -1990,7 +1991,7 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
         const overwrite = Boolean(prev.prefillOverwrite);
         const pick = (current, next) => {
           const nextVal =
-            typeof next === "string" ? next.trim() : next ?? undefined;
+            typeof next === "string" ? next.trim() : (next ?? undefined);
           if (nextVal == null || nextVal === "") return current;
           if (overwrite) return nextVal;
           return String(current || "").trim() ? current : nextVal;
@@ -2052,13 +2053,7 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                 ? String(prefill.dimensions.height)
                 : prev.dimHeight
               : prev.dimHeight,
-          dimUnit:
-            typeof prefill?.dimensions?.unit === "string" &&
-            prefill.dimensions.unit.trim()
-              ? overwrite || !String(prev.dimUnit || "").trim()
-                ? prefill.dimensions.unit.trim().toLowerCase()
-                : prev.dimUnit
-              : prev.dimUnit,
+
           imageUrlsText:
             Array.isArray(prefill.imageUrls) && prefill.imageUrls.length
               ? overwrite || !String(prev.imageUrlsText || "").trim()
@@ -2143,16 +2138,18 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
         attributes,
         weightGrams: form.weightGrams ? Number(form.weightGrams) : undefined,
         dimensions:
-          form.dimLength || form.dimWidth || form.dimHeight
+          form.dimLength ||
+          form.dimWidth ||
+          form.dimHeight ||
+          String(form.dimNote || "").trim()
             ? {
                 length:
                   form.dimLength === "" ? undefined : Number(form.dimLength),
                 width: form.dimWidth === "" ? undefined : Number(form.dimWidth),
                 height:
                   form.dimHeight === "" ? undefined : Number(form.dimHeight),
-                unit: String(form.dimUnit || "cm")
-                  .trim()
-                  .toLowerCase(),
+                unit: "cm",
+                note: String(form.dimNote || "").trim() || undefined,
               }
             : undefined,
         tags: form.tags
@@ -2423,19 +2420,28 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                       min="0"
                       step="0.1"
                     />
-                    <select
-                      name="dimUnit"
-                      value={form.dimUnit}
-                      onChange={handleChange}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
-                    >
-                      <option value="cm">cm</option>
-                      <option value="in">in</option>
-                    </select>
+                    <div className="mt-0.5 w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt flex items-center justify-center">
+                      <span className="text-xs font-semibold tracking-wide">
+                        cm
+                      </span>
+                    </div>
                   </div>
                   <span className="block text-[11px] text-primary/70">
                     Optional. Stored as L × W × H.
                   </span>
+                  <div className="col-span-full">
+                    <label className="block text-xs text-primary">
+                      Dimensions note (optional)
+                    </label>
+                    <input
+                      type="text"
+                      name="dimNote"
+                      value={form.dimNote || ""}
+                      onChange={handleChange}
+                      placeholder='e.g. "Varies by size", "Packed", "Approximate"'
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                    />
+                  </div>
                 </div>
 
                 <div className="sm:col-span-2">
@@ -4260,8 +4266,8 @@ function PublicListsSection() {
                               {featureTogglingId === list._id
                                 ? "Saving..."
                                 : list.isFeatured
-                                ? "Unfeature"
-                                : "Feature"}
+                                  ? "Unfeature"
+                                  : "Feature"}
                             </button>
                             {list.isActive ? (
                               // Active: show Revoke with confirm dialog
