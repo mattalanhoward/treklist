@@ -11,7 +11,7 @@ import i18n from "../i18n";
 import { detectRegion, normalizeRegion } from "../utils/region";
 
 const SettingsCtx = createContext();
-const SUPPORTED_LANGS = ["en", "nl"];
+const SUPPORTED_LANGS = ["en", "nl", "de", "fr", "it", "es"];
 const SUPPORTED_REGIONS = ["nl", "us", "ca", "gb", "de", "fr", "it"];
 
 export function SettingsProvider({ children }) {

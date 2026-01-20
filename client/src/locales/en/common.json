@@ -21,7 +21,11 @@
   },
   "language": {
     "english": "English",
-    "dutch": "Nederlands"
+    "dutch": "Nederlands",
+    "german": "Deutsch",
+    "french": "Français",
+    "italian": "Italiano",
+    "spanish": "Español"
   },
   "topbar": {
     "accountHeader": "Account",
@@ -237,25 +241,20 @@
       "shareList": "Share list",
       "deleteList": "Delete list"
     },
-
     "confirm": {
       "removeItemTitle": "Remove this item?",
       "removeItemConfirm": "Remove item",
-
       "deleteCategoryTitle": "Delete “{{title}}”?",
       "deleteCategoryTitleGeneric": "Delete this category?",
       "deleteCategoryMessage": "Items in this category will stay in your list but move to “Unsorted”.",
       "deleteCategoryConfirm": "Delete category",
-
       "deleteListTitle": "Delete “{{title}}”?",
       "deleteListMessage": "This will permanently delete this list and all of its items.",
       "deleteListConfirm": "Delete list"
     },
-
     "toasts": {
       "itemDeleted": "Item deleted",
       "itemDeleteFailed": "Could not delete item.",
-
       "categoryNameEmpty": "Category name cannot be empty.",
       "categoryAdded": "Category added",
       "categoryAddFailed": "Could not add category.",
@@ -263,24 +262,18 @@
       "categoryDeleteFailed": "Could not delete category.",
       "categoryRenamed": "Category renamed",
       "categoryRenameFailed": "Could not rename category.",
-
       "quantityUpdateFailed": "Could not update quantity.",
-
       "listRenamed": "List renamed",
       "listRenameFailed": "Could not rename list.",
-
       "backgroundUpdateFailed": "Could not update background.",
       "backgroundImageUpdated": "Background image updated.",
       "imageTooLarge": "Please choose an image under 25MB.",
       "imageTooLargeExplicit": "Image is too large. Please upload a file under 5 MB.",
       "imageUploadFailed": "Image upload failed.",
-
       "listCopied": "List copied",
       "listCopyFailed": "Could not copy list.",
-
       "listDeleted": "List deleted",
       "listDeleteFailed": "Could not delete list.",
-
       "toggleWornFailed": "Could not update worn status.",
       "toggleConsumableFailed": "Could not update consumable status."
     },
@@ -670,34 +663,28 @@
   },
   "publicList": {
     "documentTitleSuffix": "Public Gear List",
-
     "status": {
       "loading": "Loading…"
     },
-
     "errors": {
       "loadFailed": "Failed to load list",
       "copyFailedAlert": "Could not copy this list."
     },
-
     "stats": {
       "base": "Base weight",
       "worn": "Worn",
       "consumable": "Consumable",
       "total": "Total weight"
     },
-
     "cta": {
       "ariaLabel": "Customize this list in TrekList",
       "labelDesktop": "Customize This List",
       "labelMobile": "Customize This List"
     },
-
     "categories": {
       "uncategorized": "Uncategorized",
       "untitled": "Category"
     },
-
     "item": {
       "consumable": "Consumable",
       "worn": "Worn",
@@ -739,6 +726,110 @@
     "common": {
       "amazonAssociate": "As an Amazon Associate, I earn from qualifying purchases.",
       "learnMore": "Learn more"
+    }
+  },
+  "landing": {
+    "pageTitle": "Pack Smart. Travel Light.",
+    "hero": {
+      "title": "Pack Smart. Travel Light.",
+      "subtitle": "Build a gear list, see your total weight instantly, and pack with confidence. Designed for long distance hikes, weekend trips, and hut to hut treks across Europe and beyond.",
+      "cta": "Start Your List"
+    },
+    "images": {
+      "heroAlt": "Hiker at Cinque Torri in the Dolomites",
+      "mobileSidebarAlt": "TrekList mobile view showing gear lists and My Gear search",
+      "mobileColumnAlt": "TrekList mobile category columns",
+      "desktopAlt": "TrekList desktop view with multiple gear categories in columns"
+    },
+    "features": {
+      "sectionTitle": "Features",
+      "mobile": {
+        "title": "Built for the trail",
+        "subtitle": "Mobile first UX. Add, edit, and reorder without friction.",
+        "bullets": {
+          "mobileFirst": {
+            "title": "Mobile first design",
+            "text": "Create and edit gear lists on the go."
+          },
+          "catalogCustom": {
+            "title": "Catalog and custom gear",
+            "text": "Import common items from the catalog, or add your own gear with weight, notes, and a link."
+          },
+          "weightTotals": {
+            "title": "Smart weight totals",
+            "text": "Base, worn, consumables in real time."
+          },
+          "quickAdd": {
+            "title": "Quick add and search",
+            "text": "Find gear fast, edit from anywhere."
+          },
+          "checklist": {
+            "title": "Packing checklist",
+            "text": "One tap packing, clean PDF export."
+          }
+        }
+      },
+      "desktop": {
+        "title": "Built for planning",
+        "subtitle": "Column view or list view, whichever matches how you plan.",
+        "bullets": {
+          "drag": {
+            "title": "Drag between categories",
+            "text": "Move items across your kit as your plan evolves."
+          },
+          "share": {
+            "title": "Public share links",
+            "text": "Share read only pages for forums, friends, or trip planning."
+          },
+          "embed": {
+            "title": "Embeds",
+            "text": "Drop your list into posts."
+          }
+        }
+      }
+    },
+    "recommended": {
+      "title": "Recommended Gear Lists",
+      "subtitle": "Explore curated gear lists for Europe’s most iconic long distance trails. View them instantly, or customize and save them to your account.",
+      "cards": {
+        "viewCta": "View Gear List",
+        "ariaOpen": "Open {{title}} gear list",
+        "av1": {
+          "title": "Alta Via 1",
+          "alt": "Alta Via 1 gear list in the Dolomites, Italy"
+        },
+        "camino": {
+          "title": "Camino de Santiago",
+          "alt": "Camino de Santiago gear list for walking across Spain"
+        },
+        "tmb": {
+          "title": "Tour du Mont Blanc",
+          "alt": "Tour du Mont Blanc gear list"
+        },
+        "whw": {
+          "title": "West Highland Way",
+          "alt": "West Highland Way gear list"
+        },
+        "kungsleden": {
+          "title": "Kungsleden",
+          "alt": "Kungsleden gear list"
+        },
+        "gr20": {
+          "title": "GR20 Corsica",
+          "alt": "GR20 gear list"
+        }
+      }
+    },
+    "howItWorks": {
+      "title": "How TrekList Works",
+      "paragraph": "I built TrekList because when planning for big trips I'd lay everything out, second guess myself, and still feel like I was forgetting the one gear item that would matter most. TrekList is free to use, and it's supported by optional affiliate links. If you purchase through a link, it helps cover hosting, keeps the project improving, and it genuinely means a lot to me.",
+      "signature": "Tall Joe"
+    },
+    "finalCta": {
+      "title": "Ready to pack smarter for your next trip?",
+      "subtitle": "Start a gear list for your upcoming trek, fine tune your kit, and walk out the door knowing you haven't forgotten anything.",
+      "primary": "Start your free gear list",
+      "secondary": "Preview an example list"
     }
   }
 }

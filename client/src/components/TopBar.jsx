@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import DropdownMenu from "./DropdownMenu";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
-import logo from "../../public/brand/treklist_horizontal.png";
+import logo from "../assets/images/media-kit/treklist_horizontal.png";
 import { useUserSettings } from "../contexts/UserSettings";
 import AccountModal from "./AccountModal";
 import ViewToggle from "./ViewToggle";
@@ -191,6 +191,10 @@ export default function TopBar({ title, openSettings }) {
                     >
                       <option value="en">{t("language.english")}</option>
                       <option value="nl">{t("language.dutch")}</option>
+                      <option value="de">{t("language.german")}</option>
+                      <option value="fr">{t("language.french")}</option>
+                      <option value="it">{t("language.italian")}</option>
+                      <option value="es">{t("language.spanish")}</option>
                     </select>
                   </div>
                 ),

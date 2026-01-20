@@ -1,0 +1,835 @@
+{
+  "app": {
+    "name": "TrekList",
+    "tagline": "Pianifica e condividi le tue liste di attrezzatura da trekking"
+  },
+  "actions": {
+    "save": "Salva",
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "close": "Chiudi",
+    "saving": "Salvataggio…"
+  },
+  "validation": {
+    "nameRequired": "Il nome è obbligatorio.",
+    "weightInvalid": "Inserisci un peso valido.",
+    "weightNegative": "Il peso non può essere negativo.",
+    "urlInvalid": "Il link deve essere un URL valido."
+  },
+  "confirm": {
+    "defaultTitle": "Sei sicuro?"
+  },
+  "language": {
+    "english": "Inglese",
+    "dutch": "Nederlands",
+    "german": "Tedesco",
+    "french": "Francese",
+    "italian": "Italiano",
+    "spanish": "Spagnolo"
+  },
+  "topbar": {
+    "accountHeader": "Account",
+    "manageAccount": "Gestisci account…",
+    "preferencesHeader": "Preferenze",
+    "viewMode": "Modalità di visualizzazione",
+    "theme": "Tema",
+    "weightUnit": "Unità di peso",
+    "language": "Lingua",
+    "region": "Regione",
+    "legal": "Note legali e policy",
+    "logout": "Esci",
+    "themeOptions": {
+      "forest": "Foresta",
+      "snow": "Neve",
+      "alpine": "Alpino",
+      "desert": "Deserto",
+      "light": "Chiaro",
+      "dark": "Scuro"
+    },
+    "regions": {
+      "ca": "Canada",
+      "fr": "Francia",
+      "de": "Germania",
+      "it": "Italia",
+      "nl": "Paesi Bassi",
+      "gb": "Regno Unito",
+      "us": "Stati Uniti"
+    },
+    "a11y": {
+      "openAccountMenu": "Apri menu account"
+    }
+  },
+  "sidebar": {
+    "gearListsTitle": "Liste attrezzatura",
+    "newListPlaceholder": "Nuova lista",
+    "listNameEmpty": "Il nome della lista non può essere vuoto.",
+    "listCreated": "Lista creata!",
+    "couldNotCreateList": "Impossibile creare la lista.",
+    "myGearTitle": "La mia attrezzatura",
+    "searchGearPlaceholder": "Cerca articoli",
+    "noGearItems": "Nessun articolo",
+    "mustSelectListFirst": "Seleziona o crea prima una lista con almeno una categoria.",
+    "addToListFailed": "Impossibile aggiungere l'articolo alla lista.",
+    "editGlobalTemplate": "Modifica modello globale"
+  },
+  "auth": {
+    "title": {
+      "login": "Accedi",
+      "register": "Crea il tuo account",
+      "verify": "Controlla la tua email",
+      "forgotPassword": "Password dimenticata"
+    },
+    "tabs": {
+      "login": "Accedi",
+      "register": "Registrati"
+    },
+    "labels": {
+      "email": "Email",
+      "password": "Password",
+      "trailNameOptional": "Nome trail (opzionale)"
+    },
+    "links": {
+      "forgotPassword": "Hai dimenticato la password?"
+    },
+    "buttons": {
+      "signIn": "Accedi",
+      "signInLoading": "Accesso…",
+      "createAccount": "Crea account",
+      "createAccountLoading": "Creazione…",
+      "verifyCheck": "Ho verificato la mia email",
+      "verifyCheckLoading": "Verifica…",
+      "verifyResend": "Invia di nuovo l'email di verifica",
+      "forgotPasswordSend": "Invia link di reset",
+      "forgotPasswordSendLoading": "Invio…"
+    },
+    "errors": {
+      "loginMissingFields": "Inserisci email e password.",
+      "loginFailed": "Accesso non riuscito",
+      "registerMissingFields": "Email e password sono obbligatorie.",
+      "acceptTermsRequired": "Accetta i Termini di utilizzo e l'Informativa sulla privacy per creare un account.",
+      "registerFailed": "Registrazione non riuscita",
+      "emailInUse": "Email già in uso."
+    },
+    "text": {
+      "marketingOptIn": "Inviami email su nuove funzioni di TrekList, consigli e offerte occasionali.",
+      "termsPrefix": "Accetto i ",
+      "termsTermsOfUse": "Termini di utilizzo",
+      "termsAnd": "e",
+      "termsPrivacyPolicy": "Informativa sulla privacy",
+      "termsSuffix": "."
+    },
+    "verify": {
+      "sentTo": "Abbiamo inviato un link di verifica a {{email}}.",
+      "step1": "1. Apri la tua email e clicca sul link di verifica.",
+      "step2": "2. Poi torna a questa finestra e premi il pulsante qui sotto.",
+      "laterInfo": "Puoi anche chiudere questa finestra e tornare più tardi. Quando la tua email sarà verificata, potrai accedere normalmente."
+    },
+    "toasts": {
+      "welcomeBack": "Bentornato!",
+      "verificationEmailResent": "Email di verifica inviata di nuovo.",
+      "resendFailed": "Impossibile reinviare l'email di verifica.",
+      "notVerifiedYet": "Non ancora verificato — riprova tra qualche secondo.",
+      "forgotPasswordEmailSent": "Controlla la posta in arrivo per le istruzioni di reset.",
+      "forgotPasswordFailed": "Invio dell'email di reset non riuscito."
+    },
+    "a11y": {
+      "closeModal": "Chiudi modale"
+    },
+    "reset": {
+      "title": "Reimposta password",
+      "labels": {
+        "newPassword": "Nuova password",
+        "confirmPassword": "Conferma password"
+      },
+      "buttons": {
+        "submit": "Reimposta password",
+        "submitting": "Reimpostazione…"
+      },
+      "invalidLink": "Link di reset non valido.",
+      "errors": {
+        "passwordsDontMatch": "Le password non corrispondono."
+      },
+      "toast": {
+        "success": "Password reimpostata! Accedi.",
+        "failed": "Reset non riuscito"
+      }
+    }
+  },
+  "accountModal": {
+    "title": "Impostazioni account",
+    "tabs": {
+      "profile": "Profilo",
+      "security": "Sicurezza"
+    },
+    "labels": {
+      "email": "Email",
+      "trailname": "Nome trail",
+      "currentPassword": "Password attuale",
+      "newPassword": "Nuova password",
+      "confirmNewPassword": "Conferma nuova password"
+    },
+    "messages": {
+      "emailImmutable": "L'email non può essere modificata qui",
+      "marketingHint": "Puoi cambiare questa preferenza in qualsiasi momento."
+    },
+    "errors": {
+      "passwordMismatch": "Nuova password e conferma non coincidono.",
+      "currentPasswordRequired": "Devi inserire la password attuale per cambiarla."
+    },
+    "toast": {
+      "loadFailed": "Impossibile caricare le impostazioni account.",
+      "nothingToSave": "Niente da salvare",
+      "saveSuccess": "Impostazioni salvate",
+      "saveFailed": "Impossibile salvare le impostazioni. Riprova."
+    },
+    "loading": "Caricamento…"
+  },
+  "verifyEmailPage": {
+    "loading": "Verifica della tua email…",
+    "missingToken": "Nessun token di verifica fornito.",
+    "fallbackSuccessMessage": "La tua email è stata verificata.",
+    "fallbackErrorMessage": "Verifica non riuscita.",
+    "successTitle": "Email verificata",
+    "successHelp": "Puoi chiudere questa scheda e tornare a {{appName}} nella finestra originale. Se preferisci, puoi anche aprire {{appName}} da qui.",
+    "successButton": "Apri {{appName}}",
+    "errorTitle": "Problema di verifica email",
+    "errorHelp": "Il link di verifica potrebbe essere scaduto o già utilizzato. Se pensi che la tua email sia già verificata, prova ad accedere dalla pagina di login di {{appName}}. Se non funziona, avvia di nuovo la registrazione con la stessa email per ricevere un nuovo link di verifica.",
+    "errorLoginLink": "Vai al login"
+  },
+  "dashboard": {
+    "loadingLists": "Caricamento delle tue liste…",
+    "empty": {
+      "title": "Benvenuto su TrekList 👋",
+      "intro": "TrekList ti aiuta a pianificare e preparare la tua attrezzatura per non dimenticare nulla nel prossimo viaggio.",
+      "gettingStartedTitle": "Per iniziare",
+      "gettingStartedBody": "Inizia creando la tua prima lista nel pannello Liste attrezzatura a sinistra. Digita un nome del viaggio o dello zaino nella casella Nuova lista e clicca il pulsante +. Si aprirà la prima lista, dove potrai aggiungere categorie come Rifugi, Escursioni o Toiletry. Poi usa il pannello La mia attrezzatura per costruire la tua libreria personale, aggiungendo gli oggetti che possiedi o che vuoi comprare e inserendoli nelle categorie giuste della lista.",
+      "howOrganizedTitle": "Come è organizzato TrekList",
+      "howOrganizedGearLists": "Una lista per ogni viaggio o setup, ad esempio Alta Via 1, Tour du Mont Blanc o Ultralight Estate 2025.",
+      "howOrganizedMyGear": "La tua libreria di attrezzatura che possiedi o vuoi acquistare. Puoi riutilizzare questi elementi in più liste.",
+      "howOrganizedPackStats": "In cima a ogni lista vedrai peso totale, base, indossato e consumabili, così puoi ottimizzare lo zaino.",
+      "settingsTitle": "Impostazioni e preferenze",
+      "settingsListMenu": "Usa il menu … (ellipsis) in alto nella lista per preferenze specifiche come sfondo, checklist, condivisione, copia ed eliminazione.",
+      "settingsAccount": "Usa l'icona in alto a destra per impostazioni account e globali.",
+      "buttonSampleListLoading": "Caricamento lista di esempio…",
+      "buttonSampleList": "Carica una lista di esempio",
+      "startFromScratch": "Oppure inizia da zero nel pannello Liste attrezzatura."
+    },
+    "toasts": {
+      "loadListsFailed": "Impossibile caricare le tue liste",
+      "createSampleFailed": "Impossibile creare una lista di esempio.",
+      "listGone": "Questa lista non esiste più",
+      "loadListFailed": "Impossibile caricare questa lista"
+    }
+  },
+  "packStats": {
+    "base": "Base",
+    "worn": "Indossato",
+    "consumable": "Consumabili",
+    "total": "Totale"
+  },
+  "gearList": {
+    "menu": {
+      "listOptionsA11y": "Opzioni lista",
+      "headerPreferences": "Preferenze lista",
+      "background": "Sfondo",
+      "customImage": "Immagine personalizzata",
+      "defaultImages": "Immagini predefinite",
+      "colors": "Colori",
+      "viewEditDetails": "Vedi / modifica dettagli",
+      "viewAsChecklist": "Checklist",
+      "copyList": "Copia lista",
+      "shareList": "Condividi lista",
+      "deleteList": "Elimina lista"
+    },
+    "confirm": {
+      "removeItemTitle": "Rimuovere questo articolo?",
+      "removeItemConfirm": "Rimuovi articolo",
+      "deleteCategoryTitle": "Eliminare “{{title}}”?",
+      "deleteCategoryTitleGeneric": "Eliminare questa categoria?",
+      "deleteCategoryMessage": "Gli articoli in questa categoria resteranno nella lista ma verranno spostati in “Non ordinati”.",
+      "deleteCategoryConfirm": "Elimina categoria",
+      "deleteListTitle": "Eliminare “{{title}}”?",
+      "deleteListMessage": "Questa operazione eliminerà definitivamente la lista e tutti i suoi articoli.",
+      "deleteListConfirm": "Elimina lista"
+    },
+    "toasts": {
+      "itemDeleted": "Articolo eliminato",
+      "itemDeleteFailed": "Impossibile eliminare l'articolo.",
+      "categoryNameEmpty": "Il nome della categoria non può essere vuoto.",
+      "categoryAdded": "Categoria aggiunta",
+      "categoryAddFailed": "Impossibile aggiungere la categoria.",
+      "categoryDeleted": "Categoria eliminata",
+      "categoryDeleteFailed": "Impossibile eliminare la categoria.",
+      "categoryRenamed": "Categoria rinominata",
+      "categoryRenameFailed": "Impossibile rinominare la categoria.",
+      "quantityUpdateFailed": "Impossibile aggiornare la quantità.",
+      "listRenamed": "Lista rinominata",
+      "listRenameFailed": "Impossibile rinominare la lista.",
+      "backgroundUpdateFailed": "Impossibile aggiornare lo sfondo.",
+      "backgroundImageUpdated": "Immagine di sfondo aggiornata.",
+      "imageTooLarge": "Scegli un'immagine sotto i 25MB.",
+      "imageTooLargeExplicit": "Immagine troppo grande. Carica un file sotto i 5 MB.",
+      "imageUploadFailed": "Caricamento immagine non riuscito.",
+      "listCopied": "Lista copiata",
+      "listCopyFailed": "Impossibile copiare la lista.",
+      "listDeleted": "Lista eliminata",
+      "listDeleteFailed": "Impossibile eliminare la lista.",
+      "toggleWornFailed": "Impossibile aggiornare lo stato indossato.",
+      "toggleConsumableFailed": "Impossibile aggiornare lo stato consumabile."
+    },
+    "addCategory": {
+      "button": "Aggiungi categoria",
+      "inlinePlaceholder": "Nome nuova categoria",
+      "columnPlaceholder": "Nome nuova categoria"
+    },
+    "items": {
+      "addButton": "Aggiungi articolo",
+      "editQuantityTitle": "Clicca per modificare la quantità",
+      "viewEditDetails": "Vedi / modifica dettagli",
+      "moveItem": "Sposta articolo",
+      "toggleConsumable": "Attiva/disattiva consumabile",
+      "toggleWorn": "Attiva/disattiva indossato",
+      "openProductPageTitle": "Apri pagina prodotto",
+      "openProductPageAria": "Apri pagina prodotto (link a pagamento)",
+      "itemOptionsA11y": "Opzioni articolo"
+    }
+  },
+  "cookieBanner": {
+    "text": {
+      "prefix": "{{appName}} usa",
+      "essential": "cookie essenziali",
+      "middle": "per mantenere il sito sicuro e funzionante, e cookie",
+      "analytics": "di analisi",
+      "suffix": "opzionali per capire come viene usato il sito e migliorarlo."
+    },
+    "buttons": {
+      "readPolicy": "Leggi la Cookie Policy",
+      "settings": "Impostazioni cookie",
+      "acceptAll": "Accetta tutti"
+    }
+  },
+  "emailOptInBanner": {
+    "text": {
+      "body": "Vuoi aggiornamenti occasionali su nuove funzioni di {{appName}} e consigli? Niente spam: solo contenuti utili poche volte l'anno."
+    },
+    "buttons": {
+      "noThanks": "No grazie",
+      "yesEmailMe": "Sì, inviami email"
+    },
+    "states": {
+      "saving": "Salvataggio…"
+    },
+    "toast": {
+      "success": "Grazie! Ti invieremo occasionalmente email su nuove funzioni e consigli di {{appName}}.",
+      "error": "Impossibile aggiornare la preferenza email. Riprova."
+    }
+  },
+  "publicHeader": {
+    "nav": {
+      "features": "Funzioni",
+      "recommendedGearList": "Lista consigliata",
+      "howItWorks": "Come funziona"
+    },
+    "auth": {
+      "login": "Accedi",
+      "getStarted": "Inizia"
+    }
+  },
+  "footerLegal": {
+    "brandLine": "© {{year}} TrekList",
+    "companyLine": "Tall Joe Hikes — KvK 98785419",
+    "links": {
+      "privacy": "Privacy",
+      "cookies": "Cookie Policy",
+      "cookieSettings": "Impostazioni cookie",
+      "terms": "Termini",
+      "affiliateDisclosure": "Informativa affiliati",
+      "imprint": "Imprint / Contatti"
+    }
+  },
+  "globalItemModal": {
+    "title": "Nuovo articolo attrezzatura",
+    "tabs": {
+      "import": "Importa",
+      "custom": "Personalizzato"
+    },
+    "buttons": {
+      "clearSelection": "Cancella selezione"
+    },
+    "labels": {
+      "itemType": "Tipo articolo",
+      "name": "Nome",
+      "brand": "Marca",
+      "link": "Link",
+      "weight": "Peso ({{unit}})",
+      "description": "Descrizione"
+    },
+    "placeholders": {
+      "itemType": "Tenda",
+      "name": "Rainbow",
+      "brand": "Tarptent",
+      "link": "tarptent.com",
+      "weightGrams": "es. 350",
+      "weightOunces": "es. 12,6"
+    },
+    "messages": {
+      "affiliateLinkLockedTitle": "Link bloccato",
+      "affiliateLinkLockedBody": "Il link è impostato dal merchant per gli articoli importati.",
+      "affiliateNote": "Il link è impostato dal merchant per gli articoli importati.",
+      "cancelHintImport": "Seleziona un prodotto (Importa) o passa a Personalizzato."
+    },
+    "toast": {
+      "created": "Articolo creato!",
+      "createFailed": "Impossibile creare l'articolo."
+    },
+    "importTab": {
+      "searchPlaceholder": "Cerca nel catalogo…",
+      "filters": {
+        "allCategories": "Tutte le categorie",
+        "allSubcategories": "Tutte le sottocategorie",
+        "allBrands": "Tutte le marche"
+      },
+      "badges": {
+        "added": "Aggiunto"
+      },
+      "labels": {
+        "unknownBrand": "Sconosciuta",
+        "uncategorized": "Non categorizzato"
+      },
+      "states": {
+        "loading": "Caricamento…",
+        "empty": "Nessun articolo nel catalogo"
+      },
+      "buttons": {
+        "import_one": "Importa {{count}} articolo",
+        "import_other": "Importa {{count}} articoli",
+        "importing": "Importazione…",
+        "clear": "Pulisci",
+        "clearTitle": "Cancella selezione"
+      },
+      "toasts": {
+        "selectAtLeastOne": "Seleziona almeno un articolo.",
+        "alreadyImported": "Alcuni articoli sono già importati.",
+        "importSuccess": "Importazione completata.",
+        "importFailed": "Importazione non riuscita."
+      },
+      "errors": {
+        "loadFailed": "Impossibile caricare gli articoli del catalogo."
+      }
+    }
+  },
+  "catalogPreview": {
+    "titleFallback": "Articolo del catalogo",
+    "badges": { "alreadyAdded": "Già aggiunto" },
+    "buttons": {
+      "viewDetails": "Vedi dettagli",
+      "import": "Aggiungi a La mia attrezzatura",
+      "importing": "Aggiunta…"
+    },
+    "messages": {
+      "alreadyAdded": "Questo articolo è già in La mia attrezzatura."
+    }
+  },
+  "globalItemEditModal": {
+    "titleGlobal": "Dettagli articolo",
+    "titleList": "Dettagli articolo",
+    "buttons": {
+      "delete": "Elimina articolo",
+      "saving": "Salvataggio…"
+    },
+    "toast": {
+      "updated": "Articolo aggiornato",
+      "updatedEverywhere": "Articolo aggiornato ovunque",
+      "deleted": "Articolo eliminato",
+      "deleteFailed": "Eliminazione non riuscita",
+      "saveFailed": "Salvataggio non riuscito. Riprova."
+    },
+    "confirm": {
+      "saveListTitle": "Salvare le modifiche a questo articolo?",
+      "saveGlobalTitle": "Applicare le modifiche a tutte le istanze?",
+      "saveListConfirm": "Salva modifiche",
+      "saveGlobalConfirm": "Sì, aggiorna tutti",
+      "deleteTitle": "Eliminare questo articolo?",
+      "deleteMessage": "Questo lo rimuoverà dai tuoi articoli e da tutte le tue liste.",
+      "deleteConfirm": "Elimina articolo"
+    }
+  },
+  "addGearItemModal": {
+    "title": "Aggiungi articolo/i",
+    "a11y": {
+      "close": "Chiudi modale aggiungi articoli"
+    },
+    "searchPlaceholder": "Cerca articoli globali…",
+    "badges": {
+      "added": "Aggiunto"
+    },
+    "empty": "Nessun articolo trovato",
+    "buttons": {
+      "add_one": "Aggiungi {{count}} articolo",
+      "add_other": "Aggiungi {{count}} articoli",
+      "adding": "Aggiunta…"
+    },
+    "toasts": {
+      "selectAtLeastOne": "Seleziona almeno un articolo.",
+      "alreadyInList": "Alcuni articoli sono già in questa lista.",
+      "addSuccess": "Articoli aggiunti con successo.",
+      "addFailed": "Impossibile aggiungere uno o più articoli."
+    }
+  },
+  "gearListDetailsModal": {
+    "title": "Dettagli lista",
+    "labels": {
+      "weightBreakdown": "Dettaglio peso",
+      "name": "Nome",
+      "tripStart": "Inizio viaggio",
+      "tripEnd": "Fine viaggio",
+      "location": "Località",
+      "notes": "Note / descrizione"
+    },
+    "placeholders": {
+      "date": "Seleziona data"
+    },
+    "stats": {
+      "totalCost": "Costo totale:",
+      "itemsCount": "Numero di articoli:"
+    },
+    "confirm": {
+      "discardTitle": "Scartare le modifiche?",
+      "discardMessage": "Hai modifiche non salvate. Vuoi davvero chiudere?",
+      "discardConfirm": "Scarta",
+      "discardCancel": "Continua a modificare"
+    },
+    "toast": {
+      "saveSuccess": "Dettagli lista salvati.",
+      "saveFailed": "Impossibile salvare i dettagli. Riprova."
+    }
+  },
+  "affiliateProductPicker": {
+    "labels": {
+      "search": "Cerca",
+      "brand": "Marca",
+      "itemType": "Tipo articolo"
+    },
+    "placeholders": {
+      "search": "Marca o prodotto (es. zaino Osprey)"
+    },
+    "options": {
+      "all": "Tutti",
+      "noBrands": "Nessuna marca per questa selezione",
+      "noItemTypes": "Nessun tipo articolo per questa selezione"
+    },
+    "messages": {
+      "noResults": "Nessun risultato per questa selezione.",
+      "loading": "Caricamento…",
+      "showingCount": "Mostrati {{shown}}/{{total}}"
+    },
+    "buttons": {
+      "useProduct": "Usa questo prodotto"
+    },
+    "errors": {
+      "searchFailed": "Ricerca non riuscita."
+    }
+  },
+  "shareModal": {
+    "title": "Condividi questa lista",
+    "fields": {
+      "shareUrlLabel": "URL condivisibile",
+      "shareUrlPlaceholderGenerating": "Generazione…",
+      "shareUrlPlaceholderNone": "Nessun link attivo",
+      "shareUrlHelp": "Chiunque con questo link può vedere una versione in sola lettura della tua lista.",
+      "embedLabel": "Snippet incorporabile",
+      "embedPlaceholderGenerating": "Generazione…",
+      "embedPlaceholderNone": "Nessun link attivo",
+      "csvLabel": "Esporta CSV",
+      "csvHelp": "Scarica un CSV di questa lista condivisa."
+    },
+    "buttons": {
+      "copyLink": "Copia",
+      "copyEmbed": "Copia",
+      "downloadCsv": "Scarica",
+      "revokeLink": "Revoca link"
+    },
+    "tooltips": {
+      "copyLink": "Copia link",
+      "copyEmbed": "Copia embed",
+      "downloadCsv": "Scarica CSV",
+      "revokeLink": "Revoca link"
+    },
+    "toasts": {
+      "copySuccess": "Copiato!",
+      "copyError": "Copia non supportata su questo dispositivo.",
+      "embedCopySuccess": "Embed copiato!",
+      "createLinkError": "Impossibile creare il link di condivisione",
+      "revokeSuccess": "Link di condivisione revocato",
+      "revokeError": "Impossibile revocare il link",
+      "csvError": "Impossibile scaricare il CSV"
+    },
+    "confirm": {
+      "revokeTitle": "Revocare questo URL di condivisione?",
+      "revokeMessage": "Questo disabiliterà immediatamente il link corrente.",
+      "revokeConfirm": "Revoca link"
+    }
+  },
+  "checklistView": {
+    "fallbackTitle": "Lista attrezzatura",
+    "titleSuffix": "Checklist",
+    "error": {
+      "loadFailed": "Impossibile caricare questa lista."
+    },
+    "buttons": {
+      "backToDashboard": "Torna alla dashboard",
+      "reset": "Reset",
+      "print": "Stampa"
+    },
+    "a11y": {
+      "backToDashboard": "Torna alla dashboard",
+      "reset": "Resetta tutte le spunte",
+      "print": "Stampa checklist"
+    },
+    "progress": {
+      "packed": "Preparati {{packed}} / {{total}}",
+      "categoryPacked": "{{packed}} / {{total}}"
+    },
+    "nightSingular": "notte",
+    "nightPlural": "notti",
+    "legend": {
+      "worn": "indossato",
+      "consumable": "consumabile"
+    },
+    "print": {
+      "totalItems": "Totale articoli: {{total}}",
+      "categoryTotal": "Totale: {{count}}"
+    }
+  },
+  "moveItemModal": {
+    "title": "Sposta “{{name}}”",
+    "labels": {
+      "category": "Categoria",
+      "position": "Posizione nella categoria"
+    },
+    "topPosition": "{{pos}} (in alto)",
+    "buttons": {
+      "move": "Sposta articolo"
+    },
+    "a11y": {
+      "close": "Chiudi modale sposta articolo"
+    }
+  },
+  "viewToggle": {
+    "ariaLabel": "Cambia vista lista/colonne",
+    "title": "Cambia vista lista/colonne"
+  },
+  "linkInput": {
+    "placeholder": "example.com",
+    "errors": {
+      "required": "Inserisci un link.",
+      "invalid": "Inserisci un URL o un dominio valido."
+    }
+  },
+  "legalModal": {
+    "title": "Note legali e cookie",
+    "buttons": {
+      "close": "Chiudi"
+    },
+    "a11y": {
+      "close": "Chiudi informazioni legali"
+    },
+    "tabs": {
+      "privacy": {
+        "label": "Privacy",
+        "subtitle": "Come gestiamo i tuoi dati"
+      },
+      "cookies": {
+        "label": "Cookie Policy",
+        "subtitle": "Quali cookie usiamo"
+      },
+      "cookieSettings": {
+        "label": "Impostazioni cookie",
+        "subtitle": "Controlla i cookie opzionali"
+      },
+      "terms": {
+        "label": "Termini",
+        "subtitle": "Uso e limitazioni"
+      },
+      "affiliate": {
+        "label": "Informativa affiliati",
+        "subtitle": "Come guadagna TrekList"
+      },
+      "imprint": {
+        "label": "Imprint / Contatti",
+        "subtitle": "Dati aziendali e contatti"
+      }
+    }
+  },
+  "publicList": {
+    "documentTitleSuffix": "Lista pubblica",
+    "status": {
+      "loading": "Caricamento…"
+    },
+    "errors": {
+      "loadFailed": "Impossibile caricare la lista",
+      "copyFailedAlert": "Impossibile copiare questa lista."
+    },
+    "stats": {
+      "base": "Peso base",
+      "worn": "Indossato",
+      "consumable": "Consumabile",
+      "total": "Peso totale"
+    },
+    "cta": {
+      "ariaLabel": "Personalizza questa lista in TrekList",
+      "labelDesktop": "Personalizza questa lista",
+      "labelMobile": "Personalizza questa lista"
+    },
+    "categories": {
+      "uncategorized": "Non categorizzato",
+      "untitled": "Categoria"
+    },
+    "item": {
+      "consumable": "Consumabile",
+      "worn": "Indossato",
+      "quantity": "Quantità",
+      "viewProduct": "Vedi prodotto",
+      "viewProductPaid": "Vedi prodotto (link a pagamento)"
+    }
+  },
+  "affiliateDisclosure": {
+    "label": "Informativa:",
+    "public": {
+      "bodyPrefix": "Questa pagina può includere link di affiliazione (UE e USA). Se acquisti tramite un link,",
+      "actor": "TrekList o il proprietario della lista ",
+      "bodySuffix": "potrebbe guadagnare una commissione senza costi aggiuntivi per te."
+    },
+    "private": {
+      "bodyPrefix": "Questa pagina può includere link di affiliazione (UE e USA). Se acquisti tramite un link,",
+      "actor": "TrekList ",
+      "bodySuffix": "potrebbe guadagnare una commissione senza costi aggiuntivi per te."
+    },
+    "amazon": "In qualità di Associato Amazon, guadagno dagli acquisti idonei."
+  },
+  "affiliateGate": {
+    "modal": {
+      "title": "Grazie per supportare TrekList!",
+      "cancel": "Annulla",
+      "continue": "Continua sul negozio"
+    },
+    "button": {
+      "openProductPageTitle": "Apri pagina prodotto",
+      "openProductPageAria": "Apri pagina prodotto (link a pagamento)"
+    },
+    "public": {
+      "body": "TrekList è uno strumento gratuito reso possibile dai link di affiliazione. Quando acquisti attrezzatura tramite questi link, TrekList o il proprietario della lista potrebbe guadagnare una piccola commissione senza costi aggiuntivi per te. Il tuo supporto aiuta a mantenere il progetto attivo e gratuito per tutti."
+    },
+    "private": {
+      "body": "TrekList è un servizio gratuito supportato da link di affiliazione. Se decidi di acquistare dopo aver cliccato, TrekList potrebbe guadagnare una piccola commissione senza costi aggiuntivi per te. Ogni acquisto aiuta a sostenere il progetto e i futuri aggiornamenti."
+    },
+    "common": {
+      "amazonAssociate": "In qualità di Associato Amazon, guadagno dagli acquisti idonei.",
+      "learnMore": "Scopri di più"
+    }
+  },
+  "landing": {
+    "pageTitle": "Prepara meglio. Viaggia leggero.",
+    "hero": {
+      "title": "Prepara meglio. Viaggia leggero.",
+      "subtitle": "Crea una lista di attrezzatura, vedi il peso totale subito e prepara lo zaino con sicurezza. Pensato per trekking a lunga distanza, weekend fuori porta e traversate da rifugio a rifugio in Europa e oltre.",
+      "cta": "Inizia la tua lista"
+    },
+    "images": {
+      "heroAlt": "Escursionista a Cinque Torri nelle Dolomiti",
+      "mobileSidebarAlt": "Vista mobile di TrekList con liste e ricerca in La mia attrezzatura",
+      "mobileColumnAlt": "Colonne delle categorie su TrekList in mobile",
+      "desktopAlt": "Vista desktop di TrekList con più categorie in colonne"
+    },
+    "features": {
+      "sectionTitle": "Funzioni",
+      "mobile": {
+        "title": "Fatto per il sentiero",
+        "subtitle": "Esperienza mobile first. Aggiungi, modifica e riordina senza attriti.",
+        "bullets": {
+          "mobileFirst": {
+            "title": "Design mobile first",
+            "text": "Crea e modifica liste anche mentre sei in movimento."
+          },
+          "catalogCustom": {
+            "title": "Catalogo e attrezzatura personalizzata",
+            "text": "Importa elementi comuni dal catalogo o aggiungi la tua attrezzatura con peso, note e un link."
+          },
+          "weightTotals": {
+            "title": "Totali di peso intelligenti",
+            "text": "Base, indossato e consumabili in tempo reale."
+          },
+          "quickAdd": {
+            "title": "Aggiunta rapida e ricerca",
+            "text": "Trova l'attrezzatura in fretta e modifica da qualsiasi punto."
+          },
+          "checklist": {
+            "title": "Checklist di preparazione",
+            "text": "Un tap per spuntare e un PDF pulito da esportare."
+          }
+        }
+      },
+      "desktop": {
+        "title": "Fatto per la pianificazione",
+        "subtitle": "Vista a colonne o a lista, quella che rispecchia il tuo modo di pianificare.",
+        "bullets": {
+          "drag": {
+            "title": "Trascina tra categorie",
+            "text": "Sposta gli elementi nel tuo kit mentre il piano cambia."
+          },
+          "share": {
+            "title": "Link pubblici",
+            "text": "Condividi pagine in sola lettura per forum, amici o pianificazione."
+          },
+          "embed": {
+            "title": "Embed",
+            "text": "Inserisci la tua lista nei post."
+          }
+        }
+      }
+    },
+    "recommended": {
+      "title": "Liste consigliate",
+      "subtitle": "Esplora liste curate per i sentieri a lunga distanza più iconici d'Europa. Guardale subito oppure personalizzale e salvale nel tuo account.",
+      "cards": {
+        "viewCta": "Vedi lista",
+        "ariaOpen": "Apri la lista di {{title}}",
+        "av1": {
+          "title": "Alta Via 1",
+          "alt": "Lista attrezzatura per Alta Via 1 nelle Dolomiti, Italia"
+        },
+        "camino": {
+          "title": "Camino de Santiago",
+          "alt": "Lista attrezzatura per il Camino de Santiago in Spagna"
+        },
+        "tmb": {
+          "title": "Tour du Mont Blanc",
+          "alt": "Lista attrezzatura per il Tour du Mont Blanc"
+        },
+        "whw": {
+          "title": "West Highland Way",
+          "alt": "Lista attrezzatura per la West Highland Way"
+        },
+        "kungsleden": {
+          "title": "Kungsleden",
+          "alt": "Lista attrezzatura per il Kungsleden"
+        },
+        "gr20": {
+          "title": "GR20 Corsica",
+          "alt": "Lista attrezzatura per il GR20"
+        }
+      }
+    },
+    "howItWorks": {
+      "title": "Come funziona TrekList",
+      "paragraph": "Ho creato TrekList perché prima dei viaggi importanti mettevo tutto sul pavimento, mi venivano mille dubbi e avevo comunque la sensazione di dimenticare proprio la cosa che avrebbe contato di più. TrekList è gratuito e si sostiene con link di affiliazione facoltativi. Se acquisti tramite un link, aiuti a coprire l'hosting, a migliorare il progetto e per me significa davvero tanto.",
+      "signature": "Tall Joe"
+    },
+    "finalCta": {
+      "title": "Pronto a prepararti meglio per il tuo prossimo viaggio?",
+      "subtitle": "Inizia una lista per il tuo prossimo trek, ottimizza il kit e esci di casa sapendo di non aver dimenticato nulla.",
+      "primary": "Inizia la tua lista gratis",
+      "secondary": "Guarda un esempio"
+    }
+  }
+}

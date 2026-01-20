@@ -1,15 +1,15 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
+const SUPPORTED_LANGS = ["en", "nl", "de", "fr", "it", "es"];
+const SUPPORTED_REGIONS = ["nl", "us", "ca", "gb", "de", "fr", "it"];
+
 const UserSchema = new mongoose.Schema(
   {
     // Optional marketing / email-updates preferences
     marketing: {
-      // Has the user explicitly opted in to product / feature updates?
       optedIn: { type: Boolean, default: false },
-      // When they last opted in (for basic GDPR hygiene / audit trail)
       optedInAt: { type: Date },
-      // Where the opt-in came from: "register", "settings", "banner", etc.
       optedInSource: { type: String },
     },
     refreshTokens: {
@@ -51,14 +51,23 @@ const UserSchema = new mongoose.Schema(
     sidebarGearListsCollapsed: { type: Boolean, default: false },
     sidebarMyGearCollapsed: { type: Boolean, default: false },
     viewMode: { type: String, enum: ["column", "list"], default: "column" },
-    locale: { type: String, default: "en-NL" },
     theme: { type: String, default: "light" },
     weightUnit: { type: String, enum: ["g", "oz"], default: "g" },
-    language: { type: String, default: "en" },
+    language: {
+      type: String,
+      enum: SUPPORTED_LANGS,
+      default: "en",
+    },
+
     region: {
       type: String,
-      enum: ["nl", "us", "ca", "gb", "de", "fr", "it"],
-      default: "nl",
+      enum: SUPPORTED_REGIONS,
+      default: "us",
+    },
+
+    locale: {
+      type: String,
+      default: "en-US",
     },
   },
   {
