@@ -11,7 +11,8 @@ import {
 import { BsBackpack4 } from "react-icons/bs";
 import AffiliateGateLink from "../components/AffiliateGateLink";
 import AffiliateDisclosureNotice from "../components/AffiliateDisclosureNotice";
-import { normalizeRegion } from "../utils/region";
+import PublicHeader from "../components/PublicHeader";
+import FooterLegal from "../components/FooterLegal";
 import api, { refreshAccessToken } from "../services/api";
 import { useTranslation } from "react-i18next";
 
@@ -71,6 +72,19 @@ export default function PublicGearList() {
   const [data, setData] = React.useState(null);
   const [unit, setUnit] = React.useState("g"); // "g" | "oz"
 
+  // ── Embed detection (no header/footer when embedded) ─────────────────────────
+  const params = new URLSearchParams(location.search);
+  const isEmbedParam = params.get("embed") === "1";
+  const isInIframe = (() => {
+    try {
+      return typeof window !== "undefined" && window.self !== window.top;
+    } catch {
+      // cross-origin frames can throw; treat as embedded
+      return true;
+    }
+  })();
+  const isEmbed = isEmbedParam || isInIframe;
+
   React.useEffect(() => {
     let cancelled = false;
     async function run() {
@@ -99,8 +113,8 @@ export default function PublicGearList() {
 
   // If ?copy=1 is present, attempt copy automatically after mount (post-auth return)
   React.useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    if (params.get("copy") === "1" && !copyRanRef.current) {
+    const p = new URLSearchParams(location.search);
+    if (p.get("copy") === "1" && !copyRanRef.current) {
       copyRanRef.current = true; // guard against React StrictMode double-invoke
       attemptCopy(); // fire and forget; it will redirect on success
     }
@@ -291,23 +305,113 @@ export default function PublicGearList() {
   const fallbackCategoryLabel = t("publicList.categories.untitled");
 
   return (
-    <div className="public-share-theme min-h-screen bg-neutral">
+    <div className="public-share-theme min-h-screen bg-neutral flex flex-col">
       {/* Scoped palette for the public page only */}
       <style>{PUBLIC_THEME_CSS}</style>
-      <div className="max-w-5xl mx-auto px-4 py-6">
-        {/* ===== Header ===== */}
-        {/* Desktop (>= md): Row 1 = Title | CTA | Toggle; Row 2 = icon-only stats */}
-        <div className="hidden md:grid mb-4 gap-y-3">
-          <AffiliateDisclosureNotice context="public" className="mb-2" />
 
-          <div className="grid grid-cols-[1fr_auto] items-center gap-4">
-            <h1 className="text-3xl font-semibold text-primary truncate">
+      {/* Header + footer are suppressed when embedded */}
+      {!isEmbed && <PublicHeader variant="solid" showSections={false} />}
+
+      <main className="flex-1">
+        <div className="max-w-5xl mx-auto px-4 py-6">
+          {/* ===== Header ===== */}
+          {/* Desktop (>= md): Row 1 = Title | CTA | Toggle; Row 2 = icon-only stats */}
+          <div className="hidden md:grid mb-4 gap-y-3">
+            <AffiliateDisclosureNotice context="public" className="mb-2" />
+
+            <div className="grid grid-cols-[1fr_auto] items-center gap-4">
+              <h1 className="text-3xl font-semibold text-primary truncate">
+                {data.list.title}
+              </h1>
+
+              {/* Right-side controls: toggle + big CTA */}
+              <div className="flex items-center gap-3">
+                {/* Unit toggle */}
+                <div
+                  className="inline-flex border rounded overflow-hidden"
+                  aria-live="polite"
+                >
+                  <button
+                    className={cx(
+                      "px-3 py-1 text-sm",
+                      unit === "g" ? "bg-primary text-base-100" : "bg-base-100"
+                    )}
+                    onClick={() => setUnit("g")}
+                    aria-pressed={unit === "g"}
+                  >
+                    g
+                  </button>
+                  <button
+                    className={cx(
+                      "px-3 py-1 text-sm",
+                      unit === "oz" ? "bg-primary text-base-100" : "bg-base-100"
+                    )}
+                    onClick={() => setUnit("oz")}
+                    aria-pressed={unit === "oz"}
+                  >
+                    oz
+                  </button>
+                </div>
+
+                {/* Primary CTA — strong visual affordance */}
+                <button
+                  type="button"
+                  onClick={attemptCopy}
+                  className="
+                    inline-flex items-center gap-2
+                    px-3 py-1 rounded-lg
+                    bg-[rgb(var(--color-accent-rgb))] text-[rgb(var(--color-base-100-rgb))]
+                    shadow-md hover:shadow-lg
+                    hover:bg-opacity-90 active:translate-y-[0.5px]
+                    focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-accent-rgb))] focus:ring-offset-1
+                    transition
+                  "
+                  aria-label={t("publicList.cta.ariaLabel")}
+                >
+                  <FaEdit aria-hidden />
+                  <span className="font-sm">
+                    {t("publicList.cta.labelDesktop")}
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            {/* Row 2: stats, full width */}
+            <StatsRow />
+          </div>
+
+          {/* Mobile (< md): Title (center) → CTA (full width) → Toggle (center) → Stats (center) */}
+          <div className="md:hidden mb-4">
+            <AffiliateDisclosureNotice context="public" className="mb-2" />
+
+            <h1 className="text-2xl font-semibold text-primary text-center">
               {data.list.title}
             </h1>
 
-            {/* Right-side controls: toggle + big CTA */}
-            <div className="flex items-center gap-3">
-              {/* Unit toggle */}
+            <div className="mt-2 flex justify-center">
+              <button
+                type="button"
+                onClick={attemptCopy}
+                className="
+                  inline-flex items-center gap-2 text-sm
+                  px-3 py-2 rounded-lg
+                  min-h-[44px] whitespace-nowrap
+                  bg-[rgb(var(--color-accent-rgb))] text-[rgb(var(--color-base-100-rgb))]
+                  shadow-md hover:shadow-lg
+                  hover:bg-opacity-90 active:translate-y-[0.5px]
+                  focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-accent-rgb))] focus:ring-offset-1
+                  transition
+                "
+                aria-label={t("publicList.cta.ariaLabel")}
+              >
+                <FaEdit aria-hidden />
+                <span className="font-sm">
+                  {t("publicList.cta.labelMobile")}
+                </span>
+              </button>
+            </div>
+
+            <div className="mt-3 flex justify-center">
               <div
                 className="inline-flex border rounded overflow-hidden"
                 aria-live="polite"
@@ -333,326 +437,254 @@ export default function PublicGearList() {
                   oz
                 </button>
               </div>
-
-              {/* Primary CTA — strong visual affordance */}
-              <button
-                type="button"
-                onClick={attemptCopy}
-                className="
-          inline-flex items-center gap-2
-          px-3 py-1 rounded-lg
-          bg-[rgb(var(--color-accent-rgb))] text-[rgb(var(--color-base-100-rgb))]
-          shadow-md hover:shadow-lg
-          hover:bg-opacity-90 active:translate-y-[0.5px]
-          focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-accent-rgb))] focus:ring-offset-1
-          transition
-        "
-                aria-label={t("publicList.cta.ariaLabel")}
-              >
-                <FaEdit aria-hidden />
-                <span className="font-sm">
-                  {t("publicList.cta.labelDesktop")}
-                </span>
-              </button>
             </div>
+
+            <StatsRow className="justify-center mt-3" />
           </div>
 
-          {/* Row 2: stats, full width */}
-          <StatsRow />
-        </div>
+          {/* ======= PUBLIC LIST MODE: MOBILE CARDS (< md) ======= */}
+          <div className="md:hidden">
+            {catOrder.map((catId) => {
+              const title =
+                catId === "__uncategorized__"
+                  ? uncategorizedLabel
+                  : catById.get(catId) || fallbackCategoryLabel;
+              const items = grouped[catId] || [];
+              const totalG = catTotalG(items);
 
-        {/* Mobile (< md): Title (center) → CTA (full width) → Toggle (center) → Stats (center) */}
-        <div className="md:hidden mb-4">
-          <AffiliateDisclosureNotice context="public" className="mb-2" />
+              return (
+                <section key={catId} className="bg-neutral rounded-lg py-2">
+                  {/* Category header (no grabber / no X) */}
+                  <div className="flex items-center mb-3 min-w-0">
+                    <h2 className="font-semibold text-lg flex-1 min-w-0 truncate pr-2 text-primaryAlt">
+                      <span>{title}</span>
+                    </h2>
+                    <span className="pr-1 flex-shrink-0 text-primaryAlt tabular-nums">
+                      {fmtWeight(totalG, unit)}
+                    </span>
+                  </div>
 
-          <h1 className="text-2xl font-semibold text-primary text-center">
-            {data.list.title}
-          </h1>
+                  {/* Items */}
+                  <ul>
+                    {items.map((it) => {
+                      const g = Number(it.weight_g) || 0;
+                      const linkHref =
+                        it.affiliate?.deepLink ||
+                        it.affiliate?.url ||
+                        it.link ||
+                        null;
 
-          <div className="mt-2 flex justify-center">
-            <button
-              type="button"
-              onClick={attemptCopy}
-              className="
-      inline-flex items-center gap-2 text-sm
-      px-3 py-2 rounded-lg
-      min-h-[44px] whitespace-nowrap
-      bg-[rgb(var(--color-accent-rgb))] text-[rgb(var(--color-base-100-rgb))]
-      shadow-md hover:shadow-lg
-      hover:bg-opacity-90 active:translate-y-[0.5px]
-      focus:outline-none focus:ring-2 focus:ring-[rgb(var(--color-accent-rgb))] focus:ring-offset-1
-      transition
-    "
-              aria-label={t("publicList.cta.ariaLabel")}
-            >
-              <FaEdit aria-hidden />
-              <span className="font-sm">{t("publicList.cta.labelMobile")}</span>
-            </button>
-          </div>
-
-          <div className="mt-3 flex justify-center">
-            <div
-              className="inline-flex border rounded overflow-hidden"
-              aria-live="polite"
-            >
-              <button
-                className={cx(
-                  "px-3 py-1 text-sm",
-                  unit === "g" ? "bg-primary text-base-100" : "bg-base-100"
-                )}
-                onClick={() => setUnit("g")}
-                aria-pressed={unit === "g"}
-              >
-                g
-              </button>
-              <button
-                className={cx(
-                  "px-3 py-1 text-sm",
-                  unit === "oz" ? "bg-primary text-base-100" : "bg-base-100"
-                )}
-                onClick={() => setUnit("oz")}
-                aria-pressed={unit === "oz"}
-              >
-                oz
-              </button>
-            </div>
-          </div>
-
-          <StatsRow className="justify-center mt-3" />
-        </div>
-
-        {/* ======= PUBLIC LIST MODE: MOBILE CARDS (< md) ======= */}
-        <div className="md:hidden">
-          {catOrder.map((catId) => {
-            const title =
-              catId === "__uncategorized__"
-                ? uncategorizedLabel
-                : catById.get(catId) || fallbackCategoryLabel;
-            const items = grouped[catId] || [];
-            const totalG = catTotalG(items);
-
-            return (
-              <section key={catId} className="bg-neutral rounded-lg py-2">
-                {/* Category header (no grabber / no X) */}
-                <div className="flex items-center mb-3 min-w-0">
-                  <h2 className="font-semibold text-lg flex-1 min-w-0 truncate pr-2 text-primaryAlt">
-                    <span>{title}</span>
-                  </h2>
-                  <span className="pr-1 flex-shrink-0 text-primaryAlt tabular-nums">
-                    {fmtWeight(totalG, unit)}
-                  </span>
-                </div>
-
-                {/* Items */}
-                <ul>
-                  {items.map((it) => {
-                    const g = Number(it.weight_g) || 0;
-                    const linkHref =
-                      it.affiliate?.deepLink ||
-                      it.affiliate?.url ||
-                      it.link ||
-                      null;
-
-                    return (
-                      <li
-                        key={it.id || it._id}
-                        className="bg-base-100 px-3 py-2 rounded shadow mb-2"
-                      >
-                        {/* Grid matches SortableItem mobile (minus ellipsis) */}
-                        <div className="grid grid-rows-[auto_auto] gap-y-1 gap-x-2 text-sm">
-                          {/* Row 1: type + brand/name (no ellipsis menu) */}
-                          <div className="row-start-1 col-span-2 flex items-center overflow-hidden">
-                            <div className="font-semibold text-primary flex-shrink-0 mr-1">
-                              {it.itemType || "—"}
-                            </div>
-                            <div className="truncate text-primary flex-1 overflow-hidden">
-                              {it.brand && (
-                                <span className="mr-1">{it.brand}</span>
-                              )}
-                              {it.name}
-                            </div>
-                          </div>
-
-                          {/* Row 2: left (weight) · right (🍴 👕 qty 🛒) */}
-                          <div className="row-start-2 col-span-2 grid grid-cols-[1fr_auto] items-center">
-                            {/* Left: fixed-width columns so every card lines up */}
-                            <div className="grid grid-cols-[70px_75px] text-primary">
-                              <span className="tabular-nums text-left">
-                                {fmtWeight(g, unit)}
-                              </span>
+                      return (
+                        <li
+                          key={it.id || it._id}
+                          className="bg-base-100 px-3 py-2 rounded shadow mb-2"
+                        >
+                          {/* Grid matches SortableItem mobile (minus ellipsis) */}
+                          <div className="grid grid-rows-[auto_auto] gap-y-1 gap-x-2 text-sm">
+                            {/* Row 1: type + brand/name (no ellipsis menu) */}
+                            <div className="row-start-1 col-span-2 flex items-center overflow-hidden">
+                              <div className="font-semibold text-primary flex-shrink-0 mr-1">
+                                {it.itemType || "—"}
+                              </div>
+                              <div className="truncate text-primary flex-1 overflow-hidden">
+                                {it.brand && (
+                                  <span className="mr-1">{it.brand}</span>
+                                )}
+                                {it.name}
+                              </div>
                             </div>
 
-                            {/* Right group: state icons + qty + cart (read-only) */}
-                            <div className="flex items-center gap-3">
-                              <span
-                                className={`${
-                                  it.consumable
-                                    ? "text-green-600"
-                                    : "opacity-30"
-                                }`}
-                                title={t("publicList.item.consumable")}
-                                aria-label={t("publicList.item.consumable")}
-                              >
-                                <FaUtensils aria-hidden />
-                              </span>
-                              <span
-                                className={`${
-                                  it.worn ? "text-blue-600" : "opacity-30"
-                                }`}
-                                title={t("publicList.item.worn")}
-                                aria-label={t("publicList.item.worn")}
-                              >
-                                <FaTshirt aria-hidden />
-                              </span>
-                              <span
-                                className="text-xs text-primary tabular-nums"
-                                title={t("publicList.item.quantity")}
-                              >
-                                × {it.qty ?? 1}
-                              </span>
-                              {linkHref ? (
-                                <AffiliateGateLink
-                                  href={linkHref}
-                                  context="public"
-                                  className="text-primary"
-                                  title={t("publicList.item.viewProduct")}
-                                  ariaLabel={t(
-                                    "publicList.item.viewProductPaid"
-                                  )}
+                            {/* Row 2: left (weight) · right (🍴 👕 qty 🛒) */}
+                            <div className="row-start-2 col-span-2 grid grid-cols-[1fr_auto] items-center">
+                              {/* Left: fixed-width columns so every card lines up */}
+                              <div className="grid grid-cols-[70px_75px] text-primary">
+                                <span className="tabular-nums text-left">
+                                  {fmtWeight(g, unit)}
+                                </span>
+                              </div>
+
+                              {/* Right group: state icons + qty + cart (read-only) */}
+                              <div className="flex items-center gap-3">
+                                <span
+                                  className={`${
+                                    it.consumable
+                                      ? "text-green-600"
+                                      : "opacity-30"
+                                  }`}
+                                  title={t("publicList.item.consumable")}
+                                  aria-label={t("publicList.item.consumable")}
                                 >
-                                  <FaShoppingCart
-                                    className="h-4 w-4"
+                                  <FaUtensils aria-hidden />
+                                </span>
+                                <span
+                                  className={`${
+                                    it.worn ? "text-blue-600" : "opacity-30"
+                                  }`}
+                                  title={t("publicList.item.worn")}
+                                  aria-label={t("publicList.item.worn")}
+                                >
+                                  <FaTshirt aria-hidden />
+                                </span>
+                                <span
+                                  className="text-xs text-primary tabular-nums"
+                                  title={t("publicList.item.quantity")}
+                                >
+                                  × {it.qty ?? 1}
+                                </span>
+                                {linkHref ? (
+                                  <AffiliateGateLink
+                                    href={linkHref}
+                                    context="public"
+                                    className="text-primary"
+                                    title={t("publicList.item.viewProduct")}
+                                    ariaLabel={t(
+                                      "publicList.item.viewProductPaid"
+                                    )}
+                                  >
+                                    <FaShoppingCart
+                                      className="h-4 w-4"
+                                      aria-hidden
+                                    />
+                                  </AffiliateGateLink>
+                                ) : (
+                                  /* placeholder to keep row layout consistent */
+                                  <span
+                                    className="inline-flex h-5 w-5 align-middle opacity-0"
                                     aria-hidden
                                   />
-                                </AffiliateGateLink>
-                              ) : (
-                                /* placeholder to keep row layout consistent */
-                                <span
-                                  className="inline-flex h-5 w-5 align-middle opacity-0"
-                                  aria-hidden
-                                />
-                              )}
+                                )}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </section>
-            );
-          })}
-        </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </section>
+              );
+            })}
+          </div>
 
-        {/* ======= PUBLIC LIST MODE: DESKTOP (≥ md) — match SortableItem list row, read-only ======= */}
-        <div className="hidden md:block">
-          {catOrder.map((catId) => {
-            const title =
-              catId === "__uncategorized__"
-                ? uncategorizedLabel
-                : catById.get(catId) || fallbackCategoryLabel;
-            const items = grouped[catId] || [];
-            const totalG = catTotalG(items);
+          {/* ======= PUBLIC LIST MODE: DESKTOP (≥ md) — match SortableItem list row, read-only ======= */}
+          <div className="hidden md:block">
+            {catOrder.map((catId) => {
+              const title =
+                catId === "__uncategorized__"
+                  ? uncategorizedLabel
+                  : catById.get(catId) || fallbackCategoryLabel;
+              const items = grouped[catId] || [];
+              const totalG = catTotalG(items);
 
-            return (
-              <section key={catId} className="bg-neutral rounded-lg py-2">
-                {/* Category header (no grabber / no X) */}
-                <div className="flex items-center mb-3 min-w-0">
-                  <h2 className="font-semibold text-lg flex-1 min-w-0 truncate pr-2 text-primaryAlt">
-                    <span>{title}</span>
-                  </h2>
-                  <span className="pr-1 flex-shrink-0 text-primaryAlt tabular-nums">
-                    {fmtWeight(totalG, unit)}
-                  </span>
-                </div>
+              return (
+                <section key={catId} className="bg-neutral rounded-lg py-2">
+                  {/* Category header (no grabber / no X) */}
+                  <div className="flex items-center mb-3 min-w-0">
+                    <h2 className="font-semibold text-lg flex-1 min-w-0 truncate pr-2 text-primaryAlt">
+                      <span>{title}</span>
+                    </h2>
+                    <span className="pr-1 flex-shrink-0 text-primaryAlt tabular-nums">
+                      {fmtWeight(totalG, unit)}
+                    </span>
+                  </div>
 
-                {/* Rows */}
-                <div className="space-y-2">
-                  {items.map((it) => {
-                    const g = Number(it.weight_g) || 0;
-                    const linkHref =
-                      it.affiliate?.deepLink ||
-                      it.affiliate?.url ||
-                      it.link ||
-                      null;
+                  {/* Rows */}
+                  <div className="space-y-2">
+                    {items.map((it) => {
+                      const g = Number(it.weight_g) || 0;
+                      const linkHref =
+                        it.affiliate?.deepLink ||
+                        it.affiliate?.url ||
+                        it.link ||
+                        null;
 
-                    return (
-                      <div
-                        key={it.id || it._id}
-                        className="grid items-center text-sm
-                  grid-cols-[160px,minmax(260px,1fr),96px,24px,24px,24px,48px]
-                  gap-x-2 bg-base-100 px-3 py-2 rounded shadow"
-                      >
-                        {/* 1) Item type */}
-                        <div className="font-semibold text-primary truncate">
-                          {it.itemType || "—"}
-                        </div>
+                      return (
+                        <div
+                          key={it.id || it._id}
+                          className="grid items-center text-sm
+                            grid-cols-[160px,minmax(260px,1fr),96px,24px,24px,24px,48px]
+                            gap-x-2 bg-base-100 px-3 py-2 rounded shadow"
+                        >
+                          {/* 1) Item type */}
+                          <div className="font-semibold text-primary truncate">
+                            {it.itemType || "—"}
+                          </div>
 
-                        {/* 2) Name/brand */}
-                        <div className="truncate text-primary">
-                          {it.brand && <span className="mr-1">{it.brand}</span>}
-                          {it.name}
-                        </div>
+                          {/* 2) Name/brand */}
+                          <div className="truncate text-primary">
+                            {it.brand && (
+                              <span className="mr-1">{it.brand}</span>
+                            )}
+                            {it.name}
+                          </div>
 
-                        {/* 3) Weight (right-aligned, tabular) */}
-                        <div className="justify-self-end tabular-nums text-primary w-[96px] text-right pr-2">
-                          {fmtWeight(g, unit)}
-                        </div>
+                          {/* 3) Weight (right-aligned, tabular) */}
+                          <div className="justify-self-end tabular-nums text-primary w-[96px] text-right pr-2">
+                            {fmtWeight(g, unit)}
+                          </div>
 
-                        {/* 5) Consumable */}
-                        <div className="justify-self-center">
-                          <span
-                            className={`${
-                              it.consumable ? "text-green-600" : "opacity-30"
-                            }`}
-                            title={t("publicList.item.consumable")}
-                            aria-label={t("publicList.item.consumable")}
-                          >
-                            <FaUtensils aria-hidden />
-                          </span>
-                        </div>
-
-                        {/* 6) Worn */}
-                        <div className="justify-self-center">
-                          <span
-                            className={`${
-                              it.worn ? "text-blue-600" : "opacity-30"
-                            }`}
-                            title={t("publicList.item.worn")}
-                            aria-label={t("publicList.item.worn")}
-                          >
-                            <FaTshirt aria-hidden />
-                          </span>
-                        </div>
-
-                        {/* 7) Qty */}
-                        <div className="justify-self-center tabular-nums text-primary">
-                          {it.qty ?? 1}
-                        </div>
-
-                        {/* 8) Cart */}
-                        <div className="justify-self-center">
-                          {linkHref ? (
-                            <AffiliateGateLink
-                              href={linkHref}
-                              context="public"
-                              className="text-primary hover:text-primary/80"
-                              title={t("publicList.item.viewProduct")}
-                              ariaLabel={t("publicList.item.viewProductPaid")}
+                          {/* 5) Consumable */}
+                          <div className="justify-self-center">
+                            <span
+                              className={`${
+                                it.consumable ? "text-green-600" : "opacity-30"
+                              }`}
+                              title={t("publicList.item.consumable")}
+                              aria-label={t("publicList.item.consumable")}
                             >
-                              <FaShoppingCart aria-hidden />
-                            </AffiliateGateLink>
-                          ) : null}
+                              <FaUtensils aria-hidden />
+                            </span>
+                          </div>
+
+                          {/* 6) Worn */}
+                          <div className="justify-self-center">
+                            <span
+                              className={`${
+                                it.worn ? "text-blue-600" : "opacity-30"
+                              }`}
+                              title={t("publicList.item.worn")}
+                              aria-label={t("publicList.item.worn")}
+                            >
+                              <FaTshirt aria-hidden />
+                            </span>
+                          </div>
+
+                          {/* 7) Qty */}
+                          <div className="justify-self-center tabular-nums text-primary">
+                            {it.qty ?? 1}
+                          </div>
+
+                          {/* 8) Cart */}
+                          <div className="justify-self-center">
+                            {linkHref ? (
+                              <AffiliateGateLink
+                                href={linkHref}
+                                context="public"
+                                className="text-primary hover:text-primary/80"
+                                title={t("publicList.item.viewProduct")}
+                                ariaLabel={t("publicList.item.viewProductPaid")}
+                              >
+                                <FaShoppingCart aria-hidden />
+                              </AffiliateGateLink>
+                            ) : null}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </section>
-            );
-          })}
+                      );
+                    })}
+                  </div>
+                </section>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      </main>
+
+      {!isEmbed && (
+        <FooterLegal
+          variant="light"
+          containerWidth="max-w-5xl"
+          className="mt-10"
+        />
+      )}
     </div>
   );
 }
