@@ -12,6 +12,7 @@ import { useUserSettings } from "../contexts/UserSettings";
 import { detectRegion, normalizeRegion } from "../utils/region";
 import CatalogItemPreviewModal from "./CatalogItemPreviewModal";
 import Spinner from "../components/ui/Spinner";
+import { CATALOG_CATEGORIES } from "../config/catalogTaxonomy";
 
 function ImportCatalogTab({ onImported }) {
   const { t } = useTranslation("common");
@@ -141,10 +142,8 @@ function ImportCatalogTab({ onImported }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearch, categoryFilter, subcategoryFilter, brandFilter]);
 
-  // build dropdown options from loaded items (simple + consistent)
-  const categories = Array.from(
-    new Set(items.map((i) => i.category).filter(Boolean))
-  ).sort();
+  // Category options are locked (always show all)
+  const categories = CATALOG_CATEGORIES;
 
   const subcategories = Array.from(
     new Set(

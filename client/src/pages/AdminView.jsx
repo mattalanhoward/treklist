@@ -1,6 +1,10 @@
 // client/src/pages/AdminView.jsx
 import React, { useState, useEffect, useMemo } from "react";
 import api from "../services/api";
+import {
+  CATALOG_CATEGORIES,
+  buildCategoryOptions,
+} from "../config/catalogTaxonomy";
 import { toast } from "react-hot-toast";
 import {
   FaEdit,
@@ -178,6 +182,11 @@ function GearCatalogSection({ mode = "both" }) {
 
     // IMPORTANT: this UI uses offers[] (not links[])
     offers: [blankOffer()],
+  });
+
+  const categorySelectOptions = buildCategoryOptions({
+    existing: [],
+    current: form.category,
   });
 
   const loadItems = async ({ includeArchived } = {}) => {
@@ -586,12 +595,12 @@ function GearCatalogSection({ mode = "both" }) {
     loadItems({ includeArchived: showArchived });
   };
 
-  // ---- Derived (memoized) ----
-  const categoryOptions = useMemo(
-    () =>
-      Array.from(new Set(items.map((i) => i.category).filter(Boolean))).sort(),
-    [items]
-  );
+  const categoryOptions = useMemo(() => {
+    const existing = Array.from(
+      new Set(items.map((i) => i.category).filter(Boolean))
+    );
+    return buildCategoryOptions({ existing });
+  }, [items]);
 
   const brandOptions = useMemo(
     () => Array.from(new Set(items.map((i) => i.brand).filter(Boolean))).sort(),
@@ -936,14 +945,22 @@ function GearCatalogSection({ mode = "both" }) {
                     <label className="block font-medium text-primary mb-0.5">
                       Category
                     </label>
-                    <input
-                      type="text"
+                    <select
                       name="category"
                       value={form.category}
                       onChange={handleChange}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                      placeholder="shelter / mid-layer / headlamp..."
-                    />
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                    >
+                      <option value="">Select a category…</option>
+                      {categorySelectOptions.map((cat) => {
+                        const isLegacy = !CATALOG_CATEGORIES.includes(cat);
+                        return (
+                          <option key={cat} value={cat}>
+                            {isLegacy ? `${cat} (legacy)` : cat}
+                          </option>
+                        );
+                      })}
+                    </select>
                   </div>
 
                   <div>
@@ -1880,6 +1897,12 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
     };
   });
 
+  // Locked categories + ensure current value is selectable (legacy-safe)
+  const categorySelectOptions = buildCategoryOptions({
+    existing: [], // locked list only
+    current: form.category,
+  });
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({
@@ -2279,14 +2302,22 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                   <label className="block font-medium text-primary mb-0.5">
                     Category
                   </label>
-                  <input
-                    type="text"
+                  <select
                     name="category"
                     value={form.category}
                     onChange={handleChange}
-                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                    placeholder="shelter / mid-layer / headlamp..."
-                  />
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                  >
+                    <option value="">Select a category…</option>
+                    {categorySelectOptions.map((cat) => {
+                      const isLegacy = !CATALOG_CATEGORIES.includes(cat);
+                      return (
+                        <option key={cat} value={cat}>
+                          {isLegacy ? `${cat} (legacy)` : cat}
+                        </option>
+                      );
+                    })}
+                  </select>
                 </div>
 
                 <div>
