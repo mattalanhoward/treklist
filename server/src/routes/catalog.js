@@ -111,7 +111,8 @@ router.get("/items", auth, async (req, res) => {
     if (brand) query.brand = brand;
 
     if (q && q.trim()) {
-      const regex = new RegExp(q.trim(), "i");
+      const qNorm = q.trim().replace(/\s+/g, " ");
+      const regex = new RegExp(qNorm, "i");
       query.$or = [
         { name: regex },
         { brand: regex },

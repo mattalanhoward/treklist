@@ -60,18 +60,43 @@ export default function AddGearItemModal({
     })();
   }, []);
 
-  // allResults ⇒ filteredResults (sorted by item name)
+  function normalize(str = "") {
+    return String(str)
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "") // remove accents
+      .trim();
+  }
+
+  function toSearchText(item) {
+    // add/remove fields here as your GlobalItem shape supports
+    const parts = [
+      item.name,
+      item.brand,
+      item.itemType,
+      item.category,
+      item.subcategory,
+      item.description,
+      ...(Array.isArray(item.tags) ? item.tags : []),
+    ];
+    return normalize(parts.filter(Boolean).join(" "));
+  }
+
   const filteredResults = useMemo(() => {
-    const lowerQuery = searchQuery.trim().toLowerCase();
+    const q = normalize(searchQuery);
+    const tokens = q ? q.split(/\s+/).filter(Boolean) : [];
+
     const filtered =
-      lowerQuery === ""
+      tokens.length === 0
         ? allResults
         : allResults.filter((item) => {
-            const hay = `${item.itemType} ${item.name}`.toLowerCase();
-            return hay.includes(lowerQuery);
+            const hay = toSearchText(item);
+            // require every token to match somewhere
+            return tokens.every((tok) => hay.includes(tok));
           });
+
     return [...filtered].sort((a, b) =>
-      a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+      normalize(a.name).localeCompare(normalize(b.name))
     );
   }, [allResults, searchQuery]);
 
