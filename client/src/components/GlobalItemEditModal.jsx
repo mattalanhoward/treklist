@@ -84,8 +84,8 @@ export default function GlobalItemEditModal({
     const pid = item?.productId
       ? String(item.productId)
       : template?.productId
-      ? String(template.productId)
-      : null;
+        ? String(template.productId)
+        : null;
 
     return pid || null;
   }, [item?.productId, template?.productId]);
@@ -454,19 +454,19 @@ export default function GlobalItemEditModal({
   const modalWidthClass = isCustom
     ? "max-w-xl"
     : showImageBlock
-    ? "max-w-3xl"
-    : "max-w-xl";
+      ? "max-w-3xl"
+      : "max-w-xl";
 
   return (
-    <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-[60]">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center z-[60]">
       {showFullscreenSpinner ? (
         <Spinner tone="white" />
       ) : (
         <form
           onSubmit={handleSave}
           className={
-            "bg-white rounded-lg shadow-2xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 " +
-            " overflow-y-auto " +
+            "bg-base-100 rounded-lg shadow-2xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 " +
+            "border border-primary/15 overflow-y-auto " +
             modalWidthClass
           }
         >
@@ -504,7 +504,7 @@ export default function GlobalItemEditModal({
                     value={form.itemType}
                     onChange={handleChange}
                     disabled={disableEdits}
-                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100"
                   />
                 </div>
 
@@ -518,7 +518,7 @@ export default function GlobalItemEditModal({
                     value={form.name}
                     onChange={handleChange}
                     disabled={disableEdits}
-                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100"
                   />
                 </div>
 
@@ -531,7 +531,7 @@ export default function GlobalItemEditModal({
                     value={form.brand}
                     onChange={handleChange}
                     disabled={disableEdits}
-                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100"
                   />
                 </div>
 
@@ -559,7 +559,7 @@ export default function GlobalItemEditModal({
                       value={displayWeight}
                       onChange={(e) => setDisplayWeight(e.target.value)}
                       disabled={disableEdits}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100"
                     />
                   </div>
                 </div>
@@ -573,7 +573,7 @@ export default function GlobalItemEditModal({
                     value={form.description}
                     onChange={handleChange}
                     disabled={disableEdits}
-                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100"
                     rows={2}
                   />
                 </div>
@@ -629,7 +629,7 @@ export default function GlobalItemEditModal({
                           inputMode="decimal"
                           value={displayWeight}
                           onChange={(e) => setDisplayWeight(e.target.value)}
-                          className="w-full max-w-[220px] text-primary bg-white text-left px-2"
+                          className="w-full max-w-[220px] text-primary bg-base-100 border border-primary/30 rounded px-2 py-1"
                         />
                       </div>
                     </div>
@@ -655,16 +655,14 @@ export default function GlobalItemEditModal({
 
                 {showImageBlock && (
                   <div className="hidden sm:flex items-center justify-center">
-                    <div className="bg-white py-2 px-2 w-full max-w-md">
+                    <div className="bg-white rounded border border-primary/15 py-2 px-2 w-full max-w-md">
                       <div className="h-[260px] w-full overflow-hidden flex items-center justify-center">
                         {loadingImages || loadingImageAsset ? (
                           <Spinner />
                         ) : (
                           <ImageCarousel
                             images={safeCatalogImages}
-                            alt={`${form.brand ? form.brand + " " : ""}${
-                              form.name || ""
-                            }`}
+                            alt={`${form.brand ? form.brand + " " : ""}${form.name || ""}`}
                             loading={false}
                           />
                         )}

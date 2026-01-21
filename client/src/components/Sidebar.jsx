@@ -48,18 +48,13 @@ export default function Sidebar({
   // global gear items & debounced search
   const [items, setItems] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState(searchQuery);
 
-  // 1) update debouncedSearch 1000 ms after user stops typing
-  useEffect(() => {
-    const handler = setTimeout(() => setDebouncedSearch(searchQuery), 1000);
-    return () => clearTimeout(handler);
-  }, [searchQuery]);
+  // Fetch global items (small dataset: <200) + refresh on global update event
 
   // Refresh global items whenever a global item is edited anywhere
   useEffect(() => {
     const handleGlobalUpdated = () => {
-      fetchGlobalItems(debouncedSearch);
+      fetchGlobalItems();
     };
 
     if (typeof window !== "undefined") {
@@ -71,14 +66,11 @@ export default function Sidebar({
         window.removeEventListener("global-items:updated", handleGlobalUpdated);
       }
     };
-  }, [debouncedSearch]);
+  }, []);
 
-  // 2) fetch whenever debouncedSearch changes
-  const fetchGlobalItems = async (query) => {
+  const fetchGlobalItems = async () => {
     try {
-      const { data } = await api.get("/global/items", {
-        params: { search: query },
-      });
+      const { data } = await api.get("/global/items");
       setItems(data);
     } catch (err) {
       console.error("Error fetching gear items:", err);
@@ -86,8 +78,29 @@ export default function Sidebar({
   };
 
   useEffect(() => {
-    fetchGlobalItems(debouncedSearch);
-  }, [debouncedSearch]);
+    fetchGlobalItems();
+  }, []);
+
+  function normalize(str = "") {
+    return String(str)
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim();
+  }
+
+  function toSearchText(item) {
+    const parts = [
+      item.name,
+      item.brand,
+      item.itemType,
+      item.category?.name ?? item.category,
+      item.subcategory?.name ?? item.subcategory,
+      item.description,
+      ...(Array.isArray(item.tags) ? item.tags : []),
+    ];
+    return normalize(parts.filter(Boolean).join(" "));
+  }
 
   // === Gear‐list CRUD ===
 
@@ -171,18 +184,22 @@ export default function Sidebar({
   );
 
   const filteredAndSortedItems = useMemo(() => {
-    const lower = searchQuery.trim().toLowerCase();
+    const q = normalize(searchQuery);
+    const tokens = q ? q.split(/\s+/).filter(Boolean) : [];
+
     const filtered =
-      lower === ""
+      tokens.length === 0
         ? items
-        : items.filter((item) =>
-            `${item.itemType} ${item.name}`.toLowerCase().includes(lower)
-          );
-    return [...filtered].sort((a, b) =>
-      `${a.itemType} ${a.name}`
-        .toLowerCase()
-        .localeCompare(`${b.itemType} ${b.name}`.toLowerCase())
-    );
+        : items.filter((item) => {
+            const hay = toSearchText(item);
+            return tokens.every((tok) => hay.includes(tok));
+          });
+
+    return [...filtered].sort((a, b) => {
+      const aKey = normalize(`${a.itemType ?? ""} ${a.name ?? ""}`);
+      const bKey = normalize(`${b.itemType ?? ""} ${b.name ?? ""}`);
+      return aKey.localeCompare(bKey);
+    });
   }, [items, searchQuery]);
 
   const widthClass = collapsed ? "w-0" : "w-full sm:w-80";

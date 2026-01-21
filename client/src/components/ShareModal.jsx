@@ -146,7 +146,7 @@ export default function ShareModal({ listId, isOpen, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center z-50"
       role="dialog"
       aria-modal="true"
       aria-labelledby="share-modal-title"
@@ -179,7 +179,7 @@ export default function ShareModal({ listId, isOpen, onClose }) {
                 ref={inputRef}
                 type="text"
                 readOnly
-                className="flex-1 mt-0.5 block w-full border border-primary rounded p-2 h-10 text-primary"
+                className="flex-1 mt-0.5 block w-full border border-primary rounded p-2 h-10 text-primary bg-base-100 placeholder:text-primary/50"
                 value={shareUrl}
                 placeholder={
                   busy
@@ -209,7 +209,7 @@ export default function ShareModal({ listId, isOpen, onClose }) {
             <div className="flex gap-2">
               <textarea
                 ref={embedRef}
-                className="flex-1 mt-0.5 block w-full border border-primary rounded p-2 h-10 resize-none text-primary"
+                className="flex-1 mt-0.5 block w-full border border-primary rounded p-2 h-10 resize-none text-primary bg-base-100 placeholder:text-primary/50"
                 rows={1}
                 readOnly
                 value={embedCode}

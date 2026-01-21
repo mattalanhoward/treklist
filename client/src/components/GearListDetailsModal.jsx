@@ -82,10 +82,10 @@ export default function GearListDetailsModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center z-50">
       <form
         onSubmit={handleSave}
-        className="bg-neutralAlt rounded-lg shadow-2xl max-w-xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 overflow-auto"
+        className="bg-neutralAlt rounded-lg shadow-2xl border border-neutral/60 max-w-xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 overflow-auto"
       >
         {/* Header */}
         <div className="flex justify-between items-center mb-2 sm:mb-3">
@@ -145,7 +145,7 @@ export default function GearListDetailsModal({
                 setTitle(e.target.value);
                 setDirty(true);
               }}
-              className="w-full border border-primary rounded px-2 py-1 text-primary"
+              className="w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50"
             />
           </div>
 
@@ -164,7 +164,7 @@ export default function GearListDetailsModal({
                 }}
                 dateFormat="P"
                 locale={dfnsLocale}
-                className="w-full border border-primary rounded px-2 py-1 text-primary"
+                className="w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50"
                 placeholderText={t("gearListDetailsModal.placeholders.date")}
               />
             </div>
@@ -181,7 +181,7 @@ export default function GearListDetailsModal({
                 }}
                 dateFormat="P"
                 locale={dfnsLocale}
-                className="w-full border border-primary rounded px-2 py-1 text-primary"
+                className="w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50"
                 placeholderText={t("gearListDetailsModal.placeholders.date")}
               />
             </div>
@@ -199,7 +199,7 @@ export default function GearListDetailsModal({
                 setLocation(e.target.value);
                 setDirty(true);
               }}
-              className="w-full border border-primary rounded px-2 py-1 text-primary"
+              className="w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50"
             />
           </div>
 
@@ -215,7 +215,7 @@ export default function GearListDetailsModal({
                 setNotes(e.target.value);
                 setDirty(true);
               }}
-              className="w-full border border-primary rounded px-2 py-1 text-primary"
+              className="w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50"
             />
           </div>
 
@@ -247,7 +247,6 @@ export default function GearListDetailsModal({
           </button>
         </div>
       </form>
-
       {/* Confirm discard */}
       <ConfirmDialog
         isOpen={showConfirmClose}

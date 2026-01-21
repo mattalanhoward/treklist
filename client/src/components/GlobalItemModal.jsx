@@ -12,6 +12,7 @@ import { useUserSettings } from "../contexts/UserSettings";
 import { detectRegion, normalizeRegion } from "../utils/region";
 import CatalogItemPreviewModal from "./CatalogItemPreviewModal";
 import Spinner from "../components/ui/Spinner";
+import { CATALOG_CATEGORIES } from "../config/catalogTaxonomy";
 
 function ImportCatalogTab({ onImported }) {
   const { t } = useTranslation("common");
@@ -141,10 +142,8 @@ function ImportCatalogTab({ onImported }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearch, categoryFilter, subcategoryFilter, brandFilter]);
 
-  // build dropdown options from loaded items (simple + consistent)
-  const categories = Array.from(
-    new Set(items.map((i) => i.category).filter(Boolean))
-  ).sort();
+  // Category options are locked (always show all)
+  const categories = CATALOG_CATEGORIES;
 
   const subcategories = Array.from(
     new Set(
@@ -260,12 +259,13 @@ function ImportCatalogTab({ onImported }) {
           placeholder={t("globalItemModal.importTab.searchPlaceholder")}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="flex-1 border border-primary rounded px-2 py-1 text-primary placeholder:text-primary/50 bg-white"
+          className="flex-1 border border-primary rounded px-2 py-1 text-primary placeholder:text-primary/50 bg-base-100"
+          bg-base-100
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 w-full">
           <select
-            className="w-full border border-primary rounded px-2 py-1 text-primary bg-white"
+            className="w-full border border-primary rounded px-2 py-1 text-primary bg-base-100"
             value={categoryFilter}
             onChange={(e) => {
               setCategoryFilter(e.target.value);
@@ -282,7 +282,7 @@ function ImportCatalogTab({ onImported }) {
             ))}
           </select>
           <select
-            className="border border-primary rounded px-2 py-1 text-primary bg-white"
+            className="border border-primary rounded px-2 py-1 text-primary bg-base-100"
             value={subcategoryFilter}
             onChange={(e) => setSubcategoryFilter(e.target.value)}
             disabled={categoryFilter === "all" && subcategories.length === 0}
@@ -297,7 +297,7 @@ function ImportCatalogTab({ onImported }) {
             ))}
           </select>
           <select
-            className="border border-primary rounded px-2 py-1 text-primary bg-white"
+            className="border border-primary rounded px-2 py-1 text-primary bg-base-100"
             value={brandFilter}
             onChange={(e) => setBrandFilter(e.target.value)}
           >
@@ -579,7 +579,8 @@ export default function GlobalItemModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center z-50">
+      {" "}
       <form
         onSubmit={handleSubmit}
         className="bg-neutralAlt rounded-lg shadow-2xl max-w-2xl w-full sm:h-[80vh] h-[70vh] px-4 py-4 sm:px-6 sm:py-6 my-4 flex flex-col overflow-hidden"
@@ -689,7 +690,7 @@ export default function GlobalItemModal({
                     required
                     value={itemType}
                     onChange={(e) => setItemType(e.target.value)}
-                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50"
                   />
                 </div>
 
@@ -705,7 +706,7 @@ export default function GlobalItemModal({
                     value={name}
                     required
                     onChange={(e) => setName(e.target.value)}
-                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50"
                   />
                 </div>
 
@@ -719,7 +720,7 @@ export default function GlobalItemModal({
                     placeholder={t("globalItemModal.placeholders.brand")}
                     value={brand}
                     onChange={(e) => setBrand(e.target.value)}
-                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50"
                   />
                 </div>
 
@@ -763,7 +764,7 @@ export default function GlobalItemModal({
                           : t("globalItemModal.placeholders.weightOunces")
                       }
                       onChange={(e) => setDisplayWeight(e.target.value)}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50"
                     />
                   </div>
                 </div>
@@ -776,7 +777,7 @@ export default function GlobalItemModal({
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="block w-full flex-1 min-h-0 border border-primary rounded px-2 py-1 text-primary resize-none"
+                  className="block w-full flex-1 min-h-0 border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 resize-none"
                 />
               </div>
             </div>
