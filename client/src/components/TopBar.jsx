@@ -4,6 +4,7 @@ import DropdownMenu from "./DropdownMenu";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import logo from "../assets/images/media-kit/treklist_horizontal.png";
+import logoDark from "../assets/images/media-kit/treklist_horizontal_white.png";
 import { useUserSettings } from "../contexts/UserSettings";
 import AccountModal from "./AccountModal";
 import ViewToggle from "./ViewToggle";
@@ -17,7 +18,7 @@ const themes = [
   { name: "alpine", color: "#172b4d" }, // default
   { name: "desert", color: "#E0B251" },
   { name: "light", color: "#ffffff" },
-  // { name: "dark", color: "#0f172a" },
+  { name: "dark", color: "#0f172a" },
 ];
 
 export default function TopBar({ title, openSettings }) {
@@ -37,6 +38,8 @@ export default function TopBar({ title, openSettings }) {
     viewMode,
     setViewMode,
   } = useUserSettings();
+
+  const isDark = theme === "dark";
 
   const { t } = useTranslation("common");
   const navigate = useNavigate();
@@ -77,7 +80,11 @@ export default function TopBar({ title, openSettings }) {
       {/* Top row: logo + account menu */}
       <div className="flex items-center justify-between px-2 py-2">
         <div className="flex items-center space-x-3">
-          <img src={logo} alt={t("app.name")} className="h-8" />
+          <img
+            src={isDark ? logoDark : logo}
+            alt={t("app.name")}
+            className="h-8 w-auto"
+          />
         </div>
 
         <div className="flex items-center print:hidden">

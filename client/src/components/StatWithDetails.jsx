@@ -48,31 +48,40 @@ export default function StatWithDetails({
         <Popover.Content
           side="bottom"
           align="center"
-          className="w-56 p-2 bg-white rounded-lg shadow-lg max-h-64 overflow-y-auto text-xs z-[9999]"
+          className="
+    w-72 p-2 rounded-lg shadow-lg
+    max-h-64 overflow-y-auto text-xs z-[9999]
+    bg-base-100 text-primary
+    border border-primary/20
+  "
         >
           <div className="flex justify-between items-center mb-1">
-            <span className="font-medium text-gray-800">{label}</span>
-            <span className="font-medium text-gray-800">{displayValue}</span>
+            <span className="font-medium text-primary">{label}</span>
+            <span className="font-medium text-primary">{displayValue}</span>
           </div>
-          <ul className="divide-y divide-gray-200">
+
+          <ul className="divide-y divide-primary/15">
             {items.map((it) => (
               <li
                 key={it._id}
-                className="py-1 flex justify-between hover:bg-gray-50"
+                className="py-1 flex justify-between hover:bg-primary/10 rounded px-1"
               >
                 <div className="flex flex-col truncate">
-                  <span className="font-medium truncate">{it.name}</span>
-                  <span className="text-xs text-gray-500 truncate">
+                  <span className="font-medium truncate text-primary">
+                    {it.name}
+                  </span>
+                  <span className="text-xs text-secondary truncate">
                     {it.brand} • {it.itemType}
                   </span>
                 </div>
-                <span className="ml-2 whitespace-nowrap">
-                  {formatWeight(it.weight * (it.quantity || 1), unit)}{" "}
+                <span className="ml-2 whitespace-nowrap text-primary">
+                  {formatWeight(it.weight * (it.quantity || 1), unit)}
                 </span>
               </li>
             ))}
           </ul>
-          <Popover.Arrow className="fill-white" />
+
+          <Popover.Arrow className="fill-[rgb(var(--color-base-100-rgb))]" />
         </Popover.Content>
       </Popover.Portal>
     </Popover.Root>
