@@ -1,5 +1,30 @@
 const mongoose = require("mongoose");
 
+function cleanString(val) {
+  if (val === undefined || val === null) return undefined;
+  const s = String(val).trim();
+  return s ? s : undefined;
+}
+
+function cleanUpper(val) {
+  const s = cleanString(val);
+  return s ? s.toUpperCase() : undefined;
+}
+
+function cleanStringArray(arr) {
+  if (!Array.isArray(arr)) return [];
+  const out = [];
+  const seen = new Set();
+  for (const raw of arr) {
+    const s = cleanString(raw);
+    if (!s) continue;
+    if (seen.has(s)) continue;
+    seen.add(s);
+    out.push(s);
+  }
+  return out;
+}
+
 const DimensionsSchema = new mongoose.Schema(
   {
     length: { type: Number, min: 0 },
@@ -8,7 +33,7 @@ const DimensionsSchema = new mongoose.Schema(
     unit: { type: String, enum: ["cm"], default: "cm" },
     note: { type: String, trim: true },
   },
-  { _id: false }
+  { _id: false },
 );
 
 // ------------------------------------------------------------
@@ -164,7 +189,7 @@ const CatalogItemSchema = new mongoose.Schema(
   },
   {
     timestamps: true, // createdAt, updatedAt
-  }
+  },
 );
 
 // ------------------------------------------------------------
@@ -172,18 +197,123 @@ const CatalogItemSchema = new mongoose.Schema(
 // Ensures consistent stored values & index performance
 // ------------------------------------------------------------
 CatalogItemSchema.pre("save", function normalize(next) {
-  if (this.brand) this.brandLC = String(this.brand).toLowerCase().trim();
-  if (this.category) this.category = this.category.trim();
-  if (this.subcategory) this.subcategory = this.subcategory.trim();
-  if (this.itemType) this.itemType = this.itemType.trim();
-  if (this.itemGroupId !== undefined)
-    this.itemGroupId = String(this.itemGroupId);
-  if (this.canonicalAsin !== undefined)
-    this.canonicalAsin = String(this.canonicalAsin);
-  if (this.externalIds?.asin !== undefined)
-    this.externalIds.asin = String(this.externalIds.asin).trim().toUpperCase();
+  this.name = cleanString(this.name) || this.name;
+  this.brand = cleanString(this.brand);
+  this.brandLC = this.brand ? this.brand.toLowerCase() : undefined;
+
+  this.modelNumber = cleanString(this.modelNumber);
+  this.category = cleanString(this.category);
+  this.subcategory = cleanString(this.subcategory);
+  this.itemType = cleanString(this.itemType);
+  this.description = cleanString(this.description);
+
+  this.itemGroupId = cleanString(this.itemGroupId);
+  this.canonicalAsin = cleanUpper(this.canonicalAsin);
+  this.canonicalSku = cleanString(this.canonicalSku);
+
+  if (this.externalIds) {
+    this.externalIds.asin = cleanUpper(this.externalIds.asin);
+    this.externalIds.upc = cleanString(this.externalIds.upc);
+    this.externalIds.ean = cleanString(this.externalIds.ean);
+    this.externalIds.sku = cleanString(this.externalIds.sku);
+    this.externalIds.mpn = cleanString(this.externalIds.mpn);
+  }
+
+  this.imageUrls = cleanStringArray(this.imageUrls);
+  this.tags = cleanStringArray(this.tags);
   next();
 });
+
+// Normalize updates too (findOneAndUpdate / updateOne / updateMany)
+function normalizeUpdateObject(update) {
+  if (!update || typeof update !== "object") return update;
+
+  const hasOperators = Object.keys(update).some((k) => k.startsWith("$"));
+  const $set = hasOperators ? { ...(update.$set || {}) } : { ...update };
+  const $unset = { ...(update.$unset || {}) };
+
+  const unset = (path) => {
+    delete $set[path];
+    $unset[path] = 1;
+  };
+
+  const setClean = (path, val) => {
+    const s = cleanString(val);
+    if (!s) return unset(path);
+    $set[path] = s;
+  };
+
+  if ("brand" in $set) {
+    const b = cleanString($set.brand);
+    if (!b) {
+      unset("brand");
+      unset("brandLC");
+    } else {
+      $set.brand = b;
+      $set.brandLC = b.toLowerCase();
+    }
+  }
+
+  if ("category" in $set) setClean("category", $set.category);
+  if ("subcategory" in $set) setClean("subcategory", $set.subcategory);
+  if ("itemType" in $set) setClean("itemType", $set.itemType);
+  if ("modelNumber" in $set) setClean("modelNumber", $set.modelNumber);
+  if ("description" in $set) setClean("description", $set.description);
+
+  if ("itemGroupId" in $set) setClean("itemGroupId", $set.itemGroupId);
+
+  if ("canonicalAsin" in $set) {
+    const a = cleanUpper($set.canonicalAsin);
+    if (!a) unset("canonicalAsin");
+    else $set.canonicalAsin = a;
+  }
+
+  if ("externalIds.asin" in $set) {
+    const a = cleanUpper($set["externalIds.asin"]);
+    if (!a) unset("externalIds.asin");
+    else $set["externalIds.asin"] = a;
+  }
+
+  if (
+    "externalIds" in $set &&
+    $set.externalIds &&
+    typeof $set.externalIds === "object"
+  ) {
+    const ext = { ...$set.externalIds };
+    if ("asin" in ext) ext.asin = cleanUpper(ext.asin);
+    if ("upc" in ext) ext.upc = cleanString(ext.upc);
+    if ("ean" in ext) ext.ean = cleanString(ext.ean);
+    if ("sku" in ext) ext.sku = cleanString(ext.sku);
+    if ("mpn" in ext) ext.mpn = cleanString(ext.mpn);
+    $set.externalIds = ext;
+  }
+
+  if ("tags" in $set && Array.isArray($set.tags))
+    $set.tags = cleanStringArray($set.tags);
+  if ("imageUrls" in $set && Array.isArray($set.imageUrls))
+    $set.imageUrls = cleanStringArray($set.imageUrls);
+
+  if (hasOperators) {
+    update.$set = $set;
+    if (Object.keys($unset).length) update.$unset = $unset;
+    else delete update.$unset;
+    return update;
+  }
+
+  // non-operator updates become $set/$unset to support unsetting on empty/null
+  const next = { $set };
+  if (Object.keys($unset).length) next.$unset = $unset;
+  return next;
+}
+
+CatalogItemSchema.pre(
+  ["findOneAndUpdate", "updateOne", "updateMany"],
+  function (next) {
+    const update = normalizeUpdateObject(this.getUpdate());
+    this.setUpdate(update);
+    next();
+  },
+);
 
 // - Allow note-only dimensions
 // - Allow partial L/W/H ONLY if note is present
