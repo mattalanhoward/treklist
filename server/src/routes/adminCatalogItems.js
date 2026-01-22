@@ -233,7 +233,7 @@ router.get("/", async (req, res) => {
       items: items.map((it) => ({
         ...it,
         offers: (offersByProduct.get(String(it._id)) || []).sort(
-          (a, b) => (b.priority || 0) - (a.priority || 0)
+          (a, b) => (b.priority || 0) - (a.priority || 0),
         ),
       })),
       total,
@@ -272,30 +272,31 @@ router.post("/", async (req, res) => {
     const rawOffers = Array.isArray(offers)
       ? offers
       : Array.isArray(req.body?.links)
-      ? req.body.links
-      : [];
+        ? req.body.links
+        : [];
 
-    if (!Array.isArray(rawOffers) || rawOffers.length === 0) {
-      return res
-        .status(400)
-        .json({ message: "At least one offer is required." });
-    }
+    // ✅ Offers are OPTIONAL now
+    let sanitizedOffers = [];
+    if (Array.isArray(rawOffers) && rawOffers.length > 0) {
+      sanitizedOffers = sanitizeOffers(rawOffers, {
+        fallbackAsin:
+          typeof canonicalAsin === "string" && canonicalAsin.trim()
+            ? canonicalAsin.trim().toUpperCase()
+            : undefined,
+        fallbackItemGroupId:
+          typeof itemGroupId === "string" && itemGroupId.trim()
+            ? itemGroupId.trim()
+            : undefined,
+      });
 
-    const sanitizedOffers = sanitizeOffers(rawOffers, {
-      fallbackAsin:
-        typeof canonicalAsin === "string" && canonicalAsin.trim()
-          ? canonicalAsin.trim().toUpperCase()
-          : undefined,
-      fallbackItemGroupId:
-        typeof itemGroupId === "string" && itemGroupId.trim()
-          ? itemGroupId.trim()
-          : undefined,
-    });
-
-    if (sanitizedOffers.length === 0) {
-      return res
-        .status(400)
-        .json({ message: "Each offer must have a network and deepLink/url." });
+      // ✅ If they attempted to add offers but none are valid, error
+      if (sanitizedOffers.length === 0) {
+        return res
+          .status(400)
+          .json({
+            message: "Each offer must have a network and deepLink/url.",
+          });
+      }
     }
 
     let normalizedWeight = undefined;
@@ -314,11 +315,11 @@ router.post("/", async (req, res) => {
     const normalizedImageUrls = Array.isArray(imageUrls)
       ? imageUrls.map((u) => String(u || "").trim()).filter(Boolean)
       : typeof imageUrls === "string"
-      ? imageUrls
-          .split(/\r?\n|,/)
-          .map((u) => u.trim())
-          .filter(Boolean)
-      : [];
+        ? imageUrls
+            .split(/\r?\n|,/)
+            .map((u) => u.trim())
+            .filter(Boolean)
+        : [];
 
     const normalizedCanonicalAsin =
       typeof canonicalAsin === "string" && canonicalAsin.trim()
@@ -543,7 +544,7 @@ router.patch("/:id", async (req, res) => {
           tags: Array.isArray(item.tags) ? item.tags : [],
           attributes: item.attributes || {},
         },
-      }
+      },
     );
 
     // Find global template ids tied to this product
@@ -576,7 +577,7 @@ router.patch("/:id", async (req, res) => {
             { sourceProductId: item._id },
           ],
         },
-        { $set: syncSet }
+        { $set: syncSet },
       );
 
       // If you have SortableItem, sync it too (same caution re: category)
@@ -608,7 +609,7 @@ router.patch("/:id", async (req, res) => {
             deepLink: o.deepLink,
             priority: o.priority,
           })),
-          { ordered: false }
+          { ordered: false },
         );
       }
     }
@@ -641,7 +642,7 @@ router.patch("/:id/archive", async (req, res) => {
     const item = await CatalogItem.findByIdAndUpdate(
       req.params.id,
       { $set: { isActive: nextIsActive } },
-      { new: true }
+      { new: true },
     );
 
     if (!item)
@@ -651,7 +652,7 @@ router.patch("/:id/archive", async (req, res) => {
   } catch (err) {
     console.error(
       `PATCH /api/admin/catalog-items/${req.params.id}/archive error`,
-      err
+      err,
     );
     res.status(500).json({ message: "Failed to update catalog item." });
   }

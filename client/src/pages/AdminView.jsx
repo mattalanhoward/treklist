@@ -13,6 +13,7 @@ import {
   FaChevronDown,
   FaUsers,
   FaUser,
+  FaCopy,
 } from "react-icons/fa";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { useUserSettings } from "../contexts/UserSettings";
@@ -25,6 +26,7 @@ const TABS = [
 ];
 
 const NETWORK_OPTIONS = [
+  { value: "", label: "Select…" },
   { value: "amazon", label: "Amazon" },
   { value: "awin", label: "Awin" },
   { value: "impact", label: "Impact" },
@@ -58,14 +60,16 @@ const AMAZON_BASE_BY_MP = {
   pl: "https://www.amazon.pl",
 };
 
-const blankOffer = () => ({
-  network: "amazon",
-  region: "global",
-  url: "",
-  merchantName: "",
-  externalId: "",
-  priority: 10,
-});
+function blankOffer() {
+  return {
+    network: "",
+    region: "global",
+    url: "",
+    merchantName: "",
+    externalId: "",
+    priority: undefined,
+  };
+}
 
 function extractAsinFromAmazonUrl(url) {
   try {
@@ -147,7 +151,12 @@ function attributesToText(attributes) {
     .join("\n");
 }
 
-function GearCatalogSection({ mode = "both" }) {
+function GearCatalogSection({
+  mode = "both",
+  onDuplicate,
+  duplicateSeed,
+  onSeedConsumed,
+}) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -238,6 +247,61 @@ function GearCatalogSection({ mode = "both" }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (!duplicateSeed) return;
+    if (mode === "list") return;
+
+    const src = duplicateSeed;
+    const dims = src?.dimensions || {};
+
+    setForm((prev) => ({
+      ...prev,
+
+      // ✅ human-readable/spec fields
+      name: src?.name ? `${src.name} (copy)` : "",
+      brand: src?.brand || "",
+      category: src?.category || "",
+      subcategory: src?.subcategory || "",
+      itemType: src?.itemType || "",
+      modelNumber: src?.modelNumber || "",
+      description: src?.description || "",
+      attributesText: attributesToText(src?.attributes) || "",
+
+      weightGrams:
+        typeof src?.weightGrams === "number" ? String(src.weightGrams) : "",
+      dimLength: typeof dims.length === "number" ? String(dims.length) : "",
+      dimWidth: typeof dims.width === "number" ? String(dims.width) : "",
+      dimHeight: typeof dims.height === "number" ? String(dims.height) : "",
+      dimNote: typeof dims.note === "string" ? dims.note : "",
+
+      tags: Array.isArray(src?.tags) ? src.tags.join(", ") : "",
+      imageUrlsText: Array.isArray(src?.imageUrls)
+        ? src.imageUrls.join("\n")
+        : "",
+
+      // 🚫 NOT duplicated (per your requirement)
+      canonicalAsin: "",
+      itemGroupId: "",
+      offers: [blankOffer()], // empty offer slate
+
+      // keep prefill out of the way for this workflow
+      prefillSource: "none",
+      prefillOverwrite: false,
+      amazonAsinLookup: "",
+      amazonMarketplace: "us",
+
+      // reset Amazon compliance flags
+      amazonDescriptionNeedsRewrite: false,
+      amazonDescriptionConfirmed: false,
+    }));
+
+    toast.success(
+      "Duplicated into Add catalog item. Update name + offers, then save.",
+      { id: "catalog-duplicate" },
+    );
+    onSeedConsumed?.();
+  }, [duplicateSeed, mode, onSeedConsumed]);
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({
@@ -289,25 +353,37 @@ function GearCatalogSection({ mode = "both" }) {
     });
   };
 
+  // helper: treat an offer as "meaningful" if *any* field is filled
+  const isMeaningfulOffer = (o) => {
+    const url = String(o.url || "").trim();
+    const merchantName = String(o.merchantName || "").trim();
+    const externalId = String(o.externalId || "").trim();
+    const priority = String(o.priority ?? "").trim(); // only meaningful if user set it
+    return Boolean(url || merchantName || externalId || priority);
+  };
+
   const handleCreate = async (e) => {
     e.preventDefault();
 
     if (!form.name.trim()) return toast.error("Name is required.");
 
-    if (!Array.isArray(form.offers) || form.offers.length === 0) {
-      return toast.error("At least one offer is required.");
-    }
+    // 1) Only validate offers the user actually started filling out
+    const meaningfulOffers = (
+      Array.isArray(form.offers) ? form.offers : []
+    ).filter(isMeaningfulOffer);
 
-    if (
-      form.offers.some(
-        (o) => !String(o.network || "").trim() || !String(o.url || "").trim(),
-      )
-    ) {
+    // 2) If they started an offer row, require network + url for THAT row
+    const hasInvalidOffer = meaningfulOffers.some(
+      (o) => !String(o.network || "").trim() || !String(o.url || "").trim(),
+    );
+    if (hasInvalidOffer) {
       return toast.error("Each offer must have a network and URL.");
     }
 
+    // (keep your Amazon rewrite check)
     if (
-      getPrimaryOffer(form).network === "amazon" &&
+      getPrimaryOffer({ ...form, offers: meaningfulOffers }).network ===
+        "amazon" &&
       form.amazonDescriptionNeedsRewrite &&
       !form.amazonDescriptionConfirmed
     ) {
@@ -324,6 +400,23 @@ function GearCatalogSection({ mode = "both" }) {
             .map((u) => u.trim())
             .filter(Boolean)
         : [];
+
+      const offersPayload = meaningfulOffers.map((o) => ({
+        network: String(o.network || "")
+          .trim()
+          .toLowerCase(),
+        region: String(o.region || "global")
+          .trim()
+          .toLowerCase(),
+        deepLink: String(o.url || "").trim(),
+        merchantName: o.merchantName
+          ? String(o.merchantName).trim()
+          : undefined,
+        externalProductId: o.externalId
+          ? String(o.externalId).trim()
+          : undefined,
+        priority: toOptionalNumber(o.priority) ?? 0,
+      }));
 
       const payload = {
         name: form.name.trim(),
@@ -359,22 +452,10 @@ function GearCatalogSection({ mode = "both" }) {
         imageUrls,
         canonicalAsin: form.canonicalAsin.trim() || undefined,
         itemGroupId: form.itemGroupId.trim() || undefined,
-        offers: form.offers.map((o) => ({
-          network: String(o.network || "")
-            .trim()
-            .toLowerCase(),
-          region: String(o.region || "global")
-            .trim()
-            .toLowerCase(),
-          deepLink: String(o.url || "").trim(), // send deepLink
-          merchantName: o.merchantName
-            ? String(o.merchantName).trim()
-            : undefined,
-          externalProductId: o.externalId
-            ? String(o.externalId).trim()
-            : undefined,
-          priority: toOptionalNumber(o.priority) ?? 0,
-        })),
+
+        // ✅ optional offers: omit if none
+        ...(offersPayload.length ? { offers: offersPayload } : {}),
+        // or if your server prefers it always present: offers: offersPayload
       };
 
       await api.post("/admin/catalog-items", payload);
@@ -1202,7 +1283,7 @@ function GearCatalogSection({ mode = "both" }) {
                       Network *
                     </label>
                     <select
-                      value={getPrimaryOffer(form).network}
+                      value={getPrimaryOffer(form).network || ""}
                       onChange={(e) =>
                         updateOffer(0, "network", e.target.value)
                       }
@@ -1735,7 +1816,18 @@ function GearCatalogSection({ mode = "both" }) {
                                 >
                                   <FaEdit />
                                 </button>
-
+                                <button
+                                  type="button"
+                                  className="btn btn-ghost btn-xs"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    onDuplicate?.(item);
+                                  }}
+                                  title="Duplicate (copy fields into Add catalog item)"
+                                >
+                                  <FaCopy />
+                                </button>
                                 <button
                                   type="button"
                                   className={
@@ -4408,7 +4500,13 @@ function PublicListsSection() {
 
 function AdminView() {
   const [activeTab, setActiveTab] = useState("gearCatalog");
+  const [duplicateSeed, setDuplicateSeed] = useState(null);
   const { sidebarCollapsed } = useUserSettings();
+
+  const handleDuplicate = (item) => {
+    setDuplicateSeed(item);
+    setActiveTab("gearCreate");
+  };
 
   return (
     <div className="h-full w-full flex flex-col bg-neutral/40">
@@ -4452,8 +4550,16 @@ function AdminView() {
 
       {/* Content */}
       <main className="flex-1 px-4 py-2 overflow-auto bg-neutral/20">
-        {activeTab === "gearCatalog" && <GearCatalogSection mode="list" />}
-        {activeTab === "gearCreate" && <GearCatalogSection mode="create" />}
+        {activeTab === "gearCatalog" && (
+          <GearCatalogSection mode="list" onDuplicate={handleDuplicate} />
+        )}
+        {activeTab === "gearCreate" && (
+          <GearCatalogSection
+            mode="create"
+            duplicateSeed={duplicateSeed}
+            onSeedConsumed={() => setDuplicateSeed(null)}
+          />
+        )}
         {activeTab === "users" && <UsersSection />}
         {activeTab === "lists" && <PublicListsSection />}
       </main>
