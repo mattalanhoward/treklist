@@ -30,6 +30,7 @@
   "topbar": {
     "accountHeader": "Cuenta",
     "manageAccount": "Administrar cuenta…",
+    "takeTour": "Iniciar recorrido",
     "preferencesHeader": "Preferencias",
     "viewMode": "Modo de vista",
     "theme": "Tema",
@@ -57,6 +58,42 @@
     },
     "a11y": {
       "openAccountMenu": "Abrir menú de cuenta"
+    }
+  },
+  "tour": {
+    "steps": {
+      "welcome": {
+        "title": "Bienvenido a TrekList",
+        "body": "Hemos cargado una lista de ejemplo para que veas cómo funciona todo. Puedes explorarla, editarla o eliminarla cuando quieras."
+      },
+      "lists": {
+        "title": "Tus listas de equipo",
+        "body": "Cada viaje o mochila tiene su propia lista. Puedes crear una nueva desde la barra lateral."
+      },
+      "myGear": {
+        "title": "Mi equipo",
+        "body": "Aquí vive todo tu equipo. Usa el botón “+” para añadir artículos del catálogo o crear los tuyos, y luego agrégalos a cualquier lista."
+      },
+      "categories": {
+        "title": "Categorías",
+        "body": "Las categorías te ayudan a organizar tu mochila. Haz clic en el título para renombrarlas. Usa el control para mover categorías o artículos."
+      },
+      "addCategory": {
+        "title": "Añadir categoría",
+        "body": "Añade nuevas categorías a tu lista usando este botón."
+      },
+      "addItems": {
+        "title": "Añadir artículos a una categoría",
+        "body": "Haz clic en + Añadir artículos para agregar elementos de “Mi equipo” a una categoría."
+      },
+      "preferences": {
+        "title": "Preferencias de la lista",
+        "body": "Las opciones específicas de la lista están en el menú de los tres puntos. Ver detalles, modo checklist, compartir la lista y más."
+      },
+      "settings": {
+        "title": "Configuración global",
+        "body": "La configuración global de la cuenta está disponible en el menú de la barra superior."
+      }
     }
   },
   "sidebar": {
@@ -199,20 +236,10 @@
   "dashboard": {
     "loadingLists": "Cargando tus listas de equipo…",
     "empty": {
-      "title": "Bienvenido a TrekList 👋",
-      "intro": "TrekList te ayuda a planificar y preparar tu equipo para que no olvides nada en tu próximo viaje.",
-      "gettingStartedTitle": "Primeros pasos",
-      "gettingStartedBody": "Empieza creando tu primera lista de equipo en el panel Listas de equipo de la izquierda. Escribe un nombre de viaje o mochila en el cuadro Nueva lista y haz clic en el botón +. Eso abre tu primera lista, donde puedes añadir categorías como Rifugios, Senderismo o Aseo. Luego usa el panel Mi equipo para crear tu biblioteca personal, añadiendo artículos que tienes o quieres comprar y colocándolos en las categorías correctas de tu lista.",
-      "howOrganizedTitle": "Cómo se organiza TrekList",
-      "howOrganizedGearLists": "Una lista por viaje o mochila, por ejemplo Alta Via 1, Tour du Mont Blanc o Ultralight Summer 2025.",
-      "howOrganizedMyGear": "Tu biblioteca de equipo que ya tienes o quieres comprar. Puedes reutilizar estos artículos en diferentes listas.",
-      "howOrganizedPackStats": "En la parte superior de cada lista verás el peso total, base, llevado y consumible, para ajustar tu mochila.",
-      "settingsTitle": "Ajustes y preferencias",
-      "settingsListMenu": "Usa el menú … (puntos suspensivos) en la parte superior de una lista para preferencias específicas como fondo, vista checklist, compartir, copiar y eliminar.",
-      "settingsAccount": "Usa el icono en la esquina superior derecha para ajustes de cuenta y ajustes globales.",
-      "buttonSampleListLoading": "Cargando lista de ejemplo…",
-      "buttonSampleList": "Cargar una lista de ejemplo",
-      "startFromScratch": "O empieza desde cero en el panel Listas de equipo."
+      "simpleTitle": "Crea una lista para comenzar",
+      "simpleBody": "Empieza con una lista de ejemplo o crea la tuya desde la barra lateral.",
+      "buttonSampleList": "Cargar lista de ejemplo",
+      "buttonSampleListLoading": "Cargando lista de ejemplo…"
     },
     "toasts": {
       "loadListsFailed": "No se pudieron cargar tus listas de equipo",

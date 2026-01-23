@@ -84,7 +84,7 @@ export default function GearListView({
   const bgPreviewUrlRef = React.useRef("");
 
   const [customBgUrl, setCustomBgUrl] = useState(
-    list.customBackground?.url || ""
+    list.customBackground?.url || "",
   );
 
   const [shareOpen, setShareOpen] = useState(false);
@@ -206,11 +206,11 @@ export default function GearListView({
     async (catId) => {
       if (!catId) return;
       const { data } = await api.get(
-        `/dashboard/${listId}/categories/${catId}/items`
+        `/dashboard/${listId}/categories/${catId}/items`,
       );
       setItemsMap((m) => ({ ...m, [catId]: data }));
     },
-    [listId]
+    [listId],
   );
 
   const refreshListAfterEdit = useCallback(() => {
@@ -268,7 +268,7 @@ export default function GearListView({
     setItemsMap((m) => ({
       ...m,
       [catId]: m[catId].map((i) =>
-        i._id === itemId ? { ...i, worn: newWorn } : i
+        i._id === itemId ? { ...i, worn: newWorn } : i,
       ),
     }));
   }, []);
@@ -277,7 +277,7 @@ export default function GearListView({
     setItemsMap((m) => ({
       ...m,
       [catId]: m[catId].map((i) =>
-        i._id === itemId ? { ...i, consumable: newConsumable } : i
+        i._id === itemId ? { ...i, consumable: newConsumable } : i,
       ),
     }));
   }, []);
@@ -288,14 +288,14 @@ export default function GearListView({
       setItemsMap((m) => ({
         ...m,
         [catId]: m[catId].map((i) =>
-          i._id === itemId ? { ...i, quantity: newQty } : i
+          i._id === itemId ? { ...i, quantity: newQty } : i,
         ),
       }));
 
       try {
         await api.patch(
           `/dashboard/${listId}/categories/${catId}/items/${itemId}`,
-          { quantity: newQty }
+          { quantity: newQty },
         );
         await fetchItems(catId);
       } catch (err) {
@@ -303,7 +303,7 @@ export default function GearListView({
         fetchItems(catId);
       }
     },
-    [fetchItems, listId, t]
+    [fetchItems, listId, t],
   );
 
   const handleDeleteClick = (catId, itemId) => {
@@ -315,13 +315,13 @@ export default function GearListView({
     const { catId, itemId } = pendingDelete;
     try {
       await api.delete(
-        `/dashboard/${listId}/categories/${catId}/items/${itemId}`
+        `/dashboard/${listId}/categories/${catId}/items/${itemId}`,
       );
       fetchItems(catId);
       // toast.success(t("gearList.toasts.itemDeleted"));
     } catch (err) {
       toast.error(
-        err.response?.data?.message || t("gearList.toasts.itemDeleteFailed")
+        err.response?.data?.message || t("gearList.toasts.itemDeleteFailed"),
       );
     } finally {
       setConfirmOpen(false);
@@ -336,7 +336,7 @@ export default function GearListView({
 
   const pendingDeleteCategory = React.useMemo(
     () => categories.find((c) => c._id === pendingDeleteCatId),
-    [categories, pendingDeleteCatId]
+    [categories, pendingDeleteCatId],
   );
 
   // Add category
@@ -381,7 +381,8 @@ export default function GearListView({
     } catch (err) {
       console.error(err);
       toast.error(
-        err.response?.data?.message || t("gearList.toasts.categoryDeleteFailed")
+        err.response?.data?.message ||
+          t("gearList.toasts.categoryDeleteFailed"),
       );
     } finally {
       setConfirmCatOpen(false);
@@ -419,7 +420,8 @@ export default function GearListView({
       // toast.success(t("gearList.toasts.categoryRenamed"));
     } catch (err) {
       toast.error(
-        err.response?.data?.message || t("gearList.toasts.categoryRenameFailed")
+        err.response?.data?.message ||
+          t("gearList.toasts.categoryRenameFailed"),
       );
     }
   };
@@ -430,12 +432,12 @@ export default function GearListView({
     // CATEGORY REORDER
     if (active.id.startsWith("cat-") && over.id.startsWith("cat-")) {
       const oldIndex = categories.findIndex(
-        (c) => `cat-${c._id}` === active.id
+        (c) => `cat-${c._id}` === active.id,
       );
       const newIndex = categories.findIndex((c) => `cat-${c._id}` === over.id);
       if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
         const reordered = arrayMove(categories, oldIndex, newIndex).map(
-          (catObj, idx) => ({ ...catObj, position: idx })
+          (catObj, idx) => ({ ...catObj, position: idx }),
         );
         await onReorderCategories(categories, reordered);
       }
@@ -453,7 +455,7 @@ export default function GearListView({
         const newIndex = oldArray.findIndex((i) => i._id === destItemId);
         if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
           const reordered = arrayMove(oldArray, oldIndex, newIndex).map(
-            (it, idx) => ({ ...it, position: idx })
+            (it, idx) => ({ ...it, position: idx }),
           );
 
           setItemsMap((m) => ({ ...m, [sourceCatId]: reordered }));
@@ -464,7 +466,7 @@ export default function GearListView({
             if (oldIt && it.position !== oldIt.position) {
               await api.patch(
                 `/dashboard/${listId}/categories/${sourceCatId}/items/${it._id}`,
-                { position: i }
+                { position: i },
               );
             }
           }
@@ -505,7 +507,7 @@ export default function GearListView({
           {
             category: destCatId,
             position: newDest.find((i) => i._id === sourceItemId).position,
-          }
+          },
         );
 
         for (let i = 0; i < newSource.length; i++) {
@@ -514,7 +516,7 @@ export default function GearListView({
           if (oldIt && it.position !== oldIt.position) {
             await api.patch(
               `/dashboard/${listId}/categories/${sourceCatId}/items/${it._id}`,
-              { position: i }
+              { position: i },
             );
           }
         }
@@ -529,7 +531,7 @@ export default function GearListView({
           ) {
             await api.patch(
               `/dashboard/${listId}/categories/${destCatId}/items/${it._id}`,
-              { position: i }
+              { position: i },
             );
           }
         }
@@ -570,7 +572,7 @@ export default function GearListView({
         {
           category: destCatId,
           position: newDest.length - 1,
-        }
+        },
       );
 
       for (let i = 0; i < newSource.length; i++) {
@@ -579,7 +581,7 @@ export default function GearListView({
         if (oldIt && it.position !== oldIt.position) {
           await api.patch(
             `/dashboard/${listId}/categories/${sourceCatId}/items/${it._id}`,
-            { position: i }
+            { position: i },
           );
         }
       }
@@ -626,7 +628,7 @@ export default function GearListView({
     fromCatId,
     itemId,
     toCatId,
-    positionIndex
+    positionIndex,
   ) => {
     if (!fromCatId || !itemId || !toCatId) return;
 
@@ -643,12 +645,12 @@ export default function GearListView({
       const oldArray = sourceArr;
       const safeIndex = Math.max(
         0,
-        Math.min(positionIndex, oldArray.length - 1)
+        Math.min(positionIndex, oldArray.length - 1),
       );
       if (safeIndex === removedIdx) return;
 
       const reordered = arrayMove(oldArray, removedIdx, safeIndex).map(
-        (it, idx) => ({ ...it, position: idx })
+        (it, idx) => ({ ...it, position: idx }),
       );
 
       setItemsMap((m) => ({ ...m, [fromCatId]: reordered }));
@@ -661,7 +663,7 @@ export default function GearListView({
 
           await api.patch(
             `/dashboard/${listId}/categories/${fromCatId}/items/${it._id}`,
-            { position: i }
+            { position: i },
           );
         }
       } catch (err) {
@@ -702,7 +704,7 @@ export default function GearListView({
         {
           category: toCatId,
           position: newDest.find((i) => i._id === itemId).position,
-        }
+        },
       );
 
       for (let i = 0; i < newSource.length; i++) {
@@ -712,7 +714,7 @@ export default function GearListView({
 
         await api.patch(
           `/dashboard/${listId}/categories/${fromCatId}/items/${it._id}`,
-          { position: i }
+          { position: i },
         );
       }
 
@@ -723,7 +725,7 @@ export default function GearListView({
 
         await api.patch(
           `/dashboard/${listId}/categories/${toCatId}/items/${it._id}`,
-          { position: i }
+          { position: i },
         );
       }
     } catch (err) {
@@ -982,18 +984,18 @@ export default function GearListView({
         backgroundPosition: "center",
       }
     : effectiveBgColor
-    ? {
-        backgroundColor: effectiveBgColor,
-        backgroundImage: overlay,
-      }
-    : {};
+      ? {
+          backgroundColor: effectiveBgColor,
+          backgroundImage: overlay,
+        }
+      : {};
 
   const headerPadding =
     viewMode === "list"
       ? "pl-6 sm:w-4/5 sm:mx-auto"
       : collapsed
-      ? "pl-0 sm:pl-15"
-      : "pl-0 sm:pl-6";
+        ? "pl-0 sm:pl-15"
+        : "pl-0 sm:pl-6";
 
   return (
     <div
@@ -1058,8 +1060,9 @@ export default function GearListView({
           <DropdownMenu
             trigger={
               <button
+                data-tour="list-preferences-menu"
                 onMouseEnter={preloadBackgroundThumbs}
-                className="inline-flex items-center justify-center text-l text-primaryAlt hover:text-primaryAlt/80 leading-none"
+                className="inline-flex items-center justify-center text-l text-primaryAlt hover:text-primaryAlt/80 leading-none p-2 -m-2 rounded-lg"
                 aria-label={t("gearList.menu.listOptionsA11y")}
               >
                 <FaEllipsisH />
@@ -1158,7 +1161,7 @@ flex items-center justify-center text-primary/60 text-xl cursor-pointer ` +
                           style={{
                             backgroundImage: `url(${cldTransformUrl(
                               url,
-                              THUMB_TRANSFORM
+                              THUMB_TRANSFORM,
                             )})`,
                           }}
                         />
@@ -1384,6 +1387,7 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
                 </div>
               ) : (
                 <button
+                  data-tour="gearlist-add-category"
                   onClick={() => setAddingNewCat(true)}
                   className="p-2 w-full border border-secondary rounded flex items-center justify-center space-x-2 bg-base-100 text-primary hover:bg-base-100/80"
                 >
@@ -1411,7 +1415,7 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
             moveItemTarget.catId,
             moveItemTarget.item._id,
             toCatId,
-            positionIndex
+            positionIndex,
           );
           setMoveItemTarget(null);
         }}

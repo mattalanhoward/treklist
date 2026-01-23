@@ -118,7 +118,7 @@ export default function Sidebar({
     } catch (err) {
       console.error("Error creating list:", err);
       toast.error(
-        err.response?.data?.message || t("sidebar.couldNotCreateList")
+        err.response?.data?.message || t("sidebar.couldNotCreateList"),
       );
     }
   };
@@ -135,15 +135,15 @@ export default function Sidebar({
     try {
       // Fetch current items in this category to compute next position
       const { data: itemsInCat } = await api.get(
-        `/dashboard/${currentListId}/categories/${cat._id}/items`
+        `/dashboard/${currentListId}/categories/${cat._id}/items`,
       );
 
       const maxPos =
         itemsInCat && itemsInCat.length
           ? Math.max(
               ...itemsInCat.map((it) =>
-                Number.isFinite(it.position) ? it.position : -1
-              )
+                Number.isFinite(it.position) ? it.position : -1,
+              ),
             )
           : -1;
 
@@ -163,7 +163,7 @@ export default function Sidebar({
           consumable: item.consumable,
           quantity: item.quantity,
           position: nextPos, // <-- append to end
-        }
+        },
       );
 
       onRefresh();
@@ -178,9 +178,9 @@ export default function Sidebar({
   const sortedLists = useMemo(
     () =>
       [...lists].sort((a, b) =>
-        a.title.toLowerCase().localeCompare(b.title.toLowerCase())
+        a.title.toLowerCase().localeCompare(b.title.toLowerCase()),
       ),
-    [lists]
+    [lists],
   );
 
   const filteredAndSortedItems = useMemo(() => {
@@ -282,7 +282,7 @@ export default function Sidebar({
                 </button>
               </div>
               {!sidebarGearListsCollapsed && (
-                <>
+                <div data-tour="sidebar-create-list" className="p-2 rounded-lg">
                   <div className="flex mb-3">
                     <input
                       className="flex-1 rounded-lg mt-2 py-1 px-2 bg-base-100 text-primary border-primary"
@@ -332,80 +332,84 @@ export default function Sidebar({
                       </li>
                     ))}
                   </ul>
-                </>
+                </div>
               )}
             </section>
 
             {/* Gear Items / Global Items */}
             <section className="flex flex-col flex-1 px-4 py-2 overflow-hidden">
-              <div className="flex items-center text-primaryAlt">
-                <button
-                  type="button"
-                  onClick={onShowGearPane}
-                  className="font-bold truncate mr-1 text-left"
-                >
-                  {t("sidebar.myGearTitle")}
-                </button>
-                <button
-                  type="button"
-                  aria-label="Toggle my gear section"
-                  onClick={() => setSidebarMyGearCollapsed((prev) => !prev)}
-                  className="p-1 hover:text-primaryAlt/80"
-                >
-                  {sidebarMyGearCollapsed ? (
-                    <FaChevronDown className="text-xs" />
-                  ) : (
-                    <FaChevronUp className="text-xs" />
-                  )}
-                </button>
-                <div className="flex-1" />
-                <button
-                  onClick={() => setShowCreateModal(true)}
-                  className="p-1 text-primaryAlt hover:text-primaryAlt/80"
-                  disabled={!currentListId || categories.length === 0}
-                >
-                  <FaPlus />
-                </button>
-              </div>
-
-              {!sidebarMyGearCollapsed && (
-                <>
-                  <input
-                    className="w-full rounded-lg py-1 px-2 mt-2 bg-base-100 text-primary border border-primary mb-3"
-                    placeholder={t("sidebar.searchGearPlaceholder")}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-
-                  <ul className="overflow-y-auto flex-1 space-y-2">
-                    {filteredAndSortedItems.map((item) => (
-                      <li
-                        key={item._id}
-                        className="flex items-center py-1 px-2 bg-base-100/10 border border-primary/20 rounded-lg hover:bg-base-100/20"
-                      >
-                        <span className="flex-1 truncate text-secondaryAlt">
-                          {item.itemType} – {item.name}
-                        </span>
-                        <div className="flex items-center space-x-2 ml-4">
-                          <button
-                            onClick={() => setEditingGlobalItem(item)}
-                            title={t("sidebar.editGlobalTemplate")}
-                            className="text-secondaryAlt hover:text-secondaryAlt/80 rounded-lg"
-                          >
-                            <FaEllipsisH />
-                          </button>
-                        </div>
-                      </li>
-                    ))}
-                    {filteredAndSortedItems.length === 0 && (
-                      <li className="text-primaryAlt py-1 px-2">
-                        {t("sidebar.noGearItems")}
-                      </li>
+              <div data-tour="sidebar-my-gear" className="rounded-lg p-2">
+                <div className="flex items-center text-primaryAlt">
+                  <button
+                    type="button"
+                    onClick={onShowGearPane}
+                    className="font-bold truncate mr-1 text-left"
+                  >
+                    {t("sidebar.myGearTitle")}
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Toggle my gear section"
+                    onClick={() => setSidebarMyGearCollapsed((prev) => !prev)}
+                    className="p-1 hover:text-primaryAlt/80"
+                  >
+                    {sidebarMyGearCollapsed ? (
+                      <FaChevronDown className="text-xs" />
+                    ) : (
+                      <FaChevronUp className="text-xs" />
                     )}
-                  </ul>
-                </>
-              )}
+                  </button>
+                  <div className="flex-1" />
+                  <button
+                    onClick={() => setShowCreateModal(true)}
+                    className="p-1 text-primaryAlt hover:text-primaryAlt/80"
+                    disabled={!currentListId || categories.length === 0}
+                  >
+                    <FaPlus />
+                  </button>
+                </div>
 
+                {!sidebarMyGearCollapsed && (
+                  <>
+                    <input
+                      className="w-full rounded-lg py-1 px-2 mt-2 bg-base-100 text-primary border border-primary mb-3"
+                      placeholder={t("sidebar.searchGearPlaceholder")}
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+
+                    <ul
+                      // data-tour="sidebar-my-gear"
+                      className="overflow-y-auto flex-1 space-y-2"
+                    >
+                      {filteredAndSortedItems.map((item) => (
+                        <li
+                          key={item._id}
+                          className="flex items-center py-1 px-2 bg-base-100/10 border border-primary/20 rounded-lg hover:bg-base-100/20"
+                        >
+                          <span className="flex-1 truncate text-secondaryAlt">
+                            {item.itemType} – {item.name}
+                          </span>
+                          <div className="flex items-center space-x-2 ml-4">
+                            <button
+                              onClick={() => setEditingGlobalItem(item)}
+                              title={t("sidebar.editGlobalTemplate")}
+                              className="text-secondaryAlt hover:text-secondaryAlt/80 rounded-lg"
+                            >
+                              <FaEllipsisH />
+                            </button>
+                          </div>
+                        </li>
+                      ))}
+                      {filteredAndSortedItems.length === 0 && (
+                        <li className="text-primaryAlt py-1 px-2">
+                          {t("sidebar.noGearItems")}
+                        </li>
+                      )}
+                    </ul>
+                  </>
+                )}
+              </div>
               {showCreateModal && (
                 <GlobalItemModal
                   categories={categories}
