@@ -243,7 +243,7 @@ export default function TourModal({
       pointer-events-auto
       w-[360px] max-w-[calc(100vw-24px)]
       sm:w-[360px]
-      mb-[calc(env(safe-area-inset-bottom,0px)+100px)]
+      mb-[calc(env(safe-area-inset-bottom,0px)+34px)]
       sm:mb-0
     "
         >
