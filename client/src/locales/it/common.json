@@ -531,6 +531,22 @@
       "saveFailed": "Impossibile salvare i dettagli. Riprova."
     }
   },
+  "catalog": {
+    "categories": {
+      "Accessories & Tools": "Accessori e attrezzi",
+      "Backpacks & Bags": "Zaini e borse",
+      "Electronics & Power": "Elettronica e alimentazione",
+      "Health & Hygiene": "Salute e igiene",
+      "Hydration": "Idratazione",
+      "Kitchen & Cooking": "Cucina e cottura",
+      "Men's Clothing": "Abbigliamento uomo",
+      "Navigation & Planning": "Navigazione e pianificazione",
+      "Sleep System": "Sistema per dormire",
+      "Travel": "Viaggio",
+      "Unisex Clothing": "Abbigliamento unisex",
+      "Women's Clothing": "Abbigliamento donna"
+    }
+  },
   "affiliateProductPicker": {
     "labels": {
       "search": "Cerca",

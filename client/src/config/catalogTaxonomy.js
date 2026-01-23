@@ -17,6 +17,13 @@ export const CATALOG_CATEGORIES = [
   "Women's Clothing",
 ];
 
+// UI helper: translate a canonical category value
+// Usage: tCategory(t, "Backpacks & Bags") -> "Rugzakken & tassen" (nl) or fallback to the value
+export function tCategory(t, value) {
+  if (!value) return "";
+  return t?.(`catalog.categories.${value}`, value) ?? value;
+}
+
 // Merge locked categories with any existing “legacy” categories found in data.
 // This avoids breaking existing items that used older values.
 export function buildCategoryOptions({ existing = [], current = "" } = {}) {

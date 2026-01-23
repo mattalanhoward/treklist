@@ -531,6 +531,22 @@
       "saveFailed": "Lijstgegevens konden niet worden opgeslagen. Probeer het opnieuw."
     }
   },
+  "catalog": {
+    "categories": {
+      "Accessories & Tools": "Accessoires & gereedschap",
+      "Backpacks & Bags": "Rugzakken & tassen",
+      "Electronics & Power": "Elektronica & stroom",
+      "Health & Hygiene": "Gezondheid & hygiëne",
+      "Hydration": "Hydratatie",
+      "Kitchen & Cooking": "Keuken & koken",
+      "Men's Clothing": "Herenkleding",
+      "Navigation & Planning": "Navigatie & planning",
+      "Sleep System": "Slaapsysteem",
+      "Travel": "Reizen",
+      "Unisex Clothing": "Unisex kleding",
+      "Women's Clothing": "Dameskleding"
+    }
+  },
   "affiliateProductPicker": {
     "labels": {
       "search": "Zoeken",
