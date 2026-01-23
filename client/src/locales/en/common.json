@@ -61,6 +61,16 @@
     }
   },
   "tour": {
+    "aria": {
+      "productTour": "Product tour"
+    },
+    "actions": {
+      "close": "Close tour",
+      "skip": "Skip",
+      "previous": "Previous",
+      "next": "Next",
+      "done": "Done"
+    },
     "steps": {
       "welcome": {
         "title": "Welcome to TrekList",

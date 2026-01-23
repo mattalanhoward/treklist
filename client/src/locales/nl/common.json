@@ -61,38 +61,48 @@
     }
   },
   "tour": {
+    "aria": {
+      "productTour": "Productrondleiding"
+    },
+    "actions": {
+      "close": "Rondleiding sluiten",
+      "skip": "Overslaan",
+      "previous": "Vorige",
+      "next": "Volgende",
+      "done": "Klaar"
+    },
     "steps": {
       "welcome": {
-        "title": "Welcome to TrekList",
-        "body": "We loaded a sample list so you can see how everything fits together. Feel free to explore, edit, or delete it."
+        "title": "Welkom bij TrekList",
+        "body": "We hebben een voorbeeldlijst geladen zodat je kunt zien hoe alles samenwerkt. Je kunt deze vrij verkennen, aanpassen of verwijderen."
       },
       "lists": {
-        "title": "Your Gear Lists",
-        "body": "Each trip or pack gets its own gear list. You can create a new one from the sidebar."
+        "title": "Je paklijsten",
+        "body": "Elke trip of rugzak heeft zijn eigen paklijst. Je kunt een nieuwe lijst maken via de zijbalk."
       },
       "myGear": {
-        "title": "My Gear",
-        "body": "Here’s where all your gear lives. Use the “+” button to add items from our catalog or create custom items. Once added, you can include them in any gear list."
+        "title": "Mijn uitrusting",
+        "body": "Hier staat al je uitrusting. Gebruik de “+”-knop om items uit onze catalogus toe te voegen of zelf items aan te maken. Daarna kun je ze aan elke paklijst toevoegen."
       },
       "categories": {
-        "title": "Categories",
-        "body": "Categories help organize your pack. Click the title to rename it. Use the grabber to move categories or gear items."
+        "title": "Categorieën",
+        "body": "Categorieën helpen je paklijst te organiseren. Klik op de titel om deze te hernoemen. Gebruik de grijper om categorieën of items te verplaatsen."
       },
       "addCategory": {
-        "title": "Add Category",
-        "body": "Add new categories to your gear list using this button."
+        "title": "Categorie toevoegen",
+        "body": "Voeg met deze knop nieuwe categorieën toe aan je paklijst."
       },
       "addItems": {
-        "title": "Add items to a category",
-        "body": "Click + Add Items to add items from “My Gear” to a category."
+        "title": "Items toevoegen aan een categorie",
+        "body": "Klik op + Items toevoegen om items uit “Mijn uitrusting” aan een categorie toe te voegen."
       },
       "preferences": {
-        "title": "Gear List Preferences",
-        "body": "Gear-list-specific options live in the ellipsis menu. View details, switch to checklist mode, share your list, and more."
+        "title": "Paklijst-instellingen",
+        "body": "Specifieke instellingen voor deze paklijst vind je in het menu met de drie puntjes. Bekijk details, schakel de checklist-modus in, deel je lijst en meer."
       },
       "settings": {
-        "title": "Global Settings",
-        "body": "Global account settings are available in the top bar menu."
+        "title": "Algemene instellingen",
+        "body": "Algemene accountinstellingen vind je in het menu in de bovenbalk."
       }
     }
   },

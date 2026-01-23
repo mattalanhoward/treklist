@@ -1,6 +1,7 @@
 // client/src/components/TourModal.jsx
 import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { FaTimes } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 function clamp(n, min, max) {
   return Math.max(min, Math.min(max, n));
@@ -34,6 +35,8 @@ export default function TourModal({
   onBack,
   onSkip,
 }) {
+  const { t } = useTranslation("common");
+
   const step = steps?.[stepIndex] || null;
 
   const targetSelector = step?.target || "";
@@ -194,7 +197,7 @@ export default function TourModal({
       className="fixed inset-0 z-[80]"
       role="dialog"
       aria-modal="true"
-      aria-label="Product tour"
+      aria-label={t("tour.aria.productTour", "Product tour")}
     >
       {/* Dark overlay */}
       <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px]" />
@@ -253,7 +256,7 @@ export default function TourModal({
                 type="button"
                 onClick={onSkip}
                 className="p-2 rounded hover:bg-base-100/70 text-primary"
-                aria-label="Close tour"
+                aria-label={t("tour.actions.close", "Close tour")}
               >
                 <FaTimes />
               </button>
@@ -294,7 +297,7 @@ export default function TourModal({
                   onClick={onSkip}
                   className="px-3 py-2 text-sm rounded hover:bg-base-100/70 text-primary"
                 >
-                  Skip
+                  {t("tour.actions.skip", "Skip")}{" "}
                 </button>
 
                 <div className="flex items-center gap-2">
@@ -306,14 +309,16 @@ export default function TourModal({
                       stepIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
                     }`}
                   >
-                    Previous
+                    {t("tour.actions.previous", "Previous")}{" "}
                   </button>
                   <button
                     type="button"
                     onClick={onNext}
                     className="px-3 py-2 text-sm rounded bg-secondary text-white hover:bg-secondary/80"
                   >
-                    {isLast ? "Done" : "Next"}
+                    {isLast
+                      ? t("tour.actions.done", "Done")
+                      : t("tour.actions.next", "Next")}{" "}
                   </button>
                 </div>
               </div>

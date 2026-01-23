@@ -61,6 +61,16 @@
     }
   },
   "tour": {
+    "aria": {
+      "productTour": "Tour del prodotto"
+    },
+    "actions": {
+      "close": "Chiudi tour",
+      "skip": "Salta",
+      "previous": "Indietro",
+      "next": "Avanti",
+      "done": "Fatto"
+    },
     "steps": {
       "welcome": {
         "title": "Benvenuto su TrekList",
