@@ -13,6 +13,7 @@ import { toast } from "react-hot-toast";
 import { useUserSettings } from "../contexts/UserSettings";
 import { useTranslation } from "react-i18next";
 import Spinner from "../components/ui/Spinner";
+import TourModal from "../components/TourModal";
 
 function DashboardEmptyState({
   hasLists,
@@ -39,75 +40,31 @@ function DashboardEmptyState({
 
   // True first-time / zero-list state
   return (
-    <div className="h-full px-3 py-4 sm:px-4 sm:py-6 overflow-y-auto sm:overflow-visible">
-      <div className="mx-auto w-full max-w-4xl bg-base-100/95 rounded-xl shadow-md p-4 sm:p-6 space-y-3 my-2 sm:my-4">
-        <h1 className="text-xl font-semibold text-primary">
-          {t("dashboard.empty.title")}
+    <div className="h-full flex items-center justify-center px-4">
+      <div className="text-center space-y-3">
+        <h1 className="text-lg sm:text-xl font-semibold text-primary">
+          {t("dashboard.empty.simpleTitle", "Create a list to begin")}
         </h1>
-
-        <p className="text-sm sm:text-base text-primary">
-          {t("dashboard.empty.intro")}
+        <p className="text-sm text-primary/80">
+          {t(
+            "dashboard.empty.simpleBody",
+            "Start with a sample list, or create your own from the sidebar.",
+          )}
         </p>
 
-        <section className="mb-3">
-          <h3 className="font-semibold text-primary mb-1">
-            {t("dashboard.empty.gettingStartedTitle")}
-          </h3>
-          <p className="text-sm sm:text-base text-primary/90">
-            {t("dashboard.empty.gettingStartedBody")}
-          </p>
-        </section>
-
-        <section className="mb-3">
-          <h3 className="font-semibold text-primary mb-1">
-            {t("dashboard.empty.howOrganizedTitle")}
-          </h3>
-          <ul className="list-disc list-inside space-y-1 text-sm sm:text-base text-primary/90">
-            <li>
-              <span className="font-semibold">
-                {t("sidebar.gearListsTitle")}
-              </span>{" "}
-              - {t("dashboard.empty.howOrganizedGearLists")}
-            </li>
-            <li>
-              <span className="font-semibold">{t("sidebar.myGearTitle")}</span>{" "}
-              - {t("dashboard.empty.howOrganizedMyGear")}
-            </li>
-            <li>
-              <span className="font-semibold">Pack stats</span> -{" "}
-              {t("dashboard.empty.howOrganizedPackStats")}
-            </li>
-          </ul>
-        </section>
-
-        <section>
-          <h3 className="font-semibold text-primary mb-1">
-            {t("dashboard.empty.settingsTitle")}
-          </h3>
-          <ul className="list-disc list-inside space-y-1 text-sm sm:text-base text-primary/90">
-            <li>{t("dashboard.empty.settingsListMenu")}</li>
-            <li>{t("dashboard.empty.settingsAccount")}</li>
-          </ul>
-        </section>
-
-        <div className="border-t border-primary/10 pt-3 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-3 text-center sm:text-left">
-          <div className="flex justify-center sm:justify-start w-full sm:w-auto">
-            <button
-              type="button"
-              onClick={onCreateSampleList}
-              disabled={creatingSample}
-              className={`inline-flex items-center justify-center rounded px-4 py-2 text-sm font-medium text-white bg-secondary hover:bg-secondary/80 ${
-                creatingSample ? "opacity-60 cursor-not-allowed" : ""
-              }`}
-            >
-              {creatingSample
-                ? t("dashboard.empty.buttonSampleListLoading")
-                : t("dashboard.empty.buttonSampleList")}
-            </button>
-          </div>
-          <p className="text-xs text-primary/80">
-            {t("dashboard.empty.startFromScratch")}
-          </p>
+        <div className="flex items-center justify-center gap-2">
+          <button
+            type="button"
+            onClick={onCreateSampleList}
+            disabled={creatingSample}
+            className={`inline-flex items-center justify-center rounded px-4 py-2 text-sm font-medium text-white bg-secondary hover:bg-secondary/80 ${
+              creatingSample ? "opacity-60 cursor-not-allowed" : ""
+            }`}
+          >
+            {creatingSample
+              ? t("dashboard.empty.buttonSampleListLoading")
+              : t("dashboard.empty.buttonSampleList", "Load sample list")}
+          </button>
         </div>
       </div>
     </div>
@@ -120,6 +77,121 @@ export default function Dashboard() {
   const { t } = useTranslation("common");
   const { listId } = useParams(); // from /dashboard/:listId
   const navigate = useNavigate();
+  const TOUR_VERSION = 1;
+  const hasSeenTour =
+    Number(user?.onboarding?.tourVersionSeen || 0) >= TOUR_VERSION;
+
+  const [isTourOpen, setIsTourOpen] = useState(false);
+  const [tourStep, setTourStep] = useState(0);
+  const autoOnboardRef = useRef(false);
+
+  const tourSteps = [
+    {
+      title: t("tour.steps.welcome.title"),
+      body: t("tour.steps.welcome.body"),
+      onEnter: ({ isMobile }) => {
+        setActivePane("gear");
+        if (isMobile) setSidebarCollapsed(false); // open sidebar
+      },
+    },
+    {
+      title: t("tour.steps.lists.title"),
+      body: t("tour.steps.lists.body"),
+      target: '[data-tour="sidebar-create-list"]',
+      onEnter: ({ isMobile }) => {
+        setActivePane("gear");
+        if (isMobile) setSidebarCollapsed(false); // keep open
+      },
+    },
+    {
+      title: t("tour.steps.myGear.title"),
+      body: t("tour.steps.myGear.body"),
+      target: '[data-tour="sidebar-my-gear"]',
+      onEnter: ({ isMobile }) => {
+        setActivePane("gear");
+        if (isMobile) setSidebarCollapsed(false); // keep open
+      },
+    },
+    {
+      title: t("tour.steps.categories.title"),
+      body: t("tour.steps.categories.body"),
+      target: '[data-tour="gearlist-category"]',
+      onEnter: ({ isMobile }) => {
+        setActivePane("gear");
+        if (isMobile) setSidebarCollapsed(true); // close sidebar
+      },
+    },
+    {
+      title: t("tour.steps.addCategory.title"),
+      body: t("tour.steps.addCategory.body"),
+      target: '[data-tour="gearlist-add-category"]',
+      onEnter: ({ isMobile }) => {
+        setActivePane("gear");
+        if (isMobile) setSidebarCollapsed(true); // keep closed
+      },
+    },
+    {
+      title: t("tour.steps.addItems.title"),
+      body: t("tour.steps.addItems.body"),
+      target: '[data-tour="category-add-item"]',
+      onEnter: ({ isMobile }) => {
+        setActivePane("gear");
+        if (isMobile) setSidebarCollapsed(true); // keep closed
+      },
+    },
+    {
+      title: t("tour.steps.preferences.title"),
+      body: t("tour.steps.preferences.body"),
+      target: '[data-tour="list-preferences-menu"]',
+      onEnter: ({ isMobile }) => {
+        setActivePane("gear");
+        if (isMobile) setSidebarCollapsed(true); // keep closed
+      },
+    },
+    {
+      title: t("tour.steps.settings.title"),
+      body: t("tour.steps.settings.body"),
+      target: '[data-tour="settings-menu"]',
+      onEnter: ({ isMobile }) => {
+        setActivePane("gear");
+        if (isMobile) setSidebarCollapsed(true); // keep closed
+      },
+    },
+  ];
+
+  const markTourSeen = useCallback(async () => {
+    try {
+      await api.post("/auth/onboarding/tour-seen", {
+        tourVersion: TOUR_VERSION,
+      });
+    } catch (err) {
+      // Non-blocking: failing to mark shouldn't break UX
+      console.error("Failed to mark tour seen:", err);
+    }
+  }, []);
+
+  const openTour = useCallback(() => {
+    setTourStep(0);
+    setIsTourOpen(true);
+  }, []);
+
+  const closeTour = useCallback(async () => {
+    setIsTourOpen(false);
+    await markTourSeen();
+  }, [markTourSeen]);
+
+  const nextTour = useCallback(async () => {
+    const last = tourSteps.length - 1;
+    if (tourStep >= last) {
+      await closeTour();
+      return;
+    }
+    setTourStep((s) => Math.min(last, s + 1));
+  }, [tourStep, tourSteps.length, closeTour]);
+
+  const backTour = useCallback(() => {
+    setTourStep((s) => Math.max(0, s - 1));
+  }, []);
 
   // ─── Sidebar collapsed state ───
   const { sidebarCollapsed: collapsed, setSidebarCollapsed } =
@@ -159,6 +231,7 @@ export default function Dashboard() {
   }, [t]);
 
   const [creatingSample, setCreatingSample] = useState(false);
+  const [autoOnboarding, setAutoOnboarding] = useState(false);
 
   const handleCreateSampleList = useCallback(async () => {
     try {
@@ -182,7 +255,8 @@ export default function Dashboard() {
     } catch (err) {
       console.error("Failed to create sample list", err);
       toast.error(
-        err?.response?.data?.message || t("dashboard.toasts.createSampleFailed")
+        err?.response?.data?.message ||
+          t("dashboard.toasts.createSampleFailed"),
       );
     } finally {
       setCreatingSample(false);
@@ -226,6 +300,47 @@ export default function Dashboard() {
 
     navigate(`/dashboard/${ids[0]}`, { replace: true });
   }, [lists, listId, navigate, listsLoading, isAuthenticated]);
+
+  // Auto-onboarding: if user has no lists AND hasn't seen the tour, create sample list and start tour.
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    if (listsLoading) return;
+    if (autoOnboardRef.current) return;
+    if (hasSeenTour) return;
+    if (lists.length > 0) return;
+
+    autoOnboardRef.current = true;
+
+    (async () => {
+      try {
+        setAutoOnboarding(true);
+        const { data } = await api.post("/dashboard/sample-list");
+        const newList = data?.list;
+        if (!newList?._id) return;
+
+        await fetchLists();
+        localStorage.setItem("lastListId", newList._id);
+        navigate(`/dashboard/${newList._id}`, { replace: true });
+
+        // Open tour shortly after navigation settles
+        setTimeout(() => {
+          setTourStep(0);
+          setIsTourOpen(true);
+        }, 350);
+      } catch (err) {
+        console.error("Auto-onboarding sample list failed:", err);
+      } finally {
+        setAutoOnboarding(false);
+      }
+    })();
+  }, [
+    isAuthenticated,
+    listsLoading,
+    lists.length,
+    hasSeenTour,
+    fetchLists,
+    navigate,
+  ]);
 
   // ─── viewMode persistence ───
   const { viewMode, setViewMode } = useUserSettings();
@@ -284,7 +399,7 @@ export default function Dashboard() {
 
       // 2) Persist only changed positions
       const oldPosMap = Object.fromEntries(
-        oldCats.map((c) => [c._id, c.position])
+        oldCats.map((c) => [c._id, c.position]),
       );
 
       for (let i = 0; i < reorderedCats.length; i++) {
@@ -296,7 +411,7 @@ export default function Dashboard() {
         }
       }
     },
-    [listId]
+    [listId],
   );
 
   // load on mount—and whenever listId changes
@@ -326,7 +441,7 @@ export default function Dashboard() {
       if (!id) return; // optional safety
       navigate(`/dashboard/${id}`);
     },
-    [navigate]
+    [navigate],
   );
 
   // ─── If auth not ready, or (for gear view) our fullData isn't ready ───
@@ -339,10 +454,19 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col h-d-screen overflow-hidden bg-neutral/50 text-primary">
+      <TourModal
+        isOpen={isTourOpen}
+        stepIndex={tourStep}
+        steps={tourSteps}
+        onNext={nextTour}
+        onBack={backTour}
+        onSkip={closeTour}
+      />
       <TopBar
         title={t("app.name")}
         viewMode={viewMode}
         setViewMode={setViewMode}
+        onOpenTour={openTour}
       />
 
       <div className="flex flex-1 overflow-hidden">
@@ -395,7 +519,7 @@ export default function Dashboard() {
           ) : (
             <DashboardEmptyState
               hasLists={lists.length > 0}
-              listsLoading={listsLoading}
+              listsLoading={listsLoading || autoOnboarding}
               onCreateSampleList={handleCreateSampleList}
               creatingSample={creatingSample}
             />

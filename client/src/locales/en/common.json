@@ -30,6 +30,7 @@
   "topbar": {
     "accountHeader": "Account",
     "manageAccount": "Manage account…",
+    "takeTour": "Take a tour",
     "preferencesHeader": "Preferences",
     "viewMode": "View mode",
     "theme": "Theme",
@@ -57,6 +58,52 @@
     },
     "a11y": {
       "openAccountMenu": "Open account menu"
+    }
+  },
+  "tour": {
+    "aria": {
+      "productTour": "Product tour"
+    },
+    "actions": {
+      "close": "Close tour",
+      "skip": "Skip",
+      "previous": "Previous",
+      "next": "Next",
+      "done": "Done"
+    },
+    "steps": {
+      "welcome": {
+        "title": "Welcome to TrekList",
+        "body": "We loaded a sample list so you can see how everything fits together. Feel free to explore, edit, or delete it."
+      },
+      "lists": {
+        "title": "Your Gear Lists",
+        "body": "Each trip or pack gets its own gear list. You can create a new one from the sidebar."
+      },
+      "myGear": {
+        "title": "My Gear",
+        "body": "Here’s where all your gear lives. Use the “+” button to add items from our catalog or create custom items. Once added, you can include them in any gear list."
+      },
+      "categories": {
+        "title": "Categories",
+        "body": "Categories help organize your pack. Click the title to rename it. Use the grabber to move categories or gear items."
+      },
+      "addCategory": {
+        "title": "Add Category",
+        "body": "Add new categories to your gear list using this button."
+      },
+      "addItems": {
+        "title": "Add items to a category",
+        "body": "Click + Add Items to add items from “My Gear” to a category."
+      },
+      "preferences": {
+        "title": "Gear List Preferences",
+        "body": "Gear-list-specific options live in the ellipsis menu. View details, switch to checklist mode, share your list, and more."
+      },
+      "settings": {
+        "title": "Global Settings",
+        "body": "Global account settings are available in the top bar menu."
+      }
     }
   },
   "sidebar": {
@@ -199,20 +246,10 @@
   "dashboard": {
     "loadingLists": "Loading your gear lists…",
     "empty": {
-      "title": "Welcome to TrekList 👋",
-      "intro": "TrekList helps you plan and pack your hiking gear so you don't forget anything on your next trip.",
-      "gettingStartedTitle": "Getting started",
-      "gettingStartedBody": "Start by creating your first gear list in the Gear Lists panel on the left. Type a trip or pack name in the New list box and click the + button. That opens your first list, where you can add categories like Rifugios, Hiking, or Toiletries. Then use the My Gear panel to build your personal gear library, adding items you own or want to buy and adding those items into the right categories in your list.",
-      "howOrganizedTitle": "How TrekList is organized",
-      "howOrganizedGearLists": "One list per trip or pack, for example Alta Via 1, Tour du Mont Blanc, or Ultralight Summer 2025.",
-      "howOrganizedMyGear": "Your library of gear you currently own or want to buy. You can reuse these items across different lists.",
-      "howOrganizedPackStats": "At the top of each list you'll see total, base, worn, and consumable weight, so you can dial in your pack.",
-      "settingsTitle": "Settings & preferences",
-      "settingsListMenu": "Use the … (ellipsis) menu at the top of a gear list for list-specific preferences like background, checklist view, share, copy, and delete.",
-      "settingsAccount": "Use the icon in the top-right of the app for account and global settings.",
-      "buttonSampleListLoading": "Loading sample list…",
-      "buttonSampleList": "Load a sample list",
-      "startFromScratch": "Or start from scratch in the Gear Lists panel."
+      "simpleTitle": "Create a list to begin",
+      "simpleBody": "Start with a sample list, or create your own from the sidebar.",
+      "buttonSampleList": "Load sample list",
+      "buttonSampleListLoading": "Loading sample list…"
     },
     "toasts": {
       "loadListsFailed": "Could not load your gear lists",
@@ -502,6 +539,22 @@
     "toast": {
       "saveSuccess": "List details saved.",
       "saveFailed": "Failed to save list details. Please try again."
+    }
+  },
+  "catalog": {
+    "categories": {
+      "Accessories & Tools": "Accessories & Tools",
+      "Backpacks & Bags": "Backpacks & Bags",
+      "Electronics & Power": "Electronics & Power",
+      "Health & Hygiene": "Health & Hygiene",
+      "Hydration": "Hydration",
+      "Kitchen & Cooking": "Kitchen & Cooking",
+      "Men's Clothing": "Men's Clothing",
+      "Navigation & Planning": "Navigation & Planning",
+      "Sleep System": "Sleep System",
+      "Travel": "Travel",
+      "Unisex Clothing": "Unisex Clothing",
+      "Women's Clothing": "Women's Clothing"
     }
   },
   "affiliateProductPicker": {

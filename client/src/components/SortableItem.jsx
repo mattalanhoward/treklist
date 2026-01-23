@@ -46,7 +46,7 @@ export default function SortableItem({
   // Resolver works when we have a GlobalItem id to resolve from.
   // In list context, GearItem.globalItem exists (required by schema).
   const canResolve = Boolean(
-    item?.globalItem || item?.productId || item?.affiliate?.network
+    item?.globalItem || item?.productId || item?.affiliate?.network,
   );
 
   // Show cart if we can open *some* link (direct or resolvable)
@@ -66,7 +66,7 @@ export default function SortableItem({
 
                 try {
                   const res = await api.get(
-                    `/affiliates/offers/resolve-link?globalItemId=${globalItemId}&region=${region}`
+                    `/affiliates/offers/resolve-link?globalItemId=${globalItemId}&region=${region}`,
                   );
                   return res?.data?.link || null;
                 } catch (e) {
@@ -233,7 +233,7 @@ export default function SortableItem({
         onClick: () => onDelete?.(catId, item._id),
       },
     ],
-    [catId, item._id, onDelete, t]
+    [catId, item._id, onDelete, t],
   );
 
   const mobileMenuItems = useMemo(() => {

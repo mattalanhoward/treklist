@@ -30,6 +30,7 @@
   "topbar": {
     "accountHeader": "Account",
     "manageAccount": "Account beheren…",
+    "takeTour": "Rondleiding starten",
     "preferencesHeader": "Voorkeuren",
     "viewMode": "Weergave",
     "theme": "Thema",
@@ -57,6 +58,52 @@
     },
     "a11y": {
       "openAccountMenu": "Accountmenu openen"
+    }
+  },
+  "tour": {
+    "aria": {
+      "productTour": "Productrondleiding"
+    },
+    "actions": {
+      "close": "Rondleiding sluiten",
+      "skip": "Overslaan",
+      "previous": "Vorige",
+      "next": "Volgende",
+      "done": "Klaar"
+    },
+    "steps": {
+      "welcome": {
+        "title": "Welkom bij TrekList",
+        "body": "We hebben een voorbeeldlijst geladen zodat je kunt zien hoe alles samenwerkt. Je kunt deze vrij verkennen, aanpassen of verwijderen."
+      },
+      "lists": {
+        "title": "Je paklijsten",
+        "body": "Elke trip of rugzak heeft zijn eigen paklijst. Je kunt een nieuwe lijst maken via de zijbalk."
+      },
+      "myGear": {
+        "title": "Mijn uitrusting",
+        "body": "Hier staat al je uitrusting. Gebruik de “+”-knop om items uit onze catalogus toe te voegen of zelf items aan te maken. Daarna kun je ze aan elke paklijst toevoegen."
+      },
+      "categories": {
+        "title": "Categorieën",
+        "body": "Categorieën helpen je paklijst te organiseren. Klik op de titel om deze te hernoemen. Gebruik de grijper om categorieën of items te verplaatsen."
+      },
+      "addCategory": {
+        "title": "Categorie toevoegen",
+        "body": "Voeg met deze knop nieuwe categorieën toe aan je paklijst."
+      },
+      "addItems": {
+        "title": "Items toevoegen aan een categorie",
+        "body": "Klik op + Items toevoegen om items uit “Mijn uitrusting” aan een categorie toe te voegen."
+      },
+      "preferences": {
+        "title": "Paklijst-instellingen",
+        "body": "Specifieke instellingen voor deze paklijst vind je in het menu met de drie puntjes. Bekijk details, schakel de checklist-modus in, deel je lijst en meer."
+      },
+      "settings": {
+        "title": "Algemene instellingen",
+        "body": "Algemene accountinstellingen vind je in het menu in de bovenbalk."
+      }
     }
   },
   "sidebar": {
@@ -199,20 +246,10 @@
   "dashboard": {
     "loadingLists": "Je paklijsten worden geladen…",
     "empty": {
-      "title": "Welkom bij TrekList 👋",
-      "intro": "TrekList helpt je je wandeluitrusting te plannen en in te pakken, zodat je niets vergeet voor je volgende tocht.",
-      "gettingStartedTitle": "Aan de slag",
-      "gettingStartedBody": "Begin met het aanmaken van je eerste paklijst in het paneel Paklijsten links. Typ een naam voor je tocht of rugzak in het vak Nieuwe lijst en klik op de knop +. Daarmee open je je eerste lijst, waar je categorieën kunt toevoegen zoals Rifugios, Hiken of Toiletartikelen. Gebruik vervolgens het paneel Mijn uitrusting om je persoonlijke uitrustingsbibliotheek op te bouwen—met items die je hebt of wilt kopen—en voeg die toe aan de juiste categorieën in je lijst.",
-      "howOrganizedTitle": "Hoe TrekList is opgebouwd",
-      "howOrganizedGearLists": "Eén lijst per tocht of rugzak, bijvoorbeeld Alta Via 1, Tour du Mont Blanc of Ultralight Summer 2025.",
-      "howOrganizedMyGear": "Je bibliotheek met uitrusting die je nu hebt of wilt kopen. Je kunt deze items hergebruiken in verschillende lijsten.",
-      "howOrganizedPackStats": "Bovenaan elke lijst zie je het totaalgewicht, basisgewicht, gedragen en verbruikbaar gewicht, zodat je je rugzak kunt fine-tunen.",
-      "settingsTitle": "Instellingen & voorkeuren",
-      "settingsListMenu": "Gebruik het …-menu bovenaan een paklijst voor lijst-specifieke voorkeuren zoals achtergrond, checklistweergave, delen, kopiëren en verwijderen.",
-      "settingsAccount": "Gebruik het icoon rechtsboven in de app voor account- en globale instellingen.",
-      "buttonSampleListLoading": "Voorbeeldlijst wordt geladen…",
+      "simpleTitle": "Maak een lijst om te beginnen",
+      "simpleBody": "Begin met een voorbeeldlijst of maak er zelf één via de zijbalk.",
       "buttonSampleList": "Voorbeeldlijst laden",
-      "startFromScratch": "Of begin vanaf nul in het paneel Paklijsten."
+      "buttonSampleListLoading": "Voorbeeldlijst laden…"
     },
     "toasts": {
       "loadListsFailed": "Je paklijsten konden niet worden geladen",
@@ -502,6 +539,22 @@
     "toast": {
       "saveSuccess": "Lijstgegevens opgeslagen.",
       "saveFailed": "Lijstgegevens konden niet worden opgeslagen. Probeer het opnieuw."
+    }
+  },
+  "catalog": {
+    "categories": {
+      "Accessories & Tools": "Accessoires & gereedschap",
+      "Backpacks & Bags": "Rugzakken & tassen",
+      "Electronics & Power": "Elektronica & stroom",
+      "Health & Hygiene": "Gezondheid & hygiëne",
+      "Hydration": "Hydratatie",
+      "Kitchen & Cooking": "Keuken & koken",
+      "Men's Clothing": "Herenkleding",
+      "Navigation & Planning": "Navigatie & planning",
+      "Sleep System": "Slaapsysteem",
+      "Travel": "Reizen",
+      "Unisex Clothing": "Unisex kleding",
+      "Women's Clothing": "Dameskleding"
     }
   },
   "affiliateProductPicker": {

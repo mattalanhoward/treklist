@@ -30,6 +30,7 @@
   "topbar": {
     "accountHeader": "Compte",
     "manageAccount": "Gérer le compte…",
+    "takeTour": "Faire la visite",
     "preferencesHeader": "Préférences",
     "viewMode": "Mode d’affichage",
     "theme": "Thème",
@@ -57,6 +58,52 @@
     },
     "a11y": {
       "openAccountMenu": "Ouvrir le menu du compte"
+    }
+  },
+  "tour": {
+    "aria": {
+      "productTour": "Visite du produit"
+    },
+    "actions": {
+      "close": "Fermer la visite",
+      "skip": "Passer",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "done": "Terminé"
+    },
+    "steps": {
+      "welcome": {
+        "title": "Bienvenue sur TrekList",
+        "body": "Nous avons chargé une liste d’exemple pour te montrer comment tout s’organise. Tu peux l’explorer, la modifier ou la supprimer librement."
+      },
+      "lists": {
+        "title": "Tes listes d’équipement",
+        "body": "Chaque sortie ou sac possède sa propre liste. Tu peux en créer une nouvelle depuis la barre latérale."
+      },
+      "myGear": {
+        "title": "Mon équipement",
+        "body": "Tout ton équipement se trouve ici. Utilise le bouton “+” pour ajouter des articles du catalogue ou créer les tiens, puis les ajouter à n’importe quelle liste."
+      },
+      "categories": {
+        "title": "Catégories",
+        "body": "Les catégories t’aident à organiser ton sac. Clique sur le titre pour le renommer. Utilise la poignée pour déplacer catégories ou articles."
+      },
+      "addCategory": {
+        "title": "Ajouter une catégorie",
+        "body": "Ajoute de nouvelles catégories à ta liste d’équipement avec ce bouton."
+      },
+      "addItems": {
+        "title": "Ajouter des articles à une catégorie",
+        "body": "Clique sur + Ajouter des articles pour ajouter des éléments de “Mon équipement” à une catégorie."
+      },
+      "preferences": {
+        "title": "Préférences de la liste",
+        "body": "Les options spécifiques à cette liste se trouvent dans le menu à trois points. Affiche les détails, passe en mode checklist, partage la liste, et plus encore."
+      },
+      "settings": {
+        "title": "Paramètres globaux",
+        "body": "Les paramètres globaux du compte sont accessibles via le menu de la barre supérieure."
+      }
     }
   },
   "sidebar": {
@@ -199,20 +246,10 @@
   "dashboard": {
     "loadingLists": "Chargement de vos listes…",
     "empty": {
-      "title": "Bienvenue sur TrekList 👋",
-      "intro": "TrekList vous aide à planifier et préparer votre équipement de randonnée pour ne rien oublier lors de votre prochain voyage.",
-      "gettingStartedTitle": "Bien démarrer",
-      "gettingStartedBody": "Commencez par créer votre première liste dans le panneau Listes d’équipement à gauche. Saisissez un nom de voyage ou de sac dans le champ Nouvelle liste et cliquez sur le bouton +. Cela ouvre votre première liste, dans laquelle vous pouvez ajouter des catégories comme Refuges, Randonnée ou Trousse de toilette. Ensuite, utilisez le panneau Mon équipement pour construire votre bibliothèque personnelle en ajoutant les objets que vous possédez ou que vous souhaitez acheter, puis en les ajoutant aux bonnes catégories de votre liste.",
-      "howOrganizedTitle": "Comment TrekList est organisé",
-      "howOrganizedGearLists": "Une liste par voyage ou par configuration, par exemple Alta Via 1, Tour du Mont Blanc ou Été ultraléger 2025.",
-      "howOrganizedMyGear": "Votre bibliothèque d’équipement que vous possédez déjà ou que vous souhaitez acheter. Vous pouvez réutiliser ces éléments dans plusieurs listes.",
-      "howOrganizedPackStats": "En haut de chaque liste, vous verrez le poids total, le poids de base, le poids porté et les consommables, afin d’optimiser votre sac.",
-      "settingsTitle": "Paramètres et préférences",
-      "settingsListMenu": "Utilisez le menu … (points de suspension) en haut d’une liste pour les préférences spécifiques : arrière-plan, vue checklist, partage, copie et suppression.",
-      "settingsAccount": "Utilisez l’icône en haut à droite de l’application pour accéder aux paramètres du compte et aux paramètres globaux.",
-      "buttonSampleListLoading": "Chargement de la liste d’exemple…",
-      "buttonSampleList": "Charger une liste d’exemple",
-      "startFromScratch": "Ou repartez de zéro dans le panneau Listes d’équipement."
+      "simpleTitle": "Créez une liste pour commencer",
+      "simpleBody": "Commencez avec une liste d’exemple ou créez la vôtre depuis la barre latérale.",
+      "buttonSampleList": "Charger la liste d’exemple",
+      "buttonSampleListLoading": "Chargement de la liste d’exemple…"
     },
     "toasts": {
       "loadListsFailed": "Impossible de charger vos listes",
@@ -502,6 +539,22 @@
     "toast": {
       "saveSuccess": "Détails de la liste enregistrés.",
       "saveFailed": "Échec de l’enregistrement des détails. Veuillez réessayer."
+    }
+  },
+  "catalog": {
+    "categories": {
+      "Accessories & Tools": "Accessoires et outils",
+      "Backpacks & Bags": "Sacs à dos et sacs",
+      "Electronics & Power": "Électronique et alimentation",
+      "Health & Hygiene": "Santé et hygiène",
+      "Hydration": "Hydratation",
+      "Kitchen & Cooking": "Cuisine et cuisson",
+      "Men's Clothing": "Vêtements pour hommes",
+      "Navigation & Planning": "Navigation et planification",
+      "Sleep System": "Système de couchage",
+      "Travel": "Voyage",
+      "Unisex Clothing": "Vêtements unisexes",
+      "Women's Clothing": "Vêtements pour femmes"
     }
   },
   "affiliateProductPicker": {

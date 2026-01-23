@@ -13,6 +13,7 @@ import { detectRegion, normalizeRegion } from "../utils/region";
 import CatalogItemPreviewModal from "./CatalogItemPreviewModal";
 import Spinner from "../components/ui/Spinner";
 import { CATALOG_CATEGORIES } from "../config/catalogTaxonomy";
+import { tCategory } from "../config/catalogTaxonomy";
 
 function ImportCatalogTab({ onImported }) {
   const { t } = useTranslation("common");
@@ -58,7 +59,7 @@ function ImportCatalogTab({ onImported }) {
         (data || [])
           .map((g) => g.productId)
           .filter(Boolean)
-          .map((x) => String(x))
+          .map((x) => String(x)),
       );
       setImportedCatalogIds(set);
     } catch (err) {
@@ -84,7 +85,7 @@ function ImportCatalogTab({ onImported }) {
       setError(
         err?.response?.data?.message ||
           err?.message ||
-          t("globalItemModal.importTab.errors.loadFailed")
+          t("globalItemModal.importTab.errors.loadFailed"),
       );
     } finally {
       setLoading(false);
@@ -124,7 +125,7 @@ function ImportCatalogTab({ onImported }) {
       toast.error(
         err?.response?.data?.message ||
           err?.message ||
-          t("globalItemModal.importTab.toasts.importFailed")
+          t("globalItemModal.importTab.toasts.importFailed"),
       );
     } finally {
       setPreviewImporting(false);
@@ -149,15 +150,15 @@ function ImportCatalogTab({ onImported }) {
     new Set(
       items
         .filter((i) =>
-          categoryFilter === "all" ? true : i.category === categoryFilter
+          categoryFilter === "all" ? true : i.category === categoryFilter,
         )
         .map((i) => i.subcategory)
-        .filter(Boolean)
-    )
+        .filter(Boolean),
+    ),
   ).sort();
 
   const brands = Array.from(
-    new Set(items.map((i) => i.brand).filter(Boolean))
+    new Set(items.map((i) => i.brand).filter(Boolean)),
   ).sort();
 
   const toggleCheckbox = (catalogId) => {
@@ -172,13 +173,13 @@ function ImportCatalogTab({ onImported }) {
   const handleBulkImport = async () => {
     if (selectedIds.size === 0) {
       return toast.error(
-        t("globalItemModal.importTab.toasts.selectAtLeastOne")
+        t("globalItemModal.importTab.toasts.selectAtLeastOne"),
       );
     }
 
     // block if user selected already-added items (UX clarity)
     const already = Array.from(selectedIds).filter((id) =>
-      importedCatalogIds.has(String(id))
+      importedCatalogIds.has(String(id)),
     );
     if (already.length > 0) {
       return toast.error(t("globalItemModal.importTab.toasts.alreadyImported"));
@@ -208,7 +209,7 @@ function ImportCatalogTab({ onImported }) {
       toast.error(
         err?.response?.data?.message ||
           err?.message ||
-          t("globalItemModal.importTab.toasts.importFailed")
+          t("globalItemModal.importTab.toasts.importFailed"),
       );
     } finally {
       setSaving(false);
@@ -243,7 +244,7 @@ function ImportCatalogTab({ onImported }) {
       setPreviewError(
         err?.response?.data?.message ||
           err?.message ||
-          "Failed to load details."
+          "Failed to load details.",
       );
     } finally {
       setPreviewLoading(false);
@@ -277,7 +278,7 @@ function ImportCatalogTab({ onImported }) {
             </option>
             {categories.map((cat) => (
               <option key={cat} value={cat}>
-                {cat}
+                {tCategory(t, cat)}{" "}
               </option>
             ))}
           </select>
@@ -367,7 +368,7 @@ function ImportCatalogTab({ onImported }) {
                         <div className="text-sm text-primary">
                           {item.brand ||
                             t(
-                              "globalItemModal.importTab.labels.unknownBrand"
+                              "globalItemModal.importTab.labels.unknownBrand",
                             )}{" "}
                           —{" "}
                           {item.itemType ||
@@ -738,10 +739,10 @@ export default function GlobalItemModal({
                     <button
                       type="button"
                       aria-label={t(
-                        "globalItemModal.messages.affiliateLinkLockedTitle"
+                        "globalItemModal.messages.affiliateLinkLockedTitle",
                       )}
                       title={t(
-                        "globalItemModal.messages.affiliateLinkLockedBody"
+                        "globalItemModal.messages.affiliateLinkLockedBody",
                       )}
                       className="absolute inset-0 cursor-not-allowed bg-transparent"
                     />

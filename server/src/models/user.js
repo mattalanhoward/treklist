@@ -20,6 +20,11 @@ const UserSchema = new mongoose.Schema(
     lastLoginAt: {
       type: Date,
     },
+    // Onboarding / tour state (server-backed so it persists across devices)
+    onboarding: {
+      tourVersionSeen: { type: Number, default: 0 },
+      tourDismissedAt: { type: Date, default: null },
+    },
     // If true, this account is blocked from logging in
     isDisabled: {
       type: Boolean,
@@ -72,7 +77,7 @@ const UserSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 // Helper to set the password

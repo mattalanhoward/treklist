@@ -30,6 +30,7 @@
   "topbar": {
     "accountHeader": "Account",
     "manageAccount": "Gestisci account…",
+    "takeTour": "Avvia tour",
     "preferencesHeader": "Preferenze",
     "viewMode": "Modalità di visualizzazione",
     "theme": "Tema",
@@ -57,6 +58,52 @@
     },
     "a11y": {
       "openAccountMenu": "Apri menu account"
+    }
+  },
+  "tour": {
+    "aria": {
+      "productTour": "Tour del prodotto"
+    },
+    "actions": {
+      "close": "Chiudi tour",
+      "skip": "Salta",
+      "previous": "Indietro",
+      "next": "Avanti",
+      "done": "Fatto"
+    },
+    "steps": {
+      "welcome": {
+        "title": "Benvenuto su TrekList",
+        "body": "Abbiamo caricato una lista di esempio per mostrarti come funziona tutto. Puoi esplorarla, modificarla o eliminarla liberamente."
+      },
+      "lists": {
+        "title": "Le tue liste",
+        "body": "Ogni viaggio o zaino ha la propria lista. Puoi crearne una nuova dalla barra laterale."
+      },
+      "myGear": {
+        "title": "La mia attrezzatura",
+        "body": "Qui trovi tutta la tua attrezzatura. Usa il pulsante “+” per aggiungere articoli dal catalogo o crearne di personalizzati, poi aggiungili a qualsiasi lista."
+      },
+      "categories": {
+        "title": "Categorie",
+        "body": "Le categorie aiutano a organizzare lo zaino. Clicca sul titolo per rinominarle. Usa il trascinamento per spostare categorie o articoli."
+      },
+      "addCategory": {
+        "title": "Aggiungi categoria",
+        "body": "Aggiungi nuove categorie alla tua lista usando questo pulsante."
+      },
+      "addItems": {
+        "title": "Aggiungi articoli a una categoria",
+        "body": "Clicca su + Aggiungi articoli per inserire elementi da “La mia attrezzatura” in una categoria."
+      },
+      "preferences": {
+        "title": "Preferenze della lista",
+        "body": "Le opzioni specifiche della lista si trovano nel menu con i tre puntini. Visualizza i dettagli, passa alla checklist, condividi la lista e altro."
+      },
+      "settings": {
+        "title": "Impostazioni globali",
+        "body": "Le impostazioni globali dell’account sono disponibili nel menu della barra superiore."
+      }
     }
   },
   "sidebar": {
@@ -199,20 +246,10 @@
   "dashboard": {
     "loadingLists": "Caricamento delle tue liste…",
     "empty": {
-      "title": "Benvenuto su TrekList 👋",
-      "intro": "TrekList ti aiuta a pianificare e preparare la tua attrezzatura per non dimenticare nulla nel prossimo viaggio.",
-      "gettingStartedTitle": "Per iniziare",
-      "gettingStartedBody": "Inizia creando la tua prima lista nel pannello Liste attrezzatura a sinistra. Digita un nome del viaggio o dello zaino nella casella Nuova lista e clicca il pulsante +. Si aprirà la prima lista, dove potrai aggiungere categorie come Rifugi, Escursioni o Toiletry. Poi usa il pannello La mia attrezzatura per costruire la tua libreria personale, aggiungendo gli oggetti che possiedi o che vuoi comprare e inserendoli nelle categorie giuste della lista.",
-      "howOrganizedTitle": "Come è organizzato TrekList",
-      "howOrganizedGearLists": "Una lista per ogni viaggio o setup, ad esempio Alta Via 1, Tour du Mont Blanc o Ultralight Estate 2025.",
-      "howOrganizedMyGear": "La tua libreria di attrezzatura che possiedi o vuoi acquistare. Puoi riutilizzare questi elementi in più liste.",
-      "howOrganizedPackStats": "In cima a ogni lista vedrai peso totale, base, indossato e consumabili, così puoi ottimizzare lo zaino.",
-      "settingsTitle": "Impostazioni e preferenze",
-      "settingsListMenu": "Usa il menu … (ellipsis) in alto nella lista per preferenze specifiche come sfondo, checklist, condivisione, copia ed eliminazione.",
-      "settingsAccount": "Usa l'icona in alto a destra per impostazioni account e globali.",
-      "buttonSampleListLoading": "Caricamento lista di esempio…",
-      "buttonSampleList": "Carica una lista di esempio",
-      "startFromScratch": "Oppure inizia da zero nel pannello Liste attrezzatura."
+      "simpleTitle": "Crea una lista per iniziare",
+      "simpleBody": "Inizia con una lista di esempio oppure creane una tua dalla barra laterale.",
+      "buttonSampleList": "Carica lista di esempio",
+      "buttonSampleListLoading": "Caricamento lista di esempio…"
     },
     "toasts": {
       "loadListsFailed": "Impossibile caricare le tue liste",
@@ -502,6 +539,22 @@
     "toast": {
       "saveSuccess": "Dettagli lista salvati.",
       "saveFailed": "Impossibile salvare i dettagli. Riprova."
+    }
+  },
+  "catalog": {
+    "categories": {
+      "Accessories & Tools": "Accessori e attrezzi",
+      "Backpacks & Bags": "Zaini e borse",
+      "Electronics & Power": "Elettronica e alimentazione",
+      "Health & Hygiene": "Salute e igiene",
+      "Hydration": "Idratazione",
+      "Kitchen & Cooking": "Cucina e cottura",
+      "Men's Clothing": "Abbigliamento uomo",
+      "Navigation & Planning": "Navigazione e pianificazione",
+      "Sleep System": "Sistema per dormire",
+      "Travel": "Viaggio",
+      "Unisex Clothing": "Abbigliamento unisex",
+      "Women's Clothing": "Abbigliamento donna"
     }
   },
   "affiliateProductPicker": {

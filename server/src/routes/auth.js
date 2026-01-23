@@ -132,7 +132,7 @@ function issueTokens(user) {
   const accessToken = jwt.sign(
     { userId: user._id, email: user.email },
     process.env.JWT_SECRET,
-    { expiresIn: JWT_EXP }
+    { expiresIn: JWT_EXP },
   );
   const refreshToken = crypto.randomBytes(40).toString("hex");
   user.refreshTokens.push(refreshToken);
@@ -168,13 +168,48 @@ async function authenticate(req, res, next) {
 router.get("/me", authenticate, async (req, res) => {
   try {
     const user = await User.findById(req.userId).select(
-      "email trailname isAdmin"
+      "email trailname isAdmin onboarding",
     );
     if (!user) return res.status(404).json({ message: "User not found." });
     res.json({ user });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Could not retrieve user." });
+  }
+});
+
+// POST /auth/onboarding/tour-seen
+// Marks the tour as seen for this user (server-backed so it doesn't replay on other devices).
+router.post("/onboarding/tour-seen", authenticate, async (req, res) => {
+  try {
+    const { tourVersion } = req.body || {};
+    const v = Number(tourVersion || 1);
+
+    // basic guard
+    if (!Number.isFinite(v) || v < 1 || v > 1000) {
+      return res.status(400).json({ message: "Invalid tourVersion." });
+    }
+
+    const user = await User.findById(req.userId);
+    if (!user) return res.status(404).json({ message: "User not found." });
+
+    user.onboarding = user.onboarding || {};
+    // Only move forward (never decrease)
+    user.onboarding.tourVersionSeen = Math.max(
+      Number(user.onboarding.tourVersionSeen || 0),
+      v,
+    );
+    user.onboarding.tourDismissedAt = new Date();
+
+    await user.save();
+
+    return res.json({
+      ok: true,
+      onboarding: user.onboarding,
+    });
+  } catch (err) {
+    console.error("Error in POST /auth/onboarding/tour-seen:", err);
+    return res.status(500).json({ message: "Could not update onboarding." });
   }
 });
 
@@ -213,7 +248,7 @@ router.post(
       message:
         "If an account exists for that email, you’ll receive a password reset email shortly.",
     });
-  }
+  },
 );
 
 // Reset password
@@ -275,7 +310,7 @@ router.post("/register", registerLimiter, async (req, res) => {
     // Prefer explicit locale if valid, else derive from language+region
     const localeIn = String(req.body.locale || "").trim();
     const derivedLocale = `${user.language || "en"}-${String(
-      user.region || "nl"
+      user.region || "nl",
     ).toUpperCase()}`;
 
     // Only accept client locale if it matches the final chosen language/region
@@ -386,7 +421,7 @@ router.post(
         .status(500)
         .json({ message: "Could not resend verification email." });
     }
-  }
+  },
 );
 
 // Login
@@ -457,7 +492,7 @@ router.post("/logout", async (req, res) => {
     if (refreshToken) {
       await User.updateOne(
         { refreshTokens: refreshToken },
-        { $pull: { refreshTokens: refreshToken } }
+        { $pull: { refreshTokens: refreshToken } },
       );
     }
     // Clear with matching options

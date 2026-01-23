@@ -55,6 +55,7 @@ export default function SortableColumn({
 
   return (
     <div
+      data-tour="gearlist-category"
       ref={setNodeRef}
       style={style}
       className="snap-center flex-shrink-0 my-0 mx-2 w-90 sm:w-64 bg-neutral rounded-lg p-3 flex flex-col self-start max-h-full"
@@ -129,6 +130,7 @@ export default function SortableColumn({
       </SortableContext>
 
       <button
+        data-tour="category-add-item"
         onClick={() => setShowAddModalCat(catId)}
         className="p-2 w-full border border-base-100 rounded flex items-center justify-center space-x-2 bg-base-100 text-primary hover:bg-base-100/80"
         aria-label={t("gearList.items.addButton")}

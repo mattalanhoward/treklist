@@ -21,7 +21,7 @@ const themes = [
   { name: "dark", color: "#0f172a" },
 ];
 
-export default function TopBar({ title, openSettings }) {
+export default function TopBar({ title, openSettings, onOpenTour }) {
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [isLegalOpen, setIsLegalOpen] = useState(false);
   const [legalInitialTab, setLegalInitialTab] = useState("privacy");
@@ -91,6 +91,7 @@ export default function TopBar({ title, openSettings }) {
           <DropdownMenu
             trigger={
               <button
+                data-tour="settings-menu"
                 className="w-8 h-8 rounded-full bg-primaryAlt flex items-center justify-center text-sm font-medium uppercase text-base-100 hover:bg-primaryAlt/80 focus:outline-none"
                 aria-label={t("topbar.a11y.openAccountMenu")}
               >
@@ -120,6 +121,11 @@ export default function TopBar({ title, openSettings }) {
                 key: "manage-account",
                 label: t("topbar.manageAccount"),
                 onClick: () => setIsAccountOpen(true),
+              },
+              {
+                key: "take-tour",
+                label: t("topbar.takeTour", "Take a tour"),
+                onClick: () => onOpenTour?.(),
               },
               {
                 key: "sep-1",

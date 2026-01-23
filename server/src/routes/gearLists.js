@@ -7,6 +7,7 @@ const Item = require("../models/gearItem");
 const Category = require("../models/category");
 const Share = require("../models/ShareToken");
 const GlobalItem = require("../models/globalItem");
+const CatalogItem = require("../models/catalogItem");
 const cloudinary = require("../config/cloudinary");
 const { v4: uuidv4 } = require("uuid");
 const upload = require("../middleware/upload");
@@ -140,7 +141,7 @@ router.patch("/:listId", async (req, res) => {
     const updated = await GearList.findOneAndUpdate(
       { _id: req.params.listId, owner: req.userId },
       update,
-      { new: true }
+      { new: true },
     );
 
     if (!updated) {
@@ -274,7 +275,7 @@ router.post("/sample-list", async (req, res) => {
     // 1) Create the sample list itself
     sample = await GearList.create({
       owner: userId,
-      title: "Sample Dolomites Packing List",
+      title: "Sample Dolomites Gear List",
       description:
         "A small example gear list using a few of my real-world favorite items.",
       isSample: true,
@@ -295,95 +296,128 @@ router.post("/sample-list", async (req, res) => {
         gearList: sample._id,
         title,
         position: index,
-      }))
+      })),
     );
 
-    // 3) Seed the hero items that can later become affiliate-backed
+    // 3) Seed affiliate-backed hero items by linking to existing CatalogItems.
+    // IMPORTANT: we do NOT store a hardcoded link here.
+    // The UI will call /api/affiliates/offers/resolve-link using globalItemId,
+    // which looks up MerchantOffer by GlobalItem.productId (+ region).
     const itemSpecs = [
       {
         categoryTitle: "Hiking",
-        brand: "Osprey",
-        itemType: "Backpack - 24 L",
-        name: "Stratos 24",
-        description: "Osprey Stratos 24",
-        weight: 1262,
-        link: "https://amzn.to/43712Qe",
+        catalogItemId: "6952d06d77f0204ff7da39d1", // Osprey Stratos 24
+        worn: false,
+        consumable: false,
+        quantity: 1,
+      },
+      {
+        categoryTitle: "Hiking",
+        catalogItemId: "695820670ae7ad8d1ba15a04", // Sea to Summit Lightweight Dry Bag
         worn: false,
         consumable: false,
         quantity: 1,
       },
       {
         categoryTitle: "Clothing",
-        brand: "Darn Tough",
-        itemType: "Socks - Hiker",
-        name: "Hiker Micro Crew Midweight Cushion",
-        description: "Darn Tough Hiker Micro Crew Midweight Cushion",
-        weight: 68,
-        link: "https://amzn.to/3RQg9bM",
+        catalogItemId: "6956837de9f5d8692a3e06d1", // Darn Tough socks
+        worn: true,
+        consumable: false,
+        quantity: 1,
+      },
+      {
+        categoryTitle: "Clothing",
+        catalogItemId: "6956837de9f5d8692a3e0708", // Pesu hat (direct offer)
         worn: true,
         consumable: false,
         quantity: 1,
       },
       {
         categoryTitle: "Hiking",
-        brand: "Black Diamond",
-        itemType: "Trekking Poles",
-        name: "Black Diamond Alpine Carbon Cork Poles",
-        description: "Lightweight trekking poles with cork grips.",
-        weight: 624,
-        link: "https://www.awin1.com/cread.php?awinmid=26895&p=https%3A%2F%2Fexample.…",
-        worn: false,
-        consumable: false,
-        quantity: 1,
-      },
-      {
-        categoryTitle: "Electronics",
-        brand: "Anker",
-        itemType: "Battery Bank",
-        name: "Portable Charger 20,000mAh USB-C",
-        description: "Anker Portable Charger 20,000mAh USB-C",
-        weight: 357,
-        link: "https://amzn.to/4kgaZSF",
-        worn: false,
-        consumable: false,
-        quantity: 1,
-      },
-      {
-        categoryTitle: "Rifugios",
-        brand: "Sea to Summit",
-        itemType: "Sleeping Bag Liner",
-        name: "Comfort Blend Sleeping Bag Liner",
-        description: "Sea to Summit Comfort Blend Sleeping Bag Liner",
-        weight: 156,
-        link: "https://amzn.to/3XxIiHo",
+        catalogItemId: "696bab841d02c9b950131501", // Black Diamond Distance Z poles
         worn: false,
         consumable: false,
         quantity: 1,
       },
     ];
 
+    const catalogIds = itemSpecs.map((x) => x.catalogItemId);
+    const catalogDocs = await CatalogItem.find({ _id: { $in: catalogIds } })
+      .lean()
+      .exec();
+
+    const catalogById = new Map(catalogDocs.map((d) => [String(d._id), d]));
+
+    const missing = catalogIds.filter((id) => !catalogById.get(String(id)));
+    if (missing.length) {
+      return res.status(500).json({
+        message: "Sample list seed failed: missing CatalogItem(s).",
+        missingCatalogItemIds: missing,
+      });
+    }
+
     // Map category title → doc for easy lookup
     const categoryByTitle = new Map(
-      categoryDocs.map((cat) => [cat.title, cat])
+      categoryDocs.map((cat) => [cat.title, cat]),
     );
 
-    // Create matching GlobalItem docs (these live under "My Gear")
-    const globalItems = await GlobalItem.insertMany(
-      itemSpecs.map((spec) => ({
-        owner: userId,
-        category: spec.categoryTitle,
-        brand: spec.brand,
-        itemType: spec.itemType,
-        name: spec.name,
-        description: spec.description,
-        weight: spec.weight,
-        link: spec.link,
-        worn: spec.worn,
-        consumable: spec.consumable,
-        quantity: spec.quantity,
-        // weightSource, affiliate fields, etc. can be added later
-      }))
+    // catalogIds already validated + catalogById already built
+
+    const productObjectIds = itemSpecs.map(
+      (spec) => catalogById.get(String(spec.catalogItemId))._id,
     );
+
+    // 1) Upsert global items by owner+productId (idempotent)
+    await GlobalItem.bulkWrite(
+      itemSpecs.map((spec) => {
+        const c = catalogById.get(String(spec.catalogItemId));
+        return {
+          updateOne: {
+            filter: { owner: userId, productId: c._id },
+            update: {
+              $setOnInsert: {
+                owner: userId,
+                productId: c._id,
+                catalogCategory: c.category ?? null,
+                catalogSubcategory: c.subcategory ?? null,
+                brand: c.brand ?? null,
+                itemType: c.itemType ?? null,
+                name: c.name,
+                description: c.description ?? null,
+                weight:
+                  typeof c.weightGrams === "number" ? c.weightGrams : null,
+                weightSource: "catalog",
+                link: null,
+                worn: spec.worn,
+                consumable: spec.consumable,
+                quantity: spec.quantity,
+              },
+            },
+            upsert: true,
+          },
+        };
+      }),
+    );
+
+    // 2) Fetch them back in the same order as itemSpecs
+    const globals = await GlobalItem.find({
+      owner: userId,
+      productId: { $in: productObjectIds },
+    })
+      .select("_id productId")
+      .lean();
+
+    const globalByProductId = new Map(
+      globals.map((g) => [String(g.productId), g]),
+    );
+
+    // 3) Build an ordered array matching itemSpecs order
+    const globalItems = itemSpecs.map((spec) => {
+      const c = catalogById.get(String(spec.catalogItemId));
+      const g = globalByProductId.get(String(c._id));
+      if (!g) throw new Error(`Missing GlobalItem for productId ${c._id}`);
+      return g;
+    });
 
     // And the list-specific GearItem docs
     const positionsByCategory = new Map();
@@ -391,7 +425,7 @@ router.post("/sample-list", async (req, res) => {
       const catDoc = categoryByTitle.get(spec.categoryTitle);
       if (!catDoc) {
         throw new Error(
-          `Missing category document for title: ${spec.categoryTitle}`
+          `Missing category document for title: ${spec.categoryTitle}`,
         );
       }
 
@@ -400,17 +434,19 @@ router.post("/sample-list", async (req, res) => {
       positionsByCategory.set(catId, currentPos + 1);
 
       const global = globalItems[index];
+      const c = catalogById.get(String(spec.catalogItemId));
 
       return {
         globalItem: global._id,
+        productId: c._id,
         gearList: sample._id,
         category: catDoc._id,
-        brand: spec.brand,
-        itemType: spec.itemType,
-        name: spec.name,
-        description: spec.description,
-        weight: spec.weight,
-        link: spec.link,
+        brand: c.brand ?? null,
+        itemType: c.itemType ?? null,
+        name: c.name,
+        description: c.description ?? null,
+        weight: typeof c.weightGrams === "number" ? c.weightGrams : null,
+        link: null, // let resolver provide affiliate link
         worn: spec.worn,
         consumable: spec.consumable,
         quantity: spec.quantity,

@@ -30,6 +30,7 @@
   "topbar": {
     "accountHeader": "Konto",
     "manageAccount": "Konto verwalten…",
+    "takeTour": "Tour starten",
     "preferencesHeader": "Einstellungen",
     "viewMode": "Ansicht",
     "theme": "Theme",
@@ -57,6 +58,52 @@
     },
     "a11y": {
       "openAccountMenu": "Kontomenü öffnen"
+    }
+  },
+  "tour": {
+    "aria": {
+      "productTour": "Produktrundgang"
+    },
+    "actions": {
+      "close": "Rundgang schließen",
+      "skip": "Überspringen",
+      "previous": "Zurück",
+      "next": "Weiter",
+      "done": "Fertig"
+    },
+    "steps": {
+      "welcome": {
+        "title": "Willkommen bei TrekList",
+        "body": "Wir haben eine Beispiel-Packliste geladen, damit du siehst, wie alles zusammenpasst. Du kannst sie jederzeit erkunden, bearbeiten oder löschen."
+      },
+      "lists": {
+        "title": "Deine Packlisten",
+        "body": "Jede Tour oder jeder Rucksack bekommt eine eigene Packliste. Neue Listen erstellst du über die Seitenleiste."
+      },
+      "myGear": {
+        "title": "Meine Ausrüstung",
+        "body": "Hier findest du deine gesamte Ausrüstung. Mit dem „+“-Button kannst du Artikel aus dem Katalog hinzufügen oder eigene erstellen und sie anschließend jeder Packliste zuweisen."
+      },
+      "categories": {
+        "title": "Kategorien",
+        "body": "Kategorien helfen dir, deine Packliste zu strukturieren. Klicke auf den Titel, um ihn umzubenennen. Mit dem Greifer kannst du Kategorien oder Ausrüstung verschieben."
+      },
+      "addCategory": {
+        "title": "Kategorie hinzufügen",
+        "body": "Mit diesem Button fügst du neue Kategorien zu deiner Packliste hinzu."
+      },
+      "addItems": {
+        "title": "Ausrüstung zu einer Kategorie hinzufügen",
+        "body": "Klicke auf + Elemente hinzufügen, um Ausrüstung aus „Meine Ausrüstung“ einer Kategorie zuzuweisen."
+      },
+      "preferences": {
+        "title": "Packlisten-Optionen",
+        "body": "Spezielle Optionen für diese Packliste findest du im Drei-Punkte-Menü. Details ansehen, Checklistenmodus aktivieren, Liste teilen und mehr."
+      },
+      "settings": {
+        "title": "Globale Einstellungen",
+        "body": "Globale Kontoeinstellungen findest du im Menü der oberen Leiste."
+      }
     }
   },
   "sidebar": {
@@ -199,20 +246,10 @@
   "dashboard": {
     "loadingLists": "Deine Packlisten werden geladen…",
     "empty": {
-      "title": "Willkommen bei TrekList 👋",
-      "intro": "TrekList hilft dir, deine Ausrüstung zu planen und zu packen, damit du auf deiner nächsten Tour nichts vergisst.",
-      "gettingStartedTitle": "Erste Schritte",
-      "gettingStartedBody": "Erstelle zuerst deine erste Packliste im Bereich Packlisten links. Gib einen Trip- oder Packnamen in das Feld Neue Liste ein und klicke auf +. Dadurch öffnet sich deine erste Liste, in der du Kategorien wie Rifugios, Wandern oder Toilettenartikel hinzufügen kannst. Nutze dann Meine Ausrüstung, um deine persönliche Ausrüstungsbibliothek aufzubauen – füge Dinge hinzu, die du besitzt oder kaufen möchtest, und ordne sie den passenden Kategorien in deiner Liste zu.",
-      "howOrganizedTitle": "So ist TrekList organisiert",
-      "howOrganizedGearLists": "Eine Liste pro Trip oder Pack, z. B. Alta Via 1, Tour du Mont Blanc oder Ultralight Summer 2025.",
-      "howOrganizedMyGear": "Deine Bibliothek an Ausrüstung, die du besitzt oder kaufen willst. Du kannst diese Items in mehreren Listen wiederverwenden.",
-      "howOrganizedPackStats": "Oben in jeder Liste siehst du Gesamt-, Basis-, Getragen- und Verbrauchsgewicht, damit du deinen Rucksack optimieren kannst.",
-      "settingsTitle": "Einstellungen & Präferenzen",
-      "settingsListMenu": "Nutze das … (Ellipsen)-Menü oben in einer Packliste für listenbezogene Einstellungen wie Hintergrund, Checklistenansicht, Teilen, Kopieren und Löschen.",
-      "settingsAccount": "Nutze das Icon oben rechts für Konto- und globale Einstellungen.",
-      "buttonSampleListLoading": "Beispielliste wird geladen…",
+      "simpleTitle": "Erstelle eine Liste, um zu beginnen",
+      "simpleBody": "Starte mit einer Beispielliste oder erstelle deine eigene über die Seitenleiste.",
       "buttonSampleList": "Beispielliste laden",
-      "startFromScratch": "Oder starte im Bereich Packlisten von vorne."
+      "buttonSampleListLoading": "Beispielliste wird geladen…"
     },
     "toasts": {
       "loadListsFailed": "Deine Packlisten konnten nicht geladen werden",
@@ -503,6 +540,22 @@
     "toast": {
       "saveSuccess": "Listen-Details gespeichert.",
       "saveFailed": "Listen-Details konnten nicht gespeichert werden. Bitte versuche es erneut."
+    }
+  },
+  "catalog": {
+    "categories": {
+      "Accessories & Tools": "Zubehör & Werkzeuge",
+      "Backpacks & Bags": "Rucksäcke & Taschen",
+      "Electronics & Power": "Elektronik & Strom",
+      "Health & Hygiene": "Gesundheit & Hygiene",
+      "Hydration": "Hydration",
+      "Kitchen & Cooking": "Küche & Kochen",
+      "Men's Clothing": "Herrenbekleidung",
+      "Navigation & Planning": "Navigation & Planung",
+      "Sleep System": "Schlafsystem",
+      "Travel": "Reisen",
+      "Unisex Clothing": "Unisex-Bekleidung",
+      "Women's Clothing": "Damenbekleidung"
     }
   },
   "affiliateProductPicker": {
