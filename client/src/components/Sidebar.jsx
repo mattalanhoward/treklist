@@ -260,7 +260,10 @@ export default function Sidebar({
                 (sidebarGearListsCollapsed ? "" : "h-1/3")
               }
             >
-              <div className="flex items-center text-primaryAlt">
+              <div
+                data-tour="sidebar-create-list"
+                className="flex items-center text-primaryAlt rounded-lg p-1 -m-1"
+              >
                 <button
                   type="button"
                   onClick={onShowGearPane}
@@ -282,7 +285,7 @@ export default function Sidebar({
                 </button>
               </div>
               {!sidebarGearListsCollapsed && (
-                <div data-tour="sidebar-create-list" className="p-2 rounded-lg">
+                <>
                   <div className="flex mb-3">
                     <input
                       className="flex-1 rounded-lg mt-2 py-1 px-2 bg-base-100 text-primary border-primary"
@@ -332,84 +335,83 @@ export default function Sidebar({
                       </li>
                     ))}
                   </ul>
-                </div>
+                </>
               )}
             </section>
 
             {/* Gear Items / Global Items */}
             <section className="flex flex-col flex-1 px-4 py-2 overflow-hidden">
-              <div data-tour="sidebar-my-gear" className="rounded-lg p-2">
-                <div className="flex items-center text-primaryAlt">
-                  <button
-                    type="button"
-                    onClick={onShowGearPane}
-                    className="font-bold truncate mr-1 text-left"
-                  >
-                    {t("sidebar.myGearTitle")}
-                  </button>
-                  <button
-                    type="button"
-                    aria-label="Toggle my gear section"
-                    onClick={() => setSidebarMyGearCollapsed((prev) => !prev)}
-                    className="p-1 hover:text-primaryAlt/80"
-                  >
-                    {sidebarMyGearCollapsed ? (
-                      <FaChevronDown className="text-xs" />
-                    ) : (
-                      <FaChevronUp className="text-xs" />
-                    )}
-                  </button>
-                  <div className="flex-1" />
-                  <button
-                    onClick={() => setShowCreateModal(true)}
-                    className="p-1 text-primaryAlt hover:text-primaryAlt/80"
-                    disabled={!currentListId || categories.length === 0}
-                  >
-                    <FaPlus />
-                  </button>
-                </div>
-
-                {!sidebarMyGearCollapsed && (
-                  <>
-                    <input
-                      className="w-full rounded-lg py-1 px-2 mt-2 bg-base-100 text-primary border border-primary mb-3"
-                      placeholder={t("sidebar.searchGearPlaceholder")}
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-
-                    <ul
-                      // data-tour="sidebar-my-gear"
-                      className="overflow-y-auto flex-1 space-y-2"
-                    >
-                      {filteredAndSortedItems.map((item) => (
-                        <li
-                          key={item._id}
-                          className="flex items-center py-1 px-2 bg-base-100/10 border border-primary/20 rounded-lg hover:bg-base-100/20"
-                        >
-                          <span className="flex-1 truncate text-secondaryAlt">
-                            {item.itemType} – {item.name}
-                          </span>
-                          <div className="flex items-center space-x-2 ml-4">
-                            <button
-                              onClick={() => setEditingGlobalItem(item)}
-                              title={t("sidebar.editGlobalTemplate")}
-                              className="text-secondaryAlt hover:text-secondaryAlt/80 rounded-lg"
-                            >
-                              <FaEllipsisH />
-                            </button>
-                          </div>
-                        </li>
-                      ))}
-                      {filteredAndSortedItems.length === 0 && (
-                        <li className="text-primaryAlt py-1 px-2">
-                          {t("sidebar.noGearItems")}
-                        </li>
-                      )}
-                    </ul>
-                  </>
-                )}
+              <div
+                data-tour="sidebar-my-gear"
+                className="flex items-center text-primaryAlt rounded-lg p-1 -m-1"
+              >
+                <button
+                  type="button"
+                  onClick={onShowGearPane}
+                  className="font-bold truncate mr-1 text-left"
+                >
+                  {t("sidebar.myGearTitle")}
+                </button>
+                <button
+                  type="button"
+                  aria-label="Toggle my gear section"
+                  onClick={() => setSidebarMyGearCollapsed((prev) => !prev)}
+                  className="p-1 hover:text-primaryAlt/80"
+                >
+                  {sidebarMyGearCollapsed ? (
+                    <FaChevronDown className="text-xs" />
+                  ) : (
+                    <FaChevronUp className="text-xs" />
+                  )}
+                </button>
+                <div className="flex-1" />
+                <button
+                  onClick={() => setShowCreateModal(true)}
+                  className="p-1 text-primaryAlt hover:text-primaryAlt/80"
+                  disabled={!currentListId || categories.length === 0}
+                >
+                  <FaPlus />
+                </button>
               </div>
+
+              {!sidebarMyGearCollapsed && (
+                <>
+                  <input
+                    className="w-full rounded-lg py-1 px-2 mt-2 bg-base-100 text-primary border border-primary mb-3"
+                    placeholder={t("sidebar.searchGearPlaceholder")}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+
+                  <ul className="overflow-y-auto flex-1 space-y-2">
+                    {filteredAndSortedItems.map((item) => (
+                      <li
+                        key={item._id}
+                        className="flex items-center py-1 px-2 bg-base-100/10 border border-primary/20 rounded-lg hover:bg-base-100/20"
+                      >
+                        <span className="flex-1 truncate text-secondaryAlt">
+                          {item.itemType} – {item.name}
+                        </span>
+                        <div className="flex items-center space-x-2 ml-4">
+                          <button
+                            onClick={() => setEditingGlobalItem(item)}
+                            title={t("sidebar.editGlobalTemplate")}
+                            className="text-secondaryAlt hover:text-secondaryAlt/80 rounded-lg"
+                          >
+                            <FaEllipsisH />
+                          </button>
+                        </div>
+                      </li>
+                    ))}
+                    {filteredAndSortedItems.length === 0 && (
+                      <li className="text-primaryAlt py-1 px-2">
+                        {t("sidebar.noGearItems")}
+                      </li>
+                    )}
+                  </ul>
+                </>
+              )}
+
               {showCreateModal && (
                 <GlobalItemModal
                   categories={categories}
