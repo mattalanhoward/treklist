@@ -2,8 +2,15 @@
   command = "npm run build"
   publish = "dist"
 
+# Proxy API calls to your Render API subdomain
 [[redirects]]
- from = "/api/*"
+  from = "/api/*"
   to = "https://api.treklist.co/api/:splat"
   status = 200
   force = true
+
+# SPA fallback so deep links like /login work on refresh
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
