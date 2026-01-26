@@ -54,6 +54,8 @@ const defaultOrigins = [
   "http://localhost:5173",
   "http://127.0.0.1:5173",
   "https://treklist.netlify.app",
+  "https://treklist.co",
+  "https://www.treklist.co",
 ];
 
 const envOrigins = parseOrigins(process.env.CLIENT_URLS);
@@ -86,7 +88,7 @@ app.use("/api/dashboard/:listId/categories", authMiddleware, categoriesRoutes);
 app.use(
   "/api/dashboard/:listId/categories/:catId/items",
   authMiddleware,
-  gearItemRoutes
+  gearItemRoutes,
 );
 app.use("/api/public/share", publicShareLimiter, publicShareRoutes);
 app.use("/api/global/items", authMiddleware, globalItemsRoutes);
@@ -95,7 +97,7 @@ app.use(
   "/api/admin/catalog-items",
   authMiddleware,
   requireAdmin,
-  adminCatalogItemsRouter
+  adminCatalogItemsRouter,
 );
 app.use("/api/admin/amazon", authMiddleware, requireAdmin, adminAmazon);
 app.use("/api/admin/users", authMiddleware, requireAdmin, adminUsersRouter);
@@ -103,7 +105,7 @@ app.use(
   "/api/admin/public-lists",
   authMiddleware,
   requireAdmin,
-  adminPublicListsRouter
+  adminPublicListsRouter,
 );
 
 app.use("/api/catalog", require("./routes/catalog"));
@@ -129,7 +131,7 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() =>
-    console.log(`✅ Connected to MongoDB (db=${mongoose.connection.name})`)
+    console.log(`✅ Connected to MongoDB (db=${mongoose.connection.name})`),
   )
   .catch((err) => console.error("❌ Mongo connection error:", err));
 
