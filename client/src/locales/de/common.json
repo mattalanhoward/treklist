@@ -718,7 +718,8 @@
   "publicList": {
     "documentTitleSuffix": "Öffentliche Packliste",
     "status": {
-      "loading": "Laden…"
+      "loading": "Laden…",
+      "copying": "Deine Kopie wird erstellt…"
     },
     "errors": {
       "loadFailed": "Liste konnte nicht geladen werden",

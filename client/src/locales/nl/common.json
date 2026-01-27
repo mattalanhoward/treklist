@@ -717,7 +717,8 @@
   "publicList": {
     "documentTitleSuffix": "Openbare uitrustingslijst",
     "status": {
-      "loading": "Laden…"
+      "loading": "Laden…",
+      "copying": "Je kopie wordt aangemaakt…"
     },
     "errors": {
       "loadFailed": "Lijst kon niet worden geladen",

@@ -71,30 +71,13 @@ export default function ShareModal({ listId, isOpen, onClose }) {
   }
 
   const embedCode = token
-    ? `<iframe src="${window.location.origin}/share/${token}" style="width:100%;height:600px;border:0;" loading="lazy"></iframe>`
+    ? `<div class="treklist-embed" data-treklist-token="${token}"></div>
+<script async src="${window.location.origin}/embed.js"></script>`
     : "";
 
   async function onCopyEmbed() {
-    if (!token) return;
-    try {
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(embedCode);
-        toast.success(t("shareModal.toasts.embedCopySuccess"));
-        return;
-      }
-    } catch {}
-
-    try {
-      if (embedRef.current) {
-        embedRef.current.focus();
-        embedRef.current.select();
-        document.execCommand("copy");
-        toast.success(t("shareModal.toasts.embedCopySuccess"));
-        return;
-      }
-    } catch {}
-
-    toast.error(t("shareModal.toasts.copyError"));
+    const ok = await copyToClipboard(embedCode);
+    if (ok) toast.success(t("shareModal.toasts.embedCopySuccess"));
   }
 
   async function actuallyRevoke() {
@@ -209,8 +192,8 @@ export default function ShareModal({ listId, isOpen, onClose }) {
             <div className="flex gap-2">
               <textarea
                 ref={embedRef}
-                className="flex-1 mt-0.5 block w-full border border-primary rounded p-2 h-10 resize-none text-primary bg-base-100 placeholder:text-primary/50"
-                rows={1}
+                className="flex-1 mt-0.5 block w-full border border-primary rounded p-2 min-h-[72px] resize-none text-primary bg-base-100 placeholder:text-primary/50"
+                rows={2}
                 readOnly
                 value={embedCode}
                 placeholder={

@@ -717,7 +717,8 @@
   "publicList": {
     "documentTitleSuffix": "Lista de equipo pública",
     "status": {
-      "loading": "Cargando…"
+      "loading": "Cargando…",
+      "copying": "Creando tu copia…"
     },
     "errors": {
       "loadFailed": "No se pudo cargar la lista",
