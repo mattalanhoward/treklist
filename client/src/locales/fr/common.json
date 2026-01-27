@@ -717,7 +717,8 @@
   "publicList": {
     "documentTitleSuffix": "Liste publique",
     "status": {
-      "loading": "Chargement…"
+      "loading": "Chargement…",
+      "copying": "Création de votre copie…"
     },
     "errors": {
       "loadFailed": "Échec du chargement de la liste",

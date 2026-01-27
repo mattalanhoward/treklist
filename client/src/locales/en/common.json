@@ -717,7 +717,8 @@
   "publicList": {
     "documentTitleSuffix": "Public Gear List",
     "status": {
-      "loading": "Loading…"
+      "loading": "Loading…",
+      "copying": "Creating your copy…"
     },
     "errors": {
       "loadFailed": "Failed to load list",
