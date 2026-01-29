@@ -7,6 +7,7 @@ const Category = require("../models/category");
 const Item = require("../models/gearItem");
 const GlobalItem = require("../models/globalItem");
 const { resolveOfferForProduct } = require("../services/affiliateResolver");
+const { detectViewerRegion } = require("../utils/regionDetection");
 
 const router = express.Router();
 const auth = require("../middleware/auth");
@@ -17,7 +18,7 @@ function withCopyLock(key, fn, ttlMs = 5000) {
   if (copyLocks.has(key)) return Promise.reject(new Error("Copy in progress"));
   copyLocks.set(
     key,
-    setTimeout(() => copyLocks.delete(key), ttlMs)
+    setTimeout(() => copyLocks.delete(key), ttlMs),
   );
   const clear = () => {
     const t = copyLocks.get(key);
@@ -112,71 +113,74 @@ router.get("/:token/full", async (req, res) => {
     return offer || null;
   }
 
-  const userRegion = (
-    list.storeRegion ||
-    list.region ||
-    "global"
-  ).toLowerCase();
+  // Detect viewer's region from their IP address
+  const viewerRegion = detectViewerRegion(req);
+  const userRegion = viewerRegion;
+  console.log(
+    "[Public Share] Viewer IP:",
+    require("../utils/regionDetection").getClientIp(req),
+  );
+  console.log("[Public Share] Detected region:", viewerRegion);
 
-  const resolvedItems = [];
-  for (const i of items) {
-    let link = i.link || null;
-    let affiliate = i.affiliate || null;
-    const hasAffiliateLink =
-      (typeof affiliate === "string" && affiliate) ||
-      affiliate?.deepLink ||
-      affiliate?.url ||
-      affiliate?.awDeepLink;
+  const resolvedItems = await Promise.all(
+    items.map(async (i) => {
+      let link = i.link || null;
+      let affiliate = i.affiliate || null;
+      const hasAffiliateLink =
+        (typeof affiliate === "string" && affiliate) ||
+        affiliate?.deepLink ||
+        affiliate?.url ||
+        affiliate?.awDeepLink;
 
-    if (!link && !hasAffiliateLink && i.globalItem) {
-      const g = globalById.get(i.globalItem.toString());
-      if (g) {
-        // If GlobalItem is custom and has a direct link, use it
-        link = g.link || null;
+      if (!link && !hasAffiliateLink && i.globalItem) {
+        const g = globalById.get(i.globalItem.toString());
+        if (g) {
+          link = g.link || null;
 
-        // If GlobalItem already has an affiliate deepLink snapshot, prefer it
-        const deep =
-          (typeof g.affiliate === "string" ? g.affiliate : null) ||
-          g.affiliate?.deepLink ||
-          g.affiliate?.awDeepLink ||
-          g.affiliate?.url ||
-          null;
+          const deep =
+            (typeof g.affiliate === "string" ? g.affiliate : null) ||
+            g.affiliate?.deepLink ||
+            g.affiliate?.awDeepLink ||
+            g.affiliate?.url ||
+            null;
 
-        if (deep) {
-          affiliate = {
-            deepLink: deep,
-            network: g.affiliate?.network,
-            region: g.affiliate?.region,
-            merchantName: g.affiliate?.merchantName,
-          };
-        } else if (g.productId) {
-          const offer = await getOffer(g.productId, userRegion);
-          if (offer?.deepLink) {
+          if (deep) {
             affiliate = {
-              deepLink: offer.deepLink,
-              network: offer.network,
-              region: offer.region,
-              merchantName: offer.merchantName,
+              deepLink: deep,
+              network: g.affiliate?.network,
+              region: g.affiliate?.region,
+              merchantName: g.affiliate?.merchantName,
             };
+          } else if (g.productId) {
+            const offer = await getOffer(g.productId, userRegion);
+            if (offer?.deepLink) {
+              affiliate = {
+                deepLink: offer.deepLink,
+                network: offer.network,
+                region: offer.region,
+                merchantName: offer.merchantName,
+              };
+            }
           }
         }
       }
-    }
 
-    resolvedItems.push({
-      id: i._id.toString(),
-      categoryId: i.category?.toString() || null,
-      itemType: i.itemType || "gear",
-      brand: i.brand || "",
-      name: i.name || "",
-      weight_g: typeof i.weight === "number" ? i.weight : null,
-      consumable: !!i.consumable,
-      worn: !!i.worn,
-      qty: i.quantity ?? 1,
-      affiliate,
-      link,
-    });
-  }
+      return {
+        id: i._id.toString(),
+        categoryId: i.category?.toString() || null,
+        itemType: i.itemType || "gear",
+        brand: i.brand || "",
+        name: i.name || "",
+        weight_g: typeof i.weight === "number" ? i.weight : null,
+        consumable: !!i.consumable,
+        worn: !!i.worn,
+        qty: i.quantity ?? 1,
+        affiliate,
+        link,
+        productId: i.productId?.toString() || null,
+      };
+    }),
+  );
 
   res.json({
     list: {
@@ -280,7 +284,7 @@ router.get("/:token/csv", async (req, res) => {
         Worn: "",
         Qty: "",
         Link: "",
-      }
+      },
     );
 
     const escapeCsv = (val) => {
@@ -384,10 +388,10 @@ router.post("/:token/copy", auth, async (req, res) => {
         new Set(
           srcItems
             .map((it) =>
-              it.globalItem?.toString?.() ? it.globalItem.toString() : null
+              it.globalItem?.toString?.() ? it.globalItem.toString() : null,
             )
-            .filter(Boolean)
-        )
+            .filter(Boolean),
+        ),
       );
 
       // map: oldGlobalId -> newOrExistingGlobalId (for this user)
@@ -504,7 +508,7 @@ router.post("/:token/copy", auth, async (req, res) => {
             if (created.productId) {
               existingByProductId.set(
                 created.productId.toString(),
-                created._id.toString()
+                created._id.toString(),
               );
             }
             const ca = created.affiliate;
