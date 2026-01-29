@@ -413,11 +413,11 @@ export default function GlobalItemEditModal({
       }
 
       if (updatedSomething) {
-        toast.success(
-          isListContext && touchedGlobal
-            ? t("globalItemEditModal.toast.updatedEverywhere")
-            : t("globalItemEditModal.toast.updated"),
-        );
+        // toast.success(
+        //   isListContext && touchedGlobal
+        //     ? t("globalItemEditModal.toast.updatedEverywhere")
+        //     : t("globalItemEditModal.toast.updated"),
+        // );
         onSaved?.();
         onClose?.();
       }
@@ -758,7 +758,7 @@ export default function GlobalItemEditModal({
                 setDeleteConfirmOpen(false);
                 try {
                   await api.delete(`/global/items/${item._id}`);
-                  toast.success(t("globalItemEditModal.toast.deleted"));
+                  // toast.success(t("globalItemEditModal.toast.deleted"));
                   onSaved?.();
                   onClose?.();
                 } catch (err) {

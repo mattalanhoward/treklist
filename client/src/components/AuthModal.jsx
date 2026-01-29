@@ -95,7 +95,7 @@ export default function AuthModal({
     setLoading(true);
     try {
       await login(email, password);
-      toast.success(t("auth.toasts.welcomeBack"));
+      // toast.success(t("auth.toasts.welcomeBack"));
       onAuthed?.();
       onClose?.();
     } catch (e) {
@@ -186,7 +186,7 @@ export default function AuthModal({
       toast.success(t("auth.toasts.verificationEmailResent"));
     } catch (error) {
       toast.error(
-        error?.response?.data?.message || t("auth.toasts.resendFailed")
+        error?.response?.data?.message || t("auth.toasts.resendFailed"),
       );
     } finally {
       setLoading(false);
@@ -233,8 +233,8 @@ export default function AuthModal({
     mode === "login"
       ? t("auth.title.login")
       : mode === "register"
-      ? t("auth.title.register")
-      : t("auth.title.verify");
+        ? t("auth.title.register")
+        : t("auth.title.verify");
 
   // --- Render ---
   return (

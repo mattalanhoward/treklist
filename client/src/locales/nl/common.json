@@ -421,6 +421,16 @@
     },
     "importTab": {
       "searchPlaceholder": "Zoek in catalogus…",
+      "importTab": {
+        "footer": {
+          "catalogUpdatesDaily": "De catalogus wordt dagelijks bijgewerkt.",
+          "requestItemCta": "Een item aanvragen"
+        },
+        "mobileHint": {
+          "title": "Kun je niet vinden wat je zoekt?",
+          "cta": "Een item aanvragen"
+        }
+      },
       "filters": {
         "allCategories": "Alle categorieën",
         "allSubcategories": "Alle subcategorieën",
@@ -884,6 +894,33 @@
       "subtitle": "Maak een paklijst voor je volgende tocht, stel je uitrusting bij, en loop de deur uit met het gevoel dat je niets vergeten bent.",
       "primary": "Start je gratis paklijst",
       "secondary": "Bekijk een voorbeeldlijst"
+    }
+  },
+  "catalogRequest": {
+    "title": "Verzoek om item toe te voegen",
+    "fields": {
+      "name": {
+        "label": "Naam",
+        "placeholder": "bijv. Osprey Exos 48"
+      },
+      "brand": {
+        "label": "Merk",
+        "placeholder": "bijv. Osprey"
+      },
+      "link": {
+        "label": "Link (optioneel)",
+        "placeholder": "Plak een productlink (optioneel)"
+      }
+    },
+    "states": {
+      "sending": "Verzenden…"
+    },
+    "buttons": {
+      "sending": "Verzenden…"
+    },
+    "toasts": {
+      "sent": "Verzoek verzonden!",
+      "failed": "Verzoek verzenden mislukt."
     }
   }
 }

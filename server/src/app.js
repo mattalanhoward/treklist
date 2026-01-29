@@ -21,6 +21,7 @@ const adminAmazon = require("./routes/adminAmazon");
 const adminUsersRouter = require("./routes/adminUsers");
 const adminPublicListsRouter = require("./routes/adminPublicLists");
 const { publicShareLimiter } = require("./middleware/rateLimiters");
+const supportRoutes = require("./routes/support");
 
 const app = express();
 
@@ -110,6 +111,7 @@ app.use(
 
 app.use("/api/catalog", require("./routes/catalog"));
 app.use("/api/uploads", require("./routes/uploads"));
+app.use("/api/support", supportRoutes);
 
 // Central error handler
 app.use((err, req, res, next) => {

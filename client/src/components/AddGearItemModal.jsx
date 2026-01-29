@@ -171,7 +171,7 @@ export default function AddGearItemModal({
         }),
       );
 
-      toast.success(t("addGearItemModal.toasts.addSuccess"));
+      // toast.success(t("addGearItemModal.toasts.addSuccess"));
       onAdded();
       onClose();
     } catch (err) {

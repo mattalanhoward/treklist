@@ -20,23 +20,23 @@ async function resolveOfferForProduct({ productId, userRegion = "global" }) {
 
   const regions = buildRegionPreferenceChain(userRegion);
 
-  // Try regions in order until we find offers
-  for (const region of regions) {
-    const offer = await MerchantOffer.findOne({ productId, region })
-      .sort({ priority: -1, updatedAt: -1, createdAt: -1 })
-      .lean();
-    if (offer) {
-      return {
-        deepLink: offer.deepLink,
-        merchantName: offer.merchantName,
-        network: offer.network,
-        region: offer.region,
-      };
-    }
-  }
+  // Find the BEST offer across all preferred regions
+  // MongoDB will return the highest priority offer automatically due to sort
+  const offer = await MerchantOffer.findOne({
+    productId,
+    region: { $in: regions },
+  })
+    .sort({ priority: -1, updatedAt: -1, createdAt: -1 })
+    .lean();
 
-  // Nothing found in any region
-  return null;
+  if (!offer) return null;
+
+  return {
+    deepLink: offer.deepLink,
+    merchantName: offer.merchantName,
+    network: offer.network,
+    region: offer.region,
+  };
 }
 
 module.exports = {

@@ -421,6 +421,14 @@
     },
     "importTab": {
       "searchPlaceholder": "Buscar en el catálogo…",
+      "footer": {
+        "catalogUpdatesDaily": "El catálogo se actualiza a diario.",
+        "requestItemCta": "Solicitar un artículo"
+      },
+      "mobileHint": {
+        "title": "¿No encuentras lo que buscas?",
+        "cta": "Solicitar un artículo"
+      },
       "filters": {
         "allCategories": "Todas las categorías",
         "allSubcategories": "Todas las subcategorías",
@@ -884,6 +892,33 @@
       "subtitle": "Empieza una lista de equipo para tu próxima ruta, ajusta tu kit y sal por la puerta sabiendo que no olvidaste nada.",
       "primary": "Empieza tu lista gratis",
       "secondary": "Ver un ejemplo"
+    }
+  },
+  "catalogRequest": {
+    "title": "Solicitud para añadir un artículo",
+    "fields": {
+      "name": {
+        "label": "Nombre",
+        "placeholder": "p. ej., Osprey Exos 48"
+      },
+      "brand": {
+        "label": "Marca",
+        "placeholder": "p. ej., Osprey"
+      },
+      "link": {
+        "label": "Enlace (opcional)",
+        "placeholder": "Pega un enlace al producto (opcional)"
+      }
+    },
+    "states": {
+      "sending": "Enviando…"
+    },
+    "buttons": {
+      "sending": "Enviando…"
+    },
+    "toasts": {
+      "sent": "¡Solicitud enviada!",
+      "failed": "No se pudo enviar la solicitud."
     }
   }
 }

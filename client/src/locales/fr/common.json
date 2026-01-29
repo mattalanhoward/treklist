@@ -421,6 +421,14 @@
     },
     "importTab": {
       "searchPlaceholder": "Rechercher dans le catalogue…",
+      "footer": {
+        "catalogUpdatesDaily": "Le catalogue est mis à jour chaque jour.",
+        "requestItemCta": "Demander un article"
+      },
+      "mobileHint": {
+        "title": "Vous ne trouvez pas ce que vous cherchez ?",
+        "cta": "Demander un article"
+      },
       "filters": {
         "allCategories": "Toutes les catégories",
         "allSubcategories": "Toutes les sous-catégories",
@@ -884,6 +892,33 @@
       "subtitle": "Créez une liste d’équipement pour votre prochain trek, peaufinez votre kit, et partez en sachant que vous n’avez rien oublié.",
       "primary": "Créer ma liste gratuite",
       "secondary": "Voir un exemple"
+    }
+  },
+  "catalogRequest": {
+    "title": "Demande d’ajout d’article",
+    "fields": {
+      "name": {
+        "label": "Nom",
+        "placeholder": "ex. Osprey Exos 48"
+      },
+      "brand": {
+        "label": "Marque",
+        "placeholder": "ex. Osprey"
+      },
+      "link": {
+        "label": "Lien (facultatif)",
+        "placeholder": "Collez un lien produit (facultatif)"
+      }
+    },
+    "states": {
+      "sending": "Envoi…"
+    },
+    "buttons": {
+      "sending": "Envoi…"
+    },
+    "toasts": {
+      "sent": "Demande envoyée !",
+      "failed": "Impossible d’envoyer la demande."
     }
   }
 }
