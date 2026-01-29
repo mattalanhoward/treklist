@@ -707,7 +707,7 @@ export default function GlobalItemModal({
         created = await api.post("/global/items", payload).then((r) => r.data);
       }
 
-      toast.success(t("globalItemModal.toast.created"));
+      // toast.success(t("globalItemModal.toast.created"));
       onCreated?.(created);
       onClose?.();
     } catch (err) {

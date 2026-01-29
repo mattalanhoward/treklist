@@ -758,7 +758,7 @@ export default function GlobalItemEditModal({
                 setDeleteConfirmOpen(false);
                 try {
                   await api.delete(`/global/items/${item._id}`);
-                  toast.success(t("globalItemEditModal.toast.deleted"));
+                  // toast.success(t("globalItemEditModal.toast.deleted"));
                   onSaved?.();
                   onClose?.();
                 } catch (err) {

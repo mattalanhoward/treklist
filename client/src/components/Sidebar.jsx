@@ -114,7 +114,7 @@ export default function Sidebar({
       await fetchLists();
       localStorage.setItem("lastListId", data.list._id);
       onSelectList(data.list._id);
-      toast.success(t("sidebar.listCreated"));
+      // toast.success(t("sidebar.listCreated"));
     } catch (err) {
       console.error("Error creating list:", err);
       toast.error(

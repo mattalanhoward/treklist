@@ -62,7 +62,7 @@ export default function GearListDetailsModal({
       });
       onRefresh();
       onRefreshSidebar();
-      toast.success(t("gearListDetailsModal.toast.saveSuccess"));
+      // toast.success(t("gearListDetailsModal.toast.saveSuccess"));
       setDirty(false);
       onClose();
     } catch (err) {
@@ -113,19 +113,19 @@ export default function GearListDetailsModal({
               <PackStats
                 base={breakdowns.base.reduce(
                   (s, i) => s + (i.weight || 0) * (i.quantity || 1),
-                  0
+                  0,
                 )}
                 worn={breakdowns.worn.reduce(
                   (s, i) => s + (i.weight || 0) * (i.quantity || 1),
-                  0
+                  0,
                 )}
                 consumable={breakdowns.consumable.reduce(
                   (s, i) => s + (i.weight || 0) * (i.quantity || 1),
-                  0
+                  0,
                 )}
                 total={breakdowns.total.reduce(
                   (s, i) => s + (i.weight || 0) * (i.quantity || 1),
-                  0
+                  0,
                 )}
                 breakdowns={breakdowns}
                 showLabels={true}
