@@ -37,8 +37,8 @@ export default function AddGearItemModal({
           cats.map((cat) =>
             api
               .get(`/dashboard/${listId}/categories/${cat._id}/items`)
-              .then((res) => res.data || [])
-          )
+              .then((res) => res.data || []),
+          ),
         );
         // flatten
         setExistingItems(itemArrays.flat());
@@ -96,7 +96,7 @@ export default function AddGearItemModal({
           });
 
     return [...filtered].sort((a, b) =>
-      normalize(a.name).localeCompare(normalize(b.name))
+      normalize(a.name).localeCompare(normalize(b.name)),
     );
   }, [allResults, searchQuery]);
 
@@ -119,10 +119,10 @@ export default function AddGearItemModal({
 
     // DUP CHECK
     const existingGlobalIds = new Set(
-      existingItems.map((it) => it.globalItem || it._id)
+      existingItems.map((it) => it.globalItem || it._id),
     );
     const dup = Array.from(selectedIds).filter((id) =>
-      existingGlobalIds.has(id)
+      existingGlobalIds.has(id),
     );
     if (dup.length > 0) {
       return toast.error(t("addGearItemModal.toasts.alreadyInList"));
@@ -132,13 +132,13 @@ export default function AddGearItemModal({
     try {
       // Compute the starting position at the end of THIS category
       const itemsInThisCat = existingItems.filter(
-        (it) => String(it.category) === String(categoryId)
+        (it) => String(it.category) === String(categoryId),
       );
       const maxPos = itemsInThisCat.length
         ? Math.max(
             ...itemsInThisCat.map((it) =>
-              Number.isFinite(it.position) ? it.position : -1
-            )
+              Number.isFinite(it.position) ? it.position : -1,
+            ),
           )
         : -1;
       const startPos = maxPos + 1;
@@ -148,11 +148,14 @@ export default function AddGearItemModal({
       await Promise.all(
         selected.map((itemId, idx) => {
           const sel = allResults.find((i) => i._id === itemId);
+          console.log("Selected item:", sel); // ← ADD THIS
+          console.log("ProductId:", sel.productId); // ← ADD THIS
           if (!sel) return Promise.resolve();
           return api.post(
             `/dashboard/${listId}/categories/${categoryId}/items`,
             {
               globalItem: sel._id,
+              productId: sel.productId,
               brand: sel.brand,
               itemType: sel.itemType,
               name: sel.name,
@@ -163,9 +166,9 @@ export default function AddGearItemModal({
               consumable: sel.consumable,
               quantity,
               position: startPos + idx, // <-- append to end
-            }
+            },
           );
-        })
+        }),
       );
 
       toast.success(t("addGearItemModal.toasts.addSuccess"));
@@ -181,7 +184,7 @@ export default function AddGearItemModal({
 
   // Helper set for quick lookup in render
   const existingGlobalIds = new Set(
-    existingItems.map((it) => it.globalItem || it._id)
+    existingItems.map((it) => it.globalItem || it._id),
   );
 
   const addButtonLabel = saving

@@ -55,27 +55,24 @@ router.get("/items/:id", auth, async (req, res) => {
           "canonicalSku",
           "createdAt",
           "updatedAt",
-        ].join(" ")
+        ].join(" "),
       );
 
     if (!item) {
       return res.status(404).json({ message: "Catalog item not found." });
     }
 
-    // Only allow access if the item has offers for this user (global or user region)
+    // Fetch offers for this user's region (may be empty array)
     const offers = await MerchantOffer.find({
       productId: item._id,
       region: { $in: ["global", userRegion] },
     })
-
       .select(
-        "network region merchantId merchantName deepLink priority externalProductId updatedAt productId"
+        "network region merchantId merchantName deepLink priority externalProductId updatedAt productId",
       )
       .lean();
 
-    if (!offers || offers.length === 0) {
-      return res.status(404).json({ message: "Catalog item not found." });
-    }
+    // Remove the 404 check - allow returning items with no offers
 
     return res.json({
       ...item,
@@ -123,13 +120,6 @@ router.get("/items", auth, async (req, res) => {
       ];
     }
 
-    const offerProductIds = await MerchantOffer.distinct("productId", {
-      region: { $in: ["global", userRegion] },
-      productId: { $ne: null },
-    });
-
-    query._id = { $in: offerProductIds };
-
     const items = await CatalogItem.find(query)
       .collation({ locale: "en", strength: 2 })
       .sort({ brand: 1, name: 1 })
@@ -137,7 +127,7 @@ router.get("/items", auth, async (req, res) => {
       .skip(Number(skip))
       .limit(Math.min(Number(limit), 200))
       .select(
-        "name brand category subcategory itemType description weightGrams tags updatedAt"
+        "name brand category subcategory itemType description weightGrams tags updatedAt",
       );
 
     const offers = await MerchantOffer.find({
