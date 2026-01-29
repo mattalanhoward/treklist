@@ -7,6 +7,47 @@ const GearList = require("../models/gearList");
 const router = express.Router({ mergeParams: true });
 router.use(auth);
 
+const User = require("../models/user");
+const MerchantOffer = require("../models/merchantOffer");
+
+/**
+ * Add hasOffer flag to a single item
+ */
+async function addOfferFlagToItem(item, userId) {
+  // Get user's region
+  const user = await User.findById(userId).select("region").lean();
+  const userRegion = normalizeRegion(user?.region);
+
+  // Items with direct links always have offers
+  if (item.link) {
+    return { ...item, hasOffer: true };
+  }
+
+  // Items with productId need offer lookup
+  if (item.productId) {
+    const offerExists = await MerchantOffer.exists({
+      productId: item.productId,
+      region: { $in: ["global", userRegion] },
+    });
+    return { ...item, hasOffer: !!offerExists };
+  }
+
+  // Items without link or productId
+  return { ...item, hasOffer: false };
+}
+
+/**
+ * Normalize region codes
+ */
+function normalizeRegion(region) {
+  if (!region) return "global";
+  const r = String(region).trim().toLowerCase();
+  if (r === "netherlands") return "nl";
+  if (r === "united states" || r === "usa") return "us";
+  if (r.length === 2) return r;
+  return r;
+}
+
 // ─── GET /api/dashboard/:listId/categories/:catId/items ───
 // Return all items in this category
 router.get("/", async (req, res) => {
@@ -29,7 +70,13 @@ router.get("/", async (req, res) => {
     const items = await GearItem.find({ gearList: listId, category: catId })
       .sort("position")
       .lean();
-    return res.json(items);
+
+    // 4) Add hasOffer flags to all items
+    const itemsWithOffers = await Promise.all(
+      items.map((item) => addOfferFlagToItem(item, req.userId)),
+    );
+
+    return res.json(itemsWithOffers);
   } catch (err) {
     console.error("Error GET items:", err);
     return res.status(500).json({ message: "Server error" });
@@ -42,6 +89,7 @@ router.post("/", async (req, res) => {
   const { listId, catId } = req.params;
   const {
     globalItem,
+    productId,
     brand,
     itemType,
     name,
@@ -73,10 +121,10 @@ router.post("/", async (req, res) => {
     if (!cat) {
       return res.status(404).json({ message: "Category not found." });
     }
-
     // 3) Create the new item
     const newItem = await GearItem.create({
       globalItem,
+      productId,
       gearList: listId,
       category: catId,
       brand,
@@ -91,7 +139,13 @@ router.post("/", async (req, res) => {
       position,
     });
 
-    return res.status(201).json(newItem);
+    // 4) Add hasOffer flag before returning
+    const itemWithOffer = await addOfferFlagToItem(
+      newItem.toObject(),
+      req.userId,
+    );
+
+    return res.status(201).json(itemWithOffer);
   } catch (err) {
     console.error("Error POST item:", err);
     return res.status(500).json({ message: "Server error" });
@@ -150,7 +204,7 @@ router.patch("/:itemId", async (req, res) => {
         category: catId,
       },
       updates,
-      { new: true }
+      { new: true },
     );
 
     if (!updated) {

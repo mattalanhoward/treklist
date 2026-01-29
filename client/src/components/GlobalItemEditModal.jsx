@@ -193,7 +193,7 @@ export default function GlobalItemEditModal({
         const best = offers
           .slice()
           .sort(
-            (a, b) => (Number(b.priority) || 0) - (Number(a.priority) || 0)
+            (a, b) => (Number(b.priority) || 0) - (Number(a.priority) || 0),
           )[0];
 
         if (!cancelled) setPrimaryOffer(best || null);
@@ -407,7 +407,7 @@ export default function GlobalItemEditModal({
       if (isListContext) {
         await api.patch(
           `/dashboard/${listId}/categories/${catId}/items/${item._id}`,
-          listPayload
+          listPayload,
         );
         updatedSomething = true;
       }
@@ -416,7 +416,7 @@ export default function GlobalItemEditModal({
         toast.success(
           isListContext && touchedGlobal
             ? t("globalItemEditModal.toast.updatedEverywhere")
-            : t("globalItemEditModal.toast.updated")
+            : t("globalItemEditModal.toast.updated"),
         );
         onSaved?.();
         onClose?.();
@@ -439,7 +439,7 @@ export default function GlobalItemEditModal({
       return null;
 
     const entries = Object.entries(attrs).filter(
-      ([k, v]) => String(k || "").trim() && String(v ?? "").trim()
+      ([k, v]) => String(k || "").trim() && String(v ?? "").trim(),
     );
     return entries.length ? entries : null;
   }, [viewMode, template]);
@@ -697,23 +697,11 @@ export default function GlobalItemEditModal({
                 </button>
               )}
 
-              {!isCustom &&
-                (primaryOffer?.deepLink ? (
-                  <ButtonLink href={primaryOffer.deepLink}>
-                    {primaryOffer.merchantName
-                      ? primaryOffer.merchantName
-                      : "Product Page"}
-                  </ButtonLink>
-                ) : resolvedProductId ? (
-                  <button
-                    type="button"
-                    disabled
-                    className="px-2 py-1 bg-primary/10 text-primary/60 rounded-md shadow"
-                    style={{ minWidth: 110 }}
-                  >
-                    Loading…
-                  </button>
-                ) : null)}
+              {!isCustom && primaryOffer?.deepLink && (
+                <ButtonLink href={primaryOffer.deepLink}>
+                  {primaryOffer.merchantName || "Product Page"}
+                </ButtonLink>
+              )}
             </div>
 
             <div className="flex space-x-2">
@@ -776,7 +764,7 @@ export default function GlobalItemEditModal({
                 } catch (err) {
                   toast.error(
                     err.response?.data?.message ||
-                      t("globalItemEditModal.toast.deleteFailed")
+                      t("globalItemEditModal.toast.deleteFailed"),
                   );
                 }
               }}

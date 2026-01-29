@@ -9,14 +9,92 @@ const Share = require("../models/ShareToken");
 const GlobalItem = require("../models/globalItem");
 const CatalogItem = require("../models/catalogItem");
 const cloudinary = require("../config/cloudinary");
-const { v4: uuidv4 } = require("uuid");
-const upload = require("../middleware/upload");
 const {
   ensureActiveTokenForList,
   revokeTokenForList,
 } = require("../utils/share");
 
 const router = express.Router();
+
+const User = require("../models/user");
+const MerchantOffer = require("../models/merchantOffer");
+
+/**
+ * Add hasOffer flag to items based on user's region.
+ * Items with direct links always have hasOffer: true.
+ * Items with productId get hasOffer based on MerchantOffer availability.
+ *
+ * @param {Array} items - Array of GearItem documents (lean)
+ * @param {string} userId - User ID to get region from
+ * @returns {Promise<Array>} Items with hasOffer flag added
+ */
+async function addOfferFlags(items, userId) {
+  if (!items || items.length === 0) return [];
+
+  // Get user's region
+  const user = await User.findById(userId).select("region").lean();
+  const userRegion = normalizeRegion(user?.region);
+
+  // Separate items by type
+  const itemsWithDirectLink = [];
+  const itemsWithProductId = [];
+  const itemsWithNeither = [];
+
+  for (const item of items) {
+    if (item.link) {
+      // Custom items with direct links always have an offer
+      itemsWithDirectLink.push(item);
+    } else if (item.productId) {
+      // Catalog-backed items need offer lookup
+      itemsWithProductId.push(item);
+    } else {
+      // Items with neither (shouldn't happen, but handle gracefully)
+      itemsWithNeither.push(item);
+    }
+  }
+
+  // Batch check: which productIds have offers in user's region?
+  let productsWithOffers = new Set();
+
+  if (itemsWithProductId.length > 0) {
+    const productIds = itemsWithProductId.map((item) => item.productId);
+
+    const availableOffers = await MerchantOffer.find({
+      productId: { $in: productIds },
+      region: { $in: ["global", userRegion] },
+    })
+      .select("productId")
+      .lean();
+
+    productsWithOffers = new Set(
+      availableOffers.map((offer) => String(offer.productId)),
+    );
+  }
+
+  // Build final array with hasOffer flags
+  return [
+    ...itemsWithDirectLink.map((item) => ({ ...item, hasOffer: true })),
+    ...itemsWithProductId.map((item) => ({
+      ...item,
+      hasOffer: productsWithOffers.has(String(item.productId)),
+    })),
+    ...itemsWithNeither.map((item) => ({ ...item, hasOffer: false })),
+  ];
+}
+
+/**
+ * Normalize region codes for consistency
+ * @param {string} region - Raw region value
+ * @returns {string} Normalized region code
+ */
+function normalizeRegion(region) {
+  if (!region) return "global";
+  const r = String(region).trim().toLowerCase();
+  if (r === "netherlands") return "nl";
+  if (r === "united states" || r === "usa") return "us";
+  if (r.length === 2) return r;
+  return r;
+}
 
 // All routes below here require auth
 router.use(auth);
@@ -68,10 +146,13 @@ router.get("/:listId/full", async (req, res) => {
     // 3) fetch categories and items
     const [categories, items] = await Promise.all([
       Category.find({ gearList: listId }).sort({ position: 1 }),
-      Item.find({ gearList: listId }).sort({ category: 1, position: 1 }),
+      Item.find({ gearList: listId }).sort({ category: 1, position: 1 }).lean(),
     ]);
 
-    return res.json({ list, categories, items });
+    // 4) Add hasOffer flag to each item based on user's region
+    const itemsWithOfferFlags = await addOfferFlags(items, req.userId);
+
+    return res.json({ list, categories, items: itemsWithOfferFlags });
   } catch (err) {
     console.error("Error in GET /dashboard/:listId/full →", err.message);
     return res.status(500).json({ error: "Server error." });

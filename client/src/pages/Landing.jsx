@@ -32,7 +32,7 @@ const cloudinaryHeroUrl = (publicIdWithVersion, width) =>
   `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_${width}/${publicIdWithVersion}`;
 
 const LANDING_HERO_PUBLIC_ID_WITH_VERSION =
-  "v1754767080/gear-list-hero-images/hero-hiker-cinque-torri_hpe3lz";
+  "/gear-list-hero-images/hero-hiker-cinque-torri_hpe3lz";
 
 const heroSources = {
   768: cloudinaryHeroUrl(LANDING_HERO_PUBLIC_ID_WITH_VERSION, 768),
@@ -167,14 +167,14 @@ export default function Landing() {
       {
         key: "av1",
         title: t("landing.recommended.cards.av1.title"),
-        img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1752432593/gear-list-landing/gear-list-alta-via-1.jpg",
+        img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/gear-list-landing/gear-list-alta-via-1.jpg",
         alt: t("landing.recommended.cards.av1.alt"),
         link: sharePath(FEATURED_TOKENS.av1) ?? "/gearlist/alta-via-1",
       },
       {
         key: "camino",
         title: t("landing.recommended.cards.camino.title"),
-        img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1752415040/gear-list-landing/gear-list-camino-de-santiago.jpg",
+        img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/gear-list-landing/gear-list-camino-de-santiago.jpg",
         alt: t("landing.recommended.cards.camino.alt"),
         link:
           sharePath(FEATURED_TOKENS.camino) ?? "/gearlist/camino-de-santiago",
@@ -182,33 +182,33 @@ export default function Landing() {
       {
         key: "tmb",
         title: t("landing.recommended.cards.tmb.title"),
-        img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1752609809/gear-list-landing/gear-list-tour-du-mont-blanc.jpg",
+        img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/gear-list-landing/gear-list-tour-du-mont-blanc.jpg",
         alt: t("landing.recommended.cards.tmb.alt"),
         link: sharePath(FEATURED_TOKENS.tmb) ?? "/gearlist/tour-du-mont-blanc",
       },
       // {
       //   key: "whw",
       //   title: t("landing.recommended.cards.whw.title"),
-      //   img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1754772966/gear-list-landing/gear-list-west-highland-way.jpg",
+      //   img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/gear-list-landing/gear-list-west-highland-way.jpg",
       //   alt: t("landing.recommended.cards.whw.alt"),
       //   link: sharePath(FEATURED_TOKENS.whw) ?? "/gearlist/west-highland-way",
       // },
       // {
       //   key: "kungsleden",
       //   title: t("landing.recommended.cards.kungsleden.title"),
-      //   img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1754772965/gear-list-landing/gear-list-kungsleden.jpg",
+      //   img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/gear-list-landing/gear-list-kungsleden.jpg",
       //   alt: t("landing.recommended.cards.kungsleden.alt"),
       //   link: sharePath(FEATURED_TOKENS.kungsleden) ?? "/gearlist/kungsleden",
       // },
       // {
       //   key: "gr20",
       //   title: t("landing.recommended.cards.gr20.title"),
-      //   img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/v1754772963/gear-list-landing/gear-list-gr20.jpg",
+      //   img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/gear-list-landing/gear-list-gr20.jpg",
       //   alt: t("landing.recommended.cards.gr20.alt"),
       //   link: sharePath(FEATURED_TOKENS.gr20) ?? "/gearlist/gr20-corsica",
       // },
     ],
-    [t]
+    [t],
   );
 
   return (

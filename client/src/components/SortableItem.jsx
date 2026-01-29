@@ -43,14 +43,12 @@ export default function SortableItem({
   // If the item has a direct link (custom item), we should NOT call resolver.
   const hasDirectLink = Boolean(item?.link);
 
-  // Resolver works when we have a GlobalItem id to resolve from.
-  // In list context, GearItem.globalItem exists (required by schema).
-  const canResolve = Boolean(
-    item?.globalItem || item?.productId || item?.affiliate?.network,
-  );
+  // For getHref: we can resolve if there's a globalItem reference
+  // (The backend already confirmed hasOffer=true, so we know a link exists)
+  const canResolve = Boolean(item?.globalItem || item?.productId);
 
-  // Show cart if we can open *some* link (direct or resolvable)
-  const showCart = hasDirectLink || canResolve;
+  // Show cart icon only if backend confirmed an offer exists
+  const showCart = Boolean(item?.hasOffer);
 
   const CartIconLink = ({ className = "" }) =>
     showCart ? (
