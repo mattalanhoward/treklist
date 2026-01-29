@@ -7,7 +7,6 @@ import { useTranslation } from "react-i18next";
 import LinkInput from "../components/LinkInput";
 import { useUnit } from "../hooks/useUnit";
 import { useWeightInput } from "../hooks/useWeightInput";
-// import AffiliateProductPicker from "./AffiliateProductPicker";
 import { useUserSettings } from "../contexts/UserSettings";
 import { detectRegion, normalizeRegion } from "../utils/region";
 import CatalogItemPreviewModal from "./CatalogItemPreviewModal";
@@ -15,7 +14,7 @@ import Spinner from "../components/ui/Spinner";
 import { CATALOG_CATEGORIES } from "../config/catalogTaxonomy";
 import { tCategory } from "../config/catalogTaxonomy";
 
-function ImportCatalogTab({ onImported }) {
+function ImportCatalogTab({ onImported, onOpenRequest }) {
   const { t } = useTranslation("common");
 
   // preview modal state
@@ -117,9 +116,6 @@ function ImportCatalogTab({ onImported }) {
 
       // inform parent so Sidebar/My Gear can refresh if needed
       onImported?.(data?.items || []);
-
-      // optional: keep modal open (button disables + badge shows)
-      // setPreviewOpen(false);
     } catch (err) {
       console.error("Preview import failed", err);
       toast.error(
@@ -244,7 +240,9 @@ function ImportCatalogTab({ onImported }) {
       setPreviewError(
         err?.response?.data?.message ||
           err?.message ||
-          "Failed to load details.",
+          t("catalogPreview.errors.loadFailed", {
+            defaultValue: "Failed to load details.",
+          }),
       );
     } finally {
       setPreviewLoading(false);
@@ -261,7 +259,6 @@ function ImportCatalogTab({ onImported }) {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="flex-1 border border-primary rounded px-2 py-1 text-primary placeholder:text-primary/50 bg-base-100"
-          bg-base-100
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 w-full">
@@ -278,10 +275,11 @@ function ImportCatalogTab({ onImported }) {
             </option>
             {categories.map((cat) => (
               <option key={cat} value={cat}>
-                {tCategory(t, cat)}{" "}
+                {tCategory(t, cat)}
               </option>
             ))}
           </select>
+
           <select
             className="border border-primary rounded px-2 py-1 text-primary bg-base-100"
             value={subcategoryFilter}
@@ -297,6 +295,7 @@ function ImportCatalogTab({ onImported }) {
               </option>
             ))}
           </select>
+
           <select
             className="border border-primary rounded px-2 py-1 text-primary bg-base-100"
             value={brandFilter}
@@ -419,30 +418,178 @@ function ImportCatalogTab({ onImported }) {
         importing={previewImporting}
       />
 
-      {/* Actions */}
-      <div className="mt-3 flex justify-end space-x-2">
-        <button
-          type="button"
-          disabled={saving}
-          onClick={() => setSelectedIds(new Set())}
-          className="px-2 py-1 bg-base-100 text-primary rounded"
-          title={t("globalItemModal.importTab.buttons.clearTitle")}
-        >
-          {t("globalItemModal.importTab.buttons.clear")}
-        </button>
+      {/* Footer row: request note (left) + actions (right) */}
+      <div className="mt-3 pt-3 border-t border-primary/15 flex items-center justify-between gap-2">
+        {/* Left note */}
+        <div className="text-xs text-primary/70">
+          <span>
+            {t("globalItemModal.importTab.footer.catalogUpdatesDaily")}
+          </span>
+          <span className="mx-1">•</span>
+          <button
+            type="button"
+            onClick={onOpenRequest}
+            className="underline underline-offset-2 text-primary hover:text-primary/90"
+          >
+            {t("globalItemModal.importTab.footer.requestItemCta")}
+          </button>
+        </div>
 
-        <button
-          type="button"
-          onClick={handleBulkImport}
-          disabled={saving || selectedIds.size === 0}
-          className={`px-2 py-1 bg-primary text-base-100 rounded flex items-center ${
-            saving || selectedIds.size === 0
-              ? "opacity-50 cursor-not-allowed"
-              : "hover:bg-primary/80"
-          }`}
-        >
-          {importButtonLabel}
-        </button>
+        {/* Right actions */}
+        <div className="flex justify-end space-x-2">
+          <button
+            type="button"
+            disabled={saving}
+            onClick={() => setSelectedIds(new Set())}
+            className="px-2 py-1 bg-base-100 text-primary rounded"
+            title={t("globalItemModal.importTab.buttons.clearTitle")}
+          >
+            {t("globalItemModal.importTab.buttons.clear")}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleBulkImport}
+            disabled={saving || selectedIds.size === 0}
+            className={`px-2 py-1 bg-primary text-base-100 rounded flex items-center ${
+              saving || selectedIds.size === 0
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-primary/80"
+            }`}
+          >
+            {importButtonLabel}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AddItemRequestModal({ isOpen, onClose, onSend }) {
+  const { t } = useTranslation("common");
+  const [name, setName] = React.useState("");
+  const [brand, setBrand] = React.useState("");
+  const [link, setLink] = React.useState("");
+  const [sending, setSending] = React.useState(false);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setName("");
+      setBrand("");
+      setLink("");
+      setSending(false);
+    }
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  const canSend = !!name.trim() && !!brand.trim() && !sending;
+
+  return (
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center z-[60]">
+      <div className="bg-neutralAlt rounded-lg shadow-2xl max-w-md w-full px-4 py-4 sm:px-6 sm:py-6">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-lg font-semibold text-primary">
+            {t("catalogRequest.title")}
+          </h3>
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={sending}
+            className="text-error hover:text-error/80 disabled:opacity-50"
+            aria-label={t("actions.close")}
+            title={t("actions.close")}
+          >
+            <FaTimes />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 gap-3">
+          <div>
+            <label className="block text-sm font-medium text-primary mb-1">
+              {t("catalogRequest.fields.name.label")}{" "}
+              <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={name}
+              disabled={sending}
+              onChange={(e) => setName(e.target.value)}
+              placeholder={t("catalogRequest.fields.name.placeholder")}
+              className="w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 disabled:opacity-60"
+              autoFocus
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-primary mb-1">
+              {t("catalogRequest.fields.brand.label")}{" "}
+              <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={brand}
+              disabled={sending}
+              onChange={(e) => setBrand(e.target.value)}
+              placeholder={t("catalogRequest.fields.brand.placeholder")}
+              className="w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 disabled:opacity-60"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-primary mb-1">
+              {t("catalogRequest.fields.link.label")}
+            </label>
+            <input
+              type="url"
+              value={link}
+              disabled={sending}
+              onChange={(e) => setLink(e.target.value)}
+              placeholder={t("catalogRequest.fields.link.placeholder")}
+              className="w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 disabled:opacity-60"
+            />
+          </div>
+        </div>
+
+        <div className="mt-4 flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={sending}
+            className="px-2 py-1 bg-neutralAlt rounded hover:bg-neutralAlt/90 text-primary disabled:opacity-50"
+          >
+            {t("actions.cancel")}
+          </button>
+
+          <button
+            type="button"
+            disabled={!canSend}
+            onClick={async () => {
+              if (!name.trim() || !brand.trim() || sending) return;
+
+              setSending(true);
+              try {
+                await onSend({
+                  name: name.trim(),
+                  brand: brand.trim(),
+                  link: link.trim(),
+                });
+              } finally {
+                // onSend handles toast + closing on success; we just re-enable if it fails
+                setSending(false);
+              }
+            }}
+            className={`px-2 py-1 rounded ${
+              canSend
+                ? "bg-primary text-base-100 hover:bg-primary/80"
+                : "bg-primary text-base-100 opacity-50 cursor-not-allowed"
+            }`}
+          >
+            {sending
+              ? t("catalogRequest.buttons.sending")
+              : t("catalogRequest.buttons.send")}
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -464,11 +611,13 @@ export default function GlobalItemModal({
   const [consumable, setConsumable] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
+
   const unit = useUnit();
   const { unitLabel, parseInput } = useWeightInput(unit);
   const [displayWeight, setDisplayWeight] = useState("");
   const [weightSource, setWeightSource] = useState("user"); // "user" | "heuristic" | "scraped" | "catalog" | "verified"
 
+  const [requestOpen, setRequestOpen] = useState(false);
   const [tab, setTab] = useState("import"); // "import" | "custom"
   const [affProduct, setAffProduct] = useState(null); // selected affiliate product (or null)
 
@@ -533,7 +682,6 @@ export default function GlobalItemModal({
           worn,
           consumable,
           quantity: Number(quantity) || 1,
-          // Keep whatever category your API expects; omit if not used server-side
           ...(category && { category }),
         };
 
@@ -550,7 +698,6 @@ export default function GlobalItemModal({
           payload.weight = grams;
           if (weightSource === "heuristic") payload.weightSource = "heuristic";
         }
-
         if (link.trim()) payload.link = link.trim();
 
         payload.worn = worn;
@@ -574,14 +721,11 @@ export default function GlobalItemModal({
   };
 
   const handleImported = (importedItems) => {
-    // Stay open. Just inform parent so Sidebar/My Gear can refresh if needed.
-    // importedItems is an array of GlobalItems returned from bulk import.
     onCreated?.(importedItems);
   };
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center z-50">
-      {" "}
       <form
         onSubmit={handleSubmit}
         className="bg-neutralAlt rounded-lg shadow-2xl max-w-2xl w-full sm:h-[80vh] h-[70vh] px-4 py-4 sm:px-6 sm:py-6 my-4 flex flex-col overflow-hidden"
@@ -596,6 +740,8 @@ export default function GlobalItemModal({
             onClick={onClose}
             disabled={loading}
             className="text-error hover:text-error/80"
+            aria-label={t("actions.close")}
+            title={t("actions.close")}
           >
             <FaTimes />
           </button>
@@ -616,6 +762,7 @@ export default function GlobalItemModal({
             >
               {t("globalItemModal.tabs.import")}
             </button>
+
             <button
               type="button"
               className={`px-2 py-1 rounded border ${
@@ -630,34 +777,38 @@ export default function GlobalItemModal({
             </button>
           </div>
 
+          {/* On mobile, show note (IMPORT ONLY) */}
+          {tab === "import" && (
+            <div className="sm:hidden text-xs text-primary/60 text-right">
+              <div>{t("globalItemModal.importTab.mobileHint.title")}</div>
+              <button
+                type="button"
+                onClick={() => setRequestOpen(true)}
+                className="underline underline-offset-2 text-primary hover:text-primary/90"
+              >
+                {t("globalItemModal.importTab.mobileHint.cta")}
+              </button>
+            </div>
+          )}
+
           {affProduct ? (
             <div className="flex items-center gap-2">
-              {/* <span className=" text-primary">
-                Selected: <strong>{affProduct.name}</strong>
-              </span> */}
               <button
                 type="button"
                 className="text-xs underline text-primary"
                 onClick={() => {
-                  // Remove affiliate selection
                   setAffProduct(null);
-
-                  // Reset every user-editable field
-                  setCategory?.(""); // if you keep category in this modal
+                  setCategory?.("");
                   setItemType("");
                   setName("");
                   setBrand("");
                   setDescription("");
-                  setDisplayWeight(""); // clears the visible weight input
+                  setDisplayWeight("");
                   setLink("");
                   setWorn(false);
                   setConsumable(false);
                   setQuantity(1);
                   setWeightSource("user");
-                  console.debug("[GlobalItemModal] weightSource reset -> user");
-
-                  // If you want to take the user back to Import, uncomment:
-                  // setTab("import");
                 }}
                 disabled={loading}
               >
@@ -670,14 +821,16 @@ export default function GlobalItemModal({
         <div className="flex-1 min-h-0 overflow-hidden flex flex-col">
           {tab === "import" && (
             <div className="flex-1 min-h-0 overflow-hidden">
-              <ImportCatalogTab onImported={handleImported} />
+              <ImportCatalogTab
+                onImported={handleImported}
+                onOpenRequest={() => setRequestOpen(true)}
+              />
             </div>
           )}
 
           {/* Grid: only visible on the Custom tab */}
           {tab === "custom" && (
             <div className="flex-1 min-h-0 flex flex-col">
-              {" "}
               {/* top form fields */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
                 {/* Item Type */}
@@ -770,6 +923,7 @@ export default function GlobalItemModal({
                   </div>
                 </div>
               </div>
+
               {/* description fills remaining space */}
               <div className="mt-2 flex-1 min-h-0 flex flex-col">
                 <label className="block font-medium text-primary mb-0.5">
@@ -785,31 +939,7 @@ export default function GlobalItemModal({
           )}
         </div>
 
-        {/* Worn / Consumable (only on Custom tab) */}
-        {/* {tab === "custom" && (
-          <div className="flex items-center space-x-4 mt-2">
-            <label className="inline-flex items-center text-primary">
-              <input
-                type="checkbox"
-                checked={worn}
-                onChange={(e) => setWorn(e.target.checked)}
-                className="mr-1 sm:mr-2"
-              />
-              Worn
-            </label>
-            <label className="inline-flex items-center text-primary">
-              <input
-                type="checkbox"
-                checked={consumable}
-                onChange={(e) => setConsumable(e.target.checked)}
-                className="mr-1 sm:mr-2"
-              />
-              Consumable
-            </label>
-          </div>
-        )} */}
-
-        {/* Actions + merchant note */}
+        {/* Actions + merchant note (CUSTOM ONLY) */}
         {tab === "custom" && (
           <div className="mt-3 flex items-center gap-2">
             {affProduct && (
@@ -832,6 +962,7 @@ export default function GlobalItemModal({
               >
                 {t("actions.cancel")}
               </button>
+
               <button
                 type="submit"
                 disabled={loading}
@@ -842,6 +973,32 @@ export default function GlobalItemModal({
             </div>
           </div>
         )}
+
+        <AddItemRequestModal
+          isOpen={requestOpen}
+          onClose={() => setRequestOpen(false)}
+          onSend={async (payload) => {
+            try {
+              await api.post("/support/catalog-item-requests", payload);
+
+              // ✅ only show success (no "sending" toast)
+              toast.success(t("catalogRequest.toasts.sent"));
+
+              setRequestOpen(false);
+            } catch (err) {
+              console.error("Request send failed:", err);
+
+              // ✅ only show error (no "sending" toast)
+              toast.error(
+                err?.response?.data?.message ||
+                  err?.message ||
+                  t("catalogRequest.toasts.failed"),
+              );
+
+              throw err; // keep this so AddItemRequestModal re-enables the button
+            }
+          }}
+        />
       </form>
     </div>
   );

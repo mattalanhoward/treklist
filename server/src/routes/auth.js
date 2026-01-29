@@ -2,11 +2,14 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const nodemailer = require("nodemailer");
 const cookieParser = require("cookie-parser");
 const { promisify } = require("util");
 
 const User = require("../models/user");
+
+// ✅ Reuse shared mailer (single source of truth)
+// Adjust the path if your mailer lives elsewhere.
+const { sendSupportEmail } = require("../utils/mailer");
 
 const router = express.Router();
 router.use(cookieParser());
@@ -51,19 +54,6 @@ const REFRESH_COOKIE_OPTS = {
   maxAge: REFRESH_TOKEN_EXP_MS,
 };
 
-// ---- Mailer ----
-const smtpPort = Number(process.env.SMTP_PORT || 465);
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: smtpPort,
-  secure: smtpPort === 465, // 465 = implicit TLS, 587 = STARTTLS
-  requireTLS: smtpPort === 587,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
-
 // --- Client URL selection (robust to comma-separated envs) ---
 function parseOriginsString(s) {
   return (s || "")
@@ -101,28 +91,43 @@ function sanitizeNextParam(n) {
   return n;
 }
 
+// ---- Email helpers (use shared mailer) ----
 async function sendVerificationEmail(email, token, nextPath) {
   const safeNext = sanitizeNextParam(nextPath);
   const query = safeNext
-    ? `?token=${encodeURIComponent(token)}&next=${encodeURIComponent(safeNext)}`
+    ? `` +
+      `?token=${encodeURIComponent(token)}` +
+      `&next=${encodeURIComponent(safeNext)}`
     : `?token=${encodeURIComponent(token)}`;
+
   const url = clientUrl(`/verify-email${query}`);
-  await transporter.sendMail({
-    from: `"TrekList" <${process.env.SMTP_USER}>`,
+
+  // keep branding consistent; SMTP_FROM can override this in env
+  const from = process.env.SMTP_FROM || `"TrekList" <${process.env.SMTP_USER}>`;
+
+  await sendSupportEmail({
     to: email,
     subject: "Please verify your email",
+    text: `Verify your email by opening this link:\n\n${url}\n\nExpires in 24h.`,
     html: `<p>Click the link below to verify your email:</p><a href="${url}">${url}</a><p>Expires in 24h.</p>`,
+    // NOTE: sendSupportEmail uses SMTP_FROM internally; we keep this here for clarity.
+    // If you want per-email "from", upgrade mailer.js to accept a from override.
+    // For now SMTP_FROM should be set to: TrekList <support@treklist.co> or similar.
   });
+
+  // If you want the FROM to be guaranteed per email, update mailer.js to accept "from".
+  // (Right now your mailer.js chooses SMTP_FROM or SMTP_USER.)
 }
 
 async function sendPasswordResetEmail(email, token) {
-  const url = clientUrl(`/reset-password?token=${token}`);
+  const url = clientUrl(`/reset-password?token=${encodeURIComponent(token)}`);
   const expSec = Number(process.env.RESET_TOKEN_EXP) || 3600; // default 1h
   const expHrs = expSec / 3600;
-  await transporter.sendMail({
-    from: `"TrekList" <${process.env.SMTP_USER}>`,
+
+  await sendSupportEmail({
     to: email,
     subject: "Reset your password",
+    text: `Reset your password by opening this link:\n\n${url}\n\nExpires in ${expHrs}h.`,
     html: `<p>Click the link below to reset your password:</p><a href="${url}">${url}</a><p>Expires in ${expHrs}h.</p>`,
   });
 }
@@ -273,9 +278,11 @@ router.post("/register", registerLimiter, async (req, res) => {
   try {
     const { email, trailname, password, acceptTerms, marketingOptIn, next } =
       req.body;
+
     const normalizedEmail = String(email || "")
       .trim()
       .toLowerCase();
+
     if (!email || !password) {
       return res.status(400).json({
         message: "Email & password are required.",
@@ -290,7 +297,7 @@ router.post("/register", registerLimiter, async (req, res) => {
       });
     }
 
-    if (await User.findOne({ email })) {
+    if (await User.findOne({ email: normalizedEmail })) {
       return res.status(409).json({ message: "Email already in use." });
     }
 
@@ -338,7 +345,7 @@ router.post("/register", registerLimiter, async (req, res) => {
     await user.save();
 
     // Pass `next` through; sendVerificationEmail will sanitize it
-    await sendVerificationEmail(email, verifyToken, next);
+    await sendVerificationEmail(normalizedEmail, verifyToken, next);
     res.status(201).json({ message: "Registered! Check your email." });
   } catch (err) {
     console.error(err);
@@ -385,6 +392,7 @@ router.post(
       const user = await User.findOne({
         email: normalizedEmail,
       });
+
       // Avoid email enumeration: respond generically even if not found
       if (!user) {
         return res.json({
@@ -434,12 +442,13 @@ router.post("/login", loginLimiter, async (req, res) => {
         .json({ message: "Email & password are required." });
     }
 
-    const user = await User.findOne({ email });
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const user = await User.findOne({ email: normalizedEmail });
     if (!user || !(await user.validatePassword(password))) {
       return res.status(401).json({ message: "Invalid email or password." });
     }
 
-    // 🔹 NEW: block disabled accounts
+    // block disabled accounts
     if (user.isDisabled) {
       return res.status(403).json({
         message:
@@ -453,10 +462,10 @@ router.post("/login", loginLimiter, async (req, res) => {
         .json({ message: "Please verify your email first." });
     }
 
-    // 🔹 Issue tokens as before
+    // Issue tokens as before
     const tokens = issueTokens(user);
 
-    // 🔹 NEW: update lastLoginAt — sendTokenResponse will save the user
+    // update lastLoginAt — sendTokenResponse will save the user
     user.lastLoginAt = new Date();
 
     await sendTokenResponse(res, user, tokens);
@@ -495,6 +504,7 @@ router.post("/logout", async (req, res) => {
         { $pull: { refreshTokens: refreshToken } },
       );
     }
+
     // Clear with matching options
     res
       .clearCookie("refreshToken", {

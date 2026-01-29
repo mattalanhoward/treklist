@@ -421,6 +421,14 @@
     },
     "importTab": {
       "searchPlaceholder": "Search catalog…",
+      "footer": {
+        "catalogUpdatesDaily": "Catalog updates daily.",
+        "requestItemCta": "Request an item"
+      },
+      "mobileHint": {
+        "title": "Don't see what you're looking for?",
+        "cta": "Request an item"
+      },
       "filters": {
         "allCategories": "All categories",
         "allSubcategories": "All subcategories",
@@ -885,5 +893,19 @@
       "primary": "Start your free gear list",
       "secondary": "Preview an example list"
     }
+  },
+  "catalogRequest": {
+    "title": "Add Item Request",
+    "fields": {
+      "name": { "label": "Name", "placeholder": "e.g., Osprey Exos 48" },
+      "brand": { "label": "Brand", "placeholder": "e.g., Osprey" },
+      "link": {
+        "label": "Link (Optional)",
+        "placeholder": "Paste a product link (optional)"
+      }
+    },
+    "states": { "sending": "Sending…" },
+    "buttons": { "send": "Send", "sending": "Sending…" },
+    "toasts": { "sent": "Request sent!", "failed": "Failed to send request." }
   }
 }
