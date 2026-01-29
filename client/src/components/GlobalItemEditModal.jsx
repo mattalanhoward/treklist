@@ -413,11 +413,11 @@ export default function GlobalItemEditModal({
       }
 
       if (updatedSomething) {
-        toast.success(
-          isListContext && touchedGlobal
-            ? t("globalItemEditModal.toast.updatedEverywhere")
-            : t("globalItemEditModal.toast.updated"),
-        );
+        // toast.success(
+        //   isListContext && touchedGlobal
+        //     ? t("globalItemEditModal.toast.updatedEverywhere")
+        //     : t("globalItemEditModal.toast.updated"),
+        // );
         onSaved?.();
         onClose?.();
       }
