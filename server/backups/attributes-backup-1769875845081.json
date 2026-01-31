@@ -1,0 +1,3184 @@
+[
+  {
+    "_id": "695451150ae7ad8d1ba159a8",
+    "name": "Sirrus 24 Pack - Women's",
+    "brand": "Osprey",
+    "category": "Backpacks & Bags",
+    "subcategory": "Day Packs & Accessories",
+    "itemType": "Daypack",
+    "weightGrams": 1239,
+    "dimensions": {
+      "length": 24,
+      "width": 34,
+      "height": 55,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Capacity (L)": "24",
+      "Raincover Included": "No",
+      "Reservoir Compatible": "Yes",
+      "Adjustable Torso Length": "Yes",
+      "Material(s)": "100-denier high-tenacity recycled ripstop nylon/400-denier high-tenacity recycled nylon",
+      "Gender / Fit": "Women"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06c3",
+    "name": "Men's Give-N-Go 2.0 6\" Boxer Brief",
+    "brand": "ExOfficio",
+    "category": "Men's Clothing",
+    "subcategory": "Underwear",
+    "itemType": "Boxer Briefs",
+    "weightGrams": 50,
+    "attributes": {
+      "Inseam": "6\"",
+      "Fabric": "89% nylon / 11% elastane",
+      "Breathability": "High breathability",
+      "Care": "Machine wash"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06c5",
+    "name": "Trek 700 Pot Titanium",
+    "brand": "Snowpeak",
+    "category": "Kitchen & Cooking",
+    "subcategory": "Cookware",
+    "itemType": "Backpacking Pot (Titanium)",
+    "weightGrams": 136,
+    "dimensions": {
+      "length": 10.7,
+      "width": 10.7,
+      "height": 11.2,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Material": "Titanium (Japanese titanium)",
+      "Capacity": "700ml",
+      "Pieces / features": "2-piece set; compact nesting design; folding handle"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06c6",
+    "name": "Titanium Long Handle Spoon (Polished Bowl)",
+    "brand": "Toaks",
+    "category": "Kitchen & Cooking",
+    "subcategory": "Utensils",
+    "itemType": "Spoon (Long Handle, Titanium)",
+    "weightGrams": 18,
+    "dimensions": {
+      "length": 23,
+      "width": 3.8,
+      "height": 0.2,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Material / finish": "Pure titanium; polished bowl + matte handle",
+      "Care": "Dishwasher safe"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06c7",
+    "name": "Knit Cuffed Beanie",
+    "brand": "Carhartt",
+    "category": "Unisex Clothing",
+    "subcategory": "Headwear",
+    "itemType": "Beanie",
+    "attributes": {
+      "Material": "100% acrylic",
+      "Fit": "Stretch / one size",
+      "Care": "Machine wash",
+      "Gender": "Unisex"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06c8",
+    "name": "N2X Relaxed Taper",
+    "brand": "Deur",
+    "category": "Men's Clothing",
+    "subcategory": "Pants",
+    "itemType": "Pants",
+    "attributes": {
+      "Style / Fit": "Relaxed through the thigh, tapered at the ankle",
+      "Fabric": "62% cotton / 34% TENCEL Lyocell / 3% LYCRA T400 polyester / 1% LYCRA spandex",
+      "Stretch": "High-stretch “No Sweat” fabric",
+      "Breathability": "Breathable + moisture-wicking",
+      "Care": "Machine wash"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06c9",
+    "name": "NeoAir Xlite NXT - R",
+    "brand": "Therm-a-Rest",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Pads",
+    "itemType": "Inflatable Sleeping Pad",
+    "weightGrams": 370,
+    "dimensions": {
+      "length": 183,
+      "width": 51,
+      "height": 7.6,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Variant": "Regular",
+      "Style": "Mummy",
+      "R-Value": "4.5",
+      "Valve": "WingLock valve (quick inflation/deflation)",
+      "Included components": "Pump sack, stuff sack, repair/patch kit",
+      "Material": "Nylon, Polyurethane (PU)"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06cc",
+    "name": "Merino 250 Bottoms",
+    "brand": "Smartwool",
+    "category": "Men's Clothing",
+    "subcategory": "Base Layers",
+    "itemType": "Long Underwear",
+    "weightGrams": 249,
+    "attributes": {
+      "Fabric": "Merino Wool",
+      "Weight": "Midweight",
+      "Moisture Wicking": "Yes",
+      "Gender": "Men"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06cf",
+    "name": "PowerCore Essential 20k",
+    "brand": "Anker",
+    "category": "Electronics & Power",
+    "subcategory": "Charging & Power Banks",
+    "itemType": "Portable Power Bank",
+    "weightGrams": 349,
+    "dimensions": {
+      "length": 15.8,
+      "width": 7.4,
+      "height": 1.9,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Capacity": "20,000 mAh",
+      "Charging": "5V / 3A high-speed; PowerIQ; two-way USB-C",
+      "Ports / connectors": "1× USB-C (two-way), 2× USB-A; Micro-USB input",
+      "Full recharge": "8 hours 45 mins"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06d0",
+    "name": "Alpine Carbon Cork Hiking Poles",
+    "brand": "Black Diamond",
+    "category": "Accessories & Tools",
+    "subcategory": "Trekking Poles",
+    "itemType": "Trekking Poles (Carbon Fiber)",
+    "weightGrams": 624,
+    "attributes": {
+      "Extended Length": "130 Centimeters",
+      "Folded Size": "61 cm",
+      "Shaft Material": "Carbon Fiber",
+      "Handle Material": "Cork",
+      "Lock Type": "Flick-lock",
+      "Item Weight": "624g (Pair)"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06d1",
+    "name": "Micro Crew Lightweight Cushion",
+    "brand": "Darn Tough",
+    "category": "Men's Clothing",
+    "subcategory": "Socks",
+    "itemType": "Hiking socks",
+    "weightGrams": 68,
+    "attributes": {
+      "Weight": "Lightweight",
+      "Height": "Micro Crew",
+      "Cushion": "Medium",
+      "Fabric": "47% Merino Wool, 48% Nylon, 5% Lycra",
+      "Gender": "Men's"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06d5",
+    "name": "Alta Via 1 Trekking in the Dolomites",
+    "brand": "Cicerone Trekking Guides",
+    "category": "Navigation & Planning",
+    "subcategory": "Guidebooks & Maps",
+    "itemType": "Trail Guidebook (Book)",
+    "weightGrams": 183,
+    "dimensions": {
+      "length": 11.4,
+      "width": 1,
+      "height": 17.1,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Trail / region": "Alta Via 1, Dolomites (Italy)",
+      "Maps included": "Separate 1:25,000 map booklet + guide maps",
+      "Route length": "115 km total (typical 11 stages)",
+      "Format / language": "Paperback, English",
+      "Pages": "192",
+      "Author": "Gillian Price"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06d6",
+    "name": "Wall Charger Double USB C",
+    "brand": "Apple",
+    "category": "Electronics & Power",
+    "subcategory": "Charging & Power Banks",
+    "itemType": "Wall Charger",
+    "weightGrams": 127,
+    "dimensions": {
+      "length": 3.8,
+      "width": 1.3,
+      "height": 3.8,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Power rating": "35W",
+      "Ports": "2× USB-C",
+      "Simultaneous charging": "Yes (2 devices)",
+      "Fast charging": "Yes"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06d7",
+    "name": "Longitude",
+    "brand": "Johnny Fly",
+    "category": "Unisex Clothing",
+    "subcategory": "Accessories",
+    "itemType": "Sunglasses",
+    "weightGrams": 113,
+    "dimensions": {
+      "length": 14.5,
+      "width": 13.9,
+      "height": 4.1,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Lens": "Nylon polarized, UV400 protection",
+      "Front frame": "Acetate",
+      "Temples (arms)": "Layered wood",
+      "Hinges": "Medical-grade spring hinges",
+      "Ear tips": "Adjustable acetate eartips"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06d9",
+    "name": "Cash",
+    "brand": "Euro",
+    "category": "Travel",
+    "subcategory": "Wallet",
+    "itemType": "Cash",
+    "weightGrams": 0,
+    "attributes": {}
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06dc",
+    "name": "Classic Clog",
+    "brand": "Crocs",
+    "category": "Unisex Clothing",
+    "subcategory": "Footwear",
+    "itemType": "Camp & Hut Shoes",
+    "weightGrams": 400,
+    "attributes": {
+      "Style": "Slip-on clog",
+      "Closure": "Pivoting heel strap",
+      "Water": "Water-friendly, quick-drying",
+      "Material": "Ethylene Vinyl Acetate"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06e1",
+    "name": "The Roo Hip Pack (1.5L)",
+    "brand": "Atom Packs",
+    "category": "Backpacks & Bags",
+    "subcategory": "Day Packs & Accessories",
+    "itemType": "Hip Pack / Bum Bag",
+    "weightGrams": 96,
+    "dimensions": {
+      "length": 20,
+      "width": 6,
+      "height": 13,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Capacity": "1.5 L",
+      "Materials": "Mixed fabrics (mostly EPX200 / VX21); YKK Aquaguard zip",
+      "Waist fit": "Adjustable up to 120 cm",
+      "Storage": "Stretch front pocket + internal sleeve + key hook",
+      "Weather": "Water-resistant"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06e3",
+    "name": "Deuce of Spades #2",
+    "brand": "TheTentLab",
+    "category": "Health & Hygiene",
+    "subcategory": "Toilet",
+    "itemType": "Trowel",
+    "weightGrams": 17,
+    "dimensions": {
+      "length": 19.6,
+      "width": 6.6,
+      "height": 1.9,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Material": "7075-T6 aluminum (aerospace-grade); anodized finish",
+      "Color": "Fire!"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06e7",
+    "name": "Men's SILVER 2N1 7IN SHORT",
+    "brand": "ASICS",
+    "category": "Men's Clothing",
+    "subcategory": "Shorts",
+    "itemType": "Running Shorts 7\"",
+    "weightGrams": 181,
+    "dimensions": {
+      "length": 24.5,
+      "width": 25.9,
+      "height": 1.3,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Inseam": "7\"",
+      "Style / Fit": "2-in-1 short with inner sprinter liner (light compression)",
+      "Fabric features": "Light stretch woven; quick-dry"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06e8",
+    "name": "Merino 250 LS Top",
+    "brand": "Smartwool",
+    "category": "Men's Clothing",
+    "subcategory": "Base Layers",
+    "itemType": "LS Top",
+    "weightGrams": 303,
+    "attributes": {
+      "Fabric": "Merino Wool",
+      "Weight": "Midweight",
+      "Moisture Wicking": "Yes",
+      "Sleeve Length": "Long",
+      "Gender": "Men"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06e9",
+    "name": "Merino 150 LS Top",
+    "brand": "Smartwool",
+    "category": "Men's Clothing",
+    "subcategory": "Base Layers",
+    "itemType": "LS Top",
+    "weightGrams": 208,
+    "attributes": {
+      "Fabric": "Merino Wool",
+      "Weight": "Lightweight",
+      "Moisture Wicking": "Yes",
+      "Sleeve Length": "Long",
+      "Gender": "Men"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06ea",
+    "name": "Merino 120 SS Top",
+    "brand": "Smartwool",
+    "category": "Men's Clothing",
+    "subcategory": "Base Layers",
+    "itemType": "T-Shirt",
+    "weightGrams": 207,
+    "attributes": {
+      "Moisture Wicking": "Yes",
+      "Weight": "Lightweight 120",
+      "Fabric": "88% merino wool/12% nylon",
+      "Sleeve Length": "Short",
+      "Gender": "Men"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06eb",
+    "name": "GripTight ONE",
+    "brand": "Joby",
+    "category": "Electronics & Power",
+    "subcategory": "Photo & Video",
+    "itemType": "Smartphone Tripod + Phone Mount",
+    "weightGrams": 71,
+    "dimensions": {
+      "length": 23,
+      "width": 13,
+      "height": 4,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Compatibility": "Most smartphones (with or without a case)",
+      "Clamp Type": "Spring-loaded (quick grip/release)",
+      "Tripod Legs": "Flexible GorillaPod legs",
+      "Head": "Rotating ball head",
+      "Form Factor": "Compact / foldable"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06ec",
+    "name": "Wildcat Trail Running Shoes",
+    "brand": "La Sportiva",
+    "category": "Men's Clothing",
+    "subcategory": "Footwear",
+    "itemType": "Trail Runners",
+    "weightGrams": 709,
+    "attributes": {
+      "Waterproof": "No",
+      "Closure": "Lace-up",
+      "Upper / lining": "Wear-resistant mesh trail cage; mesh interior",
+      "Outsole": "FriXion AT rubber with Impact Brake System"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06ef",
+    "name": "BIC Mini Lighter",
+    "brand": "Bic",
+    "category": "Accessories & Tools",
+    "subcategory": "Fire",
+    "itemType": "Lighter",
+    "weightGrams": 9,
+    "attributes": {}
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06f0",
+    "name": "Wet Wipes",
+    "brand": "Amazon Basics",
+    "category": "Health & Hygiene",
+    "subcategory": "Toilet",
+    "itemType": "Wet Wipes",
+    "weightGrams": 57,
+    "attributes": {}
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06f1",
+    "name": "Toilet Paper",
+    "brand": "Charmin",
+    "category": "Health & Hygiene",
+    "subcategory": "Toilet",
+    "itemType": "Toilet Paper",
+    "weightGrams": 57,
+    "attributes": {}
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06f2",
+    "name": "Water Bottles - 1 Liter",
+    "brand": "Smart Water",
+    "category": "Hydration",
+    "subcategory": "Water Bottles",
+    "itemType": "Water Bottle (single use)",
+    "weightGrams": 34,
+    "attributes": {
+      "Capacity": "1 Liter",
+      "Empty Weight": "34g",
+      "Full Weight": "1034g"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06f5",
+    "name": "Aeros Premium Inflatable Travel Pillow — Regular",
+    "brand": "Sea to Summit",
+    "category": "Sleep System",
+    "subcategory": "Pillows",
+    "itemType": "Inflatable Camping/Travel Pillow",
+    "weightGrams": 77,
+    "dimensions": {
+      "length": 34,
+      "width": 23.9,
+      "height": 10.9,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Material": "50D polyester",
+      "Valve Type": "Multi-function mini valve"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06f7",
+    "name": "Always Summer 40°",
+    "brand": "Marmot",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Bags",
+    "itemType": "Sleeping Bag (Down)",
+    "weightGrams": 595,
+    "attributes": {
+      "Temperature rating": "40°F (4°C)",
+      "Fill": "650 fill-power down (Down Defender)",
+      "Shape": "Mummy",
+      "Zippers": "Dual side zippers + footbox zipper",
+      "PFAS-Free": "Yes"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06f8",
+    "name": "Earplugs",
+    "brand": "Peace&Quiet",
+    "category": "Health & Hygiene",
+    "subcategory": "Personal Care",
+    "itemType": "Earplugs (silicone)",
+    "weightGrams": 32,
+    "dimensions": {
+      "length": 10.4,
+      "width": 3.9,
+      "height": 1.9,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Material": "Moldable wax-gel",
+      "Noise reduction": "Up to 32 dB",
+      "Fit": "Moldable; good for side sleepers;",
+      "Pack / uses": "6 pillows (can be split for more uses)"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06f9",
+    "name": "Silk Blend Sleeping Bag Liner",
+    "brand": "Sea to Summit",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Bag Accessories",
+    "itemType": "Sleeping Bag Liner",
+    "weightGrams": 156,
+    "dimensions": {
+      "length": 225,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Material": "Thermolite",
+      "Shape": "Rectangular",
+      "Pillow Sleeve": "Yes",
+      "Weight": "5.5 oz (156g)"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06fa",
+    "name": "Multi Towel Mini",
+    "brand": "REI",
+    "category": "Health & Hygiene",
+    "subcategory": "Personal Care",
+    "itemType": "Pack Towel",
+    "weightGrams": 17,
+    "dimensions": {
+      "length": 39.4,
+      "width": 39.4,
+      "unit": "cm",
+      "note": "Flat"
+    },
+    "attributes": {
+      "Material": "70% recycled polyester / 15% polyester / 15% nylon",
+      "Quick-drying": "Yes",
+      "Odor control": "Antimicrobial treatment (bluesign-approved)",
+      "Carry / attachment": "Carry pouch + mini carabiner; hang loop",
+      "Best use": "Hiking / Backpacking / Camping / Rifugios"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06fb",
+    "name": "Standard Pillow Case",
+    "brand": "Amazon Basics",
+    "category": "Sleep System",
+    "subcategory": "Pillows",
+    "itemType": "Pillow Case",
+    "weightGrams": 116,
+    "dimensions": {
+      "length": 76,
+      "width": 50,
+      "height": 0.5,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Material": "100% polyester microfiber",
+      "Care": "Machine wash warm; no bleach; tumble dry low",
+      "Color": "Dark Gray"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06fd",
+    "name": "Passport",
+    "brand": "Various",
+    "category": "Travel",
+    "subcategory": "Documents",
+    "itemType": "Passport",
+    "weightGrams": 34,
+    "attributes": {}
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06fe",
+    "name": "Debit card",
+    "brand": "Debit",
+    "category": "Travel",
+    "subcategory": "Wallet",
+    "itemType": "Debit Card",
+    "weightGrams": 0,
+    "dimensions": {
+      "length": 8.6,
+      "width": 5.4,
+      "height": 0.1,
+      "unit": "cm"
+    },
+    "attributes": {}
+  },
+  {
+    "_id": "6956837de9f5d8692a3e06ff",
+    "name": "Credit Card",
+    "brand": "Credit",
+    "category": "Travel",
+    "subcategory": "Wallet",
+    "itemType": "Credit Card",
+    "weightGrams": 0,
+    "dimensions": {
+      "length": 8.6,
+      "width": 5.4,
+      "height": 0.1,
+      "unit": "cm"
+    },
+    "attributes": {}
+  },
+  {
+    "_id": "6956837de9f5d8692a3e0700",
+    "name": "Toothpaste",
+    "brand": "Tom's of Maine",
+    "category": "Health & Hygiene",
+    "subcategory": "Personal Care",
+    "itemType": "Toothpaste (travel)",
+    "weightGrams": 41,
+    "dimensions": {
+      "length": 3.8,
+      "width": 3.8,
+      "height": 10.4,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Flavor": "Peppermint",
+      "Fluoride-free": "Yes",
+      "Size": "1 fl oz (29.6 mL)",
+      "Use": "Travel / mini"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e0701",
+    "name": "Toothbrush",
+    "brand": "Jordan",
+    "category": "Health & Hygiene",
+    "subcategory": "Personal Care",
+    "itemType": "Toothbrush",
+    "weightGrams": 11,
+    "dimensions": {
+      "length": 19.1,
+      "width": 1.2,
+      "height": 1.7,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Bristle firmness": "Soft",
+      "Handle material": "100% recycled plastic",
+      "Bristle material": "Bio-based nylon"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e0702",
+    "name": "Ultra Sheer Dry-Touch Sunscreen",
+    "brand": "Neutrogena",
+    "category": "Health & Hygiene",
+    "subcategory": "Personal Care",
+    "itemType": "Sunscreen",
+    "weightGrams": 57,
+    "dimensions": {
+      "length": 7.3,
+      "width": 3.5,
+      "height": 16,
+      "unit": "cm"
+    },
+    "attributes": {
+      "SPF": "55 (Broad Spectrum UVA/UVB)",
+      "Finish / feel": "Dry-touch, lightweight, non-greasy",
+      "Water resistance": "Up to 80 minutes",
+      "Free from (as listed)": "Oxybenzone-free, PABA-free"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e0703",
+    "name": "Castile Soap",
+    "brand": "Dr. Bronner's",
+    "category": "Health & Hygiene",
+    "subcategory": "Personal Care",
+    "itemType": "Liquid Soap (travel)",
+    "weightGrams": 57,
+    "attributes": {
+      "Product Type": "Pure-Castile Liquid Soap",
+      "Size": "2 fl oz (~59 mL)",
+      "Uses": "Face, body, hair, laundry, dishes"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e0704",
+    "name": "Hand Sanitizer Spray - Plant Based",
+    "brand": "Honest",
+    "category": "Health & Hygiene",
+    "subcategory": "Personal Care",
+    "itemType": "Hand Sanitizer",
+    "weightGrams": 57,
+    "dimensions": {
+      "length": 3.4,
+      "width": 3.4,
+      "height": 12.5,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Format": "Spray",
+      "Active ingredient": "Ethyl alcohol 62%",
+      "Scent": "Fragrance-free (Free + Clear)",
+      "Free from": "BZK, parabens, synthetic fragrances"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e0705",
+    "name": "Beeswax Lip Balm",
+    "brand": "Burt's Bees",
+    "category": "Health & Hygiene",
+    "subcategory": "Personal Care",
+    "itemType": "Lip Balm",
+    "weightGrams": 9,
+    "attributes": {
+      "Form / finish": "Balm stick; tint-free; matte finish",
+      "Key ingredients (as listed)": "Beeswax, vitamin E, nourishing oils, peppermint oil",
+      "Size": "~4.3 g (from 0.15 oz)",
+      "Free from (as listed)": "Parabens, phthalates, petrolatum, SLS"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e0706",
+    "name": "Squeeze Water Filtration System",
+    "brand": "Sawyer",
+    "category": "Hydration",
+    "subcategory": "Water Treatment",
+    "itemType": "Water Filter",
+    "weightGrams": 71,
+    "dimensions": {
+      "length": 10.1,
+      "width": 6.4,
+      "height": 19,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Filter Capacity": "100,000 gallons",
+      "Microns": "0.1",
+      "Filtration": "99.999999% bacteria; 99.9999% protozoa; 100% microplastics"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e0707",
+    "name": "Dove Men+Care Roll on Deodorant",
+    "brand": "Dove",
+    "category": "Health & Hygiene",
+    "subcategory": "Men's Personal Care",
+    "itemType": "Deodorant",
+    "weightGrams": 57,
+    "attributes": {
+      "Item Form": "Roll On",
+      "Scent": "clean comfort",
+      "Volume": "50ml (1.69floz"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e0708",
+    "name": "Aero Box Logo",
+    "brand": "Pesu",
+    "category": "Unisex Clothing",
+    "subcategory": "Headwear",
+    "itemType": "Running Hat",
+    "weightGrams": 85,
+    "attributes": {}
+  },
+  {
+    "_id": "6956837de9f5d8692a3e0709",
+    "name": "Levi’s Multi-Purpose Bandana",
+    "brand": "Levi’s",
+    "category": "Unisex Clothing",
+    "subcategory": "Accessories",
+    "itemType": "Bandana",
+    "weightGrams": 34,
+    "dimensions": {
+      "length": 54.6,
+      "width": 54.6,
+      "height": 0.2,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Material": "65% polyester / 35% cotton",
+      "Pattern": "Paisley",
+      "Fit": "Unisex"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e070a",
+    "name": "USB-C to Lightning (1FT)",
+    "brand": "Apple",
+    "category": "Electronics & Power",
+    "subcategory": "Charging & Power Banks",
+    "itemType": "USB-C to Lightning (1FT)",
+    "weightGrams": 14,
+    "attributes": {
+      "Use Cases": "Fast charging; data sync",
+      "Compatibility": "Lightning Devices (iPhones, iPads)"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e070b",
+    "name": "iPhone 14 Pro 256gb",
+    "brand": "Apple",
+    "category": "Electronics & Power",
+    "subcategory": "Phones & GPS",
+    "itemType": "Smartphone",
+    "weightGrams": 206,
+    "dimensions": {
+      "length": 14.8,
+      "width": 7.1,
+      "height": 0.8,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Storage": "256 GB",
+      "Cellular Technology": "5G",
+      "Battery Life": "Up to 23 hours"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e070c",
+    "name": "AAA Batteries",
+    "brand": "Duracell",
+    "category": "Electronics & Power",
+    "subcategory": "Batteries",
+    "itemType": "AAA Alkaline Batteries",
+    "weightGrams": 8,
+    "dimensions": {
+      "length": 11.7,
+      "width": 8.4,
+      "height": 1.3,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Battery type": "AAA, Alkaline",
+      "Storage": "12 years"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e070d",
+    "name": "EU Travel Adapter (Type E/F)",
+    "brand": "Anker",
+    "category": "Electronics & Power",
+    "subcategory": "Charging & Power Banks",
+    "itemType": "Travel Adapter",
+    "weightGrams": 90,
+    "dimensions": {
+      "length": 7.3,
+      "width": 5.4,
+      "height": 5.5,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Input Voltage": "220V",
+      "Plug Type": "E/F",
+      "Countries": "FR, DE, GR, HU, IS, NL, KR, NO, PL, PT, RO, ES, RU"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e070e",
+    "name": "Lightweight Dry Bag",
+    "brand": "Sea to Summit",
+    "category": "Accessories & Tools",
+    "subcategory": "Dry Bags",
+    "itemType": "Dry Bag (3L)",
+    "weightGrams": 34,
+    "dimensions": {
+      "length": 17,
+      "width": 13,
+      "height": 21,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Volume": "3 L",
+      "Closure": "Roll-top (Hypalon)",
+      "Material": "70D nylon"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e070f",
+    "name": "USB C to USB C (1FT)",
+    "brand": "Anker",
+    "category": "Electronics & Power",
+    "subcategory": "Charging & Power Banks",
+    "itemType": "USB-C to USB-C Cable (1FT)",
+    "weightGrams": 14,
+    "dimensions": {
+      "length": 30,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Power Rating": "60W (max)",
+      "Length": "1 ft (0.3 m)",
+      "Use Cases": "Fast charging; data sync",
+      "Compatibility": "USB-C devices (phones, tablets, power banks, chargers)"
+    }
+  },
+  {
+    "_id": "6956837de9f5d8692a3e0710",
+    "name": "Ghost Whisperer",
+    "brand": "Mountain Hardwear",
+    "category": "Men's Clothing",
+    "subcategory": "Jackets",
+    "itemType": "Down Jacket",
+    "weightGrams": 255,
+    "attributes": {
+      "Insulation Type": "Down",
+      "Fill Power": "800",
+      "Fabric": "10-denier ripstop",
+      "Gender": "Men's"
+    }
+  },
+  {
+    "_id": "6957bc250ae7ad8d1ba159e9",
+    "name": "Ghost Whisperer Hoody",
+    "brand": "Mountain Hardwear",
+    "category": "Men's Clothing",
+    "subcategory": "Jackets",
+    "itemType": "Down Jacket - Hoody",
+    "weightGrams": null,
+    "attributes": {
+      "Insulation Type": "Down",
+      "Fill Power": "800",
+      "Fabric": "10-denier ripstop",
+      "Gender": "Men's"
+    }
+  },
+  {
+    "_id": "6952b1d477f0204ff7da393d",
+    "name": "Exos 48 Pack - Men's",
+    "brand": "Osprey",
+    "category": "Backpacks & Bags",
+    "subcategory": "Backpacking Packs",
+    "itemType": "Backpack",
+    "weightGrams": 1294,
+    "dimensions": {
+      "length": 80,
+      "width": 36,
+      "height": 30,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Capacity (L)": "48",
+      "Raincover Included": "No",
+      "Reservoir Compatible": "Yes",
+      "Adjustable Torso Length": "Yes",
+      "Material(s)": "100-denier high-tenacity recycled ripstop nylon/400-denier high-tenacity recycled nylon",
+      "Gender / Fit": "Men"
+    }
+  },
+  {
+    "_id": "6952cd8e77f0204ff7da39a3",
+    "name": "Eja 48 Pack - Women's",
+    "brand": "Osprey",
+    "category": "Backpacks & Bags",
+    "subcategory": "Backpacking Packs",
+    "itemType": "Backpack",
+    "weightGrams": 1207,
+    "dimensions": {
+      "length": 71,
+      "width": 35.5,
+      "height": 30.5,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Capacity (L)": "48",
+      "Raincover Included": "No",
+      "Reservoir Compatible": "Yes",
+      "Adjustable Torso Length": "Yes",
+      "Material(s)": "100-denier high-tenacity recycled ripstop nylon/400-denier high-tenacity recycled nylon",
+      "Gender / Fit": "Women"
+    }
+  },
+  {
+    "_id": "6952d06d77f0204ff7da39d1",
+    "name": "Stratos 24 Pack - Men's",
+    "brand": "Osprey",
+    "category": "Backpacks & Bags",
+    "subcategory": "Day Packs & Accessories",
+    "itemType": "Daypack",
+    "weightGrams": 1259,
+    "dimensions": {
+      "length": 59,
+      "width": 34,
+      "height": 24,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Capacity (L)": "24",
+      "Raincover Included": "Yes",
+      "Gender / Fit": "Men"
+    }
+  },
+  {
+    "_id": "6957df9e0ae7ad8d1ba159f7",
+    "name": "Merino 250 Bottoms",
+    "brand": "Smartwool",
+    "category": "Women's Clothing",
+    "subcategory": "Base Layers",
+    "itemType": "Long Underwear",
+    "weightGrams": null,
+    "attributes": {
+      "Fabric": "Merino Wool",
+      "Weight": "Midweight",
+      "Moisture Wicking": "Yes",
+      "Gender": "Women"
+    }
+  },
+  {
+    "_id": "6957e2260ae7ad8d1ba159f8",
+    "name": "Merino 120 SS Top",
+    "brand": "Smartwool",
+    "category": "Women's Clothing",
+    "subcategory": "Base Layers",
+    "itemType": "T-Shirt",
+    "weightGrams": null,
+    "attributes": {
+      "Moisture Wicking": "Yes",
+      "Weight": "Lightweight 120",
+      "Fabric": "88% merino wool/12% nylon",
+      "Sleeve Length": "Short",
+      "Gender": "Women"
+    }
+  },
+  {
+    "_id": "6957e3360ae7ad8d1ba159f9",
+    "name": "Merino 250 LS Top",
+    "brand": "Smartwool",
+    "category": "Women's Clothing",
+    "subcategory": "Base Layers",
+    "itemType": "LS Top",
+    "weightGrams": null,
+    "attributes": {
+      "Fabric": "Merino Wool",
+      "Weight": "Midweight",
+      "Moisture Wicking": "Yes",
+      "Sleeve Length": "Long",
+      "Gender": "Women"
+    }
+  },
+  {
+    "_id": "6957e51b0ae7ad8d1ba159fa",
+    "name": "Merino 150 LS Top",
+    "brand": "Smartwool",
+    "category": "Women's Clothing",
+    "subcategory": "Base Layers",
+    "itemType": "LS Top",
+    "weightGrams": null,
+    "attributes": {
+      "Fabric": "Merino Wool",
+      "Weight": "Lightweight",
+      "Moisture Wicking": "Yes",
+      "Sleeve Length": "Long",
+      "Gender": "Women"
+    }
+  },
+  {
+    "_id": "695818770ae7ad8d1ba159fe",
+    "name": "Micro Crew Midweight Cushion",
+    "brand": "Darn Tough",
+    "category": "Men's Clothing",
+    "subcategory": "Socks",
+    "itemType": "Hiking socks",
+    "weightGrams": 68,
+    "attributes": {
+      "Weight": "Midweight",
+      "Height": "Micro Crew",
+      "Cushion": "Medium",
+      "Fabric": "61% Merino Wool, 36% Nylon, 3% Lycra",
+      "Gender": "Men's"
+    }
+  },
+  {
+    "_id": "695820260ae7ad8d1ba15a02",
+    "name": "Lightweight Dry Bag",
+    "brand": "Sea to Summit",
+    "category": "Accessories & Tools",
+    "subcategory": "Dry Bags",
+    "itemType": "Dry Bag (5L)",
+    "weightGrams": 50,
+    "dimensions": {
+      "length": 17,
+      "width": 14,
+      "height": 32,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Volume": "5 L",
+      "Closure": "Roll-top (Hypalon)",
+      "Material": "70D nylon"
+    }
+  },
+  {
+    "_id": "6958204d0ae7ad8d1ba15a03",
+    "name": "Lightweight Dry Bag",
+    "brand": "Sea to Summit",
+    "category": "Accessories & Tools",
+    "subcategory": "Dry Bags",
+    "itemType": "Dry Bag (8L)",
+    "weightGrams": 68,
+    "dimensions": {
+      "length": 20,
+      "width": 17,
+      "height": 39,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Volume": "8 L",
+      "Closure": "Roll-top (Hypalon)",
+      "Material": "70D nylon"
+    }
+  },
+  {
+    "_id": "695820670ae7ad8d1ba15a04",
+    "name": "Lightweight Dry Bag",
+    "brand": "Sea to Summit",
+    "category": "Accessories & Tools",
+    "subcategory": "Dry Bags",
+    "itemType": "Dry Bag (13L)",
+    "weightGrams": 82,
+    "dimensions": {
+      "length": 22,
+      "width": 20,
+      "height": 46,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Volume": "13 L",
+      "Closure": "Roll-top (Hypalon)",
+      "Material": "70D nylon"
+    }
+  },
+  {
+    "_id": "695820790ae7ad8d1ba15a05",
+    "name": "Lightweight Dry Bag",
+    "brand": "Sea to Summit",
+    "category": "Accessories & Tools",
+    "subcategory": "Dry Bags",
+    "itemType": "Dry Bag (20L)",
+    "weightGrams": 91,
+    "dimensions": {
+      "length": 27,
+      "width": 23,
+      "height": 48,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Volume": "20 L",
+      "Closure": "Roll-top (Hypalon)",
+      "Material": "70D nylon"
+    }
+  },
+  {
+    "_id": "695e4996232e7ebc80ca0ad2",
+    "name": "Fingerless Glove",
+    "brand": "Fox River",
+    "category": "Men's Clothing",
+    "subcategory": "Hands",
+    "itemType": "Gloves-Fingerless",
+    "weightGrams": 52,
+    "attributes": {
+      "Material": "85% wool, 15% nylon, 2% spandex",
+      "Warmth": "Midweight / medium-insulated knit",
+      "Cuff": "Elastic cuff",
+      "Gender": "Men's",
+      "Care": "Machine wash"
+    }
+  },
+  {
+    "_id": "695f221d0ae7ad8d1ba15a15",
+    "name": "NeoAir Xlite NXT - L",
+    "brand": "Therm-a-Rest",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Pads",
+    "itemType": "Inflatable Sleeping Pad",
+    "weightGrams": 482,
+    "dimensions": {
+      "length": 196,
+      "width": 64,
+      "height": 7.6,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Variant": "Large",
+      "Style": "Mummy",
+      "R-Value": "4.5",
+      "Valve": "WingLock valve (quick inflation/deflation)",
+      "Included components": "Pump sack, stuff sack, repair/patch kit",
+      "Material": "Nylon, Polyurethane (PU)"
+    }
+  },
+  {
+    "_id": "695f22f60ae7ad8d1ba15a16",
+    "name": "NeoAir Xlite NXT - RW",
+    "brand": "Therm-a-Rest",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Pads",
+    "itemType": "Inflatable Sleeping Pad",
+    "weightGrams": 450,
+    "dimensions": {
+      "length": 183,
+      "width": 63,
+      "height": 7.6,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Variant": "Regular Wide",
+      "Style": "Mummy",
+      "R-Value": "4.5",
+      "Valve": "WingLock valve (quick inflation/deflation)",
+      "Included components": "Pump sack, stuff sack, repair/patch kit",
+      "Material": "Nylon, Polyurethane (PU)"
+    }
+  },
+  {
+    "_id": "695f23300ae7ad8d1ba15a17",
+    "name": "NeoAir Xlite NXT - RS",
+    "brand": "Therm-a-Rest",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Pads",
+    "itemType": "Inflatable Sleeping Pad",
+    "weightGrams": 330,
+    "dimensions": {
+      "length": 168,
+      "width": 51,
+      "height": 7.6,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Variant": "Regular Short",
+      "Style": "Mummy",
+      "R-Value": "4.5",
+      "Valve": "WingLock valve (quick inflation/deflation)",
+      "Included components": "Pump sack, stuff sack, repair/patch kit",
+      "Material": "Nylon, Polyurethane (PU)"
+    }
+  },
+  {
+    "_id": "6968d62d4803ccebe4314b0e",
+    "name": "Aeros Premium Inflatable Travel Pillow — Large",
+    "brand": "Sea to Summit",
+    "category": "Sleep System",
+    "subcategory": "Pillows",
+    "itemType": "Inflatable Camping/Travel Pillow",
+    "weightGrams": 113,
+    "dimensions": {
+      "length": 41.9,
+      "width": 27.9,
+      "height": 13,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Material": "50D polyester",
+      "Valve Type": "Multi-function mini valve"
+    }
+  },
+  {
+    "_id": "6968d7564803ccebe4314b0f",
+    "name": "Aeros Premium Inflatable Travel Pillow — Deluxe",
+    "brand": "Sea to Summit",
+    "category": "Sleep System",
+    "subcategory": "Pillows",
+    "itemType": "Inflatable Camping/Travel Pillow",
+    "weightGrams": 77,
+    "dimensions": {
+      "length": 55.9,
+      "width": 35.6,
+      "height": 14,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Material": "50D polyester",
+      "Valve Type": "Multi-function mini valve"
+    }
+  },
+  {
+    "_id": "6969f8df4803ccebe4314b10",
+    "name": "PowerCore Slim 10k",
+    "brand": "Anker",
+    "category": "Electronics & Power",
+    "subcategory": "Charging & Power Banks",
+    "itemType": "Portable Power Bank",
+    "weightGrams": 244,
+    "dimensions": {
+      "length": 15.2,
+      "width": 7.1,
+      "height": 1.5,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Capacity": "10,000 mAh",
+      "Charging": "5V / 3A high-speed; PowerIQ; two-way USB-C",
+      "Ports": "1× USB-C, 1× USB-A",
+      "Full recharge": "5 hours 10 mins"
+    }
+  },
+  {
+    "_id": "6969fc551d02c9b950130ae2",
+    "name": "NB Plus 10,000mAh",
+    "brand": "Nitecore",
+    "category": "Electronics & Power",
+    "subcategory": "Charging & Power Banks",
+    "itemType": "Portable Power Bank",
+    "weightGrams": 155,
+    "dimensions": {
+      "length": 12.2,
+      "width": 6,
+      "height": 1.2,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Capacity": "10,000 mAh",
+      "Charging / Output": "5V / 3A; QC / PD fast charging",
+      "Ports": "1× USB-C, 1× USB-A",
+      "Waterproof": "IPX7"
+    }
+  },
+  {
+    "_id": "6969fca64803ccebe4314b11",
+    "name": "NB Air 5000mAh",
+    "brand": "Nitecore",
+    "category": "Electronics & Power",
+    "subcategory": "Charging & Power Banks",
+    "itemType": "Portable Power Bank",
+    "weightGrams": 89,
+    "dimensions": {
+      "length": 11.2,
+      "width": 4.8,
+      "height": 1,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Capacity": "5,000 mAh",
+      "Ports": "1× USB-C",
+      "Output": "up to 5V / 2.4A",
+      "Waterproof": "IPX7"
+    }
+  },
+  {
+    "_id": "6969ff064803ccebe4314b12",
+    "name": "NB20000",
+    "brand": "Nitecore",
+    "category": "Electronics & Power",
+    "subcategory": "Charging & Power Banks",
+    "itemType": "Portable Power Bank",
+    "weightGrams": 291,
+    "dimensions": {
+      "height": 2.2,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Capacity": "20,000 mAh",
+      "Ports": "2× USB-C (plus USB-C→USB-A adapter for USB-A connections)",
+      "Waterproof": "IPX5"
+    }
+  },
+  {
+    "_id": "696a310e1d02c9b950130c5b",
+    "name": "Airpods Pro 3",
+    "brand": "Apple",
+    "category": "Electronics & Power",
+    "subcategory": "Headphones & Earbuds",
+    "itemType": "Earbuds",
+    "weightGrams": 56,
+    "dimensions": {
+      "length": 2.8,
+      "width": 2,
+      "height": 3,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Fit": "Customizable",
+      "Active Noise Cancellation": "Yes",
+      "Heart Rate Sensor": "Yes",
+      "Battery Life": "8 hours of listening time",
+      "Battery Life with Charging Case": "Up to 24-hours"
+    }
+  },
+  {
+    "_id": "696a33754803ccebe4314b13",
+    "name": "AirPods 4 with Active Noise Cancelling",
+    "brand": "Apple",
+    "category": "Electronics & Power",
+    "subcategory": "Headphones & Earbuds",
+    "itemType": "Earbuds",
+    "weightGrams": 41,
+    "dimensions": {
+      "length": 4.6,
+      "width": 2,
+      "height": 0.8,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Active Noise Cancellation": "Yes",
+      "Heart Rate Sensor": "No",
+      "Battery Life": "5 hours of listening time",
+      "Battery Life with Charging Case": "Up to 30-hours",
+      "Water Resistant": "IP54"
+    }
+  },
+  {
+    "_id": "696a44544803ccebe4314b14",
+    "name": "AirPods 4",
+    "brand": "Apple",
+    "category": "Electronics & Power",
+    "subcategory": "Headphones & Earbuds",
+    "itemType": "Earbuds",
+    "weightGrams": 41,
+    "dimensions": {
+      "length": 4.6,
+      "width": 2,
+      "height": 0.8,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Active Noise Cancellation": "No",
+      "Heart Rate Sensor": "No",
+      "Battery Life": "5 hours of listening time",
+      "Battery Life with Charging Case": "Up to 30-hours",
+      "Water Resistant": "IP54"
+    }
+  },
+  {
+    "_id": "696a49814803ccebe4314b15",
+    "name": "500ml",
+    "brand": "Water",
+    "category": "Hydration",
+    "subcategory": "Water",
+    "itemType": "Water",
+    "weightGrams": 500,
+    "attributes": {
+      "Volume": "500ml"
+    }
+  },
+  {
+    "_id": "696a49a34803ccebe4314b16",
+    "name": "750ml",
+    "brand": "Water",
+    "category": "Hydration",
+    "subcategory": "Water",
+    "itemType": "Water",
+    "weightGrams": 750,
+    "attributes": {
+      "Volume": "750ml"
+    }
+  },
+  {
+    "_id": "696a49dd4803ccebe4314b17",
+    "name": "1000ml",
+    "brand": "Water",
+    "category": "Hydration",
+    "subcategory": "Water",
+    "itemType": "Water",
+    "weightGrams": 1000,
+    "attributes": {
+      "Volume": "1 Liter"
+    }
+  },
+  {
+    "_id": "696a6a774803ccebe4314b1a",
+    "name": "Men's SILVER 2N1 5IN SHORT",
+    "brand": "ASICS",
+    "category": "Men's Clothing",
+    "subcategory": "Shorts",
+    "itemType": "Running Shorts 5\"",
+    "weightGrams": 122,
+    "dimensions": {
+      "length": 24.8,
+      "width": 25.9,
+      "height": 1.3,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Inseam": "5\"",
+      "Style / Fit": "2-in-1 short with inner sprinter liner (light compression)",
+      "Fabric features": "Light stretch woven; quick-dry"
+    }
+  },
+  {
+    "_id": "696b5f8c4803ccebe4314b1b",
+    "name": "Trek 1400 Pot Titanium",
+    "brand": "Snowpeak",
+    "category": "Kitchen & Cooking",
+    "subcategory": "Cookware",
+    "itemType": "Backpacking Pot (Titanium)",
+    "weightGrams": 210,
+    "dimensions": {
+      "length": 14,
+      "width": 14,
+      "height": 11.4,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Material": "Titanium (Japanese titanium)",
+      "Capacity": "1400ml",
+      "Pieces / features": "2-piece set; compact nesting design; folding handle"
+    }
+  },
+  {
+    "_id": "696b62e81d02c9b95013133b",
+    "name": "TOAKS Titanium 750 mL Pot",
+    "brand": "Toaks",
+    "category": "Kitchen & Cooking",
+    "subcategory": "Cookware",
+    "itemType": "Backpacking Pot (Titanium)",
+    "weightGrams": 102,
+    "dimensions": {
+      "length": 9.5,
+      "width": 9.5,
+      "height": 11,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Material / finish": "Pure titanium; uncoated",
+      "Capacity": "750 mL usable (760 mL to rim)",
+      "Weight": "~85 g pot-only"
+    }
+  },
+  {
+    "_id": "696b66614803ccebe4314b1c",
+    "name": "TOAKS Titanium 375 mL Pot",
+    "brand": "Toaks",
+    "category": "Kitchen & Cooking",
+    "subcategory": "Cookware",
+    "itemType": "Backpacking Pot (Titanium)",
+    "weightGrams": 62,
+    "dimensions": {
+      "length": 8.9,
+      "width": 8.9,
+      "height": 7.6,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Material / finish": "Pure titanium; uncoated",
+      "Capacity": "375 mL usable",
+      "Weight": "~62 g pot-only"
+    }
+  },
+  {
+    "_id": "696b66df4803ccebe4314b1d",
+    "name": "TOAKS Titanium 450 mL Pot",
+    "brand": "Toaks",
+    "category": "Kitchen & Cooking",
+    "subcategory": "Cookware",
+    "itemType": "Backpacking Pot (Titanium)",
+    "weightGrams": 77,
+    "dimensions": {
+      "length": 8.9,
+      "width": 8.9,
+      "height": 8.9,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Material / finish": "Pure titanium; uncoated",
+      "Capacity": "450 mL usable",
+      "Weight": "~77 g pot-only"
+    }
+  },
+  {
+    "_id": "696b67394803ccebe4314b1e",
+    "name": "TOAKS Titanium 550 mL Pot",
+    "brand": "Toaks",
+    "category": "Kitchen & Cooking",
+    "subcategory": "Cookware",
+    "itemType": "Backpacking Pot (Titanium)",
+    "weightGrams": 74,
+    "dimensions": {
+      "length": 9.5,
+      "width": 9.5,
+      "height": 7.9,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Material / finish": "Pure titanium; uncoated",
+      "Capacity": "550 mL usable",
+      "Weight": "~54 g pot-only"
+    }
+  },
+  {
+    "_id": "696b67ae4803ccebe4314b1f",
+    "name": "TOAKS Titanium 650 mL Pot",
+    "brand": "Toaks",
+    "category": "Kitchen & Cooking",
+    "subcategory": "Cookware",
+    "itemType": "Backpacking Pot (Titanium)",
+    "weightGrams": 79,
+    "dimensions": {
+      "length": 9.5,
+      "width": 9.5,
+      "height": 9.5,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Material / finish": "Pure titanium; uncoated",
+      "Capacity": "650 mL usable",
+      "Weight": "~60 g pot-only"
+    }
+  },
+  {
+    "_id": "696b68124803ccebe4314b20",
+    "name": "TOAKS Titanium 700 mL (Wide) Pot",
+    "brand": "Toaks",
+    "category": "Kitchen & Cooking",
+    "subcategory": "Cookware",
+    "itemType": "Backpacking Pot (Titanium)",
+    "weightGrams": 91,
+    "dimensions": {
+      "length": 7,
+      "width": 11.4,
+      "height": 7,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Material / finish": "Pure titanium; uncoated",
+      "Capacity": "700 mL usable",
+      "Weight": "~65 g pot-only"
+    }
+  },
+  {
+    "_id": "696b68684803ccebe4314b21",
+    "name": "TOAKS Titanium 750 mL Pot with Bail Handle",
+    "brand": "Toaks",
+    "category": "Kitchen & Cooking",
+    "subcategory": "Cookware",
+    "itemType": "Backpacking Pot (Titanium)",
+    "weightGrams": 111,
+    "dimensions": {
+      "length": 9.5,
+      "width": 9.5,
+      "height": 11,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Material / finish": "Pure titanium; uncoated",
+      "Capacity": "750 mL usable (760 mL to rim)",
+      "Weight": "~85 g pot-only"
+    }
+  },
+  {
+    "_id": "696b6a434803ccebe4314b23",
+    "name": "TOAKS Titanium 900 mL Pot (Tall)",
+    "brand": "Toaks",
+    "category": "Kitchen & Cooking",
+    "subcategory": "Cookware",
+    "itemType": "Backpacking Pot (Titanium)",
+    "weightGrams": 125,
+    "dimensions": {
+      "length": 11.5,
+      "width": 11.5,
+      "height": 9.2,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Material / finish": "Pure titanium; uncoated",
+      "Capacity": "900 mL",
+      "Weight": "~108 g pot-only",
+      "Shape": "Tall"
+    }
+  },
+  {
+    "_id": "696b6a434803ccebe4314b24",
+    "name": "TOAKS Titanium 900 mL Pot (Wide)",
+    "brand": "Toaks",
+    "category": "Kitchen & Cooking",
+    "subcategory": "Cookware",
+    "itemType": "Backpacking Pot (Titanium)",
+    "weightGrams": 105,
+    "dimensions": {
+      "length": 13,
+      "width": 13,
+      "height": 6.7,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Material / finish": "Pure titanium; uncoated",
+      "Capacity": "900 mL",
+      "Weight": "~77 g pot-only",
+      "Shape": "Wide"
+    }
+  },
+  {
+    "_id": "696b6a434803ccebe4314b25",
+    "name": "TOAKS Titanium 1100 mL Pot",
+    "brand": "Toaks",
+    "category": "Kitchen & Cooking",
+    "subcategory": "Cookware",
+    "itemType": "Backpacking Pot (Titanium)",
+    "weightGrams": 136,
+    "dimensions": {
+      "length": 11.4,
+      "width": 11.4,
+      "height": 11.1,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Material / finish": "Pure titanium; uncoated",
+      "Capacity": "1100 mL",
+      "Weight": "~116 g pot-only"
+    }
+  },
+  {
+    "_id": "696b6a434803ccebe4314b26",
+    "name": "TOAKS Titanium 1300 mL Pot",
+    "brand": "Toaks",
+    "category": "Kitchen & Cooking",
+    "subcategory": "Cookware",
+    "itemType": "Backpacking Pot (Titanium)",
+    "weightGrams": 130,
+    "dimensions": {
+      "length": 13,
+      "width": 13,
+      "height": 9.8,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Material / finish": "Pure titanium; uncoated",
+      "Capacity": "1300 mL",
+      "Weight": "~111 g pot-only"
+    }
+  },
+  {
+    "_id": "696b6a434803ccebe4314b27",
+    "name": "TOAKS Titanium 1600 mL Pot",
+    "brand": "Toaks",
+    "category": "Kitchen & Cooking",
+    "subcategory": "Cookware",
+    "itemType": "Backpacking Pot (Titanium)",
+    "weightGrams": 196,
+    "dimensions": {
+      "length": 14.6,
+      "width": 14.6,
+      "height": 10.5,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Material / finish": "Pure titanium; uncoated",
+      "Capacity": "1600 mL",
+      "Weight": "~159 g pot-only"
+    }
+  },
+  {
+    "_id": "696bab841d02c9b950131501",
+    "name": "Distance Z Trekking/Running Poles",
+    "brand": "Black Diamond",
+    "category": "Accessories & Tools",
+    "subcategory": "Trekking Poles",
+    "itemType": "Trekking Poles (Carbon Fiber)",
+    "weightGrams": 520,
+    "attributes": {
+      "Extended Length": "Varies",
+      "Folded Size": "Varies",
+      "Shaft Material": "Carbon Fiber",
+      "Handle Material": "Ethylene Vinyl Acetate",
+      "Lock Type": "Flick-lock"
+    }
+  },
+  {
+    "_id": "696bac594803ccebe4314b28",
+    "name": "Distance Z Trekking/Running Poles",
+    "brand": "Black Diamond",
+    "category": "Accessories & Tools",
+    "subcategory": "Trekking Poles",
+    "itemType": "Trekking Poles (Aluminum)",
+    "weightGrams": 660,
+    "attributes": {
+      "Extended Length": "Varies",
+      "Folded Size": "Varies",
+      "Shaft Material": "Aluminum",
+      "Handle Material": "Ethylene Vinyl Acetate",
+      "Lock Type": "Flick-lock"
+    }
+  },
+  {
+    "_id": "696baf204803ccebe4314b29",
+    "name": "Titanium Long Handle Spoon",
+    "brand": "Toaks",
+    "category": "Kitchen & Cooking",
+    "subcategory": "Utensils",
+    "itemType": "Spoon (Long Handle, Titanium)",
+    "weightGrams": 19,
+    "dimensions": {
+      "length": 23,
+      "width": 3.8,
+      "height": 0.2,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Material / finish": "Pure titanium",
+      "Care": "Dishwasher safe"
+    }
+  },
+  {
+    "_id": "696bde4e4803ccebe4314b2a",
+    "name": "Zpacks Classic Sleeping Bag 30°F (-1°C) — Slim Short",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Bags",
+    "itemType": "Sleeping Bag (Down)",
+    "weightGrams": 347,
+    "dimensions": {
+      "length": 173,
+      "width": 140,
+      "height": 5.08,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "30°F (-1°C)",
+      "Fit (girth)": "Fits up to 127 cm",
+      "Shoulder/Hip/Foot girth": "140 / 140 / 101.5 cm",
+      "Fits height up to": "168 cm",
+      "Packed size": "13 × 31 cm",
+      "Fill": "900 fill-power",
+      "Fit": "Slim / Standard / Broad",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "696bde4e4803ccebe4314b2b",
+    "name": "Zpacks Classic Sleeping Bag 30°F (-1°C) — Slim Medium",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Bags",
+    "itemType": "Sleeping Bag (Down)",
+    "weightGrams": 368,
+    "dimensions": {
+      "length": 188,
+      "width": 140,
+      "height": 5.08,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "30°F (-1°C)",
+      "Fit (girth)": "Fits up to 127 cm",
+      "Shoulder/Hip/Foot girth": "140 / 140 / 101.5 cm",
+      "Fits height up to": "188 cm",
+      "Packed size": "13 × 31 cm",
+      "Fill": "900 fill-power",
+      "Fit": "Slim / Standard / Broad",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "696bde4e4803ccebe4314b2c",
+    "name": "Zpacks Classic Sleeping Bag 30°F (-1°C) — Standard Short",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Bags",
+    "itemType": "Sleeping Bag (Down)",
+    "weightGrams": 371,
+    "dimensions": {
+      "length": 173,
+      "width": 152.5,
+      "height": 5.08,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "30°F (-1°C)",
+      "Fit (girth)": "Fits up to 140 cm",
+      "Shoulder/Hip/Foot girth": "152.5 / 152.5 / 101.5 cm",
+      "Fits height up to": "168 cm",
+      "Packed size": "13 × 31 cm",
+      "Fill": "900 fill-power",
+      "Fit": "Slim / Standard / Broad",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "696bde4e4803ccebe4314b2d",
+    "name": "Zpacks Classic Sleeping Bag 30°F",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Bags",
+    "itemType": "Sleeping Bag (Down)",
+    "weightGrams": 390,
+    "dimensions": {
+      "length": 188,
+      "width": 152.5,
+      "height": 5,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "30°F (-1°C)",
+      "Fill": "900 fill-power",
+      "Fit": "Slim / Standard / Broad",
+      "Fits height": "Up to 198 cm",
+      "Length(s)": "Short / Medium / Long",
+      "Packed size": "13 x 31 cm"
+    }
+  },
+  {
+    "_id": "696bde4e4803ccebe4314b2e",
+    "name": "Zpacks Classic Sleeping Bag 30°F (-1°C) — Standard Long",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Bags",
+    "itemType": "Sleeping Bag (Down)",
+    "weightGrams": 412,
+    "dimensions": {
+      "length": 203,
+      "width": 152.5,
+      "height": 5.08,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "30°F (-1°C)",
+      "Fit (girth)": "Fits up to 140 cm",
+      "Shoulder/Hip/Foot girth": "152.5 / 152.5 / 101.5 cm",
+      "Fits height up to": "198 cm",
+      "Packed size": "13 × 31 cm",
+      "Fill": "900 fill-power",
+      "Fit": "Slim / Standard / Broad",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "696bde4e4803ccebe4314b2f",
+    "name": "Zpacks Classic Sleeping Bag 30°F (-1°C) — Broad Medium",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Bags",
+    "itemType": "Sleeping Bag (Down)",
+    "weightGrams": 415,
+    "dimensions": {
+      "length": 188,
+      "width": 165,
+      "height": 5.08,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "30°F (-1°C)",
+      "Fit (girth)": "Fits up to 152 cm",
+      "Shoulder/Hip/Foot girth": "165 / 165 / 101.5 cm",
+      "Fits height up to": "188 cm",
+      "Packed size": "15 × 30 cm",
+      "Fill": "900 fill-power",
+      "Fit": "Slim / Standard / Broad",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "696bde4e4803ccebe4314b30",
+    "name": "Zpacks Classic Sleeping Bag 30°F (-1°C) — Broad Long",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Bags",
+    "itemType": "Sleeping Bag (Down)",
+    "weightGrams": 436,
+    "dimensions": {
+      "length": 203,
+      "width": 165,
+      "height": 5.08,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "30°F (-1°C)",
+      "Fit (girth)": "Fits up to 152 cm",
+      "Shoulder/Hip/Foot girth": "165 / 165 / 101.5 cm",
+      "Fits height up to": "198 cm",
+      "Packed size": "15 × 30 cm",
+      "Fill": "900 fill-power",
+      "Fit": "Slim / Standard / Broad",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "696bde4e4803ccebe4314b31",
+    "name": "Zpacks Classic Sleeping Bag 20°F (-7°C) — Slim Short",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Bags",
+    "itemType": "Sleeping Bag (Down)",
+    "weightGrams": 471,
+    "dimensions": {
+      "length": 173,
+      "width": 140,
+      "height": 6.35,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "20°F (-7°C)",
+      "Fit (girth)": "Fits up to 127 cm",
+      "Shoulder/Hip/Foot girth": "140 / 140 / 101.5 cm",
+      "Fits height up to": "168 cm",
+      "Packed size": "15 × 30 cm",
+      "Fill": "900 fill-power",
+      "Fit": "Slim / Standard / Broad",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "696bde4e4803ccebe4314b32",
+    "name": "Zpacks Classic Sleeping Bag 20°F (-7°C) — Slim Medium",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Bags",
+    "itemType": "Sleeping Bag (Down)",
+    "weightGrams": 499,
+    "dimensions": {
+      "length": 188,
+      "width": 140,
+      "height": 6.35,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "20°F (-7°C)",
+      "Fit (girth)": "Fits up to 127 cm",
+      "Shoulder/Hip/Foot girth": "140 / 140 / 101.5 cm",
+      "Fits height up to": "188 cm",
+      "Packed size": "15 × 30 cm",
+      "Fill": "900 fill-power",
+      "Fit": "Slim / Standard / Broad",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "696bde4e4803ccebe4314b33",
+    "name": "Zpacks Classic Sleeping Bag 20°F (-7°C) — Standard Short",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Bags",
+    "itemType": "Sleeping Bag (Down)",
+    "weightGrams": 502,
+    "dimensions": {
+      "length": 173,
+      "width": 152.5,
+      "height": 6.35,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "20°F (-7°C)",
+      "Fit (girth)": "Fits up to 140 cm",
+      "Shoulder/Hip/Foot girth": "152.5 / 152.5 / 101.5 cm",
+      "Fits height up to": "168 cm",
+      "Packed size": "15 × 30 cm",
+      "Fill": "900 fill-power",
+      "Fit": "Slim / Standard / Broad",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "696bde4e4803ccebe4314b34",
+    "name": "Zpacks Classic Sleeping Bag 20°F",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Bags",
+    "itemType": "Sleeping Bag (Down)",
+    "weightGrams": 533,
+    "dimensions": {
+      "length": 188,
+      "width": 152.5,
+      "height": 6.3,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "20°F (-7°C)",
+      "Fill": "900 fill-power",
+      "Fit": "Slim / Standard / Broad",
+      "Fits height": "Up to 198 cm",
+      "Length(s)": "Short / Medium / Long",
+      "Packed size": "15 x 30 cm"
+    }
+  },
+  {
+    "_id": "696bde4e4803ccebe4314b35",
+    "name": "Zpacks Classic Sleeping Bag 20°F (-7°C) — Standard Long",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Bags",
+    "itemType": "Sleeping Bag (Down)",
+    "weightGrams": 562,
+    "dimensions": {
+      "length": 203,
+      "width": 152.5,
+      "height": 6.35,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "20°F (-7°C)",
+      "Fit (girth)": "Fits up to 140 cm",
+      "Shoulder/Hip/Foot girth": "152.5 / 152.5 / 101.5 cm",
+      "Fits height up to": "198 cm",
+      "Packed size": "15 × 30 cm",
+      "Fill": "900 fill-power",
+      "Fit": "Slim / Standard / Broad",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "696bde4e4803ccebe4314b36",
+    "name": "Zpacks Classic Sleeping Bag 20°F (-7°C) — Broad Medium",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Bags",
+    "itemType": "Sleeping Bag (Down)",
+    "weightGrams": 566,
+    "dimensions": {
+      "length": 188,
+      "width": 165,
+      "height": 6.35,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "20°F (-7°C)",
+      "Fit (girth)": "Fits up to 152 cm",
+      "Shoulder/Hip/Foot girth": "165 / 165 / 101.5 cm",
+      "Fits height up to": "188 cm",
+      "Packed size": "15 × 30 cm",
+      "Fill": "900 fill-power",
+      "Fit": "Slim / Standard / Broad",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "696bde4e4803ccebe4314b37",
+    "name": "Zpacks Classic Sleeping Bag 20°F (-7°C) — Broad Long",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Bags",
+    "itemType": "Sleeping Bag (Down)",
+    "weightGrams": 595,
+    "dimensions": {
+      "length": 203,
+      "width": 165,
+      "height": 6.35,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "20°F (-7°C)",
+      "Fit (girth)": "Fits up to 152 cm",
+      "Shoulder/Hip/Foot girth": "165 / 165 / 101.5 cm",
+      "Fits height up to": "198 cm",
+      "Packed size": "18 × 33 cm",
+      "Fill": "900 fill-power",
+      "Fit": "Slim / Standard / Broad",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "696bde4e4803ccebe4314b38",
+    "name": "Zpacks Classic Sleeping Bag 10°F (-12°C) — Slim Short",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Bags",
+    "itemType": "Sleeping Bag (Down)",
+    "weightGrams": 581,
+    "dimensions": {
+      "length": 173,
+      "width": 140,
+      "height": 7.62,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "10°F (-12°C)",
+      "Fit (girth)": "Fits up to 127 cm",
+      "Shoulder/Hip/Foot girth": "140 / 140 / 101.5 cm",
+      "Fits height up to": "168 cm",
+      "Packed size": "18 × 33 cm",
+      "Fill": "900 fill-power",
+      "Fit": "Slim / Standard / Broad",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "696bde4e4803ccebe4314b39",
+    "name": "Zpacks Classic Sleeping Bag 10°F (-12°C) — Slim Medium",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Bags",
+    "itemType": "Sleeping Bag (Down)",
+    "weightGrams": 616,
+    "dimensions": {
+      "length": 188,
+      "width": 140,
+      "height": 7.62,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "10°F (-12°C)",
+      "Fit (girth)": "Fits up to 127 cm",
+      "Shoulder/Hip/Foot girth": "140 / 140 / 101.5 cm",
+      "Fits height up to": "188 cm",
+      "Packed size": "18 × 33 cm",
+      "Fill": "900 fill-power",
+      "Fit": "Slim / Standard / Broad",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "696bde4e4803ccebe4314b3a",
+    "name": "Zpacks Classic Sleeping Bag 10°F (-12°C) — Standard Short",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Bags",
+    "itemType": "Sleeping Bag (Down)",
+    "weightGrams": 622,
+    "dimensions": {
+      "length": 173,
+      "width": 152.5,
+      "height": 7.62,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "10°F (-12°C)",
+      "Fit (girth)": "Fits up to 140 cm",
+      "Shoulder/Hip/Foot girth": "152.5 / 152.5 / 101.5 cm",
+      "Fits height up to": "168 cm",
+      "Packed size": "18 × 33 cm",
+      "Fill": "900 fill-power",
+      "Fit": "Slim / Standard / Broad",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "696bde4e4803ccebe4314b3b",
+    "name": "Zpacks Classic Sleeping Bag 10°F",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Bags",
+    "itemType": "Sleeping Bag (Down)",
+    "weightGrams": 658,
+    "dimensions": {
+      "length": 188,
+      "width": 152.5,
+      "height": 7.6,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "10°F (-12°C)",
+      "Fill": "900 fill-power",
+      "Fit": "Slim / Standard / Broad",
+      "Fits height": "Up to 198 cm",
+      "Length(s)": "Short / Medium / Long",
+      "Packed size": "18 x 33 cm"
+    }
+  },
+  {
+    "_id": "696bde4e4803ccebe4314b3c",
+    "name": "Zpacks Classic Sleeping Bag 10°F (-12°C) — Standard Long",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Bags",
+    "itemType": "Sleeping Bag (Down)",
+    "weightGrams": 694,
+    "dimensions": {
+      "length": 203,
+      "width": 152.5,
+      "height": 7.6,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "10°F (-12°C)",
+      "Fit (girth)": "Fits up to 140 cm",
+      "Shoulder/Hip/Foot girth": "152.5 / 152.5 / 101.5 cm",
+      "Fits height up to": "198 cm",
+      "Packed size": "18 × 33 cm",
+      "Fill": "900 fill-power",
+      "Fit": "Slim / Standard / Broad",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "696bde4e4803ccebe4314b3d",
+    "name": "Zpacks Classic Sleeping Bag 10°F (-12°C) — Broad Medium",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Bags",
+    "itemType": "Sleeping Bag (Down)",
+    "weightGrams": 699,
+    "dimensions": {
+      "length": 188,
+      "width": 165,
+      "height": 7.62,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "10°F (-12°C)",
+      "Fit (girth)": "Fits up to 152 cm",
+      "Shoulder/Hip/Foot girth": "165 / 165 / 101.5 cm",
+      "Fits height up to": "188 cm",
+      "Packed size": "18 × 33 cm",
+      "Fill": "900 fill-power",
+      "Fit": "Slim / Standard / Broad",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "696bde4e4803ccebe4314b3e",
+    "name": "Zpacks Classic Sleeping Bag 10°F (-12°C) — Broad Long",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Sleeping Bags",
+    "itemType": "Sleeping Bag (Down)",
+    "weightGrams": 735,
+    "dimensions": {
+      "length": 203,
+      "width": 165,
+      "height": 7.62,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "10°F (-12°C)",
+      "Fit (girth)": "Fits up to 152 cm",
+      "Shoulder/Hip/Foot girth": "165 / 165 / 101.5 cm",
+      "Fits height up to": "198 cm",
+      "Packed size": "28 × 15 × 33 cm",
+      "Fill": "900 fill-power",
+      "Fit": "Slim / Standard / Broad",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "251b83c2db94722955062ea1",
+    "name": "Zpacks Solo Quilt 30F - Slim - Short",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Quilts",
+    "itemType": "Ultralight Down Quilt",
+    "weightGrams": 335,
+    "dimensions": {
+      "length": 173,
+      "width": 140,
+      "height": 5.08,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "30°F (-1°C)",
+      "Fit": "Slim / Standard / Broad",
+      "Max user height": "168 cm",
+      "Packed size": "13 x 31 cm",
+      "Girth (shoulder/hip/foot)": "140 / 140 / 101.5 cm",
+      "Fill": "900 fill-power",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "96414bf464c85c13ac2cbed2",
+    "name": "Zpacks Solo Quilt 30F - Slim - Medium",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Quilts",
+    "itemType": "Ultralight Down Quilt",
+    "weightGrams": 356,
+    "dimensions": {
+      "length": 188,
+      "width": 140,
+      "height": 5.08,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "30°F (-1°C)",
+      "Fit": "Slim / Standard / Broad",
+      "Max user height": "188 cm",
+      "Packed size": "13 x 31 cm",
+      "Girth (shoulder/hip/foot)": "140 / 140 / 101.5 cm",
+      "Fill": "900 fill-power",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "c01869ad82d16e9300181e9d",
+    "name": "Zpacks Solo Quilt 30F - Standard - Short",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Quilts",
+    "itemType": "Ultralight Down Quilt",
+    "weightGrams": 358,
+    "dimensions": {
+      "length": 173,
+      "width": 152.5,
+      "height": 5.08,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "30°F (-1°C)",
+      "Fit": "Slim / Standard / Broad",
+      "Max user height": "168 cm",
+      "Packed size": "13 x 31 cm",
+      "Girth (shoulder/hip/foot)": "152.5 / 152.5 / 101.5 cm",
+      "Fill": "900 fill-power",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "d2153f9ae99257af563c64c5",
+    "name": "Zpacks Solo Quilt 30°F",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Quilts",
+    "itemType": "Ultralight Down Quilt",
+    "weightGrams": 378,
+    "dimensions": {
+      "length": 188,
+      "width": 152.5,
+      "height": 5,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "30°F (-1°C)",
+      "Fill": "900 fill-power",
+      "Fit": "Slim / Standard / Broad",
+      "Fits height": "Up to 198 cm",
+      "Length(s)": "Short / Medium / Long",
+      "Packed size": "13 x 31 cm"
+    }
+  },
+  {
+    "_id": "0cb4af9bafbdc652d4dd7a71",
+    "name": "Zpacks Solo Quilt 30F - Standard - Long",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Quilts",
+    "itemType": "Ultralight Down Quilt",
+    "weightGrams": 400,
+    "dimensions": {
+      "length": 203,
+      "width": 152.5,
+      "height": 5.08,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "30°F (-1°C)",
+      "Fit": "Slim / Standard / Broad",
+      "Max user height": "198 cm",
+      "Packed size": "13 x 31 cm",
+      "Girth (shoulder/hip/foot)": "152.5 / 152.5 / 101.5 cm",
+      "Fill": "900 fill-power",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "d0b0400aa9223c3170d03eea",
+    "name": "Zpacks Solo Quilt 30F - Broad - Medium",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Quilts",
+    "itemType": "Ultralight Down Quilt",
+    "weightGrams": 402,
+    "dimensions": {
+      "length": 188,
+      "width": 165,
+      "height": 5.08,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "30°F (-1°C)",
+      "Fit": "Slim / Standard / Broad",
+      "Max user height": "188 cm",
+      "Packed size": "15 x 30 cm",
+      "Girth (shoulder/hip/foot)": "165 / 165 / 101.5 cm",
+      "Fill": "900 fill-power",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "a2f98a6424a26293c36c98f8",
+    "name": "Zpacks Solo Quilt 30F - Broad - Long",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Quilts",
+    "itemType": "Ultralight Down Quilt",
+    "weightGrams": 423,
+    "dimensions": {
+      "length": 203,
+      "width": 165,
+      "height": 5.08,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "30°F (-1°C)",
+      "Fit": "Slim / Standard / Broad",
+      "Max user height": "198 cm",
+      "Packed size": "15 x 30 cm",
+      "Girth (shoulder/hip/foot)": "165 / 165 / 101.5 cm",
+      "Fill": "900 fill-power",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "4b8ec1b7e9ba13222103fb2f",
+    "name": "Zpacks Solo Quilt 20F - Slim - Short",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Quilts",
+    "itemType": "Ultralight Down Quilt",
+    "weightGrams": 458,
+    "dimensions": {
+      "length": 173,
+      "width": 140,
+      "height": 6.35,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "20°F (-7°C)",
+      "Fit": "Slim / Standard / Broad",
+      "Max user height": "168 cm",
+      "Packed size": "15 x 30 cm",
+      "Girth (shoulder/hip/foot)": "140 / 140 / 101.5 cm",
+      "Fill": "900 fill-power",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "411b94242e3cc60e81f23325",
+    "name": "Zpacks Solo Quilt 20F - Slim - Medium",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Quilts",
+    "itemType": "Ultralight Down Quilt",
+    "weightGrams": 487,
+    "dimensions": {
+      "length": 188,
+      "width": 140,
+      "height": 6.35,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "20°F (-7°C)",
+      "Fit": "Slim / Standard / Broad",
+      "Max user height": "188 cm",
+      "Packed size": "15 x 30 cm",
+      "Girth (shoulder/hip/foot)": "140 / 140 / 101.5 cm",
+      "Fill": "900 fill-power",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "f12b41471c30de6a11939855",
+    "name": "Zpacks Solo Quilt 20F - Standard - Short",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Quilts",
+    "itemType": "Ultralight Down Quilt",
+    "weightGrams": 491,
+    "dimensions": {
+      "length": 173,
+      "width": 152.5,
+      "height": 6.35,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "20°F (-7°C)",
+      "Fit": "Slim / Standard / Broad",
+      "Max user height": "168 cm",
+      "Packed size": "15 x 30 cm",
+      "Girth (shoulder/hip/foot)": "152.5 / 152.5 / 101.5 cm",
+      "Fill": "900 fill-power",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "644ec7dd7d2287852618c37f",
+    "name": "Zpacks Solo Quilt 20°F",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Quilts",
+    "itemType": "Ultralight Down Quilt",
+    "weightGrams": 520,
+    "dimensions": {
+      "length": 188,
+      "width": 152.5,
+      "height": 6.4,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "20°F (-7°C)",
+      "Fill": "900 fill-power",
+      "Fit": "Slim / Standard / Broad",
+      "Fits height": "Up to 198 cm",
+      "Length(s)": "Short / Medium / Long",
+      "Packed size": "15 x 30 cm"
+    }
+  },
+  {
+    "_id": "50a154816f0a4462ad80f2fd",
+    "name": "Zpacks Solo Quilt 20F - Standard - Long",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Quilts",
+    "itemType": "Ultralight Down Quilt",
+    "weightGrams": 549,
+    "dimensions": {
+      "length": 203,
+      "width": 152.5,
+      "height": 6.35,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "20°F (-7°C)",
+      "Fit": "Slim / Standard / Broad",
+      "Max user height": "198 cm",
+      "Packed size": "15 x 30 cm",
+      "Girth (shoulder/hip/foot)": "152.5 / 152.5 / 101.5 cm",
+      "Fill": "900 fill-power",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "ec319b45b9d8f96d06bbbba2",
+    "name": "Zpacks Solo Quilt 20F - Broad - Medium",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Quilts",
+    "itemType": "Ultralight Down Quilt",
+    "weightGrams": 553,
+    "dimensions": {
+      "length": 188,
+      "width": 165,
+      "height": 6.35,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "20°F (-7°C)",
+      "Fit": "Slim / Standard / Broad",
+      "Max user height": "188 cm",
+      "Packed size": "15 x 30 cm",
+      "Girth (shoulder/hip/foot)": "165 / 165 / 101.5 cm",
+      "Fill": "900 fill-power",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "1a2279016ab82c8cd8a40d0d",
+    "name": "Zpacks Solo Quilt 20F - Broad - Long",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Quilts",
+    "itemType": "Ultralight Down Quilt",
+    "weightGrams": 582,
+    "dimensions": {
+      "length": 203,
+      "width": 165,
+      "height": 6.35,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "20°F (-7°C)",
+      "Fit": "Slim / Standard / Broad",
+      "Max user height": "198 cm",
+      "Packed size": "18 x 33 cm",
+      "Girth (shoulder/hip/foot)": "165 / 165 / 101.5 cm",
+      "Fill": "900 fill-power",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "8a1a6b874237fa9bf588c670",
+    "name": "Zpacks Solo Quilt 10F - Slim - Short",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Quilts",
+    "itemType": "Ultralight Down Quilt",
+    "weightGrams": 568,
+    "dimensions": {
+      "length": 173,
+      "width": 140,
+      "height": 7.62,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "10°F (-12°C)",
+      "Fit": "Slim / Standard / Broad",
+      "Max user height": "168 cm",
+      "Packed size": "18 x 33 cm",
+      "Girth (shoulder/hip/foot)": "140 / 140 / 101.5 cm",
+      "Fill": "900 fill-power",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "be8193f7518ec7d3c25cba35",
+    "name": "Zpacks Solo Quilt 10F - Slim - Medium",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Quilts",
+    "itemType": "Ultralight Down Quilt",
+    "weightGrams": 604,
+    "dimensions": {
+      "length": 188,
+      "width": 140,
+      "height": 7.62,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "10°F (-12°C)",
+      "Fit": "Slim / Standard / Broad",
+      "Max user height": "188 cm",
+      "Packed size": "18 x 33 cm",
+      "Girth (shoulder/hip/foot)": "140 / 140 / 101.5 cm",
+      "Fill": "900 fill-power",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "504908d2e6f84c00d50ad634",
+    "name": "Zpacks Solo Quilt 10F - Standard - Short",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Quilts",
+    "itemType": "Ultralight Down Quilt",
+    "weightGrams": 610,
+    "dimensions": {
+      "length": 173,
+      "width": 152.5,
+      "height": 7.62,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "10°F (-12°C)",
+      "Fit": "Slim / Standard / Broad",
+      "Max user height": "168 cm",
+      "Packed size": "18 x 33 cm",
+      "Girth (shoulder/hip/foot)": "152.5 / 152.5 / 101.5 cm",
+      "Fill": "900 fill-power",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "d69bfa93a852c8efa7060ef1",
+    "name": "Zpacks Solo Quilt 10°F",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Quilts",
+    "itemType": "Ultralight Down Quilt",
+    "weightGrams": 645,
+    "dimensions": {
+      "length": 188,
+      "width": 152.5,
+      "height": 7.6,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "10°F (-12°C)",
+      "Fill": "900 fill-power",
+      "Fit": "Slim / Standard / Broad",
+      "Fits height": "Up to 198 cm",
+      "Length(s)": "Short / Medium / Long",
+      "Packed size": "18 x 33 cm"
+    }
+  },
+  {
+    "_id": "43a7da056ae0c5ffe6b0e774",
+    "name": "Zpacks Solo Quilt 10F - Standard - Long",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Quilts",
+    "itemType": "Ultralight Down Quilt",
+    "weightGrams": 681,
+    "dimensions": {
+      "length": 203,
+      "width": 152.5,
+      "height": 7.62,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "10°F (-12°C)",
+      "Fit": "Slim / Standard / Broad",
+      "Max user height": "198 cm",
+      "Packed size": "18 x 33 cm",
+      "Girth (shoulder/hip/foot)": "152.5 / 152.5 / 101.5 cm",
+      "Fill": "900 fill-power",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "fc0e35c7be96334a8ff0027c",
+    "name": "Zpacks Solo Quilt 10F - Broad - Medium",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Quilts",
+    "itemType": "Ultralight Down Quilt",
+    "weightGrams": 687,
+    "dimensions": {
+      "length": 188,
+      "width": 165,
+      "height": 7.62,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "10°F (-12°C)",
+      "Fit": "Slim / Standard / Broad",
+      "Max user height": "188 cm",
+      "Packed size": "18 x 33 cm",
+      "Girth (shoulder/hip/foot)": "165 / 165 / 101.5 cm",
+      "Fill": "900 fill-power",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "f9969706163187950876f222",
+    "name": "Zpacks Solo Quilt 10F - Broad - Long",
+    "brand": "Zpacks",
+    "category": "Sleep System",
+    "subcategory": "Quilts",
+    "itemType": "Ultralight Down Quilt",
+    "weightGrams": 723,
+    "dimensions": {
+      "length": 203,
+      "width": 165,
+      "height": 7.62,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Temperature rating": "10°F (-12°C)",
+      "Fit": "Slim / Standard / Broad",
+      "Max user height": "198 cm",
+      "Packed size": "28 x 15 x 33 cm",
+      "Girth (shoulder/hip/foot)": "165 / 165 / 101.5 cm",
+      "Fill": "900 fill-power",
+      "Fits height": "Up to 198 cm",
+      "Length": "Short / Medium / Long"
+    }
+  },
+  {
+    "_id": "696cf8104803ccebe4314b5a",
+    "name": "Micro Crew Lightweight Cushion",
+    "brand": "Darn Tough",
+    "category": "Women's Clothing",
+    "subcategory": "Socks",
+    "itemType": "Hiking socks",
+    "weightGrams": 68,
+    "attributes": {
+      "Weight": "Lightweight",
+      "Height": "Micro Crew",
+      "Cushion": "Medium",
+      "Fabric": "47% Merino Wool, 48% Nylon, 5% Lycra",
+      "Gender": "Women's"
+    }
+  },
+  {
+    "_id": "696cfa134803ccebe4314b5b",
+    "name": "Micro Crew Midweight Cushion",
+    "brand": "Darn Tough",
+    "category": "Women's Clothing",
+    "subcategory": "Socks",
+    "itemType": "Hiking socks",
+    "weightGrams": 68,
+    "attributes": {
+      "Weight": "Midweight",
+      "Height": "Micro Crew",
+      "Cushion": "Medium",
+      "Fabric": "61% Merino Wool, 36% Nylon, 3% Lycra",
+      "Gender": "Women's"
+    }
+  },
+  {
+    "_id": "696d28fc4803ccebe4314b5c",
+    "name": "The Roo Hip Pack (2.5L)",
+    "brand": "Atom Packs",
+    "category": "Backpacks & Bags",
+    "subcategory": "Day Packs & Accessories",
+    "itemType": "Hip Pack / Bum Bag",
+    "weightGrams": 100,
+    "dimensions": {
+      "length": 20,
+      "width": 8.5,
+      "height": 13,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Capacity": "2.5 L",
+      "Materials": "Mixed fabrics (mostly EPX200 / VX21); YKK Aquaguard zip",
+      "Waist fit": "Adjustable up to 120 cm",
+      "Storage": "Stretch front pocket + internal sleeve + key hook",
+      "Weather": "Water-resistant"
+    }
+  },
+  {
+    "_id": "696e0fec4803ccebe4314b60",
+    "name": "Cash",
+    "brand": "USD",
+    "category": "Travel",
+    "subcategory": "Wallet",
+    "itemType": "US Dollar",
+    "weightGrams": 0,
+    "attributes": {}
+  },
+  {
+    "_id": "696e10154803ccebe4314b61",
+    "name": "Cash",
+    "brand": "CAD",
+    "category": "Travel",
+    "subcategory": "Wallet",
+    "itemType": "Canadian Dollar",
+    "weightGrams": 0,
+    "attributes": {}
+  },
+  {
+    "_id": "696e10244803ccebe4314b62",
+    "name": "Cash",
+    "brand": "GBP",
+    "category": "Travel",
+    "subcategory": "Wallet",
+    "itemType": "Pounds",
+    "weightGrams": 0,
+    "attributes": {}
+  },
+  {
+    "_id": "696e10314803ccebe4314b63",
+    "name": "Cash",
+    "brand": "Various",
+    "category": "Travel",
+    "subcategory": "Wallet",
+    "itemType": "Various",
+    "weightGrams": 0,
+    "attributes": {}
+  },
+  {
+    "_id": "696f37cfc5cb8dfe2c0ea689",
+    "name": "Dove Invisible Solid Deodorant",
+    "brand": "Dove",
+    "category": "Health & Hygiene",
+    "subcategory": "Women's Personal Care",
+    "itemType": "Deodorant",
+    "attributes": {
+      "Form": "Solid stick",
+      "Scent": "Fresh",
+      "Aluminum-free": "Yes"
+    }
+  },
+  {
+    "_id": "696f4666c5cb8dfe2c0ea7c0",
+    "name": "Men's Precip Eco",
+    "brand": "Marmot",
+    "category": "Men's Clothing",
+    "subcategory": "Jackets",
+    "itemType": "Rain Jacket",
+    "weightGrams": 400,
+    "attributes": {
+      "Waterproofing": "Marmot NanoPro waterproof/breathable membrane",
+      "Seams": "100% seam-taped",
+      "Ventilation": "Pit zips",
+      "DWR": "PFC-free DWR",
+      "Packability": "Stows into its own pocket"
+    }
+  },
+  {
+    "_id": "696f4d3cc5cb8dfe2c0ea7fa",
+    "name": "Portable Pocket Towel",
+    "brand": "Sea to Summit",
+    "category": "Health & Hygiene",
+    "subcategory": "Personal Care",
+    "itemType": "Pack Towel",
+    "weightGrams": 80,
+    "dimensions": {
+      "length": 81.3,
+      "width": 40.6,
+      "unit": "cm",
+      "note": "Flat"
+    },
+    "attributes": {
+      "Material": "Woven microfiber (recycled polyester)",
+      "Absorbency": "Absorbs up to ~3× its weight",
+      "Drying": "Quick-drying",
+      "Attachment": "Press-stud tab (pack / clothesline)",
+      "Carry": "Molded EVA case"
+    }
+  },
+  {
+    "_id": "696f51c4c5cb8dfe2c0ea826",
+    "name": "Acetaminophen 500 mg",
+    "brand": "Tylenol",
+    "category": "Health & Hygiene",
+    "subcategory": "First Aid",
+    "itemType": "Pain Reliever",
+    "weightGrams": 17,
+    "dimensions": {
+      "length": 2,
+      "width": 8.6,
+      "height": 8.6,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Active ingredient": "Acetaminophen",
+      "Strength": "500 mg (Extra Strength)",
+      "Form": "Caplets",
+      "Count": "10 ct (travel size)",
+      "Use": "Pain reliever + fever reducer"
+    }
+  },
+  {
+    "_id": "696f52cac5cb8dfe2c0ea82e",
+    "name": "Anti-Diarrheal Medicine",
+    "brand": "Imodium",
+    "category": "Health & Hygiene",
+    "subcategory": "First Aid",
+    "itemType": "Anti-Diarrheal",
+    "weightGrams": 9,
+    "dimensions": {
+      "length": 2.2,
+      "width": 8.4,
+      "height": 8.4,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Active ingredient": "Loperamide HCl",
+      "Strength": "2 mg per caplet",
+      "Form": "Caplets",
+      "Count": "6 ct (travel pack)",
+      "Use": "Acute + traveler’s diarrhea symptom control"
+    }
+  },
+  {
+    "_id": "696f54b2c5cb8dfe2c0ea836",
+    "name": "Forerunner 970",
+    "brand": "Garmin",
+    "category": "Electronics & Power",
+    "subcategory": "Wearables & GPS",
+    "itemType": "Smartwatch",
+    "weightGrams": 56,
+    "dimensions": {
+      "length": 4.7,
+      "width": 12.9,
+      "height": 4.7,
+      "unit": "cm"
+    },
+    "attributes": {
+      "Display": "1.4\" AMOLED",
+      "GPS": "Built-in multi-band GPS (SatIQ)",
+      "Navigation": "Full-color maps + turn-by-turn directions",
+      "Light": "Built-in LED flashlight",
+      "Water resistance": "50 m"
+    }
+  },
+  {
+    "_id": "696f563bc5cb8dfe2c0ea84e",
+    "name": "Food Storage Quart Freezer Slider Bags",
+    "brand": "Ziploc",
+    "category": "Accessories & Tools",
+    "subcategory": "Organization",
+    "itemType": "Storage Bags (Zip)",
+    "weightGrams": 5,
+    "dimensions": {
+      "width": 23,
+      "height": 8.9,
+      "unit": "cm",
+      "note": "Flat"
+    },
+    "attributes": {
+      "Use case": "Organization / trash / storage",
+      "Size": "Quart (1 qt capacity)",
+      "Closure": "Slider",
+      "Durability": "Puncture/tear resistant (Power Shield)"
+    }
+  },
+  {
+    "_id": "696f5780c5cb8dfe2c0ea856",
+    "name": "Food Storage Gallon Freezer Slider Bags",
+    "brand": "Ziploc",
+    "category": "Accessories & Tools",
+    "subcategory": "Organization",
+    "itemType": "Storage Bags (Zip)",
+    "weightGrams": 5,
+    "attributes": {
+      "Use case": "Organization / trash / storage",
+      "Size": "Gallon (1 gal capacity)",
+      "Closure": "Slider",
+      "Durability": "Puncture- and tear-resistant (Power Shield)"
+    }
+  },
+  {
+    "_id": "697b36bec2002df0122e7d71",
+    "name": "NL-Link",
+    "brand": "Test3",
+    "attributes": {}
+  },
+  {
+    "_id": "697b38a1c2002df0122e7dce",
+    "name": "Global-Link",
+    "brand": "Test2",
+    "attributes": {}
+  },
+  {
+    "_id": "697b3991c2002df0122e7e4d",
+    "name": "test1",
+    "brand": "test1",
+    "attributes": {}
+  },
+  {
+    "_id": "697b4477b540dc0a054fed33",
+    "name": "Global-No Link",
+    "brand": "Test1",
+    "attributes": {}
+  },
+  {
+    "_id": "697b4c632878c360e50f59eb",
+    "name": "US-Link",
+    "brand": "Test4",
+    "category": "Accessories & Tools",
+    "attributes": {}
+  },
+  {
+    "_id": "697e1cf398b2df6a3e638700",
+    "name": "Rainbow",
+    "brand": "Test Tarptent",
+    "category": "Shelter",
+    "subcategory": "Tent",
+    "itemType": "Backpacking Tent",
+    "weightGrams": 111,
+    "dimensions": {
+      "length": 1,
+      "width": 2,
+      "height": 4,
+      "unit": "cm"
+    },
+    "attributes": {
+      "capacity": "1-Person",
+      "seasonRating": "3+ Season",
+      "tentType": "Semi-Freestanding",
+      "wallType": "Single Wall",
+      "floorArea": 15,
+      "vestibuleArea": 5,
+      "peakHeightIn": 30,
+      "doors": 2,
+      "vestibules": 2,
+      "poleMaterial": "Aluminum",
+      "flyMaterial": "silnylon",
+      "floorMaterial": "silnylon"
+    }
+  }
+]

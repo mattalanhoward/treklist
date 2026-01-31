@@ -14,7 +14,8 @@
     "db:backfill-affiliate-derived": "node scripts/backfill-affiliate-derived.js",
     "db:backfill-globalitem-itemgroupid": "node scripts/backfill-globalitem-itemGroupId.js",
     "seed:affiliates:generate": "node scripts/generate-sample-awin-feeds.js",
-    "seed:affiliates:clean": "node scripts/cleanup-test-affiliates.js --prefix=TEST-GL-"
+    "seed:affiliates:clean": "node scripts/cleanup-test-affiliates.js --prefix=TEST-GL-",
+    "test-attributeSchemas": "node src/config/test-attributeSchemas.js"
   },
   "jest": {
     "testEnvironment": "node",

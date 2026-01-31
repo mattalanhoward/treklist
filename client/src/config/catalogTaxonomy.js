@@ -11,6 +11,7 @@ export const CATALOG_CATEGORIES = [
   "Kitchen & Cooking",
   "Men's Clothing",
   "Navigation & Planning",
+  "Shelter",
   "Sleep System",
   "Travel",
   "Unisex Clothing",

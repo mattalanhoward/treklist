@@ -7,6 +7,15 @@ const GlobalItem = require("../models/globalItem");
 const GearItem = require("../models/gearItem");
 // const SortableItem = require("../models/sortableItem"); // <- if you have this model
 
+// =============================================================================
+// IMPORT ATTRIBUTE SCHEMAS FOR VALIDATION
+// =============================================================================
+const {
+  isValidItemType,
+  validateAttributes,
+  getAllItemTypes,
+} = require("../config/attributeSchemas");
+
 const router = express.Router();
 
 const ALLOWED_DIM_UNITS = new Set(["cm"]);
@@ -142,7 +151,7 @@ function normalizeDimensions(raw) {
     (widthRaw !== undefined && widthRaw !== "" && widthRaw !== null) ||
     (heightRaw !== undefined && heightRaw !== "" && heightRaw !== null);
 
-  // ✅ If no numbers AND no note => clear
+  // If no numbers AND no note => clear
   if (!hasAnyNum && !note) return { dimensions: null, clear: true };
 
   const toNum = (v) => {
@@ -166,7 +175,7 @@ function normalizeDimensions(raw) {
     };
   }
 
-  // ✅ cm only (default to cm if missing)
+  // cm only (default to cm if missing)
   const unit = String(unitRaw || "cm")
     .trim()
     .toLowerCase();
@@ -174,7 +183,7 @@ function normalizeDimensions(raw) {
     return { error: 'Dimensions unit must be "cm".' };
   }
 
-  // ✅ If numbers are partial, require note
+  // If numbers are partial, require note
   const hasAllNums =
     length !== undefined && width !== undefined && height !== undefined;
   if (hasAnyNum && !hasAllNums && !note) {
@@ -196,15 +205,74 @@ function normalizeDimensions(raw) {
   };
 }
 
+// =============================================================================
+// ATTRIBUTE VALIDATION HELPER
+// =============================================================================
+/**
+ * Validates itemType and attributes before saving.
+ * Returns { valid: true, itemType, attributes } or { valid: false, error: string }
+ */
+function validateItemTypeAndAttributes(itemType, attributes) {
+  // Normalize itemType
+  const normalizedItemType =
+    itemType && typeof itemType === "string" ? itemType.trim() : null;
+
+  // If no itemType, attributes should be empty or will be ignored
+  if (!normalizedItemType) {
+    return {
+      valid: true,
+      itemType: null,
+      attributes: {}, // Clear attributes if no itemType
+    };
+  }
+
+  // Validate itemType is in our schema
+  if (!isValidItemType(normalizedItemType)) {
+    const validTypes = getAllItemTypes().join(", ");
+    return {
+      valid: false,
+      error: `Invalid item type: "${normalizedItemType}". Valid types are: ${validTypes}`,
+    };
+  }
+
+  // Validate attributes against schema
+  const attrs = attributes && typeof attributes === "object" ? attributes : {};
+  const result = validateAttributes(normalizedItemType, attrs);
+
+  if (!result.valid) {
+    return {
+      valid: false,
+      error: `Invalid attributes for ${normalizedItemType}: ${result.errors.join(", ")}`,
+    };
+  }
+
+  // Return validated + derived attributes
+  return {
+    valid: true,
+    itemType: normalizedItemType,
+    attributes: result.cleaned,
+  };
+}
+
+// =============================================================================
 // GET /api/admin/catalog-items
+// =============================================================================
 router.get("/", async (req, res) => {
   try {
-    const { q, category, isActive = "true", limit = 100, skip = 0 } = req.query;
+    const {
+      q,
+      category,
+      itemType,
+      isActive = "true",
+      limit = 100,
+      skip = 0,
+    } = req.query;
 
     const query = {};
     if (isActive === "true") query.isActive = true;
     if (isActive === "false") query.isActive = false;
     if (category) query.category = category;
+    if (itemType) query.itemType = itemType; // NEW: filter by itemType
 
     if (q && q.trim()) {
       const regex = new RegExp(q.trim(), "i");
@@ -244,7 +312,23 @@ router.get("/", async (req, res) => {
   }
 });
 
+// =============================================================================
+// GET /api/admin/catalog-items/item-types
+// NEW: Returns list of valid item types for dropdown
+// =============================================================================
+router.get("/item-types", async (req, res) => {
+  try {
+    const itemTypes = getAllItemTypes();
+    res.json({ itemTypes });
+  } catch (err) {
+    console.error("GET /api/admin/catalog-items/item-types error", err);
+    res.status(500).json({ message: "Failed to get item types." });
+  }
+});
+
+// =============================================================================
 // POST /api/admin/catalog-items
+// =============================================================================
 router.post("/", async (req, res) => {
   try {
     const {
@@ -269,13 +353,21 @@ router.post("/", async (req, res) => {
       return res.status(400).json({ message: "Name is required." });
     }
 
+    // =========================================================================
+    // VALIDATE ITEM TYPE AND ATTRIBUTES
+    // =========================================================================
+    const attrValidation = validateItemTypeAndAttributes(itemType, attributes);
+    if (!attrValidation.valid) {
+      return res.status(400).json({ message: attrValidation.error });
+    }
+
     const rawOffers = Array.isArray(offers)
       ? offers
       : Array.isArray(req.body?.links)
         ? req.body.links
         : [];
 
-    // ✅ Offers are OPTIONAL now
+    // Offers are OPTIONAL
     let sanitizedOffers = [];
     if (Array.isArray(rawOffers) && rawOffers.length > 0) {
       sanitizedOffers = sanitizeOffers(rawOffers, {
@@ -289,13 +381,11 @@ router.post("/", async (req, res) => {
             : undefined,
       });
 
-      // ✅ If they attempted to add offers but none are valid, error
+      // If they attempted to add offers but none are valid, error
       if (sanitizedOffers.length === 0) {
-        return res
-          .status(400)
-          .json({
-            message: "Each offer must have a network and deepLink/url.",
-          });
+        return res.status(400).json({
+          message: "Each offer must have a network and deepLink/url.",
+        });
       }
     }
 
@@ -334,20 +424,18 @@ router.post("/", async (req, res) => {
     const dimNorm = normalizeDimensions(dimensions);
     if (dimNorm?.error) return res.status(400).json({ message: dimNorm.error });
 
+    // =========================================================================
+    // CREATE CATALOG ITEM
+    // =========================================================================
     const item = await CatalogItem.create({
       name: name.trim(),
       brand: brand && String(brand).trim(),
       category: category && String(category).trim(),
       subcategory: subcategory && String(subcategory).trim(),
-      itemType: itemType && String(itemType).trim(),
+      itemType: attrValidation.itemType, // Use validated itemType
       modelNumber: modelNumber && String(modelNumber).trim(),
       description: description && String(description).trim(),
-      attributes:
-        attributes &&
-        typeof attributes === "object" &&
-        !Array.isArray(attributes)
-          ? attributes
-          : undefined,
+      attributes: attrValidation.attributes, // Use validated + derived attributes
       imageUrls: normalizedImageUrls,
       weightGrams: normalizedWeight,
       dimensions: dimNorm.clear ? undefined : dimNorm.dimensions,
@@ -391,11 +479,22 @@ router.post("/", async (req, res) => {
     res.status(201).json(item);
   } catch (err) {
     console.error("POST /api/admin/catalog-items error", err);
+
+    // Better error handling for validation errors
+    if (err.name === "ValidationError") {
+      const messages = Object.values(err.errors || {}).map((e) => e.message);
+      return res.status(400).json({
+        message: messages.length ? messages.join(", ") : err.message,
+      });
+    }
+
     res.status(500).json({ message: "Failed to create catalog item." });
   }
 });
 
+// =============================================================================
 // PATCH /api/admin/catalog-items/:id
+// =============================================================================
 router.patch("/:id", async (req, res) => {
   try {
     const updates = {};
@@ -430,12 +529,64 @@ router.patch("/:id", async (req, res) => {
       updates.category = updates.category.trim();
     if (typeof updates.subcategory === "string")
       updates.subcategory = updates.subcategory.trim();
-    if (typeof updates.itemType === "string")
-      updates.itemType = updates.itemType.trim();
     if (typeof updates.modelNumber === "string")
       updates.modelNumber = updates.modelNumber.trim();
     if (typeof updates.description === "string")
       updates.description = updates.description.trim();
+
+    // =========================================================================
+    // VALIDATE ITEM TYPE AND ATTRIBUTES
+    // =========================================================================
+    // We need to handle cases where:
+    // 1. Both itemType and attributes are being updated
+    // 2. Only itemType is being updated (need to fetch current attributes)
+    // 3. Only attributes are being updated (need to fetch current itemType)
+    // 4. Neither is being updated (skip validation)
+
+    const hasItemType = Object.prototype.hasOwnProperty.call(
+      req.body,
+      "itemType",
+    );
+    const hasAttributes = Object.prototype.hasOwnProperty.call(
+      req.body,
+      "attributes",
+    );
+
+    if (hasItemType || hasAttributes) {
+      let itemTypeToValidate = updates.itemType;
+      let attributesToValidate = updates.attributes;
+
+      // If only one is provided, fetch the other from the existing document
+      if (hasItemType !== hasAttributes) {
+        const existing = await CatalogItem.findById(req.params.id)
+          .select("itemType attributes")
+          .lean();
+
+        if (!existing) {
+          return res.status(404).json({ message: "Catalog item not found." });
+        }
+
+        if (!hasItemType) {
+          itemTypeToValidate = existing.itemType;
+        }
+        if (!hasAttributes) {
+          attributesToValidate = existing.attributes;
+        }
+      }
+
+      const attrValidation = validateItemTypeAndAttributes(
+        itemTypeToValidate,
+        attributesToValidate,
+      );
+
+      if (!attrValidation.valid) {
+        return res.status(400).json({ message: attrValidation.error });
+      }
+
+      // Use validated values
+      updates.itemType = attrValidation.itemType;
+      updates.attributes = attrValidation.attributes;
+    }
 
     // Dimensions (allow clear)
     if (Object.prototype.hasOwnProperty.call(updates, "dimensions")) {
@@ -530,7 +681,7 @@ router.patch("/:id", async (req, res) => {
     if (!item)
       return res.status(404).json({ message: "Catalog item not found." });
 
-    // --- Sync GlobalItem templates (GlobalItem.category is a STRING in your app, so it's safe) ---
+    // --- Sync GlobalItem templates ---
     await GlobalItem.updateMany(
       { productId: item._id },
       {
@@ -554,7 +705,6 @@ router.patch("/:id", async (req, res) => {
     const globalIds = globals.map((g) => g._id);
 
     // --- Sync GearItems in lists ---
-    // IMPORTANT: GearItem.category is likely ObjectId -> do NOT set it from a string like "Shelter"
     let gearItemSyncResult = null;
 
     if (globalIds.length) {
@@ -579,14 +729,6 @@ router.patch("/:id", async (req, res) => {
         },
         { $set: syncSet },
       );
-
-      // If you have SortableItem, sync it too (same caution re: category)
-      /*
-      await SortableItem.updateMany(
-        { globalItem: { $in: globalIds } },
-        { $set: syncSet }
-      );
-      */
     }
 
     // Replace MerchantOffers if provided
@@ -627,13 +769,24 @@ router.patch("/:id", async (req, res) => {
     });
   } catch (err) {
     console.error("PATCH /api/admin/catalog-items/:id error", err);
+
+    // Better error handling for validation errors
+    if (err.name === "ValidationError") {
+      const messages = Object.values(err.errors || {}).map((e) => e.message);
+      return res.status(400).json({
+        message: messages.length ? messages.join(", ") : err.message,
+      });
+    }
+
     return res.status(500).json({
       message: err?.message || "Failed to update catalog item.",
     });
   }
 });
 
+// =============================================================================
 // PATCH /api/admin/catalog-items/:id/archive
+// =============================================================================
 router.patch("/:id/archive", async (req, res) => {
   try {
     const { isActive } = req.body || {};
