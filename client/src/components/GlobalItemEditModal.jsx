@@ -15,6 +15,7 @@ import {
   fetchGlobalItemCached,
   invalidateGlobalItemCache,
 } from "../services/globalItemCache";
+import { formatAttributesForDisplay } from "../utils/attributeLabels";
 
 export default function GlobalItemEditModal({
   item,
@@ -232,7 +233,7 @@ export default function GlobalItemEditModal({
     setLoadingImageAsset(false);
   }, [resolvedProductId, isImported]);
 
-  // Preload first image: if it errors, treat as “no image”
+  // Preload first image: if it errors, treat as "no image"
   useEffect(() => {
     if (!isImported) return;
 
@@ -432,17 +433,14 @@ export default function GlobalItemEditModal({
     }
   };
 
+  // Now using the utility to get human-readable labels
   const importedSpecs = useMemo(() => {
     if (viewMode !== "imported") return null;
     const attrs = template?.attributes;
-    if (!attrs || typeof attrs !== "object" || Array.isArray(attrs))
-      return null;
-
-    const entries = Object.entries(attrs).filter(
-      ([k, v]) => String(k || "").trim() && String(v ?? "").trim(),
-    );
-    return entries.length ? entries : null;
-  }, [viewMode, template]);
+    if (!attrs) return null;
+    const formatted = formatAttributesForDisplay(attrs, template?.itemType);
+    return formatted.length ? formatted : null;
+  }, [viewMode, template?.attributes, template?.itemType]);
 
   // PreviewModal-style full-screen spinner conditions
   const showFullscreenSpinner =
@@ -634,19 +632,18 @@ export default function GlobalItemEditModal({
                       </div>
                     </div>
 
+                    {/* Imported-only specs — now with human-readable labels */}
                     {importedSpecs &&
-                      importedSpecs.map(([k, v]) => (
+                      importedSpecs.map(([label, value]) => (
                         <div
-                          key={k}
+                          key={label}
                           className="grid grid-cols-[140px_1fr] gap-3 items-start px-3 py-1"
                         >
                           <div className="text-primary font-semibold truncate">
-                            {k}:
+                            {label}:
                           </div>
                           <div className="text-primary break-words">
-                            {v == null || String(v).trim() === ""
-                              ? "—"
-                              : String(v)}
+                            {value}
                           </div>
                         </div>
                       ))}
