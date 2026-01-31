@@ -5,6 +5,7 @@ import ImageCarousel from "./ImageCarousel";
 import ButtonLink from "./ui/ButtonLink";
 import { useUnit } from "../hooks/useUnit";
 import { useWeightInput } from "../hooks/useWeightInput";
+import { formatAttributesForDisplay } from "../utils/attributeLabels";
 
 export default function CatalogItemPreviewModal({
   isOpen,
@@ -84,21 +85,15 @@ export default function CatalogItemPreviewModal({
   }, [item?.offers]);
 
   // Imported-only specs come from CatalogItem.attributes
+  // Now using the utility to get human-readable labels
   const importedSpecs = useMemo(() => {
-    const attrs = item?.attributes;
-    if (!attrs) return null;
-
-    // Map vs plain object
-    let entries = [];
-    if (attrs instanceof Map) entries = Array.from(attrs.entries());
-    else if (typeof attrs === "object" && !Array.isArray(attrs))
-      entries = Object.entries(attrs);
-
-    const filtered = entries.filter(
-      ([k, v]) => String(k || "").trim() && String(v ?? "").trim()
+    if (!item?.attributes) return null;
+    const formatted = formatAttributesForDisplay(
+      item.attributes,
+      item.itemType,
     );
-    return filtered.length ? filtered : null;
-  }, [item?.attributes]);
+    return formatted.length ? formatted : null;
+  }, [item?.attributes, item?.itemType]);
 
   const displayWeight = useMemo(() => {
     if (!item || typeof item.weightGrams !== "number") return "";
@@ -107,7 +102,7 @@ export default function CatalogItemPreviewModal({
 
   if (!isOpen) return null;
 
-  // Avoid the “blank modal” flash: if we're open but item isn't ready yet,
+  // Avoid the "blank modal" flash: if we're open but item isn't ready yet,
   // show a full-screen spinner overlay instead of rendering the panel.
   const isPending = loading || (!item && !error);
   if (isPending) {
@@ -162,7 +157,7 @@ export default function CatalogItemPreviewModal({
               }`}
             >
               <div className="sm:flex-1">
-                {/* “Details” list (label on left, value on right) */}
+                {/* "Details" list (label on left, value on right) */}
                 <div className="rounded overflow-hidden">
                   {/* Item Type */}
                   <div className="grid grid-cols-[140px_1fr] gap-3 items-center px-3 py-1">
@@ -206,23 +201,19 @@ export default function CatalogItemPreviewModal({
                     </div>
                   </div>
 
-                  {/* Imported-only specs (display-only) — no header */}
+                  {/* Imported-only specs (display-only) — now with human-readable labels */}
                   {importedSpecs &&
-                    importedSpecs.map(([k, v]) => (
+                    importedSpecs.map(([label, value]) => (
                       <div
-                        key={k}
+                        key={label}
                         className={
                           "grid grid-cols-[140px_1fr] gap-3 items-start px-3 py-1 "
                         }
                       >
                         <div className="text-primary font-semibold truncate">
-                          {k}:
+                          {label}:
                         </div>
-                        <div className="text-primary break-words">
-                          {v == null || String(v).trim() === ""
-                            ? "—"
-                            : String(v)}
-                        </div>
+                        <div className="text-primary break-words">{value}</div>
                       </div>
                     ))}
                 </div>
