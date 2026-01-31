@@ -1,5 +1,18 @@
 const mongoose = require("mongoose");
 
+// =============================================================================
+// IMPORT ATTRIBUTE SCHEMAS FOR VALIDATION
+// =============================================================================
+const {
+  getAllItemTypes,
+  isValidItemType,
+  validateAttributes,
+} = require("../config/attributeSchemas");
+
+// =============================================================================
+// HELPER FUNCTIONS
+// =============================================================================
+
 function cleanString(val) {
   if (val === undefined || val === null) return undefined;
   const s = String(val).trim();
@@ -25,6 +38,10 @@ function cleanStringArray(arr) {
   return out;
 }
 
+// =============================================================================
+// SUB-SCHEMAS
+// =============================================================================
+
 const DimensionsSchema = new mongoose.Schema(
   {
     length: { type: Number, min: 0 },
@@ -36,13 +53,29 @@ const DimensionsSchema = new mongoose.Schema(
   { _id: false },
 );
 
-// ------------------------------------------------------------
-// CatalogItemSchema → Canonical product definition in TrekList.
+// =============================================================================
+// ITEM TYPE ENUM
+// =============================================================================
+// This enum is built from attributeSchemas.js to ensure consistency.
+// null is allowed for items that haven't been categorized yet.
+// =============================================================================
+
+const ITEM_TYPE_ENUM = [...getAllItemTypes(), null];
+
+// =============================================================================
+// CATALOG ITEM SCHEMA
+// =============================================================================
+// Canonical product definition in TrekList.
 // This is the ADMIN-curated product model.
 // Everything else (Offers, AffiliateProduct, GlobalItem) maps to this.
-// ------------------------------------------------------------
+// =============================================================================
+
 const CatalogItemSchema = new mongoose.Schema(
   {
+    // -------------------------------------------------------------------------
+    // CORE IDENTIFICATION
+    // -------------------------------------------------------------------------
+
     // HUMAN DISPLAY NAME (required)
     // e.g. "Nemo Hornet OSMO 2P Tent"
     name: {
@@ -72,8 +105,12 @@ const CatalogItemSchema = new mongoose.Schema(
       trim: true,
     },
 
+    // -------------------------------------------------------------------------
+    // CATEGORIZATION
+    // -------------------------------------------------------------------------
+
     // TOP-LEVEL CATEGORY (TrekList controlled taxonomy)
-    // e.g. "shelter", "sleep-system", "clothing-top", "electronics"
+    // e.g. "Shelter", "Sleep System", "Clothing", "Electronics"
     category: {
       type: String,
       trim: true,
@@ -81,21 +118,31 @@ const CatalogItemSchema = new mongoose.Schema(
     },
 
     // OPTIONAL SECONDARY SUBCATEGORY
-    // e.g. under "shelter": "tent", "tarp", "bivy"
+    // e.g. under "Shelter": "Tent", "Tarp", "Bivy"
     subcategory: {
       type: String,
       trim: true,
       index: true,
     },
 
-    // HUMAN-FRIENDLY TYPE LABEL
-    // More specific than category, shown to users.
-    // e.g. "ultralight 2-person tent", "mid-layer fleece"
+    // ITEM TYPE - ENUM (drives attribute schema)
+    // This determines which structured attributes are valid/required.
+    // e.g. "Sleeping Bag (Down)", "Backpack", "Headlamp"
+    // null = not yet categorized (attributes will be empty or unvalidated)
     itemType: {
       type: String,
-      trim: true,
+      enum: {
+        values: ITEM_TYPE_ENUM,
+        message:
+          "'{VALUE}' is not a valid item type. See attributeSchemas.js for valid types.",
+      },
+      default: null,
       index: true,
     },
+
+    // -------------------------------------------------------------------------
+    // DESCRIPTION & MEDIA
+    // -------------------------------------------------------------------------
 
     // SHORT DESCRIPTION (admin-curated text)
     // Do NOT store Amazon text permanently (PAAPI rules)
@@ -111,6 +158,10 @@ const CatalogItemSchema = new mongoose.Schema(
       default: [],
     },
 
+    // -------------------------------------------------------------------------
+    // PHYSICAL SPECS
+    // -------------------------------------------------------------------------
+
     // BASE WEIGHT (grams)
     // Canonical weight used for gear list import previews.
     weightGrams: {
@@ -118,19 +169,43 @@ const CatalogItemSchema = new mongoose.Schema(
       min: 0,
     },
 
-    externalIds: {
-      asin: { type: String, trim: true },
-      upc: { type: String, trim: true },
-      ean: { type: String, trim: true },
-      sku: { type: String, trim: true },
-      mpn: { type: String, trim: true },
-    },
-
     // Physical dimensions (store canonical values you trust)
     dimensions: {
       type: DimensionsSchema,
       default: undefined, // prevents empty {} subdocs
     },
+
+    // -------------------------------------------------------------------------
+    // STRUCTURED ATTRIBUTES (NEW!)
+    // -------------------------------------------------------------------------
+    // Validated against attributeSchemas.js based on itemType.
+    // Using Mixed type for flexibility - validation happens in pre-save hook.
+    //
+    // Example for "Sleeping Bag (Down)":
+    // {
+    //   tempRatingF: 20,
+    //   tempRatingC: -7,        // auto-derived
+    //   fillPower: 850,
+    //   shape: "Mummy",
+    //   gender: "Mens"
+    // }
+    //
+    // Example for "Backpack":
+    // {
+    //   volumeLiters: 45,
+    //   gender: "Unisex",
+    //   frameType: "Frameless",
+    //   rainCoverIncluded: true
+    // }
+    // -------------------------------------------------------------------------
+    attributes: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {},
+    },
+
+    // -------------------------------------------------------------------------
+    // TAGS & SEARCH
+    // -------------------------------------------------------------------------
 
     // TAGS FOR SEARCH / FILTERING
     // e.g. ["ultralight", "3-season", "freestanding"]
@@ -140,18 +215,20 @@ const CatalogItemSchema = new mongoose.Schema(
       index: true,
     },
 
-    // FLEXIBLE ATTRIBUTE BAG (key/value pairs)
-    // Examples:
-    // { capacity: "2P", rvalue: "4.2", liters: "55", lumens: "350" }
-    attributes: {
-      type: Map,
-      of: String,
-      default: {},
+    // -------------------------------------------------------------------------
+    // EXTERNAL IDS
+    // -------------------------------------------------------------------------
+
+    externalIds: {
+      asin: { type: String, trim: true },
+      upc: { type: String, trim: true },
+      ean: { type: String, trim: true },
+      sku: { type: String, trim: true },
+      mpn: { type: String, trim: true },
     },
 
     // STABLE CROSS-NETWORK PRODUCT ID
     // Used to unify Amazon + Awin + Impact into one product.
-    // Populated from your ingestion layer if available.
     itemGroupId: {
       type: String,
       trim: true,
@@ -159,7 +236,6 @@ const CatalogItemSchema = new mongoose.Schema(
     },
 
     // PRIMARY AMAZON IDENTIFIER (optional)
-    // If the product has a canonical ASIN.
     canonicalAsin: {
       type: String,
       trim: true,
@@ -171,6 +247,10 @@ const CatalogItemSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+
+    // -------------------------------------------------------------------------
+    // ADMIN & STATUS
+    // -------------------------------------------------------------------------
 
     // ADMIN WHO CREATED THIS PRODUCT
     createdBy: {
@@ -192,11 +272,14 @@ const CatalogItemSchema = new mongoose.Schema(
   },
 );
 
-// ------------------------------------------------------------
-// Normalization middleware
-// Ensures consistent stored values & index performance
-// ------------------------------------------------------------
+// =============================================================================
+// PRE-SAVE MIDDLEWARE
+// =============================================================================
+
 CatalogItemSchema.pre("save", function normalize(next) {
+  // -------------------------------------------------------------------------
+  // 1. NORMALIZE STRING FIELDS
+  // -------------------------------------------------------------------------
   this.name = cleanString(this.name) || this.name;
   this.brand = cleanString(this.brand);
   this.brandLC = this.brand ? this.brand.toLowerCase() : undefined;
@@ -204,7 +287,6 @@ CatalogItemSchema.pre("save", function normalize(next) {
   this.modelNumber = cleanString(this.modelNumber);
   this.category = cleanString(this.category);
   this.subcategory = cleanString(this.subcategory);
-  this.itemType = cleanString(this.itemType);
   this.description = cleanString(this.description);
 
   this.itemGroupId = cleanString(this.itemGroupId);
@@ -221,10 +303,48 @@ CatalogItemSchema.pre("save", function normalize(next) {
 
   this.imageUrls = cleanStringArray(this.imageUrls);
   this.tags = cleanStringArray(this.tags);
+
+  // -------------------------------------------------------------------------
+  // 2. NORMALIZE itemType (trim whitespace)
+  // -------------------------------------------------------------------------
+  if (this.itemType) {
+    this.itemType = cleanString(this.itemType);
+  }
+
+  // -------------------------------------------------------------------------
+  // 3. VALIDATE & DERIVE ATTRIBUTES (if itemType is set)
+  // -------------------------------------------------------------------------
+  if (this.itemType && isValidItemType(this.itemType)) {
+    const attrs = this.attributes || {};
+    const result = validateAttributes(this.itemType, attrs);
+
+    if (!result.valid) {
+      // Validation failed - throw an error with details
+      const err = new Error(
+        `Invalid attributes for ${this.itemType}: ${result.errors.join(", ")}`,
+      );
+      err.name = "ValidationError";
+      err.errors = result.errors;
+      return next(err);
+    }
+
+    // Replace attributes with cleaned + derived values
+    this.attributes = result.cleaned;
+  } else if (this.itemType && !isValidItemType(this.itemType)) {
+    // itemType is set but not in our enum - this shouldn't happen due to enum validation
+    // but just in case, clear attributes to be safe
+    this.attributes = {};
+  }
+
+  // If no itemType, leave attributes as-is (could be legacy data or empty)
+
   next();
 });
 
-// Normalize updates too (findOneAndUpdate / updateOne / updateMany)
+// =============================================================================
+// UPDATE MIDDLEWARE
+// =============================================================================
+
 function normalizeUpdateObject(update) {
   if (!update || typeof update !== "object") return update;
 
@@ -256,9 +376,18 @@ function normalizeUpdateObject(update) {
 
   if ("category" in $set) setClean("category", $set.category);
   if ("subcategory" in $set) setClean("subcategory", $set.subcategory);
-  if ("itemType" in $set) setClean("itemType", $set.itemType);
   if ("modelNumber" in $set) setClean("modelNumber", $set.modelNumber);
   if ("description" in $set) setClean("description", $set.description);
+
+  // itemType - clean but allow null
+  if ("itemType" in $set) {
+    const it = cleanString($set.itemType);
+    if (!it) {
+      $set.itemType = null;
+    } else {
+      $set.itemType = it;
+    }
+  }
 
   if ("itemGroupId" in $set) setClean("itemGroupId", $set.itemGroupId);
 
@@ -288,10 +417,29 @@ function normalizeUpdateObject(update) {
     $set.externalIds = ext;
   }
 
-  if ("tags" in $set && Array.isArray($set.tags))
+  if ("tags" in $set && Array.isArray($set.tags)) {
     $set.tags = cleanStringArray($set.tags);
-  if ("imageUrls" in $set && Array.isArray($set.imageUrls))
+  }
+  if ("imageUrls" in $set && Array.isArray($set.imageUrls)) {
     $set.imageUrls = cleanStringArray($set.imageUrls);
+  }
+
+  // -------------------------------------------------------------------------
+  // VALIDATE ATTRIBUTES ON UPDATE (if both itemType and attributes are set)
+  // -------------------------------------------------------------------------
+  if ("attributes" in $set && "itemType" in $set) {
+    const itemType = $set.itemType;
+    const attrs = $set.attributes;
+
+    if (itemType && isValidItemType(itemType) && attrs) {
+      const result = validateAttributes(itemType, attrs);
+      if (result.valid) {
+        $set.attributes = result.cleaned;
+      }
+      // If invalid, we let it through here - the route should validate first
+      // This is a safety net, not the primary validation
+    }
+  }
 
   if (hasOperators) {
     update.$set = $set;
@@ -315,9 +463,11 @@ CatalogItemSchema.pre(
   },
 );
 
-// - Allow note-only dimensions
-// - Allow partial L/W/H ONLY if note is present
-// - Disallow unit-only with no note and no numbers
+// =============================================================================
+// CUSTOM VALIDATORS
+// =============================================================================
+
+// Dimensions validation
 CatalogItemSchema.path("dimensions").validate(function (dims) {
   if (!dims) return true;
 
@@ -342,11 +492,17 @@ CatalogItemSchema.path("dimensions").validate(function (dims) {
   return true;
 }, "Dimensions must include L/W/H, or a note. Partial L/W/H requires a note.");
 
-// ------------------------------------------------------------
-// Helpful indexes for affiliate resolution & search
-// ------------------------------------------------------------
+// =============================================================================
+// INDEXES
+// =============================================================================
+
 CatalogItemSchema.index({ itemGroupId: 1 });
 CatalogItemSchema.index({ canonicalAsin: 1 });
 CatalogItemSchema.index({ brandLC: 1, category: 1 });
+CatalogItemSchema.index({ itemType: 1, isActive: 1 }); // NEW: for filtering by itemType
+
+// =============================================================================
+// EXPORT
+// =============================================================================
 
 module.exports = mongoose.model("CatalogItem", CatalogItemSchema);

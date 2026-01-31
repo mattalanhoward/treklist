@@ -17,6 +17,9 @@ import {
 } from "react-icons/fa";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { useUserSettings } from "../contexts/UserSettings";
+import AttributeFields, {
+  getAllItemTypes,
+} from "../components/AttributeFields";
 
 const TABS = [
   { id: "gearCatalog", label: "Gear catalog" },
@@ -115,42 +118,6 @@ function toOptionalNumber(val) {
   return Number.isFinite(n) ? n : undefined;
 }
 
-function parseAttributesText(text) {
-  const out = {};
-  const raw = String(text || "")
-    .split(/\r?\n/)
-    .map((l) => l.trim())
-    .filter(Boolean);
-
-  for (const line of raw) {
-    // allow "key: value" (preferred) or "key=value"
-    const idx = line.includes(":") ? line.indexOf(":") : line.indexOf("=");
-    if (idx === -1) continue;
-
-    const k = line.slice(0, idx).trim();
-    const v = line.slice(idx + 1).trim();
-    if (!k || !v) continue;
-    out[k] = v;
-  }
-
-  return Object.keys(out).length ? out : undefined;
-}
-
-function attributesToText(attributes) {
-  if (!attributes) return "";
-  // Mongoose Map can come back as plain object already, but normalize anyway
-  const obj =
-    attributes instanceof Map
-      ? Object.fromEntries(attributes.entries())
-      : attributes;
-
-  if (!obj || typeof obj !== "object") return "";
-  return Object.entries(obj)
-    .filter(([k, v]) => String(k || "").trim() && String(v ?? "").trim())
-    .map(([k, v]) => `${k}: ${v}`)
-    .join("\n");
-}
-
 function GearCatalogSection({
   mode = "both",
   onDuplicate,
@@ -200,7 +167,7 @@ function GearCatalogSection({
     imageUrlsText: "",
     canonicalAsin: "",
     itemGroupId: "",
-    attributesText: "",
+    attributes: {}, // Structured attributes object
 
     // Prefill controls (decoupled from offer network)
     prefillSource: "amazon", // "amazon" | "none" (future: "rei", etc)
@@ -265,8 +232,7 @@ function GearCatalogSection({
       itemType: src?.itemType || "",
       modelNumber: src?.modelNumber || "",
       description: src?.description || "",
-      attributesText: attributesToText(src?.attributes) || "",
-
+      attributes: src?.attributes || {},
       weightGrams:
         typeof src?.weightGrams === "number" ? String(src.weightGrams) : "",
       dimLength: typeof dims.length === "number" ? String(dims.length) : "",
@@ -390,7 +356,11 @@ function GearCatalogSection({
       return toast.error("Please confirm you rewrote the Amazon description.");
     }
 
-    const attributes = parseAttributesText(form.attributesText);
+    // Attributes are already structured - just pass them through
+    const attributes =
+      form.attributes && Object.keys(form.attributes).length > 0
+        ? form.attributes
+        : undefined;
 
     setCreating(true);
     try {
@@ -485,7 +455,7 @@ function GearCatalogSection({
         amazonAsinLookup: "",
         amazonMarketplace: "us",
         offers: [blankOffer()],
-        attributesText: "",
+        attributes: {},
       });
 
       loadItems({ includeArchived: showArchived });
@@ -1083,14 +1053,27 @@ function GearCatalogSection({
                     <label className="block font-medium text-primary mb-0.5">
                       Item type
                     </label>
-                    <input
-                      type="text"
+                    <select
                       name="itemType"
                       value={form.itemType}
-                      onChange={handleChange}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                      placeholder="ultralight 2P tent..."
-                    />
+                      onChange={(e) => {
+                        const newItemType = e.target.value;
+                        setForm((prev) => ({
+                          ...prev,
+                          itemType: newItemType,
+                          // Clear attributes when item type changes
+                          attributes: {},
+                        }));
+                      }}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                    >
+                      <option value="">Select item type…</option>
+                      {getAllItemTypes().map((type) => (
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               </div>
@@ -1117,20 +1100,15 @@ function GearCatalogSection({
 
                 <div>
                   <label className="block font-medium text-primary mb-0.5">
-                    Attributes (one per line)
+                    Attributes
                   </label>
-                  <textarea
-                    name="attributesText"
-                    value={form.attributesText || ""}
-                    onChange={handleChange}
-                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary resize-y"
-                    rows={3}
-                    placeholder={`Capacity (L): 24\nGender / Fit: Women\nSuspension: AirSpeed`}
+                  <AttributeFields
+                    itemType={form.itemType}
+                    attributes={form.attributes}
+                    onChange={(newAttrs) =>
+                      setForm((prev) => ({ ...prev, attributes: newAttrs }))
+                    }
                   />
-                  <span className="block text-[11px] text-primary/70">
-                    Format: <code>Key: Value</code> (or <code>Key=Value</code>).
-                    Stored in CatalogItem.attributes.
-                  </span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -1973,7 +1951,7 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
       itemType: item?.itemType || "",
       modelNumber: item?.modelNumber || "",
       description: item?.description || "",
-      attributesText: attributesToText(item?.attributes),
+      attributes: item?.attributes || {},
       weightGrams:
         typeof item?.weightGrams === "number" ? String(item.weightGrams) : "",
       dimLength: typeof dims.length === "number" ? String(dims.length) : "",
@@ -2214,7 +2192,10 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const attributes = parseAttributesText(form.attributesText);
+    const attributes =
+      form.attributes && Object.keys(form.attributes).length > 0
+        ? form.attributes
+        : undefined;
 
     if (!form.name.trim()) {
       toast.error("Name is required.");
@@ -2441,14 +2422,26 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                   <label className="block font-medium text-primary mb-0.5">
                     Item type
                   </label>
-                  <input
-                    type="text"
+                  <select
                     name="itemType"
                     value={form.itemType}
-                    onChange={handleChange}
-                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                    placeholder="ultralight 2P tent..."
-                  />
+                    onChange={(e) => {
+                      const newItemType = e.target.value;
+                      setForm((prev) => ({
+                        ...prev,
+                        itemType: newItemType,
+                        attributes: {},
+                      }));
+                    }}
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                  >
+                    <option value="">Select item type…</option>
+                    {getAllItemTypes().map((type) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
@@ -2488,20 +2481,15 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
 
               <div>
                 <label className="block font-medium text-primary mb-0.5">
-                  Attributes (one per line)
+                  Attributes
                 </label>
-                <textarea
-                  name="attributesText"
-                  value={form.attributesText || ""}
-                  onChange={handleChange}
-                  className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary resize-y"
-                  rows={3}
-                  placeholder={`Capacity (L): 24\nGender / Fit: Women\nSuspension: AirSpeed`}
+                <AttributeFields
+                  itemType={form.itemType}
+                  attributes={form.attributes}
+                  onChange={(newAttrs) =>
+                    setForm((prev) => ({ ...prev, attributes: newAttrs }))
+                  }
                 />
-                <span className="block text-[11px] text-primary/70">
-                  Format: <code>Key: Value</code> (or <code>Key=Value</code>).
-                  Stored in CatalogItem.attributes.
-                </span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
