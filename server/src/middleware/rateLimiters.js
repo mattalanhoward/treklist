@@ -93,6 +93,13 @@ const searchLimiter = makeLimiter({
   message: "Too many search requests. Please try again later.",
 });
 
+// OAuth rate limiter (Google, etc.)
+const oauthLimiter = makeLimiter({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10,
+  message: "Too many OAuth attempts. Please try again later.",
+});
+
 module.exports = {
   registerLimiter,
   forgotPasswordLimiter,
@@ -103,4 +110,5 @@ module.exports = {
   publicShareLimiter,
   searchLimiter,
   resolveLimiter,
+  oauthLimiter,
 };

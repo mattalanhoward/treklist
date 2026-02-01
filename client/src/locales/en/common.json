@@ -143,11 +143,12 @@
       "signInLoading": "Signing in…",
       "createAccount": "Create Account",
       "createAccountLoading": "Creating…",
-      "verifyCheck": "I’ve verified my email",
+      "verifyCheck": "I've verified my email",
       "verifyCheckLoading": "Checking…",
       "verifyResend": "Resend verification email",
       "forgotPasswordSend": "Send reset link",
-      "forgotPasswordSendLoading": "Sending…"
+      "forgotPasswordSendLoading": "Sending…",
+      "continueWithGoogle": "Continue with Google"
     },
     "errors": {
       "loginMissingFields": "Please enter your email and password.",
@@ -155,7 +156,10 @@
       "registerMissingFields": "Email and password are required.",
       "acceptTermsRequired": "Please accept the Terms of Use and Privacy Policy to create an account.",
       "registerFailed": "Registration failed",
-      "emailInUse": "Email already in use."
+      "emailInUse": "Email already in use.",
+      "googleAuthFailed": "Google sign-in failed. Please try again.",
+      "googleOnlyAccount": "This account uses Google sign-in. Please use 'Continue with Google'.",
+      "googleRegistered": "This email is registered with Google. Try 'Sign in with Google' instead."
     },
     "text": {
       "marketingOptIn": "Email me about new TrekList features, tips, and occasional offers.",
@@ -163,7 +167,8 @@
       "termsTermsOfUse": "Terms of Use",
       "termsAnd": "and",
       "termsPrivacyPolicy": "Privacy Policy",
-      "termsSuffix": "."
+      "termsSuffix": ".",
+      "or": "or"
     },
     "verify": {
       "sentTo": "We've sent a verification link to {{email}}.",

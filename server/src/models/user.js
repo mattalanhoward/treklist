@@ -44,7 +44,21 @@ const UserSchema = new mongoose.Schema(
     },
     passwordHash: {
       type: String,
-      required: true,
+      required: false, // Optional to support OAuth users (Google, etc.)
+    },
+    authProviders: {
+      type: [
+        {
+          provider: {
+            type: String,
+            enum: ["google", "email"],
+            required: true,
+          },
+          providerId: { type: String }, // Google user ID or null for email
+          connectedAt: { type: Date, default: Date.now },
+        },
+      ],
+      default: [],
     },
     isVerified: { type: Boolean, default: false },
     isAdmin: { type: Boolean, default: false },
@@ -89,6 +103,23 @@ UserSchema.methods.setPassword = async function (plainText) {
 // Helper to check the password
 UserSchema.methods.validatePassword = async function (plainText) {
   return bcrypt.compare(plainText, this.passwordHash);
+};
+
+// Check if user has password authentication
+UserSchema.methods.hasPasswordAuth = function () {
+  return Boolean(this.passwordHash);
+};
+
+// Check if user has Google authentication
+UserSchema.methods.hasGoogleAuth = function () {
+  return this.authProviders.some((p) => p.provider === "google");
+};
+
+// Add an authentication provider
+UserSchema.methods.addAuthProvider = function (provider, providerId) {
+  if (!this.authProviders.some((p) => p.provider === provider)) {
+    this.authProviders.push({ provider, providerId });
+  }
 };
 
 module.exports = mongoose.model("User", UserSchema);

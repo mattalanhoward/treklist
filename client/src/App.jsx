@@ -5,6 +5,7 @@ import useAuth from "./hooks/useAuth";
 import VerifyEmail from "./pages/VerifyEmail";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import AuthCallback from "./pages/AuthCallback";
 import Dashboard from "./pages/Dashboard";
 import Landing from "./pages/Landing";
 import ChecklistView from "./pages/ChecklistView";
@@ -58,6 +59,7 @@ export default function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/auth/register" element={<Landing />} />
         <Route path="/auth/login" element={<Landing />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
