@@ -178,9 +178,17 @@ export function formatAttributeValue(key, value) {
   if (value === null || value === undefined) return "—";
   if (value === "") return "—";
 
-  // Boolean values
+  // Boolean values (actual booleans)
   if (typeof value === "boolean") {
     return value ? "Yes" : "No";
+  }
+
+  // String booleans (from Mongoose Map serialization or old data)
+  if (value === "true" || value === "True" || value === "TRUE") {
+    return "Yes";
+  }
+  if (value === "false" || value === "False" || value === "FALSE") {
+    return "No";
   }
 
   // Arrays (rare, but handle gracefully)
