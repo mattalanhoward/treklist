@@ -18,7 +18,7 @@ import {
 import ConfirmDialog from "../components/ConfirmDialog";
 import { useUserSettings } from "../contexts/UserSettings";
 import AttributeFields, {
-  getAllItemTypes,
+  getItemTypesForCategory,
 } from "../components/AttributeFields";
 
 const TABS = [
@@ -1068,7 +1068,7 @@ function GearCatalogSection({
                       className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
                     >
                       <option value="">Select item type…</option>
-                      {getAllItemTypes().map((type) => (
+                      {getItemTypesForCategory(form.category).map((type) => (
                         <option key={type} value={type}>
                           {type}
                         </option>
@@ -2436,7 +2436,7 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                     className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
                   >
                     <option value="">Select item type…</option>
-                    {getAllItemTypes().map((type) => (
+                    {getItemTypesForCategory(form.category).map((type) => (
                       <option key={type} value={type}>
                         {type}
                       </option>
