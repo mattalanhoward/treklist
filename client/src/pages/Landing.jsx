@@ -9,6 +9,7 @@ import desktopColumnScreenshot from "../assets/images/screen-shots/treklist-colu
 import AuthModal from "../components/AuthModal";
 import FooterLegal from "../components/FooterLegal";
 import PublicHeader from "../components/PublicHeader";
+import SEO from "../components/SEO";
 import usePageTitle from "../hooks/usePageTitle";
 
 // helper to build share path safely
@@ -213,6 +214,11 @@ export default function Landing() {
 
   return (
     <div className="relative flex flex-col min-h-screen bg-white text-gray-800">
+      <SEO
+        title={t("landing.pageTitle")}
+        description={t("landing.seo.description")}
+        url="https://treklist.co/"
+      />
       <PublicHeader
         variant="overlay"
         showSections={true}

@@ -730,6 +730,9 @@
   },
   "publicList": {
     "documentTitleSuffix": "Lista de equipo pública",
+    "seo": {
+      "description": "{{title}} - Una lista de equipo de senderismo y trekking en TrekList. Consulta la lista completa con pesos y detalles."
+    },
     "status": {
       "loading": "Cargando…",
       "copying": "Creando tu copia…"
@@ -798,6 +801,9 @@
   },
   "landing": {
     "pageTitle": "Empaca inteligente. Viaja ligero.",
+    "seo": {
+      "description": "Planifica tus excursiones y rutas de senderismo con TrekList. Crea listas de equipo, controla el peso de tu mochila y comparte tu configuración con otros senderistas. Gratis para excursionistas en Europa y más allá."
+    },
     "hero": {
       "title": "Empaca inteligente. Viaja ligero.",
       "subtitle": "Crea tu lista de equipo, ajusta tu mochila y sal al sendero bien preparado. Diseñado para senderistas de larga distancia, excursionistas de fin de semana y trekker de refugio en refugio que exploran Europa y más allá.",
