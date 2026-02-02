@@ -147,7 +147,8 @@
       "verifyCheckLoading": "Comprobando…",
       "verifyResend": "Reenviar correo de verificación",
       "forgotPasswordSend": "Enviar enlace de restablecimiento",
-      "forgotPasswordSendLoading": "Enviando…"
+      "forgotPasswordSendLoading": "Enviando…",
+      "continueWithGoogle": "Continuar con Google"
     },
     "errors": {
       "loginMissingFields": "Introduce tu correo y tu contraseña.",
@@ -155,7 +156,10 @@
       "registerMissingFields": "El correo y la contraseña son obligatorios.",
       "acceptTermsRequired": "Acepta los Términos de uso y la Política de privacidad para crear una cuenta.",
       "registerFailed": "Registro fallido",
-      "emailInUse": "El correo ya está en uso."
+      "emailInUse": "El correo ya está en uso.",
+      "googleAuthFailed": "Error al iniciar sesión con Google. Inténtalo de nuevo.",
+      "googleOnlyAccount": "Esta cuenta usa inicio de sesión con Google. Usa 'Continuar con Google'.",
+      "googleRegistered": "Este correo está registrado con Google. Prueba 'Iniciar sesión con Google'."
     },
     "text": {
       "marketingOptIn": "Envíame correos sobre nuevas funciones de TrekList, consejos y ofertas ocasionales.",
@@ -163,7 +167,9 @@
       "termsTermsOfUse": "Términos de uso",
       "termsAnd": "y",
       "termsPrivacyPolicy": "Política de privacidad",
-      "termsSuffix": "."
+      "termsSuffix": ".",
+      "or": "o",
+      "googleTermsPrefix": "Al continuar con Google, aceptas nuestros"
     },
     "verify": {
       "sentTo": "Hemos enviado un enlace de verificación a {{email}}.",
@@ -914,6 +920,7 @@
       "sending": "Enviando…"
     },
     "buttons": {
+      "send": "Enviar",
       "sending": "Enviando…"
     },
     "toasts": {
