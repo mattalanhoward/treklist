@@ -5,7 +5,7 @@ import {
   loadConsent,
   saveConsent,
 } from "../../utils/cookieConsent";
-import { initAnalytics, disableAnalytics } from "../../utils/analytics";
+import { initAnalytics, disableAnalytics, grantAnalyticsConsent } from "../../utils/analytics";
 
 export default function CookieSettingsContent() {
   const [consent, setConsent] = useState(defaultConsent);
@@ -47,8 +47,9 @@ export default function CookieSettingsContent() {
     setConsent(next);
     setSavedAt(next.updatedAt);
     setDirty(false);
-    // User explicitly accepted analytics → try to load analytics script
+    // User explicitly accepted analytics → load GTM and grant consent
     initAnalytics();
+    grantAnalyticsConsent();
   };
 
   const handleRejectNonEssential = () => {
@@ -68,9 +69,10 @@ export default function CookieSettingsContent() {
     setConsent(next);
     setSavedAt(next.updatedAt);
     setDirty(false);
-    // If analytics are enabled via Save, try to load analytics script
+    // If analytics are enabled via Save, load GTM and grant consent
     if (next.analytics) {
       initAnalytics();
+      grantAnalyticsConsent();
     } else {
       disableAnalytics();
     }

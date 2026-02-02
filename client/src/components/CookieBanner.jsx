@@ -5,7 +5,7 @@ import {
   loadConsent,
   saveConsent,
 } from "../utils/cookieConsent";
-import { initAnalytics } from "../utils/analytics";
+import { initAnalytics, grantAnalyticsConsent } from "../utils/analytics";
 import { useTranslation } from "react-i18next";
 
 // Better heuristic:
@@ -72,9 +72,10 @@ export default function CookieBanner() {
 
   const handleAcceptAll = () => {
     const current = loadConsent();
-    const next = saveConsent({ ...current, analytics: true });
-    // User just consented to analytics; load analytics if configured.
+    saveConsent({ ...current, analytics: true });
+    // Initialize GTM if not loaded, then grant consent
     initAnalytics();
+    grantAnalyticsConsent();
     setOpen(false);
   };
 
