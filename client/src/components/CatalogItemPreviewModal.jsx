@@ -118,7 +118,7 @@ export default function CatalogItemPreviewModal({
   return (
     <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-[60]">
       <div
-        className={`bg-white rounded-lg shadow-2xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 max-h-[calc(100vh-2rem)] flex flex-col
+        className={`bg-white rounded-lg shadow-2xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 max-h-[70vh] sm:max-h-[calc(100vh-5rem)] flex flex-col
     ${modalWidthClass}`}
       >
         {/* Header - fixed at top */}
