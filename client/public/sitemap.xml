@@ -5,6 +5,23 @@
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
+  <!-- Featured Gear Lists -->
+  <url>
+    <loc>https://treklist.co/share/DEeOxfDkvBClbMqB/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://treklist.co/share/5dnOar4EfadBxPy6/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://treklist.co/share/x8WJwraT13LDbmDb/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Legal Pages -->
   <url>
     <loc>https://treklist.co/legal/privacy</loc>
     <changefreq>monthly</changefreq>
