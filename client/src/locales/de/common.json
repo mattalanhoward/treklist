@@ -147,7 +147,8 @@
       "verifyCheckLoading": "Prüfen…",
       "verifyResend": "Bestätigungs-E-Mail erneut senden",
       "forgotPasswordSend": "Reset-Link senden",
-      "forgotPasswordSendLoading": "Senden…"
+      "forgotPasswordSendLoading": "Senden…",
+      "continueWithGoogle": "Mit Google fortfahren"
     },
     "errors": {
       "loginMissingFields": "Bitte gib deine E-Mail und dein Passwort ein.",
@@ -155,7 +156,10 @@
       "registerMissingFields": "E-Mail und Passwort sind erforderlich.",
       "acceptTermsRequired": "Bitte akzeptiere die Nutzungsbedingungen und die Datenschutzerklärung, um ein Konto zu erstellen.",
       "registerFailed": "Registrierung fehlgeschlagen",
-      "emailInUse": "E-Mail wird bereits verwendet."
+      "emailInUse": "E-Mail wird bereits verwendet.",
+      "googleAuthFailed": "Anmeldung mit Google fehlgeschlagen. Bitte versuche es erneut.",
+      "googleOnlyAccount": "Dieses Konto verwendet Google-Anmeldung. Bitte nutze 'Mit Google fortfahren'.",
+      "googleRegistered": "Diese E-Mail ist mit Google registriert. Versuche 'Mit Google anmelden'."
     },
     "text": {
       "marketingOptIn": "Schick mir E-Mails über neue TrekList-Funktionen, Tipps und gelegentliche Angebote.",
@@ -163,7 +167,9 @@
       "termsTermsOfUse": "Nutzungsbedingungen",
       "termsAnd": "und",
       "termsPrivacyPolicy": "Datenschutzerklärung",
-      "termsSuffix": " zu."
+      "termsSuffix": " zu.",
+      "or": "oder",
+      "googleTermsPrefix": "Mit Google fortzufahren bedeutet, dass du unsere"
     },
     "verify": {
       "sentTo": "Wir haben einen Bestätigungslink an {{email}} gesendet.",
@@ -317,7 +323,6 @@
     "addCategory": {
       "button": "Kategorie hinzufügen",
       "inlinePlaceholder": "Neuer Kategoriename",
-      "triggers": "New category name",
       "columnPlaceholder": "Neuer Kategoriename"
     },
     "items": {
@@ -915,6 +920,7 @@
       "sending": "Wird gesendet…"
     },
     "buttons": {
+      "send": "Senden",
       "sending": "Wird gesendet…"
     },
     "toasts": {

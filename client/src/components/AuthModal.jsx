@@ -207,6 +207,31 @@ export default function AuthModal({
     </div>
   );
 
+  // Google terms notice component
+  const GoogleTermsNotice = () => (
+    <p className="text-xs text-primary/70 text-center mb-3">
+      {t("auth.text.googleTermsPrefix")}{" "}
+      <a
+        href="/legal/terms"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-secondary underline"
+      >
+        {t("auth.text.termsTermsOfUse")}
+      </a>{" "}
+      {t("auth.text.termsAnd")}{" "}
+      <a
+        href="/legal/privacy"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-secondary underline"
+      >
+        {t("auth.text.termsPrivacyPolicy")}
+      </a>
+      .
+    </p>
+  );
+
   // Google button component
   const GoogleButton = ({ disabled }) => (
     <button
@@ -384,6 +409,7 @@ export default function AuthModal({
               </button>
             </div>
             <OAuthDivider />
+            <GoogleTermsNotice />
             <GoogleButton disabled={loading} />
           </form>
         )}
@@ -484,6 +510,7 @@ export default function AuthModal({
               </div>
             </form>
             <OAuthDivider />
+            <GoogleTermsNotice />
             <GoogleButton disabled={loading} />
           </>
         )}

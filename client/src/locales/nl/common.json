@@ -147,7 +147,8 @@
       "verifyCheckLoading": "Bezig met controleren…",
       "verifyResend": "Verificatie-e-mail opnieuw versturen",
       "forgotPasswordSend": "Resetlink versturen",
-      "forgotPasswordSendLoading": "Bezig met versturen…"
+      "forgotPasswordSendLoading": "Bezig met versturen…",
+      "continueWithGoogle": "Doorgaan met Google"
     },
     "errors": {
       "loginMissingFields": "Vul je e-mail en wachtwoord in.",
@@ -155,7 +156,10 @@
       "registerMissingFields": "E-mail en wachtwoord zijn verplicht.",
       "acceptTermsRequired": "Accepteer de gebruiksvoorwaarden en het privacybeleid om een account aan te maken.",
       "registerFailed": "Registratie mislukt",
-      "emailInUse": "E-mailadres is al in gebruik"
+      "emailInUse": "E-mailadres is al in gebruik.",
+      "googleAuthFailed": "Inloggen met Google is mislukt. Probeer het opnieuw.",
+      "googleOnlyAccount": "Dit account gebruikt Google-inlog. Gebruik 'Doorgaan met Google'.",
+      "googleRegistered": "Dit e-mailadres is geregistreerd met Google. Probeer 'Inloggen met Google'."
     },
     "text": {
       "marketingOptIn": "Stuur mij e-mails over nieuwe TrekList-functies, tips en af en toe aanbiedingen.",
@@ -163,7 +167,9 @@
       "termsTermsOfUse": "Gebruiksvoorwaarden",
       "termsAnd": "en",
       "termsPrivacyPolicy": "Privacyverklaring",
-      "termsSuffix": "."
+      "termsSuffix": ".",
+      "or": "of",
+      "googleTermsPrefix": "Door verder te gaan met Google ga je akkoord met onze"
     },
     "verify": {
       "sentTo": "We hebben een verificatielink gestuurd naar {{email}}.",
@@ -421,15 +427,13 @@
     },
     "importTab": {
       "searchPlaceholder": "Zoek in catalogus…",
-      "importTab": {
-        "footer": {
-          "catalogUpdatesDaily": "De catalogus wordt dagelijks bijgewerkt.",
-          "requestItemCta": "Een item aanvragen"
-        },
-        "mobileHint": {
-          "title": "Kun je niet vinden wat je zoekt?",
-          "cta": "Een item aanvragen"
-        }
+      "footer": {
+        "catalogUpdatesDaily": "De catalogus wordt dagelijks bijgewerkt.",
+        "requestItemCta": "Een item aanvragen"
+      },
+      "mobileHint": {
+        "title": "Kun je niet vinden wat je zoekt?",
+        "cta": "Een item aanvragen"
       },
       "filters": {
         "allCategories": "Alle categorieën",
@@ -916,6 +920,7 @@
       "sending": "Verzenden…"
     },
     "buttons": {
+      "send": "Verzenden",
       "sending": "Verzenden…"
     },
     "toasts": {

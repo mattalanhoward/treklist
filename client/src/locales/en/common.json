@@ -168,7 +168,8 @@
       "termsAnd": "and",
       "termsPrivacyPolicy": "Privacy Policy",
       "termsSuffix": ".",
-      "or": "or"
+      "or": "or",
+      "googleTermsPrefix": "By continuing with Google, you agree to our"
     },
     "verify": {
       "sentTo": "We've sent a verification link to {{email}}.",
