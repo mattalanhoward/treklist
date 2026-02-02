@@ -1,6 +1,6 @@
 // src/pages/GearListView.jsx
 import React, { useState, useEffect, useCallback } from "react";
-import { FaPlus, FaEllipsisH, FaCheck } from "react-icons/fa";
+import { FaPlus, FaEllipsisH, FaCheck, FaLock, FaUnlock } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { DragOverlay, closestCorners, pointerWithin } from "@dnd-kit/core";
@@ -93,6 +93,9 @@ export default function GearListView({
   const [moveItemTarget, setMoveItemTarget] = useState(null); // { catId, item }
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [isDeletingList, setIsDeletingList] = useState(false);
+
+  // Lock state to prevent accidental edits
+  const [isLocked, setIsLocked] = useState(list.isLocked || false);
 
   // Prevent "stale list prop" from overwriting optimistic background changes.
   // We keep showing the optimistic value until the server (list prop) catches up.
@@ -191,6 +194,11 @@ export default function GearListView({
 
     setCustomBgUrl(serverCustom);
   }, [list.customBackground?.url, isUploading]);
+
+  // Sync lock state with server
+  useEffect(() => {
+    setIsLocked(list.isLocked || false);
+  }, [list.isLocked]);
 
   // Auto-group every time `items` changes
   useEffect(() => {
@@ -332,6 +340,23 @@ export default function GearListView({
   const cancelDeleteItem = () => {
     setConfirmOpen(false);
     setPendingDelete({ catId: null, itemId: null });
+  };
+
+  const handleToggleLock = async () => {
+    const newLocked = !isLocked;
+    setIsLocked(newLocked); // optimistic update
+
+    try {
+      await api.patch(`/dashboard/${listId}/lock`, { isLocked: newLocked });
+      toast.success(
+        newLocked
+          ? t("gearList.toasts.listLocked")
+          : t("gearList.toasts.listUnlocked"),
+      );
+    } catch (err) {
+      setIsLocked(!newLocked); // rollback
+      toast.error(t("gearList.toasts.lockToggleFailed"));
+    }
   };
 
   const pendingDeleteCategory = React.useMemo(
@@ -1049,8 +1074,8 @@ export default function GearListView({
             ) : (
               <>
                 <h2
-                  onClick={() => setIsEditingTitle(true)}
-                  className="hide-on-touch text-primary"
+                  onClick={() => !isLocked && setIsEditingTitle(true)}
+                  className={`hide-on-touch text-primary ${isLocked ? "cursor-default" : "cursor-text"}`}
                 >
                   {list.title}
                 </h2>
@@ -1065,8 +1090,23 @@ export default function GearListView({
             )}
           </div>
 
-          {/* Ellipsis menu */}
-          <DropdownMenu
+          {/* Lock + Ellipsis menu grouped together */}
+          <div className="flex items-center space-x-2">
+            {/* Lock toggle button - desktop only */}
+            <button
+              onClick={handleToggleLock}
+              className="hidden sm:inline-flex items-center justify-center text-l text-primaryAlt hover:text-primaryAlt/80 leading-none p-2 -m-2 rounded-lg"
+              aria-label={
+                isLocked
+                  ? t("gearList.menu.unlockListA11y")
+                  : t("gearList.menu.lockListA11y")
+              }
+            >
+              {isLocked ? <FaLock /> : <FaUnlock />}
+            </button>
+
+            {/* Ellipsis menu */}
+            <DropdownMenu
             trigger={
               <button
                 data-tour="list-preferences-menu"
@@ -1082,8 +1122,21 @@ export default function GearListView({
               {
                 key: "header-prefs",
                 render: () => (
-                  <div className="font-semibold text-primary uppercase">
-                    {t("gearList.menu.headerPreferences")}{" "}
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-primary uppercase">
+                      {t("gearList.menu.headerPreferences")}
+                    </span>
+                    <button
+                      onClick={handleToggleLock}
+                      className="sm:hidden p-1 text-primary hover:text-primary/80"
+                      aria-label={
+                        isLocked
+                          ? t("gearList.menu.unlockListA11y")
+                          : t("gearList.menu.lockListA11y")
+                      }
+                    >
+                      {isLocked ? <FaLock /> : <FaUnlock />}
+                    </button>
                   </div>
                 ),
               },
@@ -1246,6 +1299,7 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
               },
             ]}
           />
+          </div>
         </div>
       </div>
 
@@ -1259,14 +1313,18 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
             ? verticalListSortingStrategy
             : horizontalListSortingStrategy
         }
-        onDragStart={handleDragStart}
-        onDragEnd={(event) => {
-          handleDragEnd(event);
-          setTimeout(() => {
-            setActiveItem(null);
-            setActiveCategory(null);
-          }, 300);
-        }}
+        onDragStart={isLocked ? undefined : handleDragStart}
+        onDragEnd={
+          isLocked
+            ? undefined
+            : (event) => {
+                handleDragEnd(event);
+                setTimeout(() => {
+                  setActiveItem(null);
+                  setActiveCategory(null);
+                }, 300);
+              }
+        }
         collisionDetection={collisionDetectionStrategy}
         modifiers={[axisModifier]}
         renderDragOverlay={() => (
@@ -1314,41 +1372,44 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
                 onMoveItem={(catId, item) => setMoveItemTarget({ catId, item })}
                 viewMode={viewMode}
                 onItemUpdated={refreshListAfterEdit}
+                isLocked={isLocked}
               />
             ))}
 
-            <div className="px-4 mt-4">
-              {addingNewCat ? (
-                <input
-                  autoFocus
-                  value={newCatName}
-                  onChange={(e) => setNewCatName(e.target.value)}
-                  placeholder={t("gearList.addCategory.inlinePlaceholder")}
-                  className="w-full p-2 border-b-2 border-accent focus:outline-none bg-neutral text-primary rounded"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") confirmAddCat();
-                    if (e.key === "Escape") cancelAddCat();
-                  }}
-                  onBlur={() => {
-                    if (newCatName.trim()) confirmAddCat();
-                    else cancelAddCat();
-                  }}
-                />
-              ) : (
-                <button
-                  onClick={() => {
-                    setNewCatName("");
-                    setAddingNewCat(true);
-                  }}
-                  className="p-2 w-full border border-secondary rounded flex items-center justify-center space-x-2 bg-base-100 text-primary hover:bg-base-100/80"
-                >
-                  <FaPlus />
-                  <span className="text-sm">
-                    {t("gearList.addCategory.button")}
-                  </span>
-                </button>
-              )}
-            </div>
+            {!isLocked && (
+              <div className="px-4 mt-4">
+                {addingNewCat ? (
+                  <input
+                    autoFocus
+                    value={newCatName}
+                    onChange={(e) => setNewCatName(e.target.value)}
+                    placeholder={t("gearList.addCategory.inlinePlaceholder")}
+                    className="w-full p-2 border-b-2 border-accent focus:outline-none bg-neutral text-primary rounded"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") confirmAddCat();
+                      if (e.key === "Escape") cancelAddCat();
+                    }}
+                    onBlur={() => {
+                      if (newCatName.trim()) confirmAddCat();
+                      else cancelAddCat();
+                    }}
+                  />
+                ) : (
+                  <button
+                    onClick={() => {
+                      setNewCatName("");
+                      setAddingNewCat(true);
+                    }}
+                    className="p-2 w-full border border-secondary rounded flex items-center justify-center space-x-2 bg-base-100 text-primary hover:bg-base-100/80"
+                  >
+                    <FaPlus />
+                    <span className="text-sm">
+                      {t("gearList.addCategory.button")}
+                    </span>
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         ) : (
           <div className="flex-1 flex flex-nowrap items-start overflow-x-auto px-2 py-2 snap-x snap-mandatory sm:snap-none">
@@ -1372,41 +1433,44 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
                 onMoveItem={(catId, item) => setMoveItemTarget({ catId, item })}
                 viewMode={viewMode}
                 onItemUpdated={refreshListAfterEdit}
+                isLocked={isLocked}
               />
             ))}
 
-            <div className="snap-center flex-shrink-0 mt-0 mb-0 w-90 sm:w-64 flex flex-col h-full px-2">
-              {addingNewCat ? (
-                <div>
-                  <input
-                    autoFocus
-                    value={newCatName}
-                    onChange={(e) => setNewCatName(e.target.value)}
-                    placeholder={t("gearList.addCategory.columnPlaceholder")}
-                    className="w-full py-1 px-2 border-b-2 border-accent focus:outline-none bg-neutral text-primary rounded"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") confirmAddCat();
-                      if (e.key === "Escape") cancelAddCat();
-                    }}
-                    onBlur={() => {
-                      if (newCatName.trim()) confirmAddCat();
-                      else cancelAddCat();
-                    }}
-                  />
-                </div>
-              ) : (
-                <button
-                  data-tour="gearlist-add-category"
-                  onClick={() => setAddingNewCat(true)}
-                  className="p-2 w-full border border-secondary rounded flex items-center justify-center space-x-2 bg-base-100 text-primary hover:bg-base-100/80"
-                >
-                  <FaPlus />
-                  <span className="text-sm">
-                    {t("gearList.addCategory.button")}
-                  </span>
-                </button>
-              )}
-            </div>
+            {!isLocked && (
+              <div className="snap-center flex-shrink-0 mt-0 mb-0 w-90 sm:w-64 flex flex-col h-full px-2">
+                {addingNewCat ? (
+                  <div>
+                    <input
+                      autoFocus
+                      value={newCatName}
+                      onChange={(e) => setNewCatName(e.target.value)}
+                      placeholder={t("gearList.addCategory.columnPlaceholder")}
+                      className="w-full py-1 px-2 border-b-2 border-accent focus:outline-none bg-neutral text-primary rounded"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") confirmAddCat();
+                        if (e.key === "Escape") cancelAddCat();
+                      }}
+                      onBlur={() => {
+                        if (newCatName.trim()) confirmAddCat();
+                        else cancelAddCat();
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <button
+                    data-tour="gearlist-add-category"
+                    onClick={() => setAddingNewCat(true)}
+                    className="p-2 w-full border border-secondary rounded flex items-center justify-center space-x-2 bg-base-100 text-primary hover:bg-base-100/80"
+                  >
+                    <FaPlus />
+                    <span className="text-sm">
+                      {t("gearList.addCategory.button")}
+                    </span>
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         )}
       </DndContextWrapper>

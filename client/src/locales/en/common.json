@@ -274,6 +274,10 @@
     "menu": {
       "listOptionsA11y": "List options",
       "headerPreferences": "List preferences",
+      "lockList": "Lock list",
+      "unlockList": "Unlock list",
+      "lockListA11y": "Lock list to prevent editing",
+      "unlockListA11y": "Unlock list to allow editing",
       "background": "Background",
       "customImage": "Custom image",
       "defaultImages": "Default images",
@@ -318,7 +322,10 @@
       "listDeleted": "List deleted",
       "listDeleteFailed": "Could not delete list.",
       "toggleWornFailed": "Could not update worn status.",
-      "toggleConsumableFailed": "Could not update consumable status."
+      "toggleConsumableFailed": "Could not update consumable status.",
+      "listLocked": "List locked",
+      "listUnlocked": "List unlocked",
+      "lockToggleFailed": "Could not toggle lock."
     },
     "addCategory": {
       "button": "Add category",

@@ -464,12 +464,12 @@ export default function GlobalItemEditModal({
           onSubmit={handleSave}
           className={
             "bg-base-100 rounded-lg shadow-2xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 " +
-            "border border-primary/15 overflow-y-auto " +
+            "border border-primary/15 max-h-[calc(100vh-2rem)] flex flex-col " +
             modalWidthClass
           }
         >
-          {/* Header */}
-          <div className="flex justify-between items-center mb-2 sm:mb-3">
+          {/* Header - fixed at top */}
+          <div className="flex justify-between items-center mb-2 sm:mb-3 flex-shrink-0">
             <h2 className="text-xl font-semibold text-primary">
               {isListContext
                 ? t("globalItemEditModal.titleList")
@@ -487,9 +487,11 @@ export default function GlobalItemEditModal({
             </button>
           </div>
 
-          {error && <div className="text-error mb-2">{error}</div>}
+          {/* Scrollable content area */}
+          <div className="flex-1 overflow-y-auto min-h-0">
+            {error && <div className="text-error mb-2">{error}</div>}
 
-          {isCustom ? (
+            {isCustom ? (
             <>
               {/* Custom items layout (editable) */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -673,15 +675,16 @@ export default function GlobalItemEditModal({
                 <label className="block font-semibold text-primary mb-1">
                   {t("globalItemModal.labels.description")}
                 </label>
-                <div className="text-primary/90 whitespace-pre-line leading-6 min-h-[60px] max-h-[160px] overflow-y-auto pr-2">
+                <div className="text-primary/90 whitespace-pre-line leading-6 min-h-[60px] pr-2">
                   {form.description || "—"}
                 </div>
               </div>
             </>
           )}
+          </div>
 
-          {/* Actions */}
-          <div className="mt-3 flex justify-between">
+          {/* Actions - fixed at bottom */}
+          <div className="mt-3 flex justify-between flex-shrink-0">
             <div className="flex space-x-2">
               {allowDelete && (
                 <button

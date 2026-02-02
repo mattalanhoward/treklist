@@ -32,6 +32,7 @@ export default function SortableSection({
   onQuantityChange,
   onMoveItem,
   onItemUpdated,
+  isLocked,
 }) {
   const { t } = useTranslation("common");
   const filtered = useMemo(
@@ -73,7 +74,7 @@ export default function SortableSection({
           className="hide-on-touch mr-2 cursor-grab text-primaryAlt"
         />
 
-        {editingCatId === catId ? (
+        {editingCatId === catId && !isLocked ? (
           // Inline <input> that saves on blur or Enter
           <input
             autoFocus
@@ -94,22 +95,26 @@ export default function SortableSection({
           <>
             <h3
               onClick={() => {
-                setEditingCatId(catId);
-                setLocalTitle(category.title);
+                if (!isLocked) {
+                  setEditingCatId(catId);
+                  setLocalTitle(category.title);
+                }
               }}
-              className="flex-1 min-w-0 truncate pr-2 cursor-text text-primaryAlt"
+              className={`flex-1 min-w-0 truncate pr-2 text-primaryAlt ${isLocked ? "cursor-default" : "cursor-text"}`}
             >
               <span>{category.title}</span>
             </h3>
             <span className="pr-3 flex-shrink-0 text-primaryAlt">
               {totalWeightText}
             </span>
-            <FaTimes
-              aria-label={t("gearList.confirm.deleteCategoryConfirm")}
-              title={t("gearList.confirm.deleteCategoryConfirm")}
-              onClick={() => onDeleteCategory(catId)}
-              className="flex-shrink-0 cursor-pointer text-primaryAlt hover:text-primaryAlt/80"
-            />
+            {!isLocked && (
+              <FaTimes
+                aria-label={t("gearList.confirm.deleteCategoryConfirm")}
+                title={t("gearList.confirm.deleteCategoryConfirm")}
+                onClick={() => onDeleteCategory(catId)}
+                className="flex-shrink-0 cursor-pointer text-primaryAlt hover:text-primaryAlt/80"
+              />
+            )}
           </>
         )}
       </div>
@@ -132,19 +137,22 @@ export default function SortableSection({
               onQuantityChange={onQuantityChange}
               onMoveItem={onMoveItem}
               onItemUpdated={onItemUpdated}
+              isLocked={isLocked}
             />
           ))}
         </div>
       </SortableContext>
-      <button
-        onClick={() => setShowAddModalCat(catId)}
-        className="p-2 w-full border border-secondary rounded flex items-center justify-center space-x-2 bg-base-100 text-primary hover:bg-base-100/80"
-        aria-label={t("gearList.items.addButton")}
-        title={t("gearList.items.addButton")}
-      >
-        <FaPlus />
-        <span className="text-sm">{t("gearList.items.addButton")}</span>
-      </button>
+      {!isLocked && (
+        <button
+          onClick={() => setShowAddModalCat(catId)}
+          className="p-2 w-full border border-secondary rounded flex items-center justify-center space-x-2 bg-base-100 text-primary hover:bg-base-100/80"
+          aria-label={t("gearList.items.addButton")}
+          title={t("gearList.items.addButton")}
+        >
+          <FaPlus />
+          <span className="text-sm">{t("gearList.items.addButton")}</span>
+        </button>
+      )}
       {showAddModalCat === catId && (
         <AddGearItemModal
           listId={listId}

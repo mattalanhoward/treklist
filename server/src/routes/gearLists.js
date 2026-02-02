@@ -211,6 +211,20 @@ router.patch("/:listId", async (req, res) => {
       return res.status(400).json({ message: "Title is required." });
     }
 
+    // Check if list exists and is owned by user
+    const list = await GearList.findOne({
+      _id: req.params.listId,
+      owner: req.userId,
+    });
+
+    if (!list) {
+      return res.status(404).json({ message: "List not found." });
+    }
+
+    if (list.isLocked) {
+      return res.status(403).json({ message: "List is locked" });
+    }
+
     // build an update object only with provided fields
     const update = { title };
     if (notes !== undefined) update.notes = notes;
@@ -225,9 +239,6 @@ router.patch("/:listId", async (req, res) => {
       { new: true },
     );
 
-    if (!updated) {
-      return res.status(404).json({ message: "List not found." });
-    }
     // return the full updated document
     res.json(updated);
   } catch (err) {
@@ -270,6 +281,10 @@ router.patch("/:listId/preferences", async (req, res, next) => {
     const list = await GearList.findOne({ _id: listId, owner: req.userId });
     if (!list) return res.status(404).json({ message: "List not found" });
 
+    if (list.isLocked) {
+      return res.status(403).json({ message: "List is locked" });
+    }
+
     // Color update: clear ACTIVE image only (do not delete customBackground)
     if (backgroundColor !== undefined) {
       list.backgroundColor = backgroundColor;
@@ -309,6 +324,10 @@ router.patch("/:listId/preferences/image-direct", async (req, res, next) => {
     const list = await GearList.findOne({ _id: listId, owner: req.userId });
     if (!list) return res.status(404).json({ message: "List not found" });
 
+    if (list.isLocked) {
+      return res.status(403).json({ message: "List is locked" });
+    }
+
     const oldPublicId = list.customBackground?.publicId || null;
 
     // Set ACTIVE background
@@ -333,6 +352,28 @@ router.patch("/:listId/preferences/image-direct", async (req, res, next) => {
       imageUrl: list.backgroundImageUrl,
       customBackground: list.customBackground,
     });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// PATCH /api/dashboard/:listId/lock — toggle list lock
+router.patch("/:listId/lock", async (req, res, next) => {
+  try {
+    const { listId } = req.params;
+    const { isLocked } = req.body;
+
+    if (typeof isLocked !== "boolean") {
+      return res.status(400).json({ message: "isLocked must be a boolean" });
+    }
+
+    const list = await GearList.findOne({ _id: listId, owner: req.userId });
+    if (!list) return res.status(404).json({ message: "List not found" });
+
+    list.isLocked = isLocked;
+    await list.save();
+
+    return res.json({ isLocked: list.isLocked });
   } catch (err) {
     next(err);
   }

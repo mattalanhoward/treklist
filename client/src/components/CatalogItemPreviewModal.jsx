@@ -118,11 +118,11 @@ export default function CatalogItemPreviewModal({
   return (
     <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-[60]">
       <div
-        className={`bg-white rounded-lg shadow-2xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 overflow-y-auto
+        className={`bg-white rounded-lg shadow-2xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 max-h-[calc(100vh-2rem)] flex flex-col
     ${modalWidthClass}`}
       >
-        {/* Header */}
-        <div className="flex justify-between items-center mb-2 sm:mb-3">
+        {/* Header - fixed at top */}
+        <div className="flex justify-between items-center mb-2 sm:mb-3 flex-shrink-0">
           <div className="flex items-center gap-2 min-w-0">
             <h2 className="text-xl font-semibold text-primary truncate">
               {t("catalogPreview.titleFallback")}
@@ -146,11 +146,13 @@ export default function CatalogItemPreviewModal({
           </button>
         </div>
 
-        {error && <div className="text-error mb-2">{error}</div>}
+        {/* Scrollable content area */}
+        <div className="flex-1 overflow-y-auto min-h-0">
+          {error && <div className="text-error mb-2">{error}</div>}
 
-        {
-          <>
-            {/* Imported layout (locked fields + images + specs display-only) */}
+          {
+            <>
+              {/* Imported layout (locked fields + images + specs display-only) */}
             <div
               className={`sm:grid sm:gap-6 ${
                 showImageBlock ? "sm:grid-cols-2" : "sm:grid-cols-1"
@@ -245,15 +247,16 @@ export default function CatalogItemPreviewModal({
               <label className="block font-semibold text-primary mb-1">
                 {t("globalItemModal.labels.description")}
               </label>
-              <div className="text-primary/90 whitespace-pre-line leading-6 min-h-[60px] max-h-[160px] overflow-y-auto pr-2">
+              <div className="text-primary/90 whitespace-pre-line leading-6 min-h-[60px] pr-2">
                 {item.description || "—"}
               </div>
             </div>
           </>
         }
+        </div>
 
-        {/* Actions (match layout: left = Buy, right = Close) */}
-        <div className="mt-3 flex justify-between">
+        {/* Actions - fixed at bottom */}
+        <div className="mt-3 flex justify-between flex-shrink-0">
           <div className="flex space-x-2">
             {primaryOffer?.deepLink ? (
               <ButtonLink href={primaryOffer.deepLink}>
