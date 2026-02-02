@@ -730,6 +730,9 @@
   },
   "publicList": {
     "documentTitleSuffix": "Openbare uitrustingslijst",
+    "seo": {
+      "description": "{{title}} - Een samengestelde wandel- en backpack-uitrustingslijst op TrekList. Bekijk de volledige paklijst met gewichten en details."
+    },
     "status": {
       "loading": "Laden…",
       "copying": "Je kopie wordt aangemaakt…"
@@ -798,6 +801,9 @@
   },
   "landing": {
     "pageTitle": "Slim inpakken. Licht reizen.",
+    "seo": {
+      "description": "Plan je wandel- en backpacktrips met TrekList. Maak paklijsten, houd je rugzakgewicht bij en deel je uitrusting met mede-wandelaars. Gratis voor hikers die Europa en verder verkennen."
+    },
     "hero": {
       "title": "Slim inpakken. Licht reizen.",
       "subtitle": "Stel je paklijst samen, stem je rugzak perfect af en ga goed voorbereid op pad. Ontworpen voor langeafstandswandelaars, weekendhikers en hut-tot-hut trekkers die Europa en verder verkennen.",

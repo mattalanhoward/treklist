@@ -730,6 +730,9 @@
   },
   "publicList": {
     "documentTitleSuffix": "Öffentliche Packliste",
+    "seo": {
+      "description": "{{title}} - Eine kuratierte Wander- und Rucksack-Packliste auf TrekList. Sieh dir die vollständige Packliste mit Gewichten und Details an."
+    },
     "status": {
       "loading": "Laden…",
       "copying": "Deine Kopie wird erstellt…"
@@ -798,6 +801,9 @@
   },
   "landing": {
     "pageTitle": "Clever packen. Leicht reisen.",
+    "seo": {
+      "description": "Plane deine Wander- und Rucksacktouren mit TrekList. Erstelle Packlisten, verfolge dein Rucksackgewicht und teile deine Ausrüstung mit anderen Wanderern. Kostenlos für Wanderer in Europa und weltweit."
+    },
     "hero": {
       "title": "Clever packen. Leicht reisen.",
       "subtitle": "Erstelle deine Packliste, optimiere deinen Rucksack und starte gut vorbereitet auf den Trail. Entwickelt für Weitwanderer, Wochenendwanderer und Hüttentrekker, die Europa und darüber hinaus erkunden.",

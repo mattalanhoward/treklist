@@ -730,6 +730,9 @@
   },
   "publicList": {
     "documentTitleSuffix": "Public Gear List",
+    "seo": {
+      "description": "{{title}} - A curated hiking and backpacking gear list on TrekList. View the complete packing list with weights and details."
+    },
     "status": {
       "loading": "Loading…",
       "copying": "Creating your copy…"
@@ -798,6 +801,9 @@
   },
   "landing": {
     "pageTitle": "Pack Smart. Travel Light.",
+    "seo": {
+      "description": "Plan your hiking and backpacking trips with TrekList. Create gear lists, track pack weight, and share your setup with fellow trekkers. Free for hikers exploring Europe and beyond."
+    },
     "hero": {
       "title": "Pack Smart. Travel Light.",
       "subtitle": "Create your gear list, dial in your pack, and hit the trail prepared. Designed for long-distance hikers, weekenders, and hut-to-hut trekkers exploring Europe and beyond.",

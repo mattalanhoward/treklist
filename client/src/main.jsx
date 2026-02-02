@@ -3,6 +3,7 @@ document.documentElement.classList.add(`theme-${saved}`);
 
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { HelmetProvider } from "react-helmet-async";
 import App from "./App";
 import "./themes.css";
 import "./index.css";
@@ -17,15 +18,17 @@ import "./i18n";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <AuthProvider>
-      <BrowserRouter
-        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-      >
-        <SettingsProvider>
-          <App />
-          <Toaster position="top-center" />
-        </SettingsProvider>
-      </BrowserRouter>
-    </AuthProvider>
+    <HelmetProvider>
+      <AuthProvider>
+        <BrowserRouter
+          future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+        >
+          <SettingsProvider>
+            <App />
+            <Toaster position="top-center" />
+          </SettingsProvider>
+        </BrowserRouter>
+      </AuthProvider>
+    </HelmetProvider>
   </React.StrictMode>
 );

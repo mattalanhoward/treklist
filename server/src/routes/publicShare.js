@@ -62,7 +62,7 @@ router.get("/:token/full", async (req, res) => {
 
   const [list, categories, items] = await Promise.all([
     GearList.findById(listId)
-      .select({ _id: 1, title: 1, region: 1, storeRegion: 1 })
+      .select({ _id: 1, title: 1, region: 1, storeRegion: 1, isFeatured: 1 })
       .lean(),
     Category.find({ gearList: listId })
       .sort({ position: 1 })
@@ -188,6 +188,7 @@ router.get("/:token/full", async (req, res) => {
       title: list.title,
       region: list.region || null,
       storeRegion: list.storeRegion || null,
+      isFeatured: !!list.isFeatured,
     },
     categories: categories.map((c) => ({
       id: c._id.toString(),

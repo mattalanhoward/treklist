@@ -730,6 +730,9 @@
   },
   "publicList": {
     "documentTitleSuffix": "Lista pubblica",
+    "seo": {
+      "description": "{{title}} - Una lista di attrezzatura per escursionismo e trekking su TrekList. Visualizza la lista completa con pesi e dettagli."
+    },
     "status": {
       "loading": "Caricamento…",
       "copying": "Creazione della tua copia in corso…"
@@ -798,6 +801,9 @@
   },
   "landing": {
     "pageTitle": "Prepara meglio. Viaggia leggero.",
+    "seo": {
+      "description": "Pianifica le tue escursioni e trekking con TrekList. Crea liste di attrezzatura, monitora il peso dello zaino e condividi la tua configurazione con altri escursionisti. Gratuito per escursionisti in Europa e nel mondo."
+    },
     "hero": {
       "title": "Prepara meglio. Viaggia leggero.",
       "subtitle": "Crea la tua lista dell’attrezzatura, ottimizza lo zaino e parti sui sentieri ben preparato. Progettato per escursionisti di lunga distanza, camminatori del weekend e trekker da rifugio a rifugio in Europa e oltre.",

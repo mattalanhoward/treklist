@@ -730,6 +730,9 @@
   },
   "publicList": {
     "documentTitleSuffix": "Liste publique",
+    "seo": {
+      "description": "{{title}} - Une liste d'équipement de randonnée et de trek sur TrekList. Consultez la liste complète avec les poids et les détails."
+    },
     "status": {
       "loading": "Chargement…",
       "copying": "Création de votre copie…"
@@ -798,6 +801,9 @@
   },
   "landing": {
     "pageTitle": "Préparez malin. Voyagez léger.",
+    "seo": {
+      "description": "Planifiez vos randonnées et treks avec TrekList. Créez des listes d'équipement, suivez le poids de votre sac et partagez votre configuration avec d'autres randonneurs. Gratuit pour les randonneurs en Europe et ailleurs."
+    },
     "hero": {
       "title": "Préparez malin. Voyagez léger.",
       "subtitle": "Créez votre liste d’équipement, ajustez votre sac et partez sur les sentiers bien préparé. Conçu pour les randonneurs longue distance, les aventuriers du week-end et les trekkeurs de refuge en refuge à travers l’Europe et au-delà.",

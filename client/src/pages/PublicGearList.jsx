@@ -13,6 +13,7 @@ import AffiliateGateLink from "../components/AffiliateGateLink";
 import AffiliateDisclosureNotice from "../components/AffiliateDisclosureNotice";
 import PublicHeader from "../components/PublicHeader";
 import FooterLegal from "../components/FooterLegal";
+import SEO from "../components/SEO";
 import api, { refreshAccessToken } from "../services/api";
 import { useTranslation } from "react-i18next";
 import Spinner from "../components/ui/Spinner";
@@ -189,37 +190,7 @@ export default function PublicGearList() {
     }
   }
 
-  // document title + noindex
-  React.useEffect(() => {
-    const prevTitle = document.title;
-    const robotsMetaExisting = document.querySelector('meta[name="robots"]');
-    const prevRobotsContent = robotsMetaExisting?.getAttribute("content") || "";
-
-    let robotsMeta = robotsMetaExisting;
-    if (!robotsMeta) {
-      robotsMeta = document.createElement("meta");
-      robotsMeta.name = "robots";
-      document.head.appendChild(robotsMeta);
-    }
-    robotsMeta.content = "noindex";
-
-    if (data?.list?.title) {
-      document.title = `${data.list.title} • ${t(
-        "publicList.documentTitleSuffix",
-      )}`;
-    }
-
-    return () => {
-      document.title = prevTitle;
-      if (robotsMeta) {
-        if (robotsMetaExisting) {
-          robotsMeta.content = prevRobotsContent;
-        } else {
-          document.head.removeChild(robotsMeta);
-        }
-      }
-    };
-  }, [data, t]);
+  // SEO is now handled by the SEO component in the JSX
 
   // When embedded, report our rendered height to the parent page (postMessage).
   // Uses rootRef + getBoundingClientRect to avoid 100vh / body measurement feedback loops.
@@ -489,6 +460,17 @@ export default function PublicGearList() {
         isEmbed ? "text-[16px] leading-[1.25]" : "",
       )}
     >
+      {/* SEO meta tags - only index featured lists */}
+      <SEO
+        title={data.list.title}
+        description={t("publicList.seo.description", {
+          title: data.list.title,
+        })}
+        url={`https://treklist.co/share/${token}/`}
+        type="article"
+        noindex={!data.list.isFeatured}
+      />
+
       {/* Scoped palette for the public page only */}
       <style>{PUBLIC_THEME_CSS}</style>
 
