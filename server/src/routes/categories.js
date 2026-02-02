@@ -39,6 +39,10 @@ router.post("/", async (req, res) => {
     const list = await GearList.findOne({ _id: listId, owner: req.userId });
     if (!list) return res.status(404).json({ message: "Gear list not found." });
 
+    if (list.isLocked) {
+      return res.status(403).json({ message: "List is locked" });
+    }
+
     const newCat = new Category({ gearList: listId, title, position });
     await newCat.save();
     res.status(201).json(newCat);
@@ -61,6 +65,10 @@ router.patch("/:catId", async (req, res) => {
     // Verify ownership
     const list = await GearList.findOne({ _id: listId, owner: req.userId });
     if (!list) return res.status(404).json({ message: "Gear list not found." });
+
+    if (list.isLocked) {
+      return res.status(403).json({ message: "List is locked" });
+    }
 
     // Build update object
     const update = {};
@@ -96,6 +104,10 @@ router.patch("/:catId/position", async (req, res) => {
     const list = await GearList.findOne({ _id: listId, owner: req.userId });
     if (!list) return res.status(404).json({ message: "Gear list not found." });
 
+    if (list.isLocked) {
+      return res.status(403).json({ message: "List is locked" });
+    }
+
     const updated = await Category.findOneAndUpdate(
       { _id: catId, gearList: listId },
       { position },
@@ -119,6 +131,10 @@ router.delete("/:catId", async (req, res) => {
     // Verify ownership
     const list = await GearList.findOne({ _id: listId, owner: req.userId });
     if (!list) return res.status(404).json({ message: "Gear list not found." });
+
+    if (list.isLocked) {
+      return res.status(403).json({ message: "List is locked" });
+    }
 
     const deleted = await Category.findOneAndDelete({
       _id: catId,

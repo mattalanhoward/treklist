@@ -31,6 +31,7 @@ export default function SortableItem({
   onQuantityChange,
   onMoveItem,
   onItemUpdated,
+  isLocked,
 }) {
   const { t } = useTranslation("common");
   const [wornLocal, setWornLocal] = useState(item.worn);
@@ -105,6 +106,7 @@ export default function SortableItem({
 
   // → handleWornClick
   const handleWornClick = () => {
+    if (isLocked) return;
     const newWorn = !wornLocal;
     setWornLocal(newWorn);
 
@@ -123,6 +125,7 @@ export default function SortableItem({
 
   // → handleConsumableClick
   const handleConsumableClick = () => {
+    if (isLocked) return;
     const newConsumable = !consumableLocal;
     setConsumableLocal(newConsumable);
 
@@ -146,6 +149,7 @@ export default function SortableItem({
     listId,
     itemId,
     fetchItems,
+    isLocked,
   }) {
     const [editing, setEditing] = useState(false);
     const [value, setValue] = useState(qty);
@@ -204,9 +208,9 @@ export default function SortableItem({
 
     return (
       <span
-        onClick={() => setEditing(true)}
-        className="cursor-pointer select-none px-1"
-        title={t("gearList.items.editQuantityTitle")}
+        onClick={() => !isLocked && setEditing(true)}
+        className={`select-none px-1 ${isLocked ? "cursor-default" : "cursor-pointer"}`}
+        title={isLocked ? undefined : t("gearList.items.editQuantityTitle")}
       >
         {localQty}
       </span>
@@ -218,21 +222,23 @@ export default function SortableItem({
     transition,
   };
 
-  const desktopMenuItems = useMemo(
-    () => [
+  const desktopMenuItems = useMemo(() => {
+    const items = [
       {
         key: "details",
         label: t("gearList.items.viewEditDetails"),
         onClick: () => setDetailsOpen(true),
       },
-      {
+    ];
+    if (!isLocked) {
+      items.push({
         key: "remove",
         label: t("gearList.confirm.removeItemConfirm"),
         onClick: () => onDelete?.(catId, item._id),
-      },
-    ],
-    [catId, item._id, onDelete, t],
-  );
+      });
+    }
+    return items;
+  }, [catId, item._id, onDelete, t, isLocked]);
 
   const mobileMenuItems = useMemo(() => {
     const base = [
@@ -243,7 +249,7 @@ export default function SortableItem({
       },
     ];
 
-    if (onMoveItem) {
+    if (onMoveItem && !isLocked) {
       base.push({
         key: "move",
         label: t("gearList.items.moveItem"),
@@ -251,14 +257,16 @@ export default function SortableItem({
       });
     }
 
-    base.push({
-      key: "remove",
-      label: t("gearList.confirm.removeItemConfirm"),
-      onClick: () => onDelete?.(catId, item._id),
-    });
+    if (!isLocked) {
+      base.push({
+        key: "remove",
+        label: t("gearList.confirm.removeItemConfirm"),
+        onClick: () => onDelete?.(catId, item._id),
+      });
+    }
 
     return base;
-  }, [catId, item, onDelete, onMoveItem, t]);
+  }, [catId, item, onDelete, onMoveItem, t, isLocked]);
 
   const twoRowVisibilityClasses = isListMode ? "xl:hidden" : "sm:hidden";
 
@@ -331,6 +339,7 @@ export default function SortableItem({
               listId={listId}
               itemId={item._id}
               fetchItems={fetchItems}
+              isLocked={isLocked}
             />
             <CartIconLink />
           </div>
@@ -400,6 +409,7 @@ export default function SortableItem({
               listId={listId}
               itemId={item._id}
               fetchItems={fetchItems}
+              isLocked={isLocked}
             />
           </div>
 
@@ -497,6 +507,7 @@ export default function SortableItem({
                 listId={listId}
                 itemId={item._id}
                 fetchItems={fetchItems}
+                isLocked={isLocked}
               />
               <CartIconLink />
             </div>
