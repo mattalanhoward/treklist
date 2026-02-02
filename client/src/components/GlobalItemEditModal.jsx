@@ -464,7 +464,7 @@ export default function GlobalItemEditModal({
           onSubmit={handleSave}
           className={
             "bg-base-100 rounded-lg shadow-2xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 " +
-            "border border-primary/15 max-h-[calc(100vh-2rem)] flex flex-col " +
+            "border border-primary/15 max-h-[70vh] sm:max-h-[calc(100vh-5rem)] flex flex-col " +
             modalWidthClass
           }
         >
