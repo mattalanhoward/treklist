@@ -56,6 +56,8 @@
     "multer-storage-cloudinary": "^4.0.0",
     "nanoid": "^5.1.6",
     "nodemailer": "^7.0.13",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
     "uuid": "^11.1.0"
   },
   "devDependencies": {

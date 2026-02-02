@@ -43,7 +43,11 @@ const {
   resendVerificationLimiter,
   resendVerificationEmailLimiter,
   loginLimiter,
+  oauthLimiter,
 } = require("../middleware/rateLimiters");
+
+// Passport for OAuth
+const passport = require("../config/passport");
 
 // Cross-site compatible cookie in prod (SameSite=None; Secure)
 const REFRESH_COOKIE_OPTS = {
@@ -297,7 +301,16 @@ router.post("/register", registerLimiter, async (req, res) => {
       });
     }
 
-    if (await User.findOne({ email: normalizedEmail })) {
+    const existingUser = await User.findOne({ email: normalizedEmail });
+    if (existingUser) {
+      // Check if user has Google auth but no password
+      if (existingUser.hasGoogleAuth() && !existingUser.hasPasswordAuth()) {
+        return res.status(409).json({
+          message:
+            "This email is registered with Google. Please sign in with Google or reset your password to add a password.",
+          provider: "google",
+        });
+      }
       return res.status(409).json({ message: "Email already in use." });
     }
 
@@ -306,6 +319,13 @@ router.post("/register", registerLimiter, async (req, res) => {
       // trailname is optional; only set it if provided
       ...(trailname ? { trailname } : {}),
       isVerified: false,
+      authProviders: [
+        {
+          provider: "email",
+          providerId: null,
+          connectedAt: new Date(),
+        },
+      ],
     });
 
     // Optional client-provided prefs (first-visit detection)
@@ -444,7 +464,21 @@ router.post("/login", loginLimiter, async (req, res) => {
 
     const normalizedEmail = String(email).trim().toLowerCase();
     const user = await User.findOne({ email: normalizedEmail });
-    if (!user || !(await user.validatePassword(password))) {
+
+    if (!user) {
+      return res.status(401).json({ message: "Invalid email or password." });
+    }
+
+    // Check if user has Google-only authentication (no password)
+    if (!user.hasPasswordAuth()) {
+      return res.status(401).json({
+        message:
+          "This account uses Google sign-in. Please use 'Continue with Google'.",
+        provider: "google",
+      });
+    }
+
+    if (!(await user.validatePassword(password))) {
       return res.status(401).json({ message: "Invalid email or password." });
     }
 
@@ -520,6 +554,56 @@ router.post("/logout", async (req, res) => {
     res.status(500).end();
   }
 });
+
+// ---- Google OAuth ----
+
+// Initialize Passport
+router.use(passport.initialize());
+
+// Google OAuth initiation
+router.get(
+  "/google",
+  oauthLimiter,
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+    session: false,
+  })
+);
+
+// Google OAuth callback
+router.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    session: false,
+    failureRedirect: `${CLIENT_BASE_URL}/?authError=google_failed`,
+  }),
+  async (req, res) => {
+    try {
+      const user = req.user;
+
+      if (!user) {
+        return res.redirect(`${CLIENT_BASE_URL}/?authError=no_user`);
+      }
+
+      // Issue JWT tokens (same as email/password login)
+      const tokens = issueTokens(user);
+      user.lastLoginAt = new Date();
+      await user.save();
+
+      // Redirect to frontend with token in URL (client will extract and store)
+      const redirectUrl =
+        `${CLIENT_BASE_URL}/auth/callback?` +
+        `accessToken=${encodeURIComponent(tokens.accessToken)}`;
+
+      res
+        .cookie("refreshToken", tokens.refreshToken, REFRESH_COOKIE_OPTS)
+        .redirect(redirectUrl);
+    } catch (err) {
+      console.error("Google callback error:", err);
+      res.redirect(`${CLIENT_BASE_URL}/?authError=token_issue_failed`);
+    }
+  }
+);
 
 router.authenticate = authenticate;
 module.exports = router;

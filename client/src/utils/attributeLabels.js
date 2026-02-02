@@ -129,6 +129,141 @@ const ATTRIBUTE_LABELS = {
   removesBacteria: "Removes Bacteria",
   removesProtozoa: "Removes Protozoa",
   backflushable: "Backflushable",
+
+  // Hydration - Water Bottles
+  capacityMl: "Capacity (ml)",
+  capacityOz: "Capacity (fl oz)",
+  insulated: "Insulated/Vacuum",
+  mouthOpening: "Mouth Opening",
+  leakProof: "Leak-Proof",
+  collapsible: "Collapsible/Compressible",
+  filterCompatible: "Filter Compatible",
+
+  // Hydration - Reservoirs/Bladders
+  capacityL: "Capacity (L)",
+  bpaFree: "BPA-Free",
+  openingType: "Opening Type",
+  biteValveType: "Bite Valve Type",
+  hoseLength: "Hose Length (in)",
+  insulatedHose: "Insulated Hose",
+  reversible: "Reversible for Cleaning",
+  quickDisconnect: "Quick Disconnect",
+
+  // Clothing - Rain Jackets
+  layerConstruction: "Layer Construction",
+  membrane: "Membrane Technology",
+  waterproofRating: "Waterproof Rating (mm)",
+  breathabilityRating: "Breathability (g/m²/24hr)",
+  pitZips: "Pit Zips",
+  packable: "Packable/Stowable",
+  pfasFree: "PFAS-Free DWR",
+
+  // Clothing - Insulated Jackets
+  shellFabric: "Shell Fabric",
+  temperatureRange: "Temperature Range",
+
+  // Clothing - Synthetic Insulation
+  insulationWeightGsm: "Insulation Weight (g/m²)",
+  waterResistant: "Water-Resistant Insulation",
+
+  // Clothing - Base Layers
+  weight: "Weight Class",
+  fabricType: "Fabric Type",
+  fabricWeightGsm: "Fabric Weight (g/m²)",
+  neckStyle: "Neck Style",
+  sleevesLength: "Sleeve Length",
+  thumbHoles: "Thumb Holes",
+
+  // Clothing - Gloves
+  style: "Style",
+  touchscreenCompatible: "Touchscreen Compatible",
+  gripPalm: "Reinforced Grip Palm",
+
+  // Footwear - Hiking Boots
+  cutHeight: "Cut Height",
+  waterproof: "Waterproof",
+  waterproofMembrane: "Waterproof Membrane",
+  upperMaterial: "Upper Material",
+  soleMaterial: "Sole Material",
+  ankleSupport: "Ankle Support",
+  midsoleType: "Midsole Type",
+  shankType: "Shank/Stability",
+  weightCategory: "Weight Category",
+  useType: "Intended Use",
+
+  // Footwear - Trail Running Shoes
+  dropMm: "Heel-Toe Drop (mm)",
+  stackHeightMm: "Stack Height (mm)",
+  cushioning: "Cushioning Level",
+  outsoleType: "Outsole Type",
+  lugDepthMm: "Lug Depth (mm)",
+  plateOrRockGuard: "Rock Plate/Guard",
+
+  // Clothing - Base Layer Bottom
+  fitStyle: "Fit Style",
+  inseamLength: "Inseam Length",
+  flyType: "Fly Type",
+
+  // Clothing - Socks
+  sockType: "Sock Type",
+  height: "Height",
+  seamlessToe: "Seamless Toe",
+  archSupport: "Arch Support",
+
+  // Clothing - Headwear
+  hatType: "Hat Type",
+  uvRating: "UV Protection Rating",
+  brimSize: "Brim Size",
+  windproof: "Windproof",
+
+  // Clothing - Shorts
+  inseamIn: "Inseam (in)",
+  stretchFabric: "Stretch Fabric",
+  beltLoops: "Belt Loops",
+  builtInLiner: "Built-in Liner",
+  uvProtection: "UV Protection",
+
+  // Clothing - Shirts
+  quickDry: "Quick-Dry",
+  vented: "Vented/Mesh Panels",
+  moistureWicking: "Moisture-Wicking",
+  buttonStyle: "Button/Closure Style",
+
+  // Accessories - Sunglasses
+  polarized: "Polarized Lenses",
+  lensCategory: "Lens Category",
+  frameMaterial: "Frame Material",
+  lensMaterial: "Lens Material",
+  interchangeableLenses: "Interchangeable Lenses",
+  nosePadsAdjustable: "Adjustable Nose Pads",
+  mirroredLens: "Mirrored/Reflective Lens",
+
+  // Sleep System - Liners
+  tempBoostF: "Temperature Boost (°F)",
+  zippered: "Zippered",
+
+  // Electronics - Power Banks
+  outputPortsUsbA: "USB-A Output Ports",
+  outputPortsUsbC: "USB-C Output Ports",
+  inputPorts: "Input Port Type",
+  fastCharging: "Fast Charging Support",
+  solarCapable: "Solar Charging Capable",
+  wirelessCharging: "Wireless Charging (Qi)",
+  waterproofRating: "Waterproof Rating",
+  passthroughCharging: "Pass-Through Charging",
+
+  // Accessories - Towels
+  size: "Size",
+  absorbency: "Absorbency Level",
+  antimicrobial: "Antimicrobial Treatment",
+  hangLoop: "Hang Loop/Snap",
+
+  // Consolidated schema fields
+  syntheticInsulationType: "Synthetic Insulation Type",
+
+  // General attributes used across multiple categories
+  pockets: "Number of Pockets",
+  material: "Material",
 };
 
 /**

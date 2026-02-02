@@ -22,6 +22,7 @@ const adminUsersRouter = require("./routes/adminUsers");
 const adminPublicListsRouter = require("./routes/adminPublicLists");
 const { publicShareLimiter } = require("./middleware/rateLimiters");
 const supportRoutes = require("./routes/support");
+const passport = require("./config/passport");
 
 const app = express();
 
@@ -80,6 +81,9 @@ app.options("*", cors(corsOptions));
 
 app.use(cookieParser());
 app.use(express.json({ limit: "10mb" }));
+
+// Initialize Passport for OAuth
+app.use(passport.initialize());
 
 // Mount routers — each must be a function (router)
 app.use("/api/auth", authRoutes);

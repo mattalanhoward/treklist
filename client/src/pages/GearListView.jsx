@@ -972,14 +972,23 @@ export default function GearListView({
   const effectiveBgImage = bgPreviewUrl || bgImage || "";
   const effectiveBgColor = bgColor || "";
 
+  // Apply consistent transformations to background images for optimal delivery
+  // f_auto ensures proper format (WebP for modern browsers, JPEG fallback)
+  // q_auto optimizes quality for performance
+  const BG_TRANSFORM = "f_auto,q_auto";
+  const transformedBgImage = effectiveBgImage
+    ? cldTransformUrl(effectiveBgImage, BG_TRANSFORM)
+    : "";
+
   // Tile uses preview while uploading so the user sees their image instantly
-  const tileBg = bgPreviewUrl || customBgUrl || "";
+  // Apply transformations to custom URL but not to blob preview
+  const tileBg = bgPreviewUrl || (customBgUrl ? cldTransformUrl(customBgUrl, THUMB_TRANSFORM) : "");
 
   const canSelectCustom = !!customBgUrl && !isUploading;
 
-  const bgstyle = effectiveBgImage
+  const bgstyle = transformedBgImage
     ? {
-        backgroundImage: `url(${effectiveBgImage})`,
+        backgroundImage: `url(${transformedBgImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }

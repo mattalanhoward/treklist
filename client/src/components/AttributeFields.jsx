@@ -23,57 +23,33 @@ import React from "react";
 // =============================================================================
 
 const SCHEMAS = {
-  "Sleeping Bag (Down)": {
+  "Sleeping Bag": {
     fields: {
+      insulationType: {
+        type: "enum",
+        required: true,
+        label: "Insulation Type",
+        options: ["Down", "Synthetic"],
+      },
       tempRatingF: {
         type: "number",
         required: true,
-        label: "Temperature Rating (°F)",
+        label: "Temperature Rating",
         min: -60,
         max: 60,
       },
       fillPower: {
         type: "enum",
-        required: true,
+        required: false,
         label: "Fill Power",
         options: [550, 600, 650, 700, 750, 800, 850, 900, 950, 1000],
-      },
-      shape: {
-        type: "enum",
-        required: true,
-        label: "Shape",
-        options: ["Mummy", "Semi-Rectangular", "Rectangular", "Spoon", "Quilt"],
-      },
-      gender: {
-        type: "enum",
-        required: true,
-        label: "Gender/Fit",
-        options: ["Mens", "Womens", "Unisex"],
-      },
-      lengthSize: {
-        type: "enum",
-        required: false,
-        label: "Length/Size",
-        options: ["Short", "Regular", "Long", "Extra Long"],
       },
       fillWeightOz: {
         type: "number",
         required: false,
-        label: "Fill Weight (oz)",
+        label: "Fill Weight",
         min: 0,
         max: 80,
-      },
-      zipperSide: {
-        type: "enum",
-        required: false,
-        label: "Zipper Side",
-        options: ["Left", "Right", "Both", "None"],
-      },
-      hoodType: {
-        type: "enum",
-        required: false,
-        label: "Hood Type",
-        options: ["Insulated Hood", "Draft Collar Only", "Hoodless"],
       },
       waterResistantDown: {
         type: "boolean",
@@ -85,29 +61,16 @@ const SCHEMAS = {
         required: false,
         label: "RDS Certified Down",
       },
-    },
-  },
-
-  "Sleeping Bag (Synthetic)": {
-    fields: {
-      tempRatingF: {
-        type: "number",
-        required: true,
-        label: "Temperature Rating (°F)",
-        min: -40,
-        max: 60,
-      },
-      insulationType: {
+      syntheticInsulationType: {
         type: "string",
         required: false,
-        label: "Insulation Type",
-        placeholder: "e.g., Climashield Apex, PrimaLoft Gold",
+        label: "Synthetic Insulation Type",
       },
       shape: {
         type: "enum",
         required: true,
         label: "Shape",
-        options: ["Mummy", "Semi-Rectangular", "Rectangular", "Spoon", "Quilt"],
+        options: ["Mummy", "Semi-Rectangular", "Rectangular", "Spoon"],
       },
       gender: {
         type: "enum",
@@ -136,20 +99,48 @@ const SCHEMAS = {
     },
   },
 
-  "Ultralight Down Quilt": {
+  Quilt: {
     fields: {
+      insulationType: {
+        type: "enum",
+        required: true,
+        label: "Insulation Type",
+        options: ["Down", "Synthetic"],
+      },
       tempRatingF: {
         type: "number",
         required: true,
-        label: "Temperature Rating (°F)",
+        label: "Temperature Rating",
         min: -20,
         max: 60,
       },
       fillPower: {
         type: "enum",
-        required: true,
+        required: false,
         label: "Fill Power",
         options: [750, 800, 850, 900, 950, 1000],
+      },
+      fillWeightOz: {
+        type: "number",
+        required: false,
+        label: "Fill Weight",
+        min: 0,
+        max: 40,
+      },
+      waterResistantDown: {
+        type: "boolean",
+        required: false,
+        label: "Water-Resistant Down",
+      },
+      rdsDown: {
+        type: "boolean",
+        required: false,
+        label: "RDS Certified Down",
+      },
+      syntheticInsulationType: {
+        type: "string",
+        required: false,
+        label: "Synthetic Insulation Type",
       },
       widthSize: {
         type: "enum",
@@ -162,13 +153,6 @@ const SCHEMAS = {
         required: false,
         label: "Length/Size",
         options: ["Short", "Regular", "Long", "Extra Long"],
-      },
-      fillWeightOz: {
-        type: "number",
-        required: false,
-        label: "Fill Weight (oz)",
-        min: 0,
-        max: 40,
       },
       attachmentSystem: {
         type: "enum",
@@ -188,16 +172,6 @@ const SCHEMAS = {
         label: "Footbox Type",
         options: ["Sewn Closed", "Snap Open", "Drawcord", "Zippered"],
       },
-      waterResistantDown: {
-        type: "boolean",
-        required: false,
-        label: "Water-Resistant Down",
-      },
-      rdsDown: {
-        type: "boolean",
-        required: false,
-        label: "RDS Certified Down",
-      },
     },
   },
 
@@ -209,15 +183,13 @@ const SCHEMAS = {
         label: "R-Value",
         min: 0,
         max: 10,
-        step: 0.1,
       },
       thicknessIn: {
         type: "number",
         required: false,
-        label: "Thickness (in)",
+        label: "Thickness",
         min: 0.5,
         max: 6,
-        step: 0.1,
       },
       lengthSize: {
         type: "enum",
@@ -260,15 +232,13 @@ const SCHEMAS = {
         label: "R-Value",
         min: 0,
         max: 6,
-        step: 0.1,
       },
       thicknessIn: {
         type: "number",
         required: false,
-        label: "Thickness (in)",
+        label: "Thickness",
         min: 0.25,
         max: 2,
-        step: 0.1,
       },
       lengthSize: {
         type: "enum",
@@ -290,7 +260,7 @@ const SCHEMAS = {
       volumeLiters: {
         type: "number",
         required: true,
-        label: "Volume (L)",
+        label: "Volume",
         min: 20,
         max: 80,
       },
@@ -333,13 +303,11 @@ const SCHEMAS = {
         type: "string",
         required: false,
         label: "Main Fabric",
-        placeholder: "e.g., DCF, X-Pac VX21, Robic Nylon",
       },
       torsoFitRange: {
         type: "string",
         required: false,
         label: "Torso Fit Range",
-        placeholder: "e.g., 15-19 in, S/M/L",
       },
       hydrationCompatible: {
         type: "boolean",
@@ -359,7 +327,7 @@ const SCHEMAS = {
       volumeLiters: {
         type: "number",
         required: true,
-        label: "Volume (L)",
+        label: "Volume",
         min: 10,
         max: 40,
       },
@@ -390,7 +358,7 @@ const SCHEMAS = {
       laptopSleeveSize: {
         type: "number",
         required: false,
-        label: "Laptop Sleeve (in)",
+        label: "Laptop Sleeve",
         min: 0,
         max: 17,
       },
@@ -407,30 +375,40 @@ const SCHEMAS = {
     },
   },
 
-  "Backpacking Pot (Titanium)": {
+  "Backpacking Pot": {
     fields: {
+      material: {
+        type: "enum",
+        required: true,
+        label: "Material",
+        options: ["Titanium", "Aluminum", "Stainless Steel"],
+      },
       volumeMl: {
         type: "number",
         required: true,
-        label: "Volume (ml)",
+        label: "Volume",
         min: 200,
-        max: 2000,
+        max: 3000,
       },
       diameterCm: {
         type: "number",
         required: false,
-        label: "Diameter (cm)",
+        label: "Diameter",
         min: 5,
         max: 20,
-        step: 0.1,
       },
       heightCm: {
         type: "number",
         required: false,
-        label: "Height (cm)",
+        label: "Height",
         min: 3,
         max: 20,
-        step: 0.1,
+      },
+      coating: {
+        type: "enum",
+        required: false,
+        label: "Coating",
+        options: ["Hard Anodized", "Non-Stick", "Ceramic", "Uncoated"],
       },
       lidType: {
         type: "enum",
@@ -462,79 +440,26 @@ const SCHEMAS = {
     },
   },
 
-  "Backpacking Pot (Aluminum)": {
-    fields: {
-      volumeMl: {
-        type: "number",
-        required: true,
-        label: "Volume (ml)",
-        min: 200,
-        max: 3000,
-      },
-      diameterCm: {
-        type: "number",
-        required: false,
-        label: "Diameter (cm)",
-        step: 0.1,
-      },
-      heightCm: {
-        type: "number",
-        required: false,
-        label: "Height (cm)",
-        step: 0.1,
-      },
-      coating: {
-        type: "enum",
-        required: false,
-        label: "Coating",
-        options: ["Hard Anodized", "Non-Stick", "Ceramic", "Uncoated"],
-      },
-      lidType: {
-        type: "enum",
-        required: false,
-        label: "Lid Type",
-        options: ["Solid Lid", "Strainer Lid", "Fry Pan Lid", "No Lid"],
-      },
-      handles: {
-        type: "enum",
-        required: false,
-        label: "Handles",
-        options: [
-          "Bail Handle",
-          "Folding Handles",
-          "Pot Gripper Required",
-          "Silicone Grip",
-        ],
-      },
-      graduations: {
-        type: "boolean",
-        required: false,
-        label: "Measurement Graduations",
-      },
-    },
-  },
-
   "Backpacking Stove (Canister)": {
     fields: {
       boilTime: {
         type: "number",
         required: false,
-        label: "Boil Time - 1L (min)",
+        label: "Boil Time (1L)",
         min: 1,
         max: 15,
-        step: 0.1,
       },
       burnTime: {
         type: "number",
         required: false,
-        label: "Burn Time per 100g (min)",
+        label: "Burn Time (per 100g)",
         min: 10,
         max: 120,
       },
       outputBtu: {
         type: "number",
         required: false,
-        label: "Output (BTU)",
+        label: "Output",
         min: 5000,
         max: 20000,
       },
@@ -563,8 +488,14 @@ const SCHEMAS = {
     },
   },
 
-  "Trekking Poles (Carbon Fiber)": {
+  "Trekking Poles": {
     fields: {
+      material: {
+        type: "enum",
+        required: true,
+        label: "Material",
+        options: ["Carbon Fiber", "Aluminum", "Hybrid"],
+      },
       soldAs: {
         type: "enum",
         required: true,
@@ -591,21 +522,21 @@ const SCHEMAS = {
       minLengthCm: {
         type: "number",
         required: false,
-        label: "Min Length (cm)",
+        label: "Min Length",
         min: 30,
         max: 100,
       },
       maxLengthCm: {
         type: "number",
         required: false,
-        label: "Max Length (cm)",
+        label: "Max Length",
         min: 100,
         max: 150,
       },
       collapsedLengthCm: {
         type: "number",
         required: false,
-        label: "Collapsed Length (cm)",
+        label: "Collapsed Length",
         min: 30,
         max: 70,
       },
@@ -641,61 +572,6 @@ const SCHEMAS = {
     },
   },
 
-  "Trekking Poles (Aluminum)": {
-    fields: {
-      soldAs: {
-        type: "enum",
-        required: true,
-        label: "Sold As",
-        options: ["Single", "Pair"],
-      },
-      adjustmentType: {
-        type: "enum",
-        required: false,
-        label: "Adjustment Type",
-        options: [
-          "Fixed Length",
-          "Folding",
-          "Telescoping",
-          "Folding + Telescoping",
-        ],
-      },
-      lockingMechanism: {
-        type: "enum",
-        required: false,
-        label: "Locking Mechanism",
-        options: ["Lever Lock", "Twist Lock", "Push Button", "None (Fixed)"],
-      },
-      minLengthCm: {
-        type: "number",
-        required: false,
-        label: "Min Length (cm)",
-      },
-      maxLengthCm: {
-        type: "number",
-        required: false,
-        label: "Max Length (cm)",
-      },
-      collapsedLengthCm: {
-        type: "number",
-        required: false,
-        label: "Collapsed Length (cm)",
-      },
-      sections: {
-        type: "enum",
-        required: false,
-        label: "Sections",
-        options: [2, 3, 4, 5],
-      },
-      gripMaterial: {
-        type: "enum",
-        required: false,
-        label: "Grip Material",
-        options: ["Cork", "EVA Foam", "Rubber", "Dual-Density"],
-      },
-    },
-  },
-
   "Backpacking Tent": {
     fields: {
       capacity: {
@@ -727,28 +603,26 @@ const SCHEMAS = {
         label: "Wall Type",
         options: ["Double Wall", "Single Wall", "Hybrid"],
       },
-      floorAreaSqM: {
+      floorArea: {
         type: "number",
         required: false,
-        label: "Floor Area (sq m)",
-        min: 1,
-        max: 10,
-        step: 0.1,
+        label: "Floor Area",
+        min: 15,
+        max: 100,
       },
-      vestibuleAreaSqM: {
+      vestibuleArea: {
         type: "number",
         required: false,
-        label: "Vestibule Area (sq m)",
+        label: "Vestibule Area",
         min: 0,
-        max: 3,
-        step: 0.1,
+        max: 30,
       },
-      peakHeightCm: {
+      peakHeightIn: {
         type: "number",
         required: false,
-        label: "Peak Height (cm)",
-        min: 75,
-        max: 150,
+        label: "Peak Height",
+        min: 30,
+        max: 60,
       },
       doors: {
         type: "enum",
@@ -778,7 +652,6 @@ const SCHEMAS = {
         type: "string",
         required: false,
         label: "Fly Material",
-        placeholder: "e.g., 20D Silnylon, DCF, 15D Ripstop",
       },
       floorMaterial: {
         type: "string",
@@ -801,29 +674,27 @@ const SCHEMAS = {
         label: "Shape",
         options: ["Rectangular", "Catenary Cut", "Hex", "A-Frame", "Pyramid"],
       },
-      coverageAreaSqM: {
+      coverageArea: {
         type: "number",
         required: false,
-        label: "Coverage Area (sq m)",
-        min: 2,
-        max: 15,
-        step: 0.1,
+        label: "Coverage Area",
+        min: 20,
+        max: 150,
       },
       lengthCm: {
         type: "number",
         required: false,
-        label: "Length (cm)",
+        label: "Length",
       },
       widthCm: {
         type: "number",
         required: false,
-        label: "Width (cm)",
+        label: "Width",
       },
       material: {
         type: "string",
         required: false,
         label: "Material",
-        placeholder: "e.g., DCF 0.5oz, Silpoly, Silnylon",
       },
       guyoutPoints: {
         type: "number",
@@ -850,9 +721,16 @@ const SCHEMAS = {
       maxLumens: {
         type: "number",
         required: true,
-        label: "Max Output (lumens)",
+        label: "Max Output",
         min: 10,
         max: 2000,
+      },
+      maxBeamDistance: {
+        type: "number",
+        required: false,
+        label: "Max Beam Distance",
+        min: 10,
+        max: 200,
       },
       batteryType: {
         type: "enum",
@@ -868,32 +746,24 @@ const SCHEMAS = {
           "Hybrid",
         ],
       },
-      maxBeamDistance: {
-        type: "number",
-        required: false,
-        label: "Max Beam Distance (m)",
-        min: 10,
-        max: 200,
-      },
       batteryCapacityMah: {
         type: "number",
         required: false,
-        label: "Battery Capacity (mAh)",
+        label: "Battery Capacity",
         min: 500,
         max: 5000,
       },
       burnTimeHigh: {
         type: "number",
         required: false,
-        label: "Burn Time - High (hrs)",
+        label: "Burn Time (High)",
         min: 0.5,
         max: 20,
-        step: 0.5,
       },
       burnTimeLow: {
         type: "number",
         required: false,
-        label: "Burn Time - Low (hrs)",
+        label: "Burn Time (Low)",
         min: 5,
         max: 500,
       },
@@ -941,23 +811,21 @@ const SCHEMAS = {
       poreSize: {
         type: "number",
         required: false,
-        label: "Pore Size (microns)",
+        label: "Pore Size",
         min: 0.01,
         max: 1,
-        step: 0.01,
       },
       flowRate: {
         type: "number",
         required: false,
-        label: "Flow Rate (L/min)",
+        label: "Flow Rate",
         min: 0.1,
         max: 5,
-        step: 0.1,
       },
       filterLifeL: {
         type: "number",
         required: false,
-        label: "Filter Life (L)",
+        label: "Filter Life",
         min: 500,
         max: 500000,
       },
@@ -983,6 +851,1108 @@ const SCHEMAS = {
       },
     },
   },
+
+  "Water Bottle": {
+    fields: {
+      capacityMl: {
+        type: "number",
+        required: true,
+        label: "Capacity",
+        min: 250,
+        max: 2000,
+      },
+      material: {
+        type: "enum",
+        required: true,
+        label: "Material",
+        options: [
+          "Plastic (BPA-Free)",
+          "Stainless Steel",
+          "Aluminum",
+          "Glass",
+          "Silicone (Collapsible)",
+        ],
+      },
+      insulated: {
+        type: "boolean",
+        required: false,
+        label: "Insulated/Vacuum",
+      },
+      mouthOpening: {
+        type: "enum",
+        required: false,
+        label: "Mouth Opening",
+        options: ["Wide Mouth", "Narrow Mouth", "Sport Cap", "Straw"],
+      },
+      leakProof: {
+        type: "boolean",
+        required: false,
+        label: "Leak-Proof",
+      },
+      collapsible: {
+        type: "boolean",
+        required: false,
+        label: "Collapsible/Compressible",
+      },
+      filterCompatible: {
+        type: "boolean",
+        required: false,
+        label: "Filter Compatible",
+      },
+    },
+  },
+
+  "Hydration Reservoir": {
+    fields: {
+      capacityL: {
+        type: "enum",
+        required: true,
+        label: "Capacity",
+        options: [1, 1.5, 2, 2.5, 3],
+      },
+      material: {
+        type: "enum",
+        required: false,
+        label: "Material",
+        options: ["TPU", "LDPE", "Polyurethane", "Silicone"],
+      },
+      bpaFree: {
+        type: "boolean",
+        required: false,
+        label: "BPA-Free",
+      },
+      openingType: {
+        type: "enum",
+        required: false,
+        label: "Opening Type",
+        options: ["Slide-Top", "Wide-Mouth Screw", "QuickLink", "Roll-Top"],
+      },
+      biteValveType: {
+        type: "enum",
+        required: false,
+        label: "Bite Valve Type",
+        options: ["Standard", "High-Flow", "Lockable", "On/Off Switch"],
+      },
+      hoseLength: {
+        type: "number",
+        required: false,
+        label: "Hose Length",
+        min: 30,
+        max: 50,
+      },
+      insulatedHose: {
+        type: "boolean",
+        required: false,
+        label: "Insulated Hose",
+      },
+      reversible: {
+        type: "boolean",
+        required: false,
+        label: "Reversible for Cleaning",
+      },
+      quickDisconnect: {
+        type: "boolean",
+        required: false,
+        label: "Quick Disconnect",
+      },
+    },
+  },
+
+  "Rain Jacket": {
+    fields: {
+      gender: {
+        type: "enum",
+        required: true,
+        label: "Gender/Fit",
+        options: ["Mens", "Womens", "Unisex"],
+      },
+      layerConstruction: {
+        type: "enum",
+        required: true,
+        label: "Layer Construction",
+        options: ["2-Layer", "2.5-Layer", "3-Layer"],
+      },
+      membrane: {
+        type: "string",
+        required: false,
+        label: "Membrane Technology",
+      },
+      waterproofRating: {
+        type: "number",
+        required: false,
+        label: "Waterproof Rating",
+        min: 5000,
+        max: 30000,
+      },
+      breathabilityRating: {
+        type: "number",
+        required: false,
+        label: "Breathability (MVTR)",
+        min: 5000,
+        max: 40000,
+      },
+      pitZips: {
+        type: "boolean",
+        required: false,
+        label: "Pit Zips",
+      },
+      hoodType: {
+        type: "enum",
+        required: false,
+        label: "Hood Type",
+        options: [
+          "Fixed Hood",
+          "Adjustable Hood",
+          "Helmet-Compatible",
+          "Stowable Hood",
+          "No Hood",
+        ],
+      },
+      pockets: {
+        type: "number",
+        required: false,
+        label: "Number of Pockets",
+        min: 0,
+        max: 6,
+      },
+      packable: {
+        type: "boolean",
+        required: false,
+        label: "Packable/Stowable",
+      },
+      pfasFree: {
+        type: "boolean",
+        required: false,
+        label: "PFAS-Free DWR",
+      },
+    },
+  },
+
+  "Insulated Jacket": {
+    fields: {
+      insulationType: {
+        type: "enum",
+        required: true,
+        label: "Insulation Type",
+        options: ["Down", "Synthetic"],
+      },
+      gender: {
+        type: "enum",
+        required: true,
+        label: "Gender/Fit",
+        options: ["Mens", "Womens", "Unisex"],
+      },
+      fillPower: {
+        type: "enum",
+        required: false,
+        label: "Fill Power",
+        options: [550, 600, 650, 700, 750, 800, 850, 900, 950],
+      },
+      fillWeightOz: {
+        type: "number",
+        required: false,
+        label: "Fill Weight",
+        min: 1,
+        max: 12,
+      },
+      waterResistantDown: {
+        type: "boolean",
+        required: false,
+        label: "Hydrophobic/Water-Resistant Down",
+      },
+      rdsDown: {
+        type: "boolean",
+        required: false,
+        label: "RDS Certified Down",
+      },
+      syntheticInsulationType: {
+        type: "string",
+        required: false,
+        label: "Synthetic Insulation Type",
+      },
+      insulationWeightGsm: {
+        type: "number",
+        required: false,
+        label: "Insulation Weight",
+        min: 40,
+        max: 200,
+      },
+      waterResistant: {
+        type: "boolean",
+        required: false,
+        label: "Water-Resistant Insulation",
+      },
+      shellFabric: {
+        type: "string",
+        required: false,
+        label: "Shell Fabric",
+      },
+      hoodType: {
+        type: "enum",
+        required: false,
+        label: "Hood",
+        options: [
+          "Insulated Hood",
+          "Helmet-Compatible Hood",
+          "Stowable Hood",
+          "No Hood",
+        ],
+      },
+      pockets: {
+        type: "number",
+        required: false,
+        label: "Number of Pockets",
+        min: 0,
+        max: 6,
+      },
+      packable: {
+        type: "boolean",
+        required: false,
+        label: "Packable/Stowable",
+      },
+      temperatureRange: {
+        type: "enum",
+        required: false,
+        label: "Temperature Range",
+        options: [
+          "Lightweight (40-60°F)",
+          "Midweight (20-40°F)",
+          "Heavyweight (<20°F)",
+        ],
+      },
+    },
+  },
+
+  "Base Layer Top": {
+    fields: {
+      gender: {
+        type: "enum",
+        required: true,
+        label: "Gender/Fit",
+        options: ["Mens", "Womens", "Unisex"],
+      },
+      weight: {
+        type: "enum",
+        required: true,
+        label: "Weight Class",
+        options: [
+          "Ultralight",
+          "Lightweight",
+          "Midweight",
+          "Heavyweight",
+          "Expedition",
+        ],
+      },
+      fabricType: {
+        type: "enum",
+        required: true,
+        label: "Fabric Type",
+        options: ["Merino Wool", "Synthetic", "Wool Blend", "Silk"],
+      },
+      fabricWeightGsm: {
+        type: "number",
+        required: false,
+        label: "Fabric Weight",
+        min: 100,
+        max: 400,
+      },
+      neckStyle: {
+        type: "enum",
+        required: false,
+        label: "Neck Style",
+        options: ["Crew Neck", "Quarter-Zip", "Half-Zip", "Full-Zip", "Hooded"],
+      },
+      sleevesLength: {
+        type: "enum",
+        required: false,
+        label: "Sleeve Length",
+        options: ["Sleeveless", "Short Sleeve", "3/4 Sleeve", "Long Sleeve"],
+      },
+      thumbHoles: {
+        type: "boolean",
+        required: false,
+        label: "Thumb Holes",
+      },
+    },
+  },
+
+  "Gloves (Insulated)": {
+    fields: {
+      style: {
+        type: "enum",
+        required: true,
+        label: "Style",
+        options: ["Gloves (5-finger)", "Mittens", "Lobster Claw"],
+      },
+      insulationType: {
+        type: "enum",
+        required: true,
+        label: "Insulation Type",
+        options: ["Down", "Synthetic", "Fleece", "Wool", "Uninsulated"],
+      },
+      waterproof: {
+        type: "boolean",
+        required: false,
+        label: "Waterproof",
+      },
+      waterproofMembrane: {
+        type: "enum",
+        required: false,
+        label: "Waterproof Membrane",
+        options: ["GORE-TEX", "Proprietary", "None"],
+      },
+      touchscreenCompatible: {
+        type: "boolean",
+        required: false,
+        label: "Touchscreen Compatible",
+      },
+      gripPalm: {
+        type: "boolean",
+        required: false,
+        label: "Reinforced Grip Palm",
+      },
+      temperatureRating: {
+        type: "enum",
+        required: false,
+        label: "Temperature Rating",
+        options: [
+          "Warm Weather (40-60°F)",
+          "Cool Weather (20-40°F)",
+          "Cold Weather (0-20°F)",
+          "Extreme Cold (<0°F)",
+        ],
+      },
+    },
+  },
+
+  "Hiking Boots": {
+    fields: {
+      gender: {
+        type: "enum",
+        required: true,
+        label: "Gender/Fit",
+        options: ["Mens", "Womens", "Unisex"],
+      },
+      cutHeight: {
+        type: "enum",
+        required: true,
+        label: "Cut Height",
+        options: ["Low/Shoe", "Mid", "High"],
+      },
+      waterproof: {
+        type: "boolean",
+        required: true,
+        label: "Waterproof",
+      },
+      waterproofMembrane: {
+        type: "enum",
+        required: false,
+        label: "Waterproof Membrane",
+        options: ["GORE-TEX", "eVent", "Proprietary", "None"],
+      },
+      upperMaterial: {
+        type: "enum",
+        required: false,
+        label: "Upper Material",
+        options: [
+          "Full Grain Leather",
+          "Nubuck Leather",
+          "Split Leather",
+          "Synthetic",
+          "Mesh/Synthetic Mix",
+        ],
+      },
+      soleMaterial: {
+        type: "enum",
+        required: false,
+        label: "Sole Material",
+        options: ["Vibram", "Continental", "Proprietary Rubber", "Other"],
+      },
+      ankleSupport: {
+        type: "enum",
+        required: false,
+        label: "Ankle Support",
+        options: ["High", "Medium", "Low", "None"],
+      },
+      midsoleType: {
+        type: "enum",
+        required: false,
+        label: "Midsole Type",
+        options: ["EVA", "PU (Polyurethane)", "Dual-Density", "TPU"],
+      },
+      shankType: {
+        type: "enum",
+        required: false,
+        label: "Shank/Stability",
+        options: ["Full Shank", "3/4 Shank", "Half Shank", "Plate", "None"],
+      },
+      weightCategory: {
+        type: "enum",
+        required: false,
+        label: "Weight Category",
+        options: ["Lightweight", "Midweight", "Heavyweight"],
+      },
+      useType: {
+        type: "enum",
+        required: false,
+        label: "Intended Use",
+        options: ["Day Hiking", "Backpacking", "Mountaineering", "Approach"],
+      },
+    },
+  },
+
+  "Trail Running Shoes": {
+    fields: {
+      gender: {
+        type: "enum",
+        required: true,
+        label: "Gender/Fit",
+        options: ["Mens", "Womens", "Unisex"],
+      },
+      dropMm: {
+        type: "number",
+        required: false,
+        label: "Heel-Toe Drop",
+        min: 0,
+        max: 12,
+      },
+      stackHeightMm: {
+        type: "number",
+        required: false,
+        label: "Stack Height",
+        min: 15,
+        max: 40,
+      },
+      cushioning: {
+        type: "enum",
+        required: false,
+        label: "Cushioning Level",
+        options: ["Minimal (0-4mm drop)", "Moderate", "Maximal"],
+      },
+      waterproof: {
+        type: "boolean",
+        required: false,
+        label: "Waterproof",
+      },
+      waterproofMembrane: {
+        type: "enum",
+        required: false,
+        label: "Waterproof Membrane",
+        options: ["GORE-TEX", "eVent", "Proprietary", "None"],
+      },
+      outsoleType: {
+        type: "enum",
+        required: false,
+        label: "Outsole Type",
+        options: [
+          "Vibram Megagrip",
+          "Continental",
+          "Proprietary Sticky Rubber",
+          "Standard Rubber",
+        ],
+      },
+      lugDepthMm: {
+        type: "number",
+        required: false,
+        label: "Lug Depth",
+        min: 2,
+        max: 6,
+      },
+      plateOrRockGuard: {
+        type: "boolean",
+        required: false,
+        label: "Rock Plate/Guard",
+      },
+      upperMaterial: {
+        type: "enum",
+        required: false,
+        label: "Upper Material",
+        options: ["Mesh", "Ripstop", "Engineered Mesh", "Mixed Synthetic"],
+      },
+    },
+  },
+
+  "Base Layer Bottom": {
+    fields: {
+      gender: {
+        type: "enum",
+        required: true,
+        label: "Gender/Fit",
+        options: ["Mens", "Womens", "Unisex"],
+      },
+      weight: {
+        type: "enum",
+        required: true,
+        label: "Weight Class",
+        options: [
+          "Ultralight",
+          "Lightweight",
+          "Midweight",
+          "Heavyweight",
+          "Expedition",
+        ],
+      },
+      fabricType: {
+        type: "enum",
+        required: true,
+        label: "Fabric Type",
+        options: ["Merino Wool", "Synthetic", "Wool Blend", "Silk"],
+      },
+      fabricWeightGsm: {
+        type: "number",
+        required: false,
+        label: "Fabric Weight",
+        min: 100,
+        max: 400,
+      },
+      fitStyle: {
+        type: "enum",
+        required: false,
+        label: "Fit Style",
+        options: ["Fitted", "Regular", "Relaxed"],
+      },
+      inseamLength: {
+        type: "enum",
+        required: false,
+        label: "Inseam Length",
+        options: ["Short", "Regular", "Long", "Full-Length", "3/4 Length"],
+      },
+      flyType: {
+        type: "enum",
+        required: false,
+        label: "Fly Type",
+        options: ["Button Fly", "No Fly", "N/A"],
+      },
+    },
+  },
+
+  "Hiking Socks": {
+    fields: {
+      sockType: {
+        type: "enum",
+        required: true,
+        label: "Sock Type",
+        options: [
+          "Liner",
+          "Hiking",
+          "Trekking",
+          "Mountaineering",
+          "Trail Running",
+        ],
+      },
+      material: {
+        type: "enum",
+        required: true,
+        label: "Material",
+        options: ["Merino Wool", "Synthetic", "Wool Blend", "Cotton Blend"],
+      },
+      cushioning: {
+        type: "enum",
+        required: false,
+        label: "Cushioning Level",
+        options: ["No Cushion (Liner)", "Light", "Medium", "Heavy"],
+      },
+      height: {
+        type: "enum",
+        required: false,
+        label: "Height",
+        options: ["No-Show", "Ankle", "Quarter", "Crew", "Over-Calf", "Knee"],
+      },
+      seamlessToe: {
+        type: "boolean",
+        required: false,
+        label: "Seamless Toe",
+      },
+      archSupport: {
+        type: "boolean",
+        required: false,
+        label: "Arch Support",
+      },
+    },
+  },
+
+  "Hat/Headwear": {
+    fields: {
+      hatType: {
+        type: "enum",
+        required: true,
+        label: "Hat Type",
+        options: [
+          "Beanie/Winter Hat",
+          "Sun Hat",
+          "Baseball Cap",
+          "Visor",
+          "Buff/Neck Gaiter",
+          "Bucket Hat",
+          "Brimmed Hat",
+        ],
+      },
+      material: {
+        type: "enum",
+        required: false,
+        label: "Material",
+        options: [
+          "Merino Wool",
+          "Synthetic",
+          "Wool Blend",
+          "Cotton",
+          "Nylon",
+          "Fleece",
+        ],
+      },
+      waterproof: {
+        type: "boolean",
+        required: false,
+        label: "Waterproof/Water-Resistant",
+      },
+      uvRating: {
+        type: "enum",
+        required: false,
+        label: "UV Protection Rating",
+        options: ["UPF 15-24", "UPF 25-39", "UPF 40-50", "UPF 50+"],
+      },
+      brimSize: {
+        type: "enum",
+        required: false,
+        label: "Brim Size",
+        options: ["No Brim", "Small (2-3in)", "Medium (3-4in)", "Large (4in+)"],
+      },
+      packable: {
+        type: "boolean",
+        required: false,
+        label: "Packable/Crushable",
+      },
+      insulated: {
+        type: "boolean",
+        required: false,
+        label: "Insulated",
+      },
+      windproof: {
+        type: "boolean",
+        required: false,
+        label: "Windproof",
+      },
+    },
+  },
+
+  "Hiking Shorts": {
+    fields: {
+      gender: {
+        type: "enum",
+        required: true,
+        label: "Gender/Fit",
+        options: ["Mens", "Womens", "Unisex"],
+      },
+      inseamIn: {
+        type: "number",
+        required: false,
+        label: "Inseam",
+        min: 3,
+        max: 12,
+      },
+      material: {
+        type: "enum",
+        required: false,
+        label: "Material",
+        options: ["Nylon", "Polyester", "Cotton Blend", "Spandex Mix"],
+      },
+      pockets: {
+        type: "number",
+        required: false,
+        label: "Number of Pockets",
+        min: 0,
+        max: 8,
+      },
+      waterResistant: {
+        type: "boolean",
+        required: false,
+        label: "Water-Resistant/DWR",
+      },
+      stretchFabric: {
+        type: "boolean",
+        required: false,
+        label: "Stretch Fabric",
+      },
+      beltLoops: {
+        type: "boolean",
+        required: false,
+        label: "Belt Loops",
+      },
+      builtInLiner: {
+        type: "boolean",
+        required: false,
+        label: "Built-in Liner",
+      },
+      uvProtection: {
+        type: "enum",
+        required: false,
+        label: "UV Protection",
+        options: ["UPF 15-24", "UPF 25-39", "UPF 40-50", "UPF 50+", "None"],
+      },
+    },
+  },
+
+  "Hiking Shirt": {
+    fields: {
+      gender: {
+        type: "enum",
+        required: true,
+        label: "Gender/Fit",
+        options: ["Mens", "Womens", "Unisex"],
+      },
+      sleevesLength: {
+        type: "enum",
+        required: true,
+        label: "Sleeve Length",
+        options: ["Sleeveless", "Short Sleeve", "Long Sleeve", "Convertible"],
+      },
+      material: {
+        type: "enum",
+        required: false,
+        label: "Material",
+        options: [
+          "Merino Wool",
+          "Synthetic",
+          "Cotton",
+          "Wool Blend",
+          "Nylon",
+          "Polyester",
+        ],
+      },
+      uvProtection: {
+        type: "enum",
+        required: false,
+        label: "UV Protection",
+        options: ["UPF 15-24", "UPF 25-39", "UPF 40-50", "UPF 50+", "None"],
+      },
+      quickDry: {
+        type: "boolean",
+        required: false,
+        label: "Quick-Dry",
+      },
+      pockets: {
+        type: "number",
+        required: false,
+        label: "Number of Pockets",
+        min: 0,
+        max: 6,
+      },
+      vented: {
+        type: "boolean",
+        required: false,
+        label: "Vented/Mesh Panels",
+      },
+      moistureWicking: {
+        type: "boolean",
+        required: false,
+        label: "Moisture-Wicking",
+      },
+      buttonStyle: {
+        type: "enum",
+        required: false,
+        label: "Button/Closure Style",
+        options: ["Button-Up", "Snap Closure", "Pullover", "Zip-Up"],
+      },
+    },
+  },
+
+  Sunglasses: {
+    fields: {
+      uvProtection: {
+        type: "enum",
+        required: true,
+        label: "UV Protection",
+        options: ["UV400 (100%)", "UV380-400", "Basic UV"],
+      },
+      polarized: {
+        type: "boolean",
+        required: false,
+        label: "Polarized Lenses",
+      },
+      lensCategory: {
+        type: "enum",
+        required: false,
+        label: "Lens Category",
+        options: [
+          "Category 0 (0-19% absorption)",
+          "Category 1 (20-56% absorption)",
+          "Category 2 (57-81% absorption)",
+          "Category 3 (82-92% absorption)",
+          "Category 4 (93%+ absorption)",
+        ],
+      },
+      frameMaterial: {
+        type: "enum",
+        required: false,
+        label: "Frame Material",
+        options: [
+          "Plastic/Acetate",
+          "Metal",
+          "Titanium",
+          "TR90 (Nylon)",
+          "Aluminum",
+        ],
+      },
+      lensMaterial: {
+        type: "enum",
+        required: false,
+        label: "Lens Material",
+        options: ["Polycarbonate", "CR-39 (Plastic)", "Glass", "Trivex"],
+      },
+      interchangeableLenses: {
+        type: "boolean",
+        required: false,
+        label: "Interchangeable Lenses",
+      },
+      nosePadsAdjustable: {
+        type: "boolean",
+        required: false,
+        label: "Adjustable Nose Pads",
+      },
+      mirroredLens: {
+        type: "boolean",
+        required: false,
+        label: "Mirrored/Reflective Lens",
+      },
+    },
+  },
+
+  "Sleeping Bag Liner": {
+    fields: {
+      material: {
+        type: "enum",
+        required: true,
+        label: "Material",
+        options: [
+          "Silk",
+          "Cotton",
+          "Fleece",
+          "Synthetic (Polyester)",
+          "Merino Wool",
+          "Microfiber",
+        ],
+      },
+      shape: {
+        type: "enum",
+        required: false,
+        label: "Shape",
+        options: ["Mummy", "Rectangular", "Semi-Rectangular"],
+      },
+      tempBoostF: {
+        type: "number",
+        required: false,
+        label: "Temperature Boost",
+        min: 5,
+        max: 25,
+      },
+      lengthSize: {
+        type: "enum",
+        required: false,
+        label: "Length/Size",
+        options: ["Regular", "Long", "XL"],
+      },
+      packable: {
+        type: "boolean",
+        required: false,
+        label: "Packable/Compact",
+      },
+      zippered: {
+        type: "boolean",
+        required: false,
+        label: "Zippered (Not Sewn Shut)",
+      },
+    },
+  },
+
+  "Power Bank": {
+    fields: {
+      capacityMah: {
+        type: "number",
+        required: true,
+        label: "Capacity",
+        min: 1000,
+        max: 50000,
+      },
+      outputPortsUsbA: {
+        type: "number",
+        required: false,
+        label: "USB-A Output Ports",
+        min: 0,
+        max: 4,
+      },
+      outputPortsUsbC: {
+        type: "number",
+        required: false,
+        label: "USB-C Output Ports",
+        min: 0,
+        max: 4,
+      },
+      inputPorts: {
+        type: "enum",
+        required: false,
+        label: "Input Port Type",
+        options: ["Micro-USB", "USB-C", "Lightning", "Multiple"],
+      },
+      fastCharging: {
+        type: "enum",
+        required: false,
+        label: "Fast Charging Support",
+        options: [
+          "USB Power Delivery (PD)",
+          "Qualcomm Quick Charge",
+          "Both PD & QC",
+          "None",
+        ],
+      },
+      solarCapable: {
+        type: "boolean",
+        required: false,
+        label: "Solar Charging Capable",
+      },
+      wirelessCharging: {
+        type: "boolean",
+        required: false,
+        label: "Wireless Charging (Qi)",
+      },
+      waterproofRating: {
+        type: "enum",
+        required: false,
+        label: "Waterproof Rating",
+        options: ["IPX4", "IPX5", "IPX6", "IPX7", "IP67", "None"],
+      },
+      passthroughCharging: {
+        type: "boolean",
+        required: false,
+        label: "Pass-Through Charging",
+      },
+    },
+  },
+
+  "Travel Towel": {
+    fields: {
+      size: {
+        type: "enum",
+        required: true,
+        label: "Size",
+        options: [
+          "Small (20x40in)",
+          "Medium (24x48in)",
+          "Large (30x60in)",
+          "XL (35x70in)",
+        ],
+      },
+      material: {
+        type: "enum",
+        required: true,
+        label: "Material",
+        options: ["Microfiber", "Cotton", "Bamboo", "Synthetic Blend"],
+      },
+      quickDry: {
+        type: "boolean",
+        required: false,
+        label: "Quick-Dry",
+      },
+      absorbency: {
+        type: "enum",
+        required: false,
+        label: "Absorbency Level",
+        options: ["Low", "Medium", "High", "Ultra-High"],
+      },
+      packable: {
+        type: "boolean",
+        required: false,
+        label: "Packable/Compact",
+      },
+      antimicrobial: {
+        type: "boolean",
+        required: false,
+        label: "Antimicrobial Treatment",
+      },
+      hangLoop: {
+        type: "boolean",
+        required: false,
+        label: "Hang Loop/Snap",
+      },
+    },
+  },
+
+  Toiletry: {
+    fields: {},
+  },
+
+  Medication: {
+    fields: {},
+  },
+
+  Document: {
+    fields: {},
+  },
+
+  Other: {
+    fields: {},
+  },
+};
+
+// =============================================================================
+// CATEGORY TO ITEM TYPE MAPPING
+// =============================================================================
+// Maps catalog categories to their relevant item types
+export const CATEGORY_ITEM_TYPE_MAPPING = {
+  "Sleep System": [
+    "Sleeping Bag",
+    "Quilt",
+    "Inflatable Sleeping Pad",
+    "Foam Sleeping Pad",
+    "Sleeping Bag Liner",
+  ],
+  "Backpacks & Bags": ["Backpack", "Daypack"],
+  "Kitchen & Cooking": ["Backpacking Pot", "Backpacking Stove (Canister)"],
+  Shelter: ["Backpacking Tent", "Tarp Shelter"],
+  "Electronics & Power": ["Headlamp", "Power Bank"],
+  Hydration: ["Water Filter", "Water Bottle", "Hydration Reservoir"],
+  "Men's Clothing": [
+    "Rain Jacket",
+    "Insulated Jacket",
+    "Base Layer Top",
+    "Base Layer Bottom",
+    "Hiking Socks",
+    "Hat/Headwear",
+    "Hiking Shorts",
+    "Hiking Shirt",
+    "Gloves (Insulated)",
+    "Hiking Boots",
+    "Trail Running Shoes",
+  ],
+  "Women's Clothing": [
+    "Rain Jacket",
+    "Insulated Jacket",
+    "Base Layer Top",
+    "Base Layer Bottom",
+    "Hiking Socks",
+    "Hat/Headwear",
+    "Hiking Shorts",
+    "Hiking Shirt",
+    "Gloves (Insulated)",
+    "Hiking Boots",
+    "Trail Running Shoes",
+  ],
+  "Unisex Clothing": [
+    "Rain Jacket",
+    "Insulated Jacket",
+    "Base Layer Top",
+    "Base Layer Bottom",
+    "Hiking Socks",
+    "Hat/Headwear",
+    "Hiking Shorts",
+    "Hiking Shirt",
+    "Gloves (Insulated)",
+    "Hiking Boots",
+    "Trail Running Shoes",
+  ],
+  "Accessories & Tools": ["Trekking Poles", "Sunglasses"],
+  Travel: ["Travel Towel"],
+  "Health & Hygiene": ["Toiletry", "Medication"],
+  "Navigation & Planning": ["Document"],
 };
 
 // =============================================================================
@@ -990,6 +1960,23 @@ const SCHEMAS = {
 // =============================================================================
 export function getAllItemTypes() {
   return Object.keys(SCHEMAS).sort();
+}
+
+// =============================================================================
+// GET ITEM TYPES FOR CATEGORY
+// =============================================================================
+// Returns item types relevant to the selected category
+export function getItemTypesForCategory(category) {
+  if (!category) {
+    return getAllItemTypes();
+  }
+
+  const mappedTypes = CATEGORY_ITEM_TYPE_MAPPING[category] || [];
+
+  // Sort mapped types alphabetically, then add "Other" at the end
+  const sortedTypes = [...mappedTypes].sort();
+
+  return [...sortedTypes, "Other"];
 }
 
 // =============================================================================
