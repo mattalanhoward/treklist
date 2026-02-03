@@ -1918,6 +1918,53 @@ const SCHEMAS = {
 };
 
 // =============================================================================
+// CUSTOM FIELD LAYOUTS
+// =============================================================================
+// Define custom row layouts for specific item types to optimize data entry.
+// Each row is an array of field keys. Fields not listed will be omitted.
+// Use gridCols to specify the grid columns for each row (default: length of row).
+const FIELD_LAYOUTS = {
+  Backpack: {
+    rows: [
+      // Row 1: Core identifiers (5 cols)
+      {
+        fields: ["gender", "volumeLiters", "mainFabric", "torsoFitRange", "loadCapacityKg"],
+        gridCols: 5,
+      },
+      // Row 2: Frame & suspension (4 cols)
+      {
+        fields: ["frameType", "backPanelType", "hipBeltType", "waterResistance"],
+        gridCols: 4,
+      },
+      // Row 3: Booleans (4 cols to align with row above, 4th empty)
+      {
+        fields: ["hydrationCompatible", "rainCoverIncluded", "hipBeltRemovable"],
+        gridCols: 4,
+      },
+    ],
+  },
+  Daypack: {
+    rows: [
+      // Row 1: Core identifiers (4 cols)
+      {
+        fields: ["gender", "volumeLiters", "loadCapacityKg", "laptopSleeveSize"],
+        gridCols: 4,
+      },
+      // Row 2: Frame & suspension (4 cols, 4th empty)
+      {
+        fields: ["frameType", "hipBeltType", "waterResistance"],
+        gridCols: 4,
+      },
+      // Row 3: Booleans (4 cols to align, 4th empty)
+      {
+        fields: ["hydrationCompatible", "rainCoverIncluded", "hipBeltRemovable"],
+        gridCols: 4,
+      },
+    ],
+  },
+};
+
+// =============================================================================
 // CATEGORY TO ITEM TYPE MAPPING
 // =============================================================================
 // Maps catalog categories to their relevant item types
@@ -2233,6 +2280,37 @@ export default function AttributeFields({ itemType, attributes, onChange }) {
     }
   };
 
+  // Check for custom layout
+  const customLayout = FIELD_LAYOUTS[itemType];
+
+  if (customLayout) {
+    // Render using custom row layout
+    return (
+      <div className="space-y-3">
+        {customLayout.rows.map((row, rowIndex) => {
+          const gridColsClass = {
+            2: "grid-cols-2",
+            3: "grid-cols-1 sm:grid-cols-3",
+            4: "grid-cols-2 sm:grid-cols-4",
+            5: "grid-cols-2 sm:grid-cols-3 md:grid-cols-5",
+            6: "grid-cols-2 sm:grid-cols-3 md:grid-cols-6",
+          }[row.gridCols] || "grid-cols-1 sm:grid-cols-2 md:grid-cols-3";
+
+          return (
+            <div key={rowIndex} className={`grid ${gridColsClass} gap-3`}>
+              {row.fields.map((fieldKey) => {
+                const field = schema.fields[fieldKey];
+                if (!field) return null;
+                return renderField([fieldKey, field]);
+              })}
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
+  // Default layout: required fields first, then optional
   return (
     <div className="space-y-3">
       {/* Required fields */}
