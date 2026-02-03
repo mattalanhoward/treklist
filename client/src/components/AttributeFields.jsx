@@ -399,6 +399,28 @@ const SCHEMAS = {
     },
   },
 
+  "Hip Pack": {
+    fields: {
+      volumeLiters: {
+        type: "number",
+        required: true,
+        label: "Volume",
+        min: 1,
+        max: 15,
+      },
+      waterResistant: {
+        type: "boolean",
+        required: false,
+        label: "Water Resistant",
+      },
+      keyHook: {
+        type: "boolean",
+        required: false,
+        label: "Key Hook",
+      },
+    },
+  },
+
   "Backpacking Pot": {
     fields: {
       material: {
@@ -1976,7 +1998,7 @@ export const CATEGORY_ITEM_TYPE_MAPPING = {
     "Foam Sleeping Pad",
     "Sleeping Bag Liner",
   ],
-  "Backpacks & Bags": ["Backpack", "Daypack"],
+  "Backpacks & Bags": ["Backpack", "Daypack", "Hip Pack"],
   "Kitchen & Cooking": ["Backpacking Pot", "Backpacking Stove (Canister)"],
   Shelter: ["Backpacking Tent", "Tarp Shelter"],
   "Electronics & Power": ["Headlamp", "Power Bank"],
