@@ -170,7 +170,7 @@ function GearCatalogSection({
     attributes: {}, // Structured attributes object
 
     // Prefill controls (decoupled from offer network)
-    prefillSource: "amazon", // "amazon" | "none" (future: "rei", etc)
+    prefillSource: "none", // "none" | "amazon" (future: "rei", etc)
     prefillOverwrite: false,
     amazonAsinLookup: "",
 
@@ -1086,6 +1086,82 @@ function GearCatalogSection({
 
                 <div>
                   <label className="block font-medium text-primary mb-0.5">
+                    Attributes
+                  </label>
+                  <AttributeFields
+                    itemType={form.itemType}
+                    attributes={form.attributes}
+                    onChange={(newAttrs) =>
+                      setForm((prev) => ({ ...prev, attributes: newAttrs }))
+                    }
+                  />
+                </div>
+
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    Weight / Dimensions
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-7 gap-2">
+                    <input
+                      type="number"
+                      name="weightGrams"
+                      value={form.weightGrams}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="Weight (g)"
+                      min="0"
+                    />
+                    <input
+                      type="number"
+                      name="dimLength"
+                      value={form.dimLength}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="L"
+                      min="0"
+                      step="0.1"
+                    />
+                    <input
+                      type="number"
+                      name="dimWidth"
+                      value={form.dimWidth}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="W"
+                      min="0"
+                      step="0.1"
+                    />
+                    <input
+                      type="number"
+                      name="dimHeight"
+                      value={form.dimHeight}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="H"
+                      min="0"
+                      step="0.1"
+                    />
+                    <div className="mt-0.5 w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt flex items-center justify-center">
+                      <span className="text-xs font-semibold tracking-wide">
+                        cm
+                      </span>
+                    </div>
+                    <input
+                      type="text"
+                      name="dimNote"
+                      value={form.dimNote || ""}
+                      onChange={handleChange}
+                      placeholder="Note"
+                      className="sm:col-span-2 mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                    />
+                  </div>
+                  <span className="block text-[11px] text-primary/70">
+                    Dimensions stored as L × W × H (cm). Note: e.g. "Packed", "Varies by size"
+                  </span>
+                </div>
+
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
                     Description
                   </label>
                   <textarea
@@ -1098,110 +1174,7 @@ function GearCatalogSection({
                   />
                 </div>
 
-                <div>
-                  <label className="block font-medium text-primary mb-0.5">
-                    Attributes
-                  </label>
-                  <AttributeFields
-                    itemType={form.itemType}
-                    attributes={form.attributes}
-                    onChange={(newAttrs) =>
-                      setForm((prev) => ({ ...prev, attributes: newAttrs }))
-                    }
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  <div>
-                    <label className="block font-medium text-primary mb-0.5">
-                      Weight (grams)
-                    </label>
-                    <input
-                      type="number"
-                      name="weightGrams"
-                      value={form.weightGrams}
-                      onChange={handleChange}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                      placeholder="1400"
-                      min="0"
-                    />
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label className="block font-medium text-primary mb-0.5">
-                      Dimensions
-                    </label>
-                    <div className="grid grid-cols-4 gap-2">
-                      <input
-                        type="number"
-                        name="dimLength"
-                        value={form.dimLength}
-                        onChange={handleChange}
-                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                        placeholder="L"
-                        min="0"
-                        step="0.1"
-                      />
-                      <input
-                        type="number"
-                        name="dimWidth"
-                        value={form.dimWidth}
-                        onChange={handleChange}
-                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                        placeholder="W"
-                        min="0"
-                        step="0.1"
-                      />
-                      <input
-                        type="number"
-                        name="dimHeight"
-                        value={form.dimHeight}
-                        onChange={handleChange}
-                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                        placeholder="H"
-                        min="0"
-                        step="0.1"
-                      />
-                      <div className="mt-0.5 w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt flex items-center justify-center">
-                        <span className="text-xs font-semibold tracking-wide">
-                          cm
-                        </span>
-                      </div>
-                    </div>
-                    <span className="block text-[11px] text-primary/70">
-                      Optional. Stored as L × W × H.
-                    </span>
-                    <div className="col-span-full">
-                      <label className="block text-xs text-primary">
-                        Dimensions note (optional)
-                      </label>
-                      <input
-                        type="text"
-                        name="dimNote"
-                        value={form.dimNote || ""}
-                        onChange={handleChange}
-                        placeholder='e.g. "Varies by size", "Packed", "Approximate"'
-                        className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
-                      />
-                    </div>
-                  </div>
-                </div>
-
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <div>
-                    <label className="block font-medium text-primary mb-0.5">
-                      Tags (comma-separated)
-                    </label>
-                    <input
-                      type="text"
-                      name="tags"
-                      value={form.tags}
-                      onChange={handleChange}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                      placeholder="3-season, tent, 1p"
-                    />
-                  </div>
-
                   <div>
                     <label className="block font-medium text-primary mb-0.5">
                       Image URLs
@@ -1217,6 +1190,20 @@ function GearCatalogSection({
                     <span className="block text-[11px] text-primary/70">
                       First URL will be used as the primary image.
                     </span>
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      Tags (comma-separated)
+                    </label>
+                    <input
+                      type="text"
+                      name="tags"
+                      value={form.tags}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="3-season, tent, 1p"
+                    />
                   </div>
                 </div>
               </div>
@@ -2332,12 +2319,11 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
         </div>
 
         <div className="px-4 py-4 sm:px-6 sm:py-6 space-y-3">
-          <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
-            {/* LEFT */}
-            <div className="flex-1 space-y-2">
-              <div className="text-sm font-semibold text-primary">
-                Item Details
-              </div>
+          {/* 1) ITEM DETAILS */}
+          <div className="space-y-2">
+            <div className="text-sm font-semibold text-primary">
+              Item Details
+            </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                 {/* Row 1 */}
@@ -2445,73 +2431,39 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                 </div>
               </div>
 
-              <div>
-                <label className="block font-medium text-primary mb-0.5">
-                  Description
-                </label>
-                <textarea
-                  name="description"
-                  value={form.description}
-                  onChange={handleChange}
-                  className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary resize-y"
-                  rows={2}
-                  placeholder="Short blurb to help you recognize the item when importing."
-                />
-                {primaryNetwork === "amazon" &&
-                  form.amazonDescriptionNeedsRewrite && (
-                    <div className="mt-2 rounded border border-warning/50 bg-warning/10 p-2 text-xs text-primary">
-                      <div className="font-semibold mb-1">Important</div>
-                      <div className="text-primary/80">
-                        This description was pulled from Amazon. Rewrite it in
-                        your own words before saving.
-                      </div>
-                      <label className="mt-2 flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          name="amazonDescriptionConfirmed"
-                          checked={form.amazonDescriptionConfirmed}
-                          onChange={handleChange}
-                          className="checkbox checkbox-xs"
-                        />
-                        <span>I confirm I rewrote the description.</span>
-                      </label>
-                    </div>
-                  )}
-              </div>
+              {/* 3) MEDIA & SPECS */}
+              <div className="space-y-3 border-t border-base-200 pt-4">
+                <div className="text-xs font-semibold text-primary/80">
+                  Media & specs
+                </div>
 
-              <div>
-                <label className="block font-medium text-primary mb-0.5">
-                  Attributes
-                </label>
-                <AttributeFields
-                  itemType={form.itemType}
-                  attributes={form.attributes}
-                  onChange={(newAttrs) =>
-                    setForm((prev) => ({ ...prev, attributes: newAttrs }))
-                  }
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 <div>
                   <label className="block font-medium text-primary mb-0.5">
-                    Weight (grams)
+                    Attributes
                   </label>
-                  <input
-                    type="number"
-                    name="weightGrams"
-                    value={form.weightGrams}
-                    onChange={handleChange}
-                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                    min="0"
+                  <AttributeFields
+                    itemType={form.itemType}
+                    attributes={form.attributes}
+                    onChange={(newAttrs) =>
+                      setForm((prev) => ({ ...prev, attributes: newAttrs }))
+                    }
                   />
                 </div>
 
-                <div className="sm:col-span-2">
+                <div>
                   <label className="block font-medium text-primary mb-0.5">
-                    Dimensions
+                    Weight / Dimensions
                   </label>
-                  <div className="grid grid-cols-4 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-7 gap-2">
+                    <input
+                      type="number"
+                      name="weightGrams"
+                      value={form.weightGrams}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="Weight (g)"
+                      min="0"
+                    />
                     <input
                       type="number"
                       name="dimLength"
@@ -2547,58 +2499,90 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                         cm
                       </span>
                     </div>
-                  </div>
-                  <span className="block text-[11px] text-primary/70">
-                    Optional. Stored as L × W × H.
-                  </span>
-                  <div className="col-span-full">
-                    <label className="block text-xs text-primary">
-                      Dimensions note (optional)
-                    </label>
                     <input
                       type="text"
                       name="dimNote"
                       value={form.dimNote || ""}
                       onChange={handleChange}
-                      placeholder='e.g. "Varies by size", "Packed", "Approximate"'
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                      placeholder="Note"
+                      className="sm:col-span-2 mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
+                    />
+                  </div>
+                  <span className="block text-[11px] text-primary/70">
+                    Dimensions stored as L × W × H (cm). Note: e.g. "Packed", "Varies by size"
+                  </span>
+                </div>
+
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    Description
+                  </label>
+                  <textarea
+                    name="description"
+                    value={form.description}
+                    onChange={handleChange}
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary resize-y"
+                    rows={3}
+                    placeholder="Short blurb to help you recognize the item when importing."
+                  />
+                  {primaryNetwork === "amazon" &&
+                    form.amazonDescriptionNeedsRewrite && (
+                      <div className="mt-2 rounded border border-warning/50 bg-warning/10 p-2 text-xs text-primary">
+                        <div className="font-semibold mb-1">Important</div>
+                        <div className="text-primary/80">
+                          This description was pulled from Amazon. Rewrite it in
+                          your own words before saving.
+                        </div>
+                        <label className="mt-2 flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            name="amazonDescriptionConfirmed"
+                            checked={form.amazonDescriptionConfirmed}
+                            onChange={handleChange}
+                            className="checkbox checkbox-xs"
+                          />
+                          <span>I confirm I rewrote the description.</span>
+                        </label>
+                      </div>
+                    )}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      Image URLs
+                    </label>
+                    <textarea
+                      name="imageUrlsText"
+                      value={form.imageUrlsText}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary resize-y"
+                      rows={2}
+                      placeholder="One image URL per line"
+                    />
+                    <span className="block text-[11px] text-primary/70">
+                      First URL will be used as the primary image.
+                    </span>
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      Tags (comma-separated)
+                    </label>
+                    <input
+                      type="text"
+                      name="tags"
+                      value={form.tags}
+                      onChange={handleChange}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      placeholder="3-season, tent, 1p"
                     />
                   </div>
                 </div>
-
-                <div className="sm:col-span-2">
-                  <label className="block font-medium text-primary mb-0.5">
-                    Tags (comma-separated)
-                  </label>
-                  <input
-                    type="text"
-                    name="tags"
-                    value={form.tags}
-                    onChange={handleChange}
-                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                    placeholder="3-season, tent, 1p"
-                  />
-                </div>
               </div>
 
-              <div className="mt-2">
-                <label className="block font-medium text-primary mb-0.5">
-                  Image URLs
-                </label>
-                <textarea
-                  name="imageUrlsText"
-                  value={form.imageUrlsText}
-                  onChange={handleChange}
-                  className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary resize-y"
-                  rows={2}
-                  placeholder="One image URL per line"
-                />
-                <span className="block text-[11px] text-primary/70">
-                  First URL will be used as the primary image.
-                </span>
-              </div>
-              {/* Prefill source selector (decoupled from offers) */}
-              <div className="space-y-2">
+              {/* 4) PREFILL SOURCE */}
+              <div className="space-y-3 border-t border-base-200 pt-4">
                 <div className="text-xs font-semibold text-primary/80">
                   Prefill source
                 </div>
@@ -2714,20 +2698,21 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                 />
                 <span>Overwrite existing fields when applying prefill</span>
               </label>
-            </div>
 
-            {/* RIGHT */}
-            <div className="flex-1 space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="text-sm font-semibold text-primary">Offers</div>
-                <button
-                  type="button"
-                  onClick={addOffer}
-                  className="btn btn-ghost btn-xs text-primary"
-                >
-                  + Add offer
-                </button>
-              </div>
+              {/* 5) PRIMARY OFFER */}
+              <div className="space-y-3 border-t border-base-200 pt-4">
+                <div className="flex items-center justify-between">
+                  <div className="text-xs font-semibold text-primary/80">
+                    Primary offer
+                  </div>
+                  <button
+                    type="button"
+                    onClick={addOffer}
+                    className="btn btn-ghost btn-xs text-primary"
+                  >
+                    + Add offer
+                  </button>
+                </div>
 
               {/* Primary offer */}
               <div className="grid grid-cols-2 gap-2">
@@ -2993,8 +2978,8 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                   })}
                 </div>
               )}
+              </div>
             </div>
-          </div>
 
           <div className="flex justify-end gap-2 pt-3 border-t border-base-200 mt-2">
             <button
