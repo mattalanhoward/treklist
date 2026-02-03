@@ -478,6 +478,31 @@ const SCHEMAS = {
     derive: (attrs) => attrs,
   },
 
+  "Hip Pack": {
+    fields: {
+      volumeLiters: {
+        type: "number",
+        required: true,
+        label: "Volume",
+        unit: "L",
+        min: 1,
+        max: 15,
+        step: 0.5,
+      },
+      waterResistant: {
+        type: "boolean",
+        required: false,
+        label: "Water Resistant",
+      },
+      keyHook: {
+        type: "boolean",
+        required: false,
+        label: "Key Hook",
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
   // ===========================================================================
   // COOKING / KITCHEN
   // ===========================================================================
