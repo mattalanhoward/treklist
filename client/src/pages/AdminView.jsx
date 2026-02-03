@@ -450,7 +450,7 @@ function GearCatalogSection({
         imageUrlsText: "",
         canonicalAsin: "",
         itemGroupId: "",
-        prefillSource: "amazon",
+        prefillSource: "none",
         prefillOverwrite: false,
         amazonAsinLookup: "",
         amazonMarketplace: "us",
@@ -1965,7 +1965,9 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
       amazonDescriptionConfirmed: false,
 
       // Prefill controls (decoupled from offer network)
-      prefillSource: "amazon", // "amazon" | "none" (future: "rei", etc)
+      // Default to "none" unless primary offer is Amazon
+      prefillSource:
+        offers?.[0]?.network === "amazon" ? "amazon" : "none",
       prefillOverwrite: false,
 
       amazonMarketplace:
