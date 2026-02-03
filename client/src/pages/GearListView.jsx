@@ -872,7 +872,7 @@ export default function GearListView({
       })();
     } catch (err) {
       console.error("Background upload failed:", err);
-      toast.error(err.message || t("gearList.toasts.imageUploadFailed"));
+      toast.error(err.response?.data?.message || err.message || t("gearList.toasts.imageUploadFailed"));
 
       pendingBgRef.current = {
         bgColor: null,

@@ -291,8 +291,6 @@ export default function Dashboard() {
     const ids = lists.map((l) => l._id);
     const stored = localStorage.getItem("lastListId");
 
-    console.log("[dashboard redirect]", { stored, ids });
-
     if (stored && ids.includes(stored)) {
       navigate(`/dashboard/${stored}`, { replace: true });
       return;
