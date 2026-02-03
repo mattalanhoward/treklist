@@ -335,6 +335,14 @@ const SCHEMAS = {
         min: 20,
         max: 80,
       },
+      loadCapacityKg: {
+        type: "number",
+        required: false,
+        label: "Load Capacity",
+        unit: "kg",
+        min: 5,
+        max: 35,
+      },
       gender: {
         type: "enum",
         required: true,
@@ -362,7 +370,12 @@ const SCHEMAS = {
         type: "enum",
         required: false,
         label: "Hip Belt",
-        options: ["Padded", "Webbing Only", "Removable", "None"],
+        options: ["Padded", "Webbing Only", "None"],
+      },
+      hipBeltRemovable: {
+        type: "boolean",
+        required: false,
+        label: "Removable Hip Belt",
       },
       waterResistance: {
         type: "enum",
@@ -406,6 +419,14 @@ const SCHEMAS = {
         min: 10,
         max: 40,
       },
+      loadCapacityKg: {
+        type: "number",
+        required: false,
+        label: "Load Capacity",
+        unit: "kg",
+        min: 5,
+        max: 25,
+      },
       gender: {
         type: "enum",
         required: false,
@@ -422,7 +443,12 @@ const SCHEMAS = {
         type: "enum",
         required: false,
         label: "Hip Belt",
-        options: ["Padded", "Webbing Only", "Removable", "None"],
+        options: ["Padded", "Webbing Only", "None"],
+      },
+      hipBeltRemovable: {
+        type: "boolean",
+        required: false,
+        label: "Removable Hip Belt",
       },
       waterResistance: {
         type: "enum",
