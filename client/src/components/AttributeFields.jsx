@@ -407,6 +407,7 @@ const SCHEMAS = {
         label: "Volume",
         min: 1,
         max: 15,
+        step: 0.5,
       },
       waterResistant: {
         type: "boolean",
