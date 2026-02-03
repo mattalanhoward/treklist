@@ -43,9 +43,11 @@ const ATTRIBUTE_LABELS = {
 
   // Backpacks
   volumeLiters: "Volume (L)",
+  loadCapacityKg: "Load Capacity (kg)",
   frameType: "Frame Type",
   backPanelType: "Back Panel",
   hipBeltType: "Hip Belt",
+  hipBeltRemovable: "Removable Hip Belt",
   waterResistance: "Water Resistance",
   mainFabric: "Main Fabric",
   torsoFitRange: "Torso Fit Range",
