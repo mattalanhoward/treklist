@@ -628,4 +628,5 @@ router.get(
 );
 
 router.authenticate = authenticate;
+router.sendVerificationEmail = sendVerificationEmail;
 module.exports = router;

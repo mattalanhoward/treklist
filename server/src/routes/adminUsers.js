@@ -1,8 +1,10 @@
 // server/src/routes/adminUsers.js
 const express = require("express");
 const mongoose = require("mongoose");
+const crypto = require("crypto");
 const auth = require("../middleware/auth");
 const requireAdmin = require("../middleware/requireAdmin");
+const authRouter = require("./auth");
 
 const User = require("../models/user");
 const GearList = require("../models/gearList");
@@ -268,6 +270,43 @@ router.delete("/:id", async (req, res) => {
   } catch (err) {
     console.error(`DELETE /api/admin/users/${req.params.id} error`, err);
     res.status(500).json({ message: "Failed to delete user." });
+  }
+});
+
+/**
+ * POST /api/admin/users/:id/resend-verification
+ * Resend verification email to an unverified user
+ */
+router.post("/:id/resend-verification", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({ message: "Invalid user id." });
+    }
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({ message: "User is already verified." });
+    }
+
+    // Generate fresh verification token
+    const verifyToken = crypto.randomBytes(20).toString("hex");
+    user.verifyEmailToken = verifyToken;
+    user.verifyEmailExpires = Date.now() + 24 * 60 * 60 * 1000; // 24h
+    await user.save();
+
+    // Send verification email
+    await authRouter.sendVerificationEmail(user.email, verifyToken, null);
+
+    res.json({ message: "Verification email sent." });
+  } catch (err) {
+    console.error(`POST /api/admin/users/${req.params.id}/resend-verification error`, err);
+    res.status(500).json({ message: "Failed to send verification email." });
   }
 });
 

@@ -3506,6 +3506,25 @@ function UsersSection() {
     }
   };
 
+  const [resendingUserId, setResendingUserId] = useState(null);
+
+  const handleResendVerification = async (userId) => {
+    setResendingUserId(userId);
+    try {
+      await api.post(`/admin/users/${userId}/resend-verification`);
+      toast.success("Verification email sent.");
+    } catch (err) {
+      console.error("Resend verification failed", err);
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to send verification email.";
+      toast.error(msg);
+    } finally {
+      setResendingUserId(null);
+    }
+  };
+
   return (
     <div className="space-y-3">
       {/* Section header */}
@@ -3768,6 +3787,15 @@ function UsersSection() {
                                 title="Mark as verified"
                               >
                                 Verify
+                              </button>
+                              <button
+                                type="button"
+                                className="btn btn-ghost btn-xs"
+                                onClick={() => handleResendVerification(u._id)}
+                                disabled={resendingUserId === u._id}
+                                title="Resend verification email"
+                              >
+                                {resendingUserId === u._id ? "Sending…" : "Resend"}
                               </button>
                             </div>
                           )}
