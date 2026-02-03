@@ -112,8 +112,19 @@ async function sendVerificationEmail(email, token, nextPath) {
   await sendSupportEmail({
     to: email,
     subject: "Please verify your email",
-    text: `Verify your email by opening this link:\n\n${url}\n\nExpires in 24h.`,
-    html: `<p>Click the link below to verify your email:</p><a href="${url}">${url}</a><p>Expires in 24h.</p>`,
+    text: `Welcome to TrekList!\n\nThank you for signing up. Please verify your email address to complete your registration and start organizing your gear.\n\nVerify your email by opening this link:\n${url}\n\nThis link will expire in 24 hours.\n\nIf you did not create an account, you can safely ignore this email.\n\nHappy trails,\nThe TrekList Team`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #2d5016;">Welcome to TrekList!</h2>
+        <p>Thank you for signing up. Please verify your email address to complete your registration and start organizing your gear.</p>
+        <p style="margin: 24px 0;">
+          <a href="${url}" style="background-color: #2d5016; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Verify Email Address</a>
+        </p>
+        <p style="color: #666; font-size: 14px;">This link will expire in 24 hours.</p>
+        <p style="color: #666; font-size: 14px;">If you did not create an account, you can safely ignore this email.</p>
+        <p style="margin-top: 24px;">Happy trails,<br>The TrekList Team</p>
+      </div>
+    `,
     // NOTE: sendSupportEmail uses SMTP_FROM internally; we keep this here for clarity.
     // If you want per-email "from", upgrade mailer.js to accept a from override.
     // For now SMTP_FROM should be set to: TrekList <support@treklist.co> or similar.
@@ -131,8 +142,19 @@ async function sendPasswordResetEmail(email, token) {
   await sendSupportEmail({
     to: email,
     subject: "Reset your password",
-    text: `Reset your password by opening this link:\n\n${url}\n\nExpires in ${expHrs}h.`,
-    html: `<p>Click the link below to reset your password:</p><a href="${url}">${url}</a><p>Expires in ${expHrs}h.</p>`,
+    text: `TrekList Password Reset\n\nWe received a request to reset your password. Click the link below to create a new password:\n\n${url}\n\nThis link will expire in ${expHrs} hour(s).\n\nIf you did not request a password reset, you can safely ignore this email. Your password will remain unchanged.\n\nHappy trails,\nThe TrekList Team`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #2d5016;">Reset Your Password</h2>
+        <p>We received a request to reset your password. Click the button below to create a new password:</p>
+        <p style="margin: 24px 0;">
+          <a href="${url}" style="background-color: #2d5016; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Reset Password</a>
+        </p>
+        <p style="color: #666; font-size: 14px;">This link will expire in ${expHrs} hour(s).</p>
+        <p style="color: #666; font-size: 14px;">If you did not request a password reset, you can safely ignore this email. Your password will remain unchanged.</p>
+        <p style="margin-top: 24px;">Happy trails,<br>The TrekList Team</p>
+      </div>
+    `,
   });
 }
 
