@@ -133,7 +133,7 @@
     "labels": {
       "email": "Email",
       "password": "Password",
-      "trailNameOptional": "Trail Name (optional)"
+      "trailNameOptional": "Nickname / Trail Name (optional)"
     },
     "links": {
       "forgotPassword": "Forgot password?"
@@ -216,7 +216,7 @@
     },
     "labels": {
       "email": "Email",
-      "trailname": "Trail name",
+      "trailname": "Nickname / Trail Name",
       "currentPassword": "Current password",
       "newPassword": "New password",
       "confirmNewPassword": "Confirm new password"

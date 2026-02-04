@@ -133,7 +133,7 @@
     "labels": {
       "email": "Correo electrónico",
       "password": "Contraseña",
-      "trailNameOptional": "Nombre de trail (opcional)"
+      "trailNameOptional": "Apodo / Nombre de sendero (opcional)"
     },
     "links": {
       "forgotPassword": "¿Olvidaste tu contraseña?"
@@ -216,7 +216,7 @@
     },
     "labels": {
       "email": "Correo electrónico",
-      "trailname": "Nombre de trail",
+      "trailname": "Apodo / Nombre de sendero",
       "currentPassword": "Contraseña actual",
       "newPassword": "Nueva contraseña",
       "confirmNewPassword": "Confirmar nueva contraseña"
