@@ -1005,6 +1005,7 @@ const SCHEMAS = {
         unit: "microns",
         min: 0.01,
         max: 1,
+        step: 0.01,
       },
       flowRate: {
         type: "number",
@@ -1013,6 +1014,7 @@ const SCHEMAS = {
         unit: "L/min",
         min: 0.1,
         max: 5,
+        step: 0.1,
       },
       filterLifeL: {
         type: "number",
