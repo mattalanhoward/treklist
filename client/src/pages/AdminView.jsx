@@ -3019,6 +3019,26 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+  const [confirmResendOpen, setConfirmResendOpen] = useState(false);
+  const [resending, setResending] = useState(false);
+
+  const handleResendVerification = async () => {
+    if (!user) return;
+    setResending(true);
+    try {
+      await api.post(`/admin/users/${user._id}/resend-verification`);
+      toast.success("Verification email sent.");
+    } catch (err) {
+      console.error("Resend verification failed", err);
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to send verification email.";
+      toast.error(msg);
+    } finally {
+      setResending(false);
+    }
+  };
 
   useEffect(() => {
     if (!userId) return;
@@ -3210,7 +3230,7 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
                     className="checkbox checkbox-sm"
                     checked={isVerified}
                     onChange={(e) => setIsVerified(e.target.checked)}
-                  />
+                    />
                   <span>Verified email</span>
                 </label>
                 <label className="inline-flex items-center gap-2 text-primary">
@@ -3219,10 +3239,23 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
                     className="checkbox checkbox-sm"
                     checked={isDisabled}
                     onChange={(e) => setIsDisabled(e.target.checked)}
-                  />
+                    />
                   <span>Disable login for this user</span>
                 </label>
               </div>
+                    
+              {!user.isVerified && (
+                <div className="flex flex-col justify-end">
+                  <button
+                    type="button"
+                    className="btn btn-sm btn-outline"
+                    onClick={() => setConfirmResendOpen(true)}
+                    disabled={resending}
+                  >
+                    {resending ? "Sending…" : "Resend Verification Email"}
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Lists summary */}
@@ -3302,6 +3335,20 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
                 </button>
               </div>
             </div>
+
+            {/* Resend verification confirm dialog */}
+            <ConfirmDialog
+              isOpen={confirmResendOpen}
+              title="Resend verification email?"
+              message={`Send a new verification email to ${user?.email}?`}
+              confirmText="Send email"
+              cancelText="Cancel"
+              onConfirm={() => {
+                setConfirmResendOpen(false);
+                handleResendVerification();
+              }}
+              onCancel={() => setConfirmResendOpen(false)}
+            />
 
             {/* Delete confirm dialog */}
             <ConfirmDialog
@@ -3489,40 +3536,6 @@ function UsersSection() {
   const handleUserChanged = () => {
     // After update/delete, reload current page with same filters
     loadUsers({ pageOverride: currentPage });
-  };
-
-  const handleQuickVerify = async (userId) => {
-    try {
-      await api.patch(`/admin/users/${userId}`, { isVerified: true });
-      toast.success("User marked as verified.");
-      handleUserChanged();
-    } catch (err) {
-      console.error("Quick verify failed", err);
-      const msg =
-        err?.response?.data?.message ||
-        err?.message ||
-        "Failed to verify user.";
-      toast.error(msg);
-    }
-  };
-
-  const [resendingUserId, setResendingUserId] = useState(null);
-
-  const handleResendVerification = async (userId) => {
-    setResendingUserId(userId);
-    try {
-      await api.post(`/admin/users/${userId}/resend-verification`);
-      toast.success("Verification email sent.");
-    } catch (err) {
-      console.error("Resend verification failed", err);
-      const msg =
-        err?.response?.data?.message ||
-        err?.message ||
-        "Failed to send verification email.";
-      toast.error(msg);
-    } finally {
-      setResendingUserId(null);
-    }
   };
 
   return (
@@ -3771,34 +3784,14 @@ function UsersSection() {
                           </span>
                         </td>
                         <td className="px-3 py-2 align-top">
-                          {u.isVerified ? (
-                            <span className="badge badge-xs badge-success">
-                              Verified
-                            </span>
-                          ) : (
-                            <div className="flex items-center gap-2">
-                              <span className="badge badge-xs badge-ghost">
-                                Unverified
-                              </span>
-                              <button
-                                type="button"
-                                className="btn btn-ghost btn-xs"
-                                onClick={() => handleQuickVerify(u._id)}
-                                title="Mark as verified"
-                              >
-                                Verify
-                              </button>
-                              <button
-                                type="button"
-                                className="btn btn-ghost btn-xs"
-                                onClick={() => handleResendVerification(u._id)}
-                                disabled={resendingUserId === u._id}
-                                title="Resend verification email"
-                              >
-                                {resendingUserId === u._id ? "Sending…" : "Resend"}
-                              </button>
-                            </div>
-                          )}
+                          <span
+                            className={
+                              "badge badge-xs " +
+                              (u.isVerified ? "badge-success" : "badge-ghost")
+                            }
+                          >
+                            {u.isVerified ? "Verified" : "Unverified"}
+                          </span>
                         </td>
                         <td className="px-3 py-2 text-right align-top">
                           {u.listsCount ?? 0}
