@@ -133,7 +133,7 @@
     "labels": {
       "email": "E-mail",
       "password": "Wachtwoord",
-      "trailNameOptional": "Trailnaam (optioneel)"
+      "trailNameOptional": "Bijnaam / Trailnaam (optioneel)"
     },
     "links": {
       "forgotPassword": "Wachtwoord vergeten?"
@@ -216,7 +216,7 @@
     },
     "labels": {
       "email": "E-mail",
-      "trailname": "Trailnaam",
+      "trailname": "Bijnaam / Trailnaam",
       "currentPassword": "Huidig wachtwoord",
       "newPassword": "Nieuw wachtwoord",
       "confirmNewPassword": "Nieuw wachtwoord bevestigen"
