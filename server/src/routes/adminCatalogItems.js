@@ -18,6 +18,10 @@ const {
 
 const router = express.Router();
 
+function escapeRegex(s) {
+  return String(s || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 const ALLOWED_DIM_UNITS = new Set(["cm"]);
 
 function marketplaceFromAmazonUrl(url) {
@@ -275,7 +279,7 @@ router.get("/", async (req, res) => {
     if (itemType) query.itemType = itemType; // NEW: filter by itemType
 
     if (q && q.trim()) {
-      const regex = new RegExp(q.trim(), "i");
+      const regex = new RegExp(escapeRegex(q.trim()), "i");
       query.$or = [{ name: regex }, { brand: regex }, { tags: regex }];
     }
 
