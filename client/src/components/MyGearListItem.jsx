@@ -1,6 +1,6 @@
 // client/src/components/MyGearListItem.jsx
 import React from "react";
-import { FaTrash, FaEdit, FaCheckSquare, FaRegSquare } from "react-icons/fa";
+import { FaTrash, FaShoppingCart, FaCheckSquare, FaRegSquare } from "react-icons/fa";
 
 export default function MyGearListItem({
   item,
@@ -50,40 +50,45 @@ export default function MyGearListItem({
                 )}
               </button>
             )}
-            <div className="font-semibold text-primary flex-shrink-0">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onViewEdit();
+              }}
+              style={{ fontSize: 14 }}
+              className="font-semibold text-primary flex-shrink-0 hover:text-primary/80"
+            >
               {item.itemType || "—"}
-            </div>
-            {merchantUrl ? (
-              <a
-                href={merchantUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="truncate text-primary flex-1 min-w-0 hover:underline"
-              >
-                {item.brand && <span className="mr-1">{item.brand}</span>}
-                {item.name}
-              </a>
-            ) : (
-              <div className="truncate text-primary flex-1 min-w-0">
-                {item.brand && <span className="mr-1">{item.brand}</span>}
-                {item.name}
-              </div>
-            )}
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onViewEdit();
+              }}
+              style={{ fontSize: 14 }}
+              className="truncate text-primary flex-1 min-w-0 text-left hover:text-primary/80"
+            >
+              {item.brand && <span className="mr-1">{item.brand}</span>}
+              {item.name}
+            </button>
           </div>
 
           {!selectionMode && (
             <div className="flex items-center gap-1">
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onViewEdit();
-                }}
-                className="p-1 text-secondary hover:text-secondary/80 focus:outline-none"
-                title={t("myGear.actions.viewEdit", "View / Edit")}
-              >
-                <FaEdit className="text-sm" />
-              </button>
+              {merchantUrl && (
+                <a
+                  href={merchantUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="p-1 text-secondary hover:text-secondary/80"
+                  title={t("myGear.actions.openLink", "Open product link")}
+                >
+                  <FaShoppingCart className="text-sm" />
+                </a>
+              )}
               <button
                 type="button"
                 disabled={actionLoading === item._id}
@@ -91,7 +96,7 @@ export default function MyGearListItem({
                   e.stopPropagation();
                   onDelete();
                 }}
-                className="p-1 text-error/70 hover:text-error focus:outline-none"
+                className="p-1 text-secondary hover:text-secondary/80 focus:outline-none"
                 title={t("myGear.actions.delete", "Delete")}
               >
                 <FaTrash className="text-sm" />
@@ -131,25 +136,29 @@ export default function MyGearListItem({
                 )}
               </button>
             )}
-            <div className="font-semibold text-primary flex-shrink-0 truncate max-w-[180px]">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onViewEdit();
+              }}
+              style={{ fontSize: 14 }}
+              className="font-semibold text-primary flex-shrink-0 truncate max-w-[180px] hover:text-primary/80"
+            >
               {item.itemType || "—"}
-            </div>
-            {merchantUrl ? (
-              <a
-                href={merchantUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="truncate text-primary hover:underline"
-              >
-                {item.brand && <span className="mr-1">{item.brand}</span>}
-                {item.name}
-              </a>
-            ) : (
-              <div className="truncate text-primary">
-                {item.brand && <span className="mr-1">{item.brand}</span>}
-                {item.name}
-              </div>
-            )}
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onViewEdit();
+              }}
+              style={{ fontSize: 14 }}
+              className="truncate text-primary text-left hover:text-primary/80"
+            >
+              {item.brand && <span className="mr-1">{item.brand}</span>}
+              {item.name}
+            </button>
             {item.weight && (
               <div className="ml-auto tabular-nums text-primary/70 flex-shrink-0">
                 {formatWeight(item.weight)} {unitLabel}
@@ -158,20 +167,21 @@ export default function MyGearListItem({
           </div>
         </div>
 
-        {/* Right: Edit + Delete buttons */}
+        {/* Right: Cart + Delete buttons */}
         {!selectionMode && (
           <div className="flex items-center gap-1 justify-self-end">
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onViewEdit();
-              }}
-              className="p-2 text-secondary hover:text-secondary/80 focus:outline-none rounded"
-              title={t("myGear.actions.viewEdit", "View / Edit")}
-            >
-              <FaEdit className="text-sm" />
-            </button>
+            {merchantUrl && (
+              <a
+                href={merchantUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="p-2 text-secondary hover:text-secondary/80 rounded"
+                title={t("myGear.actions.openLink", "Open product link")}
+              >
+                <FaShoppingCart className="text-sm" />
+              </a>
+            )}
             <button
               type="button"
               disabled={actionLoading === item._id}
@@ -179,7 +189,7 @@ export default function MyGearListItem({
                 e.stopPropagation();
                 onDelete();
               }}
-              className="p-2 text-error/70 hover:text-error focus:outline-none rounded"
+              className="p-2 text-secondary hover:text-secondary/80 focus:outline-none rounded"
               title={t("myGear.actions.delete", "Delete")}
             >
               <FaTrash className="text-sm" />

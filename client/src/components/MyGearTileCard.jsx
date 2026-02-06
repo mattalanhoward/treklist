@@ -1,6 +1,6 @@
 // client/src/components/MyGearTileCard.jsx
 import React from "react";
-import { FaTrash, FaCheckSquare, FaRegSquare } from "react-icons/fa";
+import { FaTrash, FaShoppingCart, FaCheckSquare, FaRegSquare } from "react-icons/fa";
 
 function pickFirstImageUrl(item) {
   if (!item) return null;
@@ -83,11 +83,19 @@ export default function MyGearTileCard({
       }`}
       onClick={handleCardClick}
     >
-      {/* Top bar: ItemType left, checkbox/delete button right */}
+      {/* Top bar: ItemType left, checkbox/cart+delete button right */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-primary/10">
-        <div className="font-semibold text-primary truncate">
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onViewEdit();
+          }}
+          style={{ fontSize: 14 }}
+          className="font-semibold text-primary truncate hover:text-primary/80"
+        >
           {item.itemType || "—"}
-        </div>
+        </button>
 
         {selectionMode ? (
           <button
@@ -105,15 +113,29 @@ export default function MyGearTileCard({
             )}
           </button>
         ) : (
-          <button
-            type="button"
-            disabled={actionLoading === item._id}
-            onClick={handleDelete}
-            className="p-1 text-error/70 hover:text-error rounded"
-            title={t("myGear.actions.delete", "Delete")}
-          >
-            <FaTrash className="text-sm" />
-          </button>
+          <div className="flex items-center gap-1">
+            {merchantUrl && (
+              <a
+                href={merchantUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="p-1 text-secondary hover:text-secondary/80 rounded"
+                title={t("myGear.actions.openLink", "Open product link")}
+              >
+                <FaShoppingCart className="text-sm" />
+              </a>
+            )}
+            <button
+              type="button"
+              disabled={actionLoading === item._id}
+              onClick={handleDelete}
+              className="p-1 text-secondary hover:text-secondary/80 rounded"
+              title={t("myGear.actions.delete", "Delete")}
+            >
+              <FaTrash className="text-sm" />
+            </button>
+          </div>
         )}
       </div>
 
@@ -150,33 +172,33 @@ export default function MyGearTileCard({
         ) : null}
       </button>
 
-      {/* Details */}
-      <div className="px-3 py-3 space-y-1">
+      {/* Details - clickable to open edit */}
+      <button
+        type="button"
+        onClick={(e) => {
+          if (selectionMode) {
+            e.stopPropagation();
+            onToggleSelect?.();
+          } else {
+            onViewEdit();
+          }
+        }}
+        className="px-3 py-3 space-y-1 w-full text-left hover:bg-neutral/5 transition-colors"
+      >
         {item.brand ? (
           <div className="text-sm text-primary/70 truncate">{item.brand}</div>
         ) : null}
 
-        {merchantUrl ? (
-          <a
-            href={merchantUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-semibold text-primary leading-snug line-clamp-2 block hover:underline"
-          >
-            {item.name}
-          </a>
-        ) : (
-          <div className="font-semibold text-primary leading-snug line-clamp-2">
-            {item.name}
-          </div>
-        )}
+        <div style={{ fontSize: 14 }} className="font-semibold text-primary leading-snug line-clamp-2">
+          {item.name}
+        </div>
 
         {item.description ? (
           <div className="text-sm text-primary/70 line-clamp-3">
             {item.description}
           </div>
         ) : null}
-      </div>
+      </button>
     </div>
   );
 }

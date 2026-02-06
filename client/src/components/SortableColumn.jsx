@@ -32,6 +32,7 @@ export default function SortableColumn({
   onMoveItem,
   onItemUpdated,
   isLocked,
+  reorderMode = false,
 }) {
   const { t } = useTranslation("common");
   const scrollRef = useScrollPreserver(items);
@@ -130,6 +131,7 @@ export default function SortableColumn({
               onMoveItem={onMoveItem}
               onItemUpdated={onItemUpdated}
               isLocked={isLocked}
+              reorderMode={reorderMode}
             />
           ))}
         </div>

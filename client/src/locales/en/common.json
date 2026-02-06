@@ -278,6 +278,8 @@
       "unlockList": "Unlock list",
       "lockListA11y": "Lock list to prevent editing",
       "unlockListA11y": "Unlock list to allow editing",
+      "reorderA11y": "Reorder items",
+      "exitReorderA11y": "Exit reorder mode",
       "background": "Background",
       "customImage": "Custom image",
       "defaultImages": "Default images",
