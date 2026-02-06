@@ -1,5 +1,5 @@
 // src/components/SortableItem.jsx
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { useUserSettings } from "../contexts/UserSettings";
 import api from "../services/api";
 import { toast } from "react-hot-toast";
@@ -10,12 +10,11 @@ import {
   FaGripVertical,
   FaUtensils,
   FaTshirt,
-  FaEllipsisH,
   FaShoppingCart,
+  FaTrash,
 } from "react-icons/fa";
 import AffiliateGateLink from "./AffiliateGateLink";
 import { useWeight } from "../hooks/useWeight";
-import DropdownMenu from "./DropdownMenu";
 import GlobalItemEditModal from "./GlobalItemEditModal";
 import { useTranslation } from "react-i18next";
 
@@ -29,9 +28,9 @@ export default function SortableItem({
   isListMode,
   fetchItems,
   onQuantityChange,
-  onMoveItem,
   onItemUpdated,
   isLocked,
+  reorderMode = false,
 }) {
   const { t } = useTranslation("common");
   const [wornLocal, setWornLocal] = useState(item.worn);
@@ -222,51 +221,6 @@ export default function SortableItem({
     transition,
   };
 
-  const desktopMenuItems = useMemo(() => {
-    const items = [
-      {
-        key: "details",
-        label: t("gearList.items.viewEditDetails"),
-        onClick: () => setDetailsOpen(true),
-      },
-    ];
-    if (!isLocked) {
-      items.push({
-        key: "remove",
-        label: t("gearList.confirm.removeItemConfirm"),
-        onClick: () => onDelete?.(catId, item._id),
-      });
-    }
-    return items;
-  }, [catId, item._id, onDelete, t, isLocked]);
-
-  const mobileMenuItems = useMemo(() => {
-    const base = [
-      {
-        key: "details",
-        label: t("gearList.items.viewEditDetails"),
-        onClick: () => setDetailsOpen(true),
-      },
-    ];
-
-    if (onMoveItem && !isLocked) {
-      base.push({
-        key: "move",
-        label: t("gearList.items.moveItem"),
-        onClick: () => onMoveItem(catId, item),
-      });
-    }
-
-    if (!isLocked) {
-      base.push({
-        key: "remove",
-        label: t("gearList.confirm.removeItemConfirm"),
-        onClick: () => onDelete?.(catId, item._id),
-      });
-    }
-
-    return base;
-  }, [catId, item, onDelete, onMoveItem, t, isLocked]);
 
   const twoRowVisibilityClasses = isListMode ? "xl:hidden" : "sm:hidden";
 
@@ -280,32 +234,51 @@ export default function SortableItem({
       <div
         className={`${twoRowVisibilityClasses} grid grid-rows-[auto_auto] gap-y-1 gap-x-2 text-sm`}
       >
-        {/* Row 1: type + name/brand + ellipsis */}
+        {/* Row 1: drag handle (reorder mode) + type + name/brand + actions */}
         <div className="row-start-1 col-span-2 flex items-center justify-between space-x-2 overflow-x-hidden">
-          {" "}
+          {/* Drag handle - only visible in reorder mode */}
+          {reorderMode && (
+            <div
+              className="cursor-grab text-secondary flex-shrink-0"
+              {...attributes}
+              {...listeners}
+            >
+              <FaGripVertical />
+            </div>
+          )}
           {/* Text block gets the overflow handling, not the whole row */}
           <div className="flex items-center space-x-1 overflow-hidden min-w-0">
-            <div className="font-semibold text-primary flex-shrink-0">
+            <button
+              type="button"
+              onClick={() => setDetailsOpen(true)}
+              style={{ fontSize: 14 }}
+              className="font-semibold text-primary flex-shrink-0 hover:text-primary/80"
+            >
               {item.itemType || "—"}
-            </div>
-            <div className="truncate text-primary flex-1 min-w-0">
+            </button>
+            <button
+              type="button"
+              onClick={() => setDetailsOpen(true)}
+              style={{ fontSize: 14 }}
+              className="truncate text-primary flex-1 min-w-0 text-left hover:text-primary/80"
+            >
               {item.brand && <span className="mr-1">{item.brand}</span>}
               {item.name}
-            </div>
+            </button>
           </div>
-          <DropdownMenu
-            trigger={
+          {/* Action buttons - hidden in reorder mode */}
+          {!reorderMode && !isLocked && (
+            <div className="flex items-center gap-1 flex-shrink-0">
               <button
                 type="button"
-                title={t("gearList.menu.listOptionsA11y")}
-                aria-label={t("gearList.menu.listOptionsA11y")}
-                className="text-secondary hover:text-secondary/80 focus:outline-none"
+                onClick={() => onDelete?.(catId, item._id)}
+                className="p-1 text-secondary hover:text-secondary/80 focus:outline-none"
+                title={t("gearList.confirm.removeItemConfirm")}
               >
-                <FaEllipsisH />
+                <FaTrash className="text-sm" />
               </button>
-            }
-            items={mobileMenuItems}
-          />
+            </div>
+          )}
         </div>
         {/* Row 2: left (weight) · right (Buy · icons · qty) */}
         <div className="row-start-2 col-span-2 grid grid-cols-[1fr_auto] items-center">
@@ -361,15 +334,25 @@ export default function SortableItem({
           </div>
 
           {/* 2) Item type */}
-          <div className="font-semibold text-primary truncate">
+          <button
+            type="button"
+            onClick={() => setDetailsOpen(true)}
+            style={{ fontSize: 14 }}
+            className="font-semibold text-primary truncate text-left hover:text-primary/80"
+          >
             {item.itemType || "—"}
-          </div>
+          </button>
 
           {/* 3) Name/brand */}
-          <div className="truncate text-primary">
+          <button
+            type="button"
+            onClick={() => setDetailsOpen(true)}
+            style={{ fontSize: 14 }}
+            className="truncate text-primary text-left hover:text-primary/80"
+          >
             {item.brand && <span className="mr-1">{item.brand}</span>}
             {item.name}
-          </div>
+          </button>
 
           {/* 4) Weight (fixed width, right-aligned, tabular nums) */}
           <div className="justify-self-end tabular-nums text-primary w-[96px] text-right">
@@ -418,28 +401,25 @@ export default function SortableItem({
             <CartIconLink />
           </div>
 
-          {/* 10) Actions menu (desktop list) */}
-          <div className="place-self-center">
-            <DropdownMenu
-              trigger={
-                <button
-                  type="button"
-                  title={t("gearList.menu.listOptionsA11y")}
-                  aria-label={t("gearList.menu.listOptionsA11y")}
-                  className="inline-flex items-center justify-center text-secondary hover:text-secondary/80 focus:outline-none leading-none"
-                >
-                  <FaEllipsisH className="w-4 h-4 align-middle" />
-                </button>
-              }
-              items={desktopMenuItems}
-            />
-          </div>
+          {/* 10) Delete action (desktop list) */}
+          {!isLocked && (
+            <div className="place-self-center mr-3.5">
+              <button
+                type="button"
+                onClick={() => onDelete?.(catId, item._id)}
+                className="p-1 text-secondary hover:text-secondary/80 focus:outline-none"
+                title={t("gearList.confirm.removeItemConfirm")}
+              >
+                <FaTrash className="text-sm" />
+              </button>
+            </div>
+          )}
         </div>
       )}
       {/* ========== DESKTOP COLUMN MODE (3 rows) ========== */}
       {!isListMode && (
         <div className="hidden sm:grid bg-base-100 px-2 grid-rows-[auto_auto_auto]">
-          {/* Row 1: Drag · Type · Delete (X) */}
+          {/* Row 1: Drag · Type · Delete */}
           <div className="grid grid-cols-[auto_1fr_auto] items-center">
             <div
               className="cursor-grab hide-on-touch text-secondary"
@@ -448,31 +428,38 @@ export default function SortableItem({
             >
               <FaGripVertical />
             </div>
-            <div className="font-semibold text-primary px-2">
+            <button
+              type="button"
+              onClick={() => setDetailsOpen(true)}
+              style={{ fontSize: 14 }}
+              className="font-semibold text-primary px-2 text-left hover:text-primary/80"
+            >
               {item.itemType || "—"}
-            </div>
-            <DropdownMenu
-              trigger={
+            </button>
+            {!isLocked && (
+              <div className="-mr-0.5">
                 <button
                   type="button"
-                  title={t("gearList.menu.listOptionsA11y")}
-                  aria-label={t("gearList.menu.listOptionsA11y")}
-                  className="inline-flex items-center justify-center text-secondary hover:text-secondary/80 focus:outline-none leading-none"
+                  onClick={() => onDelete?.(catId, item._id)}
+                  className="text-secondary hover:text-secondary/80 focus:outline-none"
+                  title={t("gearList.confirm.removeItemConfirm")}
                 >
-                  <FaEllipsisH />
+                  <FaTrash className="text-sm" />
                 </button>
-              }
-              items={desktopMenuItems}
-            />
+              </div>
+            )}
           </div>
           {/* Row 2: Brand/Name (left) */}
           <div className="grid grid-cols-[1fr] items-center">
-            <div className="truncate text-sm text-primary">
-              {item.brand && (
-                <span className="font-medium mr-1">{item.brand}</span>
-              )}
+            <button
+              type="button"
+              onClick={() => setDetailsOpen(true)}
+              style={{ fontSize: 14 }}
+              className="truncate text-primary text-left hover:text-primary/80"
+            >
+              {item.brand && <span className="mr-1">{item.brand}</span>}
               {item.name}
-            </div>
+            </button>
           </div>
           {/* Row 3: Left (weight) — Right (🍴 · 👕 · Qty · …) */}
           <div className="grid grid-cols-[1fr_auto] items-center">

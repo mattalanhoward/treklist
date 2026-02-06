@@ -124,6 +124,22 @@ const GlobalItemSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
+    // Whether this item is owned or on the wishlist.
+    // "owned" = user has this gear, "wishlisted" = user wants this gear
+    status: {
+      type: String,
+      enum: ["owned", "wishlisted"],
+      default: "owned",
+      index: true,
+    },
+
+    // Notes specific to wishlist items (e.g., "Size medium, blue color").
+    // Cleared when item is marked as owned.
+    wishlistNotes: {
+      type: String,
+      trim: true,
+    },
   },
   {
     timestamps: true,

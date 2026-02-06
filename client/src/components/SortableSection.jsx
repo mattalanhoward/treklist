@@ -33,6 +33,7 @@ export default function SortableSection({
   onMoveItem,
   onItemUpdated,
   isLocked,
+  reorderMode = false,
 }) {
   const { t } = useTranslation("common");
   const filtered = useMemo(
@@ -138,6 +139,7 @@ export default function SortableSection({
               onMoveItem={onMoveItem}
               onItemUpdated={onItemUpdated}
               isLocked={isLocked}
+              reorderMode={reorderMode}
             />
           ))}
         </div>

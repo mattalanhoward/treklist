@@ -933,5 +933,57 @@
       "sent": "Verzoek verzonden!",
       "failed": "Verzoek verzenden mislukt."
     }
+  },
+  "myGear": {
+    "title": "Mijn Uitrusting",
+    "searchPlaceholder": "Zoek uitrusting...",
+    "empty": "Je hebt nog geen uitrusting toegevoegd. Importeer items uit de catalogus of maak eigen items aan.",
+    "noResults": "Geen items gevonden.",
+    "itemCount": "{{count}} item(s)",
+    "showing": "{{count}} weergegeven",
+    "selected": "{{count}} geselecteerd",
+    "selectItems": "Selecteer items",
+    "filter": {
+      "allCategories": "Alle categorieën"
+    },
+    "sort": {
+      "nameAsc": "Naam A-Z",
+      "nameDesc": "Naam Z-A",
+      "weightAsc": "Gewicht ↑",
+      "weightDesc": "Gewicht ↓",
+      "dateDesc": "Nieuwste",
+      "dateAsc": "Oudste"
+    },
+    "view": {
+      "list": "Lijstweergave",
+      "tiles": "Tegelweergave"
+    },
+    "actions": {
+      "addItem": "Item toevoegen",
+      "select": "Items selecteren",
+      "viewEdit": "Bekijken / Bewerken",
+      "delete": "Verwijderen",
+      "selectAll": "Alles selecteren",
+      "clearSelection": "Wissen",
+      "deleteSelected": "Verwijderen"
+    },
+    "tiles": {
+      "noImage": "Geen afbeelding"
+    },
+    "toast": {
+      "loadFailed": "Uitrusting laden mislukt",
+      "deleted": "Item verwijderd",
+      "deleteFailed": "Verwijderen mislukt",
+      "bulkDeleted": "{{count}} items verwijderd",
+      "bulkDeleteFailed": "Sommige items konden niet worden verwijderd"
+    },
+    "confirm": {
+      "deleteTitle": "Item verwijderen",
+      "deleteMessage": "Weet je zeker dat je dit item wilt verwijderen? Het wordt ook uit alle paklijsten verwijderd.",
+      "deleteConfirm": "Verwijderen",
+      "bulkDeleteTitle": "Items verwijderen",
+      "bulkDeleteMessage": "Weet je zeker dat je {{count}} items wilt verwijderen? Ze worden ook uit alle paklijsten verwijderd.",
+      "bulkDeleteConfirm": "Alles verwijderen"
+    }
   }
 }

@@ -5,7 +5,6 @@ import {
   FaChevronLeft,
   FaChevronRight,
   FaPlus,
-  FaEllipsisH,
   FaChevronDown,
   FaChevronUp,
 } from "react-icons/fa";
@@ -27,6 +26,7 @@ export default function Sidebar({
   onOpenAdmin = () => {},
   onOpenForum = () => {},
   onOpenWishlist = () => {},
+  onOpenMyGear = () => {},
   onShowGearPane = () => {},
   isAdmin = false,
 }) {
@@ -267,7 +267,7 @@ export default function Sidebar({
                 <button
                   type="button"
                   onClick={onShowGearPane}
-                  className="font-bold truncate mr-1 text-left"
+                  className="font-bold truncate mr-1 text-left hover:underline transition-colors"
                 >
                   {t("sidebar.gearListsTitle")}
                 </button>
@@ -307,19 +307,10 @@ export default function Sidebar({
                       <li key={l._id} className="flex items-center">
                         <button
                           onClick={() => {
-                            // If this list is already active:
-                            if (l._id === currentListId) {
-                              // Just collapse on mobile (nice UX), but don't trigger a re-select.
-                              if (isMobile()) {
-                                setCollapsed(true);
-                              }
-                              return;
-                            }
-
-                            // 1) Select the new list
+                            // Always call onSelectList to ensure view switches (e.g., from MyGear)
                             onSelectList(l._id);
 
-                            // 2) if on mobile, collapse sidebar
+                            // Collapse sidebar on mobile
                             if (isMobile()) {
                               setCollapsed(true);
                             }
@@ -347,8 +338,8 @@ export default function Sidebar({
               >
                 <button
                   type="button"
-                  onClick={onShowGearPane}
-                  className="font-bold truncate mr-1 text-left"
+                  onClick={onOpenMyGear}
+                  className="font-bold truncate mr-1 text-left hover:underline transition-colors"
                 >
                   {t("sidebar.myGearTitle")}
                 </button>
@@ -385,22 +376,14 @@ export default function Sidebar({
 
                   <ul className="overflow-y-auto flex-1 space-y-2">
                     {filteredAndSortedItems.map((item) => (
-                      <li
-                        key={item._id}
-                        className="flex items-center py-1 px-2 bg-base-100/10 border border-primary/20 rounded-lg hover:bg-base-100/20"
-                      >
-                        <span className="flex-1 truncate text-secondaryAlt">
+                      <li key={item._id}>
+                        <button
+                          type="button"
+                          onClick={() => setEditingGlobalItem(item)}
+                          className="w-full text-left py-1 px-2 bg-base-100/10 border border-primary/20 rounded-lg hover:bg-base-100/20 truncate text-secondaryAlt cursor-pointer"
+                        >
                           {item.itemType} – {item.name}
-                        </span>
-                        <div className="flex items-center space-x-2 ml-4">
-                          <button
-                            onClick={() => setEditingGlobalItem(item)}
-                            title={t("sidebar.editGlobalTemplate")}
-                            className="text-secondaryAlt hover:text-secondaryAlt/80 rounded-lg"
-                          >
-                            <FaEllipsisH />
-                          </button>
-                        </div>
+                        </button>
                       </li>
                     ))}
                     {filteredAndSortedItems.length === 0 && (
@@ -423,6 +406,7 @@ export default function Sidebar({
                     setShowCreateModal(false);
                     fetchGlobalItems();
                     onRefresh();
+                    window.dispatchEvent(new CustomEvent("global-items:updated"));
                   }}
                 />
               )}

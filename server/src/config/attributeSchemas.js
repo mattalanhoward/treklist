@@ -342,6 +342,7 @@ const SCHEMAS = {
         unit: "kg",
         min: 5,
         max: 35,
+        step: 0.1,
       },
       gender: {
         type: "enum",
@@ -426,6 +427,7 @@ const SCHEMAS = {
         unit: "kg",
         min: 5,
         max: 25,
+        step: 0.1,
       },
       gender: {
         type: "enum",

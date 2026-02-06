@@ -933,5 +933,57 @@
       "sent": "Richiesta inviata!",
       "failed": "Impossibile inviare la richiesta."
     }
+  },
+  "myGear": {
+    "title": "La Mia Attrezzatura",
+    "searchPlaceholder": "Cerca attrezzatura...",
+    "empty": "Non hai ancora aggiunto attrezzatura. Importa articoli dal catalogo o crea articoli personalizzati.",
+    "noResults": "Nessun articolo corrisponde alla tua ricerca.",
+    "itemCount": "{{count}} articolo/i",
+    "showing": "{{count}} mostrati",
+    "selected": "{{count}} selezionato/i",
+    "selectItems": "Seleziona articoli",
+    "filter": {
+      "allCategories": "Tutte le categorie"
+    },
+    "sort": {
+      "nameAsc": "Nome A-Z",
+      "nameDesc": "Nome Z-A",
+      "weightAsc": "Peso ↑",
+      "weightDesc": "Peso ↓",
+      "dateDesc": "Più recenti",
+      "dateAsc": "Più vecchi"
+    },
+    "view": {
+      "list": "Vista elenco",
+      "tiles": "Vista riquadri"
+    },
+    "actions": {
+      "addItem": "Aggiungi articolo",
+      "select": "Seleziona articoli",
+      "viewEdit": "Visualizza / Modifica",
+      "delete": "Elimina",
+      "selectAll": "Seleziona tutto",
+      "clearSelection": "Cancella",
+      "deleteSelected": "Elimina"
+    },
+    "tiles": {
+      "noImage": "Nessuna immagine"
+    },
+    "toast": {
+      "loadFailed": "Impossibile caricare l'attrezzatura",
+      "deleted": "Articolo eliminato",
+      "deleteFailed": "Eliminazione fallita",
+      "bulkDeleted": "{{count}} articoli eliminati",
+      "bulkDeleteFailed": "Impossibile eliminare alcuni articoli"
+    },
+    "confirm": {
+      "deleteTitle": "Elimina articolo",
+      "deleteMessage": "Sei sicuro di voler eliminare questo articolo? Verrà rimosso anche da tutte le liste di attrezzatura.",
+      "deleteConfirm": "Elimina",
+      "bulkDeleteTitle": "Elimina articoli",
+      "bulkDeleteMessage": "Sei sicuro di voler eliminare {{count}} articoli? Verranno rimossi anche da tutte le liste di attrezzatura.",
+      "bulkDeleteConfirm": "Elimina tutto"
+    }
   }
 }

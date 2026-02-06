@@ -9,6 +9,7 @@ import GearListView from "./GearListView";
 import AdminView from "../pages/AdminView";
 import ForumView from "../pages/ForumView";
 import WishlistView from "../pages/WishlistView";
+import MyGearView from "../pages/MyGearView";
 import { toast } from "react-hot-toast";
 import { useUserSettings } from "../contexts/UserSettings";
 import { useTranslation } from "react-i18next";
@@ -437,6 +438,7 @@ export default function Dashboard() {
   const handleSelectList = useCallback(
     (id) => {
       if (!id) return; // optional safety
+      setActivePane("gear");
       navigate(`/dashboard/${id}`);
     },
     [navigate],
@@ -481,6 +483,7 @@ export default function Dashboard() {
           isAdmin={isAdmin}
           onOpenForum={() => setActivePane("forum")}
           onOpenWishlist={() => setActivePane("wishlist")}
+          onOpenMyGear={() => setActivePane("myGear")}
           onShowGearPane={() => setActivePane("gear")}
           onSelectList={handleSelectList}
           onRefresh={fetchFullData}
@@ -498,6 +501,8 @@ export default function Dashboard() {
             <ForumView />
           ) : activePane === "wishlist" ? (
             <WishlistView />
+          ) : activePane === "myGear" ? (
+            <MyGearView collapsed={collapsed} />
           ) : listId ? (
             fullData.list === null ? (
               <Spinner centered label={t("dashboard.loadingLists")} />
