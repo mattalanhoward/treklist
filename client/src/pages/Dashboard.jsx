@@ -438,6 +438,7 @@ export default function Dashboard() {
   const handleSelectList = useCallback(
     (id) => {
       if (!id) return; // optional safety
+      setActivePane("gear");
       navigate(`/dashboard/${id}`);
     },
     [navigate],
