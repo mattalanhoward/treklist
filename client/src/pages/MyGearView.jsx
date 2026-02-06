@@ -15,7 +15,7 @@ import {
 } from "react-icons/fa";
 import ConfirmDialog from "../components/ConfirmDialog";
 import GlobalItemEditModal from "../components/GlobalItemEditModal";
-import GlobalItemModal from "../components/GlobalItemModal";
+import AddGearDrawer from "../components/AddGearDrawer";
 import MyGearTileCard from "../components/MyGearTileCard";
 import MyGearListItem from "../components/MyGearListItem";
 import { useUnit } from "../hooks/useUnit";
@@ -38,7 +38,7 @@ export default function MyGearView({ collapsed }) {
   });
 
   const [editingItem, setEditingItem] = useState(null);
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showDrawer, setShowDrawer] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [actionLoading, setActionLoading] = useState(null);
 
@@ -234,7 +234,9 @@ export default function MyGearView({ collapsed }) {
   }, []);
 
   return (
-    <div className="h-full w-full flex flex-col overflow-hidden bg-neutral/10">
+    <div className={`h-full flex flex-col overflow-hidden bg-neutral/10 transition-all duration-300 ${
+      showDrawer ? "sm:w-[calc(100%-420px)]" : "w-full"
+    }`}>
       {/* Header - single row on desktop, stacked on mobile */}
       <div className={`flex-shrink-0 px-4 py-2 border-b border-primary/10 bg-base-100 ${collapsed ? "sm:pl-12" : ""}`}>
         {/* Desktop: single row */}
@@ -249,7 +251,7 @@ export default function MyGearView({ collapsed }) {
             </h1>
             <button
               type="button"
-              onClick={() => setShowCreateModal(true)}
+              onClick={() => setShowDrawer(!showDrawer)}
               className="p-1 text-secondary hover:text-secondary/80 rounded"
               title={t("myGear.actions.addItem", "Add item")}
             >
@@ -406,7 +408,7 @@ export default function MyGearView({ collapsed }) {
               </h1>
               <button
                 type="button"
-                onClick={() => setShowCreateModal(true)}
+                onClick={() => setShowDrawer(!showDrawer)}
                 className="p-1 text-secondary hover:text-secondary/80 rounded"
                 title={t("myGear.actions.addItem", "Add item")}
               >
@@ -549,6 +551,13 @@ export default function MyGearView({ collapsed }) {
         </div>
       </div>
 
+      {/* Add Gear Drawer */}
+      <AddGearDrawer
+        isOpen={showDrawer}
+        onClose={() => setShowDrawer(false)}
+        onItemsChanged={fetchItems}
+      />
+
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-4 py-3">
         {loading ? (
@@ -631,17 +640,6 @@ export default function MyGearView({ collapsed }) {
         />
       )}
 
-      {/* Create Modal */}
-      {showCreateModal && (
-        <GlobalItemModal
-          onClose={() => setShowCreateModal(false)}
-          onCreated={() => {
-            fetchItems();
-            setShowCreateModal(false);
-            window.dispatchEvent(new CustomEvent("global-items:updated"));
-          }}
-        />
-      )}
 
       {/* Delete Confirmation */}
       <ConfirmDialog
