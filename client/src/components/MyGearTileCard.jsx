@@ -120,7 +120,7 @@ export default function MyGearTileCard({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="p-1 text-secondary hover:text-secondary/80 rounded"
+                className="p-1 text-primary/60 hover:text-primary rounded"
                 title={t("myGear.actions.openLink", "Open product link")}
               >
                 <FaShoppingCart className="text-sm" />
@@ -130,7 +130,7 @@ export default function MyGearTileCard({
               type="button"
               disabled={actionLoading === item._id}
               onClick={handleDelete}
-              className="p-1 text-secondary hover:text-secondary/80 rounded"
+              className="p-1 text-primary/60 hover:text-primary rounded"
               title={t("myGear.actions.delete", "Delete")}
             >
               <FaTrash className="text-sm" />

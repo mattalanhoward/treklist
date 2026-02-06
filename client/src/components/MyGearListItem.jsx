@@ -61,18 +61,13 @@ export default function MyGearListItem({
             >
               {item.itemType || "—"}
             </button>
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onViewEdit();
-              }}
+            <span
               style={{ fontSize: 14 }}
-              className="truncate text-primary flex-1 min-w-0 text-left hover:text-primary/80"
+              className="truncate text-primary flex-1 min-w-0 text-left"
             >
               {item.brand && <span className="mr-1">{item.brand}</span>}
               {item.name}
-            </button>
+            </span>
           </div>
 
           {!selectionMode && (
@@ -83,7 +78,7 @@ export default function MyGearListItem({
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
-                  className="p-1 text-secondary hover:text-secondary/80"
+                  className="p-1 text-primary/60 hover:text-primary"
                   title={t("myGear.actions.openLink", "Open product link")}
                 >
                   <FaShoppingCart className="text-sm" />
@@ -96,7 +91,7 @@ export default function MyGearListItem({
                   e.stopPropagation();
                   onDelete();
                 }}
-                className="p-1 text-secondary hover:text-secondary/80 focus:outline-none"
+                className="p-1 text-primary/60 hover:text-primary focus:outline-none"
                 title={t("myGear.actions.delete", "Delete")}
               >
                 <FaTrash className="text-sm" />
@@ -176,7 +171,7 @@ export default function MyGearListItem({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="p-2 text-secondary hover:text-secondary/80 rounded"
+                className="p-2 text-primary/60 hover:text-primary rounded"
                 title={t("myGear.actions.openLink", "Open product link")}
               >
                 <FaShoppingCart className="text-sm" />
@@ -189,7 +184,7 @@ export default function MyGearListItem({
                 e.stopPropagation();
                 onDelete();
               }}
-              className="p-2 text-secondary hover:text-secondary/80 focus:outline-none rounded"
+              className="p-2 text-primary/60 hover:text-primary focus:outline-none rounded"
               title={t("myGear.actions.delete", "Delete")}
             >
               <FaTrash className="text-sm" />

@@ -575,8 +575,7 @@ export default function MyGearView({ collapsed }) {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-8
-           gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-8 gap-3">
             {filteredItems.map((item) => (
               <MyGearTileCard
                 key={item._id}

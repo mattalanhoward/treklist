@@ -272,7 +272,7 @@ export default function SortableItem({
               <button
                 type="button"
                 onClick={() => onDelete?.(catId, item._id)}
-                className="p-1 text-secondary hover:text-secondary/80 focus:outline-none"
+                className="p-1 text-primary/60 hover:text-primary focus:outline-none"
                 title={t("gearList.confirm.removeItemConfirm")}
               >
                 <FaTrash className="text-sm" />
@@ -407,7 +407,7 @@ export default function SortableItem({
               <button
                 type="button"
                 onClick={() => onDelete?.(catId, item._id)}
-                className="p-1 text-secondary hover:text-secondary/80 focus:outline-none"
+                className="p-1 text-primary/60 hover:text-primary focus:outline-none"
                 title={t("gearList.confirm.removeItemConfirm")}
               >
                 <FaTrash className="text-sm" />
@@ -441,7 +441,7 @@ export default function SortableItem({
                 <button
                   type="button"
                   onClick={() => onDelete?.(catId, item._id)}
-                  className="text-secondary hover:text-secondary/80 focus:outline-none"
+                  className="text-primary/60 hover:text-primary focus:outline-none"
                   title={t("gearList.confirm.removeItemConfirm")}
                 >
                   <FaTrash className="text-sm" />
