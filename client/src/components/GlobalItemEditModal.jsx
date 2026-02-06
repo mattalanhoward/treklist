@@ -59,7 +59,8 @@ export default function GlobalItemEditModal({
   const [primaryOffer, setPrimaryOffer] = useState(null);
 
   const [imageFailed, setImageFailed] = useState(false);
-  const [loadingImageAsset, setLoadingImageAsset] = useState(false);
+  // Start true - will be set to false when we confirm no images or image is loaded
+  const [loadingImageAsset, setLoadingImageAsset] = useState(true);
 
   const itemId = item ? item._id : null;
   const isListContext = useMemo(() => {
@@ -188,7 +189,16 @@ export default function GlobalItemEditModal({
         const data = res?.data || {};
 
         const urls = Array.isArray(data.imageUrls) ? data.imageUrls : [];
-        if (!cancelled) setCatalogImages(urls);
+        if (!cancelled) {
+          setCatalogImages(urls);
+          // Pre-set loading state if we have images to avoid flash before preload effect runs
+          const hasValidImages = urls.some(
+            (u) => typeof u === "string" && u.trim() && /^https?:\/\//i.test(u.trim())
+          );
+          if (hasValidImages) {
+            setLoadingImageAsset(true);
+          }
+        }
 
         const offers = Array.isArray(data.offers) ? data.offers : [];
         const best = offers
@@ -228,9 +238,12 @@ export default function GlobalItemEditModal({
   const showImageBlock = isImported && hasImages && !imageFailed;
 
   // Reset image state when switching products / modes
+  // Only reset loadingImageAsset when NOT imported (to avoid flash when becoming imported)
   useEffect(() => {
     setImageFailed(false);
-    setLoadingImageAsset(false);
+    if (!isImported) {
+      setLoadingImageAsset(false);
+    }
   }, [resolvedProductId, isImported]);
 
   // Preload first image: if it errors, treat as "no image"
@@ -447,7 +460,9 @@ export default function GlobalItemEditModal({
     !item ||
     viewMode === "loading" ||
     isResolvingMode ||
-    (isImported && resolvedProductId && catalogLoadedFor !== resolvedProductId);
+    (isImported && loadingImages) ||
+    (isImported && resolvedProductId && catalogLoadedFor !== resolvedProductId) ||
+    (isImported && loadingImageAsset);
 
   const modalWidthClass = isCustom
     ? "max-w-xl"
