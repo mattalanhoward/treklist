@@ -251,7 +251,7 @@ export default function MyGearView({ collapsed }) {
             </button>
             <button
               type="button"
-              onClick={() => setSelectionMode(true)}
+              onClick={() => selectionMode ? exitSelectionMode() : setSelectionMode(true)}
               className={`p-1 rounded ${selectionMode ? "text-secondary bg-secondary/10" : "text-secondary hover:text-secondary/80"}`}
               title={t("myGear.actions.select", "Select items")}
             >
@@ -407,7 +407,7 @@ export default function MyGearView({ collapsed }) {
               </button>
               <button
                 type="button"
-                onClick={() => setSelectionMode(true)}
+                onClick={() => selectionMode ? exitSelectionMode() : setSelectionMode(true)}
                 className={`p-1 rounded ${selectionMode ? "text-secondary bg-secondary/10" : "text-secondary hover:text-secondary/80"}`}
                 title={t("myGear.actions.select", "Select items")}
               >
