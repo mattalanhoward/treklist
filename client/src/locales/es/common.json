@@ -933,5 +933,57 @@
       "sent": "¡Solicitud enviada!",
       "failed": "No se pudo enviar la solicitud."
     }
+  },
+  "myGear": {
+    "title": "Mi Equipo",
+    "searchPlaceholder": "Buscar equipo...",
+    "empty": "Aún no has añadido ningún equipo. Importa artículos del catálogo o crea artículos personalizados.",
+    "noResults": "Ningún artículo coincide con tu búsqueda.",
+    "itemCount": "{{count}} artículo(s)",
+    "showing": "mostrando {{count}}",
+    "selected": "{{count}} seleccionado(s)",
+    "selectItems": "Seleccionar artículos",
+    "filter": {
+      "allCategories": "Todas las categorías"
+    },
+    "sort": {
+      "nameAsc": "Nombre A-Z",
+      "nameDesc": "Nombre Z-A",
+      "weightAsc": "Peso ↑",
+      "weightDesc": "Peso ↓",
+      "dateDesc": "Más recientes",
+      "dateAsc": "Más antiguos"
+    },
+    "view": {
+      "list": "Vista de lista",
+      "tiles": "Vista de mosaico"
+    },
+    "actions": {
+      "addItem": "Añadir artículo",
+      "select": "Seleccionar artículos",
+      "viewEdit": "Ver / Editar",
+      "delete": "Eliminar",
+      "selectAll": "Seleccionar todo",
+      "clearSelection": "Limpiar",
+      "deleteSelected": "Eliminar"
+    },
+    "tiles": {
+      "noImage": "Sin imagen"
+    },
+    "toast": {
+      "loadFailed": "Error al cargar el equipo",
+      "deleted": "Artículo eliminado",
+      "deleteFailed": "Error al eliminar",
+      "bulkDeleted": "{{count}} artículos eliminados",
+      "bulkDeleteFailed": "Error al eliminar algunos artículos"
+    },
+    "confirm": {
+      "deleteTitle": "Eliminar artículo",
+      "deleteMessage": "¿Seguro que quieres eliminar este artículo? También se eliminará de todas las listas de equipo.",
+      "deleteConfirm": "Eliminar",
+      "bulkDeleteTitle": "Eliminar artículos",
+      "bulkDeleteMessage": "¿Seguro que quieres eliminar {{count}} artículos? También se eliminarán de todas las listas de equipo.",
+      "bulkDeleteConfirm": "Eliminar todo"
+    }
   }
 }

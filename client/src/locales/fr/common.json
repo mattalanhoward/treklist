@@ -931,7 +931,59 @@
     },
     "toasts": {
       "sent": "Demande envoyée !",
-      "failed": "Impossible d’envoyer la demande."
+      "failed": "Impossible d'envoyer la demande."
+    }
+  },
+  "myGear": {
+    "title": "Mon Équipement",
+    "searchPlaceholder": "Rechercher...",
+    "empty": "Vous n'avez pas encore ajouté d'équipement. Importez des articles du catalogue ou créez des articles personnalisés.",
+    "noResults": "Aucun article ne correspond à votre recherche.",
+    "itemCount": "{{count}} article(s)",
+    "showing": "{{count}} affiché(s)",
+    "selected": "{{count}} sélectionné(s)",
+    "selectItems": "Sélectionner des articles",
+    "filter": {
+      "allCategories": "Toutes les catégories"
+    },
+    "sort": {
+      "nameAsc": "Nom A-Z",
+      "nameDesc": "Nom Z-A",
+      "weightAsc": "Poids ↑",
+      "weightDesc": "Poids ↓",
+      "dateDesc": "Plus récents",
+      "dateAsc": "Plus anciens"
+    },
+    "view": {
+      "list": "Vue liste",
+      "tiles": "Vue mosaïque"
+    },
+    "actions": {
+      "addItem": "Ajouter un article",
+      "select": "Sélectionner des articles",
+      "viewEdit": "Voir / Modifier",
+      "delete": "Supprimer",
+      "selectAll": "Tout sélectionner",
+      "clearSelection": "Effacer",
+      "deleteSelected": "Supprimer"
+    },
+    "tiles": {
+      "noImage": "Pas d'image"
+    },
+    "toast": {
+      "loadFailed": "Échec du chargement de l'équipement",
+      "deleted": "Article supprimé",
+      "deleteFailed": "Échec de la suppression",
+      "bulkDeleted": "{{count}} articles supprimés",
+      "bulkDeleteFailed": "Échec de la suppression de certains articles"
+    },
+    "confirm": {
+      "deleteTitle": "Supprimer l'article",
+      "deleteMessage": "Êtes-vous sûr de vouloir supprimer cet article ? Il sera également retiré de toutes les listes d'équipement.",
+      "deleteConfirm": "Supprimer",
+      "bulkDeleteTitle": "Supprimer les articles",
+      "bulkDeleteMessage": "Êtes-vous sûr de vouloir supprimer {{count}} articles ? Ils seront également retirés de toutes les listes d'équipement.",
+      "bulkDeleteConfirm": "Tout supprimer"
     }
   }
 }

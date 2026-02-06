@@ -1,6 +1,6 @@
 // client/src/components/MyGearTileCard.jsx
 import React from "react";
-import { FaTrash } from "react-icons/fa";
+import { FaTrash, FaCheckSquare, FaRegSquare } from "react-icons/fa";
 
 function pickFirstImageUrl(item) {
   if (!item) return null;
@@ -54,6 +54,9 @@ export default function MyGearTileCard({
   actionLoading,
   onViewEdit,
   onDelete,
+  selectionMode = false,
+  isSelected = false,
+  onToggleSelect,
 }) {
   const imageUrl = pickFirstImageUrl(item);
   const merchantUrl = item.link || item.affiliate?.deepLink;
@@ -63,29 +66,68 @@ export default function MyGearTileCard({
     onDelete();
   };
 
+  const handleCardClick = () => {
+    if (selectionMode && onToggleSelect) {
+      onToggleSelect();
+    }
+  };
+
   return (
-    <div className="bg-base-100 rounded shadow border border-primary/10 hover:border-primary/20 transition-colors overflow-hidden">
-      {/* Top bar: ItemType left, delete button right */}
+    <div
+      className={`bg-base-100 rounded shadow border transition-colors overflow-hidden ${
+        selectionMode ? "cursor-pointer" : ""
+      } ${
+        isSelected
+          ? "border-secondary ring-2 ring-secondary"
+          : "border-primary/10 hover:border-primary/20"
+      }`}
+      onClick={handleCardClick}
+    >
+      {/* Top bar: ItemType left, checkbox/delete button right */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-primary/10">
         <div className="font-semibold text-primary truncate">
           {item.itemType || "—"}
         </div>
 
-        <button
-          type="button"
-          disabled={actionLoading === item._id}
-          onClick={handleDelete}
-          className="p-1 text-error/70 hover:text-error rounded"
-          title={t("myGear.actions.delete", "Delete")}
-        >
-          <FaTrash className="text-sm" />
-        </button>
+        {selectionMode ? (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleSelect?.();
+            }}
+            className="p-1 text-secondary"
+          >
+            {isSelected ? (
+              <FaCheckSquare className="text-base" />
+            ) : (
+              <FaRegSquare className="text-base text-primary/40" />
+            )}
+          </button>
+        ) : (
+          <button
+            type="button"
+            disabled={actionLoading === item._id}
+            onClick={handleDelete}
+            className="p-1 text-error/70 hover:text-error rounded"
+            title={t("myGear.actions.delete", "Delete")}
+          >
+            <FaTrash className="text-sm" />
+          </button>
+        )}
       </div>
 
-      {/* Image area - clickable to edit */}
+      {/* Image area - clickable to edit (disabled in selection mode) */}
       <button
         type="button"
-        onClick={onViewEdit}
+        onClick={(e) => {
+          if (selectionMode) {
+            e.stopPropagation();
+            onToggleSelect?.();
+          } else {
+            onViewEdit();
+          }
+        }}
         className="relative bg-neutral/10 aspect-[4/3] flex items-center justify-center w-full cursor-pointer hover:bg-neutral/20 transition-colors"
       >
         {imageUrl ? (

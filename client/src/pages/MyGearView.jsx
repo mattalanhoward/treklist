@@ -9,6 +9,9 @@ import {
   FaList,
   FaPlus,
   FaChevronDown,
+  FaCheckSquare,
+  FaTrash,
+  FaTimes,
 } from "react-icons/fa";
 import ConfirmDialog from "../components/ConfirmDialog";
 import GlobalItemEditModal from "../components/GlobalItemEditModal";
@@ -37,6 +40,11 @@ export default function MyGearView({ collapsed }) {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [actionLoading, setActionLoading] = useState(null);
+
+  // Bulk selection state
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState(new Set());
+  const [confirmBulkDelete, setConfirmBulkDelete] = useState(false);
 
   // Fetch items
   const fetchItems = useCallback(async (signal) => {
@@ -153,16 +161,71 @@ export default function MyGearView({ collapsed }) {
     }
   };
 
-  // Escape key handler for modals
+  // Selection handlers
+  const toggleSelection = useCallback((id) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }, []);
+
+  const selectAll = useCallback(() => {
+    setSelectedIds(new Set(filteredItems.map((item) => item._id)));
+  }, [filteredItems]);
+
+  const clearSelection = useCallback(() => {
+    setSelectedIds(new Set());
+  }, []);
+
+  const exitSelectionMode = useCallback(() => {
+    setSelectionMode(false);
+    setSelectedIds(new Set());
+  }, []);
+
+  // Handle bulk delete
+  const handleBulkDelete = async () => {
+    setActionLoading("bulk");
+    try {
+      await Promise.all(
+        [...selectedIds].map((id) => api.delete(`/global/items/${id}`))
+      );
+      toast.success(
+        t("myGear.toast.bulkDeleted", "{{count}} items deleted", {
+          count: selectedIds.size,
+        })
+      );
+      fetchItems();
+      window.dispatchEvent(new CustomEvent("global-items:updated"));
+      exitSelectionMode();
+    } catch (err) {
+      console.error("Failed to delete items", err);
+      toast.error(
+        err?.response?.data?.message ||
+          t("myGear.toast.bulkDeleteFailed", "Failed to delete some items")
+      );
+    } finally {
+      setActionLoading(null);
+      setConfirmBulkDelete(false);
+    }
+  };
+
+  // Escape key handler for modals and selection mode
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
-        if (confirmDelete) setConfirmDelete(null);
+        if (confirmBulkDelete) setConfirmBulkDelete(false);
+        else if (confirmDelete) setConfirmDelete(null);
+        else if (selectionMode) exitSelectionMode();
       }
     };
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [confirmDelete]);
+  }, [confirmDelete, confirmBulkDelete, selectionMode, exitSelectionMode]);
 
   return (
     <div className="h-full w-full flex flex-col overflow-hidden bg-neutral/10">
@@ -170,7 +233,7 @@ export default function MyGearView({ collapsed }) {
       <div className={`flex-shrink-0 px-4 py-2 border-b border-primary/10 bg-base-100 ${collapsed ? "sm:pl-12" : ""}`}>
         {/* Desktop: single row */}
         <div className="hidden sm:flex items-center justify-between gap-4">
-          {/* Left: Title + Add button */}
+          {/* Left: Title + Add button + Select button */}
           <div className="flex items-center gap-2">
             <h1 className="text-md text-primary whitespace-nowrap">
               {t("myGear.title", "My Gear")}
@@ -185,6 +248,14 @@ export default function MyGearView({ collapsed }) {
               title={t("myGear.actions.addItem", "Add item")}
             >
               <FaPlus className="text-sm" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectionMode(true)}
+              className={`p-1 rounded ${selectionMode ? "text-secondary bg-secondary/10" : "text-secondary hover:text-secondary/80"}`}
+              title={t("myGear.actions.select", "Select items")}
+            >
+              <FaCheckSquare className="text-sm" />
             </button>
           </div>
 
@@ -264,6 +335,58 @@ export default function MyGearView({ collapsed }) {
           </div>
         </div>
 
+        {/* Desktop: Selection action bar */}
+        {selectionMode && (
+          <div className="hidden sm:flex items-center justify-between gap-4 mt-2 pt-2 border-t border-primary/10">
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-primary/60">
+                {selectedIds.size > 0
+                  ? t("myGear.selected", "{{count}} selected", { count: selectedIds.size })
+                  : t("myGear.selectItems", "Select items")}
+              </span>
+              {selectedIds.size === 0 && filteredItems.length > 0 && (
+                <button
+                  type="button"
+                  onClick={selectAll}
+                  className="text-sm text-secondary hover:text-secondary/80"
+                >
+                  {t("myGear.actions.selectAll", "Select all")}
+                </button>
+              )}
+              {selectedIds.size > 0 && (
+                <button
+                  type="button"
+                  onClick={clearSelection}
+                  className="text-sm text-secondary hover:text-secondary/80"
+                >
+                  {t("myGear.actions.clearSelection", "Clear")}
+                </button>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              {selectedIds.size > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setConfirmBulkDelete(true)}
+                  disabled={actionLoading === "bulk"}
+                  className="flex items-center gap-1 px-2 py-1 text-sm bg-error/10 text-error hover:bg-error/20 rounded"
+                >
+                  <FaTrash className="text-xs" />
+                  {t("myGear.actions.deleteSelected", "Delete")}
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={exitSelectionMode}
+                className="flex items-center gap-1 px-2 py-1 text-sm text-primary/70 hover:text-primary rounded"
+              >
+                <FaTimes className="text-xs" />
+                {t("actions.cancel", "Cancel")}
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Mobile: stacked layout */}
         <div className={`sm:hidden space-y-2 ${collapsed ? "pl-8" : ""}`}>
           <div className="flex items-center justify-between gap-4">
@@ -281,6 +404,14 @@ export default function MyGearView({ collapsed }) {
                 title={t("myGear.actions.addItem", "Add item")}
               >
                 <FaPlus className="text-sm" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectionMode(true)}
+                className={`p-1 rounded ${selectionMode ? "text-secondary bg-secondary/10" : "text-secondary hover:text-secondary/80"}`}
+                title={t("myGear.actions.select", "Select items")}
+              >
+                <FaCheckSquare className="text-sm" />
               </button>
             </div>
 
@@ -306,6 +437,58 @@ export default function MyGearView({ collapsed }) {
               </div>
             </div>
           </div>
+
+          {/* Mobile selection action bar */}
+          {selectionMode && (
+            <div className="flex items-center justify-between gap-2 py-1 border-t border-primary/10 pt-2">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-primary/60">
+                  {selectedIds.size > 0
+                    ? t("myGear.selected", "{{count}} selected", { count: selectedIds.size })
+                    : t("myGear.selectItems", "Select items")}
+                </span>
+                {selectedIds.size === 0 && filteredItems.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={selectAll}
+                    className="text-sm text-secondary hover:text-secondary/80"
+                  >
+                    {t("myGear.actions.selectAll", "Select all")}
+                  </button>
+                )}
+                {selectedIds.size > 0 && (
+                  <button
+                    type="button"
+                    onClick={clearSelection}
+                    className="text-sm text-secondary hover:text-secondary/80"
+                  >
+                    {t("myGear.actions.clearSelection", "Clear")}
+                  </button>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                {selectedIds.size > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setConfirmBulkDelete(true)}
+                    disabled={actionLoading === "bulk"}
+                    className="p-1.5 text-error hover:bg-error/10 rounded"
+                    title={t("myGear.actions.deleteSelected", "Delete selected")}
+                  >
+                    <FaTrash className="text-sm" />
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={exitSelectionMode}
+                  className="flex items-center gap-1 px-2 py-1 text-sm text-primary/70 hover:text-primary rounded"
+                >
+                  <FaTimes className="text-xs" />
+                  {t("actions.cancel", "Cancel")}
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Mobile: Filter and Sort row */}
           <div className="flex items-center gap-2">
@@ -385,6 +568,9 @@ export default function MyGearView({ collapsed }) {
                 actionLoading={actionLoading}
                 onViewEdit={() => setEditingItem(item)}
                 onDelete={() => setConfirmDelete(item)}
+                selectionMode={selectionMode}
+                isSelected={selectedIds.has(item._id)}
+                onToggleSelect={() => toggleSelection(item._id)}
               />
             ))}
           </div>
@@ -401,6 +587,9 @@ export default function MyGearView({ collapsed }) {
                 actionLoading={actionLoading}
                 onViewEdit={() => setEditingItem(item)}
                 onDelete={() => setConfirmDelete(item)}
+                selectionMode={selectionMode}
+                isSelected={selectedIds.has(item._id)}
+                onToggleSelect={() => toggleSelection(item._id)}
               />
             ))}
           </div>
@@ -459,6 +648,21 @@ export default function MyGearView({ collapsed }) {
         cancelText={t("actions.cancel")}
         onConfirm={() => confirmDelete && handleDelete(confirmDelete)}
         onCancel={() => setConfirmDelete(null)}
+      />
+
+      {/* Bulk Delete Confirmation */}
+      <ConfirmDialog
+        isOpen={confirmBulkDelete}
+        title={t("myGear.confirm.bulkDeleteTitle", "Delete Items")}
+        message={t(
+          "myGear.confirm.bulkDeleteMessage",
+          "Are you sure you want to delete {{count}} items? This will also remove them from any gear lists.",
+          { count: selectedIds.size }
+        )}
+        confirmText={t("myGear.confirm.bulkDeleteConfirm", "Delete All")}
+        cancelText={t("actions.cancel")}
+        onConfirm={handleBulkDelete}
+        onCancel={() => setConfirmBulkDelete(false)}
       />
     </div>
   );

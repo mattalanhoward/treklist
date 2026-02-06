@@ -933,5 +933,57 @@
       "sent": "Anfrage gesendet!",
       "failed": "Anfrage konnte nicht gesendet werden."
     }
+  },
+  "myGear": {
+    "title": "Meine Ausrüstung",
+    "searchPlaceholder": "Ausrüstung suchen...",
+    "empty": "Du hast noch keine Ausrüstung hinzugefügt. Importiere Artikel aus dem Katalog oder erstelle eigene.",
+    "noResults": "Keine Artikel gefunden.",
+    "itemCount": "{{count}} Artikel",
+    "showing": "{{count}} angezeigt",
+    "selected": "{{count}} ausgewählt",
+    "selectItems": "Artikel auswählen",
+    "filter": {
+      "allCategories": "Alle Kategorien"
+    },
+    "sort": {
+      "nameAsc": "Name A-Z",
+      "nameDesc": "Name Z-A",
+      "weightAsc": "Gewicht ↑",
+      "weightDesc": "Gewicht ↓",
+      "dateDesc": "Neueste",
+      "dateAsc": "Älteste"
+    },
+    "view": {
+      "list": "Listenansicht",
+      "tiles": "Kachelansicht"
+    },
+    "actions": {
+      "addItem": "Artikel hinzufügen",
+      "select": "Artikel auswählen",
+      "viewEdit": "Ansehen / Bearbeiten",
+      "delete": "Löschen",
+      "selectAll": "Alle auswählen",
+      "clearSelection": "Auswahl aufheben",
+      "deleteSelected": "Löschen"
+    },
+    "tiles": {
+      "noImage": "Kein Bild"
+    },
+    "toast": {
+      "loadFailed": "Ausrüstung konnte nicht geladen werden",
+      "deleted": "Artikel gelöscht",
+      "deleteFailed": "Löschen fehlgeschlagen",
+      "bulkDeleted": "{{count}} Artikel gelöscht",
+      "bulkDeleteFailed": "Einige Artikel konnten nicht gelöscht werden"
+    },
+    "confirm": {
+      "deleteTitle": "Artikel löschen",
+      "deleteMessage": "Möchtest du diesen Artikel wirklich löschen? Er wird auch aus allen Packlisten entfernt.",
+      "deleteConfirm": "Löschen",
+      "bulkDeleteTitle": "Artikel löschen",
+      "bulkDeleteMessage": "Möchtest du {{count}} Artikel wirklich löschen? Sie werden auch aus allen Packlisten entfernt.",
+      "bulkDeleteConfirm": "Alle löschen"
+    }
   }
 }
