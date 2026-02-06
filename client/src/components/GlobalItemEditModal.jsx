@@ -759,6 +759,7 @@ export default function GlobalItemEditModal({
                 try {
                   await api.delete(`/global/items/${item._id}`);
                   // toast.success(t("globalItemEditModal.toast.deleted"));
+                  window.dispatchEvent(new CustomEvent("global-items:updated"));
                   onSaved?.();
                   onClose?.();
                 } catch (err) {

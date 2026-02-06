@@ -618,8 +618,16 @@ export default function GlobalItemModal({
   const [weightSource, setWeightSource] = useState("user"); // "user" | "heuristic" | "scraped" | "catalog" | "verified"
 
   const [requestOpen, setRequestOpen] = useState(false);
-  const [tab, setTab] = useState("import"); // "import" | "custom"
+  const [tab, setTab] = useState(() => {
+    const saved = localStorage.getItem("globalItemModal:tab");
+    return saved === "custom" ? "custom" : "import";
+  });
   const [affProduct, setAffProduct] = useState(null); // selected affiliate product (or null)
+
+  // Persist tab selection
+  useEffect(() => {
+    localStorage.setItem("globalItemModal:tab", tab);
+  }, [tab]);
 
   // Derive item type from a category path string (e.g., "A > B > C" -> "C")
   const deriveItemTypeFromCategoryPath = (path) => {

@@ -1,0 +1,140 @@
+// client/src/components/MyGearTileCard.jsx
+import React from "react";
+import { FaTrash } from "react-icons/fa";
+
+function pickFirstImageUrl(item) {
+  if (!item) return null;
+
+  // 1) arrays
+  const arrays = [item.imageUrls, item.images, item.photos, item.gallery].filter(
+    Array.isArray,
+  );
+
+  for (const arr of arrays) {
+    const first = arr.find((x) => typeof x === "string" && x.trim());
+    if (first) return first;
+    const firstObj = arr.find(
+      (x) => x && typeof x === "object" && typeof x.url === "string",
+    );
+    if (firstObj?.url) return firstObj.url;
+  }
+
+  // 2) single string fields
+  const direct =
+    item.imageUrl ||
+    item.image ||
+    item.photoUrl ||
+    item.thumbnailUrl ||
+    item.thumbnail ||
+    item.primaryImageUrl;
+
+  if (typeof direct === "string" && direct.trim()) return direct;
+
+  // 3) nested common shapes
+  const nested =
+    item.catalogItem?.imageUrl ||
+    (Array.isArray(item.catalogItem?.imageUrls)
+      ? item.catalogItem.imageUrls[0]
+      : null) ||
+    item.globalItem?.imageUrl ||
+    (Array.isArray(item.globalItem?.imageUrls)
+      ? item.globalItem.imageUrls[0]
+      : null);
+
+  if (typeof nested === "string" && nested.trim()) return nested;
+
+  return null;
+}
+
+export default function MyGearTileCard({
+  item,
+  formatWeight,
+  unitLabel,
+  t,
+  actionLoading,
+  onViewEdit,
+  onDelete,
+}) {
+  const imageUrl = pickFirstImageUrl(item);
+  const merchantUrl = item.link || item.affiliate?.deepLink;
+
+  const handleDelete = (e) => {
+    e.stopPropagation();
+    onDelete();
+  };
+
+  return (
+    <div className="bg-base-100 rounded shadow border border-primary/10 hover:border-primary/20 transition-colors overflow-hidden">
+      {/* Top bar: ItemType left, delete button right */}
+      <div className="flex items-center justify-between px-3 py-2 border-b border-primary/10">
+        <div className="font-semibold text-primary truncate">
+          {item.itemType || "—"}
+        </div>
+
+        <button
+          type="button"
+          disabled={actionLoading === item._id}
+          onClick={handleDelete}
+          className="p-1 text-error/70 hover:text-error rounded"
+          title={t("myGear.actions.delete", "Delete")}
+        >
+          <FaTrash className="text-sm" />
+        </button>
+      </div>
+
+      {/* Image area - clickable to edit */}
+      <button
+        type="button"
+        onClick={onViewEdit}
+        className="relative bg-neutral/10 aspect-[4/3] flex items-center justify-center w-full cursor-pointer hover:bg-neutral/20 transition-colors"
+      >
+        {imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={item.name || "Gear item"}
+            className="max-h-full max-w-full object-contain p-3"
+            loading="lazy"
+          />
+        ) : (
+          <div className="text-primary/40 text-sm px-4 text-center">
+            {t("myGear.tiles.noImage", "No image")}
+          </div>
+        )}
+
+        {item.weight ? (
+          <div className="absolute bottom-2 right-2 text-xs px-2 py-1 rounded bg-base-100/90 border border-primary/10 text-primary tabular-nums">
+            {formatWeight(item.weight)} {unitLabel}
+          </div>
+        ) : null}
+      </button>
+
+      {/* Details */}
+      <div className="px-3 py-3 space-y-1">
+        {item.brand ? (
+          <div className="text-sm text-primary/70 truncate">{item.brand}</div>
+        ) : null}
+
+        {merchantUrl ? (
+          <a
+            href={merchantUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-primary leading-snug line-clamp-2 block hover:underline"
+          >
+            {item.name}
+          </a>
+        ) : (
+          <div className="font-semibold text-primary leading-snug line-clamp-2">
+            {item.name}
+          </div>
+        )}
+
+        {item.description ? (
+          <div className="text-sm text-primary/70 line-clamp-3">
+            {item.description}
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
