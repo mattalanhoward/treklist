@@ -266,7 +266,10 @@ export default function Sidebar({
               >
                 <button
                   type="button"
-                  onClick={onShowGearPane}
+                  onClick={() => {
+                    onShowGearPane();
+                    if (isMobile()) setCollapsed(true);
+                  }}
                   className="font-bold truncate mr-1 text-left hover:underline transition-colors"
                 >
                   {t("sidebar.gearListsTitle")}
@@ -338,7 +341,10 @@ export default function Sidebar({
               >
                 <button
                   type="button"
-                  onClick={onOpenMyGear}
+                  onClick={() => {
+                    onOpenMyGear();
+                    if (isMobile()) setCollapsed(true);
+                  }}
                   className="font-bold truncate mr-1 text-left hover:underline transition-colors"
                 >
                   {t("sidebar.myGearTitle")}
