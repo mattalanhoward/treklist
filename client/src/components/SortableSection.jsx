@@ -60,7 +60,7 @@ export default function SortableSection({
   // useSortable for the category header itself:
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: `cat-${catId}` });
-  const style = { transform: CSS.Transform.toString(transform), transition };
+  const style = { transform: CSS.Translate.toString(transform), transition };
 
   return (
     <section
