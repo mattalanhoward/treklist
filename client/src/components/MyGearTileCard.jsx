@@ -140,14 +140,26 @@ export default function MyGearTileCard({
       </div>
 
       {/* Image area - clickable to edit (disabled in selection mode) */}
-      <button
-        type="button"
+      {/* Uses <div> instead of <button> because iOS Safari ignores aspect-ratio on buttons */}
+      <div
+        role="button"
+        tabIndex={0}
         onClick={(e) => {
           if (selectionMode) {
             e.stopPropagation();
             onToggleSelect?.();
           } else {
             onViewEdit();
+          }
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            if (selectionMode) {
+              onToggleSelect?.();
+            } else {
+              onViewEdit();
+            }
           }
         }}
         className="relative bg-neutral/10 aspect-[4/3] flex items-center justify-center w-full cursor-pointer hover:bg-neutral/20 transition-colors"
@@ -170,7 +182,7 @@ export default function MyGearTileCard({
             {formatWeight(item.weight)} {unitLabel}
           </div>
         ) : null}
-      </button>
+      </div>
 
       {/* Details - clickable to open edit */}
       <button
