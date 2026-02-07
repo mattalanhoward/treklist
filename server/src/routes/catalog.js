@@ -10,6 +10,10 @@ const User = require("../models/user");
 
 const router = express.Router();
 
+function escapeRegex(s) {
+  return String(s || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 // Small normalization helper (server-side)
 function normalizeRegion(region) {
   if (!region) return "global";
@@ -109,7 +113,7 @@ router.get("/items", auth, async (req, res) => {
 
     if (q && q.trim()) {
       const qNorm = q.trim().replace(/\s+/g, " ");
-      const regex = new RegExp(qNorm, "i");
+      const regex = new RegExp(escapeRegex(qNorm), "i");
       query.$or = [
         { name: regex },
         { brand: regex },

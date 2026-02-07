@@ -1,33 +1,43 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import api from "../services/api";
 
 export default function AuthCallback() {
   const navigate = useNavigate();
   const location = useLocation();
   const { hydrateFromStorage } = useAuth();
+  const exchangedRef = useRef(false);
 
   useEffect(() => {
+    if (exchangedRef.current) return;
+
     const params = new URLSearchParams(location.search);
-    const accessToken = params.get("accessToken");
+    const code = params.get("code");
     const authError = params.get("authError");
 
     if (authError) {
-      // Handle error (redirect to login with error message)
       navigate("/?authError=" + authError, { replace: true });
       return;
     }
 
-    if (accessToken) {
-      // Store token and hydrate auth context
-      localStorage.setItem("accessToken", accessToken);
-      hydrateFromStorage();
-
-      // Navigate to dashboard
-      navigate("/dashboard", { replace: true });
-    } else {
+    if (!code) {
       navigate("/", { replace: true });
+      return;
     }
+
+    exchangedRef.current = true;
+
+    api
+      .post("/auth/exchange", { code })
+      .then(({ data }) => {
+        localStorage.setItem("accessToken", data.accessToken);
+        hydrateFromStorage();
+        navigate("/dashboard", { replace: true });
+      })
+      .catch(() => {
+        navigate("/?authError=token_exchange_failed", { replace: true });
+      });
   }, [location, navigate, hydrateFromStorage]);
 
   return (

@@ -17,6 +17,10 @@ const { isValidObjectId } = mongoose;
 
 const router = express.Router();
 
+function escapeRegex(s) {
+  return String(s || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 // All routes below require auth + admin
 router.use(auth, requireAdmin);
 
@@ -53,7 +57,7 @@ router.get("/", async (req, res) => {
 
     // Search by email / trailname (case-insensitive)
     if (q && q.trim()) {
-      const regex = new RegExp(q.trim(), "i");
+      const regex = new RegExp(escapeRegex(q.trim()), "i");
       query.$or = [{ email: regex }, { trailname: regex }];
     }
 

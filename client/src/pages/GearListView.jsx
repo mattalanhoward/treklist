@@ -53,6 +53,8 @@ export default function GearListView({
   const [showAddModalCat, setShowAddModalCat] = useState(null);
   const [activeItem, setActiveItem] = useState(null);
   const [activeCategory, setActiveCategory] = useState(null);
+  const [activeWidth, setActiveWidth] = useState(null);
+  const [activeHeight, setActiveHeight] = useState(null);
 
   // State to control the “delete item” confirmation dialog:
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -622,6 +624,13 @@ export default function GearListView({
   };
 
   const handleDragStart = ({ active }) => {
+    const node = active.node?.current;
+    if (node) {
+      const rect = node.getBoundingClientRect();
+      setActiveWidth(rect.width);
+      setActiveHeight(rect.height);
+    }
+
     if (active.id.startsWith("item-")) {
       const [, catId, itemId] = active.id.split("-");
       const itemArray = itemsMap[catId] || [];
@@ -1349,6 +1358,8 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
                 setTimeout(() => {
                   setActiveItem(null);
                   setActiveCategory(null);
+                  setActiveWidth(null);
+                  setActiveHeight(null);
                 }, 300);
               }
         }
@@ -1366,12 +1377,14 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
               <PreviewCard
                 item={activeItem.item}
                 viewMode={viewMode}
-                isPreview
+                width={activeWidth}
               />
             ) : activeCategory ? (
               <PreviewColumn
                 category={activeCategory}
                 items={itemsMap[activeCategory._id] || []}
+                width={activeWidth}
+                height={activeHeight}
               />
             ) : null}
           </DragOverlay>

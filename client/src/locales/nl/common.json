@@ -14,7 +14,8 @@
     "nameRequired": "Naam is verplicht.",
     "weightInvalid": "Vul een geldig gewicht in.",
     "weightNegative": "Gewicht kan niet negatief zijn.",
-    "urlInvalid": "Link moet een geldige URL zijn."
+    "urlInvalid": "Link moet een geldige URL zijn.",
+    "passwordMinLength": "Wachtwoord moet minimaal 8 tekens bevatten."
   },
   "confirm": {
     "defaultTitle": "Weet je het zeker?"

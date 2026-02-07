@@ -8,14 +8,12 @@ import {
   FaShoppingCart,
 } from "react-icons/fa";
 
-export default function PreviewCard({ item, viewMode, isPreview }) {
-  const ghostStyles = isPreview
-    ? {
-        transform: "scale(1.05)",
-        opacity: 0.85,
-        boxShadow: "0 8px 16px rgba(0,0,0,0.2)",
-      }
-    : {};
+export default function PreviewCard({ item, viewMode, width }) {
+  const ghostStyles = {
+    width: width || undefined,
+    opacity: 0.85,
+    boxShadow: "0 8px 24px rgba(0,0,0,0.25)",
+  };
 
   const weightText =
     item.weight != null && item.weight !== "" ? `${item.weight} g` : "";

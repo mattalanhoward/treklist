@@ -158,6 +158,16 @@ async function sendPasswordResetEmail(email, token) {
   });
 }
 
+// ---- One-time OAuth code store ----
+const OAUTH_CODE_TTL_MS = 60_000; // 60 seconds
+const oauthCodes = new Map();
+setInterval(() => {
+  const now = Date.now();
+  for (const [code, entry] of oauthCodes) {
+    if (now - entry.createdAt > OAUTH_CODE_TTL_MS) oauthCodes.delete(code);
+  }
+}, 60_000).unref();
+
 // ---- Helpers ----
 function issueTokens(user) {
   const accessToken = jwt.sign(
@@ -285,6 +295,13 @@ router.post(
 // Reset password
 router.post("/reset-password", async (req, res) => {
   const { token, newPassword } = req.body;
+
+  if (typeof newPassword !== "string" || newPassword.length < 8) {
+    return res.status(400).json({
+      message: "Password must be at least 8 characters.",
+    });
+  }
+
   const user = await User.findOne({
     resetPasswordToken: token,
     resetPasswordExpires: { $gt: Date.now() },
@@ -312,6 +329,12 @@ router.post("/register", registerLimiter, async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({
         message: "Email & password are required.",
+      });
+    }
+
+    if (typeof password !== "string" || password.length < 8) {
+      return res.status(400).json({
+        message: "Password must be at least 8 characters.",
       });
     }
 
@@ -540,6 +563,12 @@ router.post("/refresh", async (req, res) => {
     const user = await User.findOne({ refreshTokens: refreshToken });
     if (!user) return res.status(403).end();
 
+    if (user.isDisabled) {
+      user.refreshTokens = [];
+      await user.save();
+      return res.status(403).end();
+    }
+
     // rotate
     user.refreshTokens = user.refreshTokens.filter((t) => t !== refreshToken);
     const tokens = issueTokens(user);
@@ -607,25 +636,46 @@ router.get(
         return res.redirect(`${CLIENT_BASE_URL}/?authError=no_user`);
       }
 
-      // Issue JWT tokens (same as email/password login)
-      const tokens = issueTokens(user);
-      user.lastLoginAt = new Date();
-      await user.save();
+      // Generate a one-time code; real tokens are issued at /auth/exchange
+      const code = crypto.randomBytes(32).toString("hex");
+      oauthCodes.set(code, { userId: user._id, createdAt: Date.now() });
 
-      // Redirect to frontend with token in URL (client will extract and store)
-      const redirectUrl =
-        `${CLIENT_BASE_URL}/auth/callback?` +
-        `accessToken=${encodeURIComponent(tokens.accessToken)}`;
-
-      res
-        .cookie("refreshToken", tokens.refreshToken, REFRESH_COOKIE_OPTS)
-        .redirect(redirectUrl);
+      res.redirect(`${CLIENT_BASE_URL}/auth/callback?code=${code}`);
     } catch (err) {
       console.error("Google callback error:", err);
       res.redirect(`${CLIENT_BASE_URL}/?authError=token_issue_failed`);
     }
   }
 );
+
+// Exchange a one-time OAuth code for tokens
+router.post("/exchange", oauthLimiter, async (req, res) => {
+  try {
+    const { code } = req.body;
+    if (!code || typeof code !== "string") {
+      return res.status(400).json({ message: "Missing code." });
+    }
+
+    const entry = oauthCodes.get(code);
+    oauthCodes.delete(code); // one-time use regardless of outcome
+
+    if (!entry || Date.now() - entry.createdAt > OAUTH_CODE_TTL_MS) {
+      return res.status(403).json({ message: "Invalid or expired code." });
+    }
+
+    const user = await User.findById(entry.userId);
+    if (!user || user.isDisabled) {
+      return res.status(403).json({ message: "Account unavailable." });
+    }
+
+    const tokens = issueTokens(user);
+    user.lastLoginAt = new Date();
+    await sendTokenResponse(res, user, tokens);
+  } catch (err) {
+    console.error("POST /auth/exchange error:", err);
+    res.status(500).json({ message: "Token exchange failed." });
+  }
+});
 
 router.authenticate = authenticate;
 router.sendVerificationEmail = sendVerificationEmail;

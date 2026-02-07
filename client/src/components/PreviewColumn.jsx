@@ -4,7 +4,7 @@ import { FaGripVertical, FaTimes, FaPlus } from "react-icons/fa";
 import { useWeight } from "../hooks/useWeight";
 import { useTranslation } from "react-i18next";
 
-export default function PreviewColumn({ category, items }) {
+export default function PreviewColumn({ category, items, width, height }) {
   const { t } = useTranslation("common");
 
   // mirror SortableColumn’s total weight logic (in grams)
@@ -21,11 +21,10 @@ export default function PreviewColumn({ category, items }) {
   return (
     <div
       className="
-        snap-center flex-shrink-0 my-0 mx-2 w-90 sm:w-64
-        bg-neutral rounded-lg p-3 flex flex-col self-start max-h-full
-        opacity-75
+        snap-center flex-shrink-0 my-0 mx-2
+        bg-neutral rounded-lg p-3 flex flex-col
       "
-      style={{ pointerEvents: "none" }}
+      style={{ pointerEvents: "none", opacity: 0.85, boxShadow: "0 8px 24px rgba(0,0,0,0.25)", width: width || undefined, height: height || undefined }}
     >
       {/* Header row: grip + title + totalWeight + placeholder X */}
       <div className="flex items-center mb-2">
@@ -40,12 +39,12 @@ export default function PreviewColumn({ category, items }) {
         <FaTimes className="flex-shrink-0 text-primaryAlt opacity-0" />
       </div>
 
-      {/* Ghost items list – just skeleton cards */}
-      <div className="flex-1 overflow-y-auto space-y-2 mb-2">
+      {/* Ghost items list – skeleton cards that fill available height */}
+      <div className="flex-1 overflow-hidden flex flex-col gap-2 mb-2">
         {(items || []).map((_, idx) => (
           <div
             key={idx}
-            className="bg-base-100 px-3 py-2 rounded shadow flex flex-col opacity-60"
+            className="bg-base-100 px-3 py-2 rounded shadow flex flex-col flex-1 opacity-60"
           >
             <div className="h-4 bg-base-200 rounded mb-1 w-1/2" />
             <div className="h-3 bg-base-200 rounded w-3/4" />
