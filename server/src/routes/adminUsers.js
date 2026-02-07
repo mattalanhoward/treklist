@@ -87,27 +87,16 @@ router.get("/", async (req, res) => {
           { $match: { owner: { $in: userIds } } },
           { $group: { _id: "$owner", count: { $sum: 1 } } },
         ]),
-        GearList.aggregate([
-          { $match: { owner: { $in: userIds } } },
-          {
-            $lookup: {
-              from: "gearitems",
-              localField: "_id",
-              foreignField: "gearList",
-              as: "items",
-            },
-          },
-          {
-            $unwind: "$items",
-          },
+        GlobalItem.aggregate([
+          { $match: { owner: { $in: userIds }, status: { $ne: "wishlisted" } } },
           {
             $group: {
               _id: "$owner",
               catalog: {
-                $sum: { $cond: [{ $ifNull: ["$items.productId", false] }, 1, 0] },
+                $sum: { $cond: [{ $ifNull: ["$productId", false] }, 1, 0] },
               },
               custom: {
-                $sum: { $cond: [{ $ifNull: ["$items.productId", false] }, 0, 1] },
+                $sum: { $cond: [{ $ifNull: ["$productId", false] }, 0, 1] },
               },
             },
           },
@@ -177,20 +166,18 @@ router.get("/:id", async (req, res) => {
       .select("title createdAt updatedAt region")
       .lean();
 
-    const listIds = lists.map((l) => l._id);
-    let catalogItemsCount = 0;
-    let customItemsCount = 0;
-    if (listIds.length > 0) {
-      const [catalog, total] = await Promise.all([
-        GearItem.countDocuments({
-          gearList: { $in: listIds },
-          productId: { $ne: null },
-        }),
-        GearItem.countDocuments({ gearList: { $in: listIds } }),
-      ]);
-      catalogItemsCount = catalog;
-      customItemsCount = total - catalog;
-    }
+    const [catalogItemsCount, customItemsCount] = await Promise.all([
+      GlobalItem.countDocuments({
+        owner: id,
+        status: { $ne: "wishlisted" },
+        productId: { $ne: null },
+      }),
+      GlobalItem.countDocuments({
+        owner: id,
+        status: { $ne: "wishlisted" },
+        $or: [{ productId: null }, { productId: { $exists: false } }],
+      }),
+    ]);
 
     res.json({
       user,
