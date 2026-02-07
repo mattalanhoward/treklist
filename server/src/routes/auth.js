@@ -553,6 +553,12 @@ router.post("/refresh", async (req, res) => {
     const user = await User.findOne({ refreshTokens: refreshToken });
     if (!user) return res.status(403).end();
 
+    if (user.isDisabled) {
+      user.refreshTokens = [];
+      await user.save();
+      return res.status(403).end();
+    }
+
     // rotate
     user.refreshTokens = user.refreshTokens.filter((t) => t !== refreshToken);
     const tokens = issueTokens(user);
