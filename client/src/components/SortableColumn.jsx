@@ -33,6 +33,7 @@ export default function SortableColumn({
   onItemUpdated,
   isLocked,
   reorderMode = false,
+  sidebarDragOver = false,
 }) {
   const { t } = useTranslation("common");
   const scrollRef = useScrollPreserver(items);
@@ -60,7 +61,7 @@ export default function SortableColumn({
       data-tour="gearlist-category"
       ref={setNodeRef}
       style={style}
-      className="snap-center flex-shrink-0 my-0 mx-2 w-90 sm:w-64 bg-neutral rounded-lg p-3 flex flex-col self-start max-h-full"
+      className={`snap-center flex-shrink-0 my-0 mx-2 w-90 sm:w-64 bg-neutral rounded-lg p-3 flex flex-col self-start max-h-full transition-shadow ${sidebarDragOver ? "ring-2 ring-secondary" : ""}`}
     >
       <div className="flex items-center mb-2">
         <FaGripVertical

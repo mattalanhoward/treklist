@@ -3,17 +3,13 @@ import React, { useState, useEffect, useCallback } from "react";
 import { FaPlus, FaEllipsisH, FaCheck, FaLock, FaUnlock, FaArrowsAlt } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { DragOverlay, closestCorners, pointerWithin } from "@dnd-kit/core";
-import {
-  restrictToHorizontalAxis,
-  restrictToVerticalAxis,
-} from "@dnd-kit/modifiers";
+import { DragOverlay } from "@dnd-kit/core";
 import {
   arrayMove,
+  SortableContext,
   horizontalListSortingStrategy,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { DndContextWrapper } from "../components/DndContextWrapper";
 import api from "../services/api";
 import DropdownMenu from "../components/DropdownMenu";
 import ConfirmDialog from "../components/ConfirmDialog";
@@ -43,6 +39,8 @@ export default function GearListView({
   onReorderCategories,
   fetchLists,
   collapsed,
+  dndRef,
+  sidebarDragOverCatId,
 }) {
   const { t } = useTranslation("common");
   const navigate = useNavigate();
@@ -521,10 +519,23 @@ export default function GearListView({
           .filter((i) => i._id !== sourceItemId)
           .map((it, idx) => ({ ...it, position: idx }));
 
+        // Determine if we should insert before or after the over item
+        // by comparing the dragged item's center with the over item's center
+        let finalIdx = insertedIdx;
+        const activeTranslated = active.rect.current.translated;
+        const overRect = over.rect;
+        if (activeTranslated && overRect) {
+          const activeCenterY = activeTranslated.top + activeTranslated.height / 2;
+          const overCenterY = overRect.top + overRect.height / 2;
+          if (activeCenterY > overCenterY) {
+            finalIdx = insertedIdx + 1;
+          }
+        }
+
         const newDest = [
-          ...destArr.slice(0, insertedIdx),
+          ...destArr.slice(0, finalIdx),
           movedItem,
-          ...destArr.slice(insertedIdx),
+          ...destArr.slice(finalIdx),
         ].map((it, idx) => ({
           ...it,
           position: idx,
@@ -643,28 +654,25 @@ export default function GearListView({
     }
   };
 
-  const axisModifier = (args) => {
-    const { active, transform } = args;
-
-    if (!active || !active.id || active.id.startsWith("item-"))
-      return transform;
-
-    if (viewMode === "column" && active.id.startsWith("cat-")) {
-      return restrictToHorizontalAxis(args);
-    }
-
-    if (viewMode === "list" && active.id.startsWith("cat-")) {
-      return restrictToVerticalAxis(args);
-    }
-
-    return transform;
-  };
-
-  const collisionDetectionStrategy = (args) => {
-    const { active } = args;
-    if (active && active.id?.startsWith("item-")) return closestCorners(args);
-    return pointerWithin(args);
-  };
+  // Expose drag handlers to Dashboard's DndContext via mutable ref
+  React.useEffect(() => {
+    if (!dndRef) return;
+    dndRef.current = {
+      handleDragStart: isLocked ? undefined : handleDragStart,
+      handleDragEnd: isLocked
+        ? undefined
+        : (event) => {
+            handleDragEnd(event);
+            setTimeout(() => {
+              setActiveItem(null);
+              setActiveCategory(null);
+              setActiveWidth(null);
+              setActiveHeight(null);
+            }, 300);
+          },
+      getItemsMap: () => itemsMap,
+    };
+  });
 
   const handleMoveItemManual = async (
     fromCatId,
@@ -1341,54 +1349,13 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
 
       <ShareModal listId={listId} isOpen={shareOpen} onClose={closeShare} />
 
-      {/* Wrap everything in one DndContextWrapper */}
-      <DndContextWrapper
+      <SortableContext
         items={categories.map((c) => `cat-${c._id}`)}
         strategy={
           viewMode === "list"
             ? verticalListSortingStrategy
             : horizontalListSortingStrategy
         }
-        onDragStart={isLocked ? undefined : handleDragStart}
-        onDragEnd={
-          isLocked
-            ? undefined
-            : (event) => {
-                handleDragEnd(event);
-                setTimeout(() => {
-                  setActiveItem(null);
-                  setActiveCategory(null);
-                  setActiveWidth(null);
-                  setActiveHeight(null);
-                }, 300);
-              }
-        }
-        collisionDetection={collisionDetectionStrategy}
-        modifiers={[axisModifier]}
-        renderDragOverlay={() => (
-          <DragOverlay
-            style={{ pointerEvents: "none", zIndex: 1000 }}
-            dropAnimation={{
-              duration: 300,
-              easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)",
-            }}
-          >
-            {activeItem ? (
-              <PreviewCard
-                item={activeItem.item}
-                viewMode={viewMode}
-                width={activeWidth}
-              />
-            ) : activeCategory ? (
-              <PreviewColumn
-                category={activeCategory}
-                items={itemsMap[activeCategory._id] || []}
-                width={activeWidth}
-                height={activeHeight}
-              />
-            ) : null}
-          </DragOverlay>
-        )}
       >
         {viewMode === "list" ? (
           <div className="flex-1 overflow-y-auto px-2 py-2 sm:w-4/5 sm:mx-auto">
@@ -1414,6 +1381,7 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
                 onItemUpdated={refreshListAfterEdit}
                 isLocked={isLocked}
                 reorderMode={reorderMode}
+                sidebarDragOver={sidebarDragOverCatId === cat._id}
               />
             ))}
 
@@ -1476,6 +1444,7 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
                 onItemUpdated={refreshListAfterEdit}
                 isLocked={isLocked}
                 reorderMode={reorderMode}
+                sidebarDragOver={sidebarDragOverCatId === cat._id}
               />
             ))}
 
@@ -1515,7 +1484,31 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
             )}
           </div>
         )}
-      </DndContextWrapper>
+      </SortableContext>
+
+      {/* Internal drag overlay for category/item reordering */}
+      <DragOverlay
+        style={{ pointerEvents: "none", zIndex: 1000 }}
+        dropAnimation={{
+          duration: 300,
+          easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)",
+        }}
+      >
+        {activeItem ? (
+          <PreviewCard
+            item={activeItem.item}
+            viewMode={viewMode}
+            width={activeWidth}
+          />
+        ) : activeCategory ? (
+          <PreviewColumn
+            category={activeCategory}
+            items={itemsMap[activeCategory._id] || []}
+            width={activeWidth}
+            height={activeHeight}
+          />
+        ) : null}
+      </DragOverlay>
 
       <MoveItemModal
         isOpen={!!moveItemTarget}

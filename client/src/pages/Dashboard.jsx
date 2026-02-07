@@ -15,6 +15,21 @@ import { useUserSettings } from "../contexts/UserSettings";
 import { useTranslation } from "react-i18next";
 import Spinner from "../components/ui/Spinner";
 import TourModal from "../components/TourModal";
+import {
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  KeyboardSensor,
+  useSensor,
+  useSensors,
+  pointerWithin,
+  closestCorners,
+} from "@dnd-kit/core";
+import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import {
+  restrictToHorizontalAxis,
+  restrictToVerticalAxis,
+} from "@dnd-kit/modifiers";
 
 function DashboardEmptyState({
   hasLists,
@@ -391,6 +406,149 @@ export default function Dashboard() {
     }
   }, [listId, navigate, t]);
 
+  // ─── Drag-and-drop: shared DndContext for sidebar → gearlist + internal sorting ───
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
+
+  const gearListDndRef = useRef({});
+  const [sidebarDragItem, setSidebarDragItem] = useState(null);
+  const [sidebarDragOverCatId, setSidebarDragOverCatId] = useState(null);
+
+  const collisionDetectionStrategy = useCallback((args) => {
+    const { active } = args;
+    if (active && active.id?.startsWith("item-")) return closestCorners(args);
+    return pointerWithin(args);
+  }, []);
+
+  const axisModifier = useCallback(
+    (args) => {
+      const { active, transform } = args;
+      if (!active || !active.id || active.id.startsWith("item-") || active.id.startsWith("sidebar-"))
+        return transform;
+      if (viewMode === "column" && active.id.startsWith("cat-"))
+        return restrictToHorizontalAxis(args);
+      if (viewMode === "list" && active.id.startsWith("cat-"))
+        return restrictToVerticalAxis(args);
+      return transform;
+    },
+    [viewMode],
+  );
+
+  const handleDndDragStart = useCallback((event) => {
+    const { active } = event;
+    if (active.id.startsWith("sidebar-")) {
+      setSidebarDragItem(active.data?.current?.globalItem || null);
+    } else {
+      gearListDndRef.current.handleDragStart?.(event);
+    }
+  }, []);
+
+  const handleDndDragOver = useCallback((event) => {
+    const { active, over } = event;
+    if (!active.id.startsWith("sidebar-")) return;
+    if (!over) {
+      setSidebarDragOverCatId(null);
+      return;
+    }
+    if (over.id.startsWith("cat-")) {
+      setSidebarDragOverCatId(over.id.replace("cat-", ""));
+    } else if (over.id.startsWith("item-")) {
+      const parts = over.id.split("-");
+      setSidebarDragOverCatId(parts[1] || null);
+    } else {
+      setSidebarDragOverCatId(null);
+    }
+  }, []);
+
+  const handleDndDragEnd = useCallback(
+    async (event) => {
+      const { active, over } = event;
+
+      // Sidebar item drop
+      if (active.id.startsWith("sidebar-")) {
+        const globalItem = active.data?.current?.globalItem;
+        setSidebarDragItem(null);
+        setSidebarDragOverCatId(null);
+
+        if (!over || !globalItem || !listId) return;
+
+        let targetCatId;
+        if (over.id.startsWith("cat-")) {
+          targetCatId = over.id.replace("cat-", "");
+        } else if (over.id.startsWith("item-")) {
+          targetCatId = over.id.split("-")[1];
+        }
+        if (!targetCatId) return;
+
+        const itemsMap = gearListDndRef.current.getItemsMap?.() || {};
+
+        // Prevent duplicates: check if this global item already exists in any category
+        const allListItems = Object.values(itemsMap).flat();
+        const duplicate = allListItems.find(
+          (i) => i.globalItem === globalItem._id,
+        );
+        if (duplicate) {
+          toast.error(t("sidebar.itemAlreadyInList"));
+          return;
+        }
+
+        const catItems = itemsMap[targetCatId] || [];
+
+        // Determine insert position based on drop target
+        let insertPos;
+        if (over.id.startsWith("item-")) {
+          const overItemId = over.id.split("-")[2];
+          const overIndex = catItems.findIndex((i) => i._id === overItemId);
+          insertPos = overIndex !== -1 ? overIndex : catItems.length;
+        } else {
+          insertPos = catItems.length;
+        }
+
+        try {
+          // Shift positions of items at or after the insert point
+          for (let i = catItems.length - 1; i >= insertPos; i--) {
+            await api.patch(
+              `/dashboard/${listId}/categories/${targetCatId}/items/${catItems[i]._id}`,
+              { position: i + 1 },
+            );
+          }
+
+          await api.post(
+            `/dashboard/${listId}/categories/${targetCatId}/items`,
+            {
+              globalItem: globalItem._id,
+              productId: globalItem.productId,
+              brand: globalItem.brand,
+              itemType: globalItem.itemType,
+              name: globalItem.name,
+              description: globalItem.description,
+              weight: globalItem.weight,
+              link: globalItem.link,
+              worn: globalItem.worn,
+              consumable: globalItem.consumable,
+              quantity: globalItem.quantity || 1,
+              position: insertPos,
+            },
+          );
+          fetchFullData();
+        } catch (err) {
+          toast.error(
+            err.response?.data?.message || t("sidebar.addToListFailed"),
+          );
+        }
+        return;
+      }
+
+      // Internal GearListView drag — delegate
+      gearListDndRef.current.handleDragEnd?.(event);
+    },
+    [listId, fetchFullData, t],
+  );
+
   // — New: Optimistic reorder + persist for categories
   const onReorderCategories = useCallback(
     async (oldCats, reorderedCats) => {
@@ -470,66 +628,90 @@ export default function Dashboard() {
         onOpenTour={openTour}
       />
 
-      <div className="flex flex-1 overflow-hidden">
-        <Sidebar
-          lists={lists} // up-to-date list array
-          fetchLists={fetchLists} // allows Sidebar to re-load after mutating
-          currentListId={listId}
-          categories={fullData?.categories || []}
-          collapsed={collapsed}
-          setCollapsed={setSidebarCollapsed}
-          onOpenAdmin={() => {
-            if (isAdmin) setActivePane("admin");
-          }}
-          isAdmin={isAdmin}
-          onOpenForum={() => setActivePane("forum")}
-          onOpenWishlist={() => setActivePane("wishlist")}
-          onOpenMyGear={() => setActivePane("myGear")}
-          onShowGearPane={() => setActivePane("gear")}
-          onSelectList={handleSelectList}
-          onRefresh={fetchFullData}
-        />
+      <DndContext
+        sensors={sensors}
+        collisionDetection={collisionDetectionStrategy}
+        modifiers={[axisModifier]}
+        onDragStart={handleDndDragStart}
+        onDragOver={handleDndDragOver}
+        onDragEnd={handleDndDragEnd}
+      >
+        <div className="flex flex-1 overflow-hidden">
+          <Sidebar
+            lists={lists}
+            fetchLists={fetchLists}
+            currentListId={listId}
+            categories={fullData?.categories || []}
+            collapsed={collapsed}
+            setCollapsed={setSidebarCollapsed}
+            onOpenAdmin={() => {
+              if (isAdmin) setActivePane("admin");
+            }}
+            isAdmin={isAdmin}
+            onOpenForum={() => setActivePane("forum")}
+            onOpenWishlist={() => setActivePane("wishlist")}
+            onOpenMyGear={() => setActivePane("myGear")}
+            onShowGearPane={() => setActivePane("gear")}
+            onSelectList={handleSelectList}
+            onRefresh={fetchFullData}
+            isLocked={fullData.list?.isLocked || false}
+          />
 
-        <main className="relative flex-1 overflow-hidden">
-          {activePane === "gear" && listId && isSwitchingLists && (
-            <div className="absolute inset-0 z-50 bg-base-100/40 backdrop-blur-[1px] flex items-center justify-center">
-              <Spinner />
-            </div>
-          )}
-          {activePane === "admin" && isAdmin ? (
-            <AdminView />
-          ) : activePane === "forum" ? (
-            <ForumView />
-          ) : activePane === "wishlist" ? (
-            <WishlistView />
-          ) : activePane === "myGear" ? (
-            <MyGearView collapsed={collapsed} />
-          ) : listId ? (
-            fullData.list === null ? (
-              <Spinner centered label={t("dashboard.loadingLists")} />
+          <main className="relative flex-1 overflow-hidden">
+            {activePane === "gear" && listId && isSwitchingLists && (
+              <div className="absolute inset-0 z-50 bg-base-100/40 backdrop-blur-[1px] flex items-center justify-center">
+                <Spinner />
+              </div>
+            )}
+            {activePane === "admin" && isAdmin ? (
+              <AdminView />
+            ) : activePane === "forum" ? (
+              <ForumView />
+            ) : activePane === "wishlist" ? (
+              <WishlistView />
+            ) : activePane === "myGear" ? (
+              <MyGearView collapsed={collapsed} />
+            ) : listId ? (
+              fullData.list === null ? (
+                <Spinner centered label={t("dashboard.loadingLists")} />
+              ) : (
+                <GearListView
+                  listId={listId}
+                  viewMode={viewMode}
+                  categories={fullData.categories}
+                  onRefresh={fetchFullData}
+                  onReorderCategories={onReorderCategories}
+                  list={fullData.list}
+                  items={fullData.items}
+                  fetchLists={fetchLists}
+                  collapsed={collapsed}
+                  dndRef={gearListDndRef}
+                  sidebarDragOverCatId={sidebarDragOverCatId}
+                />
+              )
             ) : (
-              <GearListView
-                listId={listId}
-                viewMode={viewMode}
-                categories={fullData.categories}
-                onRefresh={fetchFullData}
-                onReorderCategories={onReorderCategories}
-                list={fullData.list}
-                items={fullData.items}
-                fetchLists={fetchLists}
-                collapsed={collapsed}
+              <DashboardEmptyState
+                hasLists={lists.length > 0}
+                listsLoading={listsLoading || autoOnboarding}
+                onCreateSampleList={handleCreateSampleList}
+                creatingSample={creatingSample}
               />
-            )
-          ) : (
-            <DashboardEmptyState
-              hasLists={lists.length > 0}
-              listsLoading={listsLoading || autoOnboarding}
-              onCreateSampleList={handleCreateSampleList}
-              creatingSample={creatingSample}
-            />
-          )}
-        </main>
-      </div>
+            )}
+          </main>
+        </div>
+
+        {/* Drag overlay for sidebar → category drags */}
+        <DragOverlay
+          style={{ pointerEvents: "none", zIndex: 1000 }}
+          dropAnimation={{ duration: 250, easing: "cubic-bezier(0.18,0.67,0.6,1.22)" }}
+        >
+          {sidebarDragItem ? (
+            <div className="bg-base-100 px-3 py-2 rounded shadow text-sm text-primary opacity-85">
+              {sidebarDragItem.itemType} – {sidebarDragItem.name}
+            </div>
+          ) : null}
+        </DragOverlay>
+      </DndContext>
     </div>
   );
 }

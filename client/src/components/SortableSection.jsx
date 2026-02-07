@@ -34,6 +34,7 @@ export default function SortableSection({
   onItemUpdated,
   isLocked,
   reorderMode = false,
+  sidebarDragOver = false,
 }) {
   const { t } = useTranslation("common");
   const filtered = useMemo(
@@ -66,7 +67,7 @@ export default function SortableSection({
     <section
       ref={setNodeRef}
       style={style}
-      className="bg-neutral rounded-lg p-4 mb-6"
+      className={`bg-neutral rounded-lg p-4 mb-6 transition-shadow ${sidebarDragOver ? "ring-2 ring-secondary" : ""}`}
     >
       <div className="flex items-center mb-3 min-w-0">
         <FaGripVertical

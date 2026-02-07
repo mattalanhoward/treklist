@@ -118,6 +118,7 @@
     "noGearItems": "No gear items",
     "mustSelectListFirst": "Pick or create a list with at least one category first.",
     "addToListFailed": "Failed to add item into your list.",
+    "itemAlreadyInList": "This item is already in your list. Use the quantity field to add more.",
     "editGlobalTemplate": "Edit global template"
   },
   "auth": {

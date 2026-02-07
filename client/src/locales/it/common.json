@@ -118,6 +118,7 @@
     "noGearItems": "Nessun articolo",
     "mustSelectListFirst": "Seleziona o crea prima una lista con almeno una categoria.",
     "addToListFailed": "Impossibile aggiungere l'articolo alla lista.",
+    "itemAlreadyInList": "Questo articolo è già nella tua lista. Usa il campo quantità per aggiungerne di più.",
     "editGlobalTemplate": "Modifica modello globale"
   },
   "auth": {
