@@ -14,7 +14,8 @@
     "nameRequired": "El nombre es obligatorio.",
     "weightInvalid": "Introduce un peso válido.",
     "weightNegative": "El peso no puede ser negativo.",
-    "urlInvalid": "El enlace debe ser una URL válida."
+    "urlInvalid": "El enlace debe ser una URL válida.",
+    "passwordMinLength": "La contraseña debe tener al menos 8 caracteres."
   },
   "confirm": {
     "defaultTitle": "¿Estás seguro?"

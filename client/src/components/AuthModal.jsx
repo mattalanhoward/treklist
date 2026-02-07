@@ -119,6 +119,11 @@ export default function AuthModal({
       return;
     }
 
+    if (password.length < 8) {
+      setErr(t("validation.passwordMinLength"));
+      return;
+    }
+
     setLoading(true);
     const safeRegion = String(region || "gb").toLowerCase();
     const safeLanguage = String(language || "en").toLowerCase();

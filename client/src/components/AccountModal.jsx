@@ -63,6 +63,10 @@ export default function AccountModal({ isOpen, onClose }) {
       setError(msg);
       return;
     }
+    if (tab === "security" && form.newPassword && form.newPassword.length < 8) {
+      setError(t("validation.passwordMinLength"));
+      return;
+    }
 
     // build payload
     const payload = {};

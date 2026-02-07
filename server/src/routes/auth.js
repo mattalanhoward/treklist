@@ -285,6 +285,13 @@ router.post(
 // Reset password
 router.post("/reset-password", async (req, res) => {
   const { token, newPassword } = req.body;
+
+  if (typeof newPassword !== "string" || newPassword.length < 8) {
+    return res.status(400).json({
+      message: "Password must be at least 8 characters.",
+    });
+  }
+
   const user = await User.findOne({
     resetPasswordToken: token,
     resetPasswordExpires: { $gt: Date.now() },
@@ -312,6 +319,12 @@ router.post("/register", registerLimiter, async (req, res) => {
     if (!email || !password) {
       return res.status(400).json({
         message: "Email & password are required.",
+      });
+    }
+
+    if (typeof password !== "string" || password.length < 8) {
+      return res.status(400).json({
+        message: "Password must be at least 8 characters.",
       });
     }
 

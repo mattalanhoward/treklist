@@ -124,8 +124,13 @@ router.patch("/", async (req, res) => {
       }
     }
 
-    // If they’re changing password, handle separately
+    // If they're changing password, handle separately
     if (updates.password) {
+      if (typeof updates.password !== "string" || updates.password.length < 8) {
+        return res
+          .status(400)
+          .json({ message: "Password must be at least 8 characters." });
+      }
       if (!updates.currentPassword) {
         return res
           .status(400)

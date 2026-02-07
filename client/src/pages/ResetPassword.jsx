@@ -26,6 +26,10 @@ export default function ResetPassword() {
       toast.error(t("auth.reset.errors.passwordsDontMatch"));
       return;
     }
+    if (newPassword.length < 8) {
+      toast.error(t("validation.passwordMinLength"));
+      return;
+    }
     setLoading(true);
     try {
       await api.post("/auth/reset-password", { token, newPassword });
