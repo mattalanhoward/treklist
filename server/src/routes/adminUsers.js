@@ -77,7 +77,7 @@ router.get("/", async (req, res) => {
       User.countDocuments(query),
     ]);
 
-    // Compute listsCount and itemsCount per user
+    // Compute listsCount and item counts per user
     const userIds = users.map((u) => u._id);
     let listCountsByUserId = {};
     let itemCountsByUserId = {};
@@ -98,9 +98,17 @@ router.get("/", async (req, res) => {
             },
           },
           {
+            $unwind: "$items",
+          },
+          {
             $group: {
               _id: "$owner",
-              count: { $sum: { $size: "$items" } },
+              catalog: {
+                $sum: { $cond: [{ $ifNull: ["$items.productId", false] }, 1, 0] },
+              },
+              custom: {
+                $sum: { $cond: [{ $ifNull: ["$items.productId", false] }, 0, 1] },
+              },
             },
           },
         ]),
@@ -112,16 +120,20 @@ router.get("/", async (req, res) => {
       }, {});
 
       itemCountsByUserId = itemCounts.reduce((acc, row) => {
-        acc[String(row._id)] = row.count;
+        acc[String(row._id)] = { catalog: row.catalog, custom: row.custom };
         return acc;
       }, {});
     }
 
-    const enrichedUsers = users.map((u) => ({
-      ...u,
-      listsCount: listCountsByUserId[String(u._id)] || 0,
-      itemsCount: itemCountsByUserId[String(u._id)] || 0,
-    }));
+    const enrichedUsers = users.map((u) => {
+      const ic = itemCountsByUserId[String(u._id)] || { catalog: 0, custom: 0 };
+      return {
+        ...u,
+        listsCount: listCountsByUserId[String(u._id)] || 0,
+        catalogItemsCount: ic.catalog,
+        customItemsCount: ic.custom,
+      };
+    });
 
     res.json({
       users: enrichedUsers,
@@ -166,16 +178,26 @@ router.get("/:id", async (req, res) => {
       .lean();
 
     const listIds = lists.map((l) => l._id);
-    const itemsCount =
-      listIds.length > 0
-        ? await GearItem.countDocuments({ gearList: { $in: listIds } })
-        : 0;
+    let catalogItemsCount = 0;
+    let customItemsCount = 0;
+    if (listIds.length > 0) {
+      const [catalog, total] = await Promise.all([
+        GearItem.countDocuments({
+          gearList: { $in: listIds },
+          productId: { $ne: null },
+        }),
+        GearItem.countDocuments({ gearList: { $in: listIds } }),
+      ]);
+      catalogItemsCount = catalog;
+      customItemsCount = total - catalog;
+    }
 
     res.json({
       user,
       lists,
       listsCount: lists.length,
-      itemsCount,
+      catalogItemsCount,
+      customItemsCount,
       sessionCount,
     });
   } catch (err) {

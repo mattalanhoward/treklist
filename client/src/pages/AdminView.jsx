@@ -3022,7 +3022,8 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
   const [confirmResendOpen, setConfirmResendOpen] = useState(false);
   const [resending, setResending] = useState(false);
   const [sessionCount, setSessionCount] = useState(0);
-  const [itemsCount, setItemsCount] = useState(0);
+  const [catalogItemsCount, setCatalogItemsCount] = useState(0);
+  const [customItemsCount, setCustomItemsCount] = useState(0);
   const [revoking, setRevoking] = useState(false);
   const [confirmRevokeOpen, setConfirmRevokeOpen] = useState(false);
 
@@ -3078,7 +3079,8 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
         setIsAdmin(Boolean(data.user.isAdmin));
         setIsDisabled(Boolean(data.user.isDisabled));
         setSessionCount(data.sessionCount ?? 0);
-        setItemsCount(data.itemsCount ?? 0);
+        setCatalogItemsCount(data.catalogItemsCount ?? 0);
+        setCustomItemsCount(data.customItemsCount ?? 0);
       } catch (err) {
         console.error("Failed to load user", err);
         const msg =
@@ -3386,7 +3388,8 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
                 <span>
                   Gear lists ({lists.length})
                   <span className="font-normal text-primary/70 ml-1">
-                    · {itemsCount} {itemsCount === 1 ? "item" : "items"}
+                    · {catalogItemsCount + customItemsCount} items
+                    ({catalogItemsCount} catalog, {customItemsCount} custom)
                   </span>
                 </span>
               </h3>
@@ -3636,8 +3639,8 @@ function UsersSection() {
         return al > bl ? dir : -dir;
       }
       case "items": {
-        const ai = a.itemsCount ?? 0;
-        const bi = b.itemsCount ?? 0;
+        const ai = (a.catalogItemsCount ?? 0) + (a.customItemsCount ?? 0);
+        const bi = (b.catalogItemsCount ?? 0) + (b.customItemsCount ?? 0);
         if (ai === bi) return 0;
         return ai > bi ? dir : -dir;
       }
@@ -3989,7 +3992,10 @@ function UsersSection() {
                           {u.listsCount ?? 0}
                         </td>
                         <td className="px-3 py-2 text-right align-top">
-                          {u.itemsCount ?? 0}
+                          <div>{(u.catalogItemsCount ?? 0) + (u.customItemsCount ?? 0)}</div>
+                          <div className="text-[10px] text-primary/70 mt-0.5">
+                            {u.catalogItemsCount ?? 0}c / {u.customItemsCount ?? 0}u
+                          </div>
                         </td>
                         <td className="px-3 py-2 align-top text-xs">
                           {formatDate(u.createdAt)}
