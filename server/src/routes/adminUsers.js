@@ -77,16 +77,41 @@ router.get("/", async (req, res) => {
       User.countDocuments(query),
     ]);
 
-    // Compute listsCount per user (single aggregate over GearList)
+    // Compute listsCount and itemsCount per user
     const userIds = users.map((u) => u._id);
     let listCountsByUserId = {};
+    let itemCountsByUserId = {};
     if (userIds.length > 0) {
-      const listCounts = await GearList.aggregate([
-        { $match: { owner: { $in: userIds } } },
-        { $group: { _id: "$owner", count: { $sum: 1 } } },
+      const [listCounts, itemCounts] = await Promise.all([
+        GearList.aggregate([
+          { $match: { owner: { $in: userIds } } },
+          { $group: { _id: "$owner", count: { $sum: 1 } } },
+        ]),
+        GearList.aggregate([
+          { $match: { owner: { $in: userIds } } },
+          {
+            $lookup: {
+              from: "gearitems",
+              localField: "_id",
+              foreignField: "gearList",
+              as: "items",
+            },
+          },
+          {
+            $group: {
+              _id: "$owner",
+              count: { $sum: { $size: "$items" } },
+            },
+          },
+        ]),
       ]);
 
       listCountsByUserId = listCounts.reduce((acc, row) => {
+        acc[String(row._id)] = row.count;
+        return acc;
+      }, {});
+
+      itemCountsByUserId = itemCounts.reduce((acc, row) => {
         acc[String(row._id)] = row.count;
         return acc;
       }, {});
@@ -95,6 +120,7 @@ router.get("/", async (req, res) => {
     const enrichedUsers = users.map((u) => ({
       ...u,
       listsCount: listCountsByUserId[String(u._id)] || 0,
+      itemsCount: itemCountsByUserId[String(u._id)] || 0,
     }));
 
     res.json({
@@ -139,10 +165,17 @@ router.get("/:id", async (req, res) => {
       .select("title createdAt updatedAt region")
       .lean();
 
+    const listIds = lists.map((l) => l._id);
+    const itemsCount =
+      listIds.length > 0
+        ? await GearItem.countDocuments({ gearList: { $in: listIds } })
+        : 0;
+
     res.json({
       user,
       lists,
       listsCount: lists.length,
+      itemsCount,
       sessionCount,
     });
   } catch (err) {

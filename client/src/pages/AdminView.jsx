@@ -3022,6 +3022,7 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
   const [confirmResendOpen, setConfirmResendOpen] = useState(false);
   const [resending, setResending] = useState(false);
   const [sessionCount, setSessionCount] = useState(0);
+  const [itemsCount, setItemsCount] = useState(0);
   const [revoking, setRevoking] = useState(false);
   const [confirmRevokeOpen, setConfirmRevokeOpen] = useState(false);
 
@@ -3077,6 +3078,7 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
         setIsAdmin(Boolean(data.user.isAdmin));
         setIsDisabled(Boolean(data.user.isDisabled));
         setSessionCount(data.sessionCount ?? 0);
+        setItemsCount(data.itemsCount ?? 0);
       } catch (err) {
         console.error("Failed to load user", err);
         const msg =
@@ -3381,7 +3383,12 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
             <div className="border-t border-base-200 pt-3 mt-2">
               <h3 className="text-sm font-semibold text-primary flex items-center gap-1 mb-2">
                 <FaUsers className="text-primary/80" />
-                <span>Gear lists ({lists.length})</span>
+                <span>
+                  Gear lists ({lists.length})
+                  <span className="font-normal text-primary/70 ml-1">
+                    · {itemsCount} {itemsCount === 1 ? "item" : "items"}
+                  </span>
+                </span>
               </h3>
 
               {lists.length === 0 && (
@@ -3627,6 +3634,12 @@ function UsersSection() {
         const bl = b.listsCount ?? 0;
         if (al === bl) return 0;
         return al > bl ? dir : -dir;
+      }
+      case "items": {
+        const ai = a.itemsCount ?? 0;
+        const bi = b.itemsCount ?? 0;
+        if (ai === bi) return 0;
+        return ai > bi ? dir : -dir;
       }
       case "lastLoginAt": {
         const al = a.lastLoginAt ? new Date(a.lastLoginAt).getTime() : 0;
@@ -3883,6 +3896,17 @@ function UsersSection() {
                         )}
                       </th>
                       <th
+                        className="text-right px-3 py-2 font-semibold cursor-pointer select-none"
+                        onClick={() => handleSort("items")}
+                      >
+                        Items
+                        {sort.field === "items" && (
+                          <span className="ml-1 text-[10px]">
+                            {sort.dir === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
+                      </th>
+                      <th
                         className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
                         onClick={() => handleSort("createdAt")}
                       >
@@ -3963,6 +3987,9 @@ function UsersSection() {
                         </td>
                         <td className="px-3 py-2 text-right align-top">
                           {u.listsCount ?? 0}
+                        </td>
+                        <td className="px-3 py-2 text-right align-top">
+                          {u.itemsCount ?? 0}
                         </td>
                         <td className="px-3 py-2 align-top text-xs">
                           {formatDate(u.createdAt)}
