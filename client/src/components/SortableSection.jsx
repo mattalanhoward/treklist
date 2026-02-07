@@ -35,6 +35,7 @@ export default function SortableSection({
   isLocked,
   reorderMode = false,
   sidebarDragOver = false,
+  newItemId,
 }) {
   const { t } = useTranslation("common");
   const filtered = useMemo(
@@ -126,22 +127,26 @@ export default function SortableSection({
       >
         <div>
           {filtered.map((item) => (
-            <SortableItem
+            <div
               key={`cat-${catId}-item-${item._id}`}
-              item={item}
-              fetchItems={fetchItems}
-              listId={listId}
-              catId={catId}
-              isListMode={viewMode === "list"}
-              onDelete={onDeleteItem}
-              onToggleWorn={onToggleWorn}
-              onToggleConsumable={onToggleConsumable}
-              onQuantityChange={onQuantityChange}
-              onMoveItem={onMoveItem}
-              onItemUpdated={onItemUpdated}
-              isLocked={isLocked}
-              reorderMode={reorderMode}
-            />
+              className={item._id === newItemId ? "item-enter" : ""}
+            >
+              <SortableItem
+                item={item}
+                fetchItems={fetchItems}
+                listId={listId}
+                catId={catId}
+                isListMode={viewMode === "list"}
+                onDelete={onDeleteItem}
+                onToggleWorn={onToggleWorn}
+                onToggleConsumable={onToggleConsumable}
+                onQuantityChange={onQuantityChange}
+                onMoveItem={onMoveItem}
+                onItemUpdated={onItemUpdated}
+                isLocked={isLocked}
+                reorderMode={reorderMode}
+              />
+            </div>
           ))}
         </div>
       </SortableContext>

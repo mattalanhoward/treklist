@@ -34,6 +34,7 @@ export default function SortableColumn({
   isLocked,
   reorderMode = false,
   sidebarDragOver = false,
+  newItemId,
 }) {
   const { t } = useTranslation("common");
   const scrollRef = useScrollPreserver(items);
@@ -118,22 +119,26 @@ export default function SortableColumn({
       >
         <div ref={scrollRef} className="overflow-y-auto mb-2 space-y-2">
           {items.map((item) => (
-            <SortableItem
+            <div
               key={`cat-${catId}-item-${item._id}`}
-              item={item}
-              fetchItems={fetchItems}
-              listId={listId}
-              catId={catId}
-              isListMode={viewMode === "list"}
-              onDelete={onDeleteItem}
-              onToggleWorn={onToggleWorn}
-              onToggleConsumable={onToggleConsumable}
-              onQuantityChange={onQuantityChange}
-              onMoveItem={onMoveItem}
-              onItemUpdated={onItemUpdated}
-              isLocked={isLocked}
-              reorderMode={reorderMode}
-            />
+              className={item._id === newItemId ? "item-enter" : ""}
+            >
+              <SortableItem
+                item={item}
+                fetchItems={fetchItems}
+                listId={listId}
+                catId={catId}
+                isListMode={viewMode === "list"}
+                onDelete={onDeleteItem}
+                onToggleWorn={onToggleWorn}
+                onToggleConsumable={onToggleConsumable}
+                onQuantityChange={onQuantityChange}
+                onMoveItem={onMoveItem}
+                onItemUpdated={onItemUpdated}
+                isLocked={isLocked}
+                reorderMode={reorderMode}
+              />
+            </div>
           ))}
         </div>
       </SortableContext>

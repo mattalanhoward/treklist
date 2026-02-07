@@ -24,12 +24,15 @@ import {
   useSensors,
   pointerWithin,
   closestCorners,
+  defaultDropAnimationSideEffects,
 } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import {
   restrictToHorizontalAxis,
   restrictToVerticalAxis,
 } from "@dnd-kit/modifiers";
+import PreviewCard from "../components/PreviewCard";
 
 function DashboardEmptyState({
   hasLists,
@@ -508,6 +511,13 @@ export default function Dashboard() {
           insertPos = catItems.length;
         }
 
+        // Optimistic insert — item appears instantly in the list
+        gearListDndRef.current.insertOptimistic?.(
+          targetCatId,
+          insertPos,
+          globalItem,
+        );
+
         try {
           // Shift positions of items at or after the insert point
           for (let i = catItems.length - 1; i >= insertPos; i--) {
@@ -536,6 +546,7 @@ export default function Dashboard() {
           );
           fetchFullData();
         } catch (err) {
+          fetchFullData(); // rollback optimistic insert on error
           toast.error(
             err.response?.data?.message || t("sidebar.addToListFailed"),
           );
@@ -703,12 +714,26 @@ export default function Dashboard() {
         {/* Drag overlay for sidebar → category drags */}
         <DragOverlay
           style={{ pointerEvents: "none", zIndex: 1000 }}
-          dropAnimation={{ duration: 250, easing: "cubic-bezier(0.18,0.67,0.6,1.22)" }}
+          dropAnimation={{
+            duration: 200,
+            easing: "ease-out",
+            keyframes({ transform }) {
+              return [
+                { opacity: 0.85, transform: CSS.Transform.toString(transform.initial) },
+                { opacity: 0, transform: CSS.Transform.toString(transform.initial) },
+              ];
+            },
+            sideEffects: defaultDropAnimationSideEffects({
+              styles: { active: { opacity: "0" } },
+            }),
+          }}
         >
           {sidebarDragItem ? (
-            <div className="bg-base-100 px-3 py-2 rounded shadow text-sm text-primary opacity-85">
-              {sidebarDragItem.itemType} – {sidebarDragItem.name}
-            </div>
+            <PreviewCard
+              item={sidebarDragItem}
+              viewMode={viewMode}
+              width={gearListDndRef.current?.getPreviewWidth?.()}
+            />
           ) : null}
         </DragOverlay>
       </DndContext>

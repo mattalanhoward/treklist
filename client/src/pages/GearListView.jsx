@@ -53,8 +53,10 @@ export default function GearListView({
   const [activeCategory, setActiveCategory] = useState(null);
   const [activeWidth, setActiveWidth] = useState(null);
   const [activeHeight, setActiveHeight] = useState(null);
+  const [newItemId, setNewItemId] = useState(null);
+  const listContainerRef = React.useRef(null);
 
-  // State to control the “delete item” confirmation dialog:
+  // State to control the "delete item" confirmation dialog:
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingDelete, setPendingDelete] = useState({
     catId: null,
@@ -671,6 +673,45 @@ export default function GearListView({
             }, 300);
           },
       getItemsMap: () => itemsMap,
+      insertOptimistic: (targetCatId, insertPos, globalItem) => {
+        const tempId = `temp-${Date.now()}`;
+        const tempItem = {
+          _id: tempId,
+          globalItem: globalItem._id,
+          productId: globalItem.productId,
+          brand: globalItem.brand,
+          itemType: globalItem.itemType,
+          name: globalItem.name,
+          description: globalItem.description,
+          weight: globalItem.weight,
+          link: globalItem.link,
+          worn: globalItem.worn,
+          consumable: globalItem.consumable,
+          quantity: globalItem.quantity || 1,
+          hasOffer: globalItem.hasOffer,
+          position: insertPos,
+        };
+        setItemsMap((prev) => {
+          const catItems = [...(prev[targetCatId] || [])];
+          catItems.splice(insertPos, 0, tempItem);
+          return {
+            ...prev,
+            [targetCatId]: catItems.map((it, idx) => ({
+              ...it,
+              position: idx,
+            })),
+          };
+        });
+        setNewItemId(tempId);
+        setTimeout(() => setNewItemId(null), 400);
+      },
+      getPreviewWidth: () => {
+        if (viewMode === "list" && listContainerRef.current) {
+          return listContainerRef.current.clientWidth;
+        }
+        // Column mode: match SortableColumn width (w-90 = 344px mobile, sm:w-64 = 256px)
+        return window.innerWidth >= 640 ? 256 : 344;
+      },
     };
   });
 
@@ -1358,7 +1399,7 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
         }
       >
         {viewMode === "list" ? (
-          <div className="flex-1 overflow-y-auto px-2 py-2 sm:w-4/5 sm:mx-auto">
+          <div ref={listContainerRef} className="flex-1 overflow-y-auto px-2 py-2 sm:w-4/5 sm:mx-auto">
             {categories.map((cat) => (
               <SortableSection
                 key={cat._id}
@@ -1382,6 +1423,7 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
                 isLocked={isLocked}
                 reorderMode={reorderMode}
                 sidebarDragOver={sidebarDragOverCatId === cat._id}
+                newItemId={newItemId}
               />
             ))}
 
@@ -1445,6 +1487,7 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
                 isLocked={isLocked}
                 reorderMode={reorderMode}
                 sidebarDragOver={sidebarDragOverCatId === cat._id}
+                newItemId={newItemId}
               />
             ))}
 
@@ -1490,8 +1533,8 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
       <DragOverlay
         style={{ pointerEvents: "none", zIndex: 1000 }}
         dropAnimation={{
-          duration: 300,
-          easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)",
+          duration: 250,
+          easing: "cubic-bezier(0.22, 1, 0.36, 1)",
         }}
       >
         {activeItem ? (
