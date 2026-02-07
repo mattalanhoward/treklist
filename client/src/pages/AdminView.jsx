@@ -3173,10 +3173,10 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
     <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-50">
       <form
         onSubmit={handleSave}
-        className="bg-neutralAlt rounded-lg shadow-2xl max-w-2xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4"
+        className="bg-neutralAlt rounded-lg shadow-2xl max-w-2xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 max-h-[85vh] sm:max-h-[calc(100vh-5rem)] flex flex-col"
       >
-        {/* Header */}
-        <div className="flex justify-between items-center mb-2 sm:mb-3">
+        {/* Header - fixed at top */}
+        <div className="flex justify-between items-center mb-2 sm:mb-3 flex-shrink-0">
           <h2 className="text-xl font-semibold text-primary flex items-center gap-2">
             <FaUser />
             <span>User details</span>
@@ -3191,6 +3191,8 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
           </button>
         </div>
 
+        {/* Scrollable content area */}
+        <div className="flex-1 overflow-y-auto min-h-0">
         {loading && (
           <div className="text-sm text-primary/70">
             Loading user information…
@@ -3436,8 +3438,14 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
                 </div>
               )}
             </div>
-            {/* Actions */}
-            <div className="mt-3 flex items-center justify-between">
+          </>
+        )}
+        </div>
+
+        {/* Actions - fixed at bottom */}
+        {!loading && user && (
+          <>
+            <div className="mt-3 flex items-center justify-between flex-shrink-0">
               <button
                 type="button"
                 onClick={() => setConfirmDeleteOpen(true)}
@@ -3994,7 +4002,7 @@ function UsersSection() {
                         <td className="px-3 py-2 text-right align-top">
                           <div>{(u.catalogItemsCount ?? 0) + (u.customItemsCount ?? 0)}</div>
                           <div className="text-[10px] text-primary/70 mt-0.5">
-                            {u.catalogItemsCount ?? 0}c / {u.customItemsCount ?? 0}u
+                            {u.catalogItemsCount ?? 0} cat / {u.customItemsCount ?? 0} cust
                           </div>
                         </td>
                         <td className="px-3 py-2 align-top text-xs">
