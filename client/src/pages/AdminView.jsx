@@ -3021,6 +3021,28 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [confirmResendOpen, setConfirmResendOpen] = useState(false);
   const [resending, setResending] = useState(false);
+  const [sessionCount, setSessionCount] = useState(0);
+  const [revoking, setRevoking] = useState(false);
+  const [confirmRevokeOpen, setConfirmRevokeOpen] = useState(false);
+
+  const handleRevokeSessions = async () => {
+    if (!user) return;
+    setRevoking(true);
+    try {
+      await api.post(`/admin/users/${user._id}/revoke-sessions`);
+      setSessionCount(0);
+      toast.success("All sessions revoked.");
+    } catch (err) {
+      console.error("Revoke sessions failed", err);
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to revoke sessions.";
+      toast.error(msg);
+    } finally {
+      setRevoking(false);
+    }
+  };
 
   const handleResendVerification = async () => {
     if (!user) return;
@@ -3054,6 +3076,7 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
         setIsVerified(Boolean(data.user.isVerified));
         setIsAdmin(Boolean(data.user.isAdmin));
         setIsDisabled(Boolean(data.user.isDisabled));
+        setSessionCount(data.sessionCount ?? 0);
       } catch (err) {
         console.error("Failed to load user", err);
         const msg =
@@ -3122,6 +3145,24 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
     const d = new Date(val);
     if (Number.isNaN(d.getTime())) return "–";
     return d.toLocaleString();
+  };
+
+  const timeAgo = (val) => {
+    if (!val) return "Never";
+    const d = new Date(val);
+    if (Number.isNaN(d.getTime())) return "Never";
+    const seconds = Math.floor((Date.now() - d.getTime()) / 1000);
+    if (seconds < 60) return "Just now";
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    if (days < 30) return `${days}d ago`;
+    const months = Math.floor(days / 30);
+    if (months < 12) return `${months}mo ago`;
+    const years = Math.floor(months / 12);
+    return `${years}y ago`;
   };
 
   return (
@@ -3205,7 +3246,39 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
                   Last login
                 </label>
                 <div className="mt-0.5 text-sm text-primary bg-base-200 rounded px-2 py-1">
-                  {formatDateTime(user.lastLoginAt)}
+                  {user.lastLoginAt
+                    ? `${formatDateTime(user.lastLoginAt)} (${timeAgo(user.lastLoginAt)})`
+                    : "Never"}
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-medium text-primary mb-0.5">
+                  Auth providers
+                </label>
+                <div className="mt-0.5 flex flex-wrap gap-1">
+                  {user.authProviders && user.authProviders.length > 0 ? (
+                    user.authProviders.map((ap, i) => (
+                      <span
+                        key={i}
+                        className={
+                          "badge badge-sm " +
+                          (ap.provider === "google"
+                            ? "badge-secondary"
+                            : "badge-ghost")
+                        }
+                        title={
+                          ap.connectedAt
+                            ? `Connected ${new Date(ap.connectedAt).toLocaleDateString()}`
+                            : ""
+                        }
+                      >
+                        {ap.provider === "google" ? "Google" : "Email"}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="text-sm text-primary/60">None</span>
+                  )}
                 </div>
               </div>
 
@@ -3256,6 +3329,52 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
                   </button>
                 </div>
               )}
+
+              <div>
+                <label className="block font-medium text-primary mb-0.5">
+                  Active sessions
+                </label>
+                <div className="mt-0.5 flex items-center gap-2">
+                  <span className="text-sm text-primary bg-base-200 rounded px-2 py-1">
+                    {sessionCount}
+                  </span>
+                  {sessionCount > 0 && (
+                    <button
+                      type="button"
+                      className="btn btn-xs btn-outline"
+                      onClick={() => setConfirmRevokeOpen(true)}
+                      disabled={revoking}
+                    >
+                      {revoking ? "Revoking…" : "Revoke all"}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-medium text-primary mb-0.5">
+                  Marketing
+                </label>
+                <div className="mt-0.5 text-sm text-primary bg-base-200 rounded px-2 py-1">
+                  {user.marketing?.optedIn ? (
+                    <span>
+                      <span className="badge badge-xs badge-success mr-1">Opted in</span>
+                      {user.marketing.optedInAt && (
+                        <span className="text-primary/70 text-xs">
+                          on {new Date(user.marketing.optedInAt).toLocaleDateString()}
+                        </span>
+                      )}
+                      {user.marketing.optedInSource && (
+                        <span className="text-primary/70 text-xs">
+                          {" "}via {user.marketing.optedInSource}
+                        </span>
+                      )}
+                    </span>
+                  ) : (
+                    <span className="badge badge-xs badge-ghost">Not opted in</span>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* Lists summary */}
@@ -3348,6 +3467,20 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
                 handleResendVerification();
               }}
               onCancel={() => setConfirmResendOpen(false)}
+            />
+
+            {/* Revoke sessions confirm dialog */}
+            <ConfirmDialog
+              isOpen={confirmRevokeOpen}
+              title="Revoke all sessions?"
+              message={`This will log ${user?.email} out of all devices. They can log back in immediately.`}
+              confirmText="Revoke all"
+              cancelText="Cancel"
+              onConfirm={() => {
+                setConfirmRevokeOpen(false);
+                handleRevokeSessions();
+              }}
+              onCancel={() => setConfirmRevokeOpen(false)}
             />
 
             {/* Delete confirm dialog */}
@@ -3483,6 +3616,12 @@ function UsersSection() {
         if (av === bv) return 0;
         return (av - bv) * dir;
       }
+      case "marketing": {
+        const am = boolToNum(a.marketing?.optedIn);
+        const bm = boolToNum(b.marketing?.optedIn);
+        if (am === bm) return 0;
+        return (am - bm) * dir;
+      }
       case "lists": {
         const al = a.listsCount ?? 0;
         const bl = b.listsCount ?? 0;
@@ -3531,6 +3670,24 @@ function UsersSection() {
     const d = new Date(val);
     if (Number.isNaN(d.getTime())) return "–";
     return d.toLocaleDateString();
+  };
+
+  const timeAgo = (val) => {
+    if (!val) return "Never";
+    const d = new Date(val);
+    if (Number.isNaN(d.getTime())) return "Never";
+    const seconds = Math.floor((Date.now() - d.getTime()) / 1000);
+    if (seconds < 60) return "Just now";
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    const days = Math.floor(hours / 24);
+    if (days < 30) return `${days}d ago`;
+    const months = Math.floor(days / 30);
+    if (months < 12) return `${months}mo ago`;
+    const years = Math.floor(months / 12);
+    return `${years}y ago`;
   };
 
   const handleUserChanged = () => {
@@ -3750,6 +3907,17 @@ function UsersSection() {
                       <th className="text-left px-3 py-2 font-semibold">
                         Status
                       </th>
+                      <th
+                        className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
+                        onClick={() => handleSort("marketing")}
+                      >
+                        Marketing
+                        {sort.field === "marketing" && (
+                          <span className="ml-1 text-[10px]">
+                            {sort.dir === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
+                      </th>
                       <th className="text-right px-3 py-2 font-semibold">
                         Actions
                       </th>
@@ -3799,8 +3967,11 @@ function UsersSection() {
                         <td className="px-3 py-2 align-top text-xs">
                           {formatDate(u.createdAt)}
                         </td>
-                        <td className="px-3 py-2 align-top text-xs">
-                          {formatDate(u.lastLoginAt)}
+                        <td
+                          className="px-3 py-2 align-top text-xs"
+                          title={u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString() : ""}
+                        >
+                          {timeAgo(u.lastLoginAt)}
                         </td>
                         <td className="px-3 py-2 align-top">
                           <span
@@ -3810,6 +3981,18 @@ function UsersSection() {
                             }
                           >
                             {u.isDisabled ? "Disabled" : "Active"}
+                          </span>
+                        </td>
+                        <td className="px-3 py-2 align-top">
+                          <span
+                            className={
+                              "badge badge-xs " +
+                              (u.marketing?.optedIn
+                                ? "badge-success"
+                                : "badge-ghost")
+                            }
+                          >
+                            {u.marketing?.optedIn ? "Opted in" : "No"}
                           </span>
                         </td>
                         <td className="px-3 py-2 text-right align-top">

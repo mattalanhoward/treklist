@@ -119,15 +119,20 @@ router.get("/:id", async (req, res) => {
       return res.status(400).json({ message: "Invalid user id." });
     }
 
-    const user = await User.findById(id)
-      .select(
-        "-passwordHash -refreshTokens -verifyEmailToken -verifyEmailExpires -resetPasswordToken -resetPasswordExpires"
-      )
-      .lean();
+    const [user, tokenDoc] = await Promise.all([
+      User.findById(id)
+        .select(
+          "-passwordHash -refreshTokens -verifyEmailToken -verifyEmailExpires -resetPasswordToken -resetPasswordExpires"
+        )
+        .lean(),
+      User.findById(id).select("refreshTokens").lean(),
+    ]);
 
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
+
+    const sessionCount = tokenDoc?.refreshTokens?.length ?? 0;
 
     const lists = await GearList.find({ owner: id })
       .sort({ updatedAt: -1 })
@@ -138,6 +143,7 @@ router.get("/:id", async (req, res) => {
       user,
       lists,
       listsCount: lists.length,
+      sessionCount,
     });
   } catch (err) {
     console.error(`GET /api/admin/users/${req.params.id} error`, err);
@@ -311,6 +317,35 @@ router.post("/:id/resend-verification", async (req, res) => {
   } catch (err) {
     console.error(`POST /api/admin/users/${req.params.id}/resend-verification error`, err);
     res.status(500).json({ message: "Failed to send verification email." });
+  }
+});
+
+/**
+ * POST /api/admin/users/:id/revoke-sessions
+ * Revoke all refresh tokens without disabling the account
+ */
+router.post("/:id/revoke-sessions", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({ message: "Invalid user id." });
+    }
+
+    const user = await User.findById(id).select("_id");
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    await User.updateOne({ _id: id }, { $set: { refreshTokens: [] } });
+
+    res.json({ message: "All sessions revoked." });
+  } catch (err) {
+    console.error(
+      `POST /api/admin/users/${req.params.id}/revoke-sessions error`,
+      err
+    );
+    res.status(500).json({ message: "Failed to revoke sessions." });
   }
 });
 
