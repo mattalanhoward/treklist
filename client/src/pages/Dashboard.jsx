@@ -318,6 +318,7 @@ export default function Dashboard() {
         if (!newList?._id) return;
 
         await fetchLists();
+        window.dispatchEvent(new CustomEvent("global-items:updated"));
         localStorage.setItem("lastListId", newList._id);
         navigate(`/dashboard/${newList._id}`, { replace: true });
 
