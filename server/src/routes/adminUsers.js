@@ -77,25 +77,63 @@ router.get("/", async (req, res) => {
       User.countDocuments(query),
     ]);
 
-    // Compute listsCount per user (single aggregate over GearList)
+    // Compute listsCount and item counts per user
     const userIds = users.map((u) => u._id);
     let listCountsByUserId = {};
+    let itemCountsByUserId = {};
     if (userIds.length > 0) {
-      const listCounts = await GearList.aggregate([
-        { $match: { owner: { $in: userIds } } },
-        { $group: { _id: "$owner", count: { $sum: 1 } } },
+      const [listCounts, itemCounts] = await Promise.all([
+        GearList.aggregate([
+          { $match: { owner: { $in: userIds } } },
+          { $group: { _id: "$owner", count: { $sum: 1 } } },
+        ]),
+        GearList.aggregate([
+          { $match: { owner: { $in: userIds } } },
+          {
+            $lookup: {
+              from: "gearitems",
+              localField: "_id",
+              foreignField: "gearList",
+              as: "items",
+            },
+          },
+          {
+            $unwind: "$items",
+          },
+          {
+            $group: {
+              _id: "$owner",
+              catalog: {
+                $sum: { $cond: [{ $ifNull: ["$items.productId", false] }, 1, 0] },
+              },
+              custom: {
+                $sum: { $cond: [{ $ifNull: ["$items.productId", false] }, 0, 1] },
+              },
+            },
+          },
+        ]),
       ]);
 
       listCountsByUserId = listCounts.reduce((acc, row) => {
         acc[String(row._id)] = row.count;
         return acc;
       }, {});
+
+      itemCountsByUserId = itemCounts.reduce((acc, row) => {
+        acc[String(row._id)] = { catalog: row.catalog, custom: row.custom };
+        return acc;
+      }, {});
     }
 
-    const enrichedUsers = users.map((u) => ({
-      ...u,
-      listsCount: listCountsByUserId[String(u._id)] || 0,
-    }));
+    const enrichedUsers = users.map((u) => {
+      const ic = itemCountsByUserId[String(u._id)] || { catalog: 0, custom: 0 };
+      return {
+        ...u,
+        listsCount: listCountsByUserId[String(u._id)] || 0,
+        catalogItemsCount: ic.catalog,
+        customItemsCount: ic.custom,
+      };
+    });
 
     res.json({
       users: enrichedUsers,
@@ -119,25 +157,48 @@ router.get("/:id", async (req, res) => {
       return res.status(400).json({ message: "Invalid user id." });
     }
 
-    const user = await User.findById(id)
-      .select(
-        "-passwordHash -refreshTokens -verifyEmailToken -verifyEmailExpires -resetPasswordToken -resetPasswordExpires"
-      )
-      .lean();
+    const [user, tokenDoc] = await Promise.all([
+      User.findById(id)
+        .select(
+          "-passwordHash -refreshTokens -verifyEmailToken -verifyEmailExpires -resetPasswordToken -resetPasswordExpires"
+        )
+        .lean(),
+      User.findById(id).select("refreshTokens").lean(),
+    ]);
 
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
+
+    const sessionCount = tokenDoc?.refreshTokens?.length ?? 0;
 
     const lists = await GearList.find({ owner: id })
       .sort({ updatedAt: -1 })
       .select("title createdAt updatedAt region")
       .lean();
 
+    const listIds = lists.map((l) => l._id);
+    let catalogItemsCount = 0;
+    let customItemsCount = 0;
+    if (listIds.length > 0) {
+      const [catalog, total] = await Promise.all([
+        GearItem.countDocuments({
+          gearList: { $in: listIds },
+          productId: { $ne: null },
+        }),
+        GearItem.countDocuments({ gearList: { $in: listIds } }),
+      ]);
+      catalogItemsCount = catalog;
+      customItemsCount = total - catalog;
+    }
+
     res.json({
       user,
       lists,
       listsCount: lists.length,
+      catalogItemsCount,
+      customItemsCount,
+      sessionCount,
     });
   } catch (err) {
     console.error(`GET /api/admin/users/${req.params.id} error`, err);
@@ -311,6 +372,35 @@ router.post("/:id/resend-verification", async (req, res) => {
   } catch (err) {
     console.error(`POST /api/admin/users/${req.params.id}/resend-verification error`, err);
     res.status(500).json({ message: "Failed to send verification email." });
+  }
+});
+
+/**
+ * POST /api/admin/users/:id/revoke-sessions
+ * Revoke all refresh tokens without disabling the account
+ */
+router.post("/:id/revoke-sessions", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({ message: "Invalid user id." });
+    }
+
+    const user = await User.findById(id).select("_id");
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    await User.updateOne({ _id: id }, { $set: { refreshTokens: [] } });
+
+    res.json({ message: "All sessions revoked." });
+  } catch (err) {
+    console.error(
+      `POST /api/admin/users/${req.params.id}/revoke-sessions error`,
+      err
+    );
+    res.status(500).json({ message: "Failed to revoke sessions." });
   }
 });
 
