@@ -1,6 +1,7 @@
 // src/pages/GearListView.jsx
 import React, { useState, useEffect, useCallback } from "react";
-import { FaPlus, FaEllipsisH, FaCheck, FaLock, FaUnlock } from "react-icons/fa";
+import { FaPlus, FaEllipsisH, FaCheck, FaLock, FaUnlock, FaInfoCircle } from "react-icons/fa";
+import { FaArrowUpFromBracket } from "react-icons/fa6";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { DragOverlay } from "@dnd-kit/core";
@@ -1150,12 +1151,30 @@ export default function GearListView({
             )}
           </div>
 
-          {/* Reorder + Lock + Ellipsis menu grouped together */}
-          <div className="flex items-center space-x-2">
+          {/* Share + Details + Lock + Ellipsis menu grouped together */}
+          <div className="flex items-center gap-4">
+            {/* Share button - desktop only */}
+            <button
+              onClick={() => setShareOpen(true)}
+              className="hidden sm:inline-flex items-center justify-center text-primaryAlt hover:text-primaryAlt/80 leading-none"
+              aria-label={t("gearList.menu.shareList")}
+            >
+              <FaArrowUpFromBracket />
+            </button>
+
+            {/* Details button - desktop only */}
+            <button
+              onClick={() => setShowDetailsModal(true)}
+              className="hidden sm:inline-flex items-center justify-center text-primaryAlt hover:text-primaryAlt/80 leading-none"
+              aria-label={t("gearList.menu.viewEditDetails")}
+            >
+              <FaInfoCircle />
+            </button>
+
             {/* Lock toggle button - desktop only */}
             <button
               onClick={handleToggleLock}
-              className="hidden sm:inline-flex items-center justify-center text-l text-primaryAlt hover:text-primaryAlt/80 leading-none p-2 -m-2 rounded-lg"
+              className="hidden sm:inline-flex items-center justify-center text-primaryAlt hover:text-primaryAlt/80 leading-none"
               aria-label={
                 isLocked
                   ? t("gearList.menu.unlockListA11y")
@@ -1171,7 +1190,7 @@ export default function GearListView({
               <button
                 data-tour="list-preferences-menu"
                 onMouseEnter={preloadBackgroundThumbs}
-                className="inline-flex items-center justify-center text-l text-primaryAlt hover:text-primaryAlt/80 leading-none p-2 -m-2 rounded-lg"
+                className="inline-flex items-center justify-center text-primaryAlt hover:text-primaryAlt/80 leading-none"
                 aria-label={t("gearList.menu.listOptionsA11y")}
               >
                 <FaEllipsisH />
