@@ -1,6 +1,6 @@
 // src/pages/GearListView.jsx
 import React, { useState, useEffect, useCallback } from "react";
-import { FaPlus, FaEllipsisH, FaCheck, FaLock, FaUnlock, FaArrowsAlt } from "react-icons/fa";
+import { FaPlus, FaEllipsisH, FaCheck, FaLock, FaUnlock } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { DragOverlay } from "@dnd-kit/core";
@@ -99,13 +99,6 @@ export default function GearListView({
   // Lock state to prevent accidental edits
   const [isLocked, setIsLocked] = useState(list.isLocked || false);
 
-  // Reorder mode for mobile drag-and-drop
-  const [reorderMode, setReorderMode] = useState(false);
-
-  // Exit reorder mode when list changes or gets locked
-  useEffect(() => {
-    setReorderMode(false);
-  }, [listId, isLocked]);
 
   // Prevent "stale list prop" from overwriting optimistic background changes.
   // We keep showing the optimistic value until the server (list prop) catches up.
@@ -1158,25 +1151,6 @@ export default function GearListView({
 
           {/* Reorder + Lock + Ellipsis menu grouped together */}
           <div className="flex items-center space-x-2">
-            {/* Reorder toggle button - mobile only, hidden when locked */}
-            {!isLocked && (
-              <button
-                onClick={() => setReorderMode((m) => !m)}
-                className={`sm:hidden inline-flex items-center justify-center text-l leading-none p-2 -m-2 rounded-lg ${
-                  reorderMode
-                    ? "text-secondary"
-                    : "text-primaryAlt hover:text-primaryAlt/80"
-                }`}
-                aria-label={
-                  reorderMode
-                    ? t("gearList.menu.exitReorderA11y", "Exit reorder mode")
-                    : t("gearList.menu.reorderA11y", "Reorder items")
-                }
-              >
-                <FaArrowsAlt />
-              </button>
-            )}
-
             {/* Lock toggle button - desktop only */}
             <button
               onClick={handleToggleLock}
@@ -1421,7 +1395,7 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
                 viewMode={viewMode}
                 onItemUpdated={refreshListAfterEdit}
                 isLocked={isLocked}
-                reorderMode={reorderMode}
+
                 sidebarDragOver={sidebarDragOverCatId === cat._id}
                 newItemId={newItemId}
               />
@@ -1485,7 +1459,7 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
                 viewMode={viewMode}
                 onItemUpdated={refreshListAfterEdit}
                 isLocked={isLocked}
-                reorderMode={reorderMode}
+
                 sidebarDragOver={sidebarDragOverCatId === cat._id}
                 newItemId={newItemId}
               />

@@ -30,7 +30,7 @@ export default function SortableItem({
   onQuantityChange,
   onItemUpdated,
   isLocked,
-  reorderMode = false,
+
 }) {
   const { t } = useTranslation("common");
   const [wornLocal, setWornLocal] = useState(item.worn);
@@ -234,18 +234,8 @@ export default function SortableItem({
       <div
         className={`${twoRowVisibilityClasses} grid grid-rows-[auto_auto] gap-y-1 gap-x-2 text-sm`}
       >
-        {/* Row 1: drag handle (reorder mode) + type + name/brand + actions */}
+        {/* Row 1: type + name/brand + actions */}
         <div className="row-start-1 col-span-2 flex items-center justify-between space-x-2 overflow-x-hidden">
-          {/* Drag handle - only visible in reorder mode */}
-          {reorderMode && (
-            <div
-              className="cursor-grab text-secondary flex-shrink-0"
-              {...attributes}
-              {...listeners}
-            >
-              <FaGripVertical />
-            </div>
-          )}
           {/* Text block gets the overflow handling, not the whole row */}
           <div className="flex items-center space-x-1 overflow-hidden min-w-0">
             <button
@@ -266,8 +256,7 @@ export default function SortableItem({
               {item.name}
             </button>
           </div>
-          {/* Action buttons - hidden in reorder mode */}
-          {!reorderMode && !isLocked && (
+          {!isLocked && (
             <div className="flex items-center gap-1 flex-shrink-0">
               <button
                 type="button"
@@ -326,9 +315,8 @@ export default function SortableItem({
         >
           {/* 1) Drag */}
           <div
-            className="cursor-grab hide-on-touch justify-self-center text-secondary"
-            {...attributes}
-            {...listeners}
+            className={`hide-on-touch justify-self-center text-secondary ${isLocked ? "invisible" : "cursor-grab"}`}
+            {...(isLocked ? {} : { ...attributes, ...listeners })}
           >
             <FaGripVertical />
           </div>
@@ -422,9 +410,8 @@ export default function SortableItem({
           {/* Row 1: Drag · Type · Delete */}
           <div className="grid grid-cols-[auto_1fr_auto] items-center">
             <div
-              className="cursor-grab hide-on-touch text-secondary"
-              {...attributes}
-              {...listeners}
+              className={`hide-on-touch text-secondary ${isLocked ? "invisible" : "cursor-grab"}`}
+              {...(isLocked ? {} : { ...attributes, ...listeners })}
             >
               <FaGripVertical />
             </div>

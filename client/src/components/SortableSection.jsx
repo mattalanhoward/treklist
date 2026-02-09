@@ -33,7 +33,7 @@ export default function SortableSection({
   onMoveItem,
   onItemUpdated,
   isLocked,
-  reorderMode = false,
+
   sidebarDragOver = false,
   newItemId,
 }) {
@@ -72,9 +72,8 @@ export default function SortableSection({
     >
       <div className="flex items-center mb-3 min-w-0">
         <FaGripVertical
-          {...attributes}
-          {...listeners}
-          className="hide-on-touch mr-2 cursor-grab text-primaryAlt"
+          {...(isLocked ? {} : { ...attributes, ...listeners })}
+          className={`hide-on-touch mr-2 text-primaryAlt ${isLocked ? "invisible" : "cursor-grab"}`}
         />
 
         {editingCatId === catId && !isLocked ? (
@@ -144,7 +143,7 @@ export default function SortableSection({
                 onMoveItem={onMoveItem}
                 onItemUpdated={onItemUpdated}
                 isLocked={isLocked}
-                reorderMode={reorderMode}
+
               />
             </div>
           ))}

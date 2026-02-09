@@ -32,7 +32,7 @@ export default function SortableColumn({
   onMoveItem,
   onItemUpdated,
   isLocked,
-  reorderMode = false,
+
   sidebarDragOver = false,
   newItemId,
 }) {
@@ -66,9 +66,8 @@ export default function SortableColumn({
     >
       <div className="flex items-center mb-2">
         <FaGripVertical
-          {...attributes}
-          {...listeners}
-          className="hide-on-touch mr-2 cursor-grab text-primaryAlt"
+          {...(isLocked ? {} : { ...attributes, ...listeners })}
+          className={`hide-on-touch mr-2 text-primaryAlt ${isLocked ? "invisible" : "cursor-grab"}`}
         />
         {editingCatId === catId && !isLocked ? (
           <input
@@ -136,7 +135,7 @@ export default function SortableColumn({
                 onMoveItem={onMoveItem}
                 onItemUpdated={onItemUpdated}
                 isLocked={isLocked}
-                reorderMode={reorderMode}
+
               />
             </div>
           ))}
