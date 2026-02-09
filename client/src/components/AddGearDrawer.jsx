@@ -245,9 +245,9 @@ function ImportTab({ onImported }) {
       />
 
       {/* Filters row */}
-      <div className="flex gap-2 mb-2">
+      <div className="flex gap-2 mb-2 overflow-hidden">
         <select
-          className="flex-1 border border-primary rounded px-2 py-1 text-primary bg-base-100 text-sm"
+          className="flex-1 min-w-0 border border-primary rounded px-2 py-1 text-primary bg-base-100 text-sm"
           value={categoryFilter}
           onChange={(e) => {
             setCategoryFilter(e.target.value);
@@ -265,7 +265,7 @@ function ImportTab({ onImported }) {
         </select>
 
         <select
-          className="flex-1 border border-primary rounded px-2 py-1 text-primary bg-base-100 text-sm"
+          className="flex-1 min-w-0 border border-primary rounded px-2 py-1 text-primary bg-base-100 text-sm"
           value={subcategoryFilter}
           onChange={(e) => setSubcategoryFilter(e.target.value)}
           disabled={categoryFilter === "all" && subcategories.length === 0}
@@ -281,7 +281,7 @@ function ImportTab({ onImported }) {
         </select>
 
         <select
-          className="flex-1 border border-primary rounded px-2 py-1 text-primary bg-base-100 text-sm"
+          className="flex-1 min-w-0 border border-primary rounded px-2 py-1 text-primary bg-base-100 text-sm"
           value={brandFilter}
           onChange={(e) => setBrandFilter(e.target.value)}
         >
@@ -623,7 +623,7 @@ export default function AddGearDrawer({ isOpen, onClose, onItemsChanged }) {
   return (
     <>
       {/* Mobile: full-screen overlay */}
-      <div className="sm:hidden fixed inset-0 bg-base-100 z-40 flex flex-col">
+      <div className="sm:hidden fixed inset-0 bg-base-100 z-[70] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-primary/10">
           <h2 className="text-lg font-semibold text-primary">
