@@ -351,6 +351,7 @@ export default function GearListView({
 
     try {
       await api.patch(`/dashboard/${listId}/lock`, { isLocked: newLocked });
+      onRefresh?.();
       toast.success(
         newLocked
           ? t("gearList.toasts.listLocked")
