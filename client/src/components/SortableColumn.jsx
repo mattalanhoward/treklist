@@ -32,7 +32,9 @@ export default function SortableColumn({
   onMoveItem,
   onItemUpdated,
   isLocked,
-  reorderMode = false,
+
+  sidebarDragOver = false,
+  newItemId,
 }) {
   const { t } = useTranslation("common");
   const scrollRef = useScrollPreserver(items);
@@ -60,13 +62,12 @@ export default function SortableColumn({
       data-tour="gearlist-category"
       ref={setNodeRef}
       style={style}
-      className="snap-center flex-shrink-0 my-0 mx-2 w-90 sm:w-64 bg-neutral rounded-lg p-3 flex flex-col self-start max-h-full"
+      className={`snap-center flex-shrink-0 my-0 mx-2 w-90 sm:w-64 bg-neutral rounded-lg p-3 flex flex-col self-start max-h-full transition-shadow ${sidebarDragOver ? "ring-2 ring-secondary" : ""}`}
     >
       <div className="flex items-center mb-2">
         <FaGripVertical
-          {...attributes}
-          {...listeners}
-          className="hide-on-touch mr-2 cursor-grab text-primaryAlt"
+          {...(isLocked ? {} : { ...attributes, ...listeners })}
+          className={`hide-on-touch mr-2 text-primaryAlt ${isLocked ? "invisible" : "cursor-grab"}`}
         />
         {editingCatId === catId && !isLocked ? (
           <input
@@ -117,22 +118,26 @@ export default function SortableColumn({
       >
         <div ref={scrollRef} className="overflow-y-auto mb-2 space-y-2">
           {items.map((item) => (
-            <SortableItem
+            <div
               key={`cat-${catId}-item-${item._id}`}
-              item={item}
-              fetchItems={fetchItems}
-              listId={listId}
-              catId={catId}
-              isListMode={viewMode === "list"}
-              onDelete={onDeleteItem}
-              onToggleWorn={onToggleWorn}
-              onToggleConsumable={onToggleConsumable}
-              onQuantityChange={onQuantityChange}
-              onMoveItem={onMoveItem}
-              onItemUpdated={onItemUpdated}
-              isLocked={isLocked}
-              reorderMode={reorderMode}
-            />
+              className={item._id === newItemId ? "item-enter" : ""}
+            >
+              <SortableItem
+                item={item}
+                fetchItems={fetchItems}
+                listId={listId}
+                catId={catId}
+                isListMode={viewMode === "list"}
+                onDelete={onDeleteItem}
+                onToggleWorn={onToggleWorn}
+                onToggleConsumable={onToggleConsumable}
+                onQuantityChange={onQuantityChange}
+                onMoveItem={onMoveItem}
+                onItemUpdated={onItemUpdated}
+                isLocked={isLocked}
+
+              />
+            </div>
           ))}
         </div>
       </SortableContext>

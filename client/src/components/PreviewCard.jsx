@@ -4,8 +4,8 @@ import {
   FaGripVertical,
   FaUtensils,
   FaTshirt,
-  FaEllipsisH,
   FaShoppingCart,
+  FaTrash,
 } from "react-icons/fa";
 
 export default function PreviewCard({ item, viewMode, width }) {
@@ -18,64 +18,63 @@ export default function PreviewCard({ item, viewMode, width }) {
   const weightText =
     item.weight != null && item.weight !== "" ? `${item.weight} g` : "";
   const qty = item.quantity ?? 1;
+  const isListMode = viewMode === "list";
+  const twoRowVisibilityClasses = isListMode ? "xl:hidden" : "sm:hidden";
 
-  // ─────────── LIST MODE PREVIEW ───────────
-  if (viewMode === "list") {
-    return (
-      <>
-        {/* Mobile / tablet: two-row layout (matches SortableItem mobile/list) */}
-        <div
-          style={ghostStyles}
-          className="xl:hidden bg-base-100 px-3 py-2 rounded shadow mb-2 grid grid-rows-[auto_auto] gap-y-1 gap-x-2 text-sm"
-        >
-          {/* Row 1: grip · type · brand/name · ellipsis */}
-          <div className="row-start-1 col-span-2 flex items-center justify-between space-x-2 overflow-x-hidden">
-            <div className="flex items-center space-x-2 overflow-hidden min-w-0">
-              <FaGripVertical className="shrink-0 text-secondary" />
-              <div className="font-semibold text-primary flex-shrink-0">
-                {item.itemType || "—"}
-              </div>
-              <div className="truncate text-primary flex-1 min-w-0">
-                {item.brand && <span className="mr-1">{item.brand}</span>}
-                {item.name}
-              </div>
+  return (
+    <div style={ghostStyles} className="bg-base-100 px-3 sm:px-1 rounded shadow mb-2">
+      {/* ========== MOBILE (both list/column collapse to this) ========== */}
+      <div
+        className={`${twoRowVisibilityClasses} grid grid-rows-[auto_auto] gap-y-1 gap-x-2 text-sm`}
+      >
+        {/* Row 1: grip · type · brand/name · trash */}
+        <div className="row-start-1 col-span-2 flex items-center justify-between space-x-2 overflow-x-hidden">
+          <div className="flex items-center space-x-1 overflow-hidden min-w-0">
+            <div className="font-semibold text-primary flex-shrink-0" style={{ fontSize: 14 }}>
+              {item.itemType || "—"}
             </div>
-            <span className="inline-flex items-center justify-center h-6 w-6 text-secondary">
-              <FaEllipsisH className="w-4 h-4" />
-            </span>
+            <div
+              className="truncate text-primary flex-1 min-w-0 text-left"
+              style={{ fontSize: 14 }}
+            >
+              {item.brand && <span className="mr-1">{item.brand}</span>}
+              {item.name}
+            </div>
           </div>
-
-          {/* Row 2: left (weight) · right (🍴 👕 qty 🛒) */}
-          <div className="row-start-2 col-span-2 grid grid-cols-[1fr_auto] items-center">
-            <div className="grid grid-cols-[70px_75px] text-primary">
-              <span className="tabular-nums text-left">{weightText}</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <FaUtensils
-                className={
-                  item.consumable
-                    ? "text-green-600"
-                    : "opacity-30 text-secondary"
-                }
-              />
-              <FaTshirt
-                className={
-                  item.worn ? "text-blue-600" : "opacity-30 text-secondary"
-                }
-              />
-              <span className="text-xs text-primary tabular-nums">× {qty}</span>
-              <FaShoppingCart className="h-4 w-4 text-secondary" />
-            </div>
+          <div className="flex items-center gap-1 flex-shrink-0">
+            <span className="p-1 text-primary/60">
+              <FaTrash className="text-sm" />
+            </span>
           </div>
         </div>
 
-        {/* Desktop: wide row (matches SortableItem list row) */}
+        {/* Row 2: left (weight) · right (🍴 👕 qty 🛒) */}
+        <div className="row-start-2 col-span-2 grid grid-cols-[1fr_auto] items-center">
+          <div className="grid grid-cols-[70px_75px] text-primary">
+            <span className="tabular-nums text-left">{weightText}</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <FaUtensils
+              className={
+                item.consumable ? "text-green-600" : "opacity-30"
+              }
+            />
+            <FaTshirt
+              className={
+                item.worn ? "text-blue-600" : "opacity-30"
+              }
+            />
+            <span className="select-none px-1">{qty}</span>
+            <FaShoppingCart className="w-4 h-4 text-secondary" />
+          </div>
+        </div>
+      </div>
+
+      {/* ========== DESKTOP LIST MODE (single row) ========== */}
+      {isListMode && (
         <div
-          style={ghostStyles}
           className="hidden xl:grid items-center text-sm
-            bg-base-100 px-3 py-2 rounded shadow mb-2
-            grid-cols-[32px,120px,minmax(260px,1fr),96px,112px,24px,24px,48px,24px,24px]
-            gap-x-2"
+            grid-cols-[32px,160px,minmax(260px,1fr),96px,24px,24px,24px,48px,24px] gap-x-2"
         >
           {/* 1) Drag handle */}
           <div className="cursor-grab justify-self-center text-secondary">
@@ -83,12 +82,18 @@ export default function PreviewCard({ item, viewMode, width }) {
           </div>
 
           {/* 2) Item type */}
-          <div className="font-semibold text-primary truncate">
+          <div
+            className="font-semibold text-primary truncate text-left"
+            style={{ fontSize: 14 }}
+          >
             {item.itemType || "—"}
           </div>
 
           {/* 3) Brand / Name */}
-          <div className="truncate text-primary">
+          <div
+            className="truncate text-primary text-left"
+            style={{ fontSize: 14 }}
+          >
             {item.brand && <span className="mr-1">{item.brand}</span>}
             {item.name}
           </div>
@@ -98,141 +103,101 @@ export default function PreviewCard({ item, viewMode, width }) {
             {weightText}
           </div>
 
-          {/* 6) Consumable */}
+          {/* 5) Consumable */}
           <div className="justify-self-center">
             <FaUtensils
               className={
-                item.consumable ? "text-green-600" : "opacity-30 text-secondary"
+                item.consumable ? "text-green-600" : "opacity-30"
               }
             />
           </div>
 
-          {/* 7) Worn */}
+          {/* 6) Worn */}
           <div className="justify-self-center">
             <FaTshirt
               className={
-                item.worn ? "text-blue-600" : "opacity-30 text-secondary"
+                item.worn ? "text-blue-600" : "opacity-30"
               }
             />
           </div>
 
-          {/* 8) Qty */}
-          <div className="justify-self-center tabular-nums text-primary">
-            {qty}
+          {/* 7) Qty */}
+          <div className="justify-self-center">
+            <span className="select-none px-1">{qty}</span>
           </div>
 
-          {/* 9) Cart */}
-          <div className="justify-self-center text-secondary">
-            <FaShoppingCart className="w-4 h-4" />
+          {/* 8) Cart */}
+          <div className="justify-self-center">
+            <FaShoppingCart className="w-4 h-4 text-secondary" />
           </div>
 
-          {/* 10) Ellipsis */}
-          <div className="justify-self-center text-secondary">
-            <FaEllipsisH className="w-4 h-4" />
+          {/* 9) Delete */}
+          <div className="place-self-center mr-3.5">
+            <span className="p-1 text-primary/60">
+              <FaTrash className="text-sm" />
+            </span>
           </div>
         </div>
-      </>
-    );
-  }
+      )}
 
-  // ─────────── COLUMN MODE PREVIEW (CARD) ───────────
-  return (
-    <>
-      {/* Mobile: same 2-row layout as SortableItem mobile/column */}
-      <div
-        style={ghostStyles}
-        className="sm:hidden bg-base-100 px-3 py-2 rounded shadow mb-2 grid grid-rows-[auto_auto] gap-y-1 gap-x-2 text-sm"
-      >
-        <div className="row-start-1 col-span-2 flex items-center justify-between space-x-2 overflow-x-hidden">
-          <div className="flex items-center space-x-2 overflow-hidden min-w-0">
-            <FaGripVertical className="shrink-0 text-secondary" />
-            <div className="font-semibold text-primary flex-shrink-0">
+      {/* ========== DESKTOP COLUMN MODE (3 rows) ========== */}
+      {!isListMode && (
+        <div className="hidden sm:grid bg-base-100 px-2 grid-rows-[auto_auto_auto]">
+          {/* Row 1: Drag · Type · Delete */}
+          <div className="grid grid-cols-[auto_1fr_auto] items-center">
+            <div className="cursor-grab text-secondary">
+              <FaGripVertical />
+            </div>
+            <div
+              className="font-semibold text-primary px-2 text-left"
+              style={{ fontSize: 14 }}
+            >
               {item.itemType || "—"}
             </div>
-            <div className="truncate text-primary flex-1 min-w-0">
+            <div className="-mr-0.5">
+              <span className="text-primary/60">
+                <FaTrash className="text-sm" />
+              </span>
+            </div>
+          </div>
+
+          {/* Row 2: Brand/Name */}
+          <div className="grid grid-cols-[1fr] items-center">
+            <div
+              className="truncate text-primary text-left"
+              style={{ fontSize: 14 }}
+            >
               {item.brand && <span className="mr-1">{item.brand}</span>}
               {item.name}
             </div>
           </div>
-          <span className="inline-flex items-center justify-center h-6 w-6 text-secondary">
-            <FaEllipsisH className="w-4 h-4" />
-          </span>
-        </div>
 
-        <div className="row-start-2 col-span-2 grid grid-cols-[1fr_auto] items-center">
-          <div className="grid grid-cols-[70px_75px] text-primary">
-            <span className="tabular-nums text-left">{weightText}</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <FaUtensils
-              className={
-                item.consumable ? "text-green-600" : "opacity-30 text-secondary"
-              }
-            />
-            <FaTshirt
-              className={
-                item.worn ? "text-blue-600" : "opacity-30 text-secondary"
-              }
-            />
-            <span className="text-xs text-primary tabular-nums">× {qty}</span>
-            <FaShoppingCart className="h-4 w-4 text-secondary" />
-          </div>
-        </div>
-      </div>
-
-      {/* Desktop column card (matches SortableItem column layout) */}
-      <div
-        style={ghostStyles}
-        className="hidden sm:grid bg-base-100 px-2 rounded shadow mb-2 grid-rows-[auto_auto_auto]"
-      >
-        {/* Row 1: grip · type · ellipsis */}
-        <div className="grid grid-cols-[auto_1fr_auto] items-center">
-          <div className="cursor-grab text-secondary">
-            <FaGripVertical />
-          </div>
-          <div className="font-semibold text-primary px-2">
-            {item.itemType || "—"}
-          </div>
-          <span className="inline-flex items-center justify-center h-6 w-6 text-secondary">
-            <FaEllipsisH className="w-4 h-4" />
-          </span>
-        </div>
-
-        {/* Row 2: brand · name */}
-        <div className="grid grid-cols-[1fr] items-center">
-          <div className="truncate text-sm text-primary">
-            {item.brand && (
-              <span className="font-medium mr-1">{item.brand}</span>
-            )}
-            {item.name}
+          {/* Row 3: Left (weight) — Right (🍴 · 👕 · Qty · 🛒) */}
+          <div className="grid grid-cols-[1fr_auto] items-center">
+            <div className="flex items-center space-x-3">
+              <span className="text-sm text-primary tabular-nums">
+                {weightText}
+              </span>
+            </div>
+            <div className="grid grid-cols-[16px_16px_auto_16px] items-center justify-end gap-x-3">
+              <FaUtensils
+                className={
+                  item.consumable ? "text-green-600" : "opacity-30"
+                }
+              />
+              <FaTshirt
+                className={
+                  item.worn ? "text-blue-600" : "opacity-30"
+                }
+              />
+              <span className="flex items-center justify-center border rounded px-2 py-0.5 bg-neutral text-sm text-primary">
+                {qty}
+              </span>
+              <FaShoppingCart className="w-4 h-4 text-secondary" />
+            </div>
           </div>
         </div>
-
-        {/* Row 3: left (weight) — right (🍴 👕 qty 🛒) */}
-        <div className="grid grid-cols-[1fr_auto] items-center">
-          <div className="flex items-center space-x-3">
-            <span className="text-sm text-primary tabular-nums">
-              {weightText}
-            </span>
-          </div>
-          <div className="grid grid-cols-[16px_16px_auto_16px] items-center justify-end gap-x-3">
-            <FaUtensils
-              className={
-                item.consumable ? "text-green-600" : "opacity-30 text-secondary"
-              }
-            />
-            <FaTshirt
-              className={
-                item.worn ? "text-blue-600" : "opacity-30 text-secondary"
-              }
-            />
-            <span className="flex items-center justify-center border rounded px-2 py-0.5 bg-neutral text-sm text-primary">
-              {qty}
-            </span>
-            <FaShoppingCart className="w-4 h-4 text-secondary" />
-          </div>
-        </div>
-      </div>
-    </>
+      )}
+    </div>
   );
 }

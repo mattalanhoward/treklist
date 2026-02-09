@@ -118,6 +118,7 @@
     "noGearItems": "Geen uitrusting",
     "mustSelectListFirst": "Kies of maak eerst een lijst met ten minste één categorie.",
     "addToListFailed": "Item kon niet aan je lijst worden toegevoegd.",
+    "itemAlreadyInList": "Dit item staat al in je lijst. Gebruik het aantal-veld om meer toe te voegen.",
     "editGlobalTemplate": "Globaal sjabloon bewerken"
   },
   "auth": {

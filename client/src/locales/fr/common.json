@@ -117,7 +117,8 @@
     "searchGearPlaceholder": "Rechercher des articles",
     "noGearItems": "Aucun article",
     "mustSelectListFirst": "Choisissez ou créez d’abord une liste avec au moins une catégorie.",
-    "addToListFailed": "Échec de l’ajout de l’article à votre liste.",
+    "addToListFailed": "Échec de l'ajout de l'article à votre liste.",
+    "itemAlreadyInList": "Cet article est déjà dans votre liste. Utilisez le champ quantité pour en ajouter.",
     "editGlobalTemplate": "Modifier le modèle global"
   },
   "auth": {

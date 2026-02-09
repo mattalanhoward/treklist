@@ -118,6 +118,7 @@
     "noGearItems": "Keine Ausrüstung",
     "mustSelectListFirst": "Wähle oder erstelle zuerst eine Liste mit mindestens einer Kategorie.",
     "addToListFailed": "Element konnte nicht zu deiner Liste hinzugefügt werden.",
+    "itemAlreadyInList": "Dieses Element ist bereits in deiner Liste. Verwende das Mengenfeld, um mehr hinzuzufügen.",
     "editGlobalTemplate": "Globale Vorlage bearbeiten"
   },
   "auth": {

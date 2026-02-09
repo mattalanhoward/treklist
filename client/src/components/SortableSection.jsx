@@ -33,7 +33,9 @@ export default function SortableSection({
   onMoveItem,
   onItemUpdated,
   isLocked,
-  reorderMode = false,
+
+  sidebarDragOver = false,
+  newItemId,
 }) {
   const { t } = useTranslation("common");
   const filtered = useMemo(
@@ -66,13 +68,12 @@ export default function SortableSection({
     <section
       ref={setNodeRef}
       style={style}
-      className="bg-neutral rounded-lg p-4 mb-6"
+      className={`bg-neutral rounded-lg p-4 mb-6 transition-shadow ${sidebarDragOver ? "ring-2 ring-secondary" : ""}`}
     >
       <div className="flex items-center mb-3 min-w-0">
         <FaGripVertical
-          {...attributes}
-          {...listeners}
-          className="hide-on-touch mr-2 cursor-grab text-primaryAlt"
+          {...(isLocked ? {} : { ...attributes, ...listeners })}
+          className={`hide-on-touch mr-2 text-primaryAlt ${isLocked ? "invisible" : "cursor-grab"}`}
         />
 
         {editingCatId === catId && !isLocked ? (
@@ -125,22 +126,26 @@ export default function SortableSection({
       >
         <div>
           {filtered.map((item) => (
-            <SortableItem
+            <div
               key={`cat-${catId}-item-${item._id}`}
-              item={item}
-              fetchItems={fetchItems}
-              listId={listId}
-              catId={catId}
-              isListMode={viewMode === "list"}
-              onDelete={onDeleteItem}
-              onToggleWorn={onToggleWorn}
-              onToggleConsumable={onToggleConsumable}
-              onQuantityChange={onQuantityChange}
-              onMoveItem={onMoveItem}
-              onItemUpdated={onItemUpdated}
-              isLocked={isLocked}
-              reorderMode={reorderMode}
-            />
+              className={item._id === newItemId ? "item-enter" : ""}
+            >
+              <SortableItem
+                item={item}
+                fetchItems={fetchItems}
+                listId={listId}
+                catId={catId}
+                isListMode={viewMode === "list"}
+                onDelete={onDeleteItem}
+                onToggleWorn={onToggleWorn}
+                onToggleConsumable={onToggleConsumable}
+                onQuantityChange={onQuantityChange}
+                onMoveItem={onMoveItem}
+                onItemUpdated={onItemUpdated}
+                isLocked={isLocked}
+
+              />
+            </div>
           ))}
         </div>
       </SortableContext>

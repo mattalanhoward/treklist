@@ -118,6 +118,7 @@
     "noGearItems": "No hay artículos de equipo",
     "mustSelectListFirst": "Elige o crea primero una lista con al menos una categoría.",
     "addToListFailed": "No se pudo añadir el artículo a tu lista.",
+    "itemAlreadyInList": "Este artículo ya está en tu lista. Usa el campo de cantidad para añadir más.",
     "editGlobalTemplate": "Editar plantilla global"
   },
   "auth": {

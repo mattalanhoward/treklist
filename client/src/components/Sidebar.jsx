@@ -7,12 +7,44 @@ import {
   FaPlus,
   FaChevronDown,
   FaChevronUp,
+  FaGripVertical,
 } from "react-icons/fa";
+import { useDraggable } from "@dnd-kit/core";
 import GlobalItemModal from "./GlobalItemModal";
 import GlobalItemEditModal from "./GlobalItemEditModal";
 import { toast } from "react-hot-toast";
 import { useUserSettings } from "../contexts/UserSettings";
 import { useTranslation } from "react-i18next";
+
+function SidebarDraggableItem({ item, onClickDetails, isLocked }) {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: `sidebar-${item._id}`,
+    data: { globalItem: item },
+    disabled: isLocked,
+  });
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={`flex items-center w-full py-1 px-2 bg-base-100/10 border border-primary/20 rounded-lg hover:bg-base-100/20 text-secondaryAlt ${isDragging ? "opacity-50" : ""}`}
+    >
+      {!isLocked && (
+        <FaGripVertical
+          {...attributes}
+          {...listeners}
+          className="hide-on-touch mr-2 cursor-grab text-primaryAlt flex-shrink-0"
+        />
+      )}
+      <button
+        type="button"
+        onClick={onClickDetails}
+        className="flex-1 text-left truncate cursor-pointer"
+      >
+        {item.itemType} – {item.name}
+      </button>
+    </div>
+  );
+}
 
 export default function Sidebar({
   lists,
@@ -29,6 +61,7 @@ export default function Sidebar({
   onOpenMyGear = () => {},
   onShowGearPane = () => {},
   isAdmin = false,
+  isLocked = false,
 }) {
   const { t } = useTranslation("common");
 
@@ -383,13 +416,11 @@ export default function Sidebar({
                   <ul className="overflow-y-auto flex-1 space-y-2">
                     {filteredAndSortedItems.map((item) => (
                       <li key={item._id}>
-                        <button
-                          type="button"
-                          onClick={() => setEditingGlobalItem(item)}
-                          className="w-full text-left py-1 px-2 bg-base-100/10 border border-primary/20 rounded-lg hover:bg-base-100/20 truncate text-secondaryAlt cursor-pointer"
-                        >
-                          {item.itemType} – {item.name}
-                        </button>
+                        <SidebarDraggableItem
+                          item={item}
+                          onClickDetails={() => setEditingGlobalItem(item)}
+                          isLocked={isLocked}
+                        />
                       </li>
                     ))}
                     {filteredAndSortedItems.length === 0 && (
