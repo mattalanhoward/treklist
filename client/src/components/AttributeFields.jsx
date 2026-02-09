@@ -1412,6 +1412,17 @@ const SCHEMAS = {
         label: "Footwear Closure",
         options: ["Lace-up", "Single-pull Lace", "BOA", "Slip-on"],
       },
+      waterproof: {
+        type: "boolean",
+        required: false,
+        label: "Waterproof",
+      },
+      waterproofMembrane: {
+        type: "enum",
+        required: false,
+        label: "Waterproof Membrane",
+        options: ["GORE-TEX", "eVent", "Proprietary", "None"],
+      },
       upper: {
         type: "string",
         required: false,
