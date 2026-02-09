@@ -194,12 +194,20 @@ const ATTRIBUTE_LABELS = {
   useType: "Intended Use",
 
   // Footwear - Trail Running Shoes
-  dropMm: "Heel-Toe Drop (mm)",
-  stackHeightMm: "Stack Height (mm)",
-  cushioning: "Cushioning Level",
-  outsoleType: "Outsole Type",
-  lugDepthMm: "Lug Depth (mm)",
-  plateOrRockGuard: "Rock Plate/Guard",
+  bestUse: "Best Use",
+  shoeType: "Trail-Running Shoe Type",
+  cushioning: "Running Shoe Cushioning",
+  dropMm: "Heel-to-Toe Drop (mm)",
+  heelStackHeightMm: "Heel Stack Height (mm)",
+  forefootStackHeightMm: "Forefoot Stack Height (mm)",
+  footwearHeight: "Footwear Height",
+  footwearClosure: "Footwear Closure",
+  upper: "Upper",
+  lining: "Lining",
+  midsole: "Midsole",
+  outsole: "Outsole",
+  rockPlate: "Rock Plate",
+  vegan: "Vegan",
 
   // Clothing - Base Layer Bottom
   fitStyle: "Fit Style",

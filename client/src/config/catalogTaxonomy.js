@@ -6,6 +6,7 @@ export const CATALOG_CATEGORIES = [
   "Accessories & Tools",
   "Backpacks & Bags",
   "Electronics & Power",
+  "Footwear",
   "Health & Hygiene",
   "Hydration",
   "Kitchen & Cooking",
