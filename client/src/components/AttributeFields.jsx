@@ -2030,6 +2030,7 @@ export const CATEGORY_ITEM_TYPE_MAPPING = {
   Shelter: ["Backpacking Tent", "Tarp Shelter"],
   "Electronics & Power": ["Headlamp", "Power Bank"],
   Hydration: ["Water Filter", "Water Bottle", "Hydration Reservoir"],
+  Footwear: ["Hiking Boots", "Trail Running Shoes"],
   "Men's Clothing": [
     "Rain Jacket",
     "Insulated Jacket",
@@ -2040,8 +2041,6 @@ export const CATEGORY_ITEM_TYPE_MAPPING = {
     "Hiking Shorts",
     "Hiking Shirt",
     "Gloves (Insulated)",
-    "Hiking Boots",
-    "Trail Running Shoes",
   ],
   "Women's Clothing": [
     "Rain Jacket",
@@ -2053,8 +2052,6 @@ export const CATEGORY_ITEM_TYPE_MAPPING = {
     "Hiking Shorts",
     "Hiking Shirt",
     "Gloves (Insulated)",
-    "Hiking Boots",
-    "Trail Running Shoes",
   ],
   "Unisex Clothing": [
     "Rain Jacket",
@@ -2066,8 +2063,6 @@ export const CATEGORY_ITEM_TYPE_MAPPING = {
     "Hiking Shorts",
     "Hiking Shirt",
     "Gloves (Insulated)",
-    "Hiking Boots",
-    "Trail Running Shoes",
   ],
   "Accessories & Tools": ["Trekking Poles", "Sunglasses"],
   Travel: ["Travel Towel"],
