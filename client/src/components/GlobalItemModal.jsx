@@ -42,6 +42,9 @@ function ImportCatalogTab({ onImported, onOpenRequest }) {
   // multi-select
   const [selectedIds, setSelectedIds] = useState(new Set());
 
+  // Available subcategories for the selected category (not narrowed by subcategory filter)
+  const [availableSubcategories, setAvailableSubcategories] = useState([]);
+
   // already-imported (catalogId -> imported)
   const [importedCatalogIds, setImportedCatalogIds] = useState(new Set());
 
@@ -139,19 +142,36 @@ function ImportCatalogTab({ onImported, onOpenRequest }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearch, categoryFilter, subcategoryFilter, brandFilter]);
 
+  // Fetch subcategory options whenever category or search changes (without subcategory filter)
+  useEffect(() => {
+    let cancelled = false;
+    async function loadSubcategories() {
+      if (categoryFilter === "all") {
+        setAvailableSubcategories([]);
+        return;
+      }
+      try {
+        const params = { category: categoryFilter };
+        if (debouncedSearch.trim()) params.q = debouncedSearch.trim();
+        const { data } = await api.get("/catalog/items", { params });
+        if (!cancelled) {
+          const subs = Array.from(
+            new Set((data || []).map((i) => i.subcategory).filter(Boolean)),
+          ).sort();
+          setAvailableSubcategories(subs);
+        }
+      } catch {
+        if (!cancelled) setAvailableSubcategories([]);
+      }
+    }
+    loadSubcategories();
+    return () => { cancelled = true; };
+  }, [categoryFilter, debouncedSearch]);
+
   // Category options are locked (always show all)
   const categories = CATALOG_CATEGORIES;
 
-  const subcategories = Array.from(
-    new Set(
-      items
-        .filter((i) =>
-          categoryFilter === "all" ? true : i.category === categoryFilter,
-        )
-        .map((i) => i.subcategory)
-        .filter(Boolean),
-    ),
-  ).sort();
+  const subcategories = availableSubcategories;
 
   const brands = Array.from(
     new Set(items.map((i) => i.brand).filter(Boolean)),
