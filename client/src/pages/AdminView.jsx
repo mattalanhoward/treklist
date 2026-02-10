@@ -366,7 +366,7 @@ function GearCatalogSection({
     try {
       const imageUrls = form.imageUrlsText
         ? form.imageUrlsText
-            .split(/\r?\n|,/)
+            .split(/\r?\n/)
             .map((u) => u.trim())
             .filter(Boolean)
         : [];
@@ -2218,7 +2218,7 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
     try {
       const imageUrls = form.imageUrlsText
         ? form.imageUrlsText
-            .split(/\r?\n|,/)
+            .split(/\r?\n/)
             .map((u) => u.trim())
             .filter(Boolean)
         : [];

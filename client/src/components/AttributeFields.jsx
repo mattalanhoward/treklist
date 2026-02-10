@@ -1848,6 +1848,44 @@ const SCHEMAS = {
     },
   },
 
+  Pillow: {
+    fields: {
+      bestUse: {
+        type: "enum",
+        required: false,
+        label: "Best Use",
+        options: ["Backpacking", "Car Camping", "Travel"],
+      },
+      pillowType: {
+        type: "enum",
+        required: true,
+        label: "Pillow Type",
+        options: ["Traditional Pillow", "Compressible", "Stuff Sack"],
+      },
+      inflatable: {
+        type: "boolean",
+        required: false,
+        label: "Inflatable",
+      },
+      pillowFill: {
+        type: "enum",
+        required: false,
+        label: "Pillow Fill",
+        options: ["Air", "Down", "Synthetic", "Foam", "Compressible"],
+      },
+      stuffSackIncluded: {
+        type: "boolean",
+        required: false,
+        label: "Stuff Sack Included",
+      },
+      material: {
+        type: "string",
+        required: false,
+        label: "Material",
+      },
+    },
+  },
+
   "Power Bank": {
     fields: {
       capacityMah: {
@@ -2035,6 +2073,7 @@ export const CATEGORY_ITEM_TYPE_MAPPING = {
     "Inflatable Sleeping Pad",
     "Foam Sleeping Pad",
     "Sleeping Bag Liner",
+    "Pillow",
   ],
   "Backpacks & Bags": ["Backpack", "Daypack", "Hip Pack"],
   "Kitchen & Cooking": ["Backpacking Pot", "Backpacking Stove (Canister)"],
@@ -2312,7 +2351,7 @@ export default function AttributeFields({ itemType, attributes, onChange }) {
               className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
               min={field.min}
               max={field.max}
-              step={field.step || 1}
+              step={field.step || 0.01}
               placeholder={field.placeholder}
             />
           </div>
