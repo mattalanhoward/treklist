@@ -664,12 +664,12 @@ const SCHEMAS = {
         min: 0,
         max: 30,
       },
-      peakHeightIn: {
+      peakHeightCm: {
         type: "number",
         required: false,
         label: "Peak Height",
         min: 30,
-        max: 60,
+        max: 150,
       },
       doors: {
         type: "enum",

@@ -831,9 +831,9 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Peak Height",
-        unit: "in",
-        min: 30,
-        max: 60,
+        unit: "cm",
+        min: 50,
+        max: 150,
       },
       doors: {
         type: "enum",
