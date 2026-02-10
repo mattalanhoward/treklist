@@ -410,7 +410,7 @@ router.post("/", async (req, res) => {
       ? imageUrls.map((u) => String(u || "").trim()).filter(Boolean)
       : typeof imageUrls === "string"
         ? imageUrls
-            .split(/\r?\n|,/)
+            .split(/\r?\n/)
             .map((u) => u.trim())
             .filter(Boolean)
         : [];
