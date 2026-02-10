@@ -2,8 +2,8 @@ require("dotenv").config();
 
 console.log("CWD:", process.cwd());
 console.log(
-  "AMAZON_PAAPI_MOCK:",
-  JSON.stringify(process.env.AMAZON_PAAPI_MOCK)
+  "AMAZON_CREATORS_MOCK:",
+  JSON.stringify(process.env.AMAZON_CREATORS_MOCK)
 );
 
 const app = require("./app");

@@ -145,7 +145,7 @@ const CatalogItemSchema = new mongoose.Schema(
     // -------------------------------------------------------------------------
 
     // SHORT DESCRIPTION (admin-curated text)
-    // Do NOT store Amazon text permanently (PAAPI rules)
+    // Do NOT store Amazon text permanently (Amazon API ToS)
     description: {
       type: String,
       trim: true,
