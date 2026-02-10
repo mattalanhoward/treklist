@@ -6,6 +6,7 @@ import ButtonLink from "./ui/ButtonLink";
 import { useUnit } from "../hooks/useUnit";
 import { useWeightInput } from "../hooks/useWeightInput";
 import { formatAttributesForDisplay } from "../utils/attributeLabels";
+import { tItemType } from "../config/catalogTaxonomy";
 
 export default function CatalogItemPreviewModal({
   isOpen,
@@ -167,7 +168,7 @@ export default function CatalogItemPreviewModal({
                       {t("globalItemModal.labels.itemType")}:
                     </div>
                     <div className="text-primary break-words">
-                      {item.itemType || "—"}
+                      {tItemType(t, item.itemType) || "—"}
                     </div>
                   </div>
 

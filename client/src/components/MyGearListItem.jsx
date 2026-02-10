@@ -1,6 +1,7 @@
 // client/src/components/MyGearListItem.jsx
 import React from "react";
 import { FaTrash, FaShoppingCart, FaCheckSquare, FaRegSquare } from "react-icons/fa";
+import { tItemType } from "../config/catalogTaxonomy";
 
 export default function MyGearListItem({
   item,
@@ -59,7 +60,7 @@ export default function MyGearListItem({
               style={{ fontSize: 14 }}
               className="font-semibold text-primary flex-shrink-0 hover:text-primary/80"
             >
-              {item.itemType || "—"}
+              {tItemType(t, item.itemType) || "—"}
             </button>
             <span
               style={{ fontSize: 14 }}
@@ -140,7 +141,7 @@ export default function MyGearListItem({
               style={{ fontSize: 14 }}
               className="font-semibold text-primary flex-shrink-0 truncate max-w-[180px] hover:text-primary/80"
             >
-              {item.itemType || "—"}
+              {tItemType(t, item.itemType) || "—"}
             </button>
             <button
               type="button"

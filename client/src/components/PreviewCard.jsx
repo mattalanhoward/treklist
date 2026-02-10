@@ -7,8 +7,11 @@ import {
   FaShoppingCart,
   FaTrash,
 } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
+import { tItemType } from "../config/catalogTaxonomy";
 
 export default function PreviewCard({ item, viewMode, width }) {
+  const { t } = useTranslation("common");
   const ghostStyles = {
     width: width || undefined,
     opacity: 0.85,
@@ -31,7 +34,7 @@ export default function PreviewCard({ item, viewMode, width }) {
         <div className="row-start-1 col-span-2 flex items-center justify-between space-x-2 overflow-x-hidden">
           <div className="flex items-center space-x-1 overflow-hidden min-w-0">
             <div className="font-semibold text-primary flex-shrink-0" style={{ fontSize: 14 }}>
-              {item.itemType || "—"}
+              {tItemType(t, item.itemType) || "—"}
             </div>
             <div
               className="truncate text-primary flex-1 min-w-0 text-left"
@@ -86,7 +89,7 @@ export default function PreviewCard({ item, viewMode, width }) {
             className="font-semibold text-primary truncate text-left"
             style={{ fontSize: 14 }}
           >
-            {item.itemType || "—"}
+            {tItemType(t, item.itemType) || "—"}
           </div>
 
           {/* 3) Brand / Name */}
@@ -152,7 +155,7 @@ export default function PreviewCard({ item, viewMode, width }) {
               className="font-semibold text-primary px-2 text-left"
               style={{ fontSize: 14 }}
             >
-              {item.itemType || "—"}
+              {tItemType(t, item.itemType) || "—"}
             </div>
             <div className="-mr-0.5">
               <span className="text-primary/60">

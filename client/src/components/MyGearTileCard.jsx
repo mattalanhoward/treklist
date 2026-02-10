@@ -1,6 +1,7 @@
 // client/src/components/MyGearTileCard.jsx
 import React from "react";
 import { FaTrash, FaShoppingCart, FaCheckSquare, FaRegSquare } from "react-icons/fa";
+import { tItemType } from "../config/catalogTaxonomy";
 
 function pickFirstImageUrl(item) {
   if (!item) return null;
@@ -94,7 +95,7 @@ export default function MyGearTileCard({
           style={{ fontSize: 14 }}
           className="font-semibold text-primary truncate hover:text-primary/80"
         >
-          {item.itemType || "—"}
+          {tItemType(t, item.itemType) || "—"}
         </button>
 
         {selectionMode ? (

@@ -4,6 +4,7 @@ import api from "../services/api";
 import { FaTimes } from "react-icons/fa";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
+import { tItemType } from "../config/catalogTaxonomy";
 
 export default function AddGearItemModal({
   listId,
@@ -252,7 +253,7 @@ export default function AddGearItemModal({
                             {item.name}
                           </div>
                           <div className="text-sm text-primary">
-                            {item.brand} — {item.itemType}
+                            {item.brand} — {tItemType(t, item.itemType)}
                           </div>
                         </div>
                         {disabled && (

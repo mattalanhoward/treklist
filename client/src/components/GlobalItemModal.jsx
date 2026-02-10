@@ -12,7 +12,7 @@ import { detectRegion, normalizeRegion } from "../utils/region";
 import CatalogItemPreviewModal from "./CatalogItemPreviewModal";
 import Spinner from "../components/ui/Spinner";
 import { CATALOG_CATEGORIES } from "../config/catalogTaxonomy";
-import { tCategory } from "../config/catalogTaxonomy";
+import { tCategory, tItemType } from "../config/catalogTaxonomy";
 
 function ImportCatalogTab({ onImported, onOpenRequest }) {
   const { t } = useTranslation("common");
@@ -390,7 +390,7 @@ function ImportCatalogTab({ onImported, onOpenRequest }) {
                               "globalItemModal.importTab.labels.unknownBrand",
                             )}{" "}
                           —{" "}
-                          {item.itemType ||
+                          {tItemType(t, item.itemType) ||
                             item.subcategory ||
                             item.category ||
                             t("globalItemModal.importTab.labels.uncategorized")}
