@@ -8,7 +8,7 @@
 // Usage:
 //   <AttributeFields
 //     itemType="Sleeping Bag (Down)"
-//     attributes={{ tempRatingF: 20, fillPower: 850 }}
+//     attributes={{ tempRatingC: -7, fillPower: 850 }}
 //     onChange={(newAttributes) => setAttributes(newAttributes)}
 //   />
 // =============================================================================
@@ -31,12 +31,13 @@ const SCHEMAS = {
         label: "Insulation Type",
         options: ["Down", "Synthetic"],
       },
-      tempRatingF: {
+      tempRatingC: {
         type: "number",
         required: true,
         label: "Temperature Rating",
-        min: -60,
-        max: 60,
+        unit: "°C",
+        min: -51,
+        max: 16,
       },
       fillPower: {
         type: "enum",
@@ -44,12 +45,13 @@ const SCHEMAS = {
         label: "Fill Power",
         options: [550, 600, 650, 700, 750, 800, 850, 900, 950, 1000],
       },
-      fillWeightOz: {
+      fillWeightG: {
         type: "number",
         required: false,
         label: "Fill Weight",
+        unit: "g",
         min: 0,
-        max: 80,
+        max: 2268,
       },
       waterResistantDown: {
         type: "boolean",
@@ -107,12 +109,13 @@ const SCHEMAS = {
         label: "Insulation Type",
         options: ["Down", "Synthetic"],
       },
-      tempRatingF: {
+      tempRatingC: {
         type: "number",
         required: true,
         label: "Temperature Rating",
-        min: -20,
-        max: 60,
+        unit: "°C",
+        min: -29,
+        max: 16,
       },
       fillPower: {
         type: "enum",
@@ -120,12 +123,13 @@ const SCHEMAS = {
         label: "Fill Power",
         options: [750, 800, 850, 900, 950, 1000],
       },
-      fillWeightOz: {
+      fillWeightG: {
         type: "number",
         required: false,
         label: "Fill Weight",
+        unit: "g",
         min: 0,
-        max: 40,
+        max: 1134,
       },
       waterResistantDown: {
         type: "boolean",
@@ -184,12 +188,13 @@ const SCHEMAS = {
         min: 0,
         max: 10,
       },
-      thicknessIn: {
+      thicknessCm: {
         type: "number",
         required: false,
         label: "Thickness",
-        min: 0.5,
-        max: 6,
+        unit: "cm",
+        min: 1.3,
+        max: 15.2,
       },
       lengthSize: {
         type: "enum",
@@ -233,12 +238,13 @@ const SCHEMAS = {
         min: 0,
         max: 6,
       },
-      thicknessIn: {
+      thicknessCm: {
         type: "number",
         required: false,
         label: "Thickness",
-        min: 0.25,
-        max: 2,
+        unit: "cm",
+        min: 0.6,
+        max: 5.1,
       },
       lengthSize: {
         type: "enum",
@@ -261,6 +267,7 @@ const SCHEMAS = {
         type: "number",
         required: true,
         label: "Volume",
+        unit: "L",
         min: 20,
         max: 80,
       },
@@ -268,6 +275,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Load Capacity",
+        unit: "kg",
         min: 5,
         max: 35,
       },
@@ -340,6 +348,7 @@ const SCHEMAS = {
         type: "number",
         required: true,
         label: "Volume",
+        unit: "L",
         min: 10,
         max: 40,
       },
@@ -347,6 +356,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Load Capacity",
+        unit: "kg",
         min: 5,
         max: 25,
       },
@@ -383,6 +393,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Laptop Sleeve",
+        unit: "in",
         min: 0,
         max: 17,
       },
@@ -405,6 +416,7 @@ const SCHEMAS = {
         type: "number",
         required: true,
         label: "Volume",
+        unit: "L",
         min: 1,
         max: 15,
         step: 0.5,
@@ -434,6 +446,7 @@ const SCHEMAS = {
         type: "number",
         required: true,
         label: "Volume",
+        unit: "ml",
         min: 200,
         max: 3000,
       },
@@ -441,6 +454,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Diameter",
+        unit: "cm",
         min: 5,
         max: 20,
       },
@@ -448,6 +462,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Height",
+        unit: "cm",
         min: 3,
         max: 20,
       },
@@ -493,6 +508,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Boil Time (1L)",
+        unit: "min",
         min: 1,
         max: 15,
       },
@@ -500,6 +516,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Burn Time (per 100g)",
+        unit: "min",
         min: 10,
         max: 120,
       },
@@ -507,6 +524,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Output",
+        unit: "BTU",
         min: 5000,
         max: 20000,
       },
@@ -570,6 +588,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Min Length",
+        unit: "cm",
         min: 30,
         max: 100,
       },
@@ -577,6 +596,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Max Length",
+        unit: "cm",
         min: 100,
         max: 150,
       },
@@ -584,6 +604,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Collapsed Length",
+        unit: "cm",
         min: 30,
         max: 70,
       },
@@ -650,26 +671,29 @@ const SCHEMAS = {
         label: "Wall Type",
         options: ["Double Wall", "Single Wall", "Hybrid"],
       },
-      floorArea: {
+      floorAreaSqM: {
         type: "number",
         required: false,
         label: "Floor Area",
-        min: 15,
-        max: 100,
+        unit: "sq m",
+        min: 1.4,
+        max: 9.3,
       },
-      vestibuleArea: {
+      vestibuleAreaSqM: {
         type: "number",
         required: false,
         label: "Vestibule Area",
+        unit: "sq m",
         min: 0,
-        max: 30,
+        max: 2.8,
       },
       peakHeightCm: {
         type: "number",
         required: false,
         label: "Peak Height",
-        min: 30,
-        max: 150,
+        unit: "cm",
+        min: 76,
+        max: 152,
       },
       doors: {
         type: "enum",
@@ -721,22 +745,25 @@ const SCHEMAS = {
         label: "Shape",
         options: ["Rectangular", "Catenary Cut", "Hex", "A-Frame", "Pyramid"],
       },
-      coverageArea: {
+      coverageAreaSqM: {
         type: "number",
         required: false,
         label: "Coverage Area",
-        min: 20,
-        max: 150,
+        unit: "sq m",
+        min: 1.9,
+        max: 13.9,
       },
       lengthCm: {
         type: "number",
         required: false,
         label: "Length",
+        unit: "cm",
       },
       widthCm: {
         type: "number",
         required: false,
         label: "Width",
+        unit: "cm",
       },
       material: {
         type: "string",
@@ -769,6 +796,7 @@ const SCHEMAS = {
         type: "number",
         required: true,
         label: "Max Output",
+        unit: "lumens",
         min: 10,
         max: 2000,
       },
@@ -776,6 +804,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Max Beam Distance",
+        unit: "m",
         min: 10,
         max: 200,
       },
@@ -797,6 +826,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Battery Capacity",
+        unit: "mAh",
         min: 500,
         max: 5000,
       },
@@ -804,6 +834,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Burn Time (High)",
+        unit: "hrs",
         min: 0.5,
         max: 20,
       },
@@ -811,6 +842,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Burn Time (Low)",
+        unit: "hrs",
         min: 5,
         max: 500,
       },
@@ -859,6 +891,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Pore Size",
+        unit: "microns",
         min: 0.01,
         max: 1,
       },
@@ -866,6 +899,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Flow Rate",
+        unit: "L/min",
         min: 0.1,
         max: 5,
       },
@@ -873,6 +907,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Filter Life",
+        unit: "L",
         min: 500,
         max: 500000,
       },
@@ -905,6 +940,7 @@ const SCHEMAS = {
         type: "number",
         required: true,
         label: "Capacity",
+        unit: "ml",
         min: 250,
         max: 2000,
       },
@@ -984,8 +1020,9 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Hose Length",
-        min: 30,
-        max: 100,
+        unit: "cm",
+        min: 75,
+        max: 130,
       },
       insulatedHose: {
         type: "boolean",
@@ -1028,6 +1065,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Waterproof Rating",
+        unit: "mm",
         min: 5000,
         max: 30000,
       },
@@ -1035,6 +1073,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Breathability (MVTR)",
+        unit: "g/m²/24hr",
         min: 5000,
         max: 40000,
       },
@@ -1167,12 +1206,13 @@ const SCHEMAS = {
         label: "Fill Power",
         options: [550, 600, 650, 700, 750, 800, 850, 900, 950],
       },
-      fillWeightOz: {
+      fillWeightG: {
         type: "number",
         required: false,
         label: "Fill Weight",
-        min: 1,
-        max: 12,
+        unit: "g",
+        min: 28,
+        max: 340,
       },
       waterResistantDown: {
         type: "boolean",
@@ -1193,6 +1233,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Insulation Weight",
+        unit: "g/m²",
         min: 40,
         max: 200,
       },
@@ -1234,9 +1275,9 @@ const SCHEMAS = {
         required: false,
         label: "Temperature Range",
         options: [
-          "Lightweight (40-60°F)",
-          "Midweight (20-40°F)",
-          "Heavyweight (<20°F)",
+          "Lightweight",
+          "Midweight",
+          "Heavyweight",
         ],
       },
     },
@@ -1346,6 +1387,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Fabric Weight",
+        unit: "g/m²",
         min: 100,
         max: 400,
       },
@@ -1409,10 +1451,10 @@ const SCHEMAS = {
         required: false,
         label: "Temperature Rating",
         options: [
-          "Warm Weather (40-60°F)",
-          "Cool Weather (20-40°F)",
-          "Cold Weather (0-20°F)",
-          "Extreme Cold (<0°F)",
+          "Warm Weather",
+          "Cool Weather",
+          "Cold Weather",
+          "Extreme Cold",
         ],
       },
     },
@@ -1529,6 +1571,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Heel-to-Toe Drop",
+        unit: "mm",
         min: 0,
         max: 14,
       },
@@ -1536,6 +1579,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Heel Stack Height",
+        unit: "mm",
         min: 10,
         max: 50,
       },
@@ -1543,6 +1587,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Forefoot Stack Height",
+        unit: "mm",
         min: 10,
         max: 45,
       },
@@ -1632,6 +1677,7 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Fabric Weight",
+        unit: "g/m²",
         min: 100,
         max: 400,
       },
@@ -1773,12 +1819,13 @@ const SCHEMAS = {
         label: "Gender/Fit",
         options: ["Mens", "Womens", "Unisex"],
       },
-      inseamIn: {
+      inseamCm: {
         type: "number",
         required: false,
         label: "Inseam",
-        min: 3,
-        max: 12,
+        unit: "cm",
+        min: 8,
+        max: 30,
       },
       material: {
         type: "enum",
@@ -1968,12 +2015,13 @@ const SCHEMAS = {
         label: "Shape",
         options: ["Mummy", "Rectangular", "Semi-Rectangular"],
       },
-      tempBoostF: {
+      tempBoostC: {
         type: "number",
         required: false,
         label: "Temperature Boost",
-        min: 5,
-        max: 25,
+        unit: "°C",
+        min: 3,
+        max: 14,
       },
       lengthSize: {
         type: "enum",
@@ -2038,6 +2086,7 @@ const SCHEMAS = {
         type: "number",
         required: true,
         label: "Capacity",
+        unit: "mAh",
         min: 1000,
         max: 50000,
       },
@@ -2440,10 +2489,15 @@ export default function AttributeFields({ itemType, attributes, onChange }) {
     const value = attrs[key];
     const isRequired = field.required;
 
-    // Common label
+    // Common label (shows unit hint for admin clarity)
     const label = (
       <label className="block font-medium text-primary mb-0.5">
         {field.label}
+        {field.unit && (
+          <span className="font-normal text-primary/50 ml-1">
+            ({field.unit})
+          </span>
+        )}
         {isRequired && <span className="text-error ml-1">*</span>}
       </label>
     );

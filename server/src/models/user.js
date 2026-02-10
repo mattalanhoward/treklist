@@ -72,6 +72,7 @@ const UserSchema = new mongoose.Schema(
     viewMode: { type: String, enum: ["column", "list"], default: "column" },
     theme: { type: String, default: "light" },
     weightUnit: { type: String, enum: ["g", "oz"], default: "g" },
+    measurementSystem: { type: String, enum: ["metric", "imperial"], default: "metric" },
     language: {
       type: String,
       enum: SUPPORTED_LANGS,

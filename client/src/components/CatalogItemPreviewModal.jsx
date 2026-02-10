@@ -5,6 +5,7 @@ import ImageCarousel from "./ImageCarousel";
 import ButtonLink from "./ui/ButtonLink";
 import { useUnit } from "../hooks/useUnit";
 import { useWeightInput } from "../hooks/useWeightInput";
+import { useUserSettings } from "../contexts/UserSettings";
 import { formatAttributesForDisplay } from "../utils/attributeLabels";
 import { tItemType } from "../config/catalogTaxonomy";
 
@@ -22,6 +23,7 @@ export default function CatalogItemPreviewModal({
 
   const unit = useUnit();
   const { unitLabel, formatInput } = useWeightInput(unit);
+  const { measurementSystem } = useUserSettings();
 
   const [loadingImages, setLoadingImages] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
@@ -92,9 +94,10 @@ export default function CatalogItemPreviewModal({
     const formatted = formatAttributesForDisplay(
       item.attributes,
       item.itemType,
+      measurementSystem,
     );
     return formatted.length ? formatted : null;
-  }, [item?.attributes, item?.itemType]);
+  }, [item?.attributes, item?.itemType, measurementSystem]);
 
   const displayWeight = useMemo(() => {
     if (!item || typeof item.weightGrams !== "number") return "";
