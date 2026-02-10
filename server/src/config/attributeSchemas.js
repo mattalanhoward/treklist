@@ -321,6 +321,46 @@ const SCHEMAS = {
     derive: (attrs) => attrs,
   },
 
+  Pillow: {
+    fields: {
+      bestUse: {
+        type: "enum",
+        required: false,
+        label: "Best Use",
+        options: ["Backpacking", "Car Camping", "Travel"],
+      },
+      pillowType: {
+        type: "enum",
+        required: true,
+        label: "Pillow Type",
+        options: ["Traditional Pillow", "Compressible", "Stuff Sack"],
+      },
+      inflatable: {
+        type: "boolean",
+        required: false,
+        label: "Inflatable",
+      },
+      pillowFill: {
+        type: "enum",
+        required: false,
+        label: "Pillow Fill",
+        options: ["Air", "Down", "Synthetic", "Foam", "Compressible"],
+      },
+      stuffSackIncluded: {
+        type: "boolean",
+        required: false,
+        label: "Stuff Sack Included",
+      },
+      material: {
+        type: "string",
+        required: false,
+        label: "Material",
+        // e.g., "20-denier laminated polyester"
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
   // ===========================================================================
   // BACKPACKS
   // ===========================================================================
