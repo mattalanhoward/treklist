@@ -1396,6 +1396,86 @@ const SCHEMAS = {
   },
 
   // ===========================================================================
+  // CLOTHING - MID LAYERS
+  // ===========================================================================
+
+  "Fleece Jacket": {
+    fields: {
+      gender: {
+        type: "enum",
+        required: true,
+        label: "Gender/Fit",
+        options: ["Mens", "Womens", "Unisex"],
+      },
+      fleeceType: {
+        type: "enum",
+        required: true,
+        label: "Fleece Type",
+        options: [
+          "Classic Fleece",
+          "Microfleece",
+          "Grid Fleece",
+          "Hardface Fleece",
+          "High-Loft Fleece",
+          "Sherpa Fleece",
+          "Sweater Fleece",
+        ],
+      },
+      fleeceWeight: {
+        type: "enum",
+        required: false,
+        label: "Fleece Weight",
+        options: [
+          "100 (Lightweight)",
+          "200 (Midweight)",
+          "300 (Heavyweight)",
+        ],
+      },
+      material: {
+        type: "string",
+        required: false,
+        label: "Material",
+        // e.g., "100% Recycled Polyester", "Polartec Power Grid"
+      },
+      closure: {
+        type: "enum",
+        required: false,
+        label: "Closure",
+        options: ["Full-Zip", "Half-Zip", "Quarter-Zip", "Pullover", "Snap-T/Snap"],
+      },
+      hoodType: {
+        type: "enum",
+        required: false,
+        label: "Hood",
+        options: ["Fixed Hood", "Adjustable Hood", "No Hood"],
+      },
+      pockets: {
+        type: "number",
+        required: false,
+        label: "Number of Pockets",
+        min: 0,
+        max: 8,
+      },
+      windResistant: {
+        type: "boolean",
+        required: false,
+        label: "Wind Resistant",
+      },
+      thumbHoles: {
+        type: "boolean",
+        required: false,
+        label: "Thumb Holes",
+      },
+      flatSeams: {
+        type: "boolean",
+        required: false,
+        label: "Flat-Seam Construction",
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  // ===========================================================================
   // CLOTHING - BASE LAYERS
   // ===========================================================================
 
