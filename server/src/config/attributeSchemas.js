@@ -1292,6 +1292,80 @@ const SCHEMAS = {
     derive: (attrs) => attrs,
   },
 
+  "Rain Pants": {
+    fields: {
+      gender: {
+        type: "enum",
+        required: true,
+        label: "Gender/Fit",
+        options: ["Mens", "Womens", "Unisex"],
+      },
+      layerConstruction: {
+        type: "enum",
+        required: true,
+        label: "Layer Construction",
+        options: ["2-Layer", "2.5-Layer", "3-Layer"],
+      },
+      membrane: {
+        type: "string",
+        required: false,
+        label: "Membrane Technology",
+        // e.g., "GORE-TEX", "eVent", "HydroWall", "Proprietary"
+      },
+      waterproofRating: {
+        type: "number",
+        required: false,
+        label: "Waterproof Rating",
+        unit: "mm",
+        min: 5000,
+        max: 30000,
+      },
+      breathabilityRating: {
+        type: "number",
+        required: false,
+        label: "Breathability (MVTR)",
+        unit: "g/m²/24hr",
+        min: 5000,
+        max: 40000,
+      },
+      sideZips: {
+        type: "enum",
+        required: false,
+        label: "Side Zippers",
+        options: ["Full-Length", "Partial (Ankle)", "None"],
+      },
+      waistType: {
+        type: "enum",
+        required: false,
+        label: "Waist Type",
+        options: ["Elastic Waist", "Elastic with Drawcord", "Belt Loops", "Snap Waist"],
+      },
+      ankleAdjustment: {
+        type: "boolean",
+        required: false,
+        label: "Ankle Drawcord/Adjustment",
+      },
+      pockets: {
+        type: "number",
+        required: false,
+        label: "Number of Pockets",
+        min: 0,
+        max: 6,
+      },
+      packable: {
+        type: "boolean",
+        required: false,
+        label: "Packable/Stowable",
+      },
+      pfasFree: {
+        type: "boolean",
+        required: false,
+        label: "PFAS-Free DWR",
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
   "Insulated Jacket": {
     fields: {
       insulationType: {

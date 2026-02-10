@@ -1075,6 +1075,78 @@ const SCHEMAS = {
     },
   },
 
+  "Rain Pants": {
+    fields: {
+      gender: {
+        type: "enum",
+        required: true,
+        label: "Gender/Fit",
+        options: ["Mens", "Womens", "Unisex"],
+      },
+      layerConstruction: {
+        type: "enum",
+        required: true,
+        label: "Layer Construction",
+        options: ["2-Layer", "2.5-Layer", "3-Layer"],
+      },
+      membrane: {
+        type: "string",
+        required: false,
+        label: "Membrane Technology",
+      },
+      waterproofRating: {
+        type: "number",
+        required: false,
+        label: "Waterproof Rating",
+        unit: "mm",
+        min: 5000,
+        max: 30000,
+      },
+      breathabilityRating: {
+        type: "number",
+        required: false,
+        label: "Breathability (MVTR)",
+        unit: "g/m²/24hr",
+        min: 5000,
+        max: 40000,
+      },
+      sideZips: {
+        type: "enum",
+        required: false,
+        label: "Side Zippers",
+        options: ["Full-Length", "Partial (Ankle)", "None"],
+      },
+      waistType: {
+        type: "enum",
+        required: false,
+        label: "Waist Type",
+        options: ["Elastic Waist", "Elastic with Drawcord", "Belt Loops", "Snap Waist"],
+      },
+      ankleAdjustment: {
+        type: "boolean",
+        required: false,
+        label: "Ankle Drawcord/Adjustment",
+      },
+      pockets: {
+        type: "number",
+        required: false,
+        label: "Number of Pockets",
+        min: 0,
+        max: 6,
+      },
+      packable: {
+        type: "boolean",
+        required: false,
+        label: "Packable/Stowable",
+      },
+      pfasFree: {
+        type: "boolean",
+        required: false,
+        label: "PFAS-Free DWR",
+      },
+    },
+  },
+
   "Insulated Jacket": {
     fields: {
       insulationType: {
@@ -2157,6 +2229,7 @@ export const CATEGORY_ITEM_TYPE_MAPPING = {
   Footwear: ["Hiking Boots", "Trail Running Shoes"],
   "Men's Clothing": [
     "Rain Jacket",
+    "Rain Pants",
     "Insulated Jacket",
     "Fleece Jacket",
     "Base Layer Top",
@@ -2169,6 +2242,7 @@ export const CATEGORY_ITEM_TYPE_MAPPING = {
   ],
   "Women's Clothing": [
     "Rain Jacket",
+    "Rain Pants",
     "Insulated Jacket",
     "Fleece Jacket",
     "Base Layer Top",
@@ -2181,6 +2255,7 @@ export const CATEGORY_ITEM_TYPE_MAPPING = {
   ],
   "Unisex Clothing": [
     "Rain Jacket",
+    "Rain Pants",
     "Insulated Jacket",
     "Fleece Jacket",
     "Base Layer Top",
