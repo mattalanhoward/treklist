@@ -88,6 +88,8 @@ export function SettingsProvider({ children }) {
 
   useEffect(() => {
     localStorage.setItem("measurementSystem", measurementSystem);
+    // Auto-sync weight unit from measurement system
+    setWeightUnit(measurementSystem === "imperial" ? "oz" : "g");
   }, [measurementSystem]);
 
   useEffect(() => {

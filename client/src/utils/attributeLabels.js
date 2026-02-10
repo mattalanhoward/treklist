@@ -61,7 +61,9 @@ const ATTRIBUTE_LABELS = {
   // Kitchen - Pots
   volumeMl: "Volume (ml)",
   diameterCm: "Diameter (cm)",
+  diameterIn: "Diameter (in)",
   heightCm: "Height (cm)",
+  heightIn: "Height (in)",
   lidType: "Lid Type",
   handles: "Handles",
   graduations: "Measurement Graduations",
@@ -99,6 +101,7 @@ const ATTRIBUTE_LABELS = {
   vestibuleAreaSqM: "Vestibule Area (sq m)",
   vestibuleAreaSqFt: "Vestibule Area (sq ft)",
   peakHeightCm: "Peak Height (cm)",
+  peakHeightIn: "Peak Height (in)",
   doors: "Doors",
   vestibules: "Vestibules",
   poleMaterial: "Pole Material",
@@ -110,7 +113,9 @@ const ATTRIBUTE_LABELS = {
   coverageAreaSqM: "Coverage Area (sq m)",
   coverageAreaSqFt: "Coverage Area (sq ft)",
   lengthCm: "Length (cm)",
+  lengthIn: "Length (in)",
   widthCm: "Width (cm)",
+  widthIn: "Width (in)",
   material: "Material",
   guyoutPoints: "Guyout Points",
   tieoutsIncluded: "Guylines Included",
@@ -153,6 +158,7 @@ const ATTRIBUTE_LABELS = {
   openingType: "Opening Type",
   biteValveType: "Bite Valve Type",
   hoseLength: "Hose Length (cm)",
+  hoseLengthIn: "Hose Length (in)",
   insulatedHose: "Insulated Hose",
   reversible: "Reversible for Cleaning",
   quickDisconnect: "Quick Disconnect",
@@ -284,21 +290,69 @@ const ATTRIBUTE_LABELS = {
   material: "Material",
 };
 
-// Metric/imperial pairs — used to filter display based on user preference
+// ---------------------------------------------------------------------------
+// Conversion helpers
+// ---------------------------------------------------------------------------
+const CM_TO_IN = (cm) => Math.round((cm / 2.54) * 10) / 10;
+const IN_TO_CM = (inches) => Math.round(inches * 2.54 * 10) / 10;
+const SQM_TO_SQFT = (sqm) => Math.round((sqm / 0.0929) * 10) / 10;
+const SQFT_TO_SQM = (sqft) => Math.round(sqft * 0.0929 * 100) / 100;
+const C_TO_F = (c) => Math.round(c * (9 / 5) + 32);
+const F_TO_C = (f) => Math.round((f - 32) * (5 / 9));
+const C_TO_F_DELTA = (c) => Math.round(c * (9 / 5));
+const F_TO_C_DELTA = (f) => Math.round(f * (5 / 9));
+const G_TO_OZ = (g) => Math.round((g / 28.3495) * 10) / 10;
+const OZ_TO_G = (oz) => Math.round(oz * 28.3495);
+
+// Metric/imperial pairs — used to filter display and convert on the fly
 const UNIT_PAIRS = [
-  { metric: "tempRatingC", imperial: "tempRatingF" },
-  { metric: "tempBoostC", imperial: "tempBoostF" },
-  { metric: "fillWeightG", imperial: "fillWeightOz" },
-  { metric: "thicknessCm", imperial: "thicknessIn" },
-  { metric: "floorAreaSqM", imperial: "floorAreaSqFt" },
-  { metric: "vestibuleAreaSqM", imperial: "vestibuleAreaSqFt" },
-  { metric: "coverageAreaSqM", imperial: "coverageAreaSqFt" },
-  { metric: "inseamCm", imperial: "inseamIn" },
+  { metric: "tempRatingC", imperial: "tempRatingF", toImperial: C_TO_F, toMetric: F_TO_C },
+  { metric: "tempBoostC", imperial: "tempBoostF", toImperial: C_TO_F_DELTA, toMetric: F_TO_C_DELTA },
+  { metric: "fillWeightG", imperial: "fillWeightOz", toImperial: G_TO_OZ, toMetric: OZ_TO_G },
+  { metric: "thicknessCm", imperial: "thicknessIn", toImperial: CM_TO_IN, toMetric: IN_TO_CM },
+  { metric: "floorAreaSqM", imperial: "floorAreaSqFt", toImperial: SQM_TO_SQFT, toMetric: SQFT_TO_SQM },
+  { metric: "vestibuleAreaSqM", imperial: "vestibuleAreaSqFt", toImperial: SQM_TO_SQFT, toMetric: SQFT_TO_SQM },
+  { metric: "coverageAreaSqM", imperial: "coverageAreaSqFt", toImperial: SQM_TO_SQFT, toMetric: SQFT_TO_SQM },
+  { metric: "inseamCm", imperial: "inseamIn", toImperial: CM_TO_IN, toMetric: IN_TO_CM },
+  { metric: "peakHeightCm", imperial: "peakHeightIn", toImperial: CM_TO_IN, toMetric: IN_TO_CM },
+  { metric: "lengthCm", imperial: "lengthIn", toImperial: CM_TO_IN, toMetric: IN_TO_CM },
+  { metric: "widthCm", imperial: "widthIn", toImperial: CM_TO_IN, toMetric: IN_TO_CM },
+  { metric: "diameterCm", imperial: "diameterIn", toImperial: CM_TO_IN, toMetric: IN_TO_CM },
+  { metric: "heightCm", imperial: "heightIn", toImperial: CM_TO_IN, toMetric: IN_TO_CM },
+  { metric: "hoseLength", imperial: "hoseLengthIn", toImperial: CM_TO_IN, toMetric: IN_TO_CM },
 ];
 
 function getExcludedKeys(measurementSystem) {
   const side = measurementSystem === "imperial" ? "metric" : "imperial";
   return new Set(UNIT_PAIRS.map((p) => p[side]));
+}
+
+/**
+ * Ensure both sides of each unit pair exist. If only one side is present,
+ * compute the other on the fly so the user always sees their preferred unit.
+ */
+function ensurePairValues(attrsObj) {
+  for (const pair of UNIT_PAIRS) {
+    const hasMetric =
+      attrsObj[pair.metric] != null &&
+      String(attrsObj[pair.metric]).trim() !== "";
+    const hasImperial =
+      attrsObj[pair.imperial] != null &&
+      String(attrsObj[pair.imperial]).trim() !== "";
+
+    if (hasMetric && !hasImperial && pair.toImperial) {
+      const val = Number(attrsObj[pair.metric]);
+      if (Number.isFinite(val)) {
+        attrsObj[pair.imperial] = pair.toImperial(val);
+      }
+    } else if (hasImperial && !hasMetric && pair.toMetric) {
+      const val = Number(attrsObj[pair.imperial]);
+      if (Number.isFinite(val)) {
+        attrsObj[pair.metric] = pair.toMetric(val);
+      }
+    }
+  }
+  return attrsObj;
 }
 
 /**
@@ -384,21 +438,19 @@ export function formatAttributesForDisplay(
 ) {
   if (!attributes) return [];
 
+  // Build a plain object, filling in any missing pair counterparts on the fly
+  const raw =
+    attributes instanceof Map
+      ? Object.fromEntries(attributes)
+      : { ...attributes };
+  const attrsObj = ensurePairValues(raw);
+
   const excluded = getExcludedKeys(measurementSystem);
 
-  // Handle both Map and plain object
-  const entries =
-    attributes instanceof Map
-      ? Array.from(attributes.entries())
-      : Object.entries(attributes);
-
-  return entries
+  return Object.entries(attrsObj)
     .filter(([k, v]) => {
-      // Filter out empty keys
       if (!k || !String(k).trim()) return false;
-      // Hide the opposite unit's fields
       if (excluded.has(k)) return false;
-      // Keep booleans (even false), filter out empty strings/null/undefined
       if (typeof v === "boolean") return true;
       if (v === null || v === undefined || String(v).trim() === "")
         return false;

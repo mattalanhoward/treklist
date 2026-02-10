@@ -623,6 +623,15 @@ const SCHEMAS = {
         min: 5,
         max: 20,
       },
+      diameterIn: {
+        type: "number",
+        required: false,
+        label: "Diameter",
+        unit: "in",
+        derived: true,
+        min: 2,
+        max: 8,
+      },
       heightCm: {
         type: "number",
         required: false,
@@ -630,6 +639,15 @@ const SCHEMAS = {
         unit: "cm",
         min: 3,
         max: 20,
+      },
+      heightIn: {
+        type: "number",
+        required: false,
+        label: "Height",
+        unit: "in",
+        derived: true,
+        min: 1,
+        max: 8,
       },
       // Aluminum-specific (optional)
       coating: {
@@ -670,6 +688,13 @@ const SCHEMAS = {
       // Convert ml to fl oz
       if (attrs.volumeMl != null && attrs.volumeOz == null) {
         attrs.volumeOz = Math.round((attrs.volumeMl / 29.574) * 10) / 10;
+      }
+      if (attrs.diameterCm != null && attrs.diameterIn == null) {
+        attrs.diameterIn =
+          Math.round((attrs.diameterCm / 2.54) * 10) / 10;
+      }
+      if (attrs.heightCm != null && attrs.heightIn == null) {
+        attrs.heightIn = Math.round((attrs.heightCm / 2.54) * 10) / 10;
       }
       return attrs;
     },
@@ -892,6 +917,15 @@ const SCHEMAS = {
         min: 76,
         max: 152,
       },
+      peakHeightIn: {
+        type: "number",
+        required: false,
+        label: "Peak Height",
+        unit: "in",
+        derived: true,
+        min: 30,
+        max: 60,
+      },
       doors: {
         type: "enum",
         required: false,
@@ -942,6 +976,10 @@ const SCHEMAS = {
         attrs.vestibuleAreaSqFt =
           Math.round((attrs.vestibuleAreaSqM / 0.0929) * 10) / 10;
       }
+      if (attrs.peakHeightCm != null && attrs.peakHeightIn == null) {
+        attrs.peakHeightIn =
+          Math.round((attrs.peakHeightCm / 2.54) * 10) / 10;
+      }
       return attrs;
     },
   },
@@ -975,11 +1013,25 @@ const SCHEMAS = {
         label: "Length",
         unit: "cm",
       },
+      lengthIn: {
+        type: "number",
+        required: false,
+        label: "Length",
+        unit: "in",
+        derived: true,
+      },
       widthCm: {
         type: "number",
         required: false,
         label: "Width",
         unit: "cm",
+      },
+      widthIn: {
+        type: "number",
+        required: false,
+        label: "Width",
+        unit: "in",
+        derived: true,
       },
       material: {
         type: "string",
@@ -1009,6 +1061,12 @@ const SCHEMAS = {
       if (attrs.coverageAreaSqM != null && attrs.coverageAreaSqFt == null) {
         attrs.coverageAreaSqFt =
           Math.round((attrs.coverageAreaSqM / 0.0929) * 10) / 10;
+      }
+      if (attrs.lengthCm != null && attrs.lengthIn == null) {
+        attrs.lengthIn = Math.round((attrs.lengthCm / 2.54) * 10) / 10;
+      }
+      if (attrs.widthCm != null && attrs.widthIn == null) {
+        attrs.widthIn = Math.round((attrs.widthCm / 2.54) * 10) / 10;
       }
       return attrs;
     },
@@ -1275,6 +1333,15 @@ const SCHEMAS = {
         min: 75,
         max: 130,
       },
+      hoseLengthIn: {
+        type: "number",
+        required: false,
+        label: "Hose Length",
+        unit: "in",
+        derived: true,
+        min: 30,
+        max: 52,
+      },
       insulatedHose: {
         type: "boolean",
         required: false,
@@ -1291,7 +1358,13 @@ const SCHEMAS = {
         label: "Quick Disconnect",
       },
     },
-    derive: (attrs) => attrs,
+    derive: (attrs) => {
+      if (attrs.hoseLength != null && attrs.hoseLengthIn == null) {
+        attrs.hoseLengthIn =
+          Math.round((attrs.hoseLength / 2.54) * 10) / 10;
+      }
+      return attrs;
+    },
   },
 
   // ===========================================================================
