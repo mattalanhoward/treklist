@@ -27,8 +27,6 @@ export default function TopBar({ title, openSettings, onOpenTour }) {
   const [legalInitialTab, setLegalInitialTab] = useState("privacy");
   const { user, logout } = useAuth();
   const {
-    weightUnit,
-    setWeightUnit,
     measurementSystem,
     setMeasurementSystem,
     language,
@@ -168,25 +166,6 @@ export default function TopBar({ title, openSettings, onOpenTour }) {
                           {t(`topbar.themeOptions.${themeOption.name}`)}
                         </option>
                       ))}
-                    </select>
-                  </div>
-                ),
-              },
-              {
-                key: "weight-unit",
-                render: () => (
-                  <div
-                    className="flex items-center justify-between text-sm text-secondary"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <span>{t("topbar.weightUnit")}</span>
-                    <select
-                      value={weightUnit}
-                      onChange={(e) => setWeightUnit(e.target.value)}
-                      className="ml-2 bg-transparent focus:outline-none"
-                    >
-                      <option value="g">g</option>
-                      <option value="oz">oz</option>
                     </select>
                   </div>
                 ),
