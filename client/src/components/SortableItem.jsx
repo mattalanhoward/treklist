@@ -17,6 +17,7 @@ import AffiliateGateLink from "./AffiliateGateLink";
 import { useWeight } from "../hooks/useWeight";
 import GlobalItemEditModal from "./GlobalItemEditModal";
 import { useTranslation } from "react-i18next";
+import { tItemType } from "../config/catalogTaxonomy";
 
 export default function SortableItem({
   item,
@@ -244,7 +245,7 @@ export default function SortableItem({
               style={{ fontSize: 14 }}
               className="font-semibold text-primary flex-shrink-0 hover:text-primary/80"
             >
-              {item.itemType || "—"}
+              {tItemType(t, item.itemType) || "—"}
             </button>
             <button
               type="button"
@@ -328,7 +329,7 @@ export default function SortableItem({
             style={{ fontSize: 14 }}
             className="font-semibold text-primary truncate text-left hover:text-primary/80"
           >
-            {item.itemType || "—"}
+            {tItemType(t, item.itemType) || "—"}
           </button>
 
           {/* 3) Name/brand */}
@@ -421,7 +422,7 @@ export default function SortableItem({
               style={{ fontSize: 14 }}
               className="font-semibold text-primary px-2 text-left hover:text-primary/80"
             >
-              {item.itemType || "—"}
+              {tItemType(t, item.itemType) || "—"}
             </button>
             {!isLocked && (
               <div className="-mr-0.5">

@@ -26,6 +26,13 @@ export function tCategory(t, value) {
   return t?.(`catalog.categories.${value}`, value) ?? value;
 }
 
+// UI helper: translate a canonical item type value
+// Usage: tItemType(t, "Sleeping Bag") -> "Sac de couchage" (fr) or fallback to the value
+export function tItemType(t, value) {
+  if (!value) return "";
+  return t?.(`catalog.itemTypes.${value}`, value) ?? value;
+}
+
 // Merge locked categories with any existing “legacy” categories found in data.
 // This avoids breaking existing items that used older values.
 export function buildCategoryOptions({ existing = [], current = "" } = {}) {

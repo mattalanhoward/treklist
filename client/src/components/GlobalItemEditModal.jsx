@@ -8,6 +8,7 @@ import ConfirmDialog from "./ConfirmDialog";
 import { useUnit } from "../hooks/useUnit";
 import { useWeightInput } from "../hooks/useWeightInput";
 import { FaTimes } from "react-icons/fa";
+import { tItemType } from "../config/catalogTaxonomy";
 import ImageCarousel from "./ImageCarousel";
 import ButtonLink from "./ui/ButtonLink";
 import Spinner from "../components/ui/Spinner";
@@ -609,7 +610,7 @@ export default function GlobalItemEditModal({
                         {t("globalItemModal.labels.itemType")}:
                       </div>
                       <div className="text-primary break-words">
-                        {form.itemType || "—"}
+                        {tItemType(t, form.itemType) || "—"}
                       </div>
                     </div>
 
