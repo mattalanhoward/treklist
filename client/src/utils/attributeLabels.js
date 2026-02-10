@@ -146,7 +146,7 @@ const ATTRIBUTE_LABELS = {
   bpaFree: "BPA-Free",
   openingType: "Opening Type",
   biteValveType: "Bite Valve Type",
-  hoseLength: "Hose Length (in)",
+  hoseLength: "Hose Length (cm)",
   insulatedHose: "Insulated Hose",
   reversible: "Reversible for Cleaning",
   quickDisconnect: "Quick Disconnect",

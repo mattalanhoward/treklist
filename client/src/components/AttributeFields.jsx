@@ -985,7 +985,7 @@ const SCHEMAS = {
         required: false,
         label: "Hose Length",
         min: 30,
-        max: 50,
+        max: 100,
       },
       insulatedHose: {
         type: "boolean",

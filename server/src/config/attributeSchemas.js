@@ -1191,9 +1191,9 @@ const SCHEMAS = {
         type: "number",
         required: false,
         label: "Hose Length",
-        unit: "in",
+        unit: "cm",
         min: 30,
-        max: 50,
+        max: 100,
       },
       insulatedHose: {
         type: "boolean",
