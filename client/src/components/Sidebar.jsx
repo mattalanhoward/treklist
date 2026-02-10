@@ -1,5 +1,5 @@
 // src/components/Sidebar.jsx
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import api from "../services/api";
 import {
   FaChevronLeft,
@@ -66,6 +66,7 @@ export default function Sidebar({
   const { t } = useTranslation("common");
 
   const [newListTitle, setNewListTitle] = useState("");
+  const newListInputRef = useRef(null);
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingGlobalItem, setEditingGlobalItem] = useState(null);
@@ -77,6 +78,21 @@ export default function Sidebar({
     sidebarMyGearCollapsed,
     setSidebarMyGearCollapsed,
   } = useUserSettings();
+
+  // Autofocus "New list" input when Gear Lists section opens (desktop only)
+  useEffect(() => {
+    if (collapsed) return;
+    if (sidebarGearListsCollapsed) return;
+    if (isMobile()) return;
+
+    // Defer to next tick so the input is mounted/visible
+    const id = window.setTimeout(() => {
+      newListInputRef.current?.focus();
+      newListInputRef.current?.select?.();
+    }, 0);
+
+    return () => window.clearTimeout(id);
+  }, [collapsed, sidebarGearListsCollapsed]);
 
   // global gear items & debounced search
   const [items, setItems] = useState([]);
@@ -324,10 +340,19 @@ export default function Sidebar({
                 <>
                   <div className="flex mb-3">
                     <input
+                    ref={newListInputRef}
                       className="flex-1 rounded-lg mt-2 py-1 px-2 bg-base-100 text-primary border-primary"
                       placeholder={t("sidebar.newListPlaceholder")}
                       value={newListTitle}
                       onChange={(e) => setNewListTitle(e.target.value)}
+                      onKeyDown={(e) => {
+     if (e.key === "Enter") {
+       e.preventDefault();
+       if (newListTitle.trim()) createList();
+     } else if (e.key === "Escape") {
+       setNewListTitle("");
+     }
+   }}
                     />
                     <button
                       aria-label="Create list"
