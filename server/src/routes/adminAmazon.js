@@ -8,11 +8,11 @@ const auth = require("../middleware/auth");
 const requireAdmin = require("../middleware/requireAdmin");
 
 const {
-  paapiGetItems,
-  parsePaapiItem,
+  creatorsGetItems,
+  parseCreatorsItem,
   getPartnerTagForMarketplace,
   buildAmazonAffiliateUrl,
-} = require("../services/amazonPaapi");
+} = require("../services/amazonCreatorsApi");
 
 const router = express.Router();
 
@@ -76,7 +76,7 @@ router.post(
     const merchantId = `amazon-${marketplace}`;
 
     // --- MOCK MODE ---
-    if (process.env.AMAZON_PAAPI_MOCK === "1") {
+    if (process.env.AMAZON_CREATORS_MOCK === "1") {
       const deepLink = buildAmazonAffiliateUrl({
         asin,
         marketplace,
@@ -159,7 +159,7 @@ router.post(
       });
     }
 
-    // --- LIVE PA-API MODE ---
+    // --- LIVE CREATORS API MODE ---
     try {
       // In live mode: partnerTag MUST exist
       if (!partnerTag) {
@@ -168,26 +168,17 @@ router.post(
         });
       }
 
-      const resources = [
-        "ItemInfo.Title",
-        "ItemInfo.ByLineInfo",
-        "ItemInfo.Features",
-        "ItemInfo.ManufactureInfo",
-        "ItemInfo.ProductInfo",
-        "Images.Primary.Large",
-        "Images.Primary.Medium",
-      ];
-
-      const json = await paapiGetItems({
+      const json = await creatorsGetItems({
         asin,
         marketplace,
         partnerTag,
-        resources,
       });
 
-      const parsed = parsePaapiItem(json);
+      const parsed = parseCreatorsItem(json);
       if (!parsed) {
-        return res.status(404).json({ message: "ASIN not found in PA-API." });
+        return res
+          .status(404)
+          .json({ message: "ASIN not found via Amazon Creators API." });
       }
 
       // Always return a tagged link we control
@@ -273,9 +264,9 @@ router.post(
         },
       });
     } catch (err) {
-      console.error("PA-API lookup failed:", err);
+      console.error("Creators API lookup failed:", err);
       return res.status(500).json({
-        message: err?.message || "PA-API lookup failed.",
+        message: err?.message || "Amazon lookup failed.",
       });
     }
   }
