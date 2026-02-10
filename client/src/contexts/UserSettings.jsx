@@ -21,6 +21,9 @@ export function SettingsProvider({ children }) {
   const [weightUnit, setWeightUnit] = useState(
     () => localStorage.getItem("weightUnit") || "g"
   );
+  const [measurementSystem, setMeasurementSystem] = useState(
+    () => localStorage.getItem("measurementSystem") || "metric"
+  );
   const [theme, setTheme] = useState(
     () => localStorage.getItem("theme") || "light"
   );
@@ -82,6 +85,10 @@ export function SettingsProvider({ children }) {
   useEffect(() => {
     localStorage.setItem("weightUnit", weightUnit);
   }, [weightUnit]);
+
+  useEffect(() => {
+    localStorage.setItem("measurementSystem", measurementSystem);
+  }, [measurementSystem]);
 
   useEffect(() => {
     if (!language) return;
@@ -159,6 +166,7 @@ export function SettingsProvider({ children }) {
       const s = res.data || {};
       // Apply with sensible fallbacks + normalization
       setWeightUnit(s.weightUnit || "g");
+      setMeasurementSystem(s.measurementSystem || "metric");
       setTheme(s.theme || "alpine");
       setLanguage(s.language || "en");
       setRegion((s.region || "nl").toLowerCase());
@@ -182,6 +190,7 @@ export function SettingsProvider({ children }) {
     if (!isAuthenticated || !hydrated) return; // ← prevent echo on initial hydrate
     const payload = {
       weightUnit,
+      measurementSystem,
       theme,
       language,
       region: (region || "nl").toLowerCase(),
@@ -198,6 +207,7 @@ export function SettingsProvider({ children }) {
     isAuthenticated,
     hydrated,
     weightUnit,
+    measurementSystem,
     theme,
     language,
     region,
@@ -211,6 +221,8 @@ export function SettingsProvider({ children }) {
   // Optional helpers for screens that PATCH explicitly:
   const applySettings = useCallback((partial) => {
     if (partial.weightUnit != null) setWeightUnit(partial.weightUnit);
+    if (partial.measurementSystem != null)
+      setMeasurementSystem(partial.measurementSystem);
     if (partial.theme != null) setTheme(partial.theme);
     if (partial.language != null) setLanguage(partial.language);
     if (partial.region != null) setRegion(String(partial.region).toLowerCase());
@@ -228,6 +240,7 @@ export function SettingsProvider({ children }) {
       value={{
         // values
         weightUnit,
+        measurementSystem,
         theme,
         language,
         region,
@@ -239,6 +252,7 @@ export function SettingsProvider({ children }) {
         hydrated,
         // setters
         setWeightUnit,
+        setMeasurementSystem,
         setTheme,
         setLanguage,
         setRegion,

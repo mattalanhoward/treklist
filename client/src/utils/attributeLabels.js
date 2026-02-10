@@ -17,11 +17,13 @@
 // This is a flat map since most keys are unique across schemas
 const ATTRIBUTE_LABELS = {
   // Sleep System - Sleeping Bags
+  tempRatingC: "Temperature Rating (°C)",
   tempRatingF: "Temperature Rating (°F)",
   fillPower: "Fill Power",
   shape: "Shape",
   gender: "Gender/Fit",
   lengthSize: "Length/Size",
+  fillWeightG: "Fill Weight (g)",
   fillWeightOz: "Fill Weight (oz)",
   zipperSide: "Zipper Side",
   hoodType: "Hood Type",
@@ -36,6 +38,7 @@ const ATTRIBUTE_LABELS = {
 
   // Sleep System - Pads
   rValue: "R-Value",
+  thicknessCm: "Thickness (cm)",
   thicknessIn: "Thickness (in)",
   inflationMethod: "Inflation Method",
   seasonRating: "Season Rating",
@@ -92,7 +95,9 @@ const ATTRIBUTE_LABELS = {
   tentType: "Tent Type",
   wallType: "Wall Type",
   floorAreaSqM: "Floor Area (sq m)",
+  floorAreaSqFt: "Floor Area (sq ft)",
   vestibuleAreaSqM: "Vestibule Area (sq m)",
+  vestibuleAreaSqFt: "Vestibule Area (sq ft)",
   peakHeightCm: "Peak Height (cm)",
   doors: "Doors",
   vestibules: "Vestibules",
@@ -103,6 +108,7 @@ const ATTRIBUTE_LABELS = {
 
   // Shelter - Tarps
   coverageAreaSqM: "Coverage Area (sq m)",
+  coverageAreaSqFt: "Coverage Area (sq ft)",
   lengthCm: "Length (cm)",
   widthCm: "Width (cm)",
   material: "Material",
@@ -227,6 +233,7 @@ const ATTRIBUTE_LABELS = {
   windproof: "Windproof",
 
   // Clothing - Shorts
+  inseamCm: "Inseam (cm)",
   inseamIn: "Inseam (in)",
   stretchFabric: "Stretch Fabric",
   beltLoops: "Belt Loops",
@@ -249,6 +256,7 @@ const ATTRIBUTE_LABELS = {
   mirroredLens: "Mirrored/Reflective Lens",
 
   // Sleep System - Liners
+  tempBoostC: "Temperature Boost (°C)",
   tempBoostF: "Temperature Boost (°F)",
   zippered: "Zippered",
 
@@ -275,6 +283,23 @@ const ATTRIBUTE_LABELS = {
   pockets: "Number of Pockets",
   material: "Material",
 };
+
+// Metric/imperial pairs — used to filter display based on user preference
+const UNIT_PAIRS = [
+  { metric: "tempRatingC", imperial: "tempRatingF" },
+  { metric: "tempBoostC", imperial: "tempBoostF" },
+  { metric: "fillWeightG", imperial: "fillWeightOz" },
+  { metric: "thicknessCm", imperial: "thicknessIn" },
+  { metric: "floorAreaSqM", imperial: "floorAreaSqFt" },
+  { metric: "vestibuleAreaSqM", imperial: "vestibuleAreaSqFt" },
+  { metric: "coverageAreaSqM", imperial: "coverageAreaSqFt" },
+  { metric: "inseamCm", imperial: "inseamIn" },
+];
+
+function getExcludedKeys(measurementSystem) {
+  const side = measurementSystem === "imperial" ? "metric" : "imperial";
+  return new Set(UNIT_PAIRS.map((p) => p[side]));
+}
 
 /**
  * Convert a camelCase or PascalCase key to Title Case with spaces.
@@ -349,10 +374,17 @@ export function formatAttributeValue(key, value) {
  *
  * @param {Object|Map} attributes - Raw attributes from CatalogItem/GlobalItem
  * @param {string} [itemType] - Optional item type for context
+ * @param {string} [measurementSystem] - "metric" or "imperial" — filters unit pairs
  * @returns {Array<[string, string]>} Array of [label, formattedValue] pairs
  */
-export function formatAttributesForDisplay(attributes, itemType = null) {
+export function formatAttributesForDisplay(
+  attributes,
+  itemType = null,
+  measurementSystem = "metric",
+) {
   if (!attributes) return [];
+
+  const excluded = getExcludedKeys(measurementSystem);
 
   // Handle both Map and plain object
   const entries =
@@ -364,6 +396,8 @@ export function formatAttributesForDisplay(attributes, itemType = null) {
     .filter(([k, v]) => {
       // Filter out empty keys
       if (!k || !String(k).trim()) return false;
+      // Hide the opposite unit's fields
+      if (excluded.has(k)) return false;
       // Keep booleans (even false), filter out empty strings/null/undefined
       if (typeof v === "boolean") return true;
       if (v === null || v === undefined || String(v).trim() === "")

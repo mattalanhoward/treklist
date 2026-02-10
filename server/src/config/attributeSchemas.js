@@ -39,22 +39,22 @@ const SCHEMAS = {
         label: "Insulation Type",
         options: ["Down", "Synthetic"],
       },
-      tempRatingF: {
+      tempRatingC: {
         type: "number",
         required: true,
         label: "Temperature Rating",
-        unit: "°F",
-        min: -60,
-        max: 60,
-      },
-      tempRatingC: {
-        type: "number",
-        required: false, // Auto-derived from Fahrenheit
-        label: "Temperature Rating",
         unit: "°C",
-        derived: true,
         min: -51,
         max: 16,
+      },
+      tempRatingF: {
+        type: "number",
+        required: false,
+        label: "Temperature Rating",
+        unit: "°F",
+        derived: true,
+        min: -60,
+        max: 60,
       },
       // Down-specific fields (optional, only used when insulationType = "Down")
       fillPower: {
@@ -63,11 +63,20 @@ const SCHEMAS = {
         label: "Fill Power",
         options: [550, 600, 650, 700, 750, 800, 850, 900, 950, 1000],
       },
+      fillWeightG: {
+        type: "number",
+        required: false,
+        label: "Fill Weight",
+        unit: "g",
+        min: 0,
+        max: 2268,
+      },
       fillWeightOz: {
         type: "number",
         required: false,
         label: "Fill Weight",
         unit: "oz",
+        derived: true,
         min: 0,
         max: 80,
       },
@@ -121,9 +130,14 @@ const SCHEMAS = {
       },
     },
     derive: (attrs) => {
-      // Auto-calculate Celsius from Fahrenheit
-      if (attrs.tempRatingF != null && attrs.tempRatingC == null) {
-        attrs.tempRatingC = Math.round((attrs.tempRatingF - 32) * (5 / 9));
+      // Auto-calculate Fahrenheit from Celsius
+      if (attrs.tempRatingC != null && attrs.tempRatingF == null) {
+        attrs.tempRatingF = Math.round(attrs.tempRatingC * (9 / 5) + 32);
+      }
+      // Auto-calculate ounces from grams
+      if (attrs.fillWeightG != null && attrs.fillWeightOz == null) {
+        attrs.fillWeightOz =
+          Math.round((attrs.fillWeightG / 28.3495) * 10) / 10;
       }
       return attrs;
     },
@@ -137,19 +151,19 @@ const SCHEMAS = {
         label: "Insulation Type",
         options: ["Down", "Synthetic"],
       },
-      tempRatingF: {
+      tempRatingC: {
         type: "number",
         required: true,
         label: "Temperature Rating",
-        unit: "°F",
-        min: -20,
-        max: 60,
+        unit: "°C",
+        min: -29,
+        max: 16,
       },
-      tempRatingC: {
+      tempRatingF: {
         type: "number",
         required: false,
         label: "Temperature Rating",
-        unit: "°C",
+        unit: "°F",
         derived: true,
       },
       // Down-specific fields (optional, only used when insulationType = "Down")
@@ -159,11 +173,20 @@ const SCHEMAS = {
         label: "Fill Power",
         options: [750, 800, 850, 900, 950, 1000],
       },
+      fillWeightG: {
+        type: "number",
+        required: false,
+        label: "Fill Weight",
+        unit: "g",
+        min: 0,
+        max: 1134,
+      },
       fillWeightOz: {
         type: "number",
         required: false,
         label: "Fill Weight",
         unit: "oz",
+        derived: true,
         min: 0,
         max: 40,
       },
@@ -217,8 +240,12 @@ const SCHEMAS = {
       },
     },
     derive: (attrs) => {
-      if (attrs.tempRatingF != null && attrs.tempRatingC == null) {
-        attrs.tempRatingC = Math.round((attrs.tempRatingF - 32) * (5 / 9));
+      if (attrs.tempRatingC != null && attrs.tempRatingF == null) {
+        attrs.tempRatingF = Math.round(attrs.tempRatingC * (9 / 5) + 32);
+      }
+      if (attrs.fillWeightG != null && attrs.fillWeightOz == null) {
+        attrs.fillWeightOz =
+          Math.round((attrs.fillWeightG / 28.3495) * 10) / 10;
       }
       return attrs;
     },
@@ -233,20 +260,22 @@ const SCHEMAS = {
         min: 0,
         max: 10,
       },
-      thicknessIn: {
-        type: "number",
-        required: false,
-        label: "Thickness",
-        unit: "in",
-        min: 0.5,
-        max: 6,
-      },
       thicknessCm: {
         type: "number",
         required: false,
         label: "Thickness",
         unit: "cm",
+        min: 1.3,
+        max: 15.2,
+      },
+      thicknessIn: {
+        type: "number",
+        required: false,
+        label: "Thickness",
+        unit: "in",
         derived: true,
+        min: 0.5,
+        max: 6,
       },
       lengthSize: {
         type: "enum",
@@ -280,9 +309,9 @@ const SCHEMAS = {
       },
     },
     derive: (attrs) => {
-      // Convert inches to cm
-      if (attrs.thicknessIn != null && attrs.thicknessCm == null) {
-        attrs.thicknessCm = Math.round(attrs.thicknessIn * 2.54 * 10) / 10;
+      // Convert cm to inches
+      if (attrs.thicknessCm != null && attrs.thicknessIn == null) {
+        attrs.thicknessIn = Math.round((attrs.thicknessCm / 2.54) * 10) / 10;
       }
       return attrs;
     },
@@ -297,11 +326,20 @@ const SCHEMAS = {
         min: 0,
         max: 6,
       },
+      thicknessCm: {
+        type: "number",
+        required: false,
+        label: "Thickness",
+        unit: "cm",
+        min: 0.6,
+        max: 5.1,
+      },
       thicknessIn: {
         type: "number",
         required: false,
         label: "Thickness",
         unit: "in",
+        derived: true,
         min: 0.25,
         max: 2,
       },
@@ -318,7 +356,12 @@ const SCHEMAS = {
         options: ["Closed-Cell Foam", "Accordion Fold", "Roll", "Egg Crate"],
       },
     },
-    derive: (attrs) => attrs,
+    derive: (attrs) => {
+      if (attrs.thicknessCm != null && attrs.thicknessIn == null) {
+        attrs.thicknessIn = Math.round((attrs.thicknessCm / 2.54) * 10) / 10;
+      }
+      return attrs;
+    },
   },
 
   Pillow: {
@@ -811,29 +854,43 @@ const SCHEMAS = {
         label: "Wall Type",
         options: ["Double Wall", "Single Wall", "Hybrid"],
       },
-      floorArea: {
+      floorAreaSqM: {
+        type: "number",
+        required: false,
+        label: "Floor Area",
+        unit: "sq m",
+        min: 1.4,
+        max: 9.3,
+      },
+      floorAreaSqFt: {
         type: "number",
         required: false,
         label: "Floor Area",
         unit: "sq ft",
-        min: 15,
-        max: 100,
+        derived: true,
       },
-      vestibuleArea: {
+      vestibuleAreaSqM: {
+        type: "number",
+        required: false,
+        label: "Vestibule Area",
+        unit: "sq m",
+        min: 0,
+        max: 2.8,
+      },
+      vestibuleAreaSqFt: {
         type: "number",
         required: false,
         label: "Vestibule Area",
         unit: "sq ft",
-        min: 0,
-        max: 30,
+        derived: true,
       },
-      peakHeightIn: {
+      peakHeightCm: {
         type: "number",
         required: false,
         label: "Peak Height",
         unit: "cm",
-        min: 50,
-        max: 150,
+        min: 76,
+        max: 152,
       },
       doors: {
         type: "enum",
@@ -876,7 +933,17 @@ const SCHEMAS = {
         label: "Footprint Included",
       },
     },
-    derive: (attrs) => attrs,
+    derive: (attrs) => {
+      if (attrs.floorAreaSqM != null && attrs.floorAreaSqFt == null) {
+        attrs.floorAreaSqFt =
+          Math.round((attrs.floorAreaSqM / 0.0929) * 10) / 10;
+      }
+      if (attrs.vestibuleAreaSqM != null && attrs.vestibuleAreaSqFt == null) {
+        attrs.vestibuleAreaSqFt =
+          Math.round((attrs.vestibuleAreaSqM / 0.0929) * 10) / 10;
+      }
+      return attrs;
+    },
   },
 
   "Tarp Shelter": {
@@ -887,13 +954,20 @@ const SCHEMAS = {
         label: "Shape",
         options: ["Rectangular", "Catenary Cut", "Hex", "A-Frame", "Pyramid"],
       },
-      coverageArea: {
+      coverageAreaSqM: {
+        type: "number",
+        required: false,
+        label: "Coverage Area",
+        unit: "sq m",
+        min: 1.9,
+        max: 13.9,
+      },
+      coverageAreaSqFt: {
         type: "number",
         required: false,
         label: "Coverage Area",
         unit: "sq ft",
-        min: 20,
-        max: 150,
+        derived: true,
       },
       lengthCm: {
         type: "number",
@@ -931,7 +1005,13 @@ const SCHEMAS = {
         label: "Stakes Included",
       },
     },
-    derive: (attrs) => attrs,
+    derive: (attrs) => {
+      if (attrs.coverageAreaSqM != null && attrs.coverageAreaSqFt == null) {
+        attrs.coverageAreaSqFt =
+          Math.round((attrs.coverageAreaSqM / 0.0929) * 10) / 10;
+      }
+      return attrs;
+    },
   },
 
   // ===========================================================================
@@ -1192,8 +1272,8 @@ const SCHEMAS = {
         required: false,
         label: "Hose Length",
         unit: "cm",
-        min: 30,
-        max: 100,
+        min: 75,
+        max: 130,
       },
       insulatedHose: {
         type: "boolean",
@@ -1387,11 +1467,20 @@ const SCHEMAS = {
         label: "Fill Power",
         options: [550, 600, 650, 700, 750, 800, 850, 900, 950],
       },
+      fillWeightG: {
+        type: "number",
+        required: false,
+        label: "Fill Weight",
+        unit: "g",
+        min: 28,
+        max: 340,
+      },
       fillWeightOz: {
         type: "number",
         required: false,
         label: "Fill Weight",
         unit: "oz",
+        derived: true,
         min: 1,
         max: 12,
       },
@@ -1459,14 +1548,16 @@ const SCHEMAS = {
         type: "enum",
         required: false,
         label: "Temperature Range",
-        options: [
-          "Lightweight (40-60°F)",
-          "Midweight (20-40°F)",
-          "Heavyweight (<20°F)",
-        ],
+        options: ["Lightweight", "Midweight", "Heavyweight"],
       },
     },
-    derive: (attrs) => attrs,
+    derive: (attrs) => {
+      if (attrs.fillWeightG != null && attrs.fillWeightOz == null) {
+        attrs.fillWeightOz =
+          Math.round((attrs.fillWeightG / 28.3495) * 10) / 10;
+      }
+      return attrs;
+    },
   },
 
   // ===========================================================================
@@ -1652,10 +1743,10 @@ const SCHEMAS = {
         required: false,
         label: "Temperature Rating",
         options: [
-          "Warm Weather (40-60°F)",
-          "Cool Weather (20-40°F)",
-          "Cold Weather (0-20°F)",
-          "Extreme Cold (<0°F)",
+          "Warm Weather",
+          "Cool Weather",
+          "Cold Weather",
+          "Extreme Cold",
         ],
       },
     },
@@ -2046,11 +2137,20 @@ const SCHEMAS = {
         label: "Gender/Fit",
         options: ["Mens", "Womens", "Unisex"],
       },
+      inseamCm: {
+        type: "number",
+        required: false,
+        label: "Inseam",
+        unit: "cm",
+        min: 8,
+        max: 30,
+      },
       inseamIn: {
         type: "number",
         required: false,
         label: "Inseam",
         unit: "in",
+        derived: true,
         min: 3,
         max: 12,
       },
@@ -2094,7 +2194,12 @@ const SCHEMAS = {
         options: ["UPF 15-24", "UPF 25-39", "UPF 40-50", "UPF 50+", "None"],
       },
     },
-    derive: (attrs) => attrs,
+    derive: (attrs) => {
+      if (attrs.inseamCm != null && attrs.inseamIn == null) {
+        attrs.inseamIn = Math.round((attrs.inseamCm / 2.54) * 10) / 10;
+      }
+      return attrs;
+    },
   },
 
   // ===========================================================================
@@ -2257,11 +2362,20 @@ const SCHEMAS = {
         label: "Shape",
         options: ["Mummy", "Rectangular", "Semi-Rectangular"],
       },
+      tempBoostC: {
+        type: "number",
+        required: false,
+        label: "Temperature Boost",
+        unit: "°C",
+        min: 3,
+        max: 14,
+      },
       tempBoostF: {
         type: "number",
         required: false,
         label: "Temperature Boost",
         unit: "°F",
+        derived: true,
         min: 5,
         max: 25,
       },
@@ -2282,7 +2396,12 @@ const SCHEMAS = {
         label: "Zippered (Not Sewn Shut)",
       },
     },
-    derive: (attrs) => attrs,
+    derive: (attrs) => {
+      if (attrs.tempBoostC != null && attrs.tempBoostF == null) {
+        attrs.tempBoostF = Math.round(attrs.tempBoostC * (9 / 5));
+      }
+      return attrs;
+    },
   },
 
   // ===========================================================================

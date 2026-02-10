@@ -7,6 +7,7 @@ import LinkInput from "../components/LinkInput";
 import ConfirmDialog from "./ConfirmDialog";
 import { useUnit } from "../hooks/useUnit";
 import { useWeightInput } from "../hooks/useWeightInput";
+import { useUserSettings } from "../contexts/UserSettings";
 import { FaTimes } from "react-icons/fa";
 import { tItemType } from "../config/catalogTaxonomy";
 import ImageCarousel from "./ImageCarousel";
@@ -41,6 +42,7 @@ export default function GlobalItemEditModal({
 
   const unit = useUnit();
   const { unitLabel, formatInput, parseInput } = useWeightInput(unit);
+  const { measurementSystem } = useUserSettings();
 
   const [displayWeight, setDisplayWeight] = useState("");
   const [worn, setWorn] = useState(false);
@@ -452,9 +454,9 @@ export default function GlobalItemEditModal({
     if (viewMode !== "imported") return null;
     const attrs = template?.attributes;
     if (!attrs) return null;
-    const formatted = formatAttributesForDisplay(attrs, template?.itemType);
+    const formatted = formatAttributesForDisplay(attrs, template?.itemType, measurementSystem);
     return formatted.length ? formatted : null;
-  }, [viewMode, template?.attributes, template?.itemType]);
+  }, [viewMode, template?.attributes, template?.itemType, measurementSystem]);
 
   // PreviewModal-style full-screen spinner conditions
   const showFullscreenSpinner =

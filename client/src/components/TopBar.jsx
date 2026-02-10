@@ -29,6 +29,8 @@ export default function TopBar({ title, openSettings, onOpenTour }) {
   const {
     weightUnit,
     setWeightUnit,
+    measurementSystem,
+    setMeasurementSystem,
     language,
     setLanguage,
     region,
@@ -185,6 +187,25 @@ export default function TopBar({ title, openSettings, onOpenTour }) {
                     >
                       <option value="g">g</option>
                       <option value="oz">oz</option>
+                    </select>
+                  </div>
+                ),
+              },
+              {
+                key: "measurement-system",
+                render: () => (
+                  <div
+                    className="flex items-center justify-between text-sm text-secondary"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <span>{t("topbar.measurementSystem")}</span>
+                    <select
+                      value={measurementSystem}
+                      onChange={(e) => setMeasurementSystem(e.target.value)}
+                      className="ml-2 bg-transparent focus:outline-none"
+                    >
+                      <option value="metric">{t("topbar.metric")}</option>
+                      <option value="imperial">{t("topbar.imperial")}</option>
                     </select>
                   </div>
                 ),
