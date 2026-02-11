@@ -24,7 +24,7 @@ export default function StatWithDetails({
   if (disablePopover) {
     // just render the static stat – no popover, no hover / click
     return (
-      <div className="flex items-center space-x-1">
+      <div className="flex items-center space-x-1" title={label}>
         <Icon className={`text-base ${colorClass || ""}`} />
         <span className="text-sm text-primary">{displayValue}</span>{" "}
       </div>

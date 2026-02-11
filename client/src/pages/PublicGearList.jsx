@@ -1,14 +1,9 @@
 // client/src/pages/PublicGearList.jsx
 import React from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import {
-  FaBalanceScale,
-  FaUtensils,
-  FaTshirt,
-  FaShoppingCart,
-  FaEdit,
-} from "react-icons/fa";
-import { BsBackpack4 } from "react-icons/bs";
+import { FaUtensils, FaTshirt, FaShoppingCart, FaEdit } from "react-icons/fa";
+import PackStats from "../components/PackStats";
+import { useUserSettings } from "../contexts/UserSettings";
 import AffiliateGateLink from "../components/AffiliateGateLink";
 import AffiliateDisclosureNotice from "../components/AffiliateDisclosureNotice";
 import PublicHeader from "../components/PublicHeader";
@@ -34,17 +29,6 @@ function fmtWeight(g, unit) {
   return `${Math.round(Number(g))} g`;
 }
 
-// header stat formatting: grams -> kg when large; ounces -> lb when large
-function fmtHeaderStat(valueG, unit) {
-  if (!Number.isFinite(valueG)) return "—";
-  if (unit === "g") {
-    if (valueG >= 1000) return `${(valueG / 1000).toFixed(1)} kg`;
-    return `${Math.round(valueG)} g`;
-  }
-  const oz = gToOz(valueG) ?? 0;
-  if (oz >= 16) return `${(oz / 16).toFixed(1)} lb`;
-  return `${oz.toFixed(1)} oz`;
-}
 
 function catTotalG(items) {
   // mirror computeStatsPublic's total contribution rule, but per category (in grams)
@@ -70,10 +54,13 @@ export default function PublicGearList() {
   const navigate = useNavigate();
   const copyRanRef = React.useRef(false);
 
+  const { weightUnit, setWeightUnit } = useUserSettings();
+
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState("");
   const [data, setData] = React.useState(null);
-  const [unit, setUnit] = React.useState("g"); // "g" | "oz"
+  const unit = weightUnit === "oz" ? "oz" : "g";
+  const setUnit = (u) => setWeightUnit(u);
   const [copying, setCopying] = React.useState(false);
 
   // IMPORTANT: used for embed height measurement
@@ -273,56 +260,6 @@ export default function PublicGearList() {
 
   const stats = computeStatsPublic(data?.items || []);
 
-  // compact, icon-only stats row that follows the unit toggle
-  function StatsRow({ className = "" }) {
-    const chips = [
-      {
-        key: "base",
-        title: t("publicList.stats.base"),
-        icon: BsBackpack4,
-        value: stats.base,
-      },
-      {
-        key: "worn",
-        title: t("publicList.stats.worn"),
-        icon: FaTshirt,
-        value: stats.worn,
-      },
-      {
-        key: "consumable",
-        title: t("publicList.stats.consumable"),
-        icon: FaUtensils,
-        value: stats.consumable,
-      },
-      {
-        key: "total",
-        title: t("publicList.stats.total"),
-        icon: FaBalanceScale,
-        value: stats.total,
-      },
-    ];
-    return (
-      <div
-        className={cx(
-          "flex flex-wrap items-center gap-x-6 gap-y-2",
-          isEmbed ? "text-[12px]" : "",
-          className,
-        )}
-      >
-        {chips.map(({ key, title, icon: Icon, value }) => (
-          <div
-            key={key}
-            className="inline-flex items-center gap-2 text-primary tabular-nums"
-            title={title}
-          >
-            <Icon className="shrink-0" aria-hidden />
-            <span>{fmtHeaderStat(value, unit)}</span>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
   // --- Embed styling helpers (compact mode) ---
   const pageBgClass = isEmbed ? "bg-base-100" : "bg-neutral";
   const minHClass = isEmbed ? "min-h-0" : "min-h-screen";
@@ -480,7 +417,7 @@ export default function PublicGearList() {
       <main className="flex-1">
         <div className={containerClass}>
           {/* ===== Header ===== */}
-          {/* Desktop (>= md): Row 1 = Title | CTA | Toggle; Row 2 = icon-only stats */}
+          {/* Desktop (>= md): Title + PackStats | CTA | Toggle */}
           <div className="hidden md:grid mb-2 gap-y-2">
             <AffiliateDisclosureNotice
               context="public"
@@ -488,14 +425,24 @@ export default function PublicGearList() {
             />
 
             <div className="grid grid-cols-[1fr_auto] items-center gap-3">
-              <h1
-                className={cx(
-                  isEmbed ? "text-xl" : "text-3xl",
-                  "font-semibold text-primary truncate",
-                )}
-              >
-                {data.list.title}
-              </h1>
+              <div className="flex items-center gap-4 min-w-0">
+                <h1
+                  className={cx(
+                    isEmbed ? "text-xl" : "text-3xl",
+                    "font-semibold text-primary truncate",
+                  )}
+                >
+                  {data.list.title}
+                </h1>
+
+                <PackStats
+                  base={stats.base}
+                  worn={stats.worn}
+                  consumable={stats.consumable}
+                  total={stats.total}
+                  disablePopover
+                />
+              </div>
 
               {/* Right-side controls: toggle + CTA */}
               <div className="flex items-center gap-2">
@@ -534,12 +481,9 @@ export default function PublicGearList() {
                 />
               </div>
             </div>
-
-            {/* Stats row takes a lot of vertical space — hide in embed */}
-            {!isEmbed && <StatsRow />}
           </div>
 
-          {/* Mobile (< md): Title → CTA → Toggle → Stats */}
+          {/* Mobile (< md): Title → PackStats → CTA → Toggle */}
           <div className="md:hidden mb-2">
             <AffiliateDisclosureNotice
               context="public"
@@ -554,6 +498,16 @@ export default function PublicGearList() {
             >
               {data.list.title}
             </h1>
+
+            <div className="mt-2 flex justify-center">
+              <PackStats
+                base={stats.base}
+                worn={stats.worn}
+                consumable={stats.consumable}
+                total={stats.total}
+                disablePopover
+              />
+            </div>
 
             <div className="mt-2 flex justify-center">
               <CustomizeCTA
@@ -593,8 +547,6 @@ export default function PublicGearList() {
                 </button>
               </div>
             </div>
-
-            {!isEmbed && <StatsRow className="justify-center mt-3" />}
           </div>
 
           {/* ======= PUBLIC LIST MODE: MOBILE CARDS (< md) ======= */}
