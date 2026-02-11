@@ -752,6 +752,38 @@ const SCHEMAS = {
     derive: (attrs) => attrs,
   },
 
+  "Coffee Mug": {
+    fields: {
+      volumeMl: {
+        type: "number",
+        required: true,
+        label: "Volume",
+        unit: "ml",
+        min: 100,
+        max: 600,
+      },
+      volumeOz: {
+        type: "number",
+        required: false,
+        label: "Volume",
+        unit: "fl oz",
+        derived: true,
+      },
+      material: {
+        type: "enum",
+        required: true,
+        label: "Material",
+        options: ["Titanium", "Stainless Steel", "Aluminum", "Plastic", "Silicone (Collapsible)", "Enamel"],
+      },
+    },
+    derive: (attrs) => {
+      if (attrs.volumeMl != null && attrs.volumeOz == null) {
+        attrs.volumeOz = Math.round((attrs.volumeMl / 29.574) * 10) / 10;
+      }
+      return attrs;
+    },
+  },
+
   // ===========================================================================
   // TREKKING POLES
   // ===========================================================================
@@ -2597,6 +2629,35 @@ const SCHEMAS = {
         label: "Hang Loop/Snap",
       },
     },
+    derive: (attrs) => attrs,
+  },
+
+  // ===========================================================================
+  // ACCESSORIES - BEAR CANISTERS
+  // ===========================================================================
+
+  "Bear Canister": {
+    fields: {
+      capacityL: {
+        type: "number",
+        required: true,
+        label: "Capacity",
+        unit: "L",
+        min: 1,
+        max: 15,
+      },
+      material: {
+        type: "enum",
+        required: true,
+        label: "Material",
+        options: ["Polycarbonate", "Carbon Fiber", "Aluminum", "ABS Plastic"],
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  "Pocket Knife": {
+    fields: {},
     derive: (attrs) => attrs,
   },
 

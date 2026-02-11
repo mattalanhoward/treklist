@@ -571,6 +571,25 @@ const SCHEMAS = {
     },
   },
 
+  "Coffee Mug": {
+    fields: {
+      volumeMl: {
+        type: "number",
+        required: true,
+        label: "Volume",
+        unit: "ml",
+        min: 100,
+        max: 600,
+      },
+      material: {
+        type: "enum",
+        required: true,
+        label: "Material",
+        options: ["Titanium", "Stainless Steel", "Aluminum", "Plastic", "Silicone (Collapsible)", "Enamel"],
+      },
+    },
+  },
+
   "Trekking Poles": {
     fields: {
       material: {
@@ -2243,6 +2262,29 @@ const SCHEMAS = {
     },
   },
 
+  "Bear Canister": {
+    fields: {
+      capacityL: {
+        type: "number",
+        required: true,
+        label: "Capacity",
+        unit: "L",
+        min: 1,
+        max: 15,
+      },
+      material: {
+        type: "enum",
+        required: true,
+        label: "Material",
+        options: ["Polycarbonate", "Carbon Fiber", "Aluminum", "ABS Plastic"],
+      },
+    },
+  },
+
+  "Pocket Knife": {
+    fields: {},
+  },
+
   Toiletry: {
     fields: {},
   },
@@ -2321,7 +2363,7 @@ export const CATEGORY_ITEM_TYPE_MAPPING = {
     "Pillow",
   ],
   "Backpacks & Bags": ["Backpack", "Daypack", "Hip Pack"],
-  "Kitchen & Cooking": ["Backpacking Pot", "Backpacking Stove (Canister)"],
+  "Kitchen & Cooking": ["Backpacking Pot", "Backpacking Stove (Canister)", "Coffee Mug"],
   Shelter: ["Backpacking Tent", "Tarp Shelter"],
   "Electronics & Power": ["Headlamp", "Power Bank"],
   Hydration: ["Water Filter", "Water Bottle", "Hydration Reservoir"],
@@ -2365,7 +2407,7 @@ export const CATEGORY_ITEM_TYPE_MAPPING = {
     "Hiking Shirt",
     "Gloves (Insulated)",
   ],
-  "Accessories & Tools": ["Trekking Poles", "Sunglasses"],
+  "Accessories & Tools": ["Trekking Poles", "Sunglasses", "Bear Canister", "Pocket Knife"],
   Travel: ["Travel Towel"],
   "Health & Hygiene": ["Toiletry", "Medication"],
   "Navigation & Planning": ["Document"],
