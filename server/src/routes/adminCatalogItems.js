@@ -286,7 +286,7 @@ router.get("/", async (req, res) => {
     const items = await CatalogItem.find(query)
       .sort({ updatedAt: -1 })
       .skip(Number(skip) || 0)
-      .limit(Math.min(Number(limit) || 100, 200))
+      .limit(Math.min(Number(limit) || 100, 2000))
       .lean();
 
     const ids = items.map((i) => i._id);
