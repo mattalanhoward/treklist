@@ -2285,6 +2285,10 @@ const SCHEMAS = {
     fields: {},
   },
 
+  "First Aid Kit": {
+    fields: {},
+  },
+
   Toiletry: {
     fields: {},
   },
@@ -2409,7 +2413,7 @@ export const CATEGORY_ITEM_TYPE_MAPPING = {
   ],
   "Accessories & Tools": ["Trekking Poles", "Sunglasses", "Bear Canister", "Pocket Knife"],
   Travel: ["Travel Towel"],
-  "Health & Hygiene": ["Toiletry", "Medication"],
+  "Health & Hygiene": ["Toiletry", "Medication", "First Aid Kit"],
   "Navigation & Planning": ["Document"],
 };
 
