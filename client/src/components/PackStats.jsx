@@ -1,6 +1,5 @@
 // src/components/PackStats.jsx
 import React from "react";
-import { useUserSettings } from "../contexts/UserSettings";
 import { BsBackpack4 } from "react-icons/bs";
 import { FaTshirt, FaUtensils, FaBalanceScale } from "react-icons/fa";
 import StatWithDetails from "./StatWithDetails";
@@ -27,11 +26,7 @@ export default function PackStats({
   disablePopover = false,
   showLabels = false,
 }) {
-  const { weightUnit } = useUserSettings();
   const { t } = useTranslation("common");
-
-  // only in imperial units we’ll hide the “Total” stat
-  const isImperial = weightUnit === "lb" || weightUnit === "oz";
 
   const stats = [
     {
@@ -68,15 +63,10 @@ export default function PackStats({
     },
   ];
 
-  // drop the Total entry when in lb/oz mode
-  const visibleStats = isImperial
-    ? stats.filter((s) => s.id !== "total")
-    : stats;
-
   if (!showLabels) {
     return (
       <div className="flex items-center space-x-3 text-sm overflow-x-auto px-3 hide-scrollbar">
-        {visibleStats.map((s) => (
+        {stats.map((s) => (
           <StatWithDetails key={s.id} {...s} disablePopover={disablePopover} />
         ))}
       </div>
@@ -85,7 +75,7 @@ export default function PackStats({
 
   return (
     <div className="flex items-center space-x-6 text-sm overflow-x-auto px-3 hide-scrollbar">
-      {visibleStats.map((s) => (
+      {stats.map((s) => (
         <div key={s.id} className="flex flex-col items-center space-y-2">
           <StatWithDetails {...s} disablePopover={disablePopover} />
           <span className="text-sm text-primary">{s.label}</span>
