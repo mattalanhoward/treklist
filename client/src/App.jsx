@@ -18,6 +18,8 @@ import ImprintPage from "./pages/legal/Imprint";
 import CookieSettingsPage from "./pages/legal/CookieSettings";
 import CookieBanner from "./components/CookieBanner";
 import { initAnalytics } from "./utils/analytics";
+import { isBannerRegion } from "./utils/region";
+import { hasStoredConsent, saveConsent, loadConsent } from "./utils/cookieConsent";
 
 function PrivateRoute({ children }) {
   const { isAuthenticated } = useAuth();
@@ -46,10 +48,15 @@ export default function App() {
     return isEmbedParam || isInIframe;
   }, [location.search]);
 
-  // If user has already given analytics consent on a previous visit,
-  // load analytics once when the app starts.
+  // Load analytics on app start.
+  // For non-banner regions (US/CA) where no consent decision has been stored,
+  // auto-grant analytics consent since cookie banners aren't legally required.
   useEffect(() => {
-    if (!isEmbedded) initAnalytics();
+    if (isEmbedded) return;
+    if (!hasStoredConsent() && !isBannerRegion()) {
+      saveConsent({ ...loadConsent(), analytics: true });
+    }
+    initAnalytics();
   }, [isEmbedded]);
 
   return (
