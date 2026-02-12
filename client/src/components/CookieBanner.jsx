@@ -6,40 +6,8 @@ import {
   saveConsent,
 } from "../utils/cookieConsent";
 import { initAnalytics, grantAnalyticsConsent } from "../utils/analytics";
+import { isBannerRegion } from "../utils/region";
 import { useTranslation } from "react-i18next";
-
-// Better heuristic:
-// 1) If timezone is Europe/* → show banner (treat as EU-ish).
-// 2) Else, fall back to language: hide for clear US/CA languages.
-// 3) For everything else, show banner (safe-by-default).
-function isBannerRegion() {
-  try {
-    // Prefer timezone: closer to "where you are" than language
-    if (typeof Intl !== "undefined" && Intl.DateTimeFormat) {
-      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
-      if (tz.startsWith("Europe/")) {
-        return true; // show banner in Europe
-      }
-    }
-
-    // Fallback: use language to hide obvious US/CA
-    if (typeof navigator !== "undefined") {
-      const lang = (navigator.language || "").toLowerCase();
-      const noBannerPrefixes = ["en-us", "en-ca", "fr-ca"];
-
-      // If we are clearly US/CA language and not Europe timezone, assume no banner.
-      if (noBannerPrefixes.some((prefix) => lang.startsWith(prefix))) {
-        return false;
-      }
-    }
-
-    // Default: show banner (safer than hiding it)
-    return true;
-  } catch {
-    // If anything goes wrong, default to showing the banner
-    return true;
-  }
-}
 
 export default function CookieBanner() {
   const { t } = useTranslation("common");

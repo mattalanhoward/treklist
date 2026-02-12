@@ -37,6 +37,28 @@ export function detectRegion(preferredRegion) {
   return langMap[lang] || "GB";
 }
 
+/**
+ * Should the cookie-consent banner be shown?
+ * EU timezones → yes; clear US/CA languages (non-EU timezone) → no; default → yes.
+ */
+export function isBannerRegion() {
+  try {
+    if (typeof Intl !== "undefined" && Intl.DateTimeFormat) {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+      if (tz.startsWith("Europe/")) return true;
+    }
+    if (typeof navigator !== "undefined") {
+      const lang = (navigator.language || "").toLowerCase();
+      if (["en-us", "en-ca", "fr-ca"].some((p) => lang.startsWith(p))) {
+        return false;
+      }
+    }
+    return true;
+  } catch {
+    return true;
+  }
+}
+
 // Map messy labels to ISO alpha-2 we use everywhere
 export function normalizeRegion(code) {
   const k = String(code || "")

@@ -54,6 +54,9 @@ export function initAnalytics() {
     return;
   }
 
+  // Push gtm.start event before loading the script (required by GTM)
+  window.dataLayer.push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+
   // Load GTM script
   const script = document.createElement("script");
   script.src = `https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`;
