@@ -71,7 +71,7 @@ router.get("/", async (req, res) => {
         .skip(safeSkip)
         .limit(safeLimit)
         .select(
-          "email trailname isVerified isAdmin isDisabled createdAt updatedAt lastLoginAt locale theme marketing"
+          "email trailname isVerified isAdmin isDisabled createdAt updatedAt lastLoginAt lastActiveAt locale theme marketing"
         )
         .lean(),
       User.countDocuments(query),
@@ -249,7 +249,7 @@ router.patch("/:id", async (req, res) => {
       }
     )
       .select(
-        "email trailname isVerified isAdmin isDisabled createdAt updatedAt lastLoginAt locale theme marketing"
+        "email trailname isVerified isAdmin isDisabled createdAt updatedAt lastLoginAt lastActiveAt locale theme marketing"
       )
       .lean();
 

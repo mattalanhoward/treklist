@@ -14,6 +14,7 @@ import {
   FaUsers,
   FaUser,
   FaCopy,
+  FaExternalLinkAlt,
 } from "react-icons/fa";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { useUserSettings } from "../contexts/UserSettings";
@@ -3535,7 +3536,7 @@ function UsersSection() {
   const [selectedUserId, setSelectedUserId] = useState(null);
 
   const [sort, setSort] = useState({
-    field: "createdAt", // "email" | "trailname" | "role" | "verified" | "lists" | "createdAt" | "updatedAt" | "lastLoginAt"
+    field: "createdAt", // "email" | "trailname" | "role" | "verified" | "lists" | "createdAt" | "updatedAt" | "lastLoginAt" | "lastActiveAt"
     dir: "desc", // "asc" | "desc"
   });
 
@@ -3657,6 +3658,12 @@ function UsersSection() {
         const bl = b.lastLoginAt ? new Date(b.lastLoginAt).getTime() : 0;
         if (al === bl) return 0;
         return al > bl ? dir : -dir;
+      }
+      case "lastActiveAt": {
+        const aa = a.lastActiveAt ? new Date(a.lastActiveAt).getTime() : 0;
+        const ba = b.lastActiveAt ? new Date(b.lastActiveAt).getTime() : 0;
+        if (aa === ba) return 0;
+        return aa > ba ? dir : -dir;
       }
       case "updatedAt": {
         const au = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
@@ -3845,9 +3852,47 @@ function UsersSection() {
               </div>
             )}
 
-            {/* Table */}
+            {/* Table / Cards */}
             {!loading && !error && users.length > 0 && (
               <>
+                {/* Mobile sort controls */}
+                <div className="lg:hidden px-3 py-2 border-b border-base-200 flex items-center gap-2">
+                  <select
+                    className="select select-xs select-bordered flex-1"
+                    value={sort.field}
+                    onChange={(e) => {
+                      const f = e.target.value;
+                      setSort({ field: f, dir: "asc" });
+                    }}
+                  >
+                    <option value="createdAt">Sort: Created</option>
+                    <option value="email">Sort: Email</option>
+                    <option value="trailname">Sort: Trailname</option>
+                    <option value="role">Sort: Role</option>
+                    <option value="verified">Sort: Verified</option>
+                    <option value="lists">Sort: Lists</option>
+                    <option value="items">Sort: Items</option>
+                    <option value="lastLoginAt">Sort: Last login</option>
+                    <option value="lastActiveAt">Sort: Last active</option>
+                    <option value="marketing">Sort: Marketing</option>
+                  </select>
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-xs"
+                    onClick={() =>
+                      setSort((prev) => ({
+                        ...prev,
+                        dir: prev.dir === "asc" ? "desc" : "asc",
+                      }))
+                    }
+                    title={sort.dir === "asc" ? "Ascending" : "Descending"}
+                  >
+                    {sort.dir === "asc" ? "↑" : "↓"}
+                  </button>
+                </div>
+
+                {/* Desktop table */}
+                <div className="hidden lg:block">
                 <table className="min-w-full text-xs sm:text-sm">
                   <thead className="bg-base-200/80">
                     <tr>
@@ -3939,6 +3984,17 @@ function UsersSection() {
                           </span>
                         )}
                       </th>
+                      <th
+                        className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
+                        onClick={() => handleSort("lastActiveAt")}
+                      >
+                        Last active
+                        {sort.field === "lastActiveAt" && (
+                          <span className="ml-1 text-[10px]">
+                            {sort.dir === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
+                      </th>
                       <th className="text-left px-3 py-2 font-semibold">
                         Status
                       </th>
@@ -4014,6 +4070,12 @@ function UsersSection() {
                         >
                           {timeAgo(u.lastLoginAt)}
                         </td>
+                        <td
+                          className="px-3 py-2 align-top text-xs"
+                          title={u.lastActiveAt ? new Date(u.lastActiveAt).toLocaleString() : ""}
+                        >
+                          {timeAgo(u.lastActiveAt)}
+                        </td>
                         <td className="px-3 py-2 align-top">
                           <span
                             className={
@@ -4050,6 +4112,113 @@ function UsersSection() {
                     ))}
                   </tbody>
                 </table>
+                </div>
+
+                {/* Mobile cards */}
+                <div className="lg:hidden divide-y divide-base-200">
+                  {sortedUsers.map((u) => (
+                    <div
+                      key={u._id}
+                      className="px-3 py-3 space-y-2"
+                    >
+                      {/* Header: Email + Actions */}
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <div className="font-semibold text-sm text-primary truncate">
+                            {u.email}
+                          </div>
+                          {u.locale && (
+                            <div className="text-[10px] text-primary/70 mt-0.5">
+                              {u.locale}
+                            </div>
+                          )}
+                        </div>
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-xs flex-shrink-0"
+                          onClick={() => setSelectedUserId(u._id)}
+                          title="View user details"
+                        >
+                          <FaEdit />
+                        </button>
+                      </div>
+
+                      {/* Trailname */}
+                      {u.trailname && (
+                        <div className="text-xs text-primary/70">
+                          {u.trailname}
+                        </div>
+                      )}
+
+                      {/* Badges */}
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span
+                          className={
+                            "badge badge-xs " +
+                            (u.isAdmin ? "badge-secondary" : "badge-ghost")
+                          }
+                        >
+                          {u.isAdmin ? "Admin" : "User"}
+                        </span>
+                        <span
+                          className={
+                            "badge badge-xs " +
+                            (u.isVerified ? "badge-success" : "badge-ghost")
+                          }
+                        >
+                          {u.isVerified ? "Verified" : "Unverified"}
+                        </span>
+                        <span
+                          className={
+                            "badge badge-xs " +
+                            (u.isDisabled ? "badge-error" : "badge-success")
+                          }
+                        >
+                          {u.isDisabled ? "Disabled" : "Active"}
+                        </span>
+                        <span
+                          className={
+                            "badge badge-xs " +
+                            (u.marketing?.optedIn
+                              ? "badge-success"
+                              : "badge-ghost")
+                          }
+                        >
+                          {u.marketing?.optedIn ? "Marketing" : "No marketing"}
+                        </span>
+                      </div>
+
+                      {/* Stats */}
+                      <div className="text-xs text-primary/80">
+                        <span className="font-medium">{u.listsCount ?? 0}</span>{" "}
+                        lists &middot;{" "}
+                        <span className="font-medium">
+                          {(u.catalogItemsCount ?? 0) + (u.customItemsCount ?? 0)}
+                        </span>{" "}
+                        items
+                        <span className="text-primary/60">
+                          {" "}({u.catalogItemsCount ?? 0} cat / {u.customItemsCount ?? 0} cust)
+                        </span>
+                      </div>
+
+                      {/* Dates */}
+                      <div className="text-[11px] text-primary/60 flex flex-wrap gap-x-3 gap-y-0.5">
+                        <span>
+                          <span className="font-medium text-primary/70">Created:</span>{" "}
+                          {formatDate(u.createdAt)}
+                        </span>
+                        <span title={u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString() : ""}>
+                          <span className="font-medium text-primary/70">Login:</span>{" "}
+                          {timeAgo(u.lastLoginAt)}
+                        </span>
+                        <span title={u.lastActiveAt ? new Date(u.lastActiveAt).toLocaleString() : ""}>
+                          <span className="font-medium text-primary/70">Active:</span>{" "}
+                          {timeAgo(u.lastActiveAt)}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
 
                 {/* Pagination footer */}
                 <div className="flex items-center justify-between px-3 py-2 border-t border-base-200 text-xs text-primary/80">
@@ -4454,9 +4623,42 @@ function PublicListsSection() {
               </div>
             )}
 
-            {/* Table */}
+            {/* Table / Cards */}
             {!loading && !error && lists.length > 0 && (
               <>
+                {/* Mobile sort controls */}
+                <div className="lg:hidden px-3 py-2 border-b border-base-200 flex items-center gap-2">
+                  <select
+                    className="select select-xs select-bordered flex-1"
+                    value={sort.field}
+                    onChange={(e) => {
+                      const f = e.target.value;
+                      setSort({ field: f, dir: "asc" });
+                    }}
+                  >
+                    <option value="createdAt">Sort: Created</option>
+                    <option value="title">Sort: Title</option>
+                    <option value="owner">Sort: Owner</option>
+                    <option value="views">Sort: Views</option>
+                    <option value="lastViewedAt">Sort: Last viewed</option>
+                  </select>
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-xs"
+                    onClick={() =>
+                      setSort((prev) => ({
+                        ...prev,
+                        dir: prev.dir === "asc" ? "desc" : "asc",
+                      }))
+                    }
+                    title={sort.dir === "asc" ? "Ascending" : "Descending"}
+                  >
+                    {sort.dir === "asc" ? "↑" : "↓"}
+                  </button>
+                </div>
+
+                {/* Desktop table */}
+                <div className="hidden lg:block">
                 <table className="min-w-full text-xs sm:text-sm">
                   <thead className="bg-base-200/80">
                     <tr>
@@ -4660,6 +4862,146 @@ function PublicListsSection() {
                     ))}
                   </tbody>
                 </table>
+                </div>
+
+                {/* Mobile cards */}
+                <div className="lg:hidden divide-y divide-base-200">
+                  {sortedLists.map((list) => (
+                    <div
+                      key={list._id}
+                      className="px-3 py-3 space-y-2"
+                    >
+                      {/* Title */}
+                      <div className="min-w-0">
+                        <div className="font-semibold text-sm text-primary truncate">
+                          {list.title || "(untitled list)"}
+                        </div>
+                        {list.token && list.isActive && (
+                          <div className="text-[10px] text-primary/70 mt-0.5 truncate">
+                            Token: {list.token}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Owner */}
+                      <div className="text-xs text-primary/80 truncate">
+                        <span className="font-medium text-primary/70">Owner:</span>{" "}
+                        {list.ownerEmail || "–"}
+                        {list.ownerTrailname && (
+                          <span className="text-primary/60"> ({list.ownerTrailname})</span>
+                        )}
+                      </div>
+
+                      {/* Region + Views */}
+                      <div className="text-xs text-primary/80 flex items-center gap-3">
+                        <span>
+                          <span className="font-medium text-primary/70">Region:</span>{" "}
+                          {list.region || "–"}
+                        </span>
+                        <span>
+                          <span className="font-medium text-primary/70">Views:</span>{" "}
+                          {list.viewsCount ?? 0}
+                        </span>
+                      </div>
+
+                      {/* Dates */}
+                      <div className="text-[11px] text-primary/60 flex flex-wrap gap-x-3 gap-y-0.5">
+                        <span>
+                          <span className="font-medium text-primary/70">Created:</span>{" "}
+                          {formatDate(list.createdAt)}
+                        </span>
+                        <span>
+                          <span className="font-medium text-primary/70">Last viewed:</span>{" "}
+                          {formatDateTimeShort(list.lastViewedAt)}
+                        </span>
+                      </div>
+
+                      {/* Badges */}
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span
+                          className={
+                            "badge badge-xs " +
+                            (list.isActive ? "badge-success" : "badge-ghost")
+                          }
+                        >
+                          {list.isActive ? "Active" : "Revoked"}
+                        </span>
+                        <span
+                          className={
+                            "badge badge-xs " +
+                            (list.isFeatured ? "badge-secondary" : "badge-ghost")
+                          }
+                        >
+                          {list.isFeatured ? "Featured" : "Normal"}
+                        </span>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex flex-wrap items-center gap-2 pt-1">
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-xs"
+                          onClick={() => handleOpenLink(list)}
+                          disabled={!list.token || !list.isActive}
+                          title="Open public link in new tab"
+                        >
+                          <FaExternalLinkAlt />
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-xs"
+                          onClick={() => handleCopyLink(list)}
+                          disabled={!list.token || !list.isActive}
+                          title="Copy public link"
+                        >
+                          <FaCopy />
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-xs"
+                          onClick={() => handleToggleFeatured(list)}
+                          disabled={featureTogglingId === list._id}
+                          title={
+                            list.isFeatured
+                              ? "Unfeature this list"
+                              : "Mark this list as featured"
+                          }
+                        >
+                          {featureTogglingId === list._id
+                            ? "Saving..."
+                            : list.isFeatured
+                              ? "Unfeature"
+                              : "Feature"}
+                        </button>
+                        {list.isActive ? (
+                          <button
+                            type="button"
+                            className="btn btn-xs btn-outline btn-error"
+                            onClick={() => setListToRevoke(list)}
+                            disabled={statusUpdatingId === list._id}
+                            title="Revoke / unpublish this public link"
+                          >
+                            {statusUpdatingId === list._id
+                              ? "Updating..."
+                              : "Revoke"}
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            className="btn btn-xs btn-outline"
+                            onClick={() => handleUnrevoke(list)}
+                            disabled={statusUpdatingId === list._id}
+                            title="Re-enable this public link"
+                          >
+                            {statusUpdatingId === list._id
+                              ? "Updating..."
+                              : "Unrevoke"}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
 
                 {/* Pagination footer */}
                 <div className="flex items-center justify-between px-3 py-2 border-t border-base-200 text-xs text-primary/80">
