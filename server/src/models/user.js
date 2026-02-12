@@ -20,6 +20,10 @@ const UserSchema = new mongoose.Schema(
     lastLoginAt: {
       type: Date,
     },
+    // When the user last made an authenticated API request
+    lastActiveAt: {
+      type: Date,
+    },
     // Onboarding / tour state (server-backed so it persists across devices)
     onboarding: {
       tourVersionSeen: { type: Number, default: 0 },
