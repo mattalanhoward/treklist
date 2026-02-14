@@ -405,7 +405,7 @@ export default function PublicGearList() {
         })}
         url={`https://treklist.co/share/${token}/`}
         type="article"
-        image="https://res.cloudinary.com/treklist/image/upload/v1771070022/branding/screenshot-treklist-desktop-column-view_iiyl4z.png?v=3"
+        image="https://res.cloudinary.com/treklist/image/upload/v1771075130/branding/treklist_1200x630_pclazv.png"
         noindex={!data.list.isFeatured}
       />
 
