@@ -64,15 +64,14 @@ export default function useChecklistProgress({
       try {
         const raw = localStorage.getItem(storageKey);
         if (raw) {
+          // If data exists in localStorage (even if empty object), use it
+          // This preserves explicit resets and prevents unwanted migration
           const parsed = JSON.parse(raw);
-          // Check if we have actual data, not just an empty object
-          if (Object.keys(parsed).length > 0) {
-            setChecked(parsed);
-            setIsInitialized(true);
-            return;
-          }
+          setChecked(parsed);
+          setIsInitialized(true);
+          return;
         }
-        // Current key is empty or has no data - search for most recent previous revision
+        // No data at all - search for most recent previous revision to migrate
         const migrated = findAndMigratePreviousRevision();
         setChecked(migrated);
         setIsInitialized(true);
@@ -88,19 +87,18 @@ export default function useChecklistProgress({
       // Try to load from new key first
       const newData = localStorage.getItem(storageKey);
       if (newData) {
+        // If new key exists, use it (even if empty - respects explicit resets)
         const parsed = JSON.parse(newData);
-        // Only use it if it has actual data
-        if (Object.keys(parsed).length > 0) {
-          setChecked(parsed);
-          previousStorageKeyRef.current = storageKey;
-          return;
-        }
+        setChecked(parsed);
+        previousStorageKeyRef.current = storageKey;
+        return;
       }
 
-      // New key is empty, migrate from previous in-memory key or search localStorage
+      // New key doesn't exist, try to migrate from previous in-memory key
       let oldData = localStorage.getItem(previousKey);
       if (oldData) {
         const oldChecked = JSON.parse(oldData);
+        // Migrate if there's actual progress to preserve
         if (Object.keys(oldChecked).length > 0) {
           setChecked(oldChecked);
           previousStorageKeyRef.current = storageKey;
