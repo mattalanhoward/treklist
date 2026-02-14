@@ -2,6 +2,11 @@
   command = "npm run build"
   publish = "dist"
 
+# Edge Functions configuration
+[[edge_functions]]
+  path = "/share/*"
+  function = "og-tags"
+
 # Proxy API calls to your Render API subdomain
 [[redirects]]
   from = "/api/*"
