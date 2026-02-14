@@ -423,7 +423,6 @@ export default function Sidebar({
                 <button
                   onClick={() => setShowCreateModal(true)}
                   className="p-1 text-primaryAlt hover:text-primaryAlt/80"
-                  disabled={!currentListId || categories.length === 0}
                 >
                   <FaPlus />
                 </button>

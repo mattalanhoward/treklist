@@ -53,15 +53,11 @@ export default function ChecklistView() {
     };
   }, [listId]);
 
-  const revision = useMemo(() => {
-    const u = full.list?.updatedAt || "";
-    return `${u}:${full.items?.length || 0}`;
-  }, [full.list?.updatedAt, full.items]);
-
+  // Use empty revision for stable storage key that persists across gear list edits
   const { checked, toggle, reset } = useChecklistProgress({
     userId: user?._id || "anon",
     listId,
-    revision,
+    revision: "",
   });
 
   const grouped = useMemo(() => {

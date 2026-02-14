@@ -16,6 +16,7 @@ import { tCategory, tItemType } from "../config/catalogTaxonomy";
 
 function ImportCatalogTab({ onImported, onOpenRequest }) {
   const { t } = useTranslation("common");
+  const searchInputRef = React.useRef(null);
 
   // preview modal state
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -134,6 +135,11 @@ function ImportCatalogTab({ onImported, onOpenRequest }) {
   // initial load
   useEffect(() => {
     loadImported();
+  }, []);
+
+  // Auto focus search input when tab is shown
+  useEffect(() => {
+    searchInputRef.current?.focus();
   }, []);
 
   // reload catalog when search/filters change
@@ -274,6 +280,7 @@ function ImportCatalogTab({ onImported, onOpenRequest }) {
       {/* Search + filters */}
       <div className="flex flex-col gap-2 pb-3">
         <input
+          ref={searchInputRef}
           type="text"
           placeholder={t("globalItemModal.importTab.searchPlaceholder")}
           value={searchQuery}
@@ -621,6 +628,7 @@ export default function GlobalItemModal({
   onCreated,
 }) {
   const { t } = useTranslation("common");
+  const itemTypeInputRef = React.useRef(null);
   const [category, setCategory] = useState("");
   const [itemType, setItemType] = useState("");
   const [name, setName] = useState("");
@@ -647,6 +655,13 @@ export default function GlobalItemModal({
   // Persist tab selection
   useEffect(() => {
     localStorage.setItem("globalItemModal:tab", tab);
+  }, [tab]);
+
+  // Auto focus itemType input when custom tab is shown
+  useEffect(() => {
+    if (tab === "custom") {
+      itemTypeInputRef.current?.focus();
+    }
   }, [tab]);
 
   // Derive item type from a category path string (e.g., "A > B > C" -> "C")
@@ -867,6 +882,7 @@ export default function GlobalItemModal({
                     {t("globalItemModal.labels.itemType")}
                   </label>
                   <input
+                    ref={itemTypeInputRef}
                     type="text"
                     placeholder={t("globalItemModal.placeholders.itemType")}
                     required
