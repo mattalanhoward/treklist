@@ -53,21 +53,22 @@ export default async function handler(request, context) {
     const response = await context.next();
     const html = await response.text();
 
-    // Inject the correct OG meta tags (handle multi-line tags with [\s\S])
+    // Inject the correct OG meta tags (handle multi-line tags)
+    // Use [\s\S] to match across lines, but be specific about tag boundaries
     const modifiedHtml = html
       // Replace og:title (handles multi-line)
       .replace(
-        /<meta[\s\S]*?property="og:title"[\s\S]*?content="[^"]*"[\s\S]*?\/?>/,
+        /<meta\s+property="og:title"\s+content="[^"]*"\s*\/?>/s,
         `<meta property="og:title" content="${escapeHtml(listTitle)} - TrekList" />`
       )
       // Replace og:description (handles multi-line)
       .replace(
-        /<meta[\s\S]*?property="og:description"[\s\S]*?content="[^"]*"[\s\S]*?\/?>/,
+        /<meta\s+property="og:description"\s+content="[^"]*"\s*\/?>/s,
         `<meta property="og:description" content="${escapeHtml(description)}" />`
       )
       // Replace og:image (handles multi-line)
       .replace(
-        /<meta[\s\S]*?property="og:image"[\s\S]*?content="[^"]*"[\s\S]*?\/?>/,
+        /<meta\s+property="og:image"\s+content="[^"]*"\s*\/?>/s,
         `<meta property="og:image" content="${imageUrl}" />`
       )
       // Add og:image dimensions after og:image
@@ -77,13 +78,18 @@ export default async function handler(request, context) {
       )
       // Replace og:url (handles multi-line)
       .replace(
-        /<meta[\s\S]*?property="og:url"[\s\S]*?content="[^"]*"[\s\S]*?\/?>/,
+        /<meta\s+property="og:url"\s+content="[^"]*"\s*\/?>/s,
         `<meta property="og:url" content="${shareUrl}" />`
       )
       // Replace og:type (handles multi-line)
       .replace(
-        /<meta[\s\S]*?property="og:type"[\s\S]*?content="[^"]*"[\s\S]*?\/?>/,
+        /<meta\s+property="og:type"\s+content="[^"]*"\s*\/?>/s,
         `<meta property="og:type" content="article" />`
+      )
+      // Replace og:site_name (handles multi-line)
+      .replace(
+        /<meta\s+property="og:site_name"\s+content="[^"]*"\s*\/?>/s,
+        `<meta property="og:site_name" content="TrekList" />`
       )
       // Replace title tag
       .replace(
@@ -92,26 +98,30 @@ export default async function handler(request, context) {
       )
       // Replace meta description (handles multi-line)
       .replace(
-        /<meta[\s\S]*?name="description"[\s\S]*?content="[^"]*"[\s\S]*?\/?>/,
+        /<meta\s+name="description"\s+content="[^"]*"\s*\/?>/s,
         `<meta name="description" content="${escapeHtml(description)}" />`
       )
       // Replace canonical URL (handles multi-line)
       .replace(
-        /<link[\s\S]*?rel="canonical"[\s\S]*?href="[^"]*"[\s\S]*?\/?>/,
+        /<link\s+rel="canonical"\s+href="[^"]*"\s*\/?>/s,
         `<link rel="canonical" href="${shareUrl}" />`
       )
       // Replace Twitter card meta tags (handles multi-line)
       .replace(
-        /<meta[\s\S]*?name="twitter:title"[\s\S]*?content="[^"]*"[\s\S]*?\/?>/,
+        /<meta\s+name="twitter:title"\s+content="[^"]*"\s*\/?>/s,
         `<meta name="twitter:title" content="${escapeHtml(listTitle)} - TrekList" />`
       )
       .replace(
-        /<meta[\s\S]*?name="twitter:description"[\s\S]*?content="[^"]*"[\s\S]*?\/?>/,
+        /<meta\s+name="twitter:description"\s+content="[^"]*"\s*\/?>/s,
         `<meta name="twitter:description" content="${escapeHtml(description)}" />`
       )
       .replace(
-        /<meta[\s\S]*?name="twitter:image"[\s\S]*?content="[^"]*"[\s\S]*?\/?>/,
+        /<meta\s+name="twitter:image"\s+content="[^"]*"\s*\/?>/s,
         `<meta name="twitter:image" content="${imageUrl}" />`
+      )
+      .replace(
+        /<meta\s+name="twitter:card"\s+content="[^"]*"\s*\/?>/s,
+        `<meta name="twitter:card" content="summary_large_image" />`
       );
 
     return new Response(modifiedHtml, {
