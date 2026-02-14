@@ -7,6 +7,7 @@ const DEFAULT_DESCRIPTION =
 const DEFAULT_IMAGE =
   "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,w_1200,h_630,f_jpg,q_auto/gear-list-hero-images/hero-hiker-cinque-torri_hpe3lz";
 const SITE_URL = "https://treklist.co";
+const FACEBOOK_APP_ID = import.meta.env.VITE_FACEBOOK_APP_ID;
 
 export default function SEO({
   title,
@@ -37,9 +38,12 @@ export default function SEO({
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={image} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:type" content={type} />
       <meta property="og:site_name" content={DEFAULT_TITLE} />
+      {FACEBOOK_APP_ID && <meta property="fb:app_id" content={FACEBOOK_APP_ID} />}
 
       {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />
