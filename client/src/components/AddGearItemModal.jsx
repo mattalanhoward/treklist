@@ -1,5 +1,5 @@
 // src/components/AddGearItemModal.jsx
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import api from "../services/api";
 import { FaTimes } from "react-icons/fa";
 import { toast } from "react-hot-toast";
@@ -13,6 +13,7 @@ export default function AddGearItemModal({
   onAdded,
 }) {
   const { t } = useTranslation("common");
+  const searchInputRef = useRef(null);
 
   // 1) Store all global items (fetched once on mount)
   const [allResults, setAllResults] = useState([]);
@@ -59,6 +60,11 @@ export default function AddGearItemModal({
         console.error("Error fetching global items:", err);
       }
     })();
+  }, []);
+
+  // Auto focus search input when modal opens
+  useEffect(() => {
+    searchInputRef.current?.focus();
   }, []);
 
   function normalize(str = "") {
@@ -213,6 +219,7 @@ export default function AddGearItemModal({
         {/* Search */}
         <div className="flex items-center w-full pb-4">
           <input
+            ref={searchInputRef}
             type="text"
             placeholder={t("addGearItemModal.searchPlaceholder")}
             value={searchQuery}

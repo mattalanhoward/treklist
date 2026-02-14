@@ -25,6 +25,7 @@ export default function MyGearView({ collapsed }) {
   const { t } = useTranslation("common");
   const unit = useUnit();
   const { formatInput, unitLabel } = useWeightInput(unit);
+  const searchInputRef = React.useRef(null);
 
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -227,6 +228,11 @@ export default function MyGearView({ collapsed }) {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [confirmDelete, confirmBulkDelete, selectionMode, exitSelectionMode]);
 
+  // Auto focus search input when view opens
+  useEffect(() => {
+    searchInputRef.current?.focus();
+  }, []);
+
   return (
     <div className="h-full w-full flex flex-col overflow-hidden bg-neutral/10">
       {/* Header - single row on desktop, stacked on mobile */}
@@ -263,6 +269,7 @@ export default function MyGearView({ collapsed }) {
           <div className="relative flex-1 max-w-md">
             <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/40" />
             <input
+              ref={searchInputRef}
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -531,6 +538,7 @@ export default function MyGearView({ collapsed }) {
           <div className="relative">
             <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/40" />
             <input
+              ref={searchInputRef}
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
