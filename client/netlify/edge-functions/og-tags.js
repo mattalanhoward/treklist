@@ -47,7 +47,7 @@ export default async function handler(request, context) {
     const listTitle = data.list?.title || 'TrekList';
     const shareUrl = `https://treklist.co/share/${token}/`;
     const description = `${listTitle} - Curated gear list shared on TrekList. View the complete pack breakdown, weights, and gear recommendations.`;
-    const imageUrl = 'https://res.cloudinary.com/treklist/image/upload/v1771070022/branding/screenshot-treklist-desktop-column-view_iiyl4z.png?v=2';
+    const imageUrl = 'https://res.cloudinary.com/treklist/image/upload/v1771070022/branding/screenshot-treklist-desktop-column-view_iiyl4z.png?v=' + Date.now();
 
     // Get the original HTML
     const response = await context.next();
