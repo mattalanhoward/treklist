@@ -58,6 +58,11 @@ const ATTRIBUTE_LABELS = {
   rainCoverIncluded: "Rain Cover Included",
   laptopSleeveSize: "Laptop Sleeve (in)",
 
+  // Kitchen - Utensils
+  utensilType: "Utensil Type",
+  longHandle: "Long Handle",
+  foldable: "Foldable/Collapsible",
+
   // Kitchen - Pots
   volumeMl: "Volume (ml)",
   diameterCm: "Diameter (cm)",
@@ -121,6 +126,13 @@ const ATTRIBUTE_LABELS = {
   tieoutsIncluded: "Guylines Included",
   stakesIncluded: "Stakes Included",
 
+  // Shelter - Tent Stakes
+  stakeMaterial: "Stake Material",
+  stakeProfile: "Stake Profile",
+  stakeLengthCm: "Stake Length (cm)",
+  stakeLengthIn: "Stake Length (in)",
+  reflectiveCord: "Reflective Pull Cord",
+
   // Electronics - Headlamps
   maxLumens: "Max Output (lumens)",
   batteryType: "Battery Type",
@@ -171,6 +183,12 @@ const ATTRIBUTE_LABELS = {
   pitZips: "Pit Zips",
   packable: "Packable/Stowable",
   pfasFree: "PFAS-Free DWR",
+
+  // Clothing - Rain Poncho
+  seamedSealed: "Sealed Seams",
+  backpackCoverage: "Covers Backpack",
+  hoodAdjustable: "Adjustable Hood",
+  grommets: "Corner Grommets (Shelter Use)",
 
   // Clothing - Insulated Jackets
   shellFabric: "Shell Fabric",
@@ -238,6 +256,15 @@ const ATTRIBUTE_LABELS = {
   brimSize: "Brim Size",
   windproof: "Windproof",
 
+  // Clothing - Convertible Pants
+  shortsInseamCm: "Shorts Inseam (cm)",
+  shortsInseamIn: "Shorts Inseam (in)",
+  conversionType: "Conversion Type",
+  waistType: "Waist Type",
+  gussetedCrotch: "Gusseted Crotch",
+  articulatedKnees: "Articulated Knees",
+  reinforcedCuffs: "Reinforced Cuffs",
+
   // Clothing - Shorts
   inseamCm: "Inseam (cm)",
   inseamIn: "Inseam (in)",
@@ -275,6 +302,12 @@ const ATTRIBUTE_LABELS = {
   wirelessCharging: "Wireless Charging (Qi)",
   waterproofRating: "Waterproof Rating",
   passthroughCharging: "Pass-Through Charging",
+
+  // Electronics - Travel Charger
+  totalWattage: "Total Output (W)",
+  ganTechnology: "GaN Technology",
+  foldableProng: "Foldable Prongs",
+  internationalPlugs: "International Plug Adapters",
 
   // Accessories - Towels
   size: "Size",
@@ -314,6 +347,8 @@ const UNIT_PAIRS = [
   { metric: "vestibuleAreaSqM", imperial: "vestibuleAreaSqFt", toImperial: SQM_TO_SQFT, toMetric: SQFT_TO_SQM },
   { metric: "coverageAreaSqM", imperial: "coverageAreaSqFt", toImperial: SQM_TO_SQFT, toMetric: SQFT_TO_SQM },
   { metric: "inseamCm", imperial: "inseamIn", toImperial: CM_TO_IN, toMetric: IN_TO_CM },
+  { metric: "shortsInseamCm", imperial: "shortsInseamIn", toImperial: CM_TO_IN, toMetric: IN_TO_CM },
+  { metric: "stakeLengthCm", imperial: "stakeLengthIn", toImperial: CM_TO_IN, toMetric: IN_TO_CM },
   { metric: "peakHeightCm", imperial: "peakHeightIn", toImperial: CM_TO_IN, toMetric: IN_TO_CM },
   { metric: "lengthCm", imperial: "lengthIn", toImperial: CM_TO_IN, toMetric: IN_TO_CM },
   { metric: "widthCm", imperial: "widthIn", toImperial: CM_TO_IN, toMetric: IN_TO_CM },
