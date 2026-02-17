@@ -590,6 +590,41 @@ const SCHEMAS = {
     },
   },
 
+  Utensil: {
+    fields: {
+      utensilType: {
+        type: "enum",
+        required: true,
+        label: "Utensil Type",
+        options: ["Spoon", "Fork", "Spork", "Knife", "Chopsticks", "Multi-Tool"],
+      },
+      material: {
+        type: "enum",
+        required: true,
+        label: "Material",
+        options: ["Titanium", "Aluminum", "Stainless Steel", "Plastic/Polycarbonate", "Wood/Bamboo"],
+      },
+      lengthCm: {
+        type: "number",
+        required: false,
+        label: "Length",
+        unit: "cm",
+        min: 10,
+        max: 30,
+      },
+      longHandle: {
+        type: "boolean",
+        required: false,
+        label: "Long Handle",
+      },
+      foldable: {
+        type: "boolean",
+        required: false,
+        label: "Foldable/Collapsible",
+      },
+    },
+  },
+
   "Trekking Poles": {
     fields: {
       material: {
@@ -846,6 +881,42 @@ const SCHEMAS = {
         type: "boolean",
         required: false,
         label: "Stakes Included",
+      },
+    },
+  },
+
+  "Tent Stakes": {
+    fields: {
+      soldAs: {
+        type: "enum",
+        required: true,
+        label: "Sold As",
+        options: ["Single", "Pack of 4", "Pack of 6", "Pack of 8"],
+      },
+      stakeMaterial: {
+        type: "enum",
+        required: true,
+        label: "Stake Material",
+        options: ["Aluminum", "Titanium", "Steel", "Carbon Fiber", "Plastic"],
+      },
+      stakeProfile: {
+        type: "enum",
+        required: false,
+        label: "Stake Profile",
+        options: ["Y-Beam", "V-Shape", "Nail/Pin", "Hook", "Shepherd Hook", "T-Shape"],
+      },
+      stakeLengthCm: {
+        type: "number",
+        required: false,
+        label: "Stake Length",
+        unit: "cm",
+        min: 10,
+        max: 35,
+      },
+      reflectiveCord: {
+        type: "boolean",
+        required: false,
+        label: "Reflective Pull Cord",
       },
     },
   },
@@ -1241,6 +1312,55 @@ const SCHEMAS = {
         label: "Number of Pockets",
         min: 0,
         max: 6,
+      },
+      packable: {
+        type: "boolean",
+        required: false,
+        label: "Packable/Stowable",
+      },
+      pfasFree: {
+        type: "boolean",
+        required: false,
+        label: "PFAS-Free DWR",
+      },
+    },
+  },
+
+  "Rain Poncho": {
+    fields: {
+      material: {
+        type: "enum",
+        required: false,
+        label: "Material",
+        options: ["Nylon", "Polyester", "Silnylon", "Cuben/DCF", "PVC"],
+      },
+      waterproofRating: {
+        type: "number",
+        required: false,
+        label: "Waterproof Rating",
+        unit: "mm",
+        min: 1000,
+        max: 30000,
+      },
+      seamedSealed: {
+        type: "boolean",
+        required: false,
+        label: "Sealed Seams",
+      },
+      backpackCoverage: {
+        type: "boolean",
+        required: false,
+        label: "Covers Backpack",
+      },
+      hoodAdjustable: {
+        type: "boolean",
+        required: false,
+        label: "Adjustable Hood",
+      },
+      grommets: {
+        type: "boolean",
+        required: false,
+        label: "Corner Grommets (Shelter Use)",
       },
       packable: {
         type: "boolean",
@@ -1938,6 +2058,99 @@ const SCHEMAS = {
     },
   },
 
+  "Convertible Pants": {
+    fields: {
+      gender: {
+        type: "enum",
+        required: true,
+        label: "Gender/Fit",
+        options: ["Mens", "Womens", "Unisex"],
+      },
+      inseamCm: {
+        type: "number",
+        required: false,
+        label: "Inseam (Pant)",
+        unit: "cm",
+        min: 65,
+        max: 92,
+      },
+      shortsInseamCm: {
+        type: "number",
+        required: false,
+        label: "Inseam (Shorts)",
+        unit: "cm",
+        min: 15,
+        max: 30,
+      },
+      material: {
+        type: "enum",
+        required: false,
+        label: "Material",
+        options: ["Nylon", "Polyester", "Nylon/Spandex Blend", "Cotton Blend"],
+      },
+      conversionType: {
+        type: "enum",
+        required: false,
+        label: "Conversion Type",
+        options: ["Zip-Off", "Roll-Up"],
+      },
+      waistType: {
+        type: "enum",
+        required: false,
+        label: "Waist Type",
+        options: ["Elastic Waist", "Elastic with Drawcord", "Belt Loops", "Snap Waist"],
+      },
+      pockets: {
+        type: "number",
+        required: false,
+        label: "Number of Pockets",
+        min: 0,
+        max: 10,
+      },
+      uvProtection: {
+        type: "enum",
+        required: false,
+        label: "UV Protection",
+        options: ["UPF 15-24", "UPF 25-39", "UPF 40-50", "UPF 50+", "None"],
+      },
+      waterResistant: {
+        type: "boolean",
+        required: false,
+        label: "Water-Resistant/DWR",
+      },
+      pfasFree: {
+        type: "boolean",
+        required: false,
+        label: "PFAS-Free DWR",
+      },
+      stretchFabric: {
+        type: "boolean",
+        required: false,
+        label: "Stretch Fabric",
+      },
+      gussetedCrotch: {
+        type: "boolean",
+        required: false,
+        label: "Gusseted Crotch",
+      },
+      articulatedKnees: {
+        type: "boolean",
+        required: false,
+        label: "Articulated Knees",
+      },
+      reinforcedCuffs: {
+        type: "boolean",
+        required: false,
+        label: "Reinforced Cuffs",
+      },
+      beltLoops: {
+        type: "boolean",
+        required: false,
+        label: "Belt Loops",
+      },
+    },
+  },
+
   "Hiking Shirt": {
     fields: {
       gender: {
@@ -2214,6 +2427,53 @@ const SCHEMAS = {
     },
   },
 
+  "Travel Charger": {
+    fields: {
+      totalWattage: {
+        type: "number",
+        required: false,
+        label: "Total Output",
+        unit: "W",
+        min: 5,
+        max: 200,
+      },
+      outputPortsUsbC: {
+        type: "number",
+        required: false,
+        label: "USB-C Ports",
+        min: 0,
+        max: 6,
+      },
+      outputPortsUsbA: {
+        type: "number",
+        required: false,
+        label: "USB-A Ports",
+        min: 0,
+        max: 6,
+      },
+      ganTechnology: {
+        type: "boolean",
+        required: false,
+        label: "GaN Technology",
+      },
+      foldableProng: {
+        type: "boolean",
+        required: false,
+        label: "Foldable Prongs",
+      },
+      fastCharging: {
+        type: "boolean",
+        required: false,
+        label: "Fast Charging (PD/QC)",
+      },
+      internationalPlugs: {
+        type: "boolean",
+        required: false,
+        label: "International Plug Adapters",
+      },
+    },
+  },
+
   "Travel Towel": {
     fields: {
       size: {
@@ -2367,14 +2627,15 @@ export const CATEGORY_ITEM_TYPE_MAPPING = {
     "Pillow",
   ],
   "Backpacks & Bags": ["Backpack", "Daypack", "Hip Pack"],
-  "Kitchen & Cooking": ["Backpacking Pot", "Backpacking Stove (Canister)", "Coffee Mug"],
-  Shelter: ["Backpacking Tent", "Tarp Shelter"],
-  "Electronics & Power": ["Headlamp", "Power Bank"],
+  "Kitchen & Cooking": ["Backpacking Pot", "Backpacking Stove (Canister)", "Coffee Mug", "Utensil"],
+  Shelter: ["Backpacking Tent", "Tarp Shelter", "Tent Stakes"],
+  "Electronics & Power": ["Headlamp", "Power Bank", "Travel Charger"],
   Hydration: ["Water Filter", "Water Bottle", "Hydration Reservoir"],
   Footwear: ["Hiking Boots", "Trail Running Shoes"],
   "Men's Clothing": [
     "Rain Jacket",
     "Rain Pants",
+    "Rain Poncho",
     "Insulated Jacket",
     "Fleece Jacket",
     "Base Layer Top",
@@ -2382,12 +2643,14 @@ export const CATEGORY_ITEM_TYPE_MAPPING = {
     "Hiking Socks",
     "Hat/Headwear",
     "Hiking Shorts",
+    "Convertible Pants",
     "Hiking Shirt",
     "Gloves (Insulated)",
   ],
   "Women's Clothing": [
     "Rain Jacket",
     "Rain Pants",
+    "Rain Poncho",
     "Insulated Jacket",
     "Fleece Jacket",
     "Base Layer Top",
@@ -2395,12 +2658,14 @@ export const CATEGORY_ITEM_TYPE_MAPPING = {
     "Hiking Socks",
     "Hat/Headwear",
     "Hiking Shorts",
+    "Convertible Pants",
     "Hiking Shirt",
     "Gloves (Insulated)",
   ],
   "Unisex Clothing": [
     "Rain Jacket",
     "Rain Pants",
+    "Rain Poncho",
     "Insulated Jacket",
     "Fleece Jacket",
     "Base Layer Top",
@@ -2408,6 +2673,7 @@ export const CATEGORY_ITEM_TYPE_MAPPING = {
     "Hiking Socks",
     "Hat/Headwear",
     "Hiking Shorts",
+    "Convertible Pants",
     "Hiking Shirt",
     "Gloves (Insulated)",
   ],
