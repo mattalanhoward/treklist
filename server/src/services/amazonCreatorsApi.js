@@ -32,6 +32,9 @@ const DEFAULT_ITEM_RESOURCES = [
   "itemInfo.productInfo",
   "images.primary.large",
   "images.primary.medium",
+  "images.variants.large",
+  "images.variants.medium",
+  "images.variants.small",
 ];
 
 const DOMAIN_BY_MARKETPLACE = {
@@ -223,6 +226,97 @@ async function creatorsGetItems({
   return json;
 }
 
+// --- Weight Parsing from Feature Bullets ---
+
+const WEIGHT_RE =
+  /(?:(?:weight|weighs|wt)[:\s]*)?(\d+(?:[.,]\d+)?)\s*(oz|ounces?|lbs?|pounds?|g|grams?|kg|kilograms?)\b/i;
+
+const UNIT_TO_GRAMS = {
+  oz: 28.3495,
+  ounce: 28.3495,
+  ounces: 28.3495,
+  lb: 453.592,
+  lbs: 453.592,
+  pound: 453.592,
+  pounds: 453.592,
+  g: 1,
+  gram: 1,
+  grams: 1,
+  kg: 1000,
+  kilogram: 1000,
+  kilograms: 1000,
+};
+
+function parseWeightFromFeatures(features) {
+  if (!Array.isArray(features)) return null;
+  for (const bullet of features) {
+    const m = WEIGHT_RE.exec(bullet);
+    if (m) {
+      const value = parseFloat(m[1].replace(",", "."));
+      const unit = m[2].toLowerCase();
+      const factor = UNIT_TO_GRAMS[unit];
+      if (factor && !isNaN(value) && value > 0) {
+        return Math.round(value * factor);
+      }
+    }
+  }
+  return null;
+}
+
+// --- Title Cleaning ---
+
+function cleanTitle(title, brand) {
+  if (!title || !brand) return title || "";
+  const lower = title.toLowerCase();
+  const brandLower = brand.toLowerCase();
+  if (lower.startsWith(brandLower + " ")) {
+    return title.slice(brand.length).trim();
+  }
+  // Also handle "BRAND - Product Name" pattern
+  const dashPattern = new RegExp(
+    `^${brand.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*[-–—]\\s*`,
+    "i"
+  );
+  const dashMatch = title.match(dashPattern);
+  if (dashMatch) {
+    return title.slice(dashMatch[0].length).trim();
+  }
+  return title;
+}
+
+// --- Image Extraction ---
+
+function extractAllImageUrls(item) {
+  const urls = [];
+
+  // Primary image (prefer large)
+  const primary =
+    item?.images?.primary?.large?.url ||
+    item?.images?.primary?.medium?.url ||
+    item?.images?.primary?.small?.url ||
+    item?.Images?.Primary?.Large?.URL ||
+    item?.Images?.Primary?.Medium?.URL ||
+    item?.Images?.Primary?.Small?.URL;
+  if (primary) urls.push(primary);
+
+  // Variant images
+  const variants =
+    item?.images?.variants || item?.Images?.Variants || [];
+  for (const variant of variants) {
+    const url =
+      variant?.large?.url ||
+      variant?.medium?.url ||
+      variant?.small?.url ||
+      variant?.Large?.URL ||
+      variant?.Medium?.URL ||
+      variant?.Small?.URL;
+    if (url) urls.push(url);
+  }
+
+  // Deduplicate
+  return [...new Set(urls)];
+}
+
 // --- Response Parser ---
 
 function parseCreatorsItem(json) {
@@ -255,13 +349,7 @@ function parseCreatorsItem(json) {
     item?.ItemInfo?.ManufactureInfo?.Model?.DisplayValue ||
     item?.ItemInfo?.ProductInfo?.Model?.DisplayValue;
 
-  const image =
-    item?.images?.primary?.large?.url ||
-    item?.images?.primary?.medium?.url ||
-    item?.images?.primary?.small?.url ||
-    item?.Images?.Primary?.Large?.URL ||
-    item?.Images?.Primary?.Medium?.URL ||
-    item?.Images?.Primary?.Small?.URL;
+  const imageUrls = extractAllImageUrls(item);
 
   const detailUrl = item?.detailPageURL || item?.DetailPageURL;
 
@@ -286,13 +374,30 @@ function parseCreatorsItem(json) {
   const weight = weightNode?.displayValue || weightNode?.DisplayValue;
   const weightUnit = weightNode?.unit || weightNode?.Unit;
 
+  // Parse structured weight, fall back to features parsing
+  let weightGrams = null;
+  if (weight != null && weightUnit) {
+    const unit = String(weightUnit).toLowerCase();
+    const factor = UNIT_TO_GRAMS[unit];
+    const val = parseFloat(weight);
+    if (factor && !isNaN(val) && val > 0) {
+      weightGrams = Math.round(val * factor);
+    }
+  }
+  if (weightGrams == null) {
+    weightGrams = parseWeightFromFeatures(features);
+  }
+
   return {
     title,
+    cleanTitle: cleanTitle(title, brand),
     brand,
     description,
+    features: Array.isArray(features) ? features : [],
     modelNumber,
-    imageUrls: image ? [image] : [],
+    imageUrls,
     detailUrl,
+    weightGrams,
     rawDims: { length, width, height, unit: dimUnit },
     rawWeight: { value: weight, unit: weightUnit },
   };
@@ -301,6 +406,7 @@ function parseCreatorsItem(json) {
 module.exports = {
   creatorsGetItems,
   parseCreatorsItem,
+  extractAllImageUrls,
   getPartnerTagForMarketplace,
   buildAmazonAffiliateUrl,
 };

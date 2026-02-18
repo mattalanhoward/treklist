@@ -468,10 +468,10 @@ export default function GlobalItemEditModal({
     (isImported && loadingImageAsset);
 
   const modalWidthClass = isCustom
-    ? "max-w-xl"
+    ? "max-w-2xl"
     : showImageBlock
-      ? "max-w-3xl"
-      : "max-w-xl";
+      ? "max-w-4xl"
+      : "max-w-2xl";
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center z-[60]">

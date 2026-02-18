@@ -78,7 +78,7 @@ export default function CatalogItemPreviewModal({
 
   const showImageBlock = hasImages && !imageFailed;
 
-  const modalWidthClass = showImageBlock ? "max-w-3xl" : "max-w-xl";
+  const modalWidthClass = showImageBlock ? "max-w-4xl" : "max-w-2xl";
 
   const primaryOffer = useMemo(() => {
     const offers = Array.isArray(item?.offers) ? item.offers : [];

@@ -13,6 +13,8 @@ const {
   getPartnerTagForMarketplace,
   buildAmazonAffiliateUrl,
 } = require("../services/amazonCreatorsApi");
+const { rewriteDescription } = require("../services/openaiService");
+const { detectItemType } = require("../services/itemTypeDetector");
 
 const router = express.Router();
 
@@ -67,7 +69,7 @@ router.post(
     }
 
     const now = new Date();
-    const expiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    const expiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
 
     // Partner tag for this marketplace (US/UK/DE/etc)
     const partnerTag = getPartnerTagForMarketplace(marketplace) || null;
@@ -83,6 +85,13 @@ router.post(
         partnerTag, // may be null in mock; buildAmazonAffiliateUrl should handle
       });
 
+      const mockFeatures = [
+        "Ultralight backpacking tent weighing 2 lbs 1 oz",
+        "Freestanding design with DAC Featherlite poles",
+        "Two doors and two vestibules for easy access",
+      ];
+      const mockDetection = detectItemType("Mock Amazon Title", mockFeatures);
+
       const snapshotDoc = {
         asin,
         marketplace,
@@ -94,6 +103,7 @@ router.post(
         weightGrams: 1400,
         dimensions: { length: 0, width: 0, height: 0, unit: "cm" },
         imageUrls: ["https://example.com/mock-image.jpg"],
+        features: mockFeatures,
         fetchedAt: now,
         expiresAt,
       };
@@ -104,7 +114,7 @@ router.post(
         { upsert: true, new: true }
       );
 
-      // ✅ Upsert MerchantOffer (even in mock mode)
+      // Upsert MerchantOffer (even in mock mode)
       await MerchantOffer.findOneAndUpdate(
         {
           network: "amazon",
@@ -140,13 +150,16 @@ router.post(
         prefill: {
           name: snapshotDoc.title,
           brand: snapshotDoc.brand,
-          description: snapshotDoc.description,
+          description: "A lightweight mock product for development testing.",
           modelNumber: snapshotDoc.modelNumber,
           weightGrams: snapshotDoc.weightGrams,
           dimensions: snapshotDoc.dimensions,
           imageUrls: snapshotDoc.imageUrls,
           canonicalAsin: asin,
           externalIds: { asin },
+          suggestedCategory: mockDetection?.category || null,
+          suggestedItemType: mockDetection?.itemType || null,
+          detectionConfidence: mockDetection?.confidence || null,
         },
         offer: {
           network: "amazon",
@@ -188,6 +201,16 @@ router.post(
         partnerTag,
       });
 
+      // AI description rewrite (non-blocking — falls back to bullet-join)
+      const rewrittenDescription = await rewriteDescription(
+        parsed.title,
+        parsed.brand,
+        parsed.features
+      );
+
+      // Auto-detect category + itemType from title & features
+      const detection = detectItemType(parsed.title, parsed.features);
+
       // Persist snapshot for debugging + cache semantics
       const snapshotDoc = {
         asin,
@@ -197,9 +220,10 @@ router.post(
         brand: parsed.brand,
         description: parsed.description,
         modelNumber: parsed.modelNumber,
-        weightGrams: undefined,
+        weightGrams: parsed.weightGrams || undefined,
         dimensions: undefined,
         imageUrls: parsed.imageUrls || [],
+        features: parsed.features || [],
         fetchedAt: now,
         expiresAt,
       };
@@ -210,7 +234,7 @@ router.post(
         { upsert: true, new: true }
       );
 
-      // ✅ Upsert MerchantOffer (live)
+      // Upsert MerchantOffer (live)
       const offerUpdate = {
         merchantName: "Amazon",
         deepLink,
@@ -244,15 +268,18 @@ router.post(
           imageUrls: snapshotDoc.imageUrls,
         },
         prefill: {
-          name: parsed.title,
+          name: parsed.cleanTitle || parsed.title,
           brand: parsed.brand,
-          description: parsed.description,
+          description: rewrittenDescription || parsed.description,
           modelNumber: parsed.modelNumber,
-          weightGrams: undefined,
+          weightGrams: parsed.weightGrams || undefined,
           dimensions: undefined,
           imageUrls: parsed.imageUrls || [],
           canonicalAsin: asin,
           externalIds: { asin },
+          suggestedCategory: detection?.category || null,
+          suggestedItemType: detection?.itemType || null,
+          detectionConfidence: detection?.confidence || null,
         },
         offer: {
           network: "amazon",

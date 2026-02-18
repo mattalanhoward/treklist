@@ -140,9 +140,20 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() =>
-    console.log(`✅ Connected to MongoDB (db=${mongoose.connection.name})`),
-  )
+  .then(() => {
+    console.log(`✅ Connected to MongoDB (db=${mongoose.connection.name})`);
+
+    // Start cron jobs after DB is connected (production or explicit opt-in)
+    if (
+      process.env.NODE_ENV === "production" ||
+      process.env.ENABLE_CRON === "1"
+    ) {
+      const {
+        startImageRefreshCron,
+      } = require("./services/amazonImageRefresh");
+      startImageRefreshCron();
+    }
+  })
   .catch((err) => console.error("❌ Mongo connection error:", err));
 
 module.exports = app;
