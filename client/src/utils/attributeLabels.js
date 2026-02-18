@@ -63,6 +63,10 @@ const ATTRIBUTE_LABELS = {
   longHandle: "Long Handle",
   foldable: "Foldable/Collapsible",
 
+  // Kitchen - Fuel
+  fuelType: "Fuel Type",
+  volumeG: "Net Weight (g)",
+
   // Kitchen - Pots
   volumeMl: "Volume (ml)",
   diameterCm: "Diameter (cm)",
@@ -132,6 +136,20 @@ const ATTRIBUTE_LABELS = {
   stakeLengthCm: "Stake Length (cm)",
   stakeLengthIn: "Stake Length (in)",
   reflectiveCord: "Reflective Pull Cord",
+
+  // Accessories - Umbrella
+  canopyDiameterCm: "Canopy Diameter (cm)",
+  canopyDiameterIn: "Canopy Diameter (in)",
+  windResistant: "Wind-Resistant Frame",
+  reflective: "Reflective/Silver Canopy",
+
+  // Clothing - Underwear
+  // (uses existing: gender, style, material, moistureWicking, antimicrobial)
+
+  // Footwear - Sandals
+  sandalType: "Sandal Type",
+  closedToe: "Closed Toe",
+  adjustableStraps: "Adjustable Straps",
 
   // Electronics - Headlamps
   maxLumens: "Max Output (lumens)",
@@ -349,6 +367,7 @@ const UNIT_PAIRS = [
   { metric: "inseamCm", imperial: "inseamIn", toImperial: CM_TO_IN, toMetric: IN_TO_CM },
   { metric: "shortsInseamCm", imperial: "shortsInseamIn", toImperial: CM_TO_IN, toMetric: IN_TO_CM },
   { metric: "stakeLengthCm", imperial: "stakeLengthIn", toImperial: CM_TO_IN, toMetric: IN_TO_CM },
+  { metric: "canopyDiameterCm", imperial: "canopyDiameterIn", toImperial: CM_TO_IN, toMetric: IN_TO_CM },
   { metric: "peakHeightCm", imperial: "peakHeightIn", toImperial: CM_TO_IN, toMetric: IN_TO_CM },
   { metric: "lengthCm", imperial: "lengthIn", toImperial: CM_TO_IN, toMetric: IN_TO_CM },
   { metric: "widthCm", imperial: "widthIn", toImperial: CM_TO_IN, toMetric: IN_TO_CM },

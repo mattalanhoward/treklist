@@ -625,6 +625,25 @@ const SCHEMAS = {
     },
   },
 
+  "Stove Fuel": {
+    fields: {
+      fuelType: {
+        type: "enum",
+        required: true,
+        label: "Fuel Type",
+        options: ["Isobutane/Propane", "Butane", "White Gas", "Alcohol", "Solid (Esbit)", "Wood"],
+      },
+      volumeG: {
+        type: "number",
+        required: false,
+        label: "Net Weight",
+        unit: "g",
+        min: 50,
+        max: 500,
+      },
+    },
+  },
+
   "Trekking Poles": {
     fields: {
       material: {
@@ -917,6 +936,41 @@ const SCHEMAS = {
         type: "boolean",
         required: false,
         label: "Reflective Pull Cord",
+      },
+    },
+  },
+
+  "Ground Sheet": {
+    fields: {
+      material: {
+        type: "enum",
+        required: false,
+        label: "Material",
+        options: ["Polycryo", "Tyvek", "Silnylon", "Silpoly", "Cuben/DCF", "Polyester"],
+      },
+    },
+  },
+
+  "Camp Lantern": {
+    fields: {
+      maxLumens: {
+        type: "number",
+        required: false,
+        label: "Max Output",
+        unit: "lumens",
+        min: 1,
+        max: 1000,
+      },
+      batteryType: {
+        type: "enum",
+        required: false,
+        label: "Battery Type",
+        options: ["Rechargeable (USB)", "AAA", "AA", "CR123A", "Solar", "Fuel (Candle/Gas)"],
+      },
+      collapsible: {
+        type: "boolean",
+        required: false,
+        label: "Collapsible/Packable",
       },
     },
   },
@@ -1371,6 +1425,35 @@ const SCHEMAS = {
         type: "boolean",
         required: false,
         label: "PFAS-Free DWR",
+      },
+    },
+  },
+
+  Umbrella: {
+    fields: {
+      canopyDiameterCm: {
+        type: "number",
+        required: false,
+        label: "Canopy Diameter",
+        unit: "cm",
+        min: 60,
+        max: 130,
+      },
+      uvProtection: {
+        type: "enum",
+        required: false,
+        label: "UV Protection",
+        options: ["UPF 15-24", "UPF 25-39", "UPF 40-50", "UPF 50+", "None"],
+      },
+      windResistant: {
+        type: "boolean",
+        required: false,
+        label: "Wind-Resistant Frame",
+      },
+      reflective: {
+        type: "boolean",
+        required: false,
+        label: "Reflective/Silver Canopy",
       },
     },
   },
@@ -1891,6 +1974,33 @@ const SCHEMAS = {
     },
   },
 
+  Sandals: {
+    fields: {
+      gender: {
+        type: "enum",
+        required: true,
+        label: "Gender/Fit",
+        options: ["Mens", "Womens", "Unisex"],
+      },
+      sandalType: {
+        type: "enum",
+        required: false,
+        label: "Sandal Type",
+        options: ["Sport/Hiking", "Slide", "Flip-Flop", "Water Shoe"],
+      },
+      closedToe: {
+        type: "boolean",
+        required: false,
+        label: "Closed Toe",
+      },
+      adjustableStraps: {
+        type: "boolean",
+        required: false,
+        label: "Adjustable Straps",
+      },
+    },
+  },
+
   "Hiking Socks": {
     fields: {
       sockType: {
@@ -2000,6 +2110,39 @@ const SCHEMAS = {
     },
   },
 
+  Underwear: {
+    fields: {
+      gender: {
+        type: "enum",
+        required: true,
+        label: "Gender/Fit",
+        options: ["Mens", "Womens", "Unisex"],
+      },
+      style: {
+        type: "enum",
+        required: false,
+        label: "Style",
+        options: ["Boxer Brief", "Brief", "Bikini", "Hipster", "Trunk", "Thong"],
+      },
+      material: {
+        type: "enum",
+        required: false,
+        label: "Material",
+        options: ["Merino Wool", "Synthetic", "Merino Blend", "Cotton", "Silk"],
+      },
+      moistureWicking: {
+        type: "boolean",
+        required: false,
+        label: "Moisture-Wicking",
+      },
+      antimicrobial: {
+        type: "boolean",
+        required: false,
+        label: "Antimicrobial Treatment",
+      },
+    },
+  },
+
   "Hiking Shorts": {
     fields: {
       gender: {
@@ -2008,13 +2151,13 @@ const SCHEMAS = {
         label: "Gender/Fit",
         options: ["Mens", "Womens", "Unisex"],
       },
-      inseamCm: {
+      inseamIn: {
         type: "number",
         required: false,
         label: "Inseam",
-        unit: "cm",
-        min: 8,
-        max: 30,
+        unit: "in",
+        min: 3,
+        max: 12,
       },
       material: {
         type: "enum",
@@ -2066,21 +2209,21 @@ const SCHEMAS = {
         label: "Gender/Fit",
         options: ["Mens", "Womens", "Unisex"],
       },
-      inseamCm: {
+      inseamIn: {
         type: "number",
         required: false,
         label: "Inseam (Pant)",
-        unit: "cm",
-        min: 65,
-        max: 92,
+        unit: "in",
+        min: 26,
+        max: 36,
       },
-      shortsInseamCm: {
+      shortsInseamIn: {
         type: "number",
         required: false,
         label: "Inseam (Shorts)",
-        unit: "cm",
-        min: 15,
-        max: 30,
+        unit: "in",
+        min: 6,
+        max: 12,
       },
       material: {
         type: "enum",
@@ -2480,12 +2623,7 @@ const SCHEMAS = {
         type: "enum",
         required: true,
         label: "Size",
-        options: [
-          "Small (20x40in)",
-          "Medium (24x48in)",
-          "Large (30x60in)",
-          "XL (35x70in)",
-        ],
+        options: ["XS", "Small", "Medium", "Large", "XL"],
       },
       material: {
         type: "enum",
@@ -2561,6 +2699,22 @@ const SCHEMAS = {
     fields: {},
   },
 
+  Permit: {
+    fields: {},
+  },
+
+  Wallet: {
+    fields: {},
+  },
+
+  "Mosquito Head Net": {
+    fields: {},
+  },
+
+  "Blister Prevention": {
+    fields: {},
+  },
+
   Other: {
     fields: {},
   },
@@ -2627,19 +2781,21 @@ export const CATEGORY_ITEM_TYPE_MAPPING = {
     "Pillow",
   ],
   "Backpacks & Bags": ["Backpack", "Daypack", "Hip Pack"],
-  "Kitchen & Cooking": ["Backpacking Pot", "Backpacking Stove (Canister)", "Coffee Mug", "Utensil"],
-  Shelter: ["Backpacking Tent", "Tarp Shelter", "Tent Stakes"],
-  "Electronics & Power": ["Headlamp", "Power Bank", "Travel Charger"],
+  "Kitchen & Cooking": ["Backpacking Pot", "Backpacking Stove (Canister)", "Coffee Mug", "Utensil", "Stove Fuel"],
+  Shelter: ["Backpacking Tent", "Tarp Shelter", "Tent Stakes", "Ground Sheet"],
+  "Electronics & Power": ["Headlamp", "Camp Lantern", "Power Bank", "Travel Charger"],
   Hydration: ["Water Filter", "Water Bottle", "Hydration Reservoir"],
-  Footwear: ["Hiking Boots", "Trail Running Shoes"],
+  Footwear: ["Hiking Boots", "Trail Running Shoes", "Sandals"],
   "Men's Clothing": [
     "Rain Jacket",
     "Rain Pants",
     "Rain Poncho",
+    "Umbrella",
     "Insulated Jacket",
     "Fleece Jacket",
     "Base Layer Top",
     "Base Layer Bottom",
+    "Underwear",
     "Hiking Socks",
     "Hat/Headwear",
     "Hiking Shorts",
@@ -2651,10 +2807,12 @@ export const CATEGORY_ITEM_TYPE_MAPPING = {
     "Rain Jacket",
     "Rain Pants",
     "Rain Poncho",
+    "Umbrella",
     "Insulated Jacket",
     "Fleece Jacket",
     "Base Layer Top",
     "Base Layer Bottom",
+    "Underwear",
     "Hiking Socks",
     "Hat/Headwear",
     "Hiking Shorts",
@@ -2666,10 +2824,12 @@ export const CATEGORY_ITEM_TYPE_MAPPING = {
     "Rain Jacket",
     "Rain Pants",
     "Rain Poncho",
+    "Umbrella",
     "Insulated Jacket",
     "Fleece Jacket",
     "Base Layer Top",
     "Base Layer Bottom",
+    "Underwear",
     "Hiking Socks",
     "Hat/Headwear",
     "Hiking Shorts",
@@ -2677,10 +2837,10 @@ export const CATEGORY_ITEM_TYPE_MAPPING = {
     "Hiking Shirt",
     "Gloves (Insulated)",
   ],
-  "Accessories & Tools": ["Trekking Poles", "Sunglasses", "Bear Canister", "Pocket Knife"],
-  Travel: ["Travel Towel"],
-  "Health & Hygiene": ["Toiletry", "Medication", "First Aid Kit"],
-  "Navigation & Planning": ["Document"],
+  "Accessories & Tools": ["Trekking Poles", "Sunglasses", "Bear Canister", "Pocket Knife", "Umbrella", "Wallet", "Mosquito Head Net"],
+  Travel: ["Travel Towel", "Wallet", "Permit"],
+  "Health & Hygiene": ["Toiletry", "Medication", "First Aid Kit", "Blister Prevention"],
+  "Navigation & Planning": ["Document", "Permit"],
 };
 
 // =============================================================================

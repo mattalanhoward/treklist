@@ -839,6 +839,30 @@ const SCHEMAS = {
   },
 
   // ===========================================================================
+  // KITCHEN - FUEL
+  // ===========================================================================
+
+  "Stove Fuel": {
+    fields: {
+      fuelType: {
+        type: "enum",
+        required: true,
+        label: "Fuel Type",
+        options: ["Isobutane/Propane", "Butane", "White Gas", "Alcohol", "Solid (Esbit)", "Wood"],
+      },
+      volumeG: {
+        type: "number",
+        required: false,
+        label: "Net Weight",
+        unit: "g",
+        min: 50,
+        max: 500,
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  // ===========================================================================
   // TREKKING POLES
   // ===========================================================================
 
@@ -1214,8 +1238,49 @@ const SCHEMAS = {
   },
 
   // ===========================================================================
+  // SHELTER - GROUND SHEET
+  // ===========================================================================
+
+  "Ground Sheet": {
+    fields: {
+      material: {
+        type: "enum",
+        required: false,
+        label: "Material",
+        options: ["Polycryo", "Tyvek", "Silnylon", "Silpoly", "Cuben/DCF", "Polyester"],
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  // ===========================================================================
   // HEADLAMPS / LIGHTING
   // ===========================================================================
+
+  "Camp Lantern": {
+    fields: {
+      maxLumens: {
+        type: "number",
+        required: false,
+        label: "Max Output",
+        unit: "lumens",
+        min: 1,
+        max: 1000,
+      },
+      batteryType: {
+        type: "enum",
+        required: false,
+        label: "Battery Type",
+        options: ["Rechargeable (USB)", "AAA", "AA", "CR123A", "Solar", "Fuel (Candle/Gas)"],
+      },
+      collapsible: {
+        type: "boolean",
+        required: false,
+        label: "Collapsible/Packable",
+      },
+    },
+    derive: (attrs) => attrs,
+  },
 
   Headlamp: {
     fields: {
@@ -1712,6 +1777,54 @@ const SCHEMAS = {
       },
     },
     derive: (attrs) => attrs,
+  },
+
+  // ===========================================================================
+  // ACCESSORIES - UMBRELLA
+  // ===========================================================================
+
+  Umbrella: {
+    fields: {
+      canopyDiameterCm: {
+        type: "number",
+        required: false,
+        label: "Canopy Diameter",
+        unit: "cm",
+        min: 60,
+        max: 130,
+      },
+      canopyDiameterIn: {
+        type: "number",
+        required: false,
+        label: "Canopy Diameter",
+        unit: "in",
+        derived: true,
+        min: 24,
+        max: 52,
+      },
+      uvProtection: {
+        type: "enum",
+        required: false,
+        label: "UV Protection",
+        options: ["UPF 15-24", "UPF 25-39", "UPF 40-50", "UPF 50+", "None"],
+      },
+      windResistant: {
+        type: "boolean",
+        required: false,
+        label: "Wind-Resistant Frame",
+      },
+      reflective: {
+        type: "boolean",
+        required: false,
+        label: "Reflective/Silver Canopy",
+      },
+    },
+    derive: (attrs) => {
+      if (attrs.canopyDiameterCm != null && attrs.canopyDiameterIn == null) {
+        attrs.canopyDiameterIn = Math.round((attrs.canopyDiameterCm / 2.54) * 10) / 10;
+      }
+      return attrs;
+    },
   },
 
   "Insulated Jacket": {
@@ -2215,6 +2328,38 @@ const SCHEMAS = {
   },
 
   // ===========================================================================
+  // FOOTWEAR - SANDALS
+  // ===========================================================================
+
+  Sandals: {
+    fields: {
+      gender: {
+        type: "enum",
+        required: true,
+        label: "Gender/Fit",
+        options: ["Mens", "Womens", "Unisex"],
+      },
+      sandalType: {
+        type: "enum",
+        required: false,
+        label: "Sandal Type",
+        options: ["Sport/Hiking", "Slide", "Flip-Flop", "Water Shoe"],
+      },
+      closedToe: {
+        type: "boolean",
+        required: false,
+        label: "Closed Toe",
+      },
+      adjustableStraps: {
+        type: "boolean",
+        required: false,
+        label: "Adjustable Straps",
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  // ===========================================================================
   // CLOTHING - BASE LAYERS (CONTINUED)
   // ===========================================================================
 
@@ -2394,6 +2539,44 @@ const SCHEMAS = {
   },
 
   // ===========================================================================
+  // CLOTHING - UNDERWEAR
+  // ===========================================================================
+
+  Underwear: {
+    fields: {
+      gender: {
+        type: "enum",
+        required: true,
+        label: "Gender/Fit",
+        options: ["Mens", "Womens", "Unisex"],
+      },
+      style: {
+        type: "enum",
+        required: false,
+        label: "Style",
+        options: ["Boxer Brief", "Brief", "Bikini", "Hipster", "Trunk", "Thong"],
+      },
+      material: {
+        type: "enum",
+        required: false,
+        label: "Material",
+        options: ["Merino Wool", "Synthetic", "Merino Blend", "Cotton", "Silk"],
+      },
+      moistureWicking: {
+        type: "boolean",
+        required: false,
+        label: "Moisture-Wicking",
+      },
+      antimicrobial: {
+        type: "boolean",
+        required: false,
+        label: "Antimicrobial Treatment",
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  // ===========================================================================
   // CLOTHING - SHORTS
   // ===========================================================================
 
@@ -2405,22 +2588,22 @@ const SCHEMAS = {
         label: "Gender/Fit",
         options: ["Mens", "Womens", "Unisex"],
       },
-      inseamCm: {
-        type: "number",
-        required: false,
-        label: "Inseam",
-        unit: "cm",
-        min: 8,
-        max: 30,
-      },
       inseamIn: {
         type: "number",
         required: false,
         label: "Inseam",
         unit: "in",
-        derived: true,
         min: 3,
         max: 12,
+      },
+      inseamCm: {
+        type: "number",
+        required: false,
+        label: "Inseam",
+        unit: "cm",
+        derived: true,
+        min: 8,
+        max: 30,
       },
       material: {
         type: "enum",
@@ -2463,8 +2646,8 @@ const SCHEMAS = {
       },
     },
     derive: (attrs) => {
-      if (attrs.inseamCm != null && attrs.inseamIn == null) {
-        attrs.inseamIn = Math.round((attrs.inseamCm / 2.54) * 10) / 10;
+      if (attrs.inseamIn != null && attrs.inseamCm == null) {
+        attrs.inseamCm = Math.round(attrs.inseamIn * 2.54 * 10) / 10;
       }
       return attrs;
     },
@@ -2482,39 +2665,39 @@ const SCHEMAS = {
         label: "Gender/Fit",
         options: ["Mens", "Womens", "Unisex"],
       },
-      inseamCm: {
-        type: "number",
-        required: false,
-        label: "Inseam (Pant)",
-        unit: "cm",
-        min: 65,
-        max: 92,
-      },
       inseamIn: {
         type: "number",
         required: false,
         label: "Inseam (Pant)",
         unit: "in",
-        derived: true,
         min: 26,
         max: 36,
       },
-      shortsInseamCm: {
+      inseamCm: {
         type: "number",
         required: false,
-        label: "Inseam (Shorts)",
+        label: "Inseam (Pant)",
         unit: "cm",
-        min: 15,
-        max: 30,
+        derived: true,
+        min: 65,
+        max: 92,
       },
       shortsInseamIn: {
         type: "number",
         required: false,
         label: "Inseam (Shorts)",
         unit: "in",
-        derived: true,
         min: 6,
         max: 12,
+      },
+      shortsInseamCm: {
+        type: "number",
+        required: false,
+        label: "Inseam (Shorts)",
+        unit: "cm",
+        derived: true,
+        min: 15,
+        max: 30,
       },
       material: {
         type: "enum",
@@ -2584,11 +2767,11 @@ const SCHEMAS = {
       },
     },
     derive: (attrs) => {
-      if (attrs.inseamCm != null && attrs.inseamIn == null) {
-        attrs.inseamIn = Math.round((attrs.inseamCm / 2.54) * 10) / 10;
+      if (attrs.inseamIn != null && attrs.inseamCm == null) {
+        attrs.inseamCm = Math.round(attrs.inseamIn * 2.54 * 10) / 10;
       }
-      if (attrs.shortsInseamCm != null && attrs.shortsInseamIn == null) {
-        attrs.shortsInseamIn = Math.round((attrs.shortsInseamCm / 2.54) * 10) / 10;
+      if (attrs.shortsInseamIn != null && attrs.shortsInseamCm == null) {
+        attrs.shortsInseamCm = Math.round(attrs.shortsInseamIn * 2.54 * 10) / 10;
       }
       return attrs;
     },
@@ -2928,12 +3111,7 @@ const SCHEMAS = {
         type: "enum",
         required: true,
         label: "Size",
-        options: [
-          "Small (20x40in)",
-          "Medium (24x48in)",
-          "Large (30x60in)",
-          "XL (35x70in)",
-        ],
+        options: ["XS", "Small", "Medium", "Large", "XL"],
       },
       material: {
         type: "enum",
@@ -3020,6 +3198,26 @@ const SCHEMAS = {
   },
 
   Document: {
+    fields: {},
+    derive: (attrs) => attrs,
+  },
+
+  Permit: {
+    fields: {},
+    derive: (attrs) => attrs,
+  },
+
+  Wallet: {
+    fields: {},
+    derive: (attrs) => attrs,
+  },
+
+  "Mosquito Head Net": {
+    fields: {},
+    derive: (attrs) => attrs,
+  },
+
+  "Blister Prevention": {
     fields: {},
     derive: (attrs) => attrs,
   },
