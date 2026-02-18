@@ -157,8 +157,6 @@ function GearCatalogSection({
     itemType: "",
     modelNumber: "",
     description: "",
-    amazonDescriptionNeedsRewrite: false,
-    amazonDescriptionConfirmed: false,
     weightGrams: "",
     dimLength: "",
     dimWidth: "",
@@ -256,10 +254,6 @@ function GearCatalogSection({
       prefillOverwrite: false,
       amazonAsinLookup: "",
       amazonMarketplace: "us",
-
-      // reset Amazon compliance flags
-      amazonDescriptionNeedsRewrite: false,
-      amazonDescriptionConfirmed: false,
     }));
 
     toast.success(
@@ -348,15 +342,6 @@ function GearCatalogSection({
     }
 
     // (keep your Amazon rewrite check)
-    if (
-      getPrimaryOffer({ ...form, offers: meaningfulOffers }).network ===
-        "amazon" &&
-      form.amazonDescriptionNeedsRewrite &&
-      !form.amazonDescriptionConfirmed
-    ) {
-      return toast.error("Please confirm you rewrote the Amazon description.");
-    }
-
     // Attributes are already structured - just pass them through
     const attributes =
       form.attributes && Object.keys(form.attributes).length > 0
@@ -440,8 +425,6 @@ function GearCatalogSection({
         itemType: "",
         modelNumber: "",
         description: "",
-        amazonDescriptionNeedsRewrite: false,
-        amazonDescriptionConfirmed: false,
         weightGrams: "",
         dimLength: "",
         dimWidth: "",
@@ -536,18 +519,16 @@ function GearCatalogSection({
         if (!String(primary.merchantName || "").trim()) {
           primary.merchantName = "Amazon";
         }
-        // Important: do NOT force network = "amazon" here (decoupled)
+        // Auto-set network to amazon when fetching from Amazon
+        if (!String(primary.network || "").trim() || overwrite) {
+          primary.network = "amazon";
+        }
         nextOffers[0] = { ...primary };
 
         const nextDescription = pick(
           prev.description,
           typeof prefill.description === "string" ? prefill.description : "",
         );
-        const descriptionApplied =
-          nextDescription !== prev.description &&
-          typeof prefill.description === "string" &&
-          prefill.description.trim().length > 0;
-
         return {
           ...prev,
           name: pick(prev.name, prefill.name),
@@ -584,26 +565,36 @@ function GearCatalogSection({
           imageUrlsText:
             Array.isArray(prefill.imageUrls) && prefill.imageUrls.length
               ? overwrite || !String(prev.imageUrlsText || "").trim()
-                ? String(prefill.imageUrls[0])
+                ? prefill.imageUrls.join("\n")
                 : prev.imageUrlsText
               : prev.imageUrlsText,
           canonicalAsin:
             overwrite || !String(prev.canonicalAsin || "").trim()
               ? asin
               : prev.canonicalAsin,
+          category:
+            prefill.suggestedCategory
+              ? overwrite || !String(prev.category || "").trim()
+                ? prefill.suggestedCategory
+                : prev.category
+              : prev.category,
+          itemType:
+            prefill.suggestedItemType
+              ? overwrite || !String(prev.itemType || "").trim()
+                ? prefill.suggestedItemType
+                : prev.itemType
+              : prev.itemType,
           offers: nextOffers,
-          amazonDescriptionNeedsRewrite: descriptionApplied
-            ? true
-            : prev.amazonDescriptionNeedsRewrite,
-          amazonDescriptionConfirmed: descriptionApplied
-            ? false
-            : prev.amazonDescriptionConfirmed,
         };
       });
 
-      toast.success(
-        "Amazon data loaded. Please review and rewrite description.",
-      );
+      if (prefill.suggestedItemType) {
+        toast.success(
+          `Amazon data loaded. Auto-detected: ${prefill.suggestedCategory} / ${prefill.suggestedItemType}`,
+        );
+      } else {
+        toast.success("Amazon data loaded. Review prefilled fields.");
+      }
     } catch (err) {
       console.error("Amazon lookup failed", err);
       const msg =
@@ -942,25 +933,6 @@ function GearCatalogSection({
                     </div>
                   </div>
 
-                  {form.amazonDescriptionNeedsRewrite && (
-                    <div className="rounded border border-warning/50 bg-warning/10 p-2 text-xs text-primary">
-                      <div className="font-semibold mb-1">Important</div>
-                      <div className="text-primary/80">
-                        This description was pulled from Amazon. Rewrite it in
-                        your own words before saving.
-                      </div>
-                      <label className="mt-2 flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          name="amazonDescriptionConfirmed"
-                          checked={form.amazonDescriptionConfirmed}
-                          onChange={handleChange}
-                          className="checkbox checkbox-xs"
-                        />
-                        <span>I confirm I rewrote the description.</span>
-                      </label>
-                    </div>
-                  )}
                 </div>
               )}
               {/* 2) BASICS */}
@@ -1961,10 +1933,6 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
         (offers?.[0]?.network === "amazon" ? offers?.[0]?.externalId : "") ||
         "",
 
-      // compliance guardrails (only enforced after lookup)
-      amazonDescriptionNeedsRewrite: false,
-      amazonDescriptionConfirmed: false,
-
       // Prefill controls (decoupled from offer network)
       // Default to "none" unless primary offer is Amazon
       prefillSource:
@@ -2100,18 +2068,16 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
         if (overwrite || primaryIdEmpty) primary.externalId = asin;
         if (!String(primary.merchantName || "").trim())
           primary.merchantName = "Amazon";
-        // Important: do NOT force network = "amazon" here (decoupled)
+        // Auto-set network to amazon when fetching from Amazon
+        if (!String(primary.network || "").trim() || overwrite) {
+          primary.network = "amazon";
+        }
         nextOffers[0] = { ...primary };
 
         const nextDescription = pick(
           prev.description,
           typeof prefill.description === "string" ? prefill.description : "",
         );
-        const descriptionApplied =
-          nextDescription !== prev.description &&
-          typeof prefill.description === "string" &&
-          prefill.description.trim().length > 0;
-
         return {
           ...prev,
           name: pick(prev.name, prefill.name),
@@ -2149,26 +2115,36 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
           imageUrlsText:
             Array.isArray(prefill.imageUrls) && prefill.imageUrls.length
               ? overwrite || !String(prev.imageUrlsText || "").trim()
-                ? String(prefill.imageUrls[0])
+                ? prefill.imageUrls.join("\n")
                 : prev.imageUrlsText
               : prev.imageUrlsText,
           canonicalAsin:
             overwrite || !String(prev.canonicalAsin || "").trim()
               ? asin
               : prev.canonicalAsin,
+          category:
+            prefill.suggestedCategory
+              ? overwrite || !String(prev.category || "").trim()
+                ? prefill.suggestedCategory
+                : prev.category
+              : prev.category,
+          itemType:
+            prefill.suggestedItemType
+              ? overwrite || !String(prev.itemType || "").trim()
+                ? prefill.suggestedItemType
+                : prev.itemType
+              : prev.itemType,
           offers: nextOffers,
-          amazonDescriptionNeedsRewrite: descriptionApplied
-            ? true
-            : prev.amazonDescriptionNeedsRewrite,
-          amazonDescriptionConfirmed: descriptionApplied
-            ? false
-            : prev.amazonDescriptionConfirmed,
         };
       });
 
-      toast.success(
-        "Amazon data loaded. Please review and rewrite description.",
-      );
+      if (prefill.suggestedItemType) {
+        toast.success(
+          `Amazon data loaded. Auto-detected: ${prefill.suggestedCategory} / ${prefill.suggestedItemType}`,
+        );
+      } else {
+        toast.success("Amazon data loaded. Review prefilled fields.");
+      }
     } catch (err) {
       console.error("Amazon lookup failed", err);
       const msg =
@@ -2203,15 +2179,6 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
       )
     ) {
       toast.error("Each offer must have a network and URL.");
-      return;
-    }
-
-    if (
-      getPrimaryOffer(form).network === "amazon" &&
-      form.amazonDescriptionNeedsRewrite &&
-      !form.amazonDescriptionConfirmed
-    ) {
-      toast.error("Please confirm you rewrote the Amazon description.");
       return;
     }
 
@@ -2528,26 +2495,6 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                     rows={3}
                     placeholder="Short blurb to help you recognize the item when importing."
                   />
-                  {primaryNetwork === "amazon" &&
-                    form.amazonDescriptionNeedsRewrite && (
-                      <div className="mt-2 rounded border border-warning/50 bg-warning/10 p-2 text-xs text-primary">
-                        <div className="font-semibold mb-1">Important</div>
-                        <div className="text-primary/80">
-                          This description was pulled from Amazon. Rewrite it in
-                          your own words before saving.
-                        </div>
-                        <label className="mt-2 flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            name="amazonDescriptionConfirmed"
-                            checked={form.amazonDescriptionConfirmed}
-                            onChange={handleChange}
-                            className="checkbox checkbox-xs"
-                          />
-                          <span>I confirm I rewrote the description.</span>
-                        </label>
-                      </div>
-                    )}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">

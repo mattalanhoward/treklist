@@ -49,6 +49,9 @@ const AmazonSnapshotSchema = new mongoose.Schema(
 
     imageUrls: [{ type: String, trim: true }],
 
+    // Raw Amazon feature bullets (preserved for reference)
+    features: [{ type: String, trim: true }],
+
     fetchedAt: {
       type: Date,
       required: true,
