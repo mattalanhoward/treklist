@@ -228,6 +228,9 @@ async function creatorsGetItems({
 
 // --- Weight Parsing from Feature Bullets ---
 
+// Matches compound weights like "2 lbs 1 oz" or simple "33 oz"
+const COMPOUND_WEIGHT_RE =
+  /(\d+(?:[.,]\d+)?)\s*(lbs?|pounds?)\s+(\d+(?:[.,]\d+)?)\s*(oz|ounces?)\b/i;
 const WEIGHT_RE =
   /(?:(?:weight|weighs|wt)[:\s]*)?(\d+(?:[.,]\d+)?)\s*(oz|ounces?|lbs?|pounds?|g|grams?|kg|kilograms?)\b/i;
 
@@ -250,6 +253,16 @@ const UNIT_TO_GRAMS = {
 function parseWeightFromFeatures(features) {
   if (!Array.isArray(features)) return null;
   for (const bullet of features) {
+    // Try compound first: "2 lbs 1 oz"
+    const cm = COMPOUND_WEIGHT_RE.exec(bullet);
+    if (cm) {
+      const lbVal = parseFloat(cm[1].replace(",", "."));
+      const ozVal = parseFloat(cm[3].replace(",", "."));
+      if (!isNaN(lbVal) && !isNaN(ozVal)) {
+        return Math.round(lbVal * 453.592 + ozVal * 28.3495);
+      }
+    }
+    // Then try simple: "33 oz"
     const m = WEIGHT_RE.exec(bullet);
     if (m) {
       const value = parseFloat(m[1].replace(",", "."));
@@ -374,18 +387,16 @@ function parseCreatorsItem(json) {
   const weight = weightNode?.displayValue || weightNode?.DisplayValue;
   const weightUnit = weightNode?.unit || weightNode?.Unit;
 
-  // Parse structured weight, fall back to features parsing
-  let weightGrams = null;
-  if (weight != null && weightUnit) {
+  // Prefer feature-bullet weight (actual product weight) over Amazon's
+  // structured ItemWeight which often includes packaging
+  let weightGrams = parseWeightFromFeatures(features);
+  if (weightGrams == null && weight != null && weightUnit) {
     const unit = String(weightUnit).toLowerCase();
     const factor = UNIT_TO_GRAMS[unit];
     const val = parseFloat(weight);
     if (factor && !isNaN(val) && val > 0) {
       weightGrams = Math.round(val * factor);
     }
-  }
-  if (weightGrams == null) {
-    weightGrams = parseWeightFromFeatures(features);
   }
 
   return {

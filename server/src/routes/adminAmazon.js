@@ -2,6 +2,7 @@
 const express = require("express");
 const { body, validationResult } = require("express-validator");
 const AmazonSnapshot = require("../models/amazonSnapshot");
+const CatalogItem = require("../models/catalogItem");
 const MerchantOffer = require("../models/merchantOffer");
 
 const auth = require("../middleware/auth");
@@ -67,6 +68,12 @@ router.post(
     if (!ALLOWED_REGIONS.has(region)) {
       return res.status(400).json({ message: "Invalid region" });
     }
+
+    // Check for existing catalog items with this ASIN
+    const existingItems = await CatalogItem.find(
+      { canonicalAsin: asin },
+      { name: 1, canonicalAsin: 1 }
+    ).lean();
 
     const now = new Date();
     const expiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
@@ -135,6 +142,7 @@ router.post(
         asin,
         marketplace,
         region,
+        existingItems,
         snapshot: {
           fetchedAt: now.toISOString(),
           expiresAt: expiresAt.toISOString(),
@@ -255,6 +263,7 @@ router.post(
         asin,
         marketplace,
         region,
+        existingItems,
         snapshot: {
           fetchedAt: now.toISOString(),
           expiresAt: expiresAt.toISOString(),
