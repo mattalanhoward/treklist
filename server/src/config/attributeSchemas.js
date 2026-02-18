@@ -2405,22 +2405,22 @@ const SCHEMAS = {
         label: "Gender/Fit",
         options: ["Mens", "Womens", "Unisex"],
       },
-      inseamCm: {
-        type: "number",
-        required: false,
-        label: "Inseam",
-        unit: "cm",
-        min: 8,
-        max: 30,
-      },
       inseamIn: {
         type: "number",
         required: false,
         label: "Inseam",
         unit: "in",
-        derived: true,
         min: 3,
         max: 12,
+      },
+      inseamCm: {
+        type: "number",
+        required: false,
+        label: "Inseam",
+        unit: "cm",
+        derived: true,
+        min: 8,
+        max: 30,
       },
       material: {
         type: "enum",
@@ -2463,8 +2463,8 @@ const SCHEMAS = {
       },
     },
     derive: (attrs) => {
-      if (attrs.inseamCm != null && attrs.inseamIn == null) {
-        attrs.inseamIn = Math.round((attrs.inseamCm / 2.54) * 10) / 10;
+      if (attrs.inseamIn != null && attrs.inseamCm == null) {
+        attrs.inseamCm = Math.round(attrs.inseamIn * 2.54 * 10) / 10;
       }
       return attrs;
     },
@@ -2482,39 +2482,39 @@ const SCHEMAS = {
         label: "Gender/Fit",
         options: ["Mens", "Womens", "Unisex"],
       },
-      inseamCm: {
-        type: "number",
-        required: false,
-        label: "Inseam (Pant)",
-        unit: "cm",
-        min: 65,
-        max: 92,
-      },
       inseamIn: {
         type: "number",
         required: false,
         label: "Inseam (Pant)",
         unit: "in",
-        derived: true,
         min: 26,
         max: 36,
       },
-      shortsInseamCm: {
+      inseamCm: {
         type: "number",
         required: false,
-        label: "Inseam (Shorts)",
+        label: "Inseam (Pant)",
         unit: "cm",
-        min: 15,
-        max: 30,
+        derived: true,
+        min: 65,
+        max: 92,
       },
       shortsInseamIn: {
         type: "number",
         required: false,
         label: "Inseam (Shorts)",
         unit: "in",
-        derived: true,
         min: 6,
         max: 12,
+      },
+      shortsInseamCm: {
+        type: "number",
+        required: false,
+        label: "Inseam (Shorts)",
+        unit: "cm",
+        derived: true,
+        min: 15,
+        max: 30,
       },
       material: {
         type: "enum",
@@ -2584,11 +2584,11 @@ const SCHEMAS = {
       },
     },
     derive: (attrs) => {
-      if (attrs.inseamCm != null && attrs.inseamIn == null) {
-        attrs.inseamIn = Math.round((attrs.inseamCm / 2.54) * 10) / 10;
+      if (attrs.inseamIn != null && attrs.inseamCm == null) {
+        attrs.inseamCm = Math.round(attrs.inseamIn * 2.54 * 10) / 10;
       }
-      if (attrs.shortsInseamCm != null && attrs.shortsInseamIn == null) {
-        attrs.shortsInseamIn = Math.round((attrs.shortsInseamCm / 2.54) * 10) / 10;
+      if (attrs.shortsInseamIn != null && attrs.shortsInseamCm == null) {
+        attrs.shortsInseamCm = Math.round(attrs.shortsInseamIn * 2.54 * 10) / 10;
       }
       return attrs;
     },
@@ -2928,12 +2928,7 @@ const SCHEMAS = {
         type: "enum",
         required: true,
         label: "Size",
-        options: [
-          "Small (20x40in)",
-          "Medium (24x48in)",
-          "Large (30x60in)",
-          "XL (35x70in)",
-        ],
+        options: ["XS", "Small", "Medium", "Large", "XL"],
       },
       material: {
         type: "enum",

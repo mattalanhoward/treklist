@@ -2008,13 +2008,13 @@ const SCHEMAS = {
         label: "Gender/Fit",
         options: ["Mens", "Womens", "Unisex"],
       },
-      inseamCm: {
+      inseamIn: {
         type: "number",
         required: false,
         label: "Inseam",
-        unit: "cm",
-        min: 8,
-        max: 30,
+        unit: "in",
+        min: 3,
+        max: 12,
       },
       material: {
         type: "enum",
@@ -2066,21 +2066,21 @@ const SCHEMAS = {
         label: "Gender/Fit",
         options: ["Mens", "Womens", "Unisex"],
       },
-      inseamCm: {
+      inseamIn: {
         type: "number",
         required: false,
         label: "Inseam (Pant)",
-        unit: "cm",
-        min: 65,
-        max: 92,
+        unit: "in",
+        min: 26,
+        max: 36,
       },
-      shortsInseamCm: {
+      shortsInseamIn: {
         type: "number",
         required: false,
         label: "Inseam (Shorts)",
-        unit: "cm",
-        min: 15,
-        max: 30,
+        unit: "in",
+        min: 6,
+        max: 12,
       },
       material: {
         type: "enum",
@@ -2480,12 +2480,7 @@ const SCHEMAS = {
         type: "enum",
         required: true,
         label: "Size",
-        options: [
-          "Small (20x40in)",
-          "Medium (24x48in)",
-          "Large (30x60in)",
-          "XL (35x70in)",
-        ],
+        options: ["XS", "Small", "Medium", "Large", "XL"],
       },
       material: {
         type: "enum",
