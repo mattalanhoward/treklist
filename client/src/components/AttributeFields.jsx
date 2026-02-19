@@ -2695,6 +2695,45 @@ const SCHEMAS = {
     fields: {},
   },
 
+  Guidebook: {
+    fields: {
+      language: {
+        type: "enum",
+        required: true,
+        label: "Language",
+        options: ["English", "Spanish", "French", "German", "Italian", "Portuguese", "Dutch"],
+      },
+      format: {
+        type: "enum",
+        required: true,
+        label: "Format",
+        options: ["Paperback", "Hardcover", "Spiral-Bound", "Digital/eBook"],
+      },
+      region: {
+        type: "string",
+        required: false,
+        label: "Region/Trail",
+      },
+      edition: {
+        type: "string",
+        required: false,
+        label: "Edition",
+      },
+      pageCount: {
+        type: "number",
+        required: false,
+        label: "Page Count",
+        min: 1,
+        max: 2000,
+      },
+      waterproof: {
+        type: "boolean",
+        required: false,
+        label: "Waterproof",
+      },
+    },
+  },
+
   Document: {
     fields: {},
   },
@@ -2840,7 +2879,7 @@ export const CATEGORY_ITEM_TYPE_MAPPING = {
   "Accessories & Tools": ["Trekking Poles", "Sunglasses", "Bear Canister", "Pocket Knife", "Umbrella", "Wallet", "Mosquito Head Net"],
   Travel: ["Travel Towel", "Wallet", "Permit"],
   "Health & Hygiene": ["Toiletry", "Medication", "First Aid Kit", "Blister Prevention"],
-  "Navigation & Planning": ["Document", "Permit"],
+  "Navigation & Planning": ["Document", "Guidebook", "Permit"],
 };
 
 // =============================================================================

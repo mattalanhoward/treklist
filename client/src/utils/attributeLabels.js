@@ -336,6 +336,13 @@ const ATTRIBUTE_LABELS = {
   // Consolidated schema fields
   syntheticInsulationType: "Synthetic Insulation Type",
 
+  // Navigation - Guidebooks
+  language: "Language",
+  format: "Format",
+  region: "Region/Trail",
+  edition: "Edition",
+  pageCount: "Page Count",
+
   // General attributes used across multiple categories
   pockets: "Number of Pockets",
   material: "Material",
