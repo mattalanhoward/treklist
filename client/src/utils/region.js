@@ -76,5 +76,33 @@ export function normalizeRegion(code) {
   };
   // For normalization we do NOT want to silently pick "GB" for unknown.
   // If it's not in the map and not already a 2-letter code, return empty string.
-  return map[k] || (/^[A-Z]{2}$/.test(k) ? k : "");
+  const normalized = map[k] || (/^[A-Z]{2}$/.test(k) ? k : "");
+
+  // Map to a supported region so affiliate resolution uses a known value
+  return mapToSupportedRegion(normalized);
+}
+
+/**
+ * Map any country code to the closest supported region.
+ * Mirrors server-side mapToSupportedRegion in regionDetection.js
+ */
+const EU_COUNTRIES = new Set([
+  "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
+  "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "PL", "PT",
+  "RO", "SK", "SI", "ES", "SE", "NO", "CH", "IS",
+]);
+const UK_FALLBACK = new Set(["AU", "NZ", "SG", "HK", "ZA", "IN"]);
+const US_FALLBACK = new Set(["MX", "BR", "AR", "CL", "CO", "PE", "VE", "EC", "PR"]);
+
+function mapToSupportedRegion(code) {
+  if (!code) return "";
+  const cc = code.toUpperCase();
+
+  if (["US", "CA", "DE", "NL"].includes(cc)) return cc;
+  if (cc === "GB" || cc === "UK") return "GB";
+  if (EU_COUNTRIES.has(cc)) return cc; // pass through — server maps to "eu"
+  if (UK_FALLBACK.has(cc)) return "GB";
+  if (US_FALLBACK.has(cc)) return "US";
+
+  return cc; // let the server handle final mapping
 }

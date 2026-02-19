@@ -24,7 +24,12 @@ function buildRegionPreferenceChain(userRegion) {
       return ["us", "global"];
     case "ca":
       return ["ca", "us", "global"];
+    case "eu":
+      return ["eu", "de", "uk", "gb", "global"];
+    case "global":
+      return ["global"];
     default:
+      // Unknown region — include it first, then fall back broadly
       return [region, "global"];
   }
 }

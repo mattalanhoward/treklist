@@ -486,6 +486,14 @@ function GearCatalogSection({
 
       const prefill = data?.prefill || {};
       const offer = data?.offer || {};
+      const existingItems = data?.existingItems || [];
+      if (existingItems.length > 0) {
+        const names = existingItems.map((i) => i.name).join(", ");
+        toast.warn(
+          `Duplicate ASIN: ${asin} already exists as "${names}"`,
+          { autoClose: 8000 },
+        );
+      }
 
       const base = AMAZON_BASE_BY_MP[marketplace] || AMAZON_BASE_BY_MP.us;
       const fallbackUrl = `${base}/dp/${asin}`;
@@ -2038,6 +2046,14 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
 
       const prefill = data?.prefill || {};
       const offer = data?.offer || {};
+      const existingItems = data?.existingItems || [];
+      if (existingItems.length > 0) {
+        const names = existingItems.map((i) => i.name).join(", ");
+        toast.warn(
+          `Duplicate ASIN: ${asin} already exists as "${names}"`,
+          { autoClose: 8000 },
+        );
+      }
 
       const mp = String(form.amazonMarketplace || "us").toLowerCase();
       const base = AMAZON_BASE_BY_MP[mp] || AMAZON_BASE_BY_MP.us;
