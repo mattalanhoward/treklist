@@ -14,7 +14,7 @@ import Spinner from "../components/ui/Spinner";
 import { CATALOG_CATEGORIES } from "../config/catalogTaxonomy";
 import { tCategory, tItemType } from "../config/catalogTaxonomy";
 
-function ImportCatalogTab({ onImported, onOpenRequest }) {
+function ImportCatalogTab({ onImported }) {
   const { t } = useTranslation("common");
   const searchInputRef = React.useRef(null);
 
@@ -452,14 +452,6 @@ function ImportCatalogTab({ onImported, onOpenRequest }) {
           <span>
             {t("globalItemModal.importTab.footer.catalogUpdatesDaily")}
           </span>
-          <span className="mx-1">•</span>
-          <button
-            type="button"
-            onClick={onOpenRequest}
-            className="underline underline-offset-2 text-primary hover:text-primary/90"
-          >
-            {t("globalItemModal.importTab.footer.requestItemCta")}
-          </button>
         </div>
 
         {/* Right actions */}
@@ -822,7 +814,7 @@ export default function GlobalItemModal({
 
           {/* On mobile, show note (IMPORT ONLY) */}
           {tab === "import" && (
-            <div className="sm:hidden text-xs text-primary/60 text-right">
+            <div className="text-xs text-primary/60 text-right">
               <div>{t("globalItemModal.importTab.mobileHint.title")}</div>
               <button
                 type="button"
@@ -866,7 +858,6 @@ export default function GlobalItemModal({
             <div className="flex-1 min-h-0 overflow-hidden">
               <ImportCatalogTab
                 onImported={handleImported}
-                onOpenRequest={() => setRequestOpen(true)}
               />
             </div>
           )}
