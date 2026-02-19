@@ -47,13 +47,15 @@ function normalizeBrandKey(brand) {
     .trim();
 }
 
+const { mapToSupportedRegion } = require("../utils/regionDetection");
+
 // Normalize incoming region codes (US/GB/NL/DE...) to MerchantOffer.region (us/uk/nl...)
 function normalizeOfferRegion(r) {
   const x = String(r || "")
     .trim()
     .toLowerCase();
   if (x === "gb") return "uk";
-  return x; // us/nl/de/fr/it/ca/uk/global...
+  return mapToSupportedRegion(x);
 }
 
 /**

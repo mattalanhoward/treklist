@@ -72,9 +72,10 @@ function detectRegionFromIp(ip) {
 function detectViewerRegion(req) {
   const ip = getClientIp(req);
   const countryCode = detectRegionFromIp(ip);
+  const normalized = normalizeRegion(countryCode);
 
-  // Normalize to match your region codes
-  return normalizeRegion(countryCode);
+  // Map to a supported region so downstream code always gets a known value
+  return mapToSupportedRegion(normalized);
 }
 
 /**
@@ -99,10 +100,51 @@ function normalizeRegion(region) {
   return r;
 }
 
+/**
+ * Map any detected country code to the closest supported region.
+ * Supported regions: us, ca, uk, de, nl, eu, global
+ * Countries without a direct match are grouped by geographic/marketplace proximity.
+ * @param {string} countryCode - Two-letter country code (lowercase)
+ * @returns {string} - A supported region code
+ */
+function mapToSupportedRegion(countryCode) {
+  if (!countryCode) return "global";
+
+  const cc = String(countryCode).trim().toLowerCase();
+
+  // Directly supported regions
+  const direct = new Set(["us", "ca", "uk", "de", "nl"]);
+  if (direct.has(cc)) return cc;
+  if (cc === "gb") return "uk";
+
+  // EU countries → "eu"
+  const euCountries = new Set([
+    "at", "be", "bg", "hr", "cy", "cz", "dk", "ee", "fi", "fr",
+    "gr", "hu", "ie", "it", "lv", "lt", "lu", "mt", "pl", "pt",
+    "ro", "sk", "si", "es", "se", "no", "ch", "is",
+  ]);
+  if (euCountries.has(cc)) return "eu";
+
+  // Commonwealth / English-speaking → "uk" (best Amazon marketplace match)
+  const ukFallback = new Set(["au", "nz", "sg", "hk", "za", "in"]);
+  if (ukFallback.has(cc)) return "uk";
+
+  // Americas → "us"
+  const usFallback = new Set([
+    "mx", "br", "ar", "cl", "co", "pe", "ve", "ec", "pr",
+  ]);
+  if (usFallback.has(cc)) return "us";
+
+  // East Asia → "global" (no supported marketplace yet)
+  // Everything else → "global"
+  return "global";
+}
+
 module.exports = {
   getClientIp,
   normalizeIp,
   detectRegionFromIp,
   detectViewerRegion,
   normalizeRegion,
+  mapToSupportedRegion,
 };
