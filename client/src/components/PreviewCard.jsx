@@ -4,7 +4,7 @@ import {
   FaGripVertical,
   FaUtensils,
   FaTshirt,
-  FaShoppingCart,
+  FaExternalLinkAlt,
   FaTrash,
 } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
@@ -68,7 +68,7 @@ export default function PreviewCard({ item, viewMode, width }) {
               }
             />
             <span className="select-none px-1">{qty}</span>
-            <FaShoppingCart className="w-4 h-4 text-secondary" />
+            <FaExternalLinkAlt className="w-3 h-3 text-secondary" />
           </div>
         </div>
       </div>
@@ -131,7 +131,7 @@ export default function PreviewCard({ item, viewMode, width }) {
 
           {/* 8) Cart */}
           <div className="justify-self-center">
-            <FaShoppingCart className="w-4 h-4 text-secondary" />
+            <FaExternalLinkAlt className="w-3 h-3 text-secondary" />
           </div>
 
           {/* 9) Delete */}
@@ -196,7 +196,7 @@ export default function PreviewCard({ item, viewMode, width }) {
               <span className="flex items-center justify-center border rounded px-2 py-0.5 bg-neutral text-sm text-primary">
                 {qty}
               </span>
-              <FaShoppingCart className="w-4 h-4 text-secondary" />
+              <FaExternalLinkAlt className="w-3 h-3 text-secondary" />
             </div>
           </div>
         </div>

@@ -10,7 +10,7 @@ import {
   FaGripVertical,
   FaUtensils,
   FaTshirt,
-  FaShoppingCart,
+  FaExternalLinkAlt,
   FaTrash,
 } from "react-icons/fa";
 import AffiliateGateLink from "./AffiliateGateLink";
@@ -80,7 +80,7 @@ export default function SortableItem({
         title={t("gearList.items.openProductPageTitle")}
         ariaLabel={t("gearList.items.openProductPageAria")}
       >
-        <FaShoppingCart className="w-4 h-4" />
+        <FaExternalLinkAlt className="w-3 h-3" />
       </AffiliateGateLink>
     ) : (
       <span

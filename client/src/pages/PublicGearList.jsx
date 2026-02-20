@@ -1,7 +1,7 @@
 // client/src/pages/PublicGearList.jsx
 import React from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { FaUtensils, FaTshirt, FaShoppingCart, FaEdit } from "react-icons/fa";
+import { FaUtensils, FaTshirt, FaExternalLinkAlt, FaEdit } from "react-icons/fa";
 import PackStats from "../components/PackStats";
 import { useUserSettings } from "../contexts/UserSettings";
 import AffiliateGateLink from "../components/AffiliateGateLink";
@@ -652,8 +652,8 @@ export default function PublicGearList() {
                                       "publicList.item.viewProductPaid",
                                     )}
                                   >
-                                    <FaShoppingCart
-                                      className="h-4 w-4"
+                                    <FaExternalLinkAlt
+                                      className="h-3 w-3"
                                       aria-hidden
                                     />
                                   </AffiliateGateLink>
@@ -769,7 +769,7 @@ export default function PublicGearList() {
                                 title={t("publicList.item.viewProduct")}
                                 ariaLabel={t("publicList.item.viewProductPaid")}
                               >
-                                <FaShoppingCart aria-hidden />
+                                <FaExternalLinkAlt className="w-3 h-3" aria-hidden />
                               </AffiliateGateLink>
                             ) : null}
                           </div>
