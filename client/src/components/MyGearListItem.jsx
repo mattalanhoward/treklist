@@ -1,6 +1,6 @@
 // client/src/components/MyGearListItem.jsx
 import React from "react";
-import { FaTrash, FaShoppingCart, FaCheckSquare, FaRegSquare } from "react-icons/fa";
+import { FaTrash, FaExternalLinkAlt, FaCheckSquare, FaRegSquare } from "react-icons/fa";
 import { tItemType } from "../config/catalogTaxonomy";
 
 export default function MyGearListItem({
@@ -82,7 +82,7 @@ export default function MyGearListItem({
                   className="p-1 text-primary/60 hover:text-primary"
                   title={t("myGear.actions.openLink", "Open product link")}
                 >
-                  <FaShoppingCart className="text-sm" />
+                  <FaExternalLinkAlt className="w-3 h-3" />
                 </a>
               )}
               <button
@@ -175,7 +175,7 @@ export default function MyGearListItem({
                 className="p-2 text-primary/60 hover:text-primary rounded"
                 title={t("myGear.actions.openLink", "Open product link")}
               >
-                <FaShoppingCart className="text-sm" />
+                <FaExternalLinkAlt className="w-3 h-3" />
               </a>
             )}
             <button

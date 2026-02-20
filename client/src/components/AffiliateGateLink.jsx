@@ -200,8 +200,9 @@ export default function AffiliateGateLink({
   const onClick = (e) => {
     e.preventDefault();
 
-    // If already acknowledged, resolve + open immediately
-    if (acknowledged) {
+    // Public pages already show a persistent disclosure banner at the top,
+    // so skip the interstitial modal and open the link immediately.
+    if (context === "public" || acknowledged) {
       openLink();
       return;
     }

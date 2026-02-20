@@ -489,9 +489,9 @@ function GearCatalogSection({
       const existingItems = data?.existingItems || [];
       if (existingItems.length > 0) {
         const names = existingItems.map((i) => i.name).join(", ");
-        toast.warn(
+        toast(
           `Duplicate ASIN: ${asin} already exists as "${names}"`,
-          { autoClose: 8000 },
+          { duration: 8000, icon: "⚠️" },
         );
       }
 
@@ -2049,9 +2049,9 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
       const existingItems = data?.existingItems || [];
       if (existingItems.length > 0) {
         const names = existingItems.map((i) => i.name).join(", ");
-        toast.warn(
+        toast(
           `Duplicate ASIN: ${asin} already exists as "${names}"`,
-          { autoClose: 8000 },
+          { duration: 8000, icon: "⚠️" },
         );
       }
 
