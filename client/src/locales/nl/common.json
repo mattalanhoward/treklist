@@ -827,18 +827,12 @@
     }
   },
   "affiliateDisclosure": {
-    "label": "Disclosure:",
     "public": {
-      "bodyPrefix": "Deze pagina bevat affiliate links (EU & VS). Als je via een link iets koopt, kan",
-      "actor": "TrekList of de eigenaar van de lijst",
-      "bodySuffix": "een commissie verdienen zonder extra kosten voor jou."
+      "body": "Deze pagina kan affiliate-links bevatten. Aankopen via deze links kunnen een commissie opleveren, zonder extra kosten voor jou."
     },
     "private": {
-      "bodyPrefix": "Deze pagina bevat affiliate links (EU & VS). Als je via een link iets koopt, kan",
-      "actor": "TrekList",
-      "bodySuffix": "een commissie verdienen zonder extra kosten voor jou."
-    },
-    "amazon": "Als Amazon-partner verdien ik aan in aanmerking komende aankopen."
+      "body": "Deze pagina kan affiliate-links bevatten. Aankopen via deze links kunnen een commissie opleveren, zonder extra kosten voor jou."
+    }
   },
   "affiliateGate": {
     "modal": {

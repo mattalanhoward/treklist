@@ -827,18 +827,12 @@
     }
   },
   "affiliateDisclosure": {
-    "label": "Informativa:",
     "public": {
-      "bodyPrefix": "Questa pagina può includere link di affiliazione (UE e USA). Se acquisti tramite un link,",
-      "actor": "TrekList o il proprietario della lista ",
-      "bodySuffix": "potrebbe guadagnare una commissione senza costi aggiuntivi per te."
+      "body": "Questa pagina può contenere link di affiliazione. Gli acquisti effettuati tramite questi link possono generare una commissione senza costi aggiuntivi per te."
     },
     "private": {
-      "bodyPrefix": "Questa pagina può includere link di affiliazione (UE e USA). Se acquisti tramite un link,",
-      "actor": "TrekList ",
-      "bodySuffix": "potrebbe guadagnare una commissione senza costi aggiuntivi per te."
-    },
-    "amazon": "In qualità di Associato Amazon, guadagno dagli acquisti idonei."
+      "body": "Questa pagina può contenere link di affiliazione. Gli acquisti effettuati tramite questi link possono generare una commissione senza costi aggiuntivi per te."
+    }
   },
   "affiliateGate": {
     "modal": {

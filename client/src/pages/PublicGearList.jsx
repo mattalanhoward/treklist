@@ -422,7 +422,7 @@ export default function PublicGearList() {
           <div className="hidden md:grid mb-2 gap-y-2">
             <AffiliateDisclosureNotice
               context="public"
-              className={cx(isEmbed ? "text-[12px]" : "", "mb-1")}
+              className={cx(isEmbed ? "text-[12px]" : "")}
             />
 
             <div className="grid grid-cols-[1fr_auto] items-center gap-3">
@@ -486,11 +486,6 @@ export default function PublicGearList() {
 
           {/* Mobile (< md): Title → PackStats → CTA → Toggle */}
           <div className="md:hidden mb-2">
-            <AffiliateDisclosureNotice
-              context="public"
-              className={cx(isEmbed ? "text-[12px]" : "", "mb-1")}
-            />
-
             <h1
               className={cx(
                 isEmbed ? "text-lg" : "text-2xl",
@@ -515,8 +510,8 @@ export default function PublicGearList() {
                 label={t("publicList.cta.labelMobile")}
                 className={cx(
                   isEmbed
-                    ? "text-xs px-2 py-2 min-h-[36px] whitespace-nowrap"
-                    : "text-sm px-3 py-2 min-h-[44px] whitespace-nowrap",
+                    ? "text-xs px-2 py-2 min-h-[24px] whitespace-nowrap"
+                    : "text-sm px-3 py-1 min-h-[24px] whitespace-nowrap",
                 )}
               />
             </div>
@@ -548,6 +543,12 @@ export default function PublicGearList() {
                 </button>
               </div>
             </div>
+
+            <AffiliateDisclosureNotice
+              context="public"
+              short
+              className={cx(isEmbed ? "text-[12px]" : "", "px-3 pt-4 text-center")}
+            />
           </div>
 
           {/* ======= PUBLIC LIST MODE: MOBILE CARDS (< md) ======= */}
