@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import api from "../services/api";
+import SEO from "../components/SEO";
 
 export default function AuthCallback() {
   const navigate = useNavigate();
@@ -42,6 +43,7 @@ export default function AuthCallback() {
 
   return (
     <div className="flex items-center justify-center min-h-screen">
+      <SEO title="Signing In" noindex />
       <div className="text-primary">Completing sign-in...</div>
     </div>
   );

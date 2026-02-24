@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
+import SEO from "../components/SEO";
 
 export default function ResetPassword() {
   const { t } = useTranslation("common");
@@ -46,6 +47,7 @@ export default function ResetPassword() {
   if (!token) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+        <SEO title="Reset Password" noindex />
         <p>{t("auth.reset.invalidLink")}</p>
       </div>
     );
@@ -53,6 +55,7 @@ export default function ResetPassword() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <SEO title="Reset Password" noindex />
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-md bg-white p-6 rounded shadow"

@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { useTranslation } from "react-i18next";
+import SEO from "../components/SEO";
 
 export default function VerifyEmail() {
   const [loading, setLoading] = useState(true);
@@ -52,6 +53,7 @@ export default function VerifyEmail() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+        <SEO title="Verify Email" noindex />
         <p>{t("verifyEmailPage.loading")}</p>
       </div>
     );
@@ -60,6 +62,7 @@ export default function VerifyEmail() {
   if (status === "success") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+        <SEO title="Verify Email" noindex />
         <div className="max-w-md w-full bg-white rounded-lg shadow p-6 text-center space-y-4">
           <div className="text-4xl" aria-hidden="true">
             ✅
@@ -92,6 +95,7 @@ export default function VerifyEmail() {
   // status === "error"
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <SEO title="Verify Email" noindex />
       <div className="max-w-md w-full bg-white rounded-lg shadow p-6 text-center space-y-4">
         <h1 className="text-xl font-semibold text-gray-900">
           {t("verifyEmailPage.errorTitle")}

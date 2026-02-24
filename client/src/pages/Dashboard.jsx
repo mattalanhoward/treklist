@@ -15,6 +15,7 @@ import { useUserSettings } from "../contexts/UserSettings";
 import { useTranslation } from "react-i18next";
 import Spinner from "../components/ui/Spinner";
 import TourModal from "../components/TourModal";
+import usePageTitle from "../hooks/usePageTitle";
 import {
   DndContext,
   DragOverlay,
@@ -230,6 +231,8 @@ export default function Dashboard() {
     categories: [],
     items: [],
   });
+
+  usePageTitle(fullData.list?.title ?? null);
 
   // ─── Lists state & fetchLists fn ───
   const [lists, setLists] = useState([]);
