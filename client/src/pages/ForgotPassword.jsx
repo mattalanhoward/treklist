@@ -3,6 +3,7 @@ import api from "../services/api";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import SEO from "../components/SEO";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -28,6 +29,7 @@ export default function ForgotPassword() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <SEO title="Reset Password" noindex />
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-md bg-white p-6 rounded shadow"
