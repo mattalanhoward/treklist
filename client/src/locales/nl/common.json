@@ -86,7 +86,7 @@
       },
       "myGear": {
         "title": "Mijn uitrusting",
-        "body": "Hier staat al je uitrusting. Gebruik de “+”-knop om items uit onze catalogus toe te voegen of zelf items aan te maken. Daarna kun je ze aan elke paklijst toevoegen."
+        "body": "Klik op “Mijn uitrusting” om je uitrusting te openen en te beheren. Gebruik de “+”-knop om catalogusitems toe te voegen of eigen items aan te maken via de zijbalk."
       },
       "categories": {
         "title": "Categorieën",
@@ -476,7 +476,9 @@
   },
   "catalogPreview": {
     "titleFallback": "Catalogusitem",
-    "badges": { "alreadyAdded": "Al toegevoegd" },
+    "badges": {
+      "alreadyAdded": "Al toegevoegd"
+    },
     "buttons": {
       "viewDetails": "Bekijk details",
       "import": "Toevoegen aan My Gear",
