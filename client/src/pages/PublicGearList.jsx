@@ -407,7 +407,23 @@ export default function PublicGearList() {
         type="article"
         image="https://res.cloudinary.com/treklist/image/upload/v1771075130/branding/treklist_1200x630_pclazv.png"
         noindex={!data.list.isFeatured}
-      />
+      >
+        {data.list.isFeatured && (
+          <script type="application/ld+json">{JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": data.list.title,
+            "url": `https://treklist.co/share/${token}/`,
+            "description": t("publicList.seo.description", { title: data.list.title }),
+            "image": "https://res.cloudinary.com/treklist/image/upload/v1771075130/branding/treklist_1200x630_pclazv.png",
+            "publisher": {
+              "@type": "Organization",
+              "name": "TrekList",
+              "url": "https://treklist.co"
+            }
+          })}</script>
+        )}
+      </SEO>
 
       {/* Scoped palette for the public page only */}
       <style>{PUBLIC_THEME_CSS}</style>
