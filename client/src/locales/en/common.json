@@ -551,10 +551,14 @@
       "tripStart": "Trip start",
       "tripEnd": "Trip end",
       "location": "Location",
+      "links": "Links",
+      "routeSlot": "Route",
       "notes": "Notes / description"
     },
     "placeholders": {
-      "date": "Select date"
+      "date": "Select date",
+      "linkLabel": "e.g. Alta Via 1 Guide",
+      "linkUrl": "https://..."
     },
     "stats": {
       "totalCost": "Total cost:",
@@ -681,7 +685,11 @@
       "embedPlaceholderGenerating": "Generating…",
       "embedPlaceholderNone": "No active link",
       "csvLabel": "Export CSV",
-      "csvHelp": "Download a CSV of this shared list."
+      "csvHelp": "Download a CSV of this shared list.",
+      "settingsLabel": "Display settings",
+      "showTripDetails": "Show dates & location",
+      "showNotes": "Show trip notes",
+      "showLinks": "Show links"
     },
     "buttons": {
       "copyLink": "Copy",
@@ -702,7 +710,8 @@
       "createLinkError": "Could not create share link",
       "revokeSuccess": "Share link revoked",
       "revokeError": "Could not revoke link",
-      "csvError": "Could not download CSV"
+      "csvError": "Could not download CSV",
+      "settingsError": "Could not save display settings"
     },
     "confirm": {
       "revokeTitle": "Revoke this share URL?",
@@ -835,7 +844,9 @@
       "quantity": "Quantity",
       "viewProduct": "View product",
       "viewProductPaid": "View product (paid link)"
-    }
+    },
+    "route": "Route",
+    "link": "Link"
   },
   "affiliateDisclosure": {
     "public": {

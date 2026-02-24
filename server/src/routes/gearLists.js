@@ -103,9 +103,40 @@ router.use(auth);
 router.post("/:listId/share", async (req, res) => {
   try {
     const { listId } = req.params;
-    // (Optional) verify ownership here if your other routes do — omitted for brevity
-    const doc = await ensureActiveTokenForList(listId, req.userId);
-    res.json({ token: doc.token });
+    const [doc, list] = await Promise.all([
+      ensureActiveTokenForList(listId, req.userId),
+      GearList.findOne({ _id: listId, owner: req.userId })
+        .select("shareSettings")
+        .lean(),
+    ]);
+    const shareSettings = list?.shareSettings || {
+      showNotes: false,
+      showTripDetails: false,
+      showLinks: false,
+    };
+    res.json({ token: doc.token, shareSettings });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// PATCH /api/dashboard/:listId/shareSettings
+router.patch("/:listId/shareSettings", async (req, res) => {
+  try {
+    const { listId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(listId)) {
+      return res.status(400).json({ message: "Invalid list ID." });
+    }
+    const list = await GearList.findOne({ _id: listId, owner: req.userId });
+    if (!list) return res.status(404).json({ message: "List not found." });
+    const { showNotes, showTripDetails, showLinks } = req.body;
+    if (typeof showNotes === "boolean") list.shareSettings.showNotes = showNotes;
+    if (typeof showTripDetails === "boolean")
+      list.shareSettings.showTripDetails = showTripDetails;
+    if (typeof showLinks === "boolean") list.shareSettings.showLinks = showLinks;
+    await list.save();
+    res.json({ shareSettings: list.shareSettings });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: err.message });
@@ -204,7 +235,7 @@ router.post("/", async (req, res) => {
 router.patch("/:listId", async (req, res) => {
   try {
     // pull all updatable props from body
-    const { title, notes, tripStart, tripEnd, location, backgroundColor } =
+    const { title, notes, tripStart, tripEnd, location, links, backgroundColor } =
       req.body;
 
     if (!title) {
@@ -231,6 +262,7 @@ router.patch("/:listId", async (req, res) => {
     if (tripStart !== undefined) update.tripStart = tripStart;
     if (tripEnd !== undefined) update.tripEnd = tripEnd;
     if (location !== undefined) update.location = location;
+    if (links !== undefined) update.links = links;
     if (backgroundColor !== undefined) update.backgroundColor = backgroundColor;
 
     const updated = await GearList.findOneAndUpdate(

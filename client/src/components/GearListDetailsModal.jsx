@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaTimes } from "react-icons/fa";
+import { FaTimes, FaRoute } from "react-icons/fa";
 import api from "../services/api";
 import ConfirmDialog from "./ConfirmDialog";
 import PackStats from "./PackStats";
@@ -30,6 +30,11 @@ export default function GearListDetailsModal({
   const [tripStart, setTripStart] = useState(null);
   const [tripEnd, setTripEnd] = useState(null);
   const [location, setLocation] = useState("");
+  const [links, setLinks] = useState([
+    { label: "", url: "" },
+    { label: "", url: "" },
+    { label: "", url: "" },
+  ]);
   const [showConfirmClose, setShowConfirmClose] = useState(false);
   const [isDirty, setDirty] = useState(false);
 
@@ -45,6 +50,12 @@ export default function GearListDetailsModal({
     setTripStart(list.tripStart ? new Date(list.tripStart) : null);
     setTripEnd(list.tripEnd ? new Date(list.tripEnd) : null);
     setLocation(list.location || "");
+    const raw = list.links || [];
+    setLinks([
+      { label: raw[0]?.label || "", url: raw[0]?.url || "" },
+      { label: raw[1]?.label || "", url: raw[1]?.url || "" },
+      { label: raw[2]?.label || "", url: raw[2]?.url || "" },
+    ]);
     setDirty(false);
   }, [list]);
 
@@ -59,6 +70,7 @@ export default function GearListDetailsModal({
         tripStart: tripStart ? tripStart.toISOString() : null,
         tripEnd: tripEnd ? tripEnd.toISOString() : null,
         location,
+        links: links.map((l) => ({ label: l.label.trim(), url: l.url.trim() })),
       });
       onRefresh();
       onRefreshSidebar();
@@ -201,6 +213,52 @@ export default function GearListDetailsModal({
               }}
               className="w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50"
             />
+          </div>
+
+          {/* Links */}
+          <div className="md:col-span-3">
+            <label className="block font-medium text-primary mb-1">
+              {t("gearListDetailsModal.labels.links")}
+            </label>
+            <div className="space-y-2">
+              {links.map((link, idx) => (
+                <div key={idx} className="grid grid-cols-3 gap-2">
+                  {idx === 0 ? (
+                    <div className="col-span-1 flex items-center gap-1.5 px-2 py-1 border border-primary/30 rounded bg-primary/5 text-sm text-primary/70 select-none">
+                      <FaRoute className="flex-shrink-0" aria-hidden />
+                      <span>{t("gearListDetailsModal.labels.routeSlot")}</span>
+                    </div>
+                  ) : (
+                    <input
+                      type="text"
+                      value={link.label}
+                      onChange={(e) => {
+                        const updated = links.map((l, i) =>
+                          i === idx ? { ...l, label: e.target.value } : l,
+                        );
+                        setLinks(updated);
+                        setDirty(true);
+                      }}
+                      className="col-span-1 border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 text-sm"
+                      placeholder={t("gearListDetailsModal.placeholders.linkLabel")}
+                    />
+                  )}
+                  <input
+                    type="text"
+                    value={link.url}
+                    onChange={(e) => {
+                      const updated = links.map((l, i) =>
+                        i === idx ? { ...l, url: e.target.value } : l,
+                      );
+                      setLinks(updated);
+                      setDirty(true);
+                    }}
+                    className="col-span-2 border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 text-sm"
+                    placeholder={t("gearListDetailsModal.placeholders.linkUrl")}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Notes */}

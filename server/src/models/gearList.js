@@ -27,10 +27,23 @@ const GearListSchema = new mongoose.Schema(
       updatedAt: { type: Date, default: null },
     },
 
+    links: [
+      {
+        label: { type: String, default: "" },
+        url: { type: String, default: "" },
+      },
+    ],
+
     region: { type: String, default: null },
     isFeatured: { type: Boolean, default: false },
     isSample: { type: Boolean, default: false },
     isLocked: { type: Boolean, default: false },
+
+    shareSettings: {
+      showNotes: { type: Boolean, default: false },
+      showTripDetails: { type: Boolean, default: false },
+      showLinks: { type: Boolean, default: false },
+    },
   },
   { timestamps: true }
 );

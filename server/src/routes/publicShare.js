@@ -62,7 +62,19 @@ router.get("/:token/full", async (req, res) => {
 
   const [list, categories, items] = await Promise.all([
     GearList.findById(listId)
-      .select({ _id: 1, title: 1, region: 1, storeRegion: 1, isFeatured: 1 })
+      .select({
+        _id: 1,
+        title: 1,
+        region: 1,
+        storeRegion: 1,
+        isFeatured: 1,
+        notes: 1,
+        tripStart: 1,
+        tripEnd: 1,
+        location: 1,
+        links: 1,
+        shareSettings: 1,
+      })
       .lean(),
     Category.find({ gearList: listId })
       .sort({ position: 1 })
@@ -182,6 +194,10 @@ router.get("/:token/full", async (req, res) => {
     }),
   );
 
+  const showNotes = !!list.shareSettings?.showNotes;
+  const showTripDetails = !!list.shareSettings?.showTripDetails;
+  const showLinks = !!list.shareSettings?.showLinks;
+
   res.json({
     list: {
       id: list._id.toString(),
@@ -189,6 +205,17 @@ router.get("/:token/full", async (req, res) => {
       region: list.region || null,
       storeRegion: list.storeRegion || null,
       isFeatured: !!list.isFeatured,
+      ...(showTripDetails && {
+        location: list.location || null,
+        tripStart: list.tripStart ? list.tripStart.toISOString() : null,
+        tripEnd: list.tripEnd ? list.tripEnd.toISOString() : null,
+      }),
+      ...(showNotes && { notes: list.notes || null }),
+      ...(showLinks && {
+        links: (list.links || [])
+          .map((l, i) => ({ index: i, label: l.label || "", url: l.url }))
+          .filter((l) => l.url),
+      }),
     },
     categories: categories.map((c) => ({
       id: c._id.toString(),
