@@ -801,7 +801,18 @@ export default function PublicGearList() {
         </div>
       </main>
 
-      {!isEmbed && (
+      {isEmbed ? (
+        <div className="text-center py-2">
+          <a
+            href={`https://treklist.co/share/${token}/`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-gray-400 hover:text-gray-600"
+          >
+            Powered by TrekList
+          </a>
+        </div>
+      ) : (
         <FooterLegal
           variant="light"
           containerWidth="max-w-5xl"
