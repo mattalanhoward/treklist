@@ -1,7 +1,7 @@
 // client/src/pages/PublicGearList.jsx
 import React from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { FaUtensils, FaTshirt, FaExternalLinkAlt, FaEdit } from "react-icons/fa";
+import { FaUtensils, FaTshirt, FaExternalLinkAlt, FaEdit, FaMapMarkerAlt, FaCalendarAlt, FaRoute } from "react-icons/fa";
 import PackStats from "../components/PackStats";
 import { useUserSettings } from "../contexts/UserSettings";
 import AffiliateGateLink from "../components/AffiliateGateLink";
@@ -29,6 +29,21 @@ function fmtWeight(g, unit) {
   return `${Math.round(Number(g))} g`;
 }
 
+
+function fmtDateRange(start, end) {
+  const full = { month: "short", day: "numeric", year: "numeric" };
+  const noYear = { month: "short", day: "numeric" };
+  if (!start && !end) return null;
+  const s = start ? new Date(start) : null;
+  const e = end ? new Date(end) : null;
+  if (s && e) {
+    if (s.getFullYear() === e.getFullYear()) {
+      return `${s.toLocaleDateString(undefined, noYear)} – ${e.toLocaleDateString(undefined, full)}`;
+    }
+    return `${s.toLocaleDateString(undefined, full)} – ${e.toLocaleDateString(undefined, full)}`;
+  }
+  return (s || e).toLocaleDateString(undefined, full);
+}
 
 function catTotalG(items) {
   // mirror computeStatsPublic's total contribution rule, but per category (in grams)
@@ -498,6 +513,41 @@ export default function PublicGearList() {
                 />
               </div>
             </div>
+
+            {/* Trip details: location + date range + route */}
+            {(data.list.location || data.list.tripStart || data.list.tripEnd || data.list.links?.length) && (
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-secondary">
+                {data.list.location && (
+                  <span className="flex items-center gap-1.5">
+                    <FaMapMarkerAlt className="text-xs flex-shrink-0" aria-hidden />
+                    {data.list.location}
+                  </span>
+                )}
+                {(data.list.tripStart || data.list.tripEnd) && (
+                  <span className="flex items-center gap-1.5">
+                    <FaCalendarAlt className="text-xs flex-shrink-0" aria-hidden />
+                    {fmtDateRange(data.list.tripStart, data.list.tripEnd)}
+                  </span>
+                )}
+                {data.list.links?.map((link, idx) => (
+                  <a
+                    key={idx}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 underline underline-offset-2 hover:opacity-70"
+                  >
+                    {link.index === 0
+                      ? <FaRoute className="text-xs flex-shrink-0" aria-hidden />
+                      : <FaExternalLinkAlt className="text-xs flex-shrink-0" aria-hidden />
+                    }
+                    {link.index === 0
+                      ? t("publicList.route")
+                      : link.label || t("publicList.link")}
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Mobile (< md): Title → PackStats → CTA → Toggle */}
@@ -520,6 +570,41 @@ export default function PublicGearList() {
                 disablePopover
               />
             </div>
+
+            {/* Trip details: location + date range + route */}
+            {(data.list.location || data.list.tripStart || data.list.tripEnd || data.list.links?.length) && (
+              <div className="mt-2 flex flex-wrap justify-center items-center gap-x-4 gap-y-1 text-sm text-secondary">
+                {data.list.location && (
+                  <span className="flex items-center gap-1.5">
+                    <FaMapMarkerAlt className="text-xs flex-shrink-0" aria-hidden />
+                    {data.list.location}
+                  </span>
+                )}
+                {(data.list.tripStart || data.list.tripEnd) && (
+                  <span className="flex items-center gap-1.5">
+                    <FaCalendarAlt className="text-xs flex-shrink-0" aria-hidden />
+                    {fmtDateRange(data.list.tripStart, data.list.tripEnd)}
+                  </span>
+                )}
+                {data.list.links?.map((link, idx) => (
+                  <a
+                    key={idx}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 underline underline-offset-2 hover:opacity-70"
+                  >
+                    {link.index === 0
+                      ? <FaRoute className="text-xs flex-shrink-0" aria-hidden />
+                      : <FaExternalLinkAlt className="text-xs flex-shrink-0" aria-hidden />
+                    }
+                    {link.index === 0
+                      ? t("publicList.route")
+                      : link.label || t("publicList.link")}
+                  </a>
+                ))}
+              </div>
+            )}
 
             <div className="mt-2 flex justify-center">
               <CustomizeCTA
@@ -693,6 +778,7 @@ export default function PublicGearList() {
           </div>
 
           {/* ======= PUBLIC LIST MODE: DESKTOP (≥ md) — read-only ======= */}
+
           <div className="hidden md:block">
             {catOrder.map((catId) => {
               const title =
@@ -798,6 +884,20 @@ export default function PublicGearList() {
               );
             })}
           </div>
+
+          {/* Trip notes */}
+          {data.list.notes && (
+            <div className={cx("mt-4", isEmbed ? "px-0 pb-2" : "pb-2")}>
+              <p
+                className={cx(
+                  "text-secondary whitespace-pre-wrap",
+                  isEmbed ? "text-[12px]" : "text-sm",
+                )}
+              >
+                {data.list.notes}
+              </p>
+            </div>
+          )}
         </div>
       </main>
 

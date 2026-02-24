@@ -6,11 +6,18 @@ import api from "../services/api";
 import ConfirmDialog from "./ConfirmDialog";
 import { useTranslation } from "react-i18next";
 
+const cx = (...parts) => parts.filter(Boolean).join(" ");
+
 export default function ShareModal({ listId, isOpen, onClose }) {
   const { t } = useTranslation("common");
 
   const [busy, setBusy] = React.useState(false);
   const [token, setToken] = React.useState("");
+  const [shareSettings, setShareSettings] = React.useState({
+    showNotes: false,
+    showTripDetails: false,
+    showLinks: false,
+  });
   const [revokeConfirmOpen, setRevokeConfirmOpen] = React.useState(false);
   const inputRef = React.useRef(null);
   const embedRef = React.useRef(null);
@@ -24,7 +31,16 @@ export default function ShareModal({ listId, isOpen, onClose }) {
       try {
         setBusy(true);
         const { data } = await api.post(`/dashboard/${listId}/share`);
-        if (!cancelled) setToken(data.token);
+        if (!cancelled) {
+          setToken(data.token);
+          setShareSettings(
+            data.shareSettings || {
+              showNotes: false,
+              showTripDetails: false,
+              showLinks: false,
+            },
+          );
+        }
       } catch (e) {
         console.error(e);
         if (!cancelled) toast.error(t("shareModal.toasts.createLinkError"));
@@ -37,6 +53,19 @@ export default function ShareModal({ listId, isOpen, onClose }) {
       cancelled = true;
     };
   }, [isOpen, listId, t]);
+
+  async function handleSettingChange(key, value) {
+    const updated = { ...shareSettings, [key]: value };
+    setShareSettings(updated);
+    try {
+      await api.patch(`/dashboard/${listId}/shareSettings`, { [key]: value });
+    } catch (e) {
+      console.error(e);
+      toast.error(t("shareModal.toasts.settingsError"));
+      // revert on failure
+      setShareSettings(shareSettings);
+    }
+  }
 
   async function copyToClipboard(text) {
     try {
@@ -86,6 +115,7 @@ export default function ShareModal({ listId, isOpen, onClose }) {
       setBusy(true);
       await api.post(`/dashboard/${listId}/share/revoke`);
       setToken("");
+      setShareSettings({ showNotes: false, showTripDetails: false, showRouteUrl: false });
       toast.success(t("shareModal.toasts.revokeSuccess"));
     } catch (e) {
       console.error(e);
@@ -139,7 +169,7 @@ export default function ShareModal({ listId, isOpen, onClose }) {
     >
       {/* Panel */}
       <div className="relative bg-neutralAlt rounded-lg shadow-2xl max-w-xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4">
-        {/* Header (no 'X' button) */}
+        {/* Header */}
         <div className="flex items-center justify-between mb-2 sm:mb-4">
           <h2
             id="share-modal-title"
@@ -152,6 +182,58 @@ export default function ShareModal({ listId, isOpen, onClose }) {
 
         {/* Body */}
         <div className="space-y-4">
+          {/* Display settings toggles */}
+          <div>
+            <p className="block font-medium text-primary mb-2">
+              {t("shareModal.fields.settingsLabel")}
+            </p>
+            <div className="space-y-2">
+              {[
+                {
+                  key: "showTripDetails",
+                  label: t("shareModal.fields.showTripDetails"),
+                },
+                {
+                  key: "showNotes",
+                  label: t("shareModal.fields.showNotes"),
+                },
+                {
+                  key: "showLinks",
+                  label: t("shareModal.fields.showLinks"),
+                },
+              ].map(({ key, label }) => (
+                <label
+                  key={key}
+                  className="flex items-center justify-between gap-3 cursor-pointer"
+                >
+                  <span className="text-sm text-primary">{label}</span>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={shareSettings[key]}
+                    onClick={() =>
+                      handleSettingChange(key, !shareSettings[key])
+                    }
+                    disabled={busy || !token}
+                    className={cx(
+                      "relative inline-flex h-5 w-9 flex-shrink-0 items-center rounded-full transition-colors disabled:opacity-40",
+                      shareSettings[key] ? "bg-secondary" : "bg-primary/20",
+                    )}
+                  >
+                    <span
+                      className={cx(
+                        "inline-block h-4 w-4 rounded-full bg-white shadow-sm transition-transform",
+                        shareSettings[key]
+                          ? "translate-x-4"
+                          : "translate-x-0.5",
+                      )}
+                    />
+                  </button>
+                </label>
+              ))}
+            </div>
+          </div>
+
           {/* Share URL */}
           <div>
             <label className="block font-medium text-primary mb-0.5">
@@ -190,11 +272,11 @@ export default function ShareModal({ listId, isOpen, onClose }) {
               {t("shareModal.fields.embedLabel")}
             </label>
             <div className="flex gap-2">
-              <textarea
+              <input
                 ref={embedRef}
-                className="flex-1 mt-0.5 block w-full border border-primary rounded p-2 min-h-[72px] resize-none text-primary bg-base-100 placeholder:text-primary/50"
-                rows={2}
+                type="text"
                 readOnly
+                className="flex-1 mt-0.5 block w-full border border-primary rounded p-2 h-10 text-primary bg-base-100 placeholder:text-primary/50"
                 value={embedCode}
                 placeholder={
                   busy
@@ -234,7 +316,7 @@ export default function ShareModal({ listId, isOpen, onClose }) {
           </div>
         </div>
 
-        {/* Footer: Revoke on the left (destructive), Close on the right (cancel) */}
+        {/* Footer */}
         <div className="mt-4 flex items-center justify-between">
           <button
             className="px-4 py-2 bg-error text-neutral font-semibold rounded-md shadow hover:bg-error/80 disabled:opacity-50 flex items-center gap-2"
