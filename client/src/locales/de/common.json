@@ -86,7 +86,7 @@
       },
       "myGear": {
         "title": "Meine Ausrüstung",
-        "body": "Hier findest du deine gesamte Ausrüstung. Mit dem „+“-Button kannst du Artikel aus dem Katalog hinzufügen oder eigene erstellen und sie anschließend jeder Packliste zuweisen."
+        "body": "Klicke auf „Meine Ausrüstung“, um dein Inventar zu öffnen und zu verwalten. Nutze den „+“-Button, um Katalogartikel hinzuzufügen oder eigene über die Seitenleiste zu erstellen."
       },
       "categories": {
         "title": "Kategorien",
@@ -476,7 +476,9 @@
   },
   "catalogPreview": {
     "titleFallback": "Katalog-Item",
-    "badges": { "alreadyAdded": "Bereits hinzugefügt" },
+    "badges": {
+      "alreadyAdded": "Bereits hinzugefügt"
+    },
     "buttons": {
       "viewDetails": "Details ansehen",
       "import": "Zu Meine Ausrüstung",

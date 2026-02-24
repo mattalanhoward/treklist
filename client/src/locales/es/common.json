@@ -86,7 +86,7 @@
       },
       "myGear": {
         "title": "Mi equipo",
-        "body": "Aquí vive todo tu equipo. Usa el botón “+” para añadir artículos del catálogo o crear los tuyos, y luego agrégalos a cualquier lista."
+        "body": "Haz clic en “Mi equipo” para abrir y gestionar tu inventario. Usa el botón “+” para añadir artículos del catálogo o crear los tuyos desde la barra lateral."
       },
       "categories": {
         "title": "Categorías",
@@ -476,7 +476,9 @@
   },
   "catalogPreview": {
     "titleFallback": "Artículo del catálogo",
-    "badges": { "alreadyAdded": "Ya añadido" },
+    "badges": {
+      "alreadyAdded": "Ya añadido"
+    },
     "buttons": {
       "viewDetails": "Ver detalles",
       "import": "Añadir a Mi equipo",

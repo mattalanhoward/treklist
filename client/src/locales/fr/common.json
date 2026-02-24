@@ -86,7 +86,7 @@
       },
       "myGear": {
         "title": "Mon équipement",
-        "body": "Tout ton équipement se trouve ici. Utilise le bouton “+” pour ajouter des articles du catalogue ou créer les tiens, puis les ajouter à n’importe quelle liste."
+        "body": "Clique sur « Mon équipement » pour ouvrir et gérer ton inventaire. Utilise le bouton « + » pour ajouter des articles du catalogue ou en créer depuis la barre latérale."
       },
       "categories": {
         "title": "Catégories",
@@ -476,7 +476,9 @@
   },
   "catalogPreview": {
     "titleFallback": "Article du catalogue",
-    "badges": { "alreadyAdded": "Déjà ajouté" },
+    "badges": {
+      "alreadyAdded": "Déjà ajouté"
+    },
     "buttons": {
       "viewDetails": "Voir les détails",
       "import": "Ajouter à Mon équipement",

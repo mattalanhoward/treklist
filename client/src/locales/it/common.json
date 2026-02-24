@@ -86,7 +86,7 @@
       },
       "myGear": {
         "title": "La mia attrezzatura",
-        "body": "Qui trovi tutta la tua attrezzatura. Usa il pulsante “+” per aggiungere articoli dal catalogo o crearne di personalizzati, poi aggiungili a qualsiasi lista."
+        "body": "Clicca su “La mia attrezzatura” per aprire e gestire il tuo inventario. Usa il pulsante “+” per aggiungere articoli dal catalogo o crearne di personalizzati dalla barra laterale."
       },
       "categories": {
         "title": "Categorie",
@@ -476,7 +476,9 @@
   },
   "catalogPreview": {
     "titleFallback": "Articolo del catalogo",
-    "badges": { "alreadyAdded": "Già aggiunto" },
+    "badges": {
+      "alreadyAdded": "Già aggiunto"
+    },
     "buttons": {
       "viewDetails": "Vedi dettagli",
       "import": "Aggiungi a La mia attrezzatura",

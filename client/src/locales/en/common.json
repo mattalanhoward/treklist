@@ -86,7 +86,7 @@
       },
       "myGear": {
         "title": "My Gear",
-        "body": "Here’s where all your gear lives. Use the “+” button to add items from our catalog or create custom items. Once added, you can include them in any gear list."
+        "body": "Click “My Gear” to open and manage your gear inventory. Use the “+” button to add catalog items or create custom ones from the sidebar."
       },
       "categories": {
         "title": "Categories",
@@ -485,7 +485,9 @@
   },
   "catalogPreview": {
     "titleFallback": "Catalog item",
-    "badges": { "alreadyAdded": "Already added" },
+    "badges": {
+      "alreadyAdded": "Already added"
+    },
     "buttons": {
       "viewDetails": "View details",
       "import": "Add to My Gear",
@@ -976,16 +978,30 @@
   "catalogRequest": {
     "title": "Add Item Request",
     "fields": {
-      "name": { "label": "Name", "placeholder": "e.g., Osprey Exos 48" },
-      "brand": { "label": "Brand", "placeholder": "e.g., Osprey" },
+      "name": {
+        "label": "Name",
+        "placeholder": "e.g., Osprey Exos 48"
+      },
+      "brand": {
+        "label": "Brand",
+        "placeholder": "e.g., Osprey"
+      },
       "link": {
         "label": "Link (Optional)",
         "placeholder": "Paste a product link (optional)"
       }
     },
-    "states": { "sending": "Sending…" },
-    "buttons": { "send": "Send", "sending": "Sending…" },
-    "toasts": { "sent": "Request sent!", "failed": "Failed to send request." }
+    "states": {
+      "sending": "Sending…"
+    },
+    "buttons": {
+      "send": "Send",
+      "sending": "Sending…"
+    },
+    "toasts": {
+      "sent": "Request sent!",
+      "failed": "Failed to send request."
+    }
   },
   "myGear": {
     "title": "My Gear",
