@@ -20,8 +20,10 @@ import MyGearTileCard from "../components/MyGearTileCard";
 import MyGearListItem from "../components/MyGearListItem";
 import { useUnit } from "../hooks/useUnit";
 import { useWeightInput } from "../hooks/useWeightInput";
+import { useUserSettings } from "../contexts/UserSettings";
 
 export default function MyGearView({ collapsed }) {
+  const { setSidebarCollapsed } = useUserSettings();
   const { t } = useTranslation("common");
   const unit = useUnit();
   const { formatInput, unitLabel } = useWeightInput(unit);
@@ -38,7 +40,22 @@ export default function MyGearView({ collapsed }) {
   });
 
   const [editingItem, setEditingItem] = useState(null);
-  const [showDrawer, setShowDrawer] = useState(false);
+  const [showDrawer, setShowDrawer] = useState(() =>
+    window.matchMedia("(min-width: 1024px)").matches
+  );
+
+  const openDrawer = useCallback(() => {
+    if (window.innerWidth < 1024) setSidebarCollapsed(true);
+    setShowDrawer(true);
+  }, [setSidebarCollapsed]);
+
+  // Close drawer when sidebar expands on mobile
+  useEffect(() => {
+    const handler = () => { if (window.innerWidth < 1024) setShowDrawer(false); };
+    window.addEventListener("sidebar:expanded", handler);
+    return () => window.removeEventListener("sidebar:expanded", handler);
+  }, []);
+
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [actionLoading, setActionLoading] = useState(null);
 
@@ -241,22 +258,14 @@ export default function MyGearView({ collapsed }) {
       <div className={`flex-shrink-0 px-4 py-2 border-b border-primary/10 bg-base-100 ${collapsed ? "sm:pl-12" : ""}`}>
         {/* Desktop: single row */}
         <div className="hidden sm:flex items-center justify-between gap-4">
-          {/* Left: Title + Add button + Select button */}
+          {/* Left: Title + Select button */}
           <div className="flex items-center gap-2">
-            <h1 className="text-md text-primary whitespace-nowrap">
+            <h1 className="text-lg font-semibold text-primary whitespace-nowrap">
               {t("myGear.title", "My Gear")}
               <span className="ml-2 text-base font-normal text-primary/60">
                 ({items.length})
               </span>
             </h1>
-            <button
-              type="button"
-              onClick={() => setShowDrawer(!showDrawer)}
-              className="p-1 text-secondary hover:text-secondary/80 rounded"
-              title={t("myGear.actions.addItem", "Add item")}
-            >
-              <FaPlus className="text-sm" />
-            </button>
             <button
               type="button"
               onClick={() => selectionMode ? exitSelectionMode() : setSelectionMode(true)}
@@ -275,7 +284,7 @@ export default function MyGearView({ collapsed }) {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t("myGear.searchPlaceholder", "Search gear...")}
+              placeholder={t("myGear.searchPlaceholder", "Search my gear...")}
               className="w-full pl-9 pr-3 border border-primary/30 rounded text-primary bg-base-100 placeholder:text-primary/50 text-sm"
             />
           </div>
@@ -341,6 +350,18 @@ export default function MyGearView({ collapsed }) {
                 <FaThLarge className="text-sm" />
               </button>
             </div>
+
+            {/* Add / toggle drawer */}
+            {!showDrawer && (
+              <button
+                type="button"
+                onClick={openDrawer}
+                className="p-1 text-secondary hover:text-secondary/80 rounded"
+                title={t("myGear.actions.addItem", "Add item")}
+              >
+                <FaPlus className="text-sm" />
+              </button>
+            )}
           </div>
         </div>
 
@@ -400,20 +421,12 @@ export default function MyGearView({ collapsed }) {
         <div className={`sm:hidden space-y-2 ${collapsed ? "pl-8" : ""}`}>
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <h1 className="text-md text-primary whitespace-nowrap">
+              <h1 className="text-lg font-semibold text-primary whitespace-nowrap">
                 {t("myGear.title", "My Gear")}
                 <span className="ml-2 text-base font-normal text-primary/60">
                   ({items.length})
                 </span>
               </h1>
-              <button
-                type="button"
-                onClick={() => setShowDrawer(!showDrawer)}
-                className="p-1 text-secondary hover:text-secondary/80 rounded"
-                title={t("myGear.actions.addItem", "Add item")}
-              >
-                <FaPlus className="text-sm" />
-              </button>
               <button
                 type="button"
                 onClick={() => selectionMode ? exitSelectionMode() : setSelectionMode(true)}
@@ -444,6 +457,17 @@ export default function MyGearView({ collapsed }) {
                   <FaThLarge className="text-sm" />
                 </button>
               </div>
+              {/* Add / toggle drawer */}
+              {!showDrawer && (
+                <button
+                  type="button"
+                  onClick={openDrawer}
+                  className="p-1 text-secondary hover:text-secondary/80 rounded"
+                  title={t("myGear.actions.addItem", "Add item")}
+                >
+                  <FaPlus className="text-sm" />
+                </button>
+              )}
             </div>
           </div>
 
@@ -544,7 +568,7 @@ export default function MyGearView({ collapsed }) {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t("myGear.searchPlaceholder", "Search gear...")}
+              placeholder={t("myGear.searchPlaceholder", "Search my gear...")}
               className="w-full pl-9 pr-3 border border-primary/30 rounded text-primary bg-base-100 placeholder:text-primary/50"
             />
           </div>
@@ -592,7 +616,7 @@ export default function MyGearView({ collapsed }) {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-8 gap-3">
+          <div className={`grid gap-3 ${showDrawer ? "grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6" : "grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 2xl:grid-cols-8"}`}>
             {filteredItems.map((item) => (
               <MyGearTileCard
                 key={item._id}

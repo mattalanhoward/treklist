@@ -682,40 +682,45 @@ export default function AddGearDrawer({ isOpen, onClose, onItemsChanged }) {
         }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-primary/10">
-          <div className="flex gap-2">
+        <div className="flex items-center justify-between px-4 py-2 border-b border-primary/10">
+          <span className="text-lg font-semibold text-primary">
+            {t("globalItemModal.title", "New gear item")}
+          </span>
+          <div className="flex items-center gap-2">
+            <div className="flex gap-2">
+              <button
+                type="button"
+                className={`px-3 py-1 rounded text-sm ${
+                  tab === "import"
+                    ? "bg-primary/10 text-primary font-medium"
+                    : "text-primary/70 hover:text-primary"
+                }`}
+                onClick={() => setTab("import")}
+              >
+                {t("globalItemModal.tabs.import")}
+              </button>
+              <button
+                type="button"
+                className={`px-3 py-1 rounded text-sm ${
+                  tab === "custom"
+                    ? "bg-primary/10 text-primary font-medium"
+                    : "text-primary/70 hover:text-primary"
+                }`}
+                onClick={() => setTab("custom")}
+              >
+                {t("globalItemModal.tabs.custom")}
+              </button>
+            </div>
+
             <button
               type="button"
-              className={`px-3 py-1 rounded text-sm ${
-                tab === "import"
-                  ? "bg-primary/10 text-primary font-medium"
-                  : "text-primary/70 hover:text-primary"
-              }`}
-              onClick={() => setTab("import")}
+              onClick={onClose}
+              className="p-1 text-error hover:text-error/80"
+              aria-label={t("actions.close")}
             >
-              {t("globalItemModal.tabs.import")}
-            </button>
-            <button
-              type="button"
-              className={`px-3 py-1 rounded text-sm ${
-                tab === "custom"
-                  ? "bg-primary/10 text-primary font-medium"
-                  : "text-primary/70 hover:text-primary"
-              }`}
-              onClick={() => setTab("custom")}
-            >
-              {t("globalItemModal.tabs.custom")}
+              <FaTimes />
             </button>
           </div>
-
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-1 text-error hover:text-error/80"
-            aria-label={t("actions.close")}
-          >
-            <FaTimes />
-          </button>
         </div>
 
         {/* Content */}
