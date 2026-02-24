@@ -218,7 +218,22 @@ export default function Landing() {
         title={t("landing.pageTitle")}
         description={t("landing.seo.description")}
         url="https://treklist.co/"
-      />
+      >
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          "name": "TrekList",
+          "url": "https://treklist.co",
+          "description": "Plan your hiking and backpacking trips with TrekList. Create gear lists, track pack weight, and share your setup with fellow trekkers.",
+          "applicationCategory": "TravelApplication",
+          "operatingSystem": "Web",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          }
+        })}</script>
+      </SEO>
       <PublicHeader
         variant="overlay"
         showSections={true}
