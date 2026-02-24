@@ -994,7 +994,7 @@
   },
   "myGear": {
     "title": "Mon Équipement",
-    "searchPlaceholder": "Rechercher...",
+    "searchPlaceholder": "Rechercher mon équipement...",
     "empty": "Vous n'avez pas encore ajouté d'équipement. Importez des articles du catalogue ou créez des articles personnalisés.",
     "noResults": "Aucun article ne correspond à votre recherche.",
     "itemCount": "{{count}} article(s)",

@@ -994,7 +994,7 @@
   },
   "myGear": {
     "title": "Mijn Uitrusting",
-    "searchPlaceholder": "Zoek uitrusting...",
+    "searchPlaceholder": "Zoek mijn uitrusting...",
     "empty": "Je hebt nog geen uitrusting toegevoegd. Importeer items uit de catalogus of maak eigen items aan.",
     "noResults": "Geen items gevonden.",
     "itemCount": "{{count}} item(s)",
