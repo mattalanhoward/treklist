@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { FaTimes } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import ImageCarousel from "./ImageCarousel";
@@ -110,16 +111,17 @@ export default function CatalogItemPreviewModal({
   // show a full-screen spinner overlay instead of rendering the panel.
   const isPending = loading || (!item && !error);
   if (isPending) {
-    return (
+    return createPortal(
       <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-[60]">
         <div className="h-10 w-10 rounded-full border-2 border-white/40 border-t-white animate-spin" />
-      </div>
+      </div>,
+      document.body
     );
   }
 
   // NOTE: z-index slightly higher than GlobalItemModal so it sits above it.
   // Style/layout matches GlobalItemEditModal imported layout.
-  return (
+  return createPortal(
     <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-[60]">
       <div
         className={`bg-white rounded-lg shadow-2xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 max-h-[70vh] sm:max-h-[calc(100vh-5rem)] flex flex-col
@@ -310,6 +312,7 @@ export default function CatalogItemPreviewModal({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

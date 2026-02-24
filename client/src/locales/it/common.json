@@ -994,7 +994,7 @@
   },
   "myGear": {
     "title": "La Mia Attrezzatura",
-    "searchPlaceholder": "Cerca attrezzatura...",
+    "searchPlaceholder": "Cerca la mia attrezzatura...",
     "empty": "Non hai ancora aggiunto attrezzatura. Importa articoli dal catalogo o crea articoli personalizzati.",
     "noResults": "Nessun articolo corrisponde alla tua ricerca.",
     "itemCount": "{{count}} articolo/i",

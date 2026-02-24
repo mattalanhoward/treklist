@@ -1005,7 +1005,7 @@
   },
   "myGear": {
     "title": "My Gear",
-    "searchPlaceholder": "Search gear...",
+    "searchPlaceholder": "Search my gear...",
     "empty": "You haven't added any gear yet. Import items from the catalog or create custom items.",
     "noResults": "No items match your search.",
     "itemCount": "{{count}} item(s)",

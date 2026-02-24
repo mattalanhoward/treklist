@@ -276,9 +276,15 @@ export default function Sidebar({
       >
         {/* collapse toggle */}
         <button
-          onClick={() => setCollapsed((c) => !c)}
+          onClick={() => setCollapsed((c) => {
+            // When expanding on mobile, signal the gear drawer to close
+            if (c && window.innerWidth < 1024) {
+              window.dispatchEvent(new CustomEvent("sidebar:expanded"));
+            }
+            return !c;
+          })}
           className={
-            `absolute z-50 top-[0.3rem] sm:top-[0.4rem] text-primaryAlt hover:text-primaryAlt/80 p-1 transform ` +
+            `absolute z-50 top-2 text-primaryAlt hover:text-primaryAlt/80 p-1 transform ` +
             (collapsed ? "right-[-1rem] translate-x-full" : "right-4")
           }
         >
