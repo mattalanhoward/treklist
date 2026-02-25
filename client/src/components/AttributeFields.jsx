@@ -2294,6 +2294,85 @@ const SCHEMAS = {
     },
   },
 
+  "Hiking Pants": {
+    fields: {
+      gender: {
+        type: "enum",
+        required: true,
+        label: "Gender/Fit",
+        options: ["Mens", "Womens", "Unisex"],
+      },
+      inseamIn: {
+        type: "number",
+        required: false,
+        label: "Inseam",
+        unit: "in",
+        min: 26,
+        max: 36,
+      },
+      material: {
+        type: "enum",
+        required: false,
+        label: "Material",
+        options: ["Nylon", "Polyester", "Nylon/Spandex Blend", "Cotton Blend"],
+      },
+      waistType: {
+        type: "enum",
+        required: false,
+        label: "Waist Type",
+        options: ["Elastic Waist", "Elastic with Drawcord", "Belt Loops", "Snap Waist"],
+      },
+      pockets: {
+        type: "number",
+        required: false,
+        label: "Number of Pockets",
+        min: 0,
+        max: 10,
+      },
+      uvProtection: {
+        type: "enum",
+        required: false,
+        label: "UV Protection",
+        options: ["UPF 15-24", "UPF 25-39", "UPF 40-50", "UPF 50+", "None"],
+      },
+      waterResistant: {
+        type: "boolean",
+        required: false,
+        label: "Water-Resistant/DWR",
+      },
+      pfasFree: {
+        type: "boolean",
+        required: false,
+        label: "PFAS-Free DWR",
+      },
+      stretchFabric: {
+        type: "boolean",
+        required: false,
+        label: "Stretch Fabric",
+      },
+      gussetedCrotch: {
+        type: "boolean",
+        required: false,
+        label: "Gusseted Crotch",
+      },
+      articulatedKnees: {
+        type: "boolean",
+        required: false,
+        label: "Articulated Knees",
+      },
+      reinforcedCuffs: {
+        type: "boolean",
+        required: false,
+        label: "Reinforced Cuffs",
+      },
+      beltLoops: {
+        type: "boolean",
+        required: false,
+        label: "Belt Loops",
+      },
+    },
+  },
+
   "Hiking Shirt": {
     fields: {
       gender: {
