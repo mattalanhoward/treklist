@@ -62,6 +62,7 @@ const KEYWORD_MAP = [
   { keywords: ["sun hat", "trucker hat", "beanie", "headwear", "baseball cap", "hiking hat"], itemType: "Hat/Headwear", detectGender: true },
   { keywords: ["hiking shorts", "trail shorts", "running shorts"], itemType: "Hiking Shorts", detectGender: true },
   { keywords: ["convertible pants", "zip-off pants", "zip off pants"], itemType: "Convertible Pants", detectGender: true },
+  { keywords: ["hiking pants", "trail pants", "trekking pants", "hiking trousers"], itemType: "Hiking Pants", detectGender: true },
   { keywords: ["hiking shirt", "sun hoodie", "sun shirt", "hiking tee"], itemType: "Hiking Shirt", detectGender: true },
   { keywords: ["insulated gloves", "hiking gloves", "winter gloves"], itemType: "Gloves (Insulated)", detectGender: true },
 
