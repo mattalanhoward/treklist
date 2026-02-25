@@ -115,7 +115,7 @@ export default function ShareModal({ listId, isOpen, onClose }) {
       setBusy(true);
       await api.post(`/dashboard/${listId}/share/revoke`);
       setToken("");
-      setShareSettings({ showNotes: false, showTripDetails: false, showRouteUrl: false });
+      setShareSettings({ showNotes: false, showTripDetails: false, showLinks: false });
       toast.success(t("shareModal.toasts.revokeSuccess"));
     } catch (e) {
       console.error(e);

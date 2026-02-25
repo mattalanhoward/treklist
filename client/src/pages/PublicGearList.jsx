@@ -12,6 +12,7 @@ import SEO from "../components/SEO";
 import api, { refreshAccessToken } from "../services/api";
 import { useTranslation } from "react-i18next";
 import Spinner from "../components/ui/Spinner";
+import DOMPurify from "dompurify";
 
 // tiny class combiner to avoid pulling in classnames
 const cx = (...parts) => parts.filter(Boolean).join(" ");
@@ -887,15 +888,24 @@ export default function PublicGearList() {
 
           {/* Trip notes */}
           {data.list.notes && (
-            <div className={cx("mt-4", isEmbed ? "px-0 pb-2" : "pb-2")}>
-              <p
+            <div className={cx("mt-6 pt-4 border-t border-primary/10 pb-2")}>
+              <h2
                 className={cx(
-                  "text-secondary whitespace-pre-wrap",
-                  isEmbed ? "text-[12px]" : "text-sm",
+                  "font-semibold text-primary mb-2",
+                  isEmbed ? "text-sm" : "text-base",
                 )}
               >
-                {data.list.notes}
-              </p>
+                {t("publicList.notesHeader")}
+              </h2>
+              <div
+                className={cx(
+                  "prose-notes",
+                  isEmbed ? "text-[12px]" : "text-sm",
+                )}
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(data.list.notes),
+                }}
+              />
             </div>
           )}
         </div>
