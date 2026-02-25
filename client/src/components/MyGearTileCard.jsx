@@ -205,12 +205,6 @@ export default function MyGearTileCard({
         <div style={{ fontSize: 14 }} className="font-semibold text-primary leading-snug line-clamp-2">
           {item.name}
         </div>
-
-        {item.description ? (
-          <div className="text-sm text-primary/70 line-clamp-3">
-            {item.description}
-          </div>
-        ) : null}
       </button>
     </div>
   );
