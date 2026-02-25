@@ -9,7 +9,7 @@ import { useUnit } from "../hooks/useUnit";
 import { useWeightInput } from "../hooks/useWeightInput";
 import { useUserSettings } from "../contexts/UserSettings";
 import { FaTimes } from "react-icons/fa";
-import { tItemType } from "../config/catalogTaxonomy";
+import { tItemType, tCategory, CATALOG_CATEGORIES } from "../config/catalogTaxonomy";
 import ImageCarousel from "./ImageCarousel";
 import ButtonLink from "./ui/ButtonLink";
 import Spinner from "../components/ui/Spinner";
@@ -31,7 +31,7 @@ export default function GlobalItemEditModal({
   const { t } = useTranslation("common");
 
   const [form, setForm] = useState({
-    category: "",
+    catalogCategory: "",
     itemType: "",
     name: "",
     brand: "",
@@ -289,10 +289,10 @@ export default function GlobalItemEditModal({
     const initialGrams = item.weight ?? "";
     setForm((prev) => ({
       ...prev,
-      category: item.category || "",
       weight: initialGrams,
       ...(viewMode === "custom"
         ? {
+            catalogCategory: item.catalogCategory || "",
             itemType: item.itemType || "",
             name: item.name || "",
             brand: item.brand || "",
@@ -389,6 +389,7 @@ export default function GlobalItemEditModal({
       const globalPayload = { ...basePayload };
 
       if (viewMode === "custom") {
+        globalPayload.catalogCategory = form.catalogCategory || null;
         globalPayload.itemType = form.itemType;
         globalPayload.name = form.name.trim();
         globalPayload.brand = form.brand.trim();
@@ -513,19 +514,7 @@ export default function GlobalItemEditModal({
             <>
               {/* Custom items layout (editable) */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <div>
-                  <label className="block font-medium text-primary mb-0.5">
-                    {t("globalItemModal.labels.itemType")}
-                  </label>
-                  <input
-                    name="itemType"
-                    value={form.itemType}
-                    onChange={handleChange}
-                    disabled={disableEdits}
-                    className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100"
-                  />
-                </div>
-
+                {/* Row 1: Name | Brand */}
                 <div>
                   <label className="block font-medium text-primary mb-0.5">
                     {t("globalItemModal.labels.name")}
@@ -553,6 +542,55 @@ export default function GlobalItemEditModal({
                   />
                 </div>
 
+                {/* Row 2: Category | Item Type */}
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    {t("globalItemModal.labels.category", "Category")}
+                  </label>
+                  <select
+                    name="catalogCategory"
+                    value={form.catalogCategory}
+                    onChange={handleChange}
+                    disabled={disableEdits}
+                    className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100"
+                  >
+                    <option value="">{t("myGear.filter.uncategorized", "Uncategorized")}</option>
+                    {CATALOG_CATEGORIES.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {tCategory(t, cat)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    {t("globalItemModal.labels.itemType")}
+                  </label>
+                  <input
+                    name="itemType"
+                    value={form.itemType}
+                    onChange={handleChange}
+                    disabled={disableEdits}
+                    className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100"
+                  />
+                </div>
+
+                {/* Row 3: Weight | Link */}
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    {t("globalItemModal.labels.weight", { unit: unitLabel })}
+                  </label>
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    value={displayWeight}
+                    onChange={(e) => setDisplayWeight(e.target.value)}
+                    disabled={disableEdits}
+                    className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100"
+                  />
+                </div>
+
                 <div>
                   <LinkInput
                     value={form.link}
@@ -566,22 +604,6 @@ export default function GlobalItemEditModal({
                   />
                 </div>
 
-                <div className="flex space-x-1 sm:space-x-2 col-span-1 sm:col-span-2">
-                  <div className="flex-1">
-                    <label className="block font-medium text-primary mb-0.5">
-                      {t("globalItemModal.labels.weight", { unit: unitLabel })}
-                    </label>
-                    <input
-                      type="text"
-                      inputMode="decimal"
-                      value={displayWeight}
-                      onChange={(e) => setDisplayWeight(e.target.value)}
-                      disabled={disableEdits}
-                      className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100"
-                    />
-                  </div>
-                </div>
-
                 <div className="sm:col-span-2">
                   <label className="block font-medium text-primary mb-0.5">
                     {t("globalItemModal.labels.description")}
@@ -591,7 +613,7 @@ export default function GlobalItemEditModal({
                     value={form.description}
                     onChange={handleChange}
                     disabled={disableEdits}
-                    className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100"
+                    className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100 resize-none h-16 sm:h-[6.5rem]"
                     rows={2}
                   />
                 </div>

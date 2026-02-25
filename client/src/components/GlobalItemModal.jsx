@@ -621,7 +621,7 @@ export default function GlobalItemModal({
 }) {
   const { t } = useTranslation("common");
   const itemTypeInputRef = React.useRef(null);
-  const [category, setCategory] = useState("");
+  const [catalogCategory, setCatalogCategory] = useState("");
   const [itemType, setItemType] = useState("");
   const [name, setName] = useState("");
   const [brand, setBrand] = useState("");
@@ -717,7 +717,7 @@ export default function GlobalItemModal({
           worn,
           consumable,
           quantity: Number(quantity) || 1,
-          ...(category && { category }),
+          ...(catalogCategory && { catalogCategory }),
         };
 
         created = await api
@@ -725,7 +725,8 @@ export default function GlobalItemModal({
           .then((r) => r.data);
       } else {
         // Custom item: same as your original flow (link allowed)
-        const payload = { category, name: name.trim() };
+        const payload = { name: name.trim() };
+        if (catalogCategory) payload.catalogCategory = catalogCategory;
         if (itemType.trim()) payload.itemType = itemType.trim();
         if (brand.trim()) payload.brand = brand.trim();
         if (description.trim()) payload.description = description.trim();
@@ -763,7 +764,11 @@ export default function GlobalItemModal({
     <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center z-50">
       <form
         onSubmit={handleSubmit}
-        className="bg-neutralAlt rounded-lg shadow-2xl max-w-3xl w-full sm:h-[80vh] h-[70vh] px-4 py-4 sm:px-6 sm:py-6 my-4 flex flex-col overflow-hidden"
+        className={`bg-neutralAlt rounded-lg shadow-2xl max-w-3xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 flex flex-col overflow-hidden ${
+          tab === "import"
+            ? "sm:h-[80vh] h-[70vh]"
+            : "sm:max-h-[80vh] max-h-[90dvh]"
+        }`}
       >
         {/* Header (smaller on phones) */}
         <div className="flex justify-between items-center mb-2 sm:mb-3">
@@ -833,7 +838,7 @@ export default function GlobalItemModal({
                 className="text-xs underline text-primary"
                 onClick={() => {
                   setAffProduct(null);
-                  setCategory?.("");
+                  setCatalogCategory("");
                   setItemType("");
                   setName("");
                   setBrand("");
@@ -864,26 +869,10 @@ export default function GlobalItemModal({
 
           {/* Grid: only visible on the Custom tab */}
           {tab === "custom" && (
-            <div className="flex-1 min-h-0 flex flex-col">
+            <div className="flex flex-col">
               {/* top form fields */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
-                {/* Item Type */}
-                <div>
-                  <label className="block font-medium text-primary mb-0.5">
-                    {t("globalItemModal.labels.itemType")}
-                  </label>
-                  <input
-                    ref={itemTypeInputRef}
-                    type="text"
-                    placeholder={t("globalItemModal.placeholders.itemType")}
-                    required
-                    value={itemType}
-                    onChange={(e) => setItemType(e.target.value)}
-                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50"
-                  />
-                </div>
-
-                {/* Name */}
+                {/* Row 1: Name | Brand */}
                 <div>
                   <label className="block font-medium text-primary mb-0.5">
                     {t("globalItemModal.labels.name")}
@@ -899,7 +888,6 @@ export default function GlobalItemModal({
                   />
                 </div>
 
-                {/* Brand */}
                 <div>
                   <label className="block font-medium text-primary mb-0.5">
                     {t("globalItemModal.labels.brand")}
@@ -913,7 +901,58 @@ export default function GlobalItemModal({
                   />
                 </div>
 
-                {/* Link */}
+                {/* Row 2: Category | Item Type */}
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    {t("globalItemModal.labels.category", "Category")}
+                  </label>
+                  <select
+                    value={catalogCategory}
+                    onChange={(e) => setCatalogCategory(e.target.value)}
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-base-100"
+                  >
+                    <option value="">{t("myGear.filter.uncategorized", "Uncategorized")}</option>
+                    {CATALOG_CATEGORIES.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {tCategory(t, cat)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    {t("globalItemModal.labels.itemType")}
+                  </label>
+                  <input
+                    ref={itemTypeInputRef}
+                    type="text"
+                    placeholder={t("globalItemModal.placeholders.itemType")}
+                    value={itemType}
+                    onChange={(e) => setItemType(e.target.value)}
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50"
+                  />
+                </div>
+
+                {/* Row 3: Weight | Link */}
+                <div>
+                  <label className="block font-medium text-primary mb-0.5">
+                    {t("globalItemModal.labels.weight", { unit: unitLabel })}
+                  </label>
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    value={displayWeight}
+                    placeholder={
+                      unitLabel === "g"
+                        ? t("globalItemModal.placeholders.weightGrams")
+                        : t("globalItemModal.placeholders.weightOunces")
+                    }
+                    onChange={(e) => setDisplayWeight(e.target.value)}
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50"
+                  />
+                </div>
+
                 <div className="relative">
                   <LinkInput
                     value={link}
@@ -936,38 +975,17 @@ export default function GlobalItemModal({
                     />
                   )}
                 </div>
-
-                {/* Weight */}
-                <div className="flex space-x-1 sm:space-x-2 col-span-1 sm:col-span-2">
-                  <div className="flex-1">
-                    <label className="block font-medium text-primary mb-0.5">
-                      {t("globalItemModal.labels.weight", { unit: unitLabel })}
-                    </label>
-                    <input
-                      type="text"
-                      inputMode="decimal"
-                      value={displayWeight}
-                      placeholder={
-                        unitLabel === "g"
-                          ? t("globalItemModal.placeholders.weightGrams")
-                          : t("globalItemModal.placeholders.weightOunces")
-                      }
-                      onChange={(e) => setDisplayWeight(e.target.value)}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50"
-                    />
-                  </div>
-                </div>
               </div>
 
-              {/* description fills remaining space */}
-              <div className="mt-2 flex-1 min-h-0 flex flex-col">
+              {/* description */}
+              <div className="mt-2">
                 <label className="block font-medium text-primary mb-0.5">
                   {t("globalItemModal.labels.description")}
                 </label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="block w-full flex-1 min-h-0 border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 resize-none"
+                  className="block w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 resize-none h-16 sm:h-[6.5rem]"
                 />
               </div>
             </div>

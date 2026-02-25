@@ -218,7 +218,7 @@ router.post(
     body("name").isString().isLength({ min: 1, max: 200 }).trim(),
     body("brand").optional().isString().isLength({ max: 120 }).trim(),
     body("description").optional().isString().isLength({ max: 5000 }).trim(),
-    body("category").optional().isString().isLength({ max: 120 }).trim(),
+    body("catalogCategory").optional().isString().isLength({ max: 120 }).trim(),
     body("itemType").optional().isString().isLength({ max: 120 }).trim(),
     body("weight").optional().isFloat({ min: 0 }),
     body("link").optional().isString().isLength({ max: 2000 }).trim(),
@@ -311,7 +311,7 @@ router.patch("/:id", async (req, res) => {
     }
 
     const allowed = [
-      "category",
+      "catalogCategory",
       "itemType",
       "name",
       "brand",

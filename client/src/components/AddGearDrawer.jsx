@@ -430,6 +430,7 @@ function ImportTab({ onImported }) {
 function CustomTab({ onCreated }) {
   const { t } = useTranslation("common");
 
+  const [catalogCategory, setCatalogCategory] = useState("");
   const [itemType, setItemType] = useState("");
   const [name, setName] = useState("");
   const [brand, setBrand] = useState("");
@@ -465,6 +466,7 @@ function CustomTab({ onCreated }) {
     setLoading(true);
     try {
       const payload = { name: name.trim() };
+      if (catalogCategory) payload.catalogCategory = catalogCategory;
       if (itemType.trim()) payload.itemType = itemType.trim();
       if (brand.trim()) payload.brand = brand.trim();
       if (description.trim()) payload.description = description.trim();
@@ -476,6 +478,7 @@ function CustomTab({ onCreated }) {
       toast.success(t("globalItemModal.toast.created"));
 
       // Reset form
+      setCatalogCategory("");
       setItemType("");
       setName("");
       setBrand("");
@@ -496,38 +499,24 @@ function CustomTab({ onCreated }) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-      {/* Row 1: Name */}
-      <div>
-        <label className="block text-xs font-medium text-primary mb-1">
-          {t("globalItemModal.labels.name")}
-          <span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          placeholder={t("globalItemModal.placeholders.name")}
-          value={name}
-          required
-          onChange={(e) => setName(e.target.value)}
-          className="block w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 text-sm"
-        />
-      </div>
-
-      {/* Row 2: Type, Brand, Weight */}
-      <div className="flex gap-2">
-        <div className="flex-1">
+      <div className="grid grid-cols-2 gap-2">
+        {/* Row 1: Name | Brand */}
+        <div>
           <label className="block text-xs font-medium text-primary mb-1">
-            {t("globalItemModal.labels.itemType")}
+            {t("globalItemModal.labels.name")}
+            <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
-            placeholder={t("globalItemModal.placeholders.itemType")}
-            value={itemType}
-            onChange={(e) => setItemType(e.target.value)}
+            placeholder={t("globalItemModal.placeholders.name")}
+            value={name}
+            required
+            onChange={(e) => setName(e.target.value)}
             className="block w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 text-sm"
           />
         </div>
 
-        <div className="flex-1">
+        <div>
           <label className="block text-xs font-medium text-primary mb-1">
             {t("globalItemModal.labels.brand")}
           </label>
@@ -540,7 +529,40 @@ function CustomTab({ onCreated }) {
           />
         </div>
 
-        <div className="w-24">
+        {/* Row 2: Category | Item Type */}
+        <div>
+          <label className="block text-xs font-medium text-primary mb-1">
+            {t("globalItemModal.labels.category", "Category")}
+          </label>
+          <select
+            value={catalogCategory}
+            onChange={(e) => setCatalogCategory(e.target.value)}
+            className="block w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 text-sm"
+          >
+            <option value="">{t("myGear.filter.uncategorized", "Uncategorized")}</option>
+            {CATALOG_CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {tCategory(t, cat)}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-xs font-medium text-primary mb-1">
+            {t("globalItemModal.labels.itemType")}
+          </label>
+          <input
+            type="text"
+            placeholder={t("globalItemModal.placeholders.itemType")}
+            value={itemType}
+            onChange={(e) => setItemType(e.target.value)}
+            className="block w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 text-sm"
+          />
+        </div>
+
+        {/* Row 3: Weight | Link */}
+        <div>
           <label className="block text-xs font-medium text-primary mb-1">
             {t("globalItemModal.labels.weight", { unit: unitLabel })}
           </label>
@@ -553,31 +575,29 @@ function CustomTab({ onCreated }) {
             className="block w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 text-sm"
           />
         </div>
+
+        <div>
+          <LinkInput
+            value={link}
+            onChange={setLink}
+            label={t("globalItemModal.labels.link")}
+            placeholder={t("globalItemModal.placeholders.link")}
+            required={false}
+            className="text-sm"
+          />
+        </div>
       </div>
 
-      {/* Row 3: Description */}
+      {/* Description — full width */}
       <div>
         <label className="block text-xs font-medium text-primary mb-1">
           {t("globalItemModal.labels.description")}
         </label>
-        <input
-          type="text"
+        <textarea
           placeholder={t("globalItemModal.placeholders.description", "Brief description...")}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="block w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 text-sm"
-        />
-      </div>
-
-      {/* Row 4: Link */}
-      <div>
-        <LinkInput
-          value={link}
-          onChange={setLink}
-          label={t("globalItemModal.labels.link")}
-          placeholder={t("globalItemModal.placeholders.link")}
-          required={false}
-          className="text-sm"
+          className="block w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 text-sm resize-none h-16 sm:h-[6.5rem]"
         />
       </div>
 
