@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { FaTimes, FaRoute } from "react-icons/fa";
+import { FaTimes, FaRoute, FaBold, FaItalic, FaListUl, FaListOl } from "react-icons/fa";
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import { marked } from "marked";
 import api from "../services/api";
 import ConfirmDialog from "./ConfirmDialog";
 import PackStats from "./PackStats";
@@ -26,7 +29,6 @@ export default function GearListDetailsModal({
   const { t } = useTranslation("common");
 
   const [title, setTitle] = useState("");
-  const [notes, setNotes] = useState("");
   const [tripStart, setTripStart] = useState(null);
   const [tripEnd, setTripEnd] = useState(null);
   const [location, setLocation] = useState("");
@@ -38,15 +40,31 @@ export default function GearListDetailsModal({
   const [showConfirmClose, setShowConfirmClose] = useState(false);
   const [isDirty, setDirty] = useState(false);
 
-  // Pull locale from user settings
   const { locale } = useUserSettings();
   const dfnsLocale = dateFnsLocales[locale] || dateFnsLocales["en-US"];
 
-  // initialize form when list changes
+  // Convert legacy plain-text/markdown notes to HTML for TipTap.
+  // New notes saved by TipTap will already contain HTML tags.
+  function notesToHtml(content) {
+    if (!content) return "";
+    if (/<[a-z][\s\S]*?>/i.test(content)) return content; // already HTML
+    return marked.parse(content);
+  }
+
+  const editor = useEditor({
+    extensions: [StarterKit],
+    content: "",
+    onUpdate: () => setDirty(true),
+    editorProps: {
+      attributes: {
+        class: "tiptap-editor",
+      },
+    },
+  });
+
   useEffect(() => {
     if (!list) return;
     setTitle(list.title || "");
-    setNotes(list.notes || "");
     setTripStart(list.tripStart ? new Date(list.tripStart) : null);
     setTripEnd(list.tripEnd ? new Date(list.tripEnd) : null);
     setLocation(list.location || "");
@@ -56,17 +74,17 @@ export default function GearListDetailsModal({
       { label: raw[1]?.label || "", url: raw[1]?.url || "" },
       { label: raw[2]?.label || "", url: raw[2]?.url || "" },
     ]);
+    editor?.commands.setContent(notesToHtml(list.notes), false);
     setDirty(false);
-  }, [list]);
+  }, [list, editor]);
 
   const handleSave = async (e) => {
     e.preventDefault();
     if (!list?._id) return;
-
     try {
       await api.patch(`/dashboard/${list._id}`, {
         title,
-        notes,
+        notes: editor?.getHTML() ?? "",
         tripStart: tripStart ? tripStart.toISOString() : null,
         tripEnd: tripEnd ? tripEnd.toISOString() : null,
         location,
@@ -74,15 +92,13 @@ export default function GearListDetailsModal({
       });
       onRefresh();
       onRefreshSidebar();
-      // toast.success(t("gearListDetailsModal.toast.saveSuccess"));
       setDirty(false);
       onClose();
     } catch (err) {
       console.error("Failed to save list details:", err);
-      const msg =
-        err.response?.data?.message ||
-        t("gearListDetailsModal.toast.saveFailed");
-      toast.error(msg);
+      toast.error(
+        err.response?.data?.message || t("gearListDetailsModal.toast.saveFailed"),
+      );
     }
   };
 
@@ -93,17 +109,34 @@ export default function GearListDetailsModal({
 
   if (!isOpen) return null;
 
+  const inputClass =
+    "w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 text-sm";
+  const labelClass = "block font-medium text-primary mb-1 text-sm";
+
+  const toolbarBtn = (active) =>
+    [
+      "p-1.5 rounded transition-colors text-xs",
+      active
+        ? "bg-secondary/20 text-secondary"
+        : "text-primary/60 hover:text-primary hover:bg-primary/10",
+    ].join(" ");
+
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center z-50 p-4">
       <form
         onSubmit={handleSave}
-        className="bg-neutralAlt rounded-lg shadow-2xl border border-neutral/60 max-w-xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 overflow-auto"
+        className="bg-neutralAlt rounded-lg shadow-2xl border border-neutral/60 max-w-2xl w-full flex flex-col max-h-[90vh]"
       >
         {/* Header */}
-        <div className="flex justify-between items-center mb-2 sm:mb-3">
-          <h2 className="text-xl font-semibold text-primary">
-            {t("gearListDetailsModal.title")}
-          </h2>
+        <div className="flex justify-between items-center px-4 py-3 sm:px-6 flex-shrink-0 border-b border-neutral/40">
+          <div>
+            <h2 className="text-xl font-semibold text-primary">
+              {t("gearListDetailsModal.title")}
+            </h2>
+            <p className="text-xs text-primary/50 mt-0.5">
+              {t("gearListDetailsModal.stats.itemsCount")} {itemsCount}
+            </p>
+          </div>
           <button
             type="button"
             onClick={handleClose}
@@ -114,11 +147,11 @@ export default function GearListDetailsModal({
           </button>
         </div>
 
-        {/* Grid: 3 cols on md+ */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* Weight Breakdown full row */}
-          <div className="md:col-span-3 flex flex-col items-center px-2 py-1">
-            <label className="block font-medium text-primary mb-3">
+        {/* Scrollable body */}
+        <div className="overflow-y-auto flex-1 px-4 sm:px-6 py-4">
+          {/* Weight Breakdown */}
+          <div className="flex flex-col items-center mb-4 pb-4 border-b border-neutral/40">
+            <label className="block font-medium text-primary mb-3 text-sm">
               {t("gearListDetailsModal.labels.weightBreakdown")}
             </label>
             <div className="scale-110">
@@ -145,27 +178,27 @@ export default function GearListDetailsModal({
             </div>
           </div>
 
-          {/* Name */}
-          <div className="md:col-span-2">
-            <label className="block font-medium text-primary mb-1">
-              {t("gearListDetailsModal.labels.name")}
-            </label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => {
-                setTitle(e.target.value);
-                setDirty(true);
-              }}
-              className="w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50"
-            />
-          </div>
+          {/* Fields grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {/* Name — full width */}
+            <div className="md:col-span-3">
+              <label className={labelClass}>
+                {t("gearListDetailsModal.labels.name")}
+              </label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => {
+                  setTitle(e.target.value);
+                  setDirty(true);
+                }}
+                className={inputClass}
+              />
+            </div>
 
-          {/* Trip Dates */}
-          <div className="md:col-span-2 grid grid-cols-2 gap-4">
-            {/* Trip Start */}
+            {/* Trip Start | Trip End | Location — one row */}
             <div>
-              <label className="block font-medium text-primary mb-1">
+              <label className={labelClass}>
                 {t("gearListDetailsModal.labels.tripStart")}
               </label>
               <DatePicker
@@ -176,13 +209,12 @@ export default function GearListDetailsModal({
                 }}
                 dateFormat="P"
                 locale={dfnsLocale}
-                className="w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50"
+                className={inputClass}
                 placeholderText={t("gearListDetailsModal.placeholders.date")}
               />
             </div>
-            {/* Trip End */}
             <div>
-              <label className="block font-medium text-primary mb-1">
+              <label className={labelClass}>
                 {t("gearListDetailsModal.labels.tripEnd")}
               </label>
               <DatePicker
@@ -193,119 +225,155 @@ export default function GearListDetailsModal({
                 }}
                 dateFormat="P"
                 locale={dfnsLocale}
-                className="w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50"
+                className={inputClass}
                 placeholderText={t("gearListDetailsModal.placeholders.date")}
               />
             </div>
-          </div>
+            <div>
+              <label className={labelClass}>
+                {t("gearListDetailsModal.labels.location")}
+              </label>
+              <input
+                type="text"
+                value={location}
+                onChange={(e) => {
+                  setLocation(e.target.value);
+                  setDirty(true);
+                }}
+                className={inputClass}
+              />
+            </div>
 
-          {/* Location */}
-          <div>
-            <label className="block font-medium text-primary mb-1">
-              {t("gearListDetailsModal.labels.location")}
-            </label>
-            <input
-              type="text"
-              value={location}
-              onChange={(e) => {
-                setLocation(e.target.value);
-                setDirty(true);
-              }}
-              className="w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50"
-            />
-          </div>
-
-          {/* Links */}
-          <div className="md:col-span-3">
-            <label className="block font-medium text-primary mb-1">
-              {t("gearListDetailsModal.labels.links")}
-            </label>
-            <div className="space-y-2">
-              {links.map((link, idx) => (
-                <div key={idx} className="grid grid-cols-3 gap-2">
-                  {idx === 0 ? (
-                    <div className="col-span-1 flex items-center gap-1.5 px-2 py-1 border border-primary/30 rounded bg-primary/5 text-sm text-primary/70 select-none">
-                      <FaRoute className="flex-shrink-0" aria-hidden />
-                      <span>{t("gearListDetailsModal.labels.routeSlot")}</span>
-                    </div>
-                  ) : (
+            {/* Links */}
+            <div className="md:col-span-3">
+              <label className={labelClass}>
+                {t("gearListDetailsModal.labels.links")}
+              </label>
+              <div className="space-y-2">
+                {links.map((link, idx) => (
+                  <div key={idx} className="grid grid-cols-3 gap-2">
+                    {idx === 0 ? (
+                      <div className="col-span-1 flex items-center gap-1.5 px-2 py-1 border border-primary/30 rounded bg-primary/5 text-sm text-primary/70 select-none">
+                        <FaRoute className="flex-shrink-0" aria-hidden />
+                        <span>{t("gearListDetailsModal.labels.routeSlot")}</span>
+                      </div>
+                    ) : (
+                      <input
+                        type="text"
+                        value={link.label}
+                        onChange={(e) => {
+                          const updated = links.map((l, i) =>
+                            i === idx ? { ...l, label: e.target.value } : l,
+                          );
+                          setLinks(updated);
+                          setDirty(true);
+                        }}
+                        className="col-span-1 border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 text-sm"
+                        placeholder={t(
+                          "gearListDetailsModal.placeholders.linkLabel",
+                        )}
+                      />
+                    )}
                     <input
                       type="text"
-                      value={link.label}
+                      value={link.url}
                       onChange={(e) => {
                         const updated = links.map((l, i) =>
-                          i === idx ? { ...l, label: e.target.value } : l,
+                          i === idx ? { ...l, url: e.target.value } : l,
                         );
                         setLinks(updated);
                         setDirty(true);
                       }}
-                      className="col-span-1 border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 text-sm"
-                      placeholder={t("gearListDetailsModal.placeholders.linkLabel")}
+                      className="col-span-2 border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 text-sm"
+                      placeholder={t("gearListDetailsModal.placeholders.linkUrl")}
                     />
-                  )}
-                  <input
-                    type="text"
-                    value={link.url}
-                    onChange={(e) => {
-                      const updated = links.map((l, i) =>
-                        i === idx ? { ...l, url: e.target.value } : l,
-                      );
-                      setLinks(updated);
-                      setDirty(true);
-                    }}
-                    className="col-span-2 border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 text-sm"
-                    placeholder={t("gearListDetailsModal.placeholders.linkUrl")}
-                  />
-                </div>
-              ))}
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
 
-          {/* Notes */}
-          <div className="md:col-span-3">
-            <label className="block font-medium text-primary mb-1">
-              {t("gearListDetailsModal.labels.notes")}
-            </label>
-            <textarea
-              rows={3}
-              value={notes}
-              onChange={(e) => {
-                setNotes(e.target.value);
-                setDirty(true);
-              }}
-              className="w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50"
-            />
-          </div>
-
-          {/* Stats */}
-          <div className="md:col-span-2 flex flex-wrap items-baseline gap-x-6 gap-y-2 text-primary">
-            <p className="flex items-baseline gap-1">
-              <span className="font-medium">
-                {t("gearListDetailsModal.stats.itemsCount")}{" "}
-              </span>
-              <span>{itemsCount}</span>
-            </p>
+            {/* Notes — TipTap WYSIWYG */}
+            <div className="md:col-span-3">
+              <label className={labelClass}>
+                {t("gearListDetailsModal.labels.notes")}
+              </label>
+              <div className="border border-primary rounded overflow-hidden">
+                {/* Toolbar */}
+                <div className="flex items-center gap-0.5 px-1 py-1 bg-primary/5 border-b border-primary/20">
+                  <button
+                    type="button"
+                    title="Bold"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      editor?.chain().focus().toggleBold().run();
+                    }}
+                    className={toolbarBtn(editor?.isActive("bold"))}
+                  >
+                    <FaBold />
+                  </button>
+                  <button
+                    type="button"
+                    title="Italic"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      editor?.chain().focus().toggleItalic().run();
+                    }}
+                    className={toolbarBtn(editor?.isActive("italic"))}
+                  >
+                    <FaItalic />
+                  </button>
+                  <div className="w-px h-4 bg-primary/20 mx-1" />
+                  <button
+                    type="button"
+                    title="Bullet list"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      editor?.chain().focus().toggleBulletList().run();
+                    }}
+                    className={toolbarBtn(editor?.isActive("bulletList"))}
+                  >
+                    <FaListUl />
+                  </button>
+                  <button
+                    type="button"
+                    title="Numbered list"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      editor?.chain().focus().toggleOrderedList().run();
+                    }}
+                    className={toolbarBtn(editor?.isActive("orderedList"))}
+                  >
+                    <FaListOl />
+                  </button>
+                </div>
+                {/* Editor */}
+                <EditorContent
+                  editor={editor}
+                  className="bg-base-100 text-primary text-sm min-h-[8rem] max-h-64 overflow-y-auto"
+                />
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end space-x-3">
+        <div className="flex justify-end gap-2 px-4 py-3 sm:px-6 flex-shrink-0 border-t border-neutral/40">
           <button
             type="button"
             onClick={handleClose}
-            className="px-2 py-1 bg-neutralAlt rounded hover:bg-neutralAlt/90 text-primary"
+            className="px-3 py-1.5 bg-neutralAlt rounded hover:bg-neutralAlt/90 text-primary text-sm border border-primary/20"
           >
             {t("actions.cancel")}
           </button>
           <button
             type="submit"
-            className="px-2 py-1 bg-secondary text-white rounded hover:bg-secondary/80"
+            className="px-3 py-1.5 bg-secondary text-white rounded hover:bg-secondary/80 text-sm"
           >
             {t("actions.save")}
           </button>
         </div>
       </form>
-      {/* Confirm discard */}
+
       <ConfirmDialog
         isOpen={showConfirmClose}
         title={t("gearListDetailsModal.confirm.discardTitle")}

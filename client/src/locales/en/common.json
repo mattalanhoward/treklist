@@ -558,7 +558,11 @@
     "placeholders": {
       "date": "Select date",
       "linkLabel": "e.g. Alta Via 1 Guide",
-      "linkUrl": "https://..."
+      "linkUrl": "https://...",
+      "notes": "Trip notes, gear decisions, what worked and what didn't…"
+    },
+    "hints": {
+      "markdownSupported": "Markdown supported"
     },
     "stats": {
       "totalCost": "Total cost:",
@@ -845,6 +849,7 @@
       "viewProduct": "View product",
       "viewProductPaid": "View product (paid link)"
     },
+    "notesHeader": "Trip Notes",
     "route": "Route",
     "link": "Link"
   },
