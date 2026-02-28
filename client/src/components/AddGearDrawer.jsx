@@ -9,7 +9,7 @@ import { useUnit } from "../hooks/useUnit";
 import { useWeightInput } from "../hooks/useWeightInput";
 import CatalogItemPreviewModal from "./CatalogItemPreviewModal";
 import Spinner from "./ui/Spinner";
-import { CATALOG_CATEGORIES, tCategory } from "../config/catalogTaxonomy";
+import { CATALOG_CATEGORIES, tCategory, tSubcategory } from "../config/catalogTaxonomy";
 
 function ImportTab({ onImported }) {
   const { t } = useTranslation("common");
@@ -275,7 +275,7 @@ function ImportTab({ onImported }) {
           </option>
           {subcategories.map((sub) => (
             <option key={sub} value={sub}>
-              {sub}
+              {tSubcategory(t, sub)}
             </option>
           ))}
         </select>

@@ -268,7 +268,7 @@ export default function CatalogItemPreviewModal({
               <ButtonLink href={primaryOffer.deepLink}>
                 {primaryOffer.merchantName
                   ? primaryOffer.merchantName
-                  : "Product Page"}
+                  : t("globalItemEditModal.buttons.productPage")}
               </ButtonLink>
             ) : loading ? (
               <button

@@ -4,6 +4,7 @@ import api from "../services/api";
 import {
   CATALOG_CATEGORIES,
   buildCategoryOptions,
+  buildSubcategoryOptions,
 } from "../config/catalogTaxonomy";
 import { toast } from "react-hot-toast";
 import {
@@ -1048,14 +1049,18 @@ function GearCatalogSection({
                     <label className="block font-medium text-primary mb-0.5">
                       Subcategory
                     </label>
-                    <input
-                      type="text"
+                    <select
                       name="subcategory"
                       value={form.subcategory}
                       onChange={handleChange}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                      placeholder="tent / quilt / stove..."
-                    />
+                      disabled={!form.category}
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt disabled:opacity-50"
+                    >
+                      <option value="">None</option>
+                      {buildSubcategoryOptions(form.category, { current: form.subcategory }).map((sub) => (
+                        <option key={sub} value={sub}>{sub}</option>
+                      ))}
+                    </select>
                   </div>
 
                   <div>
@@ -2429,14 +2434,18 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                   <label className="block font-medium text-primary mb-0.5">
                     Subcategory
                   </label>
-                  <input
-                    type="text"
+                  <select
                     name="subcategory"
                     value={form.subcategory}
                     onChange={handleChange}
-                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                    placeholder="tent / quilt / stove..."
-                  />
+                    disabled={!form.category}
+                    className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt disabled:opacity-50"
+                  >
+                    <option value="">None</option>
+                    {buildSubcategoryOptions(form.category, { current: form.subcategory }).map((sub) => (
+                      <option key={sub} value={sub}>{sub}</option>
+                    ))}
+                  </select>
                 </div>
 
                 <div>

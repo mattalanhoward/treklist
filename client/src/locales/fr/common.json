@@ -493,14 +493,16 @@
     "titleList": "Détails de l’article",
     "buttons": {
       "delete": "Supprimer l’article",
-      "saving": "Enregistrement…"
+      "saving": "Enregistrement…",
+      "productPage": "Page produit"
     },
     "toast": {
       "updated": "Article mis à jour",
       "updatedEverywhere": "Article mis à jour partout",
       "deleted": "Article supprimé",
       "deleteFailed": "Échec de la suppression",
-      "saveFailed": "Échec de l’enregistrement. Veuillez réessayer."
+      "saveFailed": "Échec de l’enregistrement. Veuillez réessayer.",
+      "stillLoading": "Chargement des détails de l’article…"
     },
     "confirm": {
       "saveListTitle": "Enregistrer les modifications de cet article ?",
@@ -542,10 +544,18 @@
       "tripStart": "Début du voyage",
       "tripEnd": "Fin du voyage",
       "location": "Lieu",
+      "links": "Liens",
+      "routeSlot": "Itinéraire",
       "notes": "Notes / description"
     },
     "placeholders": {
-      "date": "Sélectionner une date"
+      "date": "Sélectionner une date",
+      "linkLabel": "ex. Guide Alta Via 1",
+      "linkUrl": "https://...",
+      "notes": "Notes de voyage, décisions d'équipement, ce qui a fonctionné ou non…"
+    },
+    "hints": {
+      "markdownSupported": "Markdown pris en charge"
     },
     "stats": {
       "totalCost": "Coût total :",
@@ -633,6 +643,76 @@
       "Wallet": "Portefeuille",
       "Water Bottle": "Gourde",
       "Water Filter": "Filtre à eau"
+    },
+    "subcategories": {
+      "Accessories": "Accessoires",
+      "Backpacking Packs": "Sacs à dos de randonnée",
+      "Backpacking Tarps": "Bâches de camping",
+      "Base Layers": "Sous-vêtements techniques",
+      "Batteries": "Piles",
+      "Charging & Power Banks": "Chargeurs & batteries externes",
+      "Climbing Gear": "Matériel d'escalade",
+      "Coffee": "Café",
+      "Cookware": "Cuisine & ustensiles",
+      "Day Packs & Accessories": "Sacs de jour & accessoires",
+      "Documents": "Documents",
+      "Dry Bags": "Sacs étanches",
+      "Fire": "Feu",
+      "First Aid": "Premiers secours",
+      "Food Storage": "Conservation des aliments",
+      "Foot Care": "Soin des pieds",
+      "Footwear": "Chaussures",
+      "Fuel - Isobutane": "Combustible - Isobutane",
+      "Ground Sheet": "Tapis de sol",
+      "Guidebooks & Maps": "Guides & cartes",
+      "Hands": "Mains",
+      "Headlamps": "Lampes frontales",
+      "Headphones & Earbuds": "Casques & écouteurs",
+      "Headwear": "Couvre-chefs",
+      "Hydration Containers": "Contenants d'hydratation",
+      "Insect Protection": "Protection insectes",
+      "Jackets": "Vestes",
+      "Knives": "Couteaux",
+      "Lighting": "Éclairage",
+      "Long-Sleeved T-Shirt": "T-shirt manches longues",
+      "Men's Footwear": "Chaussures hommes",
+      "Men's Personal Care": "Soins personnels hommes",
+      "Micro Spikes": "Micro-crampons",
+      "Neck Gaiter": "Tour de cou",
+      "Organization": "Organisation",
+      "Pants": "Pantalons",
+      "Personal Care": "Soins personnels",
+      "Phones & GPS": "Téléphones & GPS",
+      "Photo & Video": "Photo & vidéo",
+      "Pillows": "Oreillers",
+      "Quilts": "Couettes",
+      "Rain Gear": "Vêtements imperméables",
+      "Shirts": "Chemises",
+      "Sleeping Bag Accessories": "Accessoires sac de couchage",
+      "Sleeping Bag Liners": "Draps de sac de couchage",
+      "Sleeping Bags": "Sacs de couchage",
+      "Sleeping Pad Accessories": "Accessoires matelas",
+      "Sleeping Pads": "Matelas",
+      "Soap Bar Case": "Étui à savon",
+      "Socks": "Chaussettes",
+      "Stoves": "Réchauds",
+      "Tent Stakes": "Sardines de tente",
+      "Tents": "Tentes",
+      "Toilet": "Toilettes",
+      "Toiletry Sets": "Trousses de toilette",
+      "Tools": "Outils",
+      "Towels": "Serviettes",
+      "Trekking Poles": "Bâtons de randonnée",
+      "Underwear": "Sous-vêtements",
+      "Unisex Footwear": "Chaussures unisexe",
+      "Utensils": "Ustensiles",
+      "Wag Bags": "Sacs déchets",
+      "Wallet": "Portefeuille",
+      "Water": "Eau",
+      "Water Treatment": "Traitement de l'eau",
+      "Wearables & GPS": "Objets connectés & GPS",
+      "Women's Footwear": "Chaussures femmes",
+      "Women's Personal Care": "Soins personnels femmes"
     }
   },
   "affiliateProductPicker": {
@@ -672,7 +752,11 @@
       "embedPlaceholderGenerating": "Génération…",
       "embedPlaceholderNone": "Aucun lien actif",
       "csvLabel": "Exporter en CSV",
-      "csvHelp": "Télécharger un CSV de cette liste partagée."
+      "csvHelp": "Télécharger un CSV de cette liste partagée.",
+      "settingsLabel": "Paramètres d'affichage",
+      "showTripDetails": "Afficher les dates et le lieu",
+      "showNotes": "Afficher les notes de voyage",
+      "showLinks": "Afficher les liens"
     },
     "buttons": {
       "copyLink": "Copier",
@@ -693,7 +777,8 @@
       "createLinkError": "Impossible de créer le lien de partage",
       "revokeSuccess": "Lien de partage révoqué",
       "revokeError": "Impossible de révoquer le lien",
-      "csvError": "Impossible de télécharger le CSV"
+      "csvError": "Impossible de télécharger le CSV",
+      "settingsError": "Impossible d'enregistrer les paramètres d'affichage"
     },
     "confirm": {
       "revokeTitle": "Révoquer cette URL de partage ?",

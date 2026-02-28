@@ -493,14 +493,16 @@
     "titleList": "Item-Details",
     "buttons": {
       "delete": "Item löschen",
-      "saving": "Speichern…"
+      "saving": "Speichern…",
+      "productPage": "Produktseite"
     },
     "toast": {
       "updated": "Item aktualisiert",
       "updatedEverywhere": "Item überall aktualisiert",
       "deleted": "Item gelöscht",
       "deleteFailed": "Löschen fehlgeschlagen",
-      "saveFailed": "Speichern fehlgeschlagen. Bitte versuche es erneut."
+      "saveFailed": "Speichern fehlgeschlagen. Bitte versuche es erneut.",
+      "stillLoading": "Artikeldetails werden noch geladen…"
     },
     "confirm": {
       "saveListTitle": "Änderungen an diesem Item speichern?",
@@ -542,10 +544,18 @@
       "tripStart": "Startdatum",
       "tripEnd": "Enddatum",
       "location": "Ort",
+      "links": "Links",
+      "routeSlot": "Route",
       "notes": "Notizen / Beschreibung"
     },
     "placeholders": {
-      "date": "Datum auswählen"
+      "date": "Datum auswählen",
+      "linkLabel": "z.B. Alta Via 1 Reiseführer",
+      "linkUrl": "https://...",
+      "notes": "Reisenotizen, Ausrüstungsentscheidungen, was gut und was nicht funktioniert hat…"
+    },
+    "hints": {
+      "markdownSupported": "Markdown unterstützt"
     },
     "stats": {
       "totalCost": "Gesamtkosten:",
@@ -633,6 +643,76 @@
       "Wallet": "Geldbörse",
       "Water Bottle": "Trinkflasche",
       "Water Filter": "Wasserfilter"
+    },
+    "subcategories": {
+      "Accessories": "Zubehör",
+      "Backpacking Packs": "Wanderrucksäcke",
+      "Backpacking Tarps": "Trekking-Tarps",
+      "Base Layers": "Funktionsunterwäsche",
+      "Batteries": "Batterien",
+      "Charging & Power Banks": "Ladegeräte & Powerbanks",
+      "Climbing Gear": "Kletterausrüstung",
+      "Coffee": "Kaffee",
+      "Cookware": "Kochgeschirr",
+      "Day Packs & Accessories": "Tagesrucksäcke & Zubehör",
+      "Documents": "Dokumente",
+      "Dry Bags": "Drybags",
+      "Fire": "Feuer",
+      "First Aid": "Erste Hilfe",
+      "Food Storage": "Lebensmittelaufbewahrung",
+      "Foot Care": "Fußpflege",
+      "Footwear": "Schuhwerk",
+      "Fuel - Isobutane": "Brennstoff - Isobutan",
+      "Ground Sheet": "Zeltunterlage",
+      "Guidebooks & Maps": "Reiseführer & Karten",
+      "Hands": "Hände",
+      "Headlamps": "Stirnlampen",
+      "Headphones & Earbuds": "Kopfhörer & Ohrhörer",
+      "Headwear": "Kopfbedeckung",
+      "Hydration Containers": "Trinkbehälter",
+      "Insect Protection": "Insektenschutz",
+      "Jackets": "Jacken",
+      "Knives": "Messer",
+      "Lighting": "Beleuchtung",
+      "Long-Sleeved T-Shirt": "Langarmshirt",
+      "Men's Footwear": "Herrenschuhe",
+      "Men's Personal Care": "Herrenpflege",
+      "Micro Spikes": "Microspikes",
+      "Neck Gaiter": "Schlauchschal",
+      "Organization": "Organisation",
+      "Pants": "Hosen",
+      "Personal Care": "Körperpflege",
+      "Phones & GPS": "Handys & GPS",
+      "Photo & Video": "Foto & Video",
+      "Pillows": "Kissen",
+      "Quilts": "Quilts",
+      "Rain Gear": "Regenkleidung",
+      "Shirts": "Shirts",
+      "Sleeping Bag Accessories": "Schlafsack-Zubehör",
+      "Sleeping Bag Liners": "Schlafsack-Inlets",
+      "Sleeping Bags": "Schlafsäcke",
+      "Sleeping Pad Accessories": "Isomattenzubehör",
+      "Sleeping Pads": "Isomatten",
+      "Soap Bar Case": "Seifendose",
+      "Socks": "Socken",
+      "Stoves": "Kocher",
+      "Tent Stakes": "Heringe",
+      "Tents": "Zelte",
+      "Toilet": "Toilette",
+      "Toiletry Sets": "Toilettensets",
+      "Tools": "Werkzeug",
+      "Towels": "Handtücher",
+      "Trekking Poles": "Trekkingstöcke",
+      "Underwear": "Unterwäsche",
+      "Unisex Footwear": "Unisex-Schuhe",
+      "Utensils": "Utensilien",
+      "Wag Bags": "Wag Bags",
+      "Wallet": "Geldbörse",
+      "Water": "Wasser",
+      "Water Treatment": "Wasseraufbereitung",
+      "Wearables & GPS": "Wearables & GPS",
+      "Women's Footwear": "Damenschuhe",
+      "Women's Personal Care": "Damenpflege"
     }
   },
   "affiliateProductPicker": {
@@ -672,7 +752,11 @@
       "embedPlaceholderGenerating": "Generieren…",
       "embedPlaceholderNone": "Kein aktiver Link",
       "csvLabel": "CSV exportieren",
-      "csvHelp": "Lade eine CSV dieser geteilten Liste herunter."
+      "csvHelp": "Lade eine CSV dieser geteilten Liste herunter.",
+      "settingsLabel": "Anzeigeeinstellungen",
+      "showTripDetails": "Daten und Ort anzeigen",
+      "showNotes": "Reisenotizen anzeigen",
+      "showLinks": "Links anzeigen"
     },
     "buttons": {
       "copyLink": "Kopieren",
@@ -693,7 +777,8 @@
       "createLinkError": "Share-Link konnte nicht erstellt werden",
       "revokeSuccess": "Share-Link widerrufen",
       "revokeError": "Share-Link konnte nicht widerrufen werden",
-      "csvError": "CSV konnte nicht heruntergeladen werden"
+      "csvError": "CSV konnte nicht heruntergeladen werden",
+      "settingsError": "Anzeigeeinstellungen konnten nicht gespeichert werden"
     },
     "confirm": {
       "revokeTitle": "Diesen Share-Link widerrufen?",

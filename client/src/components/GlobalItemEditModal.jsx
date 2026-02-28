@@ -355,7 +355,7 @@ export default function GlobalItemEditModal({
   const handleSave = (e) => {
     e.preventDefault();
     if (isResolvingMode) {
-      toast.error("Still loading item details…");
+      toast.error(t("globalItemEditModal.toast.stillLoading"));
       return;
     }
     const err = validate();
@@ -739,7 +739,7 @@ export default function GlobalItemEditModal({
 
               {!isCustom && primaryOffer?.deepLink && (
                 <ButtonLink href={primaryOffer.deepLink}>
-                  {primaryOffer.merchantName || "Product Page"}
+                  {primaryOffer.merchantName || t("globalItemEditModal.buttons.productPage")}
                 </ButtonLink>
               )}
             </div>
