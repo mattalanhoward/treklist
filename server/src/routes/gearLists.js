@@ -21,8 +21,8 @@ const MerchantOffer = require("../models/merchantOffer");
 
 /**
  * Add hasOffer flag to items based on user's region.
- * Items with direct links always have hasOffer: true.
- * Items with productId get hasOffer based on MerchantOffer availability.
+ * Falls back to the linked GlobalItem when the GearItem has no link or productId,
+ * covering items created before productId denormalization and list copies.
  *
  * @param {Array} items - Array of GearItem documents (lean)
  * @param {string} userId - User ID to get region from
@@ -31,55 +31,79 @@ const MerchantOffer = require("../models/merchantOffer");
 async function addOfferFlags(items, userId) {
   if (!items || items.length === 0) return [];
 
-  // Get user's region
+  // 1) Fetch user region once
   const user = await User.findById(userId).select("region").lean();
   const userRegion = normalizeRegion(user?.region);
 
-  // Separate items by type
-  const itemsWithDirectLink = [];
-  const itemsWithProductId = [];
-  const itemsWithNeither = [];
+  // 2) Collect globalItem IDs for items that have no direct link or productId
+  const needsFallback = items.filter((i) => !i.link && !i.productId && i.globalItem);
+  const globalItemIds = [...new Set(needsFallback.map((i) => String(i.globalItem)))];
 
+  const globalDocs = globalItemIds.length
+    ? await GlobalItem.find({ _id: { $in: globalItemIds } })
+        .select("link productId affiliate")
+        .lean()
+    : [];
+  const globalById = new Map(globalDocs.map((g) => [String(g._id), g]));
+
+  // 3) Collect all productIds that need an offer check (GearItem or GlobalItem fallback)
+  const productIdsToCheck = new Set();
   for (const item of items) {
-    if (item.link) {
-      // Custom items with direct links always have an offer
-      itemsWithDirectLink.push(item);
-    } else if (item.productId) {
-      // Catalog-backed items need offer lookup
-      itemsWithProductId.push(item);
-    } else {
-      // Items with neither (shouldn't happen, but handle gracefully)
-      itemsWithNeither.push(item);
+    if (item.link) continue;
+    if (item.productId) {
+      productIdsToCheck.add(String(item.productId));
+    } else if (item.globalItem) {
+      const g = globalById.get(String(item.globalItem));
+      if (g?.productId) productIdsToCheck.add(String(g.productId));
     }
   }
 
-  // Batch check: which productIds have offers in user's region?
-  let productsWithOffers = new Set();
+  // 4) Single query to find which productIds have an offer for this region
+  const offerDocs = productIdsToCheck.size
+    ? await MerchantOffer.find({
+        productId: { $in: [...productIdsToCheck] },
+        region: { $in: ["global", userRegion] },
+      })
+        .select("productId")
+        .lean()
+    : [];
+  const offerProductIds = new Set(offerDocs.map((o) => String(o.productId)));
 
-  if (itemsWithProductId.length > 0) {
-    const productIds = itemsWithProductId.map((item) => item.productId);
+  // 5) Assign hasOffer to each item
+  return items.map((item) => {
+    // Direct link on the GearItem → always has offer
+    if (item.link) return { ...item, hasOffer: true };
 
-    const availableOffers = await MerchantOffer.find({
-      productId: { $in: productIds },
-      region: { $in: ["global", userRegion] },
-    })
-      .select("productId")
-      .lean();
+    // GearItem has its own productId
+    if (item.productId) {
+      return { ...item, hasOffer: offerProductIds.has(String(item.productId)) };
+    }
 
-    productsWithOffers = new Set(
-      availableOffers.map((offer) => String(offer.productId)),
-    );
-  }
+    // Fall back to the linked GlobalItem
+    if (item.globalItem) {
+      const g = globalById.get(String(item.globalItem));
+      if (!g) return { ...item, hasOffer: false };
 
-  // Build final array with hasOffer flags
-  return [
-    ...itemsWithDirectLink.map((item) => ({ ...item, hasOffer: true })),
-    ...itemsWithProductId.map((item) => ({
-      ...item,
-      hasOffer: productsWithOffers.has(String(item.productId)),
-    })),
-    ...itemsWithNeither.map((item) => ({ ...item, hasOffer: false })),
-  ];
+      // GlobalItem has a direct link
+      if (g.link) return { ...item, hasOffer: true };
+
+      // GlobalItem has a productId
+      if (g.productId) {
+        return { ...item, hasOffer: offerProductIds.has(String(g.productId)) };
+      }
+
+      // Legacy affiliate link on GlobalItem
+      const deep =
+        (typeof g.affiliate === "string" ? g.affiliate : null) ||
+        g.affiliate?.deepLink ||
+        g.affiliate?.awDeepLink ||
+        g.affiliate?.url ||
+        null;
+      if (deep) return { ...item, hasOffer: true };
+    }
+
+    return { ...item, hasOffer: false };
+  });
 }
 
 /**
