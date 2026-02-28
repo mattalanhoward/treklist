@@ -15,7 +15,28 @@ import {
   FaUser,
   FaCopy,
   FaExternalLinkAlt,
+  FaCheck,
+  FaBan,
 } from "react-icons/fa";
+
+function ImageStatusCell({ imageUrls }) {
+  const firstUrl = Array.isArray(imageUrls) && imageUrls[0] ? imageUrls[0] : null;
+  const [status, setStatus] = useState(firstUrl ? "loading" : "none");
+
+  useEffect(() => {
+    if (!firstUrl) { setStatus("none"); return; }
+    setStatus("loading");
+    const img = new Image();
+    img.onload = () => setStatus("ok");
+    img.onerror = () => setStatus("error");
+    img.src = firstUrl;
+  }, [firstUrl]);
+
+  if (status === "none") return <span className="text-primary/30">–</span>;
+  if (status === "loading") return <span className="text-primary/40 text-xs">…</span>;
+  if (status === "ok") return <FaCheck className="text-success" title="Image loaded" />;
+  return <FaBan className="text-error" title="Image failed (404 or broken)" />;
+}
 import ConfirmDialog from "../components/ConfirmDialog";
 import { useUserSettings } from "../contexts/UserSettings";
 import AttributeFields, {
@@ -1671,6 +1692,10 @@ function GearCatalogSection({
                           Weight {sortArrow("weightGrams")}
                         </th>
 
+                        <th className="text-center px-3 py-2 font-semibold">
+                          Image
+                        </th>
+
                         <th className="text-left px-3 py-2 font-semibold">
                           Status
                         </th>
@@ -1733,6 +1758,10 @@ function GearCatalogSection({
                               {typeof item.weightGrams === "number"
                                 ? `${item.weightGrams} g`
                                 : "–"}
+                            </td>
+
+                            <td className="px-3 py-2 text-center align-top">
+                              <ImageStatusCell imageUrls={item.imageUrls} />
                             </td>
 
                             <td className="px-3 py-2 text-left align-top">
