@@ -269,6 +269,9 @@ export default function Dashboard() {
       // Refresh sidebar lists so the new one appears
       await fetchLists();
 
+      // Tell MyGearView to refetch (sample list items are global items too)
+      window.dispatchEvent(new CustomEvent("global-items:updated"));
+
       // Remember this as the last opened list
       localStorage.setItem("lastListId", newList._id);
 
