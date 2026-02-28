@@ -595,6 +595,13 @@ export default function Dashboard() {
     fetchFullData();
   }, [fetchFullData, listId, isAuthenticated]);
 
+  // Refetch list data when global items change (e.g. deleted from My Gear)
+  useEffect(() => {
+    const handler = () => fetchFullData();
+    window.addEventListener("global-items:updated", handler);
+    return () => window.removeEventListener("global-items:updated", handler);
+  }, [fetchFullData]);
+
   // const handleSelectList = useCallback(
   //   (id) => {
   //     // clear current list data so the new list can load fresh
