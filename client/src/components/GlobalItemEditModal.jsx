@@ -700,7 +700,7 @@ export default function GlobalItemEditModal({
                           <Spinner />
                         ) : (
                           <ImageCarousel
-                            images={safeCatalogImages}
+                            images={safeCatalogImages.slice(0, 1)}
                             alt={`${form.brand ? form.brand + " " : ""}${form.name || ""}`}
                             loading={false}
                           />
