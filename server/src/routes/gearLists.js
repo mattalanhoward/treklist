@@ -675,6 +675,7 @@ router.post("/:listId/copy", async (req, res) => {
 
         return {
           globalItem: i.globalItem,
+          productId: i.productId,
           name: i.name,
           gearList: copy._id,
           category: newCatId,
