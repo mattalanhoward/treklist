@@ -493,14 +493,16 @@
     "titleList": "Dettagli articolo",
     "buttons": {
       "delete": "Elimina articolo",
-      "saving": "Salvataggio…"
+      "saving": "Salvataggio…",
+      "productPage": "Pagina prodotto"
     },
     "toast": {
       "updated": "Articolo aggiornato",
       "updatedEverywhere": "Articolo aggiornato ovunque",
       "deleted": "Articolo eliminato",
       "deleteFailed": "Eliminazione non riuscita",
-      "saveFailed": "Salvataggio non riuscito. Riprova."
+      "saveFailed": "Salvataggio non riuscito. Riprova.",
+      "stillLoading": "Caricamento dei dettagli dell'articolo…"
     },
     "confirm": {
       "saveListTitle": "Salvare le modifiche a questo articolo?",
@@ -542,10 +544,18 @@
       "tripStart": "Inizio viaggio",
       "tripEnd": "Fine viaggio",
       "location": "Località",
+      "links": "Link",
+      "routeSlot": "Percorso",
       "notes": "Note / descrizione"
     },
     "placeholders": {
-      "date": "Seleziona data"
+      "date": "Seleziona data",
+      "linkLabel": "es. Guida Alta Via 1",
+      "linkUrl": "https://...",
+      "notes": "Note di viaggio, decisioni sull'attrezzatura, cosa ha funzionato e cosa no…"
+    },
+    "hints": {
+      "markdownSupported": "Markdown supportato"
     },
     "stats": {
       "totalCost": "Costo totale:",
@@ -633,6 +643,76 @@
       "Wallet": "Portafoglio",
       "Water Bottle": "Borraccia",
       "Water Filter": "Filtro per l'acqua"
+    },
+    "subcategories": {
+      "Accessories": "Accessori",
+      "Backpacking Packs": "Zaini da trekking",
+      "Backpacking Tarps": "Tarp da trekking",
+      "Base Layers": "Intimo tecnico",
+      "Batteries": "Batterie",
+      "Charging & Power Banks": "Caricatori & batterie esterne",
+      "Climbing Gear": "Attrezzatura da arrampicata",
+      "Coffee": "Caffè",
+      "Cookware": "Pentolame",
+      "Day Packs & Accessories": "Zaini da giorno & accessori",
+      "Documents": "Documenti",
+      "Dry Bags": "Sacche impermeabili",
+      "Fire": "Fuoco",
+      "First Aid": "Primo soccorso",
+      "Food Storage": "Conservazione alimenti",
+      "Foot Care": "Cura dei piedi",
+      "Footwear": "Calzature",
+      "Fuel - Isobutane": "Combustibile - Isobutano",
+      "Ground Sheet": "Telone da suolo",
+      "Guidebooks & Maps": "Guide & mappe",
+      "Hands": "Mani",
+      "Headlamps": "Lampade frontali",
+      "Headphones & Earbuds": "Cuffie & auricolari",
+      "Headwear": "Copricapo",
+      "Hydration Containers": "Contenitori per l'idratazione",
+      "Insect Protection": "Protezione insetti",
+      "Jackets": "Giacche",
+      "Knives": "Coltelli",
+      "Lighting": "Illuminazione",
+      "Long-Sleeved T-Shirt": "T-shirt a maniche lunghe",
+      "Men's Footwear": "Calzature uomo",
+      "Men's Personal Care": "Igiene personale uomo",
+      "Micro Spikes": "Micro ramponi",
+      "Neck Gaiter": "Scaldacollo",
+      "Organization": "Organizzazione",
+      "Pants": "Pantaloni",
+      "Personal Care": "Igiene personale",
+      "Phones & GPS": "Telefoni & GPS",
+      "Photo & Video": "Foto & video",
+      "Pillows": "Cuscini",
+      "Quilts": "Quilt",
+      "Rain Gear": "Abbigliamento antipioggia",
+      "Shirts": "Maglie",
+      "Sleeping Bag Accessories": "Accessori sacco a pelo",
+      "Sleeping Bag Liners": "Fodere sacco a pelo",
+      "Sleeping Bags": "Sacchi a pelo",
+      "Sleeping Pad Accessories": "Accessori materassino",
+      "Sleeping Pads": "Materassini",
+      "Soap Bar Case": "Porta sapone",
+      "Socks": "Calze",
+      "Stoves": "Fornelli",
+      "Tent Stakes": "Picchetti da tenda",
+      "Tents": "Tende",
+      "Toilet": "Igiene",
+      "Toiletry Sets": "Kit da toilette",
+      "Tools": "Attrezzi",
+      "Towels": "Asciugamani",
+      "Trekking Poles": "Bastoncini da trekking",
+      "Underwear": "Biancheria intima",
+      "Unisex Footwear": "Calzature unisex",
+      "Utensils": "Utensili",
+      "Wag Bags": "Sacchetti rifiuti",
+      "Wallet": "Portafoglio",
+      "Water": "Acqua",
+      "Water Treatment": "Trattamento acqua",
+      "Wearables & GPS": "Dispositivi GPS",
+      "Women's Footwear": "Calzature donna",
+      "Women's Personal Care": "Igiene personale donna"
     }
   },
   "affiliateProductPicker": {
@@ -672,7 +752,11 @@
       "embedPlaceholderGenerating": "Generazione…",
       "embedPlaceholderNone": "Nessun link attivo",
       "csvLabel": "Esporta CSV",
-      "csvHelp": "Scarica un CSV di questa lista condivisa."
+      "csvHelp": "Scarica un CSV di questa lista condivisa.",
+      "settingsLabel": "Impostazioni di visualizzazione",
+      "showTripDetails": "Mostra date e posizione",
+      "showNotes": "Mostra note di viaggio",
+      "showLinks": "Mostra link"
     },
     "buttons": {
       "copyLink": "Copia",
@@ -693,7 +777,8 @@
       "createLinkError": "Impossibile creare il link di condivisione",
       "revokeSuccess": "Link di condivisione revocato",
       "revokeError": "Impossibile revocare il link",
-      "csvError": "Impossibile scaricare il CSV"
+      "csvError": "Impossibile scaricare il CSV",
+      "settingsError": "Impossibile salvare le impostazioni di visualizzazione"
     },
     "confirm": {
       "revokeTitle": "Revocare questo URL di condivisione?",

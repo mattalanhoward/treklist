@@ -11,8 +11,7 @@ import { useUserSettings } from "../contexts/UserSettings";
 import { detectRegion, normalizeRegion } from "../utils/region";
 import CatalogItemPreviewModal from "./CatalogItemPreviewModal";
 import Spinner from "../components/ui/Spinner";
-import { CATALOG_CATEGORIES } from "../config/catalogTaxonomy";
-import { tCategory, tItemType } from "../config/catalogTaxonomy";
+import { CATALOG_CATEGORIES, tCategory, tItemType, tSubcategory } from "../config/catalogTaxonomy";
 
 function ImportCatalogTab({ onImported }) {
   const { t } = useTranslation("common");
@@ -318,7 +317,7 @@ function ImportCatalogTab({ onImported }) {
             </option>
             {subcategories.map((sub) => (
               <option key={sub} value={sub}>
-                {sub}
+                {tSubcategory(t, sub)}
               </option>
             ))}
           </select>

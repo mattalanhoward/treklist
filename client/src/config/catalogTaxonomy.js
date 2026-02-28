@@ -33,6 +33,98 @@ export function tItemType(t, value) {
   return t?.(`catalog.itemTypes.${value}`, value) ?? value;
 }
 
+// Locked subcategories per top-level category.
+// Keep these stable — add new values here when expanding the catalog.
+export const CATALOG_SUBCATEGORIES = {
+  “Accessories & Tools”: [
+    “Climbing Gear”,
+    “Dry Bags”,
+    “Fire”,
+    “Food Storage”,
+    “Insect Protection”,
+    “Knives”,
+    “Micro Spikes”,
+    “Organization”,
+    “Rain Gear”,
+    “Tools”,
+    “Trekking Poles”,
+  ],
+  “Backpacks & Bags”: [“Backpacking Packs”, “Day Packs & Accessories”],
+  “Electronics & Power”: [
+    “Batteries”,
+    “Charging & Power Banks”,
+    “Headlamps”,
+    “Headphones & Earbuds”,
+    “Lighting”,
+    “Phones & GPS”,
+    “Photo & Video”,
+    “Wearables & GPS”,
+  ],
+  Footwear: [“Men's Footwear”, “Unisex Footwear”, “Women's Footwear”],
+  “Health & Hygiene”: [
+    “First Aid”,
+    “Foot Care”,
+    “Men's Personal Care”,
+    “Personal Care”,
+    “Soap Bar Case”,
+    “Toilet”,
+    “Toiletry Sets”,
+    “Wag Bags”,
+    “Women's Personal Care”,
+  ],
+  Hydration: [“Hydration Containers”, “Water”, “Water Treatment”],
+  “Kitchen & Cooking”: [
+    “Coffee”,
+    “Cookware”,
+    “Fuel - Isobutane”,
+    “Stoves”,
+    “Utensils”,
+  ],
+  “Men's Clothing”: [
+    “Base Layers”,
+    “Hands”,
+    “Jackets”,
+    “Long-Sleeved T-Shirt”,
+    “Pants”,
+    “Rain Gear”,
+    “Shirts”,
+    “Shorts”,
+    “Socks”,
+    “Underwear”,
+  ],
+  “Navigation & Planning”: [“Guidebooks & Maps”],
+  Shelter: [“Backpacking Tarps”, “Ground Sheet”, “Tent Stakes”, “Tents”],
+  “Sleep System”: [
+    “Pillows”,
+    “Quilts”,
+    “Sleeping Bag Accessories”,
+    “Sleeping Bag Liners”,
+    “Sleeping Bags”,
+    “Sleeping Pad Accessories”,
+    “Sleeping Pads”,
+  ],
+  Travel: [“Documents”, “Personal Care”, “Towels”, “Wallet”],
+  “Unisex Clothing”: [“Accessories”, “Headwear”, “Neck Gaiter”, “Rain Gear”],
+  “Women's Clothing”: [“Base Layers”, “Jackets”, “Socks”],
+};
+
+// UI helper: translate a canonical subcategory value
+// Usage: tSubcategory(t, “Sleeping Bags”) -> “Sacs de couchage” (fr) or fallback to the value
+export function tSubcategory(t, value) {
+  if (!value) return “”;
+  return t?.(`catalog.subcategories.${value}`, value) ?? value;
+}
+
+// Returns options for a <select>, legacy-safe.
+// If the item's current subcategory isn't in the locked list, it's appended so the
+// form doesn't silently lose the value.
+export function buildSubcategoryOptions(category, { current = “” } = {}) {
+  const locked = CATALOG_SUBCATEGORIES[category] ?? [];
+  const opts = Array.from(new Set([...locked]));
+  if (current && !opts.includes(current)) opts.push(current);
+  return opts;
+}
+
 // Merge locked categories with any existing “legacy” categories found in data.
 // This avoids breaking existing items that used older values.
 export function buildCategoryOptions({ existing = [], current = "" } = {}) {

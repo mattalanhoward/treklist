@@ -493,14 +493,16 @@
     "titleList": "Uitrustingsitem bewerken",
     "buttons": {
       "delete": "Item verwijderen",
-      "saving": "Bezig met opslaan…"
+      "saving": "Bezig met opslaan…",
+      "productPage": "Productpagina"
     },
     "toast": {
       "updated": "Item bijgewerkt",
       "updatedEverywhere": "Item overal bijgewerkt",
       "deleted": "Item verwijderd",
       "deleteFailed": "Verwijderen mislukt",
-      "saveFailed": "Opslaan mislukt. Probeer het opnieuw."
+      "saveFailed": "Opslaan mislukt. Probeer het opnieuw.",
+      "stillLoading": "Artikeldetails worden nog geladen…"
     },
     "confirm": {
       "saveListTitle": "Wijzigingen aan dit item opslaan?",
@@ -542,10 +544,18 @@
       "tripStart": "Start van de tocht",
       "tripEnd": "Einde van de tocht",
       "location": "Locatie",
+      "links": "Links",
+      "routeSlot": "Route",
       "notes": "Notities / omschrijving"
     },
     "placeholders": {
-      "date": "Kies een datum"
+      "date": "Kies een datum",
+      "linkLabel": "bijv. Alta Via 1 Gids",
+      "linkUrl": "https://...",
+      "notes": "Reisnotities, uitrustingsbeslissingen, wat werkte en wat niet…"
+    },
+    "hints": {
+      "markdownSupported": "Markdown ondersteund"
     },
     "stats": {
       "totalCost": "Totale kosten:",
@@ -633,6 +643,76 @@
       "Wallet": "Portemonnee",
       "Water Bottle": "Drinkfles",
       "Water Filter": "Waterfilter"
+    },
+    "subcategories": {
+      "Accessories": "Accessoires",
+      "Backpacking Packs": "Wandelrugzakken",
+      "Backpacking Tarps": "Trekking-tarps",
+      "Base Layers": "Baselayers",
+      "Batteries": "Batterijen",
+      "Charging & Power Banks": "Laders & powerbanks",
+      "Climbing Gear": "Klimmateriaal",
+      "Coffee": "Koffie",
+      "Cookware": "Kookgerei",
+      "Day Packs & Accessories": "Dagrugzakken & accessoires",
+      "Documents": "Documenten",
+      "Dry Bags": "Drybags",
+      "Fire": "Vuur",
+      "First Aid": "EHBO",
+      "Food Storage": "Voedselopslag",
+      "Foot Care": "Voetverzorging",
+      "Footwear": "Schoeisel",
+      "Fuel - Isobutane": "Brandstof - Isobutaan",
+      "Ground Sheet": "Grondzeil",
+      "Guidebooks & Maps": "Gidsen & kaarten",
+      "Hands": "Handen",
+      "Headlamps": "Hoofdlampen",
+      "Headphones & Earbuds": "Hoofdtelefoons & oordopjes",
+      "Headwear": "Hoofddeksels",
+      "Hydration Containers": "Drinkcontainers",
+      "Insect Protection": "Insectenbescherming",
+      "Jackets": "Jassen",
+      "Knives": "Messen",
+      "Lighting": "Verlichting",
+      "Long-Sleeved T-Shirt": "Shirt met lange mouwen",
+      "Men's Footwear": "Herenschoenen",
+      "Men's Personal Care": "Herentoiletartikelen",
+      "Micro Spikes": "Microspikes",
+      "Neck Gaiter": "Nekwarmer",
+      "Organization": "Organisatie",
+      "Pants": "Broeken",
+      "Personal Care": "Persoonlijke verzorging",
+      "Phones & GPS": "Telefoons & GPS",
+      "Photo & Video": "Foto & video",
+      "Pillows": "Kussens",
+      "Quilts": "Quilts",
+      "Rain Gear": "Regenkleding",
+      "Shirts": "Shirts",
+      "Sleeping Bag Accessories": "Slaapzakaccesoires",
+      "Sleeping Bag Liners": "Slaapzakinleggers",
+      "Sleeping Bags": "Slaapzakken",
+      "Sleeping Pad Accessories": "Slaapmataccesoires",
+      "Sleeping Pads": "Slaapmatten",
+      "Soap Bar Case": "Zeephouder",
+      "Socks": "Sokken",
+      "Stoves": "Kooktoestellen",
+      "Tent Stakes": "Tentharingen",
+      "Tents": "Tenten",
+      "Toilet": "Toilet",
+      "Toiletry Sets": "Toiletsets",
+      "Tools": "Gereedschap",
+      "Towels": "Handdoeken",
+      "Trekking Poles": "Trekkingstokken",
+      "Underwear": "Ondergoed",
+      "Unisex Footwear": "Unisex schoeisel",
+      "Utensils": "Bestek",
+      "Wag Bags": "Afvalzakken",
+      "Wallet": "Portemonnee",
+      "Water": "Water",
+      "Water Treatment": "Waterbehandeling",
+      "Wearables & GPS": "Wearables & GPS",
+      "Women's Footwear": "Damesschoenen",
+      "Women's Personal Care": "Damestoiletartikelen"
     }
   },
   "affiliateProductPicker": {
@@ -672,7 +752,11 @@
       "embedPlaceholderGenerating": "Bezig met genereren…",
       "embedPlaceholderNone": "Geen actieve link",
       "csvLabel": "CSV exporteren",
-      "csvHelp": "Download een CSV van deze gedeelde lijst."
+      "csvHelp": "Download een CSV van deze gedeelde lijst.",
+      "settingsLabel": "Weergave-instellingen",
+      "showTripDetails": "Datums en locatie tonen",
+      "showNotes": "Reisnotities tonen",
+      "showLinks": "Links tonen"
     },
     "buttons": {
       "copyLink": "Kopiëren",
@@ -693,7 +777,8 @@
       "createLinkError": "Kon geen deel-link aanmaken.",
       "revokeSuccess": "Deellink ingetrokken",
       "revokeError": "Kon de link niet intrekken.",
-      "csvError": "Kon CSV niet downloaden."
+      "csvError": "Kon CSV niet downloaden.",
+      "settingsError": "Kan weergave-instellingen niet opslaan"
     },
     "confirm": {
       "revokeTitle": "Deze deel-URL intrekken?",
