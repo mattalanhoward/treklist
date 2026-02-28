@@ -9,31 +9,89 @@ router.use(auth);
 
 const User = require("../models/user");
 const MerchantOffer = require("../models/merchantOffer");
+const GlobalItem = require("../models/globalItem");
 
 /**
- * Add hasOffer flag to a single item
+ * Add hasOffer flags to a batch of items in one pass.
+ * Fetches user region once, batch-fetches needed GlobalItems,
+ * and batch-checks MerchantOffers — no N+1 queries.
  */
-async function addOfferFlagToItem(item, userId) {
-  // Get user's region
+async function addOfferFlagsToItems(items, userId) {
+  if (!items.length) return items;
+
+  // 1) Fetch user region once
   const user = await User.findById(userId).select("region").lean();
   const userRegion = normalizeRegion(user?.region);
 
-  // Items with direct links always have offers
-  if (item.link) {
-    return { ...item, hasOffer: true };
+  // 2) Collect globalItem IDs for items that have no direct link or productId
+  const needsFallback = items.filter((i) => !i.link && !i.productId && i.globalItem);
+  const globalItemIds = [...new Set(needsFallback.map((i) => String(i.globalItem)))];
+
+  const globalDocs = globalItemIds.length
+    ? await GlobalItem.find({ _id: { $in: globalItemIds } })
+        .select("link productId affiliate")
+        .lean()
+    : [];
+  const globalById = new Map(globalDocs.map((g) => [String(g._id), g]));
+
+  // 3) Collect all productIds that need an offer check (from GearItem or GlobalItem fallback)
+  const productIdsToCheck = new Set();
+  for (const item of items) {
+    if (item.link) continue;
+    if (item.productId) {
+      productIdsToCheck.add(String(item.productId));
+    } else if (item.globalItem) {
+      const g = globalById.get(String(item.globalItem));
+      if (g?.productId) productIdsToCheck.add(String(g.productId));
+    }
   }
 
-  // Items with productId need offer lookup
-  if (item.productId) {
-    const offerExists = await MerchantOffer.exists({
-      productId: item.productId,
-      region: { $in: ["global", userRegion] },
-    });
-    return { ...item, hasOffer: !!offerExists };
-  }
+  // 4) Single query to find which productIds have an offer for this region
+  const offerDocs = productIdsToCheck.size
+    ? await MerchantOffer.find({
+        productId: { $in: [...productIdsToCheck] },
+        region: { $in: ["global", userRegion] },
+      })
+        .select("productId")
+        .lean()
+    : [];
+  const offerProductIds = new Set(offerDocs.map((o) => String(o.productId)));
 
-  // Items without link or productId
-  return { ...item, hasOffer: false };
+  // 5) Assign hasOffer to each item
+  return items.map((item) => {
+    // Direct link on the GearItem → always has offer
+    if (item.link) return { ...item, hasOffer: true };
+
+    // GearItem has its own productId
+    if (item.productId) {
+      return { ...item, hasOffer: offerProductIds.has(String(item.productId)) };
+    }
+
+    // Fall back to the linked GlobalItem
+    if (item.globalItem) {
+      const g = globalById.get(String(item.globalItem));
+      if (!g) return { ...item, hasOffer: false };
+
+      // GlobalItem has a direct link
+      if (g.link) return { ...item, hasOffer: true };
+
+      // GlobalItem has a productId
+      if (g.productId) {
+        return { ...item, hasOffer: offerProductIds.has(String(g.productId)) };
+      }
+
+      // Legacy affiliate link on GlobalItem
+      const deep =
+        (typeof g.affiliate === "string" ? g.affiliate : null) ||
+        g.affiliate?.deepLink ||
+        g.affiliate?.awDeepLink ||
+        g.affiliate?.url ||
+        null;
+      if (deep) return { ...item, hasOffer: true };
+    }
+
+    return { ...item, hasOffer: false };
+  });
 }
 
 /**
@@ -72,9 +130,7 @@ router.get("/", async (req, res) => {
       .lean();
 
     // 4) Add hasOffer flags to all items
-    const itemsWithOffers = await Promise.all(
-      items.map((item) => addOfferFlagToItem(item, req.userId)),
-    );
+    const itemsWithOffers = await addOfferFlagsToItems(items, req.userId);
 
     return res.json(itemsWithOffers);
   } catch (err) {
@@ -144,8 +200,8 @@ router.post("/", async (req, res) => {
     });
 
     // 4) Add hasOffer flag before returning
-    const itemWithOffer = await addOfferFlagToItem(
-      newItem.toObject(),
+    const [itemWithOffer] = await addOfferFlagsToItems(
+      [newItem.toObject()],
       req.userId,
     );
 
