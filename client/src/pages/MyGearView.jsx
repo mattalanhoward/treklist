@@ -168,6 +168,7 @@ export default function MyGearView({ collapsed }) {
     try {
       await api.delete(`/global/items/${item._id}`);
       toast.success(t("myGear.toast.deleted", "Item deleted"));
+      setItems((prev) => prev.filter((i) => i._id !== item._id));
       fetchItems();
       window.dispatchEvent(new CustomEvent("global-items:updated"));
     } catch (err) {
@@ -217,6 +218,7 @@ export default function MyGearView({ collapsed }) {
           count: selectedIds.size,
         })
       );
+      setItems((prev) => prev.filter((i) => !selectedIds.has(i._id)));
       fetchItems();
       window.dispatchEvent(new CustomEvent("global-items:updated"));
       exitSelectionMode();
