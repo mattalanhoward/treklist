@@ -161,6 +161,7 @@ function GearCatalogSection({
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterBrand, setFilterBrand] = useState("all");
   const [filterNetwork, setFilterNetwork] = useState("all");
+  const [filterImage, setFilterImage] = useState("all");
   const [sort, setSort] = useState({ field: "updatedAt", dir: "desc" });
 
   // Pagination
@@ -721,9 +722,15 @@ function GearCatalogSection({
       const networkMatches =
         filterNetwork === "all" || itemNetwork === filterNetwork;
 
-      return searchMatches && categoryMatches && brandMatches && networkMatches;
+      const hasImage = Array.isArray(item.imageUrls) && item.imageUrls.length > 0;
+      const imageMatches =
+        filterImage === "all" ||
+        (filterImage === "has_image" && hasImage) ||
+        (filterImage === "no_image" && !hasImage);
+
+      return searchMatches && categoryMatches && brandMatches && networkMatches && imageMatches;
     });
-  }, [items, search, filterCategory, filterBrand, filterNetwork]);
+  }, [items, search, filterCategory, filterBrand, filterNetwork, filterImage]);
 
   const sortedItems = useMemo(() => {
     const dir = sort.dir === "asc" ? 1 : -1;
@@ -1635,6 +1642,19 @@ function GearCatalogSection({
                             {net}
                           </option>
                         ))}
+                      </select>
+
+                      <select
+                        className="select select-xs select-bordered"
+                        value={filterImage}
+                        onChange={(e) => {
+                          setFilterImage(e.target.value);
+                          setPage(0);
+                        }}
+                      >
+                        <option value="all">All images</option>
+                        <option value="has_image">Has image</option>
+                        <option value="no_image">No image</option>
                       </select>
                     </div>
                   </div>
