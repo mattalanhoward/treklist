@@ -5,6 +5,7 @@ import { FiX } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { tItemType } from "../config/catalogTaxonomy";
+import GlobalItemEditModal from "./GlobalItemEditModal";
 
 export default function AddGearItemModal({
   listId,
@@ -25,6 +26,8 @@ export default function AddGearItemModal({
   const [quantity, setQuantity] = useState(1);
   // 5) Loading flag while saving
   const [saving, setSaving] = useState(false);
+  // 6) Item currently being previewed in detail modal
+  const [previewItem, setPreviewItem] = useState(null);
 
   // ───────────────────────────────────────────────────────
   // Fetch categories + existing items across entire list for dup-check
@@ -238,9 +241,7 @@ export default function AddGearItemModal({
                   <li
                     key={item._id}
                     className={`flex items-center px-2 py-1 rounded bg-neutral/20 border border-primary/20 mb-1 ${
-                      disabled
-                        ? "opacity-50 cursor-default"
-                        : "hover:bg-primary/10 cursor-pointer"
+                      disabled ? "opacity-50" : ""
                     }`}
                   >
                     <input
@@ -248,11 +249,13 @@ export default function AddGearItemModal({
                       checked={selectedIds.has(item._id)}
                       onChange={() => !disabled && toggleCheckbox(item._id)}
                       disabled={disabled}
-                      className="mr-3 h-4 w-4 text-secondary border-primary rounded focus:ring-secondary"
+                      className="mr-3 h-4 w-4 text-secondary border-primary rounded focus:ring-secondary flex-shrink-0"
                     />
-                    <div
-                      className="flex-1 select-none"
-                      onClick={() => !disabled && toggleCheckbox(item._id)}
+                    <button
+                      type="button"
+                      disabled={disabled}
+                      onClick={() => setPreviewItem(item)}
+                      className="flex-1 text-left select-none hover:bg-primary/10 rounded px-1 -mx-1 py-0.5"
                     >
                       <div className="flex items-center justify-between">
                         <div>
@@ -269,7 +272,7 @@ export default function AddGearItemModal({
                           </span>
                         )}
                       </div>
-                    </div>
+                    </button>
                   </li>
                 );
               })
@@ -280,6 +283,16 @@ export default function AddGearItemModal({
             )}
           </ul>
         </div>
+
+        {previewItem && (
+          <GlobalItemEditModal
+            item={previewItem}
+            onClose={() => setPreviewItem(null)}
+            onSaved={() => setPreviewItem(null)}
+            allowDelete={false}
+            context="global"
+          />
+        )}
 
         {/* Actions */}
         <div className="mt-4 flex justify-end space-x-2">
