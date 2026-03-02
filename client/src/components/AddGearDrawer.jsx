@@ -420,6 +420,7 @@ function CustomTab({ onCreated }) {
   const [brand, setBrand] = useState("");
   const [description, setDescription] = useState("");
   const [link, setLink] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
 
   const unit = useUnit();
@@ -456,6 +457,7 @@ function CustomTab({ onCreated }) {
       if (description.trim()) payload.description = description.trim();
       if (typeof grams === "number") payload.weight = grams;
       if (link.trim()) payload.link = link.trim();
+      if (imageUrl.trim()) payload.imageUrls = [imageUrl.trim()];
 
       const { data } = await api.post("/global/items", payload);
 
@@ -468,6 +470,7 @@ function CustomTab({ onCreated }) {
       setBrand("");
       setDescription("");
       setLink("");
+      setImageUrl("");
       setDisplayWeight("");
 
       onCreated?.(data);
@@ -566,6 +569,17 @@ function CustomTab({ onCreated }) {
             onChange={setLink}
             label={t("globalItemModal.labels.link")}
             placeholder={t("globalItemModal.placeholders.link")}
+            required={false}
+            className="text-sm"
+          />
+        </div>
+
+        <div className="col-span-2">
+          <LinkInput
+            value={imageUrl}
+            onChange={setImageUrl}
+            label={t("globalItemModal.labels.imageUrl", "Image URL")}
+            placeholder="https://example.com/image.jpg"
             required={false}
             className="text-sm"
           />

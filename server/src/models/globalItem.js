@@ -101,6 +101,12 @@ const GlobalItemSchema = new mongoose.Schema(
       type: String,
     },
 
+    // User-supplied image URLs (custom items only; imported items get images from CatalogItem).
+    imageUrls: {
+      type: [String],
+      default: [],
+    },
+
     // Whether this item is worn (not carried in pack weight).
     worn: {
       type: Boolean,

@@ -65,6 +65,9 @@ export default function GlobalItemEditModal({
   // Start true - will be set to false when we confirm no images or image is loaded
   const [loadingImageAsset, setLoadingImageAsset] = useState(true);
 
+  // Image URL for custom items (single URL, stored as imageUrls[0])
+  const [imageUrl, setImageUrl] = useState("");
+
   const itemId = item ? item._id : null;
   const isListContext = useMemo(() => {
     return (
@@ -240,6 +243,9 @@ export default function GlobalItemEditModal({
   // Collapse image column entirely if no images OR image failed
   const showImageBlock = isImported && hasImages && !imageFailed;
 
+  // Show image column for custom items that have a URL set
+  const showCustomImageBlock = isCustom && Boolean(imageUrl.trim());
+
   // Reset image state when switching products / modes
   // Only reset loadingImageAsset when NOT imported (to avoid flash when becoming imported)
   useEffect(() => {
@@ -304,6 +310,10 @@ export default function GlobalItemEditModal({
     setWorn(!!item.worn);
     setConsumable(!!item.consumable);
     setQuantity(item.quantity || 1);
+    if (viewMode === "custom") {
+      const urls = item.imageUrls ?? item.globalItem?.imageUrls ?? [];
+      setImageUrl(Array.isArray(urls) && urls[0] ? urls[0] : "");
+    }
   }, [itemId, viewMode, item]);
 
   // Hydrate imported read-only fields from the *template*
@@ -340,6 +350,10 @@ export default function GlobalItemEditModal({
     if (parsed != null && parsed < 0) return t("validation.weightNegative");
 
     if (viewMode === "custom" && form.link && !/^https?:\/\//.test(form.link)) {
+      return t("validation.urlInvalid");
+    }
+
+    if (viewMode === "custom" && imageUrl.trim() && !/^https?:\/\//.test(imageUrl.trim())) {
       return t("validation.urlInvalid");
     }
 
@@ -397,6 +411,9 @@ export default function GlobalItemEditModal({
 
         const trimmedLink = (form.link || "").trim();
         globalPayload.link = trimmedLink === "" ? null : trimmedLink;
+
+        const trimmedImage = (imageUrl || "").trim();
+        globalPayload.imageUrls = trimmedImage ? [trimmedImage] : [];
       }
 
       const listPayload = { ...basePayload };
@@ -468,11 +485,8 @@ export default function GlobalItemEditModal({
     (isImported && resolvedProductId && catalogLoadedFor !== resolvedProductId) ||
     (isImported && loadingImageAsset);
 
-  const modalWidthClass = isCustom
-    ? "max-w-2xl"
-    : showImageBlock
-      ? "max-w-4xl"
-      : "max-w-2xl";
+  const modalWidthClass =
+    showImageBlock || showCustomImageBlock ? "max-w-4xl" : "max-w-2xl";
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center z-[60]">
@@ -512,111 +526,142 @@ export default function GlobalItemEditModal({
 
             {isCustom ? (
             <>
-              {/* Custom items layout (editable) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {/* Row 1: Name | Brand */}
-                <div>
-                  <label className="block font-medium text-primary mb-0.5">
-                    {t("globalItemModal.labels.name")}
-                    <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    name="name"
-                    value={form.name}
-                    onChange={handleChange}
-                    disabled={disableEdits}
-                    className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100"
-                  />
+              {/* Custom items layout: fields left, image right (when URL set), description below */}
+              <div className={`sm:grid sm:gap-6 ${showCustomImageBlock ? "sm:grid-cols-2" : ""}`}>
+                {/* Left column: editable form fields */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {/* Row 1: Name | Brand */}
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      {t("globalItemModal.labels.name")}
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      name="name"
+                      value={form.name}
+                      onChange={handleChange}
+                      disabled={disableEdits}
+                      className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      {t("globalItemModal.labels.brand")}
+                    </label>
+                    <input
+                      name="brand"
+                      value={form.brand}
+                      onChange={handleChange}
+                      disabled={disableEdits}
+                      className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100"
+                    />
+                  </div>
+
+                  {/* Row 2: Category | Item Type */}
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      {t("globalItemModal.labels.category", "Category")}
+                    </label>
+                    <select
+                      name="catalogCategory"
+                      value={form.catalogCategory}
+                      onChange={handleChange}
+                      disabled={disableEdits}
+                      className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100"
+                    >
+                      <option value="">{t("myGear.filter.uncategorized", "Uncategorized")}</option>
+                      {CATALOG_CATEGORIES.map((cat) => (
+                        <option key={cat} value={cat}>
+                          {tCategory(t, cat)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      {t("globalItemModal.labels.itemType")}
+                    </label>
+                    <input
+                      name="itemType"
+                      value={form.itemType}
+                      onChange={handleChange}
+                      disabled={disableEdits}
+                      className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100"
+                    />
+                  </div>
+
+                  {/* Row 3: Weight | Link */}
+                  <div>
+                    <label className="block font-medium text-primary mb-0.5">
+                      {t("globalItemModal.labels.weight", { unit: unitLabel })}
+                    </label>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      value={displayWeight}
+                      onChange={(e) => setDisplayWeight(e.target.value)}
+                      disabled={disableEdits}
+                      className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100"
+                    />
+                  </div>
+
+                  <div>
+                    <LinkInput
+                      value={form.link}
+                      onChange={(newLink) =>
+                        setForm((f) => ({ ...f, link: newLink }))
+                      }
+                      label="Link"
+                      placeholder="tarptent.com"
+                      disabled={disableEdits}
+                      required={false}
+                    />
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <LinkInput
+                      value={imageUrl}
+                      onChange={(val) => setImageUrl(val)}
+                      label={t("globalItemModal.labels.imageUrl", "Image URL")}
+                      placeholder="https://example.com/image.jpg"
+                      disabled={disableEdits}
+                      required={false}
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block font-medium text-primary mb-0.5">
-                    {t("globalItemModal.labels.brand")}
-                  </label>
-                  <input
-                    name="brand"
-                    value={form.brand}
-                    onChange={handleChange}
-                    disabled={disableEdits}
-                    className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100"
-                  />
-                </div>
+                {/* Right column: image preview (desktop only, when URL is set) */}
+                {showCustomImageBlock && (
+                  <div className="hidden sm:flex items-center justify-center">
+                    <div className="bg-white rounded border border-primary/15 py-2 px-2 w-full max-w-md">
+                      <div className="h-[260px] w-full overflow-hidden flex items-center justify-center">
+                        <img
+                          src={imageUrl}
+                          alt={`${form.brand ? form.brand + " " : ""}${form.name || ""}`}
+                          className="max-h-full max-w-full object-contain"
+                          onError={(e) => { e.currentTarget.style.display = "none"; }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
 
-                {/* Row 2: Category | Item Type */}
-                <div>
-                  <label className="block font-medium text-primary mb-0.5">
-                    {t("globalItemModal.labels.category", "Category")}
-                  </label>
-                  <select
-                    name="catalogCategory"
-                    value={form.catalogCategory}
-                    onChange={handleChange}
-                    disabled={disableEdits}
-                    className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100"
-                  >
-                    <option value="">{t("myGear.filter.uncategorized", "Uncategorized")}</option>
-                    {CATALOG_CATEGORIES.map((cat) => (
-                      <option key={cat} value={cat}>
-                        {tCategory(t, cat)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block font-medium text-primary mb-0.5">
-                    {t("globalItemModal.labels.itemType")}
-                  </label>
-                  <input
-                    name="itemType"
-                    value={form.itemType}
-                    onChange={handleChange}
-                    disabled={disableEdits}
-                    className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100"
-                  />
-                </div>
-
-                {/* Row 3: Weight | Link */}
-                <div>
-                  <label className="block font-medium text-primary mb-0.5">
-                    {t("globalItemModal.labels.weight", { unit: unitLabel })}
-                  </label>
-                  <input
-                    type="text"
-                    inputMode="decimal"
-                    value={displayWeight}
-                    onChange={(e) => setDisplayWeight(e.target.value)}
-                    disabled={disableEdits}
-                    className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100"
-                  />
-                </div>
-
-                <div>
-                  <LinkInput
-                    value={form.link}
-                    onChange={(newLink) =>
-                      setForm((f) => ({ ...f, link: newLink }))
-                    }
-                    label="Link"
-                    placeholder="tarptent.com"
-                    disabled={disableEdits}
-                    required={false}
-                  />
-                </div>
-
-                <div className="sm:col-span-2">
-                  <label className="block font-medium text-primary mb-0.5">
-                    {t("globalItemModal.labels.description")}
-                  </label>
-                  <textarea
-                    name="description"
-                    value={form.description}
-                    onChange={handleChange}
-                    disabled={disableEdits}
-                    className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100 resize-none h-16 sm:h-[6.5rem]"
-                    rows={2}
-                  />
-                </div>
+              {/* Description — full width below */}
+              <div className="mt-2">
+                <label className="block font-medium text-primary mb-0.5">
+                  {t("globalItemModal.labels.description")}
+                </label>
+                <textarea
+                  name="description"
+                  value={form.description}
+                  onChange={handleChange}
+                  disabled={disableEdits}
+                  className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100 resize-none h-16 sm:h-[6.5rem]"
+                  rows={2}
+                />
               </div>
             </>
           ) : (
