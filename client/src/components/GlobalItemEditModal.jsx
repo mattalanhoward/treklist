@@ -316,6 +316,14 @@ export default function GlobalItemEditModal({
     }
   }, [itemId, viewMode, item]);
 
+  // Fallback: if imageUrl is empty after hydration but globalTemplate has imageUrls, use those.
+  // Handles the case where the list's GearItem.imageUrls is stale (not yet cascaded from GlobalItem).
+  useEffect(() => {
+    if (viewMode !== "custom") return;
+    if (!globalTemplate?.imageUrls?.length) return;
+    setImageUrl((prev) => prev || globalTemplate.imageUrls[0]);
+  }, [viewMode, globalTemplate]);
+
   // Hydrate imported read-only fields from the *template*
   useEffect(() => {
     if (!item) return;
