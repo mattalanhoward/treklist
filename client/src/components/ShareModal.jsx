@@ -239,12 +239,12 @@ export default function ShareModal({ listId, isOpen, onClose }) {
             <label className="block font-medium text-primary mb-0.5">
               {t("shareModal.fields.shareUrlLabel")}
             </label>
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2">
               <input
                 ref={inputRef}
                 type="text"
                 readOnly
-                className="flex-1 mt-0.5 block w-full border border-primary rounded p-2 h-10 text-primary bg-base-100 placeholder:text-primary/50"
+                className="flex-1 mt-0.5 block w-full border border-primary rounded px-2 py-1 text-sm text-primary bg-base-100 placeholder:text-primary/50"
                 value={shareUrl}
                 placeholder={
                   busy
@@ -253,7 +253,7 @@ export default function ShareModal({ listId, isOpen, onClose }) {
                 }
               />
               <button
-                className="px-3 py-1.5 sm:px-4 sm:py-2 rounded bg-secondary text-white hover:bg-secondary/80 disabled:opacity-50 flex items-center gap-2"
+                className="px-2 py-1 rounded bg-secondary text-white hover:bg-secondary/80 disabled:opacity-50 flex items-center gap-2 text-sm"
                 onClick={onCopyUrl}
                 disabled={busy || !token}
                 title={t("shareModal.tooltips.copyLink")}
@@ -271,12 +271,12 @@ export default function ShareModal({ listId, isOpen, onClose }) {
             <label className="block font-medium text-primary mb-0.5">
               {t("shareModal.fields.embedLabel")}
             </label>
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2">
               <input
                 ref={embedRef}
                 type="text"
                 readOnly
-                className="flex-1 mt-0.5 block w-full border border-primary rounded p-2 h-10 text-primary bg-base-100 placeholder:text-primary/50"
+                className="flex-1 mt-0.5 block w-full border border-primary rounded px-2 py-1 text-sm text-primary bg-base-100 placeholder:text-primary/50"
                 value={embedCode}
                 placeholder={
                   busy
@@ -285,7 +285,7 @@ export default function ShareModal({ listId, isOpen, onClose }) {
                 }
               />
               <button
-                className="px-3 py-1.5 sm:px-4 sm:py-2 rounded bg-secondary text-white hover:bg-secondary/80 disabled:opacity-50 flex items-center gap-2"
+                className="px-2 py-1 rounded bg-secondary text-white hover:bg-secondary/80 disabled:opacity-50 flex items-center gap-2 text-sm"
                 onClick={onCopyEmbed}
                 disabled={busy || !token}
                 title={t("shareModal.tooltips.copyEmbed")}
@@ -305,7 +305,7 @@ export default function ShareModal({ listId, isOpen, onClose }) {
                 {t("shareModal.fields.csvHelp")}
               </div>
               <button
-                className="px-3 py-1.5 sm:px-4 sm:py-2 rounded bg-neutralAlt text-primary border border-primary hover:bg-neutralAlt/90 disabled:opacity-50 flex items-center gap-2"
+                className="px-2 py-1 rounded bg-neutralAlt text-primary border border-primary/30 hover:bg-neutralAlt/90 disabled:opacity-50 flex items-center gap-2 text-sm"
                 onClick={onDownloadCsv}
                 disabled={busy || !token}
                 title={t("shareModal.tooltips.downloadCsv")}
@@ -319,7 +319,7 @@ export default function ShareModal({ listId, isOpen, onClose }) {
         {/* Footer */}
         <div className="mt-4 flex items-center justify-between">
           <button
-            className="px-4 py-2 bg-error text-neutral font-semibold rounded-md shadow hover:bg-error/80 disabled:opacity-50 flex items-center gap-2"
+            className="px-2 py-1 bg-error text-neutral rounded hover:bg-error/80 disabled:opacity-50 flex items-center gap-2 text-sm"
             onClick={() => setRevokeConfirmOpen(true)}
             disabled={busy || !token}
             title={t("shareModal.tooltips.revokeLink")}
@@ -328,7 +328,7 @@ export default function ShareModal({ listId, isOpen, onClose }) {
           </button>
 
           <button
-            className="px-4 py-2 rounded bg-secondary text-white hover:bg-secondary/80"
+            className="px-2 py-1 rounded bg-secondary text-white hover:bg-secondary/80 text-sm"
             onClick={onClose}
             title={t("actions.close")}
           >
