@@ -7,18 +7,7 @@ import {
   buildSubcategoryOptions,
 } from "../config/catalogTaxonomy";
 import { toast } from "react-hot-toast";
-import {
-  FaEdit,
-  FaTimes,
-  FaChevronUp,
-  FaChevronDown,
-  FaUsers,
-  FaUser,
-  FaCopy,
-  FaExternalLinkAlt,
-  FaCheck,
-  FaBan,
-} from "react-icons/fa";
+import { FiEdit2, FiX, FiChevronUp, FiChevronDown, FiUsers, FiUser, FiCopy, FiExternalLink, FiCheck, FiSlash } from "react-icons/fi";
 
 function ImageStatusCell({ imageUrls }) {
   const firstUrl = Array.isArray(imageUrls) && imageUrls[0] ? imageUrls[0] : null;
@@ -35,8 +24,8 @@ function ImageStatusCell({ imageUrls }) {
 
   if (status === "none") return <span className="text-primary/30">–</span>;
   if (status === "loading") return <span className="text-primary/40 text-xs">…</span>;
-  if (status === "ok") return <FaCheck className="text-success" title="Image loaded" />;
-  return <FaBan className="text-error" title="Image failed (404 or broken)" />;
+  if (status === "ok") return <FiCheck className="text-success" title="Image loaded" />;
+  return <FiSlash className="text-error" title="Image failed (404 or broken)" />;
 }
 import ConfirmDialog from "../components/ConfirmDialog";
 import { useUserSettings } from "../contexts/UserSettings";
@@ -850,7 +839,7 @@ function GearCatalogSection({
               className="btn btn-ghost btn-xs text-primary"
               title={showCreateForm ? "Hide create form" : "Show create form"}
             >
-              {showCreateForm ? <FaChevronUp /> : <FaChevronDown />}
+              {showCreateForm ? <FiChevronUp /> : <FiChevronDown />}
             </button>
           </div>
 
@@ -1374,7 +1363,7 @@ function GearCatalogSection({
                             onClick={() => removeOffer(idx)}
                             title="Remove offer"
                           >
-                            <FaTimes />
+                            <FiX />
                           </button>
                         </div>
 
@@ -1565,7 +1554,7 @@ function GearCatalogSection({
                 className="btn btn-ghost btn-xs"
                 title={showListBody ? "Hide catalog list" : "Show catalog list"}
               >
-                {showListBody ? <FaChevronUp /> : <FaChevronDown />}
+                {showListBody ? <FiChevronUp /> : <FiChevronDown />}
               </button>
             </div>
           </div>
@@ -1814,7 +1803,7 @@ function GearCatalogSection({
                                   onClick={() => setEditingItem(item)}
                                   title="Edit catalog item"
                                 >
-                                  <FaEdit />
+                                  <FiEdit2 />
                                 </button>
                                 <button
                                   type="button"
@@ -1826,7 +1815,7 @@ function GearCatalogSection({
                                   }}
                                   title="Duplicate (copy fields into Add catalog item)"
                                 >
-                                  <FaCopy />
+                                  <FiCopy />
                                 </button>
                                 <button
                                   type="button"
@@ -2354,7 +2343,7 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
             className="btn btn-ghost btn-xs text-error"
             title="Close"
           >
-            <FaTimes />
+            <FiX />
           </button>
         </div>
 
@@ -2893,7 +2882,7 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                             onClick={() => removeOffer(idx)}
                             title="Remove offer"
                           >
-                            <FaTimes />
+                            <FiX />
                           </button>
                         </div>
 
@@ -3200,7 +3189,7 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
         {/* Header - fixed at top */}
         <div className="flex justify-between items-center mb-2 sm:mb-3 flex-shrink-0">
           <h2 className="text-xl font-semibold text-primary flex items-center gap-2">
-            <FaUser />
+            <FiUser />
             <span>User details</span>
           </h2>
           <button
@@ -3209,7 +3198,7 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
             disabled={saving}
             className="text-error hover:text-error/80"
           >
-            <FaTimes />
+            <FiX />
           </button>
         </div>
 
@@ -3408,7 +3397,7 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
             {/* Lists summary */}
             <div className="border-t border-base-200 pt-3 mt-2">
               <h3 className="text-sm font-semibold text-primary flex items-center gap-1 mb-2">
-                <FaUsers className="text-primary/80" />
+                <FiUsers className="text-primary/80" />
                 <span>
                   Gear lists ({lists.length})
                   <span className="font-normal text-primary/70 ml-1">
@@ -3752,7 +3741,7 @@ function UsersSection() {
       {/* Section header */}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-primary flex items-center gap-2">
-          <FaUsers />
+          <FiUsers />
           <span>Users</span>
         </h2>
       </div>
@@ -3781,7 +3770,7 @@ function UsersSection() {
               className="btn btn-ghost btn-xs"
               title={showListBody ? "Hide users list" : "Show users list"}
             >
-              {showListBody ? <FaChevronUp /> : <FaChevronDown />}
+              {showListBody ? <FiChevronUp /> : <FiChevronDown />}
             </button>
           </div>
         </div>
@@ -4126,7 +4115,7 @@ function UsersSection() {
                             onClick={() => setSelectedUserId(u._id)}
                             title="View user details"
                           >
-                            <FaEdit />
+                            <FiEdit2 />
                           </button>
                         </td>
                       </tr>
@@ -4160,7 +4149,7 @@ function UsersSection() {
                           onClick={() => setSelectedUserId(u._id)}
                           title="View user details"
                         >
-                          <FaEdit />
+                          <FiEdit2 />
                         </button>
                       </div>
 
@@ -4545,7 +4534,7 @@ function PublicListsSection() {
       {/* Section header */}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-primary flex items-center gap-2">
-          <FaUsers />
+          <FiUsers />
           <span>Public gear lists</span>
         </h2>
         <p className="text-xs sm:text-sm text-primary/70 max-w-md text-right">
@@ -4580,7 +4569,7 @@ function PublicListsSection() {
               className="btn btn-ghost btn-xs"
               title={showListBody ? "Hide public lists" : "Show public lists"}
             >
-              {showListBody ? <FaChevronUp /> : <FaChevronDown />}
+              {showListBody ? <FiChevronUp /> : <FiChevronDown />}
             </button>
           </div>
         </div>
@@ -4966,7 +4955,7 @@ function PublicListsSection() {
                           disabled={!list.token || !list.isActive}
                           title="Open public link in new tab"
                         >
-                          <FaExternalLinkAlt />
+                          <FiExternalLink />
                         </button>
                         <button
                           type="button"
@@ -4975,7 +4964,7 @@ function PublicListsSection() {
                           disabled={!list.token || !list.isActive}
                           title="Copy public link"
                         >
-                          <FaCopy />
+                          <FiCopy />
                         </button>
                         <button
                           type="button"

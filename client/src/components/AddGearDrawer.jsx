@@ -1,7 +1,7 @@
 // src/components/AddGearDrawer.jsx
 import React, { useState, useEffect } from "react";
 import api from "../services/api";
-import { FaTimes, FaInfoCircle } from "react-icons/fa";
+import { FiX } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import LinkInput from "./LinkInput";
@@ -325,9 +325,7 @@ function ImportTab({ onImported }) {
                 <li
                   key={item._id}
                   className={`flex items-center px-2 py-1 rounded bg-neutral/20 border border-primary/20 ${
-                    disabled
-                      ? "opacity-50 cursor-default"
-                      : "hover:bg-primary/10 cursor-pointer"
+                    disabled ? "opacity-50" : ""
                   }`}
                 >
                   <input
@@ -335,12 +333,14 @@ function ImportTab({ onImported }) {
                     checked={selectedIds.has(catalogId)}
                     onChange={() => !disabled && toggleCheckbox(catalogId)}
                     disabled={disabled || saving}
-                    className="mr-2 h-4 w-4 text-secondary border-primary rounded focus:ring-secondary"
+                    className="mr-2 h-4 w-4 text-secondary border-primary rounded focus:ring-secondary flex-shrink-0"
                   />
 
-                  <div
-                    className="flex-1 select-none"
-                    onClick={() => !disabled && toggleCheckbox(catalogId)}
+                  <button
+                    type="button"
+                    disabled={disabled}
+                    onClick={() => openPreview(catalogId)}
+                    className="flex-1 text-left select-none hover:bg-primary/10 rounded px-1 -mx-1 py-0.5"
                   >
                     <div className="flex items-center justify-between">
                       <div>
@@ -356,29 +356,13 @@ function ImportTab({ onImported }) {
                             t("globalItemModal.importTab.labels.uncategorized")}
                         </div>
                       </div>
-
-                      <div className="flex items-center gap-2">
-                        {disabled && (
-                          <span className="text-red-500 text-xs">
-                            {t("globalItemModal.importTab.badges.added")}
-                          </span>
-                        )}
-
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            openPreview(catalogId);
-                          }}
-                          className="p-1 text-primary hover:bg-primary/10 rounded"
-                          aria-label={t("catalogPreview.buttons.viewDetails")}
-                          title={t("catalogPreview.buttons.viewDetails")}
-                        >
-                          <FaInfoCircle className="text-sm" />
-                        </button>
-                      </div>
+                      {disabled && (
+                        <span className="text-red-500 text-xs">
+                          {t("globalItemModal.importTab.badges.added")}
+                        </span>
+                      )}
                     </div>
-                  </div>
+                  </button>
                 </li>
               );
             })}
@@ -436,6 +420,7 @@ function CustomTab({ onCreated }) {
   const [brand, setBrand] = useState("");
   const [description, setDescription] = useState("");
   const [link, setLink] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
 
   const unit = useUnit();
@@ -472,6 +457,7 @@ function CustomTab({ onCreated }) {
       if (description.trim()) payload.description = description.trim();
       if (typeof grams === "number") payload.weight = grams;
       if (link.trim()) payload.link = link.trim();
+      if (imageUrl.trim()) payload.imageUrls = [imageUrl.trim()];
 
       const { data } = await api.post("/global/items", payload);
 
@@ -484,6 +470,7 @@ function CustomTab({ onCreated }) {
       setBrand("");
       setDescription("");
       setLink("");
+      setImageUrl("");
       setDisplayWeight("");
 
       onCreated?.(data);
@@ -586,6 +573,17 @@ function CustomTab({ onCreated }) {
             className="text-sm"
           />
         </div>
+
+        <div className="col-span-2">
+          <LinkInput
+            value={imageUrl}
+            onChange={setImageUrl}
+            label={t("globalItemModal.labels.imageUrl", "Image URL")}
+            placeholder="https://example.com/image.jpg"
+            required={false}
+            className="text-sm"
+          />
+        </div>
       </div>
 
       {/* Description — full width */}
@@ -655,7 +653,7 @@ export default function AddGearDrawer({ isOpen, onClose, onItemsChanged }) {
             className="p-1 text-error hover:text-error/80"
             aria-label={t("actions.close")}
           >
-            <FaTimes className="text-lg" />
+            <FiX className="text-lg" />
           </button>
         </div>
 
@@ -738,7 +736,7 @@ export default function AddGearDrawer({ isOpen, onClose, onItemsChanged }) {
               className="p-1 text-error hover:text-error/80"
               aria-label={t("actions.close")}
             >
-              <FaTimes />
+              <FiX />
             </button>
           </div>
         </div>

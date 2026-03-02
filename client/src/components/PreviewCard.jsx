@@ -1,12 +1,7 @@
 // src/components/PreviewCard.jsx
 import React from "react";
-import {
-  FaGripVertical,
-  FaUtensils,
-  FaTshirt,
-  FaExternalLinkAlt,
-  FaTrash,
-} from "react-icons/fa";
+import { FaGripVertical, FaUtensils, FaTshirt } from "react-icons/fa";
+import { FiExternalLink, FiTrash2 } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import { tItemType } from "../config/catalogTaxonomy";
 
@@ -46,7 +41,7 @@ export default function PreviewCard({ item, viewMode, width }) {
           </div>
           <div className="flex items-center gap-1 flex-shrink-0">
             <span className="p-1 text-primary/60">
-              <FaTrash className="text-sm" />
+              <FiTrash2 className="text-sm" />
             </span>
           </div>
         </div>
@@ -68,7 +63,7 @@ export default function PreviewCard({ item, viewMode, width }) {
               }
             />
             <span className="select-none px-1">{qty}</span>
-            <FaExternalLinkAlt className="w-3 h-3 text-secondary" />
+            <FiExternalLink className="w-3 h-3 text-secondary" />
           </div>
         </div>
       </div>
@@ -131,13 +126,13 @@ export default function PreviewCard({ item, viewMode, width }) {
 
           {/* 8) Cart */}
           <div className="justify-self-center">
-            <FaExternalLinkAlt className="w-3 h-3 text-secondary" />
+            <FiExternalLink className="w-3 h-3 text-secondary" />
           </div>
 
           {/* 9) Delete */}
           <div className="place-self-center mr-3.5">
             <span className="p-1 text-primary/60">
-              <FaTrash className="text-sm" />
+              <FiTrash2 className="text-sm" />
             </span>
           </div>
         </div>
@@ -159,7 +154,7 @@ export default function PreviewCard({ item, viewMode, width }) {
             </div>
             <div className="-mr-0.5">
               <span className="text-primary/60">
-                <FaTrash className="text-sm" />
+                <FiTrash2 className="text-sm" />
               </span>
             </div>
           </div>
@@ -196,7 +191,7 @@ export default function PreviewCard({ item, viewMode, width }) {
               <span className="flex items-center justify-center border rounded px-2 py-0.5 bg-neutral text-sm text-primary">
                 {qty}
               </span>
-              <FaExternalLinkAlt className="w-3 h-3 text-secondary" />
+              <FiExternalLink className="w-3 h-3 text-secondary" />
             </div>
           </div>
         </div>

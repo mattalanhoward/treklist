@@ -1,7 +1,8 @@
 // client/src/pages/PublicGearList.jsx
 import React from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { FaUtensils, FaTshirt, FaExternalLinkAlt, FaEdit, FaMapMarkerAlt, FaCalendarAlt, FaRoute } from "react-icons/fa";
+import { FaUtensils, FaTshirt } from "react-icons/fa";
+import { FiExternalLink, FiEdit2, FiMapPin, FiCalendar, FiNavigation } from "react-icons/fi";
 import PackStats from "../components/PackStats";
 import { useUserSettings } from "../contexts/UserSettings";
 import AffiliateGateLink from "../components/AffiliateGateLink";
@@ -327,7 +328,7 @@ export default function PublicGearList() {
         className={common}
         aria-label={t("publicList.cta.ariaLabel")}
       >
-        <FaEdit aria-hidden />
+        <FiEdit2 aria-hidden />
         <span className="font-sm">{label}</span>
       </a>
     ) : (
@@ -343,7 +344,7 @@ export default function PublicGearList() {
         disabled={copying}
         aria-label={t("publicList.cta.ariaLabel")}
       >
-        <FaEdit aria-hidden />
+        <FiEdit2 aria-hidden />
         <span className="font-sm">{label}</span>
       </button>
     );
@@ -520,13 +521,13 @@ export default function PublicGearList() {
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-secondary">
                 {data.list.location && (
                   <span className="flex items-center gap-1.5">
-                    <FaMapMarkerAlt className="text-xs flex-shrink-0" aria-hidden />
+                    <FiMapPin className="text-xs flex-shrink-0" aria-hidden />
                     {data.list.location}
                   </span>
                 )}
                 {(data.list.tripStart || data.list.tripEnd) && (
                   <span className="flex items-center gap-1.5">
-                    <FaCalendarAlt className="text-xs flex-shrink-0" aria-hidden />
+                    <FiCalendar className="text-xs flex-shrink-0" aria-hidden />
                     {fmtDateRange(data.list.tripStart, data.list.tripEnd)}
                   </span>
                 )}
@@ -539,8 +540,8 @@ export default function PublicGearList() {
                     className="flex items-center gap-1.5 underline underline-offset-2 hover:opacity-70"
                   >
                     {link.index === 0
-                      ? <FaRoute className="text-xs flex-shrink-0" aria-hidden />
-                      : <FaExternalLinkAlt className="text-xs flex-shrink-0" aria-hidden />
+                      ? <FiNavigation className="text-xs flex-shrink-0" aria-hidden />
+                      : <FiExternalLink className="text-xs flex-shrink-0" aria-hidden />
                     }
                     {link.index === 0
                       ? t("publicList.route")
@@ -577,13 +578,13 @@ export default function PublicGearList() {
               <div className="mt-2 flex flex-wrap justify-center items-center gap-x-4 gap-y-1 text-sm text-secondary">
                 {data.list.location && (
                   <span className="flex items-center gap-1.5">
-                    <FaMapMarkerAlt className="text-xs flex-shrink-0" aria-hidden />
+                    <FiMapPin className="text-xs flex-shrink-0" aria-hidden />
                     {data.list.location}
                   </span>
                 )}
                 {(data.list.tripStart || data.list.tripEnd) && (
                   <span className="flex items-center gap-1.5">
-                    <FaCalendarAlt className="text-xs flex-shrink-0" aria-hidden />
+                    <FiCalendar className="text-xs flex-shrink-0" aria-hidden />
                     {fmtDateRange(data.list.tripStart, data.list.tripEnd)}
                   </span>
                 )}
@@ -596,8 +597,8 @@ export default function PublicGearList() {
                     className="flex items-center gap-1.5 underline underline-offset-2 hover:opacity-70"
                   >
                     {link.index === 0
-                      ? <FaRoute className="text-xs flex-shrink-0" aria-hidden />
-                      : <FaExternalLinkAlt className="text-xs flex-shrink-0" aria-hidden />
+                      ? <FiNavigation className="text-xs flex-shrink-0" aria-hidden />
+                      : <FiExternalLink className="text-xs flex-shrink-0" aria-hidden />
                     }
                     {link.index === 0
                       ? t("publicList.route")
@@ -755,7 +756,7 @@ export default function PublicGearList() {
                                       "publicList.item.viewProductPaid",
                                     )}
                                   >
-                                    <FaExternalLinkAlt
+                                    <FiExternalLink
                                       className="h-3 w-3"
                                       aria-hidden
                                     />
@@ -873,7 +874,7 @@ export default function PublicGearList() {
                                 title={t("publicList.item.viewProduct")}
                                 ariaLabel={t("publicList.item.viewProductPaid")}
                               >
-                                <FaExternalLinkAlt className="w-3 h-3" aria-hidden />
+                                <FiExternalLink className="w-3 h-3" aria-hidden />
                               </AffiliateGateLink>
                             ) : null}
                           </div>

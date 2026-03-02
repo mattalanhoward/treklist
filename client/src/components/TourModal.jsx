@@ -1,6 +1,6 @@
 // client/src/components/TourModal.jsx
 import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
-import { FaTimes } from "react-icons/fa";
+import { FiX } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 
 function clamp(n, min, max) {
@@ -258,7 +258,7 @@ export default function TourModal({
                 className="p-2 rounded hover:bg-base-100/70 text-primary"
                 aria-label={t("tour.actions.close", "Close tour")}
               >
-                <FaTimes />
+                <FiX />
               </button>
             </div>
 
@@ -295,7 +295,7 @@ export default function TourModal({
                 <button
                   type="button"
                   onClick={onSkip}
-                  className="px-3 py-2 text-sm rounded hover:bg-base-100/70 text-primary"
+                  className="px-2 py-1 text-sm rounded bg-neutralAlt border border-primary/15 text-primary hover:bg-base-100/70"
                 >
                   {t("tour.actions.skip", "Skip")}{" "}
                 </button>
@@ -305,7 +305,7 @@ export default function TourModal({
                     type="button"
                     onClick={onBack}
                     disabled={stepIndex === 0}
-                    className={`px-3 py-2 text-sm rounded border border-primary/15 hover:bg-base-100/70 text-primary ${
+                    className={`px-2 py-1 text-sm rounded border border-primary/15 hover:bg-base-100/70 text-primary ${
                       stepIndex === 0 ? "opacity-50 cursor-not-allowed" : ""
                     }`}
                   >
@@ -314,7 +314,7 @@ export default function TourModal({
                   <button
                     type="button"
                     onClick={onNext}
-                    className="px-3 py-2 text-sm rounded bg-secondary text-white hover:bg-secondary/80"
+                    className="px-2 py-1 text-sm rounded bg-secondary text-white hover:bg-secondary/80"
                   >
                     {isLast
                       ? t("tour.actions.done", "Done")

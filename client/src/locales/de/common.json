@@ -410,7 +410,8 @@
       "brand": "Marke",
       "link": "Link",
       "weight": "Gewicht ({{unit}})",
-      "description": "Beschreibung"
+      "description": "Beschreibung",
+      "imageUrl": "Bild-URL"
     },
     "placeholders": {
       "itemType": "Zelt",

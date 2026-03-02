@@ -170,7 +170,13 @@ export function SettingsProvider({ children }) {
       setWeightUnit(s.weightUnit || "g");
       setMeasurementSystem(s.measurementSystem || "metric");
       setTheme(s.theme || "alpine");
-      setLanguage(s.language || "en");
+      // localStorage wins: user may have picked a language on the landing page pre-login.
+      // The PATCH useEffect will sync the resolved value back to the DB automatically.
+      const localLang = localStorage.getItem("language");
+      const dbLang = s.language || "en";
+      const resolvedLang =
+        localLang && SUPPORTED_LANGS.includes(localLang) ? localLang : dbLang;
+      setLanguage(resolvedLang);
       setRegion((s.region || "nl").toLowerCase());
       setViewMode(s.viewMode || "column");
       setSidebarCollapsed(Boolean(s.sidebarCollapsed));

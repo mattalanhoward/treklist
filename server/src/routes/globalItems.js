@@ -222,6 +222,8 @@ router.post(
     body("itemType").optional().isString().isLength({ max: 120 }).trim(),
     body("weight").optional().isFloat({ min: 0 }),
     body("link").optional().isString().isLength({ max: 2000 }).trim(),
+    body("imageUrls").optional().isArray({ max: 5 }),
+    body("imageUrls.*").optional().isString().isLength({ max: 2000 }).trim(),
 
     // ✅ A) attributes validator
     body("attributes")
@@ -304,9 +306,12 @@ router.patch("/:id", async (req, res) => {
           delete req.body[k];
         }
       }
-      // Link is custom-only
+      // Link and imageUrls are custom-only
       if (Object.prototype.hasOwnProperty.call(req.body, "link")) {
         delete req.body.link;
+      }
+      if (Object.prototype.hasOwnProperty.call(req.body, "imageUrls")) {
+        delete req.body.imageUrls;
       }
     }
 
@@ -318,6 +323,7 @@ router.patch("/:id", async (req, res) => {
       "description",
       "weight",
       "link",
+      "imageUrls",
     ];
 
     // Ignore attributes in this endpoint (you said you don't want it editable here)
@@ -382,9 +388,10 @@ router.patch("/:id", async (req, res) => {
       attributes: updated.attributes,
     };
 
-    // Only cascade link for custom items
+    // Only cascade link and imageUrls for custom items
     if (!isAffiliateBacked) {
       cascade.link = updated.link;
+      cascade.imageUrls = updated.imageUrls ?? [];
     }
 
     await GearItem.updateMany({ globalItem: req.params.id }, { $set: cascade });

@@ -95,6 +95,13 @@ const GearItemSchema = new mongoose.Schema(
       type: String,
     },
 
+    // Denormalized from GlobalItem.imageUrls (custom items only).
+    // Cascaded on GlobalItem PATCH so the full-list endpoint doesn't need populate.
+    imageUrls: {
+      type: [String],
+      default: [],
+    },
+
     // Whether this item is worn (not counted in pack weight).
     worn: {
       type: Boolean,

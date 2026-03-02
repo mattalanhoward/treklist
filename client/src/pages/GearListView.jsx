@@ -1,7 +1,6 @@
 // src/pages/GearListView.jsx
 import React, { useState, useEffect, useCallback } from "react";
-import { FaPlus, FaEllipsisH, FaCheck, FaLock, FaUnlock, FaInfoCircle } from "react-icons/fa";
-import { FaArrowUpFromBracket } from "react-icons/fa6";
+import { FiShare2, FiInfo, FiLock, FiUnlock, FiMoreHorizontal, FiPlus, FiCheck } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { DragOverlay } from "@dnd-kit/core";
@@ -1159,7 +1158,7 @@ export default function GearListView({
               className="hidden sm:inline-flex items-center justify-center text-primaryAlt hover:text-primaryAlt/80 leading-none"
               aria-label={t("gearList.menu.shareList")}
             >
-              <FaArrowUpFromBracket />
+              <FiShare2 />
             </button>
 
             {/* Details button - desktop only */}
@@ -1168,7 +1167,7 @@ export default function GearListView({
               className="hidden sm:inline-flex items-center justify-center text-primaryAlt hover:text-primaryAlt/80 leading-none"
               aria-label={t("gearList.menu.viewEditDetails")}
             >
-              <FaInfoCircle />
+              <FiInfo />
             </button>
 
             {/* Lock toggle button - desktop only */}
@@ -1181,7 +1180,7 @@ export default function GearListView({
                   : t("gearList.menu.lockListA11y")
               }
             >
-              {isLocked ? <FaLock /> : <FaUnlock />}
+              {isLocked ? <FiLock /> : <FiUnlock />}
             </button>
 
             {/* Ellipsis menu */}
@@ -1193,7 +1192,7 @@ export default function GearListView({
                 className="inline-flex items-center justify-center text-primaryAlt hover:text-primaryAlt/80 leading-none"
                 aria-label={t("gearList.menu.listOptionsA11y")}
               >
-                <FaEllipsisH />
+                <FiMoreHorizontal />
               </button>
             }
             menuWidth="w-56"
@@ -1214,7 +1213,7 @@ export default function GearListView({
                           : t("gearList.menu.lockListA11y")
                       }
                     >
-                      {isLocked ? <FaLock /> : <FaUnlock />}
+                      {isLocked ? <FiLock /> : <FiUnlock />}
                     </button>
                   </div>
                 ),
@@ -1327,7 +1326,7 @@ flex items-center justify-center text-primary/60 text-xl cursor-pointer ` +
                             className={`${cls} w-6 h-6 rounded-full flex items-center justify-center p-0`}
                           >
                             {bgColor === value && (
-                              <FaCheck className="text-white text-sm" />
+                              <FiCheck className="text-white text-sm" />
                             )}
                           </button>
 
@@ -1447,7 +1446,7 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
                     }}
                     className="p-2 w-full border border-secondary rounded flex items-center justify-center space-x-2 bg-base-100 text-primary hover:bg-base-100/80"
                   >
-                    <FaPlus />
+                    <FiPlus />
                     <span className="text-sm">
                       {t("gearList.addCategory.button")}
                     </span>
@@ -1511,7 +1510,7 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
                     onClick={() => setAddingNewCat(true)}
                     className="p-2 w-full border border-secondary rounded flex items-center justify-center space-x-2 bg-base-100 text-primary hover:bg-base-100/80"
                   >
-                    <FaPlus />
+                    <FiPlus />
                     <span className="text-sm">
                       {t("gearList.addCategory.button")}
                     </span>

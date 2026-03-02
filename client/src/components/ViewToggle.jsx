@@ -1,6 +1,6 @@
 // src/components/ViewToggle.jsx
 import React from "react";
-import { FaToggleOn, FaToggleOff } from "react-icons/fa";
+import { FiToggleRight, FiToggleLeft } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 
 export default function ViewToggle({ viewMode, setViewMode }) {
@@ -21,9 +21,9 @@ export default function ViewToggle({ viewMode, setViewMode }) {
       title={t("viewToggle.title")}
     >
       {isList ? (
-        <FaToggleOn className="text-2xl transition-colors" aria-hidden="true" />
+        <FiToggleRight className="text-2xl transition-colors" aria-hidden="true" />
       ) : (
-        <FaToggleOff
+        <FiToggleLeft
           className="text-2xl text-gray-400 hover:text-gray-600 transition-colors"
           aria-hidden="true"
         />

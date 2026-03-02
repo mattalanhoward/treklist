@@ -410,7 +410,8 @@
       "brand": "Marque",
       "link": "Lien",
       "weight": "Poids ({{unit}})",
-      "description": "Description"
+      "description": "Description",
+      "imageUrl": "URL de l’image"
     },
     "placeholders": {
       "itemType": "Tente",

@@ -1,6 +1,6 @@
 // src/components/MoveItemModal.jsx
 import React, { useEffect, useMemo, useState } from "react";
-import { FaTimes } from "react-icons/fa";
+import { FiX } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 
 export default function MoveItemModal({
@@ -70,7 +70,7 @@ export default function MoveItemModal({
             className="text-primaryAlt hover:text-primaryAlt/80 focus:outline-none"
             aria-label={t("moveItemModal.a11y.close")}
           >
-            <FaTimes />
+            <FiX />
           </button>
         </div>
 

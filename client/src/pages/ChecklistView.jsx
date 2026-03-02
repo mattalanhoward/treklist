@@ -3,13 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import TopBar from "../components/TopBar"; // Standard TopBar integrated
 import { useUserSettings } from "../contexts/UserSettings";
 
-import {
-  FaPrint,
-  FaUndoAlt,
-  FaTshirt,
-  FaUtensils,
-  FaChevronLeft,
-} from "react-icons/fa";
+import { FaTshirt, FaUtensils } from "react-icons/fa";
+import { FiPrinter, FiRotateCcw, FiChevronLeft } from "react-icons/fi";
 import api from "../services/api";
 import useAuth from "../hooks/useAuth";
 import useChecklistProgress from "../hooks/useChecklistProgress";
@@ -206,7 +201,7 @@ export default function ChecklistView() {
             className="flex items-center gap-2 px-2 py-1 bg-white text-secondary rounded hover:bg-secondary-700 text-sm sm:text-base"
             aria-label={t("checklistView.a11y.backToDashboard")}
           >
-            <FaChevronLeft /> {t("checklistView.buttons.backToDashboard")}
+            <FiChevronLeft /> {t("checklistView.buttons.backToDashboard")}
           </button>
 
           <div className="flex items-center gap-2">
@@ -216,7 +211,7 @@ export default function ChecklistView() {
               className="flex items-center gap-2 px-2 py-1 bg-secondary text-white rounded hover:bg-secondary-700 text-sm sm:text-base"
               aria-label={t("checklistView.a11y.reset")}
             >
-              <FaUndoAlt /> {t("checklistView.buttons.reset")}{" "}
+              <FiRotateCcw /> {t("checklistView.buttons.reset")}{" "}
             </button>
             <button
               type="button"
@@ -224,7 +219,7 @@ export default function ChecklistView() {
               className="flex items-center gap-2 px-2 py-1 bg-white text-secondary rounded hover:bg-secondary-700 text-sm sm:text-base"
               aria-label={t("checklistView.a11y.print")}
             >
-              <FaPrint /> {t("checklistView.buttons.print")}{" "}
+              <FiPrinter /> {t("checklistView.buttons.print")}{" "}
             </button>
           </div>
         </div>

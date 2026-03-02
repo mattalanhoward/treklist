@@ -1,7 +1,7 @@
 // src/components/AuthModal.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { FaTimes } from "react-icons/fa";
+import { FiX } from "react-icons/fi";
 import useAuth from "../hooks/useAuth";
 import api from "../services/api";
 import { toast } from "react-hot-toast";
@@ -331,7 +331,7 @@ export default function AuthModal({
             className="text-error hover:text-error/80"
             aria-label={t("auth.a11y.closeModal")}
           >
-            <FaTimes size={20} />
+            <FiX size={20} />
           </button>
         </div>
 

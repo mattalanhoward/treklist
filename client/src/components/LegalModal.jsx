@@ -1,6 +1,6 @@
 // src/components/LegalModal.jsx
 import React, { useEffect, useRef, useState } from "react";
-import { FaTimes } from "react-icons/fa";
+import { FiX } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 
 import PrivacyContent from "./legal/PrivacyContent";
@@ -110,7 +110,7 @@ export default function LegalModal({ open, onClose, initialTab = "privacy" }) {
             className="inline-flex items-center justify-center rounded-full p-2 text-error hover:text-error/90 hover:bg-error/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-error"
             aria-label={t("legalModal.a11y.close")}
           >
-            <FaTimes size={18} />
+            <FiX size={18} />
           </button>
         </div>
 

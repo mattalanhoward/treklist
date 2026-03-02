@@ -410,7 +410,8 @@
       "brand": "Marca",
       "link": "Enlace",
       "weight": "Peso ({{unit}})",
-      "description": "Descripción"
+      "description": "Descripción",
+      "imageUrl": "URL de imagen"
     },
     "placeholders": {
       "itemType": "Tienda",

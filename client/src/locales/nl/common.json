@@ -410,7 +410,8 @@
       "brand": "Merk",
       "link": "Link",
       "weight": "Gewicht ({{unit}})",
-      "description": "Omschrijving"
+      "description": "Omschrijving",
+      "imageUrl": "Afbeeldings-URL"
     },
     "placeholders": {
       "itemType": "Tent",

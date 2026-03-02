@@ -20,10 +20,12 @@ router.get("/items", async (req, res) => {
       .populate("productId", "imageUrls")
       .lean();
 
-    // Merge imageUrls from populated productId into each item
+    // Merge imageUrls: imported items use CatalogItem images, custom items use their own
     const enriched = items.map((item) => {
-      const imageUrls = item.productId?.imageUrls || [];
       const { productId, ...rest } = item;
+      const imageUrls = productId
+        ? productId.imageUrls || []
+        : rest.imageUrls || [];
       return {
         ...rest,
         productId: productId?._id || null,

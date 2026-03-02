@@ -1,6 +1,7 @@
 // src/components/PreviewColumn.jsx
 import React, { useMemo } from "react";
-import { FaGripVertical, FaTimes, FaPlus } from "react-icons/fa";
+import { FaGripVertical } from "react-icons/fa";
+import { FiX, FiPlus } from "react-icons/fi";
 import { useWeight } from "../hooks/useWeight";
 import { useTranslation } from "react-i18next";
 
@@ -36,7 +37,7 @@ export default function PreviewColumn({ category, items, width, height }) {
           {totalWeightText}
         </span>
         {/* invisible X to match spacing with real column header */}
-        <FaTimes className="flex-shrink-0 text-primaryAlt opacity-0" />
+        <FiX className="flex-shrink-0 text-primaryAlt opacity-0" />
       </div>
 
       {/* Ghost items list – skeleton cards that fill available height */}
@@ -59,7 +60,7 @@ export default function PreviewColumn({ category, items, width, height }) {
         className="p-2 w-full border border-base-100 rounded flex items-center justify-center space-x-2 bg-base-100 text-primary opacity-60 cursor-not-allowed"
         aria-hidden="true"
       >
-        <FaPlus />
+        <FiPlus />
         <span className="text-sm">
           {t("gearList.items.addButton", "Add Item")}
         </span>

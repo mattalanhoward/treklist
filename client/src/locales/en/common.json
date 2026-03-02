@@ -419,7 +419,8 @@
       "brand": "Brand",
       "link": "Link",
       "weight": "Weight ({{unit}})",
-      "description": "Description"
+      "description": "Description",
+      "imageUrl": "Image URL"
     },
     "placeholders": {
       "itemType": "Tent",
