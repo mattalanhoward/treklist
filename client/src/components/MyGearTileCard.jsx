@@ -1,6 +1,6 @@
 // client/src/components/MyGearTileCard.jsx
 import React from "react";
-import { FaTrash, FaExternalLinkAlt, FaCheckSquare, FaRegSquare } from "react-icons/fa";
+import { FiTrash2, FiExternalLink, FiCheckSquare, FiSquare } from "react-icons/fi";
 import { tItemType } from "../config/catalogTaxonomy";
 
 function pickFirstImageUrl(item) {
@@ -108,9 +108,9 @@ export default function MyGearTileCard({
             className="p-1 text-secondary"
           >
             {isSelected ? (
-              <FaCheckSquare className="text-base" />
+              <FiCheckSquare className="text-base" />
             ) : (
-              <FaRegSquare className="text-base text-primary/40" />
+              <FiSquare className="text-base text-primary/40" />
             )}
           </button>
         ) : (
@@ -124,7 +124,7 @@ export default function MyGearTileCard({
                 className="p-1 text-primary/60 hover:text-primary rounded"
                 title={t("myGear.actions.openLink", "Open product link")}
               >
-                <FaExternalLinkAlt className="w-3 h-3" />
+                <FiExternalLink className="w-3 h-3" />
               </a>
             )}
             <button
@@ -134,7 +134,7 @@ export default function MyGearTileCard({
               className="p-1 text-primary/60 hover:text-primary rounded"
               title={t("myGear.actions.delete", "Delete")}
             >
-              <FaTrash className="text-sm" />
+              <FiTrash2 className="text-sm" />
             </button>
           </div>
         )}

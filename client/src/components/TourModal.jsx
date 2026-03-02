@@ -1,6 +1,6 @@
 // client/src/components/TourModal.jsx
 import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
-import { FaTimes } from "react-icons/fa";
+import { FiX } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 
 function clamp(n, min, max) {
@@ -258,7 +258,7 @@ export default function TourModal({
                 className="p-2 rounded hover:bg-base-100/70 text-primary"
                 aria-label={t("tour.actions.close", "Close tour")}
               >
-                <FaTimes />
+                <FiX />
               </button>
             </div>
 

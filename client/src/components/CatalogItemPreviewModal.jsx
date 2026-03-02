@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import { FaTimes } from "react-icons/fa";
+import { FiX } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import ImageCarousel from "./ImageCarousel";
 import ButtonLink from "./ui/ButtonLink";
@@ -148,7 +148,7 @@ export default function CatalogItemPreviewModal({
             aria-label={t("actions.close")}
             title={t("actions.close")}
           >
-            <FaTimes />
+            <FiX />
           </button>
         </div>
 

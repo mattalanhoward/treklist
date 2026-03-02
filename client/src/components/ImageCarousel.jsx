@@ -1,6 +1,6 @@
 // client/src/components/ImageCarousel.jsx
 import React, { useEffect, useMemo, useState } from "react";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 export default function ImageCarousel({
   images = [],
@@ -119,7 +119,7 @@ export default function ImageCarousel({
                 aria-label="Previous image"
                 className="rounded p-2 text-primary hover:bg-neutralAlt/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary"
               >
-                <FaChevronLeft />
+                <FiChevronLeft />
               </button>
             </div>
 
@@ -130,7 +130,7 @@ export default function ImageCarousel({
                 aria-label="Next image"
                 className="rounded p-2 text-primary hover:bg-neutralAlt/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary"
               >
-                <FaChevronRight />
+                <FiChevronRight />
               </button>
             </div>
           </>

@@ -1,7 +1,7 @@
 // src/components/AddGearItemModal.jsx
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import api from "../services/api";
-import { FaTimes } from "react-icons/fa";
+import { FiX } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { tItemType } from "../config/catalogTaxonomy";
@@ -212,7 +212,7 @@ export default function AddGearItemModal({
             className="text-error hover:text-error/80"
             aria-label={t("addGearItemModal.a11y.close")}
           >
-            <FaTimes size={20} />
+            <FiX size={20} />
           </button>
         </div>
 

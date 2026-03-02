@@ -3,16 +3,7 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import api from "../services/api";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import {
-  FaSearch,
-  FaThLarge,
-  FaList,
-  FaPlus,
-  FaChevronDown,
-  FaCheckSquare,
-  FaTrash,
-  FaTimes,
-} from "react-icons/fa";
+import { FiSearch, FiGrid, FiList, FiPlus, FiChevronDown, FiCheckSquare, FiTrash2, FiX } from "react-icons/fi";
 import ConfirmDialog from "../components/ConfirmDialog";
 import GlobalItemEditModal from "../components/GlobalItemEditModal";
 import AddGearDrawer from "../components/AddGearDrawer";
@@ -274,13 +265,13 @@ export default function MyGearView({ collapsed }) {
               className={`p-1 rounded ${selectionMode ? "text-secondary bg-secondary/10" : "text-secondary hover:text-secondary/80"}`}
               title={t("myGear.actions.select", "Select items")}
             >
-              <FaCheckSquare className="text-sm" />
+              <FiCheckSquare className="text-sm" />
             </button>
           </div>
 
           {/* Center: Search */}
           <div className="relative flex-1 max-w-md">
-            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/40" />
+            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/40" />
             <input
               ref={searchInputRef}
               type="text"
@@ -307,7 +298,7 @@ export default function MyGearView({ collapsed }) {
                   </option>
                 ))}
               </select>
-              <FaChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-primary/50 pointer-events-none text-xs" />
+              <FiChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-primary/50 pointer-events-none text-xs" />
             </div>
 
             {/* Sort dropdown */}
@@ -324,7 +315,7 @@ export default function MyGearView({ collapsed }) {
                 <option value="date-desc">{t("myGear.sort.dateDesc", "Newest")}</option>
                 <option value="date-asc">{t("myGear.sort.dateAsc", "Oldest")}</option>
               </select>
-              <FaChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-primary/50 pointer-events-none text-xs" />
+              <FiChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-primary/50 pointer-events-none text-xs" />
             </div>
 
             {/* View mode toggle */}
@@ -338,7 +329,7 @@ export default function MyGearView({ collapsed }) {
                 title={t("myGear.view.list", "List view")}
                 aria-pressed={viewMode === "list"}
               >
-                <FaList className="text-sm" />
+                <FiList className="text-sm" />
               </button>
               <button
                 type="button"
@@ -349,7 +340,7 @@ export default function MyGearView({ collapsed }) {
                 title={t("myGear.view.tiles", "Tile view")}
                 aria-pressed={viewMode === "tiles"}
               >
-                <FaThLarge className="text-sm" />
+                <FiGrid className="text-sm" />
               </button>
             </div>
 
@@ -361,7 +352,7 @@ export default function MyGearView({ collapsed }) {
                 className="p-1 text-secondary hover:text-secondary/80 rounded"
                 title={t("myGear.actions.addItem", "Add item")}
               >
-                <FaPlus className="text-sm" />
+                <FiPlus className="text-sm" />
               </button>
             )}
           </div>
@@ -403,7 +394,7 @@ export default function MyGearView({ collapsed }) {
                   disabled={actionLoading === "bulk"}
                   className="flex items-center gap-1 px-2 py-1 text-sm bg-error/10 text-error hover:bg-error/20 rounded"
                 >
-                  <FaTrash className="text-xs" />
+                  <FiTrash2 className="text-xs" />
                   {t("myGear.actions.deleteSelected", "Delete")}
                 </button>
               )}
@@ -412,7 +403,7 @@ export default function MyGearView({ collapsed }) {
                 onClick={exitSelectionMode}
                 className="flex items-center gap-1 px-2 py-1 text-sm text-primary/70 hover:text-primary rounded"
               >
-                <FaTimes className="text-xs" />
+                <FiX className="text-xs" />
                 {t("actions.cancel", "Cancel")}
               </button>
             </div>
@@ -435,7 +426,7 @@ export default function MyGearView({ collapsed }) {
                 className={`p-1 rounded ${selectionMode ? "text-secondary bg-secondary/10" : "text-secondary hover:text-secondary/80"}`}
                 title={t("myGear.actions.select", "Select items")}
               >
-                <FaCheckSquare className="text-sm" />
+                <FiCheckSquare className="text-sm" />
               </button>
             </div>
 
@@ -448,7 +439,7 @@ export default function MyGearView({ collapsed }) {
                   className={`px-2 py-1 text-primary ${viewMode === "list" ? "bg-primary/5" : "bg-base-100"}`}
                   aria-pressed={viewMode === "list"}
                 >
-                  <FaList className="text-sm" />
+                  <FiList className="text-sm" />
                 </button>
                 <button
                   type="button"
@@ -456,7 +447,7 @@ export default function MyGearView({ collapsed }) {
                   className={`px-2 py-1 text-primary ${viewMode === "tiles" ? "bg-primary/5" : "bg-base-100"}`}
                   aria-pressed={viewMode === "tiles"}
                 >
-                  <FaThLarge className="text-sm" />
+                  <FiGrid className="text-sm" />
                 </button>
               </div>
               {/* Add / toggle drawer */}
@@ -467,7 +458,7 @@ export default function MyGearView({ collapsed }) {
                   className="p-1 text-secondary hover:text-secondary/80 rounded"
                   title={t("myGear.actions.addItem", "Add item")}
                 >
-                  <FaPlus className="text-sm" />
+                  <FiPlus className="text-sm" />
                 </button>
               )}
             </div>
@@ -510,7 +501,7 @@ export default function MyGearView({ collapsed }) {
                     className="p-1.5 text-error hover:bg-error/10 rounded"
                     title={t("myGear.actions.deleteSelected", "Delete selected")}
                   >
-                    <FaTrash className="text-sm" />
+                    <FiTrash2 className="text-sm" />
                   </button>
                 )}
                 <button
@@ -518,7 +509,7 @@ export default function MyGearView({ collapsed }) {
                   onClick={exitSelectionMode}
                   className="flex items-center gap-1 px-2 py-1 text-sm text-primary/70 hover:text-primary rounded"
                 >
-                  <FaTimes className="text-xs" />
+                  <FiX className="text-xs" />
                   {t("actions.cancel", "Cancel")}
                 </button>
               </div>
@@ -541,7 +532,7 @@ export default function MyGearView({ collapsed }) {
                   </option>
                 ))}
               </select>
-              <FaChevronDown className="absolute right-1.5 top-1/2 -translate-y-1/2 text-primary/50 pointer-events-none text-xs" />
+              <FiChevronDown className="absolute right-1.5 top-1/2 -translate-y-1/2 text-primary/50 pointer-events-none text-xs" />
             </div>
 
             {/* Sort dropdown */}
@@ -558,13 +549,13 @@ export default function MyGearView({ collapsed }) {
                 <option value="date-desc">{t("myGear.sort.dateDesc", "Newest")}</option>
                 <option value="date-asc">{t("myGear.sort.dateAsc", "Oldest")}</option>
               </select>
-              <FaChevronDown className="absolute right-1.5 top-1/2 -translate-y-1/2 text-primary/50 pointer-events-none text-xs" />
+              <FiChevronDown className="absolute right-1.5 top-1/2 -translate-y-1/2 text-primary/50 pointer-events-none text-xs" />
             </div>
           </div>
 
           {/* Search - full width on mobile */}
           <div className="relative">
-            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/40" />
+            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/40" />
             <input
               ref={searchInputRef}
               type="text"

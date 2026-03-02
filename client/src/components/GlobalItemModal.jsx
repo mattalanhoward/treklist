@@ -1,7 +1,7 @@
 // src/components/GlobalItemModal.jsx
 import React, { useState, useEffect } from "react";
 import api from "../services/api";
-import { FaTimes, FaInfoCircle } from "react-icons/fa";
+import { FiX, FiInfo } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import LinkInput from "../components/LinkInput";
@@ -420,7 +420,7 @@ function ImportCatalogTab({ onImported }) {
                           aria-label={t("catalogPreview.buttons.viewDetails")}
                           title={t("catalogPreview.buttons.viewDetails")}
                         >
-                          <FaInfoCircle />
+                          <FiInfo />
                         </button>
                       </div>
                     </div>
@@ -518,7 +518,7 @@ function AddItemRequestModal({ isOpen, onClose, onSend }) {
             aria-label={t("actions.close")}
             title={t("actions.close")}
           >
-            <FaTimes />
+            <FiX />
           </button>
         </div>
 
@@ -782,7 +782,7 @@ export default function GlobalItemModal({
             aria-label={t("actions.close")}
             title={t("actions.close")}
           >
-            <FaTimes />
+            <FiX />
           </button>
         </div>
 

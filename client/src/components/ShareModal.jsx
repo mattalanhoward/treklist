@@ -1,6 +1,6 @@
 // src/components/ShareModal.jsx
 import React from "react";
-import { FaCopy, FaBan, FaCode, FaFileCsv } from "react-icons/fa";
+import { FiCopy, FiSlash, FiCode, FiFileText } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 import api from "../services/api";
 import ConfirmDialog from "./ConfirmDialog";
@@ -258,7 +258,7 @@ export default function ShareModal({ listId, isOpen, onClose }) {
                 disabled={busy || !token}
                 title={t("shareModal.tooltips.copyLink")}
               >
-                <FaCopy /> {t("shareModal.buttons.copyLink")}
+                <FiCopy /> {t("shareModal.buttons.copyLink")}
               </button>
             </div>
             <p className="mt-1 text-sm text-primary/80">
@@ -290,7 +290,7 @@ export default function ShareModal({ listId, isOpen, onClose }) {
                 disabled={busy || !token}
                 title={t("shareModal.tooltips.copyEmbed")}
               >
-                <FaCode /> {t("shareModal.buttons.copyEmbed")}
+                <FiCode /> {t("shareModal.buttons.copyEmbed")}
               </button>
             </div>
           </div>
@@ -310,7 +310,7 @@ export default function ShareModal({ listId, isOpen, onClose }) {
                 disabled={busy || !token}
                 title={t("shareModal.tooltips.downloadCsv")}
               >
-                <FaFileCsv /> {t("shareModal.buttons.downloadCsv")}
+                <FiFileText /> {t("shareModal.buttons.downloadCsv")}
               </button>
             </div>
           </div>
@@ -324,7 +324,7 @@ export default function ShareModal({ listId, isOpen, onClose }) {
             disabled={busy || !token}
             title={t("shareModal.tooltips.revokeLink")}
           >
-            <FaBan /> {t("shareModal.buttons.revokeLink")}
+            <FiSlash /> {t("shareModal.buttons.revokeLink")}
           </button>
 
           <button

@@ -6,13 +6,8 @@ import { toast } from "react-hot-toast";
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import {
-  FaGripVertical,
-  FaUtensils,
-  FaTshirt,
-  FaExternalLinkAlt,
-  FaTrash,
-} from "react-icons/fa";
+import { FaGripVertical, FaUtensils, FaTshirt } from "react-icons/fa";
+import { FiExternalLink, FiTrash2 } from "react-icons/fi";
 import AffiliateGateLink from "./AffiliateGateLink";
 import { useWeight } from "../hooks/useWeight";
 import GlobalItemEditModal from "./GlobalItemEditModal";
@@ -80,7 +75,7 @@ export default function SortableItem({
         title={t("gearList.items.openProductPageTitle")}
         ariaLabel={t("gearList.items.openProductPageAria")}
       >
-        <FaExternalLinkAlt className="w-3 h-3" />
+        <FiExternalLink className="w-3 h-3" />
       </AffiliateGateLink>
     ) : (
       <span
@@ -265,7 +260,7 @@ export default function SortableItem({
                 className="p-1 text-primary/60 hover:text-primary focus:outline-none"
                 title={t("gearList.confirm.removeItemConfirm")}
               >
-                <FaTrash className="text-sm" />
+                <FiTrash2 className="text-sm" />
               </button>
             </div>
           )}
@@ -399,7 +394,7 @@ export default function SortableItem({
                 className="p-1 text-primary/60 hover:text-primary focus:outline-none"
                 title={t("gearList.confirm.removeItemConfirm")}
               >
-                <FaTrash className="text-sm" />
+                <FiTrash2 className="text-sm" />
               </button>
             </div>
           )}
@@ -432,7 +427,7 @@ export default function SortableItem({
                   className="text-primary/60 hover:text-primary focus:outline-none"
                   title={t("gearList.confirm.removeItemConfirm")}
                 >
-                  <FaTrash className="text-sm" />
+                  <FiTrash2 className="text-sm" />
                 </button>
               </div>
             )}

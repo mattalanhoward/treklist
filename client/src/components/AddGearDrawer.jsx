@@ -1,7 +1,7 @@
 // src/components/AddGearDrawer.jsx
 import React, { useState, useEffect } from "react";
 import api from "../services/api";
-import { FaTimes, FaInfoCircle } from "react-icons/fa";
+import { FiX, FiInfo } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import LinkInput from "./LinkInput";
@@ -374,7 +374,7 @@ function ImportTab({ onImported }) {
                           aria-label={t("catalogPreview.buttons.viewDetails")}
                           title={t("catalogPreview.buttons.viewDetails")}
                         >
-                          <FaInfoCircle className="text-sm" />
+                          <FiInfo className="text-sm" />
                         </button>
                       </div>
                     </div>
@@ -655,7 +655,7 @@ export default function AddGearDrawer({ isOpen, onClose, onItemsChanged }) {
             className="p-1 text-error hover:text-error/80"
             aria-label={t("actions.close")}
           >
-            <FaTimes className="text-lg" />
+            <FiX className="text-lg" />
           </button>
         </div>
 
@@ -738,7 +738,7 @@ export default function AddGearDrawer({ isOpen, onClose, onItemsChanged }) {
               className="p-1 text-error hover:text-error/80"
               aria-label={t("actions.close")}
             >
-              <FaTimes />
+              <FiX />
             </button>
           </div>
         </div>

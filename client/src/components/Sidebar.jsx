@@ -1,14 +1,8 @@
 // src/components/Sidebar.jsx
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import api from "../services/api";
-import {
-  FaChevronLeft,
-  FaChevronRight,
-  FaPlus,
-  FaChevronDown,
-  FaChevronUp,
-  FaGripVertical,
-} from "react-icons/fa";
+import { FaGripVertical } from "react-icons/fa";
+import { FiChevronLeft, FiChevronRight, FiPlus, FiChevronDown, FiChevronUp } from "react-icons/fi";
 import { useDraggable } from "@dnd-kit/core";
 import GlobalItemModal from "./GlobalItemModal";
 import GlobalItemEditModal from "./GlobalItemEditModal";
@@ -288,7 +282,7 @@ export default function Sidebar({
             (collapsed ? "right-[-1rem] translate-x-full" : "right-4")
           }
         >
-          {collapsed ? <FaChevronRight /> : <FaChevronLeft />}
+          {collapsed ? <FiChevronRight /> : <FiChevronLeft />}
         </button>
 
         {!collapsed && (
@@ -336,9 +330,9 @@ export default function Sidebar({
                   className="p-1 hover:text-primaryAlt/80"
                 >
                   {sidebarGearListsCollapsed ? (
-                    <FaChevronDown className="text-xs" />
+                    <FiChevronDown className="text-xs" />
                   ) : (
-                    <FaChevronUp className="text-xs" />
+                    <FiChevronUp className="text-xs" />
                   )}
                 </button>
               </div>
@@ -366,7 +360,7 @@ export default function Sidebar({
                       disabled={!newListTitle.trim()}
                       className="ml-2 p-1 text-primaryAlt hover:text-primaryAlt/80"
                     >
-                      <FaPlus />
+                      <FiPlus />
                     </button>
                   </div>
                   <ul className="overflow-y-auto flex-1 space-y-1 text-secondaryAlt">
@@ -420,9 +414,9 @@ export default function Sidebar({
                   className="p-1 hover:text-primaryAlt/80"
                 >
                   {sidebarMyGearCollapsed ? (
-                    <FaChevronDown className="text-xs" />
+                    <FiChevronDown className="text-xs" />
                   ) : (
-                    <FaChevronUp className="text-xs" />
+                    <FiChevronUp className="text-xs" />
                   )}
                 </button>
                 <div className="flex-1" />
@@ -430,7 +424,7 @@ export default function Sidebar({
                   onClick={() => setShowCreateModal(true)}
                   className="p-1 text-primaryAlt hover:text-primaryAlt/80"
                 >
-                  <FaPlus />
+                  <FiPlus />
                 </button>
               </div>
 

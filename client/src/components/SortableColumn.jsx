@@ -5,7 +5,8 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { FaGripVertical, FaTimes, FaPlus } from "react-icons/fa";
+import { FaGripVertical } from "react-icons/fa";
+import { FiX, FiPlus } from "react-icons/fi";
 import SortableItem from "../components/SortableItem";
 import AddGearItemModal from "../components/AddGearItemModal";
 import { useScrollPreserver } from "../hooks/useScrollPreserver";
@@ -101,7 +102,7 @@ export default function SortableColumn({
               {totalWeightText}
             </span>
             {!isLocked && (
-              <FaTimes
+              <FiX
                 aria-label={t("gearList.confirm.deleteCategoryConfirm")}
                 title={t("gearList.confirm.deleteCategoryConfirm")}
                 onClick={() => onDeleteCategory(catId)}
@@ -150,7 +151,7 @@ export default function SortableColumn({
           aria-label={t("gearList.items.addButton")}
           title={t("gearList.items.addButton")}
         >
-          <FaPlus />
+          <FiPlus />
           <span className="text-sm">{t("gearList.items.addButton")} </span>
         </button>
       )}

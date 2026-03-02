@@ -1,6 +1,6 @@
 // src/components/AccountModal.jsx
 import React, { useEffect, useState } from "react";
-import { FaTimes } from "react-icons/fa";
+import { FiX } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 import api from "../services/api";
 import { useTranslation } from "react-i18next";
@@ -130,7 +130,7 @@ export default function AccountModal({ isOpen, onClose }) {
             className="text-error hover:text-error/80"
             aria-label={t("actions.close")}
           >
-            <FaTimes size={20} />
+            <FiX size={20} />
           </button>
         </div>
         {/* Tabs */}

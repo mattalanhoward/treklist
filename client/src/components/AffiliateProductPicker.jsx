@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { searchAwinProducts, getAwinFacets } from "../services/affiliates";
-import { FaPlus } from "react-icons/fa";
+import { FiPlus } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 
 function useDebounced(value, delay = 300) {
@@ -339,7 +339,7 @@ export default function AffiliateProductPicker({
               title={t("affiliateProductPicker.buttons.useProduct")}
               onClick={() => onPick(p)}
             >
-              <FaPlus />
+              <FiPlus />
             </button>
           </div>
         ))}

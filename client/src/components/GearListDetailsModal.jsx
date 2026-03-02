@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaTimes, FaRoute, FaBold, FaItalic, FaListUl, FaListOl } from "react-icons/fa";
+import { FiX, FiNavigation, FiBold, FiItalic, FiList } from "react-icons/fi";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { marked } from "marked";
@@ -143,7 +143,7 @@ export default function GearListDetailsModal({
             className="text-error hover:text-error/80"
             aria-label={t("auth.a11y.closeModal")}
           >
-            <FaTimes size={20} />
+            <FiX size={20} />
           </button>
         </div>
 
@@ -254,7 +254,7 @@ export default function GearListDetailsModal({
                   <div key={idx} className="grid grid-cols-3 gap-2">
                     {idx === 0 ? (
                       <div className="col-span-1 flex items-center gap-1.5 px-2 py-1 border border-primary/30 rounded bg-primary/5 text-sm text-primary/70 select-none">
-                        <FaRoute className="flex-shrink-0" aria-hidden />
+                        <FiNavigation className="flex-shrink-0" aria-hidden />
                         <span>{t("gearListDetailsModal.labels.routeSlot")}</span>
                       </div>
                     ) : (
@@ -309,7 +309,7 @@ export default function GearListDetailsModal({
                     }}
                     className={toolbarBtn(editor?.isActive("bold"))}
                   >
-                    <FaBold />
+                    <FiBold />
                   </button>
                   <button
                     type="button"
@@ -320,7 +320,7 @@ export default function GearListDetailsModal({
                     }}
                     className={toolbarBtn(editor?.isActive("italic"))}
                   >
-                    <FaItalic />
+                    <FiItalic />
                   </button>
                   <div className="w-px h-4 bg-primary/20 mx-1" />
                   <button
@@ -332,7 +332,7 @@ export default function GearListDetailsModal({
                     }}
                     className={toolbarBtn(editor?.isActive("bulletList"))}
                   >
-                    <FaListUl />
+                    <FiList />
                   </button>
                   <button
                     type="button"
@@ -343,7 +343,7 @@ export default function GearListDetailsModal({
                     }}
                     className={toolbarBtn(editor?.isActive("orderedList"))}
                   >
-                    <FaListOl />
+                    <FiList />
                   </button>
                 </div>
                 {/* Editor */}

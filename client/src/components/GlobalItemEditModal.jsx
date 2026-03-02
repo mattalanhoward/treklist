@@ -8,7 +8,7 @@ import ConfirmDialog from "./ConfirmDialog";
 import { useUnit } from "../hooks/useUnit";
 import { useWeightInput } from "../hooks/useWeightInput";
 import { useUserSettings } from "../contexts/UserSettings";
-import { FaTimes } from "react-icons/fa";
+import { FiX } from "react-icons/fi";
 import { tItemType, tCategory, CATALOG_CATEGORIES } from "../config/catalogTaxonomy";
 import ImageCarousel from "./ImageCarousel";
 import ButtonLink from "./ui/ButtonLink";
@@ -502,7 +502,7 @@ export default function GlobalItemEditModal({
               aria-label={t("actions.close")}
               title={t("actions.close")}
             >
-              <FaTimes />
+              <FiX />
             </button>
           </div>
 
