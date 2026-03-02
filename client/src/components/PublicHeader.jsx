@@ -1,8 +1,18 @@
 // src/components/PublicHeader.jsx
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import logo from "../assets/images/media-kit/treklist_horizontal.png";
+import { useUserSettings } from "../contexts/UserSettings";
+
+const LANG_OPTIONS = [
+  { code: "en", flag: "🇬🇧", label: "English" },
+  { code: "nl", flag: "🇳🇱", label: "Nederlands" },
+  { code: "de", flag: "🇩🇪", label: "Deutsch" },
+  { code: "fr", flag: "🇫🇷", label: "Français" },
+  { code: "it", flag: "🇮🇹", label: "Italiano" },
+  { code: "es", flag: "🇪🇸", label: "Español" },
+];
 
 /**
  * Public (logged-out) header used on Landing and legal pages.
@@ -23,6 +33,24 @@ export default function PublicHeader({
   onRegister,
 }) {
   const { t } = useTranslation("common");
+  const { language, setLanguage } = useUserSettings();
+  const [langOpen, setLangOpen] = useState(false);
+  const langRef = useRef(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    if (!langOpen) return;
+    function handleClick(e) {
+      if (langRef.current && !langRef.current.contains(e.target)) {
+        setLangOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [langOpen]);
+
+  const currentLang =
+    LANG_OPTIONS.find((l) => l.code === language) ?? LANG_OPTIONS[0];
 
   const base = "w-full flex items-center justify-between px-6 py-2 z-30";
 
@@ -60,7 +88,55 @@ export default function PublicHeader({
       )}
 
       {/* Auth actions */}
-      <div className="space-x-4">
+      <div className="flex items-center space-x-4">
+        {/* Language picker */}
+        <div className="relative" ref={langRef}>
+          <button
+            type="button"
+            onClick={() => setLangOpen((o) => !o)}
+            className="flex items-center gap-1 text-sm font-medium hover:opacity-80 transition"
+            aria-label="Select language"
+          >
+            <span className="text-lg leading-none">{currentLang.flag}</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className={`transition-transform ${langOpen ? "rotate-180" : ""}`}
+            >
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
+
+          {langOpen && (
+            <div className="absolute right-0 top-full mt-2 bg-white rounded-md shadow-lg py-1 z-50 min-w-[9rem] border border-gray-100">
+              {LANG_OPTIONS.map((opt) => (
+                <button
+                  key={opt.code}
+                  type="button"
+                  onClick={() => {
+                    setLanguage(opt.code);
+                    setLangOpen(false);
+                  }}
+                  className={`flex items-center gap-2 w-full px-3 py-2 text-sm text-left hover:bg-gray-50 transition ${
+                    language === opt.code ? "font-semibold" : ""
+                  }`}
+                >
+                  <span className="text-base">{opt.flag}</span>
+                  <span className="text-gray-700">{opt.label}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Login */}
         {onLogin ? (
           <button
             type="button"
@@ -75,6 +151,7 @@ export default function PublicHeader({
           </Link>
         )}
 
+        {/* Register/Get Started */}
         {onRegister ? (
           <button
             type="button"
