@@ -610,6 +610,7 @@ export default function GlobalItemModal({
   const [brand, setBrand] = useState("");
   const [description, setDescription] = useState("");
   const [link, setLink] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [worn, setWorn] = useState(false);
   const [consumable, setConsumable] = useState(false);
   const [quantity, setQuantity] = useState(1);
@@ -718,6 +719,7 @@ export default function GlobalItemModal({
           if (weightSource === "heuristic") payload.weightSource = "heuristic";
         }
         if (link.trim()) payload.link = link.trim();
+        if (imageUrl.trim()) payload.imageUrls = [imageUrl.trim()];
 
         payload.worn = worn;
         payload.consumable = consumable;
@@ -957,6 +959,17 @@ export default function GlobalItemModal({
                       className="absolute inset-0 cursor-not-allowed bg-transparent"
                     />
                   )}
+                </div>
+
+                {/* Image URL — full width */}
+                <div className="sm:col-span-2">
+                  <LinkInput
+                    value={imageUrl}
+                    onChange={setImageUrl}
+                    label={t("globalItemModal.labels.imageUrl", "Image URL")}
+                    placeholder="https://example.com/image.jpg"
+                    required={false}
+                  />
                 </div>
               </div>
 
