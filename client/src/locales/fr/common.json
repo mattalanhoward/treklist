@@ -346,16 +346,30 @@
     }
   },
   "swapModal": {
-    "title": "Swap Item",
-    "searchPlaceholder": "Search my gear...",
-    "noResults": "No matching items",
-    "noGear": "No items in My Gear",
-    "confirm": "Swap",
-    "swapping": "Swapping...",
+    "title": "Remplacer l'article",
+    "tabs": {
+      "myGear": "Mon équipement",
+      "catalog": "Catalogue",
+      "custom": "Personnalisé"
+    },
+    "searchPlaceholder": "Rechercher mon équipement...",
+    "noResults": "Aucun article correspondant",
+    "noGear": "Aucun article dans Mon équipement",
+    "confirm": "Remplacer",
+    "swapping": "Remplacement...",
+    "catalog": {
+      "searchPlaceholder": "Rechercher dans le catalogue…",
+      "empty": "Aucun article trouvé",
+      "loadFailed": "Échec du chargement du catalogue",
+      "confirmLabel": "Importer & Remplacer"
+    },
+    "custom": {
+      "confirmLabel": "Créer & Remplacer"
+    },
     "toast": {
-      "swapped": "Item swapped",
-      "swapFailed": "Failed to swap item",
-      "loadFailed": "Failed to load gear"
+      "swapped": "Article remplacé",
+      "swapFailed": "Échec du remplacement",
+      "loadFailed": "Échec du chargement"
     }
   },
   "cookieBanner": {
@@ -539,7 +553,12 @@
     "a11y": {
       "close": "Fermer la fenêtre d’ajout d’articles"
     },
-    "searchPlaceholder": "Rechercher des articles globaux…",
+    "tabs": {
+      "myGear": "Mon équipement",
+      "catalog": "Catalogue",
+      "custom": "Personnalisé"
+    },
+    "searchPlaceholder": "Rechercher mon équipement…",
     "badges": {
       "added": "Ajouté"
     },
@@ -547,7 +566,15 @@
     "buttons": {
       "add_one": "Ajouter {{count}} article",
       "add_other": "Ajouter {{count}} articles",
-      "adding": "Ajout…"
+      "adding": "Ajout…",
+      "importAndAdd_one": "Importer & Ajouter {{count}}",
+      "importAndAdd_other": "Importer & Ajouter {{count}}",
+      "createAndAdd": "Créer & Ajouter"
+    },
+    "catalog": {
+      "searchPlaceholder": "Rechercher dans le catalogue…",
+      "empty": "Aucun article trouvé",
+      "loadFailed": "Échec du chargement du catalogue"
     },
     "toasts": {
       "selectAtLeastOne": "Veuillez sélectionner au moins un article.",

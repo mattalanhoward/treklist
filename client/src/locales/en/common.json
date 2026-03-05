@@ -356,11 +356,25 @@
   },
   "swapModal": {
     "title": "Swap Item",
+    "tabs": {
+      "myGear": "My Gear",
+      "catalog": "Catalog",
+      "custom": "Custom"
+    },
     "searchPlaceholder": "Search my gear...",
     "noResults": "No matching items",
     "noGear": "No items in My Gear",
     "confirm": "Swap",
     "swapping": "Swapping...",
+    "catalog": {
+      "searchPlaceholder": "Search catalog…",
+      "empty": "No catalog items found",
+      "loadFailed": "Failed to load catalog",
+      "confirmLabel": "Import & Swap"
+    },
+    "custom": {
+      "confirmLabel": "Create & Swap"
+    },
     "toast": {
       "swapped": "Item swapped",
       "swapFailed": "Failed to swap item",
@@ -548,7 +562,12 @@
     "a11y": {
       "close": "Close add gear items modal"
     },
-    "searchPlaceholder": "Search global items…",
+    "tabs": {
+      "myGear": "My Gear",
+      "catalog": "Catalog",
+      "custom": "Custom"
+    },
+    "searchPlaceholder": "Search my gear…",
     "badges": {
       "added": "Added"
     },
@@ -556,7 +575,15 @@
     "buttons": {
       "add_one": "Add {{count}} item",
       "add_other": "Add {{count}} items",
-      "adding": "Adding…"
+      "adding": "Adding…",
+      "importAndAdd_one": "Import & Add {{count}}",
+      "importAndAdd_other": "Import & Add {{count}}",
+      "createAndAdd": "Create & Add"
+    },
+    "catalog": {
+      "searchPlaceholder": "Search catalog…",
+      "empty": "No catalog items found",
+      "loadFailed": "Failed to load catalog"
     },
     "toasts": {
       "selectAtLeastOne": "Please select at least one item.",

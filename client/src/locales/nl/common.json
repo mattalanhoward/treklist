@@ -346,16 +346,30 @@
     }
   },
   "swapModal": {
-    "title": "Swap Item",
-    "searchPlaceholder": "Search my gear...",
-    "noResults": "No matching items",
-    "noGear": "No items in My Gear",
-    "confirm": "Swap",
-    "swapping": "Swapping...",
+    "title": "Item vervangen",
+    "tabs": {
+      "myGear": "Mijn uitrusting",
+      "catalog": "Catalogus",
+      "custom": "Eigen item"
+    },
+    "searchPlaceholder": "Zoek mijn uitrusting...",
+    "noResults": "Geen overeenkomende items",
+    "noGear": "Geen items in Mijn uitrusting",
+    "confirm": "Vervangen",
+    "swapping": "Vervangen...",
+    "catalog": {
+      "searchPlaceholder": "Zoek in catalogus…",
+      "empty": "Geen catalogusitems gevonden",
+      "loadFailed": "Catalogus laden mislukt",
+      "confirmLabel": "Importeer en vervang"
+    },
+    "custom": {
+      "confirmLabel": "Maak aan en vervang"
+    },
     "toast": {
-      "swapped": "Item swapped",
-      "swapFailed": "Failed to swap item",
-      "loadFailed": "Failed to load gear"
+      "swapped": "Item vervangen",
+      "swapFailed": "Vervangen mislukt",
+      "loadFailed": "Uitrusting laden mislukt"
     }
   },
   "cookieBanner": {
@@ -539,7 +553,12 @@
     "a11y": {
       "close": "Venster uitrustingsitems toevoegen sluiten"
     },
-    "searchPlaceholder": "Zoek globale items…",
+    "tabs": {
+      "myGear": "Mijn uitrusting",
+      "catalog": "Catalogus",
+      "custom": "Eigen item"
+    },
+    "searchPlaceholder": "Zoek mijn uitrusting…",
     "badges": {
       "added": "Al toegevoegd"
     },
@@ -547,7 +566,15 @@
     "buttons": {
       "add_one": "Voeg {{count}} item toe",
       "add_other": "Voeg {{count}} items toe",
-      "adding": "Toevoegen…"
+      "adding": "Toevoegen…",
+      "importAndAdd_one": "Importeer en voeg {{count}} toe",
+      "importAndAdd_other": "Importeer en voeg {{count}} toe",
+      "createAndAdd": "Maak aan en voeg toe"
+    },
+    "catalog": {
+      "searchPlaceholder": "Zoek in catalogus…",
+      "empty": "Geen catalogusitems gevonden",
+      "loadFailed": "Catalogus laden mislukt"
     },
     "toasts": {
       "selectAtLeastOne": "Selecteer minimaal één item.",

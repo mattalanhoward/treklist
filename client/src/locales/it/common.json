@@ -346,16 +346,30 @@
     }
   },
   "swapModal": {
-    "title": "Swap Item",
-    "searchPlaceholder": "Search my gear...",
-    "noResults": "No matching items",
-    "noGear": "No items in My Gear",
-    "confirm": "Swap",
-    "swapping": "Swapping...",
+    "title": "Sostituisci articolo",
+    "tabs": {
+      "myGear": "Il mio equipaggiamento",
+      "catalog": "Catalogo",
+      "custom": "Personalizzato"
+    },
+    "searchPlaceholder": "Cerca nel mio equipaggiamento...",
+    "noResults": "Nessun articolo trovato",
+    "noGear": "Nessun articolo nel mio equipaggiamento",
+    "confirm": "Sostituisci",
+    "swapping": "Sostituzione...",
+    "catalog": {
+      "searchPlaceholder": "Cerca nel catalogo…",
+      "empty": "Nessun articolo trovato nel catalogo",
+      "loadFailed": "Impossibile caricare il catalogo",
+      "confirmLabel": "Importa e sostituisci"
+    },
+    "custom": {
+      "confirmLabel": "Crea e sostituisci"
+    },
     "toast": {
-      "swapped": "Item swapped",
-      "swapFailed": "Failed to swap item",
-      "loadFailed": "Failed to load gear"
+      "swapped": "Articolo sostituito",
+      "swapFailed": "Impossibile sostituire l'articolo",
+      "loadFailed": "Impossibile caricare l'equipaggiamento"
     }
   },
   "cookieBanner": {
@@ -539,7 +553,12 @@
     "a11y": {
       "close": "Chiudi modale aggiungi articoli"
     },
-    "searchPlaceholder": "Cerca articoli globali…",
+    "tabs": {
+      "myGear": "Il mio equipaggiamento",
+      "catalog": "Catalogo",
+      "custom": "Personalizzato"
+    },
+    "searchPlaceholder": "Cerca nel mio equipaggiamento…",
     "badges": {
       "added": "Aggiunto"
     },
@@ -547,7 +566,15 @@
     "buttons": {
       "add_one": "Aggiungi {{count}} articolo",
       "add_other": "Aggiungi {{count}} articoli",
-      "adding": "Aggiunta…"
+      "adding": "Aggiunta…",
+      "importAndAdd_one": "Importa e aggiungi {{count}}",
+      "importAndAdd_other": "Importa e aggiungi {{count}}",
+      "createAndAdd": "Crea e aggiungi"
+    },
+    "catalog": {
+      "searchPlaceholder": "Cerca nel catalogo…",
+      "empty": "Nessun articolo trovato nel catalogo",
+      "loadFailed": "Impossibile caricare il catalogo"
     },
     "toasts": {
       "selectAtLeastOne": "Seleziona almeno un articolo.",

@@ -346,16 +346,30 @@
     }
   },
   "swapModal": {
-    "title": "Swap Item",
-    "searchPlaceholder": "Search my gear...",
-    "noResults": "No matching items",
-    "noGear": "No items in My Gear",
-    "confirm": "Swap",
-    "swapping": "Swapping...",
+    "title": "Item ersetzen",
+    "tabs": {
+      "myGear": "Meine Ausrüstung",
+      "catalog": "Katalog",
+      "custom": "Eigenes"
+    },
+    "searchPlaceholder": "Meine Ausrüstung durchsuchen...",
+    "noResults": "Keine passenden Items",
+    "noGear": "Keine Items in Meine Ausrüstung",
+    "confirm": "Ersetzen",
+    "swapping": "Ersetzen…",
+    "catalog": {
+      "searchPlaceholder": "Katalog durchsuchen…",
+      "empty": "Keine Katalogeinträge gefunden",
+      "loadFailed": "Katalog konnte nicht geladen werden",
+      "confirmLabel": "Importieren & Ersetzen"
+    },
+    "custom": {
+      "confirmLabel": "Erstellen & Ersetzen"
+    },
     "toast": {
-      "swapped": "Item swapped",
-      "swapFailed": "Failed to swap item",
-      "loadFailed": "Failed to load gear"
+      "swapped": "Item ersetzt",
+      "swapFailed": "Item konnte nicht ersetzt werden",
+      "loadFailed": "Ausrüstung konnte nicht geladen werden"
     }
   },
   "cookieBanner": {
@@ -539,7 +553,12 @@
     "a11y": {
       "close": "Modal zum Hinzufügen schließen"
     },
-    "searchPlaceholder": "Globale Items suchen…",
+    "tabs": {
+      "myGear": "Meine Ausrüstung",
+      "catalog": "Katalog",
+      "custom": "Eigenes"
+    },
+    "searchPlaceholder": "Meine Ausrüstung durchsuchen…",
     "badges": {
       "added": "Hinzugefügt"
     },
@@ -547,7 +566,15 @@
     "buttons": {
       "add_one": "{{count}} Item hinzufügen",
       "add_other": "{{count}} Items hinzufügen",
-      "adding": "Hinzufügen…"
+      "adding": "Hinzufügen…",
+      "importAndAdd_one": "Importieren & Hinzufügen {{count}}",
+      "importAndAdd_other": "Importieren & Hinzufügen {{count}}",
+      "createAndAdd": "Erstellen & Hinzufügen"
+    },
+    "catalog": {
+      "searchPlaceholder": "Katalog durchsuchen…",
+      "empty": "Keine Katalogeinträge gefunden",
+      "loadFailed": "Katalog konnte nicht geladen werden"
     },
     "toasts": {
       "selectAtLeastOne": "Bitte wähle mindestens ein Item aus.",
