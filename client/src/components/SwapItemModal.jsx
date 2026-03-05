@@ -13,6 +13,7 @@ import {
 import { useUnit } from "../hooks/useUnit";
 import { useWeightInput } from "../hooks/useWeightInput";
 import Spinner from "./ui/Spinner";
+import LinkInput from "./LinkInput";
 
 function normalize(str = "") {
   return String(str)
@@ -283,67 +284,106 @@ function CustomTab({ form, onChange }) {
   const { unitLabel } = useWeightInput(unit);
 
   return (
-    <div className="space-y-3 py-1">
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="block text-xs font-medium text-primary mb-1">
-            {t("globalItemModal.labels.name")} *
-          </label>
-          <input
-            type="text"
-            value={form.name}
-            onChange={(e) => onChange({ ...form, name: e.target.value })}
-            autoFocus
-            className="w-full border border-primary/30 rounded px-2 py-1.5 text-primary bg-base-100 text-sm"
-          />
+    <div className="overflow-y-auto h-full">
+      <div className="space-y-2 py-1">
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <label className="block text-xs font-medium text-primary mb-1">
+              {t("globalItemModal.labels.name")} <span className="text-error">*</span>
+            </label>
+            <input
+              type="text"
+              value={form.name}
+              onChange={(e) => onChange({ ...form, name: e.target.value })}
+              autoFocus
+              placeholder={t("globalItemModal.placeholders.name")}
+              className="w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-primary mb-1">
+              {t("globalItemModal.labels.brand")}
+            </label>
+            <input
+              type="text"
+              value={form.brand}
+              onChange={(e) => onChange({ ...form, brand: e.target.value })}
+              placeholder={t("globalItemModal.placeholders.brand")}
+              className="w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-primary mb-1">
+              {t("globalItemModal.labels.category", "Category")}
+            </label>
+            <select
+              value={form.catalogCategory}
+              onChange={(e) => onChange({ ...form, catalogCategory: e.target.value })}
+              className="w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 text-sm"
+            >
+              <option value="">{t("myGear.filter.uncategorized", "Uncategorized")}</option>
+              {CATALOG_CATEGORIES.map((cat) => (
+                <option key={cat} value={cat}>{tCategory(t, cat)}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-primary mb-1">
+              {t("globalItemModal.labels.itemType")}
+            </label>
+            <input
+              type="text"
+              value={form.itemType}
+              onChange={(e) => onChange({ ...form, itemType: e.target.value })}
+              placeholder={t("globalItemModal.placeholders.itemType")}
+              className="w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-primary mb-1">
+              {t("globalItemModal.labels.weight", { unit: unitLabel })}
+            </label>
+            <input
+              type="text"
+              inputMode="decimal"
+              value={form.weight}
+              onChange={(e) => onChange({ ...form, weight: e.target.value })}
+              placeholder={unitLabel === "g" ? "0" : "0.0"}
+              className="w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 text-sm"
+            />
+          </div>
+          <div>
+            <LinkInput
+              value={form.link}
+              onChange={(v) => onChange({ ...form, link: v })}
+              label={t("globalItemModal.labels.link")}
+              placeholder={t("globalItemModal.placeholders.link")}
+              required={false}
+              className="text-sm"
+            />
+          </div>
+          <div className="col-span-2">
+            <LinkInput
+              value={form.imageUrl}
+              onChange={(v) => onChange({ ...form, imageUrl: v })}
+              label={t("globalItemModal.labels.imageUrl", "Image URL")}
+              placeholder="https://example.com/image.jpg"
+              required={false}
+              className="text-sm"
+            />
+          </div>
         </div>
         <div>
           <label className="block text-xs font-medium text-primary mb-1">
-            {t("globalItemModal.labels.brand")}
+            {t("globalItemModal.labels.description")}
           </label>
-          <input
-            type="text"
-            value={form.brand}
-            onChange={(e) => onChange({ ...form, brand: e.target.value })}
-            className="w-full border border-primary/30 rounded px-2 py-1.5 text-primary bg-base-100 text-sm"
+          <textarea
+            value={form.description}
+            onChange={(e) => onChange({ ...form, description: e.target.value })}
+            placeholder={t("globalItemModal.placeholders.description", "Brief description...")}
+            className="w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 text-sm resize-none h-16"
           />
         </div>
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="block text-xs font-medium text-primary mb-1">
-            {t("globalItemModal.labels.itemType")}
-          </label>
-          <input
-            type="text"
-            value={form.itemType}
-            onChange={(e) => onChange({ ...form, itemType: e.target.value })}
-            className="w-full border border-primary/30 rounded px-2 py-1.5 text-primary bg-base-100 text-sm"
-          />
-        </div>
-        <div>
-          <label className="block text-xs font-medium text-primary mb-1">
-            {t("globalItemModal.labels.weight")} ({unitLabel})
-          </label>
-          <input
-            type="text"
-            value={form.weight}
-            onChange={(e) => onChange({ ...form, weight: e.target.value })}
-            className="w-full border border-primary/30 rounded px-2 py-1.5 text-primary bg-base-100 text-sm"
-          />
-        </div>
-      </div>
-      <div>
-        <label className="block text-xs font-medium text-primary mb-1">
-          {t("globalItemModal.labels.link")}
-        </label>
-        <input
-          type="text"
-          value={form.link}
-          onChange={(e) => onChange({ ...form, link: e.target.value })}
-          placeholder="https://..."
-          className="w-full border border-primary/30 rounded px-2 py-1.5 text-primary bg-base-100 text-sm"
-        />
       </div>
     </div>
   );
@@ -376,9 +416,12 @@ export default function SwapItemModal({
   const [customForm, setCustomForm] = useState({
     name: "",
     brand: "",
+    catalogCategory: "",
     itemType: "",
     weight: "",
     link: "",
+    imageUrl: "",
+    description: "",
   });
 
   useEffect(() => {
@@ -437,11 +480,13 @@ export default function SwapItemModal({
           }
         }
         const payload = { name: customForm.name.trim() };
+        if (customForm.catalogCategory) payload.catalogCategory = customForm.catalogCategory;
         if (customForm.brand.trim()) payload.brand = customForm.brand.trim();
-        if (customForm.itemType.trim())
-          payload.itemType = customForm.itemType.trim();
+        if (customForm.itemType.trim()) payload.itemType = customForm.itemType.trim();
         if (typeof grams === "number") payload.weight = grams;
         if (customForm.link.trim()) payload.link = customForm.link.trim();
+        if (customForm.imageUrl.trim()) payload.imageUrls = [customForm.imageUrl.trim()];
+        if (customForm.description.trim()) payload.description = customForm.description.trim();
         const { data: gi } = await api.post("/global/items", payload);
         window.dispatchEvent(new CustomEvent("global-items:updated"));
         await doSwap(String(gi._id));
@@ -482,7 +527,7 @@ export default function SwapItemModal({
       onClick={onClose}
     >
       <div
-        className="bg-base-100 rounded-lg shadow-2xl w-full max-w-md mx-4 flex flex-col max-h-[85vh]"
+        className="bg-base-100 rounded-lg shadow-2xl w-full max-w-2xl mx-4 flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -524,8 +569,8 @@ export default function SwapItemModal({
           ))}
         </div>
 
-        {/* Content */}
-        <div className="flex-1 overflow-hidden flex flex-col px-4 pt-3 min-h-0">
+        {/* Content — fixed height so tabs don't shift modal size */}
+        <div className="h-[360px] overflow-hidden flex flex-col px-4 pt-3">
           {tab === "myGear" && (
             <MyGearTab
               items={myGearItems}
