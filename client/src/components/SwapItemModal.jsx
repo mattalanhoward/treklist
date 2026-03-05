@@ -90,7 +90,7 @@ function MyGearTab({ items, loading, excludeId, selectedId, onSelect }) {
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium text-primary truncate">
                       {item.brand && (
-                        <span className="mr-1 text-primary/70">{item.brand}</span>
+                        <span className="mr-1">{item.brand}</span>
                       )}
                       {item.name}
                     </div>
@@ -254,7 +254,7 @@ function CatalogTab({ selectedId, onSelect }) {
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium text-primary truncate">
                       {item.brand && (
-                        <span className="mr-1 text-primary/70">{item.brand}</span>
+                        <span className="mr-1">{item.brand}</span>
                       )}
                       {item.name}
                     </div>

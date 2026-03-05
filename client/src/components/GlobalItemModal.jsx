@@ -749,11 +749,7 @@ export default function GlobalItemModal({
     <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center z-50">
       <form
         onSubmit={handleSubmit}
-        className={`bg-neutralAlt rounded-lg shadow-2xl max-w-3xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 flex flex-col overflow-hidden ${
-          tab === "import"
-            ? "sm:h-[80vh] h-[70vh]"
-            : "sm:max-h-[80vh] max-h-[90dvh]"
-        }`}
+        className="bg-neutralAlt rounded-lg shadow-2xl max-w-3xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 flex flex-col overflow-hidden sm:h-[80vh] h-[80dvh]"
       >
         {/* Header (smaller on phones) */}
         <div className="flex justify-between items-center mb-2 sm:mb-3">
@@ -854,7 +850,7 @@ export default function GlobalItemModal({
 
           {/* Grid: only visible on the Custom tab */}
           {tab === "custom" && (
-            <div className="flex flex-col">
+            <div className="flex-1 min-h-0 overflow-y-auto">
               {/* top form fields */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
                 {/* Row 1: Name | Brand */}
