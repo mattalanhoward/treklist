@@ -178,8 +178,8 @@
     },
     "verify": {
       "sentTo": "Wir haben einen Bestätigungslink an {{email}} gesendet.",
-      "step1": "1. Öffne deine E-Mail und klicke auf den Bestätigungslink.",
-      "step2": "2. Komm dann zu diesem Fenster zurück und drücke den Button unten.",
+      "step1": "Öffne deine E-Mail und klicke auf den Bestätigungslink — du wirst direkt zu deinem Ziel weitergeleitet.",
+      "step2": "",
       "laterInfo": "Du kannst dieses Fenster auch schließen und später zurückkommen. Sobald deine E-Mail bestätigt ist, kannst du dich normal anmelden."
     },
     "toasts": {

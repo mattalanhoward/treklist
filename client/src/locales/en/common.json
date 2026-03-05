@@ -178,8 +178,8 @@
     },
     "verify": {
       "sentTo": "We've sent a verification link to {{email}}.",
-      "step1": "1. Open your email and click the verification link.",
-      "step2": "2. Then come back to this window and press the button below.",
+      "step1": "Open your email and click the verification link — you'll be taken straight to your destination.",
+      "step2": "",
       "laterInfo": "You can also close this window and come back later. Once your email is verified, you'll be able to sign in normally."
     },
     "toasts": {

@@ -178,8 +178,8 @@
     },
     "verify": {
       "sentTo": "Abbiamo inviato un link di verifica a {{email}}.",
-      "step1": "1. Apri la tua email e clicca sul link di verifica.",
-      "step2": "2. Poi torna a questa finestra e premi il pulsante qui sotto.",
+      "step1": "Apri la tua email e clicca sul link di verifica — verrai portato direttamente alla tua destinazione.",
+      "step2": "",
       "laterInfo": "Puoi anche chiudere questa finestra e tornare più tardi. Quando la tua email sarà verificata, potrai accedere normalmente."
     },
     "toasts": {

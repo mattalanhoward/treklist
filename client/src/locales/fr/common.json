@@ -178,8 +178,8 @@
     },
     "verify": {
       "sentTo": "Nous avons envoyé un lien de vérification à {{email}}.",
-      "step1": "1. Ouvrez votre email et cliquez sur le lien de vérification.",
-      "step2": "2. Revenez ensuite sur cette fenêtre et appuyez sur le bouton ci-dessous.",
+      "step1": "Ouvrez votre email et cliquez sur le lien de vérification — vous serez redirigé directement vers votre destination.",
+      "step2": "",
       "laterInfo": "Vous pouvez aussi fermer cette fenêtre et revenir plus tard. Une fois votre email vérifié, vous pourrez vous connecter normalement."
     },
     "toasts": {

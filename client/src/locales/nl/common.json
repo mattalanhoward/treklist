@@ -178,8 +178,8 @@
     },
     "verify": {
       "sentTo": "We hebben een verificatielink gestuurd naar {{email}}.",
-      "step1": "1. Open je e-mail en klik op de verificatielink.",
-      "step2": "2. Kom daarna terug naar dit venster en klik op de knop hieronder.",
+      "step1": "Open je e-mail en klik op de verificatielink — je wordt direct naar je bestemming gebracht.",
+      "step2": "",
       "laterInfo": "Je kunt dit venster ook sluiten en later terugkomen. Zodra je e-mail is bevestigd, kun je normaal inloggen."
     },
     "toasts": {

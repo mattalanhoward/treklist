@@ -15,11 +15,25 @@ export default function VerifyEmail() {
   const { verifyEmail } = useAuth();
   const { t } = useTranslation("common");
 
+  const params = new URLSearchParams(location.search);
+  const rawNext = params.get("next");
+  const next = rawNext && rawNext.startsWith("/") ? rawNext : null;
+
+  // Auto-navigate after successful verification
+  useEffect(() => {
+    if (status === "success") {
+      const timer = setTimeout(
+        () => navigate(next || "/dashboard", { replace: true }),
+        1500,
+      );
+      return () => clearTimeout(timer);
+    }
+  }, [status, next, navigate]);
+
   useEffect(() => {
     if (handledRef.current) return; // ensure we only run once
     handledRef.current = true;
 
-    const params = new URLSearchParams(location.search);
     const token = params.get("token");
 
     if (!token) {
@@ -80,7 +94,7 @@ export default function VerifyEmail() {
           </p>
           <button
             type="button"
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate(next || "/dashboard", { replace: true })}
             className="mt-2 inline-flex items-center justify-center rounded bg-secondary px-4 py-2 text-white hover:bg-secondary/80"
           >
             {t("verifyEmailPage.successButton", {
