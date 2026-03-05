@@ -340,6 +340,22 @@
       "openProductPageTitle": "Productpagina openen",
       "openProductPageAria": "Productpagina openen (betaalde link)",
       "itemOptionsA11y": "Itemopties"
+    },
+    "actions": {
+      "swap": "Swap item"
+    }
+  },
+  "swapModal": {
+    "title": "Swap Item",
+    "searchPlaceholder": "Search my gear...",
+    "noResults": "No matching items",
+    "noGear": "No items in My Gear",
+    "confirm": "Swap",
+    "swapping": "Swapping...",
+    "toast": {
+      "swapped": "Item swapped",
+      "swapFailed": "Failed to swap item",
+      "loadFailed": "Failed to load gear"
     }
   },
   "cookieBanner": {
@@ -495,7 +511,8 @@
     "buttons": {
       "delete": "Item verwijderen",
       "saving": "Bezig met opslaan…",
-      "productPage": "Productpagina"
+      "productPage": "Productpagina",
+      "claim": "Add to My Gear"
     },
     "toast": {
       "updated": "Item bijgewerkt",
@@ -503,7 +520,9 @@
       "deleted": "Item verwijderd",
       "deleteFailed": "Verwijderen mislukt",
       "saveFailed": "Opslaan mislukt. Probeer het opnieuw.",
-      "stillLoading": "Artikeldetails worden nog geladen…"
+      "stillLoading": "Artikeldetails worden nog geladen…",
+      "claimed": "Added to My Gear",
+      "claimFailed": "Failed to add to My Gear"
     },
     "confirm": {
       "saveListTitle": "Wijzigingen aan dit item opslaan?",
@@ -1109,7 +1128,12 @@
       "delete": "Verwijderen",
       "selectAll": "Alles selecteren",
       "clearSelection": "Wissen",
-      "deleteSelected": "Verwijderen"
+      "deleteSelected": "Verwijderen",
+      "showImported": "Show items from shared lists",
+      "hideImported": "Hide items from shared lists"
+    },
+    "badge": {
+      "fromSharedList": "Shared list"
     },
     "tiles": {
       "noImage": "Geen afbeelding"

@@ -790,6 +790,40 @@ export default function GlobalItemEditModal({
                 </button>
               )}
 
+              {template?.importedFromShare && globalId && (
+                <button
+                  type="button"
+                  disabled={saving}
+                  onClick={async () => {
+                    try {
+                      await api.patch(`/global/items/${globalId}/claim`);
+                      setGlobalTemplate((prev) =>
+                        prev ? { ...prev, importedFromShare: false } : prev,
+                      );
+                      toast.success(
+                        t("globalItemEditModal.toast.claimed", "Added to My Gear"),
+                      );
+                      window.dispatchEvent(
+                        new CustomEvent("global-items:updated"),
+                      );
+                      onSaved?.();
+                      onClose?.();
+                    } catch (err) {
+                      toast.error(
+                        err?.response?.data?.message ||
+                          t(
+                            "globalItemEditModal.toast.claimFailed",
+                            "Failed to add to My Gear",
+                          ),
+                      );
+                    }
+                  }}
+                  className="px-2 py-1 bg-secondary/10 text-secondary rounded hover:bg-secondary/20 text-sm"
+                >
+                  {t("globalItemEditModal.buttons.claim", "Add to My Gear")}
+                </button>
+              )}
+
               {!isCustom && primaryOffer?.deepLink && (
                 <ButtonLink href={primaryOffer.deepLink}>
                   {primaryOffer.merchantName || t("globalItemEditModal.buttons.productPage")}

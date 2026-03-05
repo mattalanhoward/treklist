@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import api from "../services/api";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { FiSearch, FiGrid, FiList, FiPlus, FiChevronDown, FiCheckSquare, FiTrash2, FiX } from "react-icons/fi";
+import { FiSearch, FiGrid, FiList, FiPlus, FiChevronDown, FiCheckSquare, FiTrash2, FiX, FiEye, FiEyeOff } from "react-icons/fi";
 import ConfirmDialog from "../components/ConfirmDialog";
 import GlobalItemEditModal from "../components/GlobalItemEditModal";
 import AddGearDrawer from "../components/AddGearDrawer";
@@ -30,6 +30,7 @@ export default function MyGearView({ collapsed }) {
     return window.matchMedia("(min-width: 768px)").matches ? "tiles" : "list";
   });
 
+  const [showImported, setShowImported] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [showDrawer, setShowDrawer] = useState(() =>
     window.matchMedia("(min-width: 1024px)").matches
@@ -55,10 +56,10 @@ export default function MyGearView({ collapsed }) {
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [confirmBulkDelete, setConfirmBulkDelete] = useState(false);
 
-  // Fetch items
+  // Fetch ALL items (including imported) — filter client-side so we can show hidden count
   const fetchItems = useCallback(async (signal) => {
     try {
-      const { data } = await api.get("/my-gear/items", { signal });
+      const { data } = await api.get("/my-gear/items?includeImported=true", { signal });
       if (!signal?.aborted) {
         setItems(data || []);
       }
@@ -111,8 +112,13 @@ export default function MyGearView({ collapsed }) {
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "");
 
+  const hiddenImportedCount = useMemo(
+    () => (!showImported ? items.filter((i) => i.importedFromShare).length : 0),
+    [items, showImported],
+  );
+
   const filteredItems = useMemo(() => {
-    let result = items;
+    let result = showImported ? items : items.filter((i) => !i.importedFromShare);
 
     // Category filter
     if (categoryFilter !== "all") {
@@ -151,7 +157,7 @@ export default function MyGearView({ collapsed }) {
     });
 
     return sorted;
-  }, [items, searchQuery, categoryFilter, sortOption]);
+  }, [items, showImported, searchQuery, categoryFilter, sortOption]);
 
   // Handle delete
   const handleDelete = async (item) => {
@@ -318,6 +324,21 @@ export default function MyGearView({ collapsed }) {
               <FiChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-primary/50 pointer-events-none text-xs" />
             </div>
 
+            {/* Show imported toggle */}
+            <button
+              type="button"
+              onClick={() => setShowImported((v) => !v)}
+              className={`relative p-1 rounded ${showImported ? "text-secondary bg-secondary/10" : "text-primary/50 hover:text-primary"}`}
+              title={showImported ? t("myGear.actions.hideImported", "Hide items from shared lists") : t("myGear.actions.showImported", "Show items from shared lists")}
+            >
+              {showImported ? <FiEyeOff className="text-sm" /> : <FiEye className="text-sm" />}
+              {!showImported && hiddenImportedCount > 0 && (
+                <span className="absolute -top-1 -right-1 text-[9px] bg-amber-400 text-white rounded-full w-3.5 h-3.5 flex items-center justify-center leading-none">
+                  {hiddenImportedCount > 9 ? "9+" : hiddenImportedCount}
+                </span>
+              )}
+            </button>
+
             {/* View mode toggle */}
             <div className="inline-flex rounded border border-primary/30 overflow-hidden">
               <button
@@ -450,6 +471,21 @@ export default function MyGearView({ collapsed }) {
                   <FiGrid className="text-sm" />
                 </button>
               </div>
+              {/* Show imported toggle (mobile) */}
+              <button
+                type="button"
+                onClick={() => setShowImported((v) => !v)}
+                className={`relative p-1 rounded ${showImported ? "text-secondary bg-secondary/10" : "text-primary/50 hover:text-primary"}`}
+                title={showImported ? t("myGear.actions.hideImported", "Hide items from shared lists") : t("myGear.actions.showImported", "Show items from shared lists")}
+              >
+                {showImported ? <FiEyeOff className="text-sm" /> : <FiEye className="text-sm" />}
+                {!showImported && hiddenImportedCount > 0 && (
+                  <span className="absolute -top-1 -right-1 text-[9px] bg-amber-400 text-white rounded-full w-3.5 h-3.5 flex items-center justify-center leading-none">
+                    {hiddenImportedCount > 9 ? "9+" : hiddenImportedCount}
+                  </span>
+                )}
+              </button>
+
               {/* Add / toggle drawer */}
               {!showDrawer && (
                 <button
@@ -593,37 +629,49 @@ export default function MyGearView({ collapsed }) {
         ) : viewMode === "list" ? (
           <div className="space-y-2">
             {filteredItems.map((item) => (
-              <MyGearListItem
-                key={item._id}
-                item={item}
-                formatWeight={formatInput}
-                unitLabel={unitLabel}
-                t={t}
-                actionLoading={actionLoading}
-                onViewEdit={() => setEditingItem(item)}
-                onDelete={() => setConfirmDelete(item)}
-                selectionMode={selectionMode}
-                isSelected={selectedIds.has(item._id)}
-                onToggleSelect={() => toggleSelection(item._id)}
-              />
+              <div key={item._id} className="relative">
+                {item.importedFromShare && (
+                  <span className="absolute top-1 right-1 z-10 text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded pointer-events-none">
+                    {t("myGear.badge.fromSharedList", "Shared list")}
+                  </span>
+                )}
+                <MyGearListItem
+                  item={item}
+                  formatWeight={formatInput}
+                  unitLabel={unitLabel}
+                  t={t}
+                  actionLoading={actionLoading}
+                  onViewEdit={() => setEditingItem(item)}
+                  onDelete={() => setConfirmDelete(item)}
+                  selectionMode={selectionMode}
+                  isSelected={selectedIds.has(item._id)}
+                  onToggleSelect={() => toggleSelection(item._id)}
+                />
+              </div>
             ))}
           </div>
         ) : (
           <div className={`grid gap-3 ${showDrawer ? "grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6" : "grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 2xl:grid-cols-8"}`}>
             {filteredItems.map((item) => (
-              <MyGearTileCard
-                key={item._id}
-                item={item}
-                formatWeight={formatInput}
-                unitLabel={unitLabel}
-                t={t}
-                actionLoading={actionLoading}
-                onViewEdit={() => setEditingItem(item)}
-                onDelete={() => setConfirmDelete(item)}
-                selectionMode={selectionMode}
-                isSelected={selectedIds.has(item._id)}
-                onToggleSelect={() => toggleSelection(item._id)}
-              />
+              <div key={item._id} className="relative">
+                {item.importedFromShare && (
+                  <span className="absolute top-1 right-1 z-10 text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded pointer-events-none">
+                    {t("myGear.badge.fromSharedList", "Shared list")}
+                  </span>
+                )}
+                <MyGearTileCard
+                  item={item}
+                  formatWeight={formatInput}
+                  unitLabel={unitLabel}
+                  t={t}
+                  actionLoading={actionLoading}
+                  onViewEdit={() => setEditingItem(item)}
+                  onDelete={() => setConfirmDelete(item)}
+                  selectionMode={selectionMode}
+                  isSelected={selectedIds.has(item._id)}
+                  onToggleSelect={() => toggleSelection(item._id)}
+                />
+              </div>
             ))}
           </div>
         )}

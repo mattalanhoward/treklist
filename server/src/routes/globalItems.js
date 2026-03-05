@@ -283,6 +283,24 @@ router.post(
   }
 );
 
+// PATCH /api/global/items/:id/claim — clear importedFromShare flag (add to My Gear)
+router.patch("/:id/claim", async (req, res) => {
+  try {
+    const updated = await GlobalItem.findOneAndUpdate(
+      { _id: req.params.id, owner: req.userId },
+      { $set: { importedFromShare: false } },
+      { new: true },
+    );
+    if (!updated) {
+      return res.status(404).json({ message: "Global item not found." });
+    }
+    res.json(updated);
+  } catch (err) {
+    console.error("Error claiming global item:", err);
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // PATCH /api/global/items/:id — update template & cascade to GearItem instances
 router.patch("/:id", async (req, res) => {
   try {

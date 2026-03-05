@@ -11,11 +11,18 @@ router.use(auth);
 // GET /api/my-gear/items - Get user's owned gear items
 router.get("/items", async (req, res) => {
   try {
-    // Match owned items OR legacy items without status field
-    const items = await GlobalItem.find({
+    const includeImported = req.query.includeImported === "true";
+
+    const query = {
       owner: req.userId,
       status: { $ne: "wishlisted" },
-    })
+    };
+    if (!includeImported) {
+      query.importedFromShare = { $ne: true };
+    }
+
+    // Match owned items OR legacy items without status field
+    const items = await GlobalItem.find(query)
       .sort({ createdAt: -1 })
       .populate("productId", "imageUrls")
       .lean();

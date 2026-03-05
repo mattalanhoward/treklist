@@ -349,6 +349,22 @@
       "openProductPageTitle": "Open product page",
       "openProductPageAria": "Open product page (paid link)",
       "itemOptionsA11y": "Item options"
+    },
+    "actions": {
+      "swap": "Swap item"
+    }
+  },
+  "swapModal": {
+    "title": "Swap Item",
+    "searchPlaceholder": "Search my gear...",
+    "noResults": "No matching items",
+    "noGear": "No items in My Gear",
+    "confirm": "Swap",
+    "swapping": "Swapping...",
+    "toast": {
+      "swapped": "Item swapped",
+      "swapFailed": "Failed to swap item",
+      "loadFailed": "Failed to load gear"
     }
   },
   "cookieBanner": {
@@ -504,7 +520,8 @@
     "buttons": {
       "delete": "Delete item",
       "saving": "Saving…",
-      "productPage": "Product Page"
+      "productPage": "Product Page",
+      "claim": "Add to My Gear"
     },
     "toast": {
       "updated": "Item updated",
@@ -512,7 +529,9 @@
       "deleted": "Item deleted",
       "deleteFailed": "Delete failed",
       "saveFailed": "Failed to save. Please try again.",
-      "stillLoading": "Still loading item details…"
+      "stillLoading": "Still loading item details…",
+      "claimed": "Added to My Gear",
+      "claimFailed": "Failed to add to My Gear"
     },
     "confirm": {
       "saveListTitle": "Save changes to this item?",
@@ -1123,7 +1142,12 @@
       "delete": "Delete",
       "selectAll": "Select all",
       "clearSelection": "Clear",
-      "deleteSelected": "Delete"
+      "deleteSelected": "Delete",
+      "showImported": "Show items from shared lists",
+      "hideImported": "Hide items from shared lists"
+    },
+    "badge": {
+      "fromSharedList": "Shared list"
     },
     "tiles": {
       "noImage": "No image"

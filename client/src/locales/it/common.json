@@ -340,6 +340,22 @@
       "openProductPageTitle": "Apri pagina prodotto",
       "openProductPageAria": "Apri pagina prodotto (link a pagamento)",
       "itemOptionsA11y": "Opzioni articolo"
+    },
+    "actions": {
+      "swap": "Swap item"
+    }
+  },
+  "swapModal": {
+    "title": "Swap Item",
+    "searchPlaceholder": "Search my gear...",
+    "noResults": "No matching items",
+    "noGear": "No items in My Gear",
+    "confirm": "Swap",
+    "swapping": "Swapping...",
+    "toast": {
+      "swapped": "Item swapped",
+      "swapFailed": "Failed to swap item",
+      "loadFailed": "Failed to load gear"
     }
   },
   "cookieBanner": {
@@ -495,7 +511,8 @@
     "buttons": {
       "delete": "Elimina articolo",
       "saving": "Salvataggio…",
-      "productPage": "Pagina prodotto"
+      "productPage": "Pagina prodotto",
+      "claim": "Add to My Gear"
     },
     "toast": {
       "updated": "Articolo aggiornato",
@@ -503,7 +520,9 @@
       "deleted": "Articolo eliminato",
       "deleteFailed": "Eliminazione non riuscita",
       "saveFailed": "Salvataggio non riuscito. Riprova.",
-      "stillLoading": "Caricamento dei dettagli dell'articolo…"
+      "stillLoading": "Caricamento dei dettagli dell'articolo…",
+      "claimed": "Added to My Gear",
+      "claimFailed": "Failed to add to My Gear"
     },
     "confirm": {
       "saveListTitle": "Salvare le modifiche a questo articolo?",
@@ -1109,7 +1128,12 @@
       "delete": "Elimina",
       "selectAll": "Seleziona tutto",
       "clearSelection": "Cancella",
-      "deleteSelected": "Elimina"
+      "deleteSelected": "Elimina",
+      "showImported": "Show items from shared lists",
+      "hideImported": "Hide items from shared lists"
+    },
+    "badge": {
+      "fromSharedList": "Shared list"
     },
     "tiles": {
       "noImage": "Nessuna immagine"

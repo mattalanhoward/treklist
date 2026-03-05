@@ -284,6 +284,57 @@ router.patch("/:itemId", async (req, res) => {
   }
 });
 
+// ─── PATCH /api/dashboard/:listId/categories/:catId/items/:itemId/swap ───
+// Swap the globalItem reference to another item from the user's gear
+router.patch("/:itemId/swap", async (req, res) => {
+  const { listId, catId, itemId } = req.params;
+  const { newGlobalItemId } = req.body;
+
+  if (!newGlobalItemId) {
+    return res.status(400).json({ message: "newGlobalItemId is required." });
+  }
+
+  try {
+    const list = await GearList.findOne({ _id: listId, owner: req.userId });
+    if (!list) return res.status(404).json({ message: "Gear list not found." });
+    if (list.isLocked) return res.status(403).json({ message: "List is locked" });
+
+    const newGlobal = await GlobalItem.findOne({
+      _id: newGlobalItemId,
+      owner: req.userId,
+    }).lean();
+    if (!newGlobal) return res.status(404).json({ message: "Global item not found." });
+
+    const snapshot = {
+      globalItem: newGlobal._id,
+      productId: newGlobal.productId || null,
+      name: newGlobal.name,
+      brand: newGlobal.brand || "",
+      itemType: newGlobal.itemType || "",
+      weight: newGlobal.weight ?? null,
+      link: newGlobal.link || null,
+      imageUrls: newGlobal.imageUrls || [],
+      description: newGlobal.description || "",
+    };
+
+    const updated = await GearItem.findOneAndUpdate(
+      { _id: itemId, gearList: listId, category: catId },
+      { $set: snapshot },
+      { new: true },
+    );
+    if (!updated) return res.status(404).json({ message: "Item not found." });
+
+    const [itemWithOffer] = await addOfferFlagsToItems(
+      [updated.toObject()],
+      req.userId,
+    );
+    return res.json(itemWithOffer);
+  } catch (err) {
+    console.error("Error PATCH swap item:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+
 // ─── DELETE /api/dashboard/:listId/categories/:catId/items/:itemId ───
 // Remove one gear item
 router.delete("/:itemId", async (req, res) => {

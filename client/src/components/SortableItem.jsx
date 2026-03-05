@@ -7,10 +7,11 @@ import { toast } from "react-hot-toast";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { FaGripVertical, FaUtensils, FaTshirt } from "react-icons/fa";
-import { FiExternalLink, FiTrash2 } from "react-icons/fi";
+import { FiExternalLink, FiTrash2, FiRefreshCw } from "react-icons/fi";
 import AffiliateGateLink from "./AffiliateGateLink";
 import { useWeight } from "../hooks/useWeight";
 import GlobalItemEditModal from "./GlobalItemEditModal";
+import SwapItemModal from "./SwapItemModal";
 import { useTranslation } from "react-i18next";
 import { tItemType } from "../config/catalogTaxonomy";
 
@@ -34,6 +35,7 @@ export default function SortableItem({
   const weightText = useWeight(item.weight);
   const itemKey = `item-${catId}-${item._id}`;
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [swapOpen, setSwapOpen] = useState(false);
   const { region: userRegion } = useUserSettings();
 
   // If the item has a direct link (custom item), we should NOT call resolver.
@@ -256,6 +258,14 @@ export default function SortableItem({
             <div className="flex items-center gap-1 flex-shrink-0">
               <button
                 type="button"
+                onClick={() => setSwapOpen(true)}
+                className="p-1 text-primary/60 hover:text-primary focus:outline-none"
+                title={t("gearList.actions.swap", "Swap item")}
+              >
+                <FiRefreshCw className="text-sm" />
+              </button>
+              <button
+                type="button"
                 onClick={() => onDelete?.(catId, item._id)}
                 className="p-1 text-primary/60 hover:text-primary focus:outline-none"
                 title={t("gearList.confirm.removeItemConfirm")}
@@ -385,9 +395,17 @@ export default function SortableItem({
             <CartIconLink />
           </div>
 
-          {/* 10) Delete action (desktop list) */}
+          {/* 10) Swap + Delete actions (desktop list) */}
           {!isLocked && (
-            <div className="place-self-center mr-3.5">
+            <div className="place-self-center flex items-center gap-1 mr-1">
+              <button
+                type="button"
+                onClick={() => setSwapOpen(true)}
+                className="p-1 text-primary/60 hover:text-primary focus:outline-none"
+                title={t("gearList.actions.swap", "Swap item")}
+              >
+                <FiRefreshCw className="text-sm" />
+              </button>
               <button
                 type="button"
                 onClick={() => onDelete?.(catId, item._id)}
@@ -420,7 +438,15 @@ export default function SortableItem({
               {tItemType(t, item.itemType) || "—"}
             </button>
             {!isLocked && (
-              <div className="-mr-0.5">
+              <div className="-mr-0.5 flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => setSwapOpen(true)}
+                  className="text-primary/60 hover:text-primary focus:outline-none"
+                  title={t("gearList.actions.swap", "Swap item")}
+                >
+                  <FiRefreshCw className="text-sm" />
+                </button>
                 <button
                   type="button"
                   onClick={() => onDelete?.(catId, item._id)}
@@ -490,14 +516,25 @@ export default function SortableItem({
           onClose={() => setDetailsOpen(false)}
           onSaved={() => {
             setDetailsOpen(false);
-            // Refresh current category (if you have a per-cat fetch)
             fetchItems?.(catId);
-            // And ask the page to refresh the whole list if needed
-            onItemUpdated?.(); // 🔑 new line
+            onItemUpdated?.();
           }}
           allowDelete={false}
           listId={listId}
           catId={catId}
+        />
+      )}
+      {swapOpen && (
+        <SwapItemModal
+          item={item}
+          listId={listId}
+          catId={catId}
+          onClose={() => setSwapOpen(false)}
+          onSwapped={() => {
+            setSwapOpen(false);
+            fetchItems?.(catId);
+            onItemUpdated?.();
+          }}
         />
       )}
     </div>
