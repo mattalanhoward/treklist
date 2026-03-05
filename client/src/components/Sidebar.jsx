@@ -230,10 +230,12 @@ export default function Sidebar({
     const q = normalize(searchQuery);
     const tokens = q ? q.split(/\s+/).filter(Boolean) : [];
 
+    const owned = items.filter((item) => !item.importedFromShare);
+
     const filtered =
       tokens.length === 0
-        ? items
-        : items.filter((item) => {
+        ? owned
+        : owned.filter((item) => {
             const hay = toSearchText(item);
             return tokens.every((tok) => hay.includes(tok));
           });
