@@ -359,7 +359,6 @@ export default function Sidebar({
                     <button
                       aria-label="Create list"
                       onClick={createList}
-                      disabled={!newListTitle.trim()}
                       className="ml-2 p-1 text-primaryAlt hover:text-primaryAlt/80"
                     >
                       <FiPlus />

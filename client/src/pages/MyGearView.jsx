@@ -629,12 +629,7 @@ export default function MyGearView({ collapsed }) {
         ) : viewMode === "list" ? (
           <div className="space-y-2">
             {filteredItems.map((item) => (
-              <div key={item._id} className="relative">
-                {item.importedFromShare && (
-                  <span className="absolute top-1 right-1 z-10 text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded pointer-events-none">
-                    {t("myGear.badge.fromSharedList", "Shared list")}
-                  </span>
-                )}
+              <div key={item._id}>
                 <MyGearListItem
                   item={item}
                   formatWeight={formatInput}
@@ -653,12 +648,7 @@ export default function MyGearView({ collapsed }) {
         ) : (
           <div className={`grid gap-3 ${showDrawer ? "grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6" : "grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 2xl:grid-cols-8"}`}>
             {filteredItems.map((item) => (
-              <div key={item._id} className="relative">
-                {item.importedFromShare && (
-                  <span className="absolute top-1 right-1 z-10 text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded pointer-events-none">
-                    {t("myGear.badge.fromSharedList", "Shared list")}
-                  </span>
-                )}
+              <div key={item._id}>
                 <MyGearTileCard
                   item={item}
                   formatWeight={formatInput}

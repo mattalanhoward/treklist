@@ -438,15 +438,7 @@ export default function SortableItem({
               {tItemType(t, item.itemType) || "—"}
             </button>
             {!isLocked && (
-              <div className="-mr-0.5 flex items-center gap-1">
-                <button
-                  type="button"
-                  onClick={() => setSwapOpen(true)}
-                  className="text-primary/60 hover:text-primary focus:outline-none"
-                  title={t("gearList.actions.swap", "Swap item")}
-                >
-                  <FiRefreshCw className="text-sm" />
-                </button>
+              <div className="-mr-0.5">
                 <button
                   type="button"
                   onClick={() => onDelete?.(catId, item._id)}
@@ -477,7 +469,7 @@ export default function SortableItem({
                 {weightText}
               </span>
             </div>
-            <div className="grid grid-cols-[16px_16px_auto_16px] items-center justify-end gap-x-3">
+            <div className="grid grid-cols-[16px_16px_16px_auto_16px] items-center justify-end gap-x-3">
               <FaUtensils
                 title={t("gearList.items.toggleConsumable")}
                 aria-label={t("gearList.items.toggleConsumable")}
@@ -496,6 +488,18 @@ export default function SortableItem({
                   wornLocal ? "text-blue-600" : "opacity-30"
                 }`}
               />
+              {!isLocked ? (
+                <button
+                  type="button"
+                  onClick={() => setSwapOpen(true)}
+                  className="text-primary/60 hover:text-primary focus:outline-none"
+                  title={t("gearList.actions.swap", "Swap item")}
+                >
+                  <FiRefreshCw className="text-sm" />
+                </button>
+              ) : (
+                <div />
+              )}
               <QuantityInline
                 qty={item.quantity}
                 onChange={(n) => onQuantityChange(catId, item._id, n)}

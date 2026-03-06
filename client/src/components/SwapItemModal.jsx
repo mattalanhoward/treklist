@@ -401,7 +401,9 @@ export default function SwapItemModal({
   const unit = useUnit();
   const { parseInput } = useWeightInput(unit);
 
-  const [tab, setTab] = useState("myGear");
+  const [tab, setTab] = useState(
+    () => localStorage.getItem("treklist_swap_item_tab") || "myGear",
+  );
   const [saving, setSaving] = useState(false);
 
   // My Gear tab
@@ -557,7 +559,10 @@ export default function SwapItemModal({
             <button
               key={key}
               type="button"
-              onClick={() => setTab(key)}
+              onClick={() => {
+                setTab(key);
+                localStorage.setItem("treklist_swap_item_tab", key);
+              }}
               className={`flex-1 py-2 text-sm font-medium transition-colors ${
                 tab === key
                   ? "border-b-2 border-secondary text-secondary"

@@ -797,6 +797,7 @@ export default function GlobalItemEditModal({
                   onClick={async () => {
                     try {
                       await api.patch(`/global/items/${globalId}/claim`);
+                      invalidateGlobalItemCache(globalId);
                       setGlobalTemplate((prev) =>
                         prev ? { ...prev, importedFromShare: false } : prev,
                       );

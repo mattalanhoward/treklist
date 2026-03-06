@@ -178,6 +178,11 @@ export default function MyGearTileCard({
           </div>
         )}
 
+        {item.importedFromShare && (
+          <div className="absolute top-2 right-2 text-[10px] px-1.5 py-0.5 rounded bg-amber-100/90 border border-amber-200 text-amber-700 pointer-events-none">
+            {t("myGear.badge.fromSharedList", "Shared list")}
+          </div>
+        )}
         {item.weight ? (
           <div className="absolute bottom-2 right-2 text-xs px-2 py-1 rounded bg-base-100/90 border border-primary/10 text-primary tabular-nums">
             {formatWeight(item.weight)} {unitLabel}
