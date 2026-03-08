@@ -41,6 +41,13 @@ a {
   display: none;
 }
 
+/* Full-height modal on mobile, stopping below the topbar */
+@media (max-width: 639px) {
+  .modal-mobile-h {
+    height: calc(100dvh - var(--topbar-h, 48px));
+  }
+}
+
 /* src/index.css */
 [data-reorderable-placeholder] {
   display: block;

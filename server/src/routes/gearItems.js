@@ -24,12 +24,16 @@ async function addOfferFlagsToItems(items, userId) {
   const userRegion = normalizeRegion(user?.region);
 
   // 2) Collect globalItem IDs for items that have no direct link or productId
+  // Fetch GlobalItem docs for all items that reference one (for offer flags + status)
+  const allGlobalItemIds = [
+    ...new Set(items.filter((i) => i.globalItem).map((i) => String(i.globalItem))),
+  ];
   const needsFallback = items.filter((i) => !i.link && !i.productId && i.globalItem);
   const globalItemIds = [...new Set(needsFallback.map((i) => String(i.globalItem)))];
 
-  const globalDocs = globalItemIds.length
-    ? await GlobalItem.find({ _id: { $in: globalItemIds } })
-        .select("link productId affiliate")
+  const globalDocs = allGlobalItemIds.length
+    ? await GlobalItem.find({ _id: { $in: allGlobalItemIds } })
+        .select("link productId affiliate status")
         .lean()
     : [];
   const globalById = new Map(globalDocs.map((g) => [String(g._id), g]));
@@ -57,40 +61,35 @@ async function addOfferFlagsToItems(items, userId) {
     : [];
   const offerProductIds = new Set(offerDocs.map((o) => String(o.productId)));
 
-  // 5) Assign hasOffer to each item
+  // 5) Assign hasOffer + globalItemStatus to each item
   return items.map((item) => {
+    const g = item.globalItem ? globalById.get(String(item.globalItem)) : null;
+    const globalItemStatus = g?.status || "owned";
+
     // Direct link on the GearItem → always has offer
-    if (item.link) return { ...item, hasOffer: true };
+    if (item.link) return { ...item, hasOffer: true, globalItemStatus };
 
     // GearItem has its own productId
     if (item.productId) {
-      return { ...item, hasOffer: offerProductIds.has(String(item.productId)) };
+      return { ...item, hasOffer: offerProductIds.has(String(item.productId)), globalItemStatus };
     }
 
     // Fall back to the linked GlobalItem
-    if (item.globalItem) {
-      const g = globalById.get(String(item.globalItem));
-      if (!g) return { ...item, hasOffer: false };
-
-      // GlobalItem has a direct link
-      if (g.link) return { ...item, hasOffer: true };
-
-      // GlobalItem has a productId
+    if (g) {
+      if (g.link) return { ...item, hasOffer: true, globalItemStatus };
       if (g.productId) {
-        return { ...item, hasOffer: offerProductIds.has(String(g.productId)) };
+        return { ...item, hasOffer: offerProductIds.has(String(g.productId)), globalItemStatus };
       }
-
-      // Legacy affiliate link on GlobalItem
       const deep =
         (typeof g.affiliate === "string" ? g.affiliate : null) ||
         g.affiliate?.deepLink ||
         g.affiliate?.awDeepLink ||
         g.affiliate?.url ||
         null;
-      if (deep) return { ...item, hasOffer: true };
+      if (deep) return { ...item, hasOffer: true, globalItemStatus };
     }
 
-    return { ...item, hasOffer: false };
+    return { ...item, hasOffer: false, globalItemStatus };
   });
 }
 
@@ -280,6 +279,57 @@ router.patch("/:itemId", async (req, res) => {
     return res.json(updated);
   } catch (err) {
     console.error("Error PATCH item:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ─── PATCH /api/dashboard/:listId/categories/:catId/items/:itemId/swap ───
+// Swap the globalItem reference to another item from the user's gear
+router.patch("/:itemId/swap", async (req, res) => {
+  const { listId, catId, itemId } = req.params;
+  const { newGlobalItemId } = req.body;
+
+  if (!newGlobalItemId) {
+    return res.status(400).json({ message: "newGlobalItemId is required." });
+  }
+
+  try {
+    const list = await GearList.findOne({ _id: listId, owner: req.userId });
+    if (!list) return res.status(404).json({ message: "Gear list not found." });
+    if (list.isLocked) return res.status(403).json({ message: "List is locked" });
+
+    const newGlobal = await GlobalItem.findOne({
+      _id: newGlobalItemId,
+      owner: req.userId,
+    }).lean();
+    if (!newGlobal) return res.status(404).json({ message: "Global item not found." });
+
+    const snapshot = {
+      globalItem: newGlobal._id,
+      productId: newGlobal.productId || null,
+      name: newGlobal.name,
+      brand: newGlobal.brand || "",
+      itemType: newGlobal.itemType || "",
+      weight: newGlobal.weight ?? null,
+      link: newGlobal.link || null,
+      imageUrls: newGlobal.imageUrls || [],
+      description: newGlobal.description || "",
+    };
+
+    const updated = await GearItem.findOneAndUpdate(
+      { _id: itemId, gearList: listId, category: catId },
+      { $set: snapshot },
+      { new: true },
+    );
+    if (!updated) return res.status(404).json({ message: "Item not found." });
+
+    const [itemWithOffer] = await addOfferFlagsToItems(
+      [updated.toObject()],
+      req.userId,
+    );
+    return res.json(itemWithOffer);
+  } catch (err) {
+    console.error("Error PATCH swap item:", err);
     return res.status(500).json({ message: "Server error" });
   }
 });

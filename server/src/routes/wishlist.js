@@ -1,33 +1,23 @@
-// server/src/routes/myGear.js
+// server/src/routes/wishlist.js
 const express = require("express");
 const auth = require("../middleware/auth");
 const GlobalItem = require("../models/globalItem");
 
 const router = express.Router();
-
-// Protect all routes
 router.use(auth);
 
-// GET /api/my-gear/items - Get user's owned gear items
+// GET /api/wishlist/items — fetch all wishlisted items for the current user
 router.get("/items", async (req, res) => {
   try {
-    const includeImported = req.query.includeImported === "true";
-
-    const query = {
+    const items = await GlobalItem.find({
       owner: req.userId,
-      status: { $ne: "wishlisted" },
-    };
-    if (!includeImported) {
-      query.importedFromShare = { $ne: true };
-    }
-
-    // Match owned items OR legacy items without status field
-    const items = await GlobalItem.find(query)
+      status: "wishlisted",
+    })
       .sort({ createdAt: -1 })
       .populate("productId", "imageUrls")
       .lean();
 
-    // Merge imageUrls: imported items use CatalogItem images, custom items use their own
+    // Same image enrichment as my-gear route: prefer catalog images for productId-backed items
     const enriched = items.map((item) => {
       const { productId, ...rest } = item;
       const imageUrls = productId
@@ -42,8 +32,8 @@ router.get("/items", async (req, res) => {
 
     res.json(enriched);
   } catch (err) {
-    console.error("GET /api/my-gear/items error:", err);
-    res.status(500).json({ message: err.message });
+    console.error("Error GET wishlist items:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 

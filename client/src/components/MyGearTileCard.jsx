@@ -1,6 +1,7 @@
 // client/src/components/MyGearTileCard.jsx
 import React from "react";
-import { FiTrash2, FiExternalLink, FiCheckSquare, FiSquare } from "react-icons/fi";
+import { FiTrash2, FiExternalLink, FiCheckSquare, FiSquare, FiStar } from "react-icons/fi";
+import { FaStar } from "react-icons/fa";
 import { tItemType } from "../config/catalogTaxonomy";
 
 function pickFirstImageUrl(item) {
@@ -55,6 +56,7 @@ export default function MyGearTileCard({
   actionLoading,
   onViewEdit,
   onDelete,
+  onToggleWishlist,
   selectionMode = false,
   isSelected = false,
   onToggleSelect,
@@ -115,6 +117,18 @@ export default function MyGearTileCard({
           </button>
         ) : (
           <div className="flex items-center gap-1">
+            {onToggleWishlist && (
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onToggleWishlist(); }}
+                className="p-1 rounded"
+                title={item.status === "wishlisted" ? t("wishlist.actions.markOwned", "Mark as owned") : t("wishlist.actions.addToWishlist", "Add to wishlist")}
+              >
+                {item.status === "wishlisted"
+                  ? <FaStar className="text-sm text-amber-400" />
+                  : <FiStar className="text-sm text-primary/40 hover:text-amber-400" />}
+              </button>
+            )}
             {merchantUrl && (
               <a
                 href={merchantUrl}
@@ -178,6 +192,11 @@ export default function MyGearTileCard({
           </div>
         )}
 
+        {item.importedFromShare && (
+          <div className="absolute top-2 right-2 text-[10px] px-1.5 py-0.5 rounded bg-amber-100/90 border border-amber-200 text-amber-700 pointer-events-none">
+            {t("myGear.badge.fromSharedList", "Shared list")}
+          </div>
+        )}
         {item.weight ? (
           <div className="absolute bottom-2 right-2 text-xs px-2 py-1 rounded bg-base-100/90 border border-primary/10 text-primary tabular-nums">
             {formatWeight(item.weight)} {unitLabel}

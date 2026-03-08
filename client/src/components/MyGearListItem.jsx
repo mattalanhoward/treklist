@@ -1,6 +1,7 @@
 // client/src/components/MyGearListItem.jsx
 import React from "react";
-import { FiTrash2, FiExternalLink, FiCheckSquare, FiSquare } from "react-icons/fi";
+import { FiTrash2, FiExternalLink, FiCheckSquare, FiSquare, FiStar } from "react-icons/fi";
+import { FaStar } from "react-icons/fa";
 import { tItemType } from "../config/catalogTaxonomy";
 
 export default function MyGearListItem({
@@ -11,6 +12,7 @@ export default function MyGearListItem({
   actionLoading,
   onViewEdit,
   onDelete,
+  onToggleWishlist,
   selectionMode = false,
   isSelected = false,
   onToggleSelect,
@@ -73,6 +75,18 @@ export default function MyGearListItem({
 
           {!selectionMode && (
             <div className="flex items-center gap-1">
+              {onToggleWishlist && (
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); onToggleWishlist(); }}
+                  className="p-1 rounded"
+                  title={item.status === "wishlisted" ? t("wishlist.actions.markOwned", "Mark as owned") : t("wishlist.actions.addToWishlist", "Add to wishlist")}
+                >
+                  {item.status === "wishlisted"
+                    ? <FaStar className="text-sm text-amber-400" />
+                    : <FiStar className="text-sm text-primary/40 hover:text-amber-400" />}
+                </button>
+              )}
               {merchantUrl && (
                 <a
                   href={merchantUrl}
@@ -101,12 +115,17 @@ export default function MyGearListItem({
           )}
         </div>
 
-        {/* Row 2: Weight */}
-        <div className="row-start-2 col-span-2 text-primary/70">
+        {/* Row 2: Weight + shared badge */}
+        <div className="row-start-2 col-span-2 flex items-center gap-2 text-primary/70">
           {item.weight ? (
             <span className="tabular-nums">{formatWeight(item.weight)} {unitLabel}</span>
           ) : (
             <span className="text-primary/40">—</span>
+          )}
+          {item.importedFromShare && (
+            <span className="ml-auto text-[10px] px-1.5 py-0.5 rounded bg-amber-100 border border-amber-200 text-amber-700 flex-shrink-0">
+              {t("myGear.badge.fromSharedList", "Shared list")}
+            </span>
           )}
         </div>
       </div>
@@ -155,6 +174,11 @@ export default function MyGearListItem({
               {item.brand && <span className="mr-1">{item.brand}</span>}
               {item.name}
             </button>
+            {item.importedFromShare && (
+              <span className="flex-shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-amber-100 border border-amber-200 text-amber-700">
+                {t("myGear.badge.fromSharedList", "Shared list")}
+              </span>
+            )}
             {item.weight && (
               <div className="ml-auto tabular-nums text-primary/70 flex-shrink-0">
                 {formatWeight(item.weight)} {unitLabel}
@@ -163,9 +187,21 @@ export default function MyGearListItem({
           </div>
         </div>
 
-        {/* Right: Cart + Delete buttons */}
+        {/* Right: Star + Cart + Delete buttons */}
         {!selectionMode && (
           <div className="flex items-center gap-1 justify-self-end">
+            {onToggleWishlist && (
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onToggleWishlist(); }}
+                className="p-2 rounded"
+                title={item.status === "wishlisted" ? t("wishlist.actions.markOwned", "Mark as owned") : t("wishlist.actions.addToWishlist", "Add to wishlist")}
+              >
+                {item.status === "wishlisted"
+                  ? <FaStar className="text-sm text-amber-400" />
+                  : <FiStar className="text-sm text-primary/40 hover:text-amber-400" />}
+              </button>
+            )}
             {merchantUrl && (
               <a
                 href={merchantUrl}

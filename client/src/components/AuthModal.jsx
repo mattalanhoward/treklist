@@ -269,25 +269,9 @@ export default function AuthModal({
 
   const renderVerifyStep = () => (
     <div className="space-y-4 text-sm text-primary">
-      <p>{t("auth.verify.sentTo", { email })}</p>{" "}
-      <p>
-        {t("auth.verify.step1")}
-        <br />
-        {t("auth.verify.step2")}
-      </p>
+      <p>{t("auth.verify.sentTo", { email })}</p>
+      <p>{t("auth.verify.step1")}</p>
       <div className="flex flex-col gap-2 pt-2">
-        <button
-          type="button"
-          onClick={handleCheckVerified}
-          disabled={loading}
-          className={`px-4 py-2 rounded bg-secondary text-white hover:bg-secondary/80 ${
-            loading ? "opacity-60 cursor-not-allowed" : ""
-          }`}
-        >
-          {loading
-            ? t("auth.buttons.verifyCheckLoading")
-            : t("auth.buttons.verifyCheck")}
-        </button>
         <button
           type="button"
           onClick={handleResend}

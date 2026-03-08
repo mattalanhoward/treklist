@@ -178,8 +178,8 @@
     },
     "verify": {
       "sentTo": "We've sent a verification link to {{email}}.",
-      "step1": "1. Open your email and click the verification link.",
-      "step2": "2. Then come back to this window and press the button below.",
+      "step1": "Open your email and click the verification link — you'll be taken straight to your destination.",
+      "step2": "",
       "laterInfo": "You can also close this window and come back later. Once your email is verified, you'll be able to sign in normally."
     },
     "toasts": {
@@ -349,6 +349,36 @@
       "openProductPageTitle": "Open product page",
       "openProductPageAria": "Open product page (paid link)",
       "itemOptionsA11y": "Item options"
+    },
+    "actions": {
+      "swap": "Swap item"
+    }
+  },
+  "swapModal": {
+    "title": "Swap Item",
+    "tabs": {
+      "myGear": "My Gear",
+      "catalog": "Catalog",
+      "custom": "Custom"
+    },
+    "searchPlaceholder": "Search my gear...",
+    "noResults": "No matching items",
+    "noGear": "No items in My Gear",
+    "confirm": "Swap",
+    "swapping": "Swapping...",
+    "catalog": {
+      "searchPlaceholder": "Search catalog…",
+      "empty": "No catalog items found",
+      "loadFailed": "Failed to load catalog",
+      "confirmLabel": "Import & Swap"
+    },
+    "custom": {
+      "confirmLabel": "Create & Swap"
+    },
+    "toast": {
+      "swapped": "Item swapped",
+      "swapFailed": "Failed to swap item",
+      "loadFailed": "Failed to load gear"
     }
   },
   "cookieBanner": {
@@ -504,7 +534,8 @@
     "buttons": {
       "delete": "Delete item",
       "saving": "Saving…",
-      "productPage": "Product Page"
+      "productPage": "Product Page",
+      "claim": "Add to My Gear"
     },
     "toast": {
       "updated": "Item updated",
@@ -512,7 +543,9 @@
       "deleted": "Item deleted",
       "deleteFailed": "Delete failed",
       "saveFailed": "Failed to save. Please try again.",
-      "stillLoading": "Still loading item details…"
+      "stillLoading": "Still loading item details…",
+      "claimed": "Added to My Gear",
+      "claimFailed": "Failed to add to My Gear"
     },
     "confirm": {
       "saveListTitle": "Save changes to this item?",
@@ -529,7 +562,12 @@
     "a11y": {
       "close": "Close add gear items modal"
     },
-    "searchPlaceholder": "Search global items…",
+    "tabs": {
+      "myGear": "My Gear",
+      "catalog": "Catalog",
+      "custom": "Custom"
+    },
+    "searchPlaceholder": "Search my gear…",
     "badges": {
       "added": "Added"
     },
@@ -537,7 +575,15 @@
     "buttons": {
       "add_one": "Add {{count}} item",
       "add_other": "Add {{count}} items",
-      "adding": "Adding…"
+      "adding": "Adding…",
+      "importAndAdd_one": "Import & Add {{count}}",
+      "importAndAdd_other": "Import & Add {{count}}",
+      "createAndAdd": "Create & Add"
+    },
+    "catalog": {
+      "searchPlaceholder": "Search catalog…",
+      "empty": "No catalog items found",
+      "loadFailed": "Failed to load catalog"
     },
     "toasts": {
       "selectAtLeastOne": "Please select at least one item.",
@@ -1112,6 +1158,20 @@
       "dateDesc": "Newest",
       "dateAsc": "Oldest"
     },
+    "tabs": {
+      "all": "All Gear",
+      "owned": "Owned Gear",
+      "wishlist": "Wishlist",
+      "shared": "From Packs",
+      "desc": {
+        "all": "All gear you use within the app.",
+        "owned": "Gear you own now. Star an item to move it to your Wishlist.",
+        "wishlist": "Gear you want to buy or still need. Star an item to move it back to Owned Gear.",
+        "shared": "Gear from another pack you saved. Star an item to add it to your Wishlist, or open it and click Add to My Gear to claim it."
+      }
+    },
+    "wishlistEmpty": "No items on your wishlist yet. Star items from your gear lists to add them here.",
+    "sharedEmpty": "No items from packs yet. Browse shared packing lists and import items to see them here.",
     "view": {
       "list": "List view",
       "tiles": "Tile view"
@@ -1123,7 +1183,12 @@
       "delete": "Delete",
       "selectAll": "Select all",
       "clearSelection": "Clear",
-      "deleteSelected": "Delete"
+      "deleteSelected": "Delete",
+      "showImported": "Show From Packs items",
+      "hideImported": "Hide From Packs items"
+    },
+    "badge": {
+      "fromSharedList": "From Packs"
     },
     "tiles": {
       "noImage": "No image"
@@ -1142,6 +1207,15 @@
       "bulkDeleteTitle": "Delete Items",
       "bulkDeleteMessage": "Are you sure you want to delete {{count}} items? This will also remove them from any gear lists.",
       "bulkDeleteConfirm": "Delete All"
+    }
+  },
+  "wishlist": {
+    "actions": {
+      "addToWishlist": "Add to wishlist",
+      "markOwned": "Mark as owned"
+    },
+    "toasts": {
+      "toggleFailed": "Failed to update wishlist"
     }
   }
 }

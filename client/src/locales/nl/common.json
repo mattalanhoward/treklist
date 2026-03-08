@@ -178,8 +178,8 @@
     },
     "verify": {
       "sentTo": "We hebben een verificatielink gestuurd naar {{email}}.",
-      "step1": "1. Open je e-mail en klik op de verificatielink.",
-      "step2": "2. Kom daarna terug naar dit venster en klik op de knop hieronder.",
+      "step1": "Open je e-mail en klik op de verificatielink — je wordt direct naar je bestemming gebracht.",
+      "step2": "",
       "laterInfo": "Je kunt dit venster ook sluiten en later terugkomen. Zodra je e-mail is bevestigd, kun je normaal inloggen."
     },
     "toasts": {
@@ -340,6 +340,36 @@
       "openProductPageTitle": "Productpagina openen",
       "openProductPageAria": "Productpagina openen (betaalde link)",
       "itemOptionsA11y": "Itemopties"
+    },
+    "actions": {
+      "swap": "Artikel wisselen"
+    }
+  },
+  "swapModal": {
+    "title": "Item vervangen",
+    "tabs": {
+      "myGear": "Mijn uitrusting",
+      "catalog": "Catalogus",
+      "custom": "Eigen item"
+    },
+    "searchPlaceholder": "Zoek mijn uitrusting...",
+    "noResults": "Geen overeenkomende items",
+    "noGear": "Geen items in Mijn uitrusting",
+    "confirm": "Vervangen",
+    "swapping": "Vervangen...",
+    "catalog": {
+      "searchPlaceholder": "Zoek in catalogus…",
+      "empty": "Geen catalogusitems gevonden",
+      "loadFailed": "Catalogus laden mislukt",
+      "confirmLabel": "Importeer en vervang"
+    },
+    "custom": {
+      "confirmLabel": "Maak aan en vervang"
+    },
+    "toast": {
+      "swapped": "Item vervangen",
+      "swapFailed": "Vervangen mislukt",
+      "loadFailed": "Uitrusting laden mislukt"
     }
   },
   "cookieBanner": {
@@ -495,7 +525,8 @@
     "buttons": {
       "delete": "Item verwijderen",
       "saving": "Bezig met opslaan…",
-      "productPage": "Productpagina"
+      "productPage": "Productpagina",
+      "claim": "Toevoegen aan Mijn uitrusting"
     },
     "toast": {
       "updated": "Item bijgewerkt",
@@ -503,7 +534,9 @@
       "deleted": "Item verwijderd",
       "deleteFailed": "Verwijderen mislukt",
       "saveFailed": "Opslaan mislukt. Probeer het opnieuw.",
-      "stillLoading": "Artikeldetails worden nog geladen…"
+      "stillLoading": "Artikeldetails worden nog geladen…",
+      "claimed": "Toegevoegd aan Mijn uitrusting",
+      "claimFailed": "Kan niet toevoegen aan Mijn uitrusting"
     },
     "confirm": {
       "saveListTitle": "Wijzigingen aan dit item opslaan?",
@@ -520,7 +553,12 @@
     "a11y": {
       "close": "Venster uitrustingsitems toevoegen sluiten"
     },
-    "searchPlaceholder": "Zoek globale items…",
+    "tabs": {
+      "myGear": "Mijn uitrusting",
+      "catalog": "Catalogus",
+      "custom": "Eigen item"
+    },
+    "searchPlaceholder": "Zoek mijn uitrusting…",
     "badges": {
       "added": "Al toegevoegd"
     },
@@ -528,7 +566,15 @@
     "buttons": {
       "add_one": "Voeg {{count}} item toe",
       "add_other": "Voeg {{count}} items toe",
-      "adding": "Toevoegen…"
+      "adding": "Toevoegen…",
+      "importAndAdd_one": "Importeer en voeg {{count}} toe",
+      "importAndAdd_other": "Importeer en voeg {{count}} toe",
+      "createAndAdd": "Maak aan en voeg toe"
+    },
+    "catalog": {
+      "searchPlaceholder": "Zoek in catalogus…",
+      "empty": "Geen catalogusitems gevonden",
+      "loadFailed": "Catalogus laden mislukt"
     },
     "toasts": {
       "selectAtLeastOne": "Selecteer minimaal één item.",
@@ -1098,6 +1144,20 @@
       "dateDesc": "Nieuwste",
       "dateAsc": "Oudste"
     },
+    "tabs": {
+      "all": "Alle uitrusting",
+      "owned": "Bezit uitrusting",
+      "wishlist": "Verlanglijst",
+      "shared": "Uit packs",
+      "desc": {
+        "all": "Alle uitrusting die je in de app gebruikt.",
+        "owned": "Uitrusting die je nu bezit. Geef een artikel een ster om het naar je Verlanglijst te verplaatsen.",
+        "wishlist": "Uitrusting die je wilt kopen of nog nodig hebt. Verwijder de ster om het terug te verplaatsen naar Bezit uitrusting.",
+        "shared": "Uitrusting uit een ander pack dat je hebt opgeslagen. Geef een artikel een ster om het toe te voegen aan je Verlanglijst, of open het en klik op Toevoegen aan Mijn uitrusting."
+      }
+    },
+    "wishlistEmpty": "Nog geen items op je verlanglijst. Markeer items in je uitrustingslijsten om ze hier toe te voegen.",
+    "sharedEmpty": "Nog geen items uit packs. Blader door gedeelde paklijsten en importeer items om ze hier te zien.",
     "view": {
       "list": "Lijstweergave",
       "tiles": "Tegelweergave"
@@ -1109,7 +1169,12 @@
       "delete": "Verwijderen",
       "selectAll": "Alles selecteren",
       "clearSelection": "Wissen",
-      "deleteSelected": "Verwijderen"
+      "deleteSelected": "Verwijderen",
+      "showImported": "Toon items uit packs",
+      "hideImported": "Verberg items uit packs"
+    },
+    "badge": {
+      "fromSharedList": "Uit packs"
     },
     "tiles": {
       "noImage": "Geen afbeelding"
@@ -1128,6 +1193,15 @@
       "bulkDeleteTitle": "Items verwijderen",
       "bulkDeleteMessage": "Weet je zeker dat je {{count}} items wilt verwijderen? Ze worden ook uit alle paklijsten verwijderd.",
       "bulkDeleteConfirm": "Alles verwijderen"
+    }
+  },
+  "wishlist": {
+    "actions": {
+      "addToWishlist": "Toevoegen aan verlanglijst",
+      "markOwned": "Markeren als eigendom"
+    },
+    "toasts": {
+      "toggleFailed": "Kon verlanglijst niet bijwerken"
     }
   }
 }

@@ -178,8 +178,8 @@
     },
     "verify": {
       "sentTo": "Hemos enviado un enlace de verificación a {{email}}.",
-      "step1": "1. Abre tu correo y haz clic en el enlace de verificación.",
-      "step2": "2. Luego vuelve a esta ventana y pulsa el botón de abajo.",
+      "step1": "Abre tu correo y haz clic en el enlace de verificación — serás llevado directamente a tu destino.",
+      "step2": "",
       "laterInfo": "También puedes cerrar esta ventana y volver más tarde. Cuando tu correo esté verificado, podrás iniciar sesión normalmente."
     },
     "toasts": {
@@ -340,6 +340,36 @@
       "openProductPageTitle": "Abrir página del producto",
       "openProductPageAria": "Abrir página del producto (enlace pagado)",
       "itemOptionsA11y": "Opciones del artículo"
+    },
+    "actions": {
+      "swap": "Intercambiar artículo"
+    }
+  },
+  "swapModal": {
+    "title": "Reemplazar artículo",
+    "tabs": {
+      "myGear": "Mi equipo",
+      "catalog": "Catálogo",
+      "custom": "Personalizado"
+    },
+    "searchPlaceholder": "Buscar mi equipo...",
+    "noResults": "No se encontraron artículos",
+    "noGear": "No hay artículos en Mi equipo",
+    "confirm": "Reemplazar",
+    "swapping": "Reemplazando...",
+    "catalog": {
+      "searchPlaceholder": "Buscar en el catálogo…",
+      "empty": "No se encontraron artículos en el catálogo",
+      "loadFailed": "Error al cargar el catálogo",
+      "confirmLabel": "Importar y reemplazar"
+    },
+    "custom": {
+      "confirmLabel": "Crear y reemplazar"
+    },
+    "toast": {
+      "swapped": "Artículo reemplazado",
+      "swapFailed": "Error al reemplazar el artículo",
+      "loadFailed": "Error al cargar el equipo"
     }
   },
   "cookieBanner": {
@@ -495,7 +525,8 @@
     "buttons": {
       "delete": "Eliminar artículo",
       "saving": "Guardando…",
-      "productPage": "Página del producto"
+      "productPage": "Página del producto",
+      "claim": "Añadir a Mi equipo"
     },
     "toast": {
       "updated": "Artículo actualizado",
@@ -503,7 +534,9 @@
       "deleted": "Artículo eliminado",
       "deleteFailed": "La eliminación falló",
       "saveFailed": "No se pudo guardar. Inténtalo de nuevo.",
-      "stillLoading": "Cargando detalles del artículo…"
+      "stillLoading": "Cargando detalles del artículo…",
+      "claimed": "Añadido a Mi equipo",
+      "claimFailed": "Error al añadir a Mi equipo"
     },
     "confirm": {
       "saveListTitle": "¿Guardar cambios en este artículo?",
@@ -520,7 +553,12 @@
     "a11y": {
       "close": "Cerrar modal de añadir artículos de equipo"
     },
-    "searchPlaceholder": "Buscar artículos globales…",
+    "tabs": {
+      "myGear": "Mi equipo",
+      "catalog": "Catálogo",
+      "custom": "Personalizado"
+    },
+    "searchPlaceholder": "Buscar mi equipo…",
     "badges": {
       "added": "Añadido"
     },
@@ -528,7 +566,15 @@
     "buttons": {
       "add_one": "Añadir {{count}} artículo",
       "add_other": "Añadir {{count}} artículos",
-      "adding": "Añadiendo…"
+      "adding": "Añadiendo…",
+      "importAndAdd_one": "Importar y añadir {{count}}",
+      "importAndAdd_other": "Importar y añadir {{count}}",
+      "createAndAdd": "Crear y añadir"
+    },
+    "catalog": {
+      "searchPlaceholder": "Buscar en el catálogo…",
+      "empty": "No se encontraron artículos en el catálogo",
+      "loadFailed": "Error al cargar el catálogo"
     },
     "toasts": {
       "selectAtLeastOne": "Selecciona al menos un artículo.",
@@ -1098,6 +1144,20 @@
       "dateDesc": "Más recientes",
       "dateAsc": "Más antiguos"
     },
+    "tabs": {
+      "all": "Todo el equipo",
+      "owned": "Equipo poseído",
+      "wishlist": "Lista de deseos",
+      "shared": "De packs",
+      "desc": {
+        "all": "Todo el equipo que usas dentro de la aplicación.",
+        "owned": "Equipo que posees ahora. Marca un artículo con estrella para moverlo a tu Lista de deseos.",
+        "wishlist": "Equipo que quieres comprar o que todavía necesitas. Desmarca la estrella para moverlo de vuelta a Equipo poseído.",
+        "shared": "Equipo de otro pack que guardaste. Marca un artículo con estrella para añadirlo a tu Lista de deseos, o ábrelo y haz clic en Añadir a Mi equipo para reclamarlo."
+      }
+    },
+    "wishlistEmpty": "Aún no hay artículos en tu lista de deseos. Marca artículos en tus listas de equipo para añadirlos aquí.",
+    "sharedEmpty": "Aún no hay artículos de packs. Explora listas compartidas e importa artículos para verlos aquí.",
     "view": {
       "list": "Vista de lista",
       "tiles": "Vista de mosaico"
@@ -1109,7 +1169,12 @@
       "delete": "Eliminar",
       "selectAll": "Seleccionar todo",
       "clearSelection": "Limpiar",
-      "deleteSelected": "Eliminar"
+      "deleteSelected": "Eliminar",
+      "showImported": "Mostrar artículos de packs",
+      "hideImported": "Ocultar artículos de packs"
+    },
+    "badge": {
+      "fromSharedList": "De packs"
     },
     "tiles": {
       "noImage": "Sin imagen"
@@ -1128,6 +1193,15 @@
       "bulkDeleteTitle": "Eliminar artículos",
       "bulkDeleteMessage": "¿Seguro que quieres eliminar {{count}} artículos? También se eliminarán de todas las listas de equipo.",
       "bulkDeleteConfirm": "Eliminar todo"
+    }
+  },
+  "wishlist": {
+    "actions": {
+      "addToWishlist": "Añadir a lista de deseos",
+      "markOwned": "Marcar como poseído"
+    },
+    "toasts": {
+      "toggleFailed": "Error al actualizar la lista de deseos"
     }
   }
 }

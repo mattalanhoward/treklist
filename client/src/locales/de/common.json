@@ -178,8 +178,8 @@
     },
     "verify": {
       "sentTo": "Wir haben einen Bestätigungslink an {{email}} gesendet.",
-      "step1": "1. Öffne deine E-Mail und klicke auf den Bestätigungslink.",
-      "step2": "2. Komm dann zu diesem Fenster zurück und drücke den Button unten.",
+      "step1": "Öffne deine E-Mail und klicke auf den Bestätigungslink — du wirst direkt zu deinem Ziel weitergeleitet.",
+      "step2": "",
       "laterInfo": "Du kannst dieses Fenster auch schließen und später zurückkommen. Sobald deine E-Mail bestätigt ist, kannst du dich normal anmelden."
     },
     "toasts": {
@@ -340,6 +340,36 @@
       "openProductPageTitle": "Produktseite öffnen",
       "openProductPageAria": "Produktseite öffnen (bezahlter Link)",
       "itemOptionsA11y": "Item-Optionen"
+    },
+    "actions": {
+      "swap": "Artikel tauschen"
+    }
+  },
+  "swapModal": {
+    "title": "Item ersetzen",
+    "tabs": {
+      "myGear": "Meine Ausrüstung",
+      "catalog": "Katalog",
+      "custom": "Eigenes"
+    },
+    "searchPlaceholder": "Meine Ausrüstung durchsuchen...",
+    "noResults": "Keine passenden Items",
+    "noGear": "Keine Items in Meine Ausrüstung",
+    "confirm": "Ersetzen",
+    "swapping": "Ersetzen…",
+    "catalog": {
+      "searchPlaceholder": "Katalog durchsuchen…",
+      "empty": "Keine Katalogeinträge gefunden",
+      "loadFailed": "Katalog konnte nicht geladen werden",
+      "confirmLabel": "Importieren & Ersetzen"
+    },
+    "custom": {
+      "confirmLabel": "Erstellen & Ersetzen"
+    },
+    "toast": {
+      "swapped": "Item ersetzt",
+      "swapFailed": "Item konnte nicht ersetzt werden",
+      "loadFailed": "Ausrüstung konnte nicht geladen werden"
     }
   },
   "cookieBanner": {
@@ -495,7 +525,8 @@
     "buttons": {
       "delete": "Item löschen",
       "saving": "Speichern…",
-      "productPage": "Produktseite"
+      "productPage": "Produktseite",
+      "claim": "Zu meiner Ausrüstung hinzufügen"
     },
     "toast": {
       "updated": "Item aktualisiert",
@@ -503,7 +534,9 @@
       "deleted": "Item gelöscht",
       "deleteFailed": "Löschen fehlgeschlagen",
       "saveFailed": "Speichern fehlgeschlagen. Bitte versuche es erneut.",
-      "stillLoading": "Artikeldetails werden noch geladen…"
+      "stillLoading": "Artikeldetails werden noch geladen…",
+      "claimed": "Zu meiner Ausrüstung hinzugefügt",
+      "claimFailed": "Fehler beim Hinzufügen zu meiner Ausrüstung"
     },
     "confirm": {
       "saveListTitle": "Änderungen an diesem Item speichern?",
@@ -520,7 +553,12 @@
     "a11y": {
       "close": "Modal zum Hinzufügen schließen"
     },
-    "searchPlaceholder": "Globale Items suchen…",
+    "tabs": {
+      "myGear": "Meine Ausrüstung",
+      "catalog": "Katalog",
+      "custom": "Eigenes"
+    },
+    "searchPlaceholder": "Meine Ausrüstung durchsuchen…",
     "badges": {
       "added": "Hinzugefügt"
     },
@@ -528,7 +566,15 @@
     "buttons": {
       "add_one": "{{count}} Item hinzufügen",
       "add_other": "{{count}} Items hinzufügen",
-      "adding": "Hinzufügen…"
+      "adding": "Hinzufügen…",
+      "importAndAdd_one": "Importieren & Hinzufügen {{count}}",
+      "importAndAdd_other": "Importieren & Hinzufügen {{count}}",
+      "createAndAdd": "Erstellen & Hinzufügen"
+    },
+    "catalog": {
+      "searchPlaceholder": "Katalog durchsuchen…",
+      "empty": "Keine Katalogeinträge gefunden",
+      "loadFailed": "Katalog konnte nicht geladen werden"
     },
     "toasts": {
       "selectAtLeastOne": "Bitte wähle mindestens ein Item aus.",
@@ -1098,6 +1144,20 @@
       "dateDesc": "Neueste",
       "dateAsc": "Älteste"
     },
+    "tabs": {
+      "all": "Gesamte Ausrüstung",
+      "owned": "Eigene Ausrüstung",
+      "wishlist": "Wunschliste",
+      "shared": "Von Packs",
+      "desc": {
+        "all": "Alle Ausrüstung, die du in der App verwendest.",
+        "owned": "Ausrüstung, die du jetzt besitzt. Markiere einen Artikel mit einem Stern, um ihn zur Wunschliste zu verschieben.",
+        "wishlist": "Ausrüstung, die du kaufen möchtest oder noch benötigst. Entferne den Stern, um einen Artikel zurück zu Eigene Ausrüstung zu verschieben.",
+        "shared": "Ausrüstung aus einem anderen Pack, das du gespeichert hast. Markiere einen Artikel mit einem Stern, um ihn zur Wunschliste hinzuzufügen, oder öffne ihn und klicke auf Zu meiner Ausrüstung hinzufügen."
+      }
+    },
+    "wishlistEmpty": "Noch keine Artikel auf deiner Wunschliste. Markiere Artikel in deinen Ausrüstungslisten, um sie hier hinzuzufügen.",
+    "sharedEmpty": "Noch keine Artikel aus Packs. Durchsuche geteilte Packlisten und importiere Artikel, um sie hier zu sehen.",
     "view": {
       "list": "Listenansicht",
       "tiles": "Kachelansicht"
@@ -1109,7 +1169,12 @@
       "delete": "Löschen",
       "selectAll": "Alle auswählen",
       "clearSelection": "Auswahl aufheben",
-      "deleteSelected": "Löschen"
+      "deleteSelected": "Löschen",
+      "showImported": "Pack-Artikel anzeigen",
+      "hideImported": "Pack-Artikel ausblenden"
+    },
+    "badge": {
+      "fromSharedList": "Von Packs"
     },
     "tiles": {
       "noImage": "Kein Bild"
@@ -1128,6 +1193,15 @@
       "bulkDeleteTitle": "Artikel löschen",
       "bulkDeleteMessage": "Möchtest du {{count}} Artikel wirklich löschen? Sie werden auch aus allen Packlisten entfernt.",
       "bulkDeleteConfirm": "Alle löschen"
+    }
+  },
+  "wishlist": {
+    "actions": {
+      "addToWishlist": "Zur Wunschliste hinzufügen",
+      "markOwned": "Als besessen markieren"
+    },
+    "toasts": {
+      "toggleFailed": "Wunschliste konnte nicht aktualisiert werden"
     }
   }
 }

@@ -1,7 +1,7 @@
-// src/components/AddGearItemModal.jsx
+// src/components/SwapItemModal.jsx
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import api from "../services/api";
-import { FiX, FiSearch } from "react-icons/fi";
+import { FiX, FiSearch, FiRefreshCw } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import {
@@ -24,7 +24,7 @@ function normalize(str = "") {
 }
 
 // ── My Gear Tab ───────────────────────────────────────────────────────────────
-function MyGearTab({ items, loading, existingGlobalIds, selectedIds, onToggle }) {
+function MyGearTab({ items, loading, excludeId, selectedId, onSelect }) {
   const { t } = useTranslation("common");
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef(null);
@@ -34,11 +34,12 @@ function MyGearTab({ items, loading, existingGlobalIds, selectedIds, onToggle })
   }, []);
 
   const filtered = useMemo(() => {
+    const available = items.filter((i) => String(i._id) !== excludeId);
     const tokens = normalize(searchQuery).split(/\s+/).filter(Boolean);
     const result =
       tokens.length === 0
-        ? items
-        : items.filter((item) => {
+        ? available
+        : available.filter((item) => {
             const hay = normalize(
               [item.name, item.brand, item.itemType].filter(Boolean).join(" "),
             );
@@ -47,7 +48,7 @@ function MyGearTab({ items, loading, existingGlobalIds, selectedIds, onToggle })
     return [...result].sort((a, b) =>
       normalize(a.name).localeCompare(normalize(b.name)),
     );
-  }, [items, searchQuery]);
+  }, [items, searchQuery, excludeId]);
 
   return (
     <>
@@ -59,7 +60,7 @@ function MyGearTab({ items, loading, existingGlobalIds, selectedIds, onToggle })
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={t("addGearItemModal.searchPlaceholder")}
+            placeholder={t("swapModal.searchPlaceholder")}
             className="w-full pl-9 pr-3 py-1.5 border border-primary/30 rounded text-primary bg-base-100 placeholder:text-primary/50 text-sm"
           />
         </div>
@@ -69,32 +70,23 @@ function MyGearTab({ items, loading, existingGlobalIds, selectedIds, onToggle })
           <Spinner centered />
         ) : filtered.length === 0 ? (
           <p className="text-sm text-primary/50 text-center py-6">
-            {t("addGearItemModal.empty")}
+            {searchQuery ? t("swapModal.noResults") : t("swapModal.noGear")}
           </p>
         ) : (
           <ul className="space-y-1">
             {filtered.map((item) => {
-              const disabled = existingGlobalIds.has(String(item._id));
-              const checked = selectedIds.has(String(item._id));
+              const id = String(item._id);
+              const isSelected = selectedId === id;
               return (
                 <li
-                  key={item._id}
-                  onClick={() => !disabled && onToggle(String(item._id))}
+                  key={id}
+                  onClick={() => onSelect(isSelected ? null : id)}
                   className={`flex items-center px-3 py-2 rounded border cursor-pointer transition-colors ${
-                    disabled
-                      ? "border-primary/10 opacity-50 cursor-default"
-                      : checked
-                        ? "border-secondary/40 bg-secondary/10"
-                        : "border-primary/20 hover:bg-primary/5"
+                    isSelected
+                      ? "border-secondary/40 bg-secondary/10"
+                      : "border-primary/20 hover:bg-primary/5"
                   }`}
                 >
-                  <input
-                    type="checkbox"
-                    checked={checked}
-                    onChange={() => {}}
-                    disabled={disabled}
-                    className="mr-3 h-4 w-4 text-secondary border-primary rounded flex-shrink-0 pointer-events-none"
-                  />
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium text-primary truncate">
                       {item.brand && (
@@ -106,10 +98,8 @@ function MyGearTab({ items, loading, existingGlobalIds, selectedIds, onToggle })
                       {tItemType(t, item.itemType) || "—"}
                     </div>
                   </div>
-                  {disabled && (
-                    <span className="text-xs text-primary/40 ml-2 flex-shrink-0">
-                      {t("addGearItemModal.badges.added")}
-                    </span>
+                  {isSelected && (
+                    <div className="flex-shrink-0 w-4 h-4 rounded-full bg-secondary ml-2" />
                   )}
                 </li>
               );
@@ -122,7 +112,7 @@ function MyGearTab({ items, loading, existingGlobalIds, selectedIds, onToggle })
 }
 
 // ── Catalog Tab ───────────────────────────────────────────────────────────────
-function CatalogTab({ selectedIds, onSelectionChange }) {
+function CatalogTab({ selectedId, onSelect }) {
   const { t } = useTranslation("common");
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -152,7 +142,7 @@ function CatalogTab({ selectedIds, onSelectionChange }) {
     api
       .get("/catalog/items", { params })
       .then(({ data }) => setItems(data || []))
-      .catch(() => toast.error(t("addGearItemModal.catalog.loadFailed")))
+      .catch(() => toast.error(t("swapModal.catalog.loadFailed")))
       .finally(() => setLoading(false));
   }, [debouncedSearch, categoryFilter, subcategoryFilter, brandFilter, t]);
 
@@ -176,13 +166,6 @@ function CatalogTab({ selectedIds, onSelectionChange }) {
     [items],
   );
 
-  const toggle = (id) => {
-    const copy = new Set(selectedIds);
-    if (copy.has(id)) copy.delete(id);
-    else copy.add(id);
-    onSelectionChange(copy);
-  };
-
   return (
     <>
       <div className="pb-2 flex-shrink-0">
@@ -193,7 +176,7 @@ function CatalogTab({ selectedIds, onSelectionChange }) {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={t("addGearItemModal.catalog.searchPlaceholder")}
+            placeholder={t("swapModal.catalog.searchPlaceholder")}
             className="w-full pl-9 pr-3 py-1.5 border border-primary/30 rounded text-primary bg-base-100 placeholder:text-primary/50 text-sm"
           />
         </div>
@@ -251,29 +234,23 @@ function CatalogTab({ selectedIds, onSelectionChange }) {
           <Spinner centered />
         ) : items.length === 0 ? (
           <p className="text-sm text-primary/50 text-center py-6">
-            {t("addGearItemModal.catalog.empty")}
+            {t("swapModal.catalog.empty")}
           </p>
         ) : (
           <ul className="space-y-1">
             {items.map((item) => {
               const id = String(item._id);
-              const checked = selectedIds.has(id);
+              const isSelected = selectedId === id;
               return (
                 <li
                   key={id}
-                  onClick={() => toggle(id)}
+                  onClick={() => onSelect(isSelected ? null : id)}
                   className={`flex items-center px-3 py-2 rounded border cursor-pointer transition-colors ${
-                    checked
+                    isSelected
                       ? "border-secondary/40 bg-secondary/10"
                       : "border-primary/20 hover:bg-primary/5"
                   }`}
                 >
-                  <input
-                    type="checkbox"
-                    checked={checked}
-                    onChange={() => {}}
-                    className="mr-3 h-4 w-4 text-secondary border-primary rounded flex-shrink-0 pointer-events-none"
-                  />
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-medium text-primary truncate">
                       {item.brand && (
@@ -287,6 +264,9 @@ function CatalogTab({ selectedIds, onSelectionChange }) {
                         "—"}
                     </div>
                   </div>
+                  {isSelected && (
+                    <div className="flex-shrink-0 w-4 h-4 rounded-full bg-secondary ml-2" />
+                  )}
                 </li>
               );
             })}
@@ -410,28 +390,29 @@ function CustomTab({ form, onChange }) {
 }
 
 // ── Main Modal ────────────────────────────────────────────────────────────────
-export default function AddGearItemModal({
+export default function SwapItemModal({
+  item,
   listId,
-  categoryId,
+  catId,
   onClose,
-  onAdded,
+  onSwapped,
 }) {
   const { t } = useTranslation("common");
   const unit = useUnit();
   const { parseInput } = useWeightInput(unit);
 
   const [tab, setTab] = useState(
-    () => localStorage.getItem("treklist_add_gear_tab") || "myGear",
+    () => localStorage.getItem("treklist_swap_item_tab") || "myGear",
   );
   const [saving, setSaving] = useState(false);
 
   // My Gear tab
   const [myGearItems, setMyGearItems] = useState([]);
   const [myGearLoading, setMyGearLoading] = useState(true);
-  const [myGearSelectedIds, setMyGearSelectedIds] = useState(new Set());
+  const [myGearSelectedId, setMyGearSelectedId] = useState(null);
 
   // Catalog tab
-  const [catalogSelectedIds, setCatalogSelectedIds] = useState(new Set());
+  const [catalogSelectedId, setCatalogSelectedId] = useState(null);
 
   // Custom tab
   const [customForm, setCustomForm] = useState({
@@ -445,34 +426,13 @@ export default function AddGearItemModal({
     description: "",
   });
 
-  // Existing items for dup-check
-  const [existingItems, setExistingItems] = useState([]);
-
   useEffect(() => {
     api
-      .get("/my-gear/items")
+      .get("/my-gear/items?includeImported=true")
       .then(({ data }) => setMyGearItems(data || []))
-      .catch(() => {})
+      .catch(() => toast.error(t("swapModal.toast.loadFailed")))
       .finally(() => setMyGearLoading(false));
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const { data: cats } = await api.get(`/dashboard/${listId}/categories`);
-        const itemArrays = await Promise.all(
-          cats.map((cat) =>
-            api
-              .get(`/dashboard/${listId}/categories/${cat._id}/items`)
-              .then((r) => r.data || []),
-          ),
-        );
-        setExistingItems(itemArrays.flat());
-      } catch (err) {
-        console.error("Error fetching existing items:", err);
-      }
-    })();
-  }, [listId]);
+  }, [t]);
 
   // Close on ESC
   useEffect(() => {
@@ -481,71 +441,33 @@ export default function AddGearItemModal({
     return () => window.removeEventListener("keydown", h);
   }, [onClose]);
 
-  const existingGlobalIds = useMemo(
-    () => new Set(existingItems.map((it) => String(it.globalItem || it._id))),
-    [existingItems],
-  );
+  const excludeId = String(item?.globalItem || item?._id || "");
 
-  const computeStartPos = () => {
-    const itemsInCat = existingItems.filter(
-      (it) => String(it.category) === String(categoryId),
+  const doSwap = async (newGlobalItemId) => {
+    const { data } = await api.patch(
+      `/dashboard/${listId}/categories/${catId}/items/${item._id}/swap`,
+      { newGlobalItemId },
     );
-    const maxPos = itemsInCat.length
-      ? Math.max(
-          ...itemsInCat.map((it) =>
-            Number.isFinite(it.position) ? it.position : -1,
-          ),
-        )
-      : -1;
-    return maxPos + 1;
-  };
-
-  const addGlobalItemsToList = async (globalItems) => {
-    const startPos = computeStartPos();
-    await Promise.all(
-      globalItems.map((gi, idx) =>
-        api.post(`/dashboard/${listId}/categories/${categoryId}/items`, {
-          globalItem: gi._id,
-          productId: gi.productId || null,
-          brand: gi.brand,
-          itemType: gi.itemType,
-          name: gi.name,
-          description: gi.description,
-          weight: gi.weight,
-          link: gi.link,
-          imageUrls: gi.imageUrls || [],
-          worn: gi.worn,
-          consumable: gi.consumable,
-          quantity: 1,
-          position: startPos + idx,
-        }),
-      ),
-    );
+    toast.success(t("swapModal.toast.swapped"));
+    onSwapped?.(data);
+    onClose?.();
   };
 
   const handleConfirm = async () => {
     setSaving(true);
     try {
       if (tab === "myGear") {
-        if (myGearSelectedIds.size === 0) return;
-        const dups = [...myGearSelectedIds].filter((id) =>
-          existingGlobalIds.has(id),
-        );
-        if (dups.length > 0) {
-          toast.error(t("addGearItemModal.toasts.alreadyInList"));
-          return;
-        }
-        const selected = myGearItems.filter((i) =>
-          myGearSelectedIds.has(String(i._id)),
-        );
-        await addGlobalItemsToList(selected);
+        if (!myGearSelectedId) return;
+        await doSwap(myGearSelectedId);
       } else if (tab === "catalog") {
-        if (catalogSelectedIds.size === 0) return;
+        if (!catalogSelectedId) return;
         const { data } = await api.post("/global/items/from-catalog/bulk", {
-          ids: [...catalogSelectedIds],
+          ids: [catalogSelectedId],
         });
-        await addGlobalItemsToList(data.items || []);
+        const gi = data.items?.[0];
+        if (!gi) throw new Error("Import failed");
         window.dispatchEvent(new CustomEvent("global-items:updated"));
+        await doSwap(String(gi._id));
       } else if (tab === "custom") {
         if (!customForm.name.trim()) {
           toast.error(t("validation.nameRequired"));
@@ -568,14 +490,13 @@ export default function AddGearItemModal({
         if (customForm.imageUrl.trim()) payload.imageUrls = [customForm.imageUrl.trim()];
         if (customForm.description.trim()) payload.description = customForm.description.trim();
         const { data: gi } = await api.post("/global/items", payload);
-        await addGlobalItemsToList([gi]);
         window.dispatchEvent(new CustomEvent("global-items:updated"));
+        await doSwap(String(gi._id));
       }
-      onAdded?.();
-      onClose?.();
     } catch (err) {
-      console.error("Error adding items:", err);
-      toast.error(t("addGearItemModal.toasts.addFailed"));
+      toast.error(
+        err?.response?.data?.message || t("swapModal.toast.swapFailed"),
+      );
     } finally {
       setSaving(false);
     }
@@ -583,25 +504,23 @@ export default function AddGearItemModal({
 
   const canConfirm =
     tab === "myGear"
-      ? myGearSelectedIds.size > 0
+      ? !!myGearSelectedId
       : tab === "catalog"
-        ? catalogSelectedIds.size > 0
+        ? !!catalogSelectedId
         : customForm.name.trim().length > 0;
 
   const confirmLabel = saving
-    ? t("addGearItemModal.buttons.adding")
+    ? t("swapModal.swapping")
     : tab === "myGear"
-      ? t("addGearItemModal.buttons.add", { count: myGearSelectedIds.size })
+      ? t("swapModal.confirm")
       : tab === "catalog"
-        ? t("addGearItemModal.buttons.importAndAdd", {
-            count: catalogSelectedIds.size,
-          })
-        : t("addGearItemModal.buttons.createAndAdd");
+        ? t("swapModal.catalog.confirmLabel")
+        : t("swapModal.custom.confirmLabel");
 
   const tabs = [
-    { key: "myGear", label: t("addGearItemModal.tabs.myGear") },
-    { key: "catalog", label: t("addGearItemModal.tabs.catalog") },
-    { key: "custom", label: t("addGearItemModal.tabs.custom") },
+    { key: "myGear", label: t("swapModal.tabs.myGear") },
+    { key: "catalog", label: t("swapModal.tabs.catalog") },
+    { key: "custom", label: t("swapModal.tabs.custom") },
   ];
 
   return (
@@ -610,21 +529,27 @@ export default function AddGearItemModal({
       onClick={onClose}
     >
       <div
-        className="bg-base-100 sm:rounded-xl shadow-2xl sm:max-w-2xl w-full sm:mx-4 flex flex-col modal-mobile-h sm:h-auto sm:max-h-[90vh]"
+        className="bg-base-100 sm:rounded-lg shadow-2xl w-full sm:max-w-2xl sm:mx-4 flex flex-col modal-mobile-h sm:h-auto sm:max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex justify-between items-center px-5 pt-4 pb-3 border-b border-primary/10 flex-shrink-0">
-          <h2 className="text-lg font-semibold text-primary">
-            {t("addGearItemModal.title")}
-          </h2>
+        <div className="flex justify-between items-center px-4 py-3 border-b border-primary/10 flex-shrink-0">
+          <div>
+            <h2 className="text-lg font-semibold text-primary">
+              {t("swapModal.title")}
+            </h2>
+            <p className="text-xs text-primary/60 mt-0.5 truncate max-w-[280px]">
+              {item.brand && <span className="mr-1">{item.brand}</span>}
+              {item.name}
+            </p>
+          </div>
           <button
+            type="button"
             onClick={onClose}
-            disabled={saving}
-            className="text-error hover:text-error/80"
-            aria-label={t("addGearItemModal.a11y.close")}
+            className="text-error hover:text-error/80 ml-2"
+            aria-label={t("actions.close")}
           >
-            <FiX size={20} />
+            <FiX size={18} />
           </button>
         </div>
 
@@ -636,7 +561,7 @@ export default function AddGearItemModal({
               type="button"
               onClick={() => {
                 setTab(key);
-                localStorage.setItem("treklist_add_gear_tab", key);
+                localStorage.setItem("treklist_swap_item_tab", key);
               }}
               className={`flex-1 py-2 text-sm font-medium transition-colors ${
                 tab === key
@@ -650,26 +575,20 @@ export default function AddGearItemModal({
         </div>
 
         {/* Content — fixed height so tabs don't shift modal size */}
-        <div className="flex-1 sm:h-[360px] sm:flex-none overflow-hidden flex flex-col px-5 pt-3">
+        <div className="flex-1 sm:h-[360px] sm:flex-none overflow-hidden flex flex-col px-4 pt-3">
           {tab === "myGear" && (
             <MyGearTab
               items={myGearItems}
               loading={myGearLoading}
-              existingGlobalIds={existingGlobalIds}
-              selectedIds={myGearSelectedIds}
-              onToggle={(id) =>
-                setMyGearSelectedIds((prev) => {
-                  const c = new Set(prev);
-                  c.has(id) ? c.delete(id) : c.add(id);
-                  return c;
-                })
-              }
+              excludeId={excludeId}
+              selectedId={myGearSelectedId}
+              onSelect={setMyGearSelectedId}
             />
           )}
           {tab === "catalog" && (
             <CatalogTab
-              selectedIds={catalogSelectedIds}
-              onSelectionChange={setCatalogSelectedIds}
+              selectedId={catalogSelectedId}
+              onSelect={setCatalogSelectedId}
             />
           )}
           {tab === "custom" && (
@@ -678,7 +597,7 @@ export default function AddGearItemModal({
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-2 px-5 py-3 border-t border-primary/10 flex-shrink-0">
+        <div className="flex justify-end gap-2 px-4 py-3 border-t border-primary/10 flex-shrink-0">
           <button
             type="button"
             onClick={onClose}
@@ -691,12 +610,13 @@ export default function AddGearItemModal({
             type="button"
             onClick={handleConfirm}
             disabled={!canConfirm || saving}
-            className={`px-3 py-1.5 rounded bg-secondary text-white text-sm ${
+            className={`px-3 py-1.5 rounded bg-secondary text-white text-sm flex items-center gap-1.5 ${
               !canConfirm || saving
                 ? "opacity-50 cursor-not-allowed"
                 : "hover:bg-secondary/80"
             }`}
           >
+            <FiRefreshCw className={`text-xs ${saving ? "animate-spin" : ""}`} />
             {confirmLabel}
           </button>
         </div>
