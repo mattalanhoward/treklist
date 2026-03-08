@@ -35,13 +35,14 @@ async function addOfferFlags(items, userId) {
   const user = await User.findById(userId).select("region").lean();
   const userRegion = normalizeRegion(user?.region);
 
-  // 2) Collect globalItem IDs for items that have no direct link or productId
-  const needsFallback = items.filter((i) => !i.link && !i.productId && i.globalItem);
-  const globalItemIds = [...new Set(needsFallback.map((i) => String(i.globalItem)))];
+  // 2) Collect ALL globalItem IDs — needed for both offer fallback and wishlist status
+  const allGlobalItemIds = [...new Set(
+    items.filter((i) => i.globalItem).map((i) => String(i.globalItem))
+  )];
 
-  const globalDocs = globalItemIds.length
-    ? await GlobalItem.find({ _id: { $in: globalItemIds } })
-        .select("link productId affiliate")
+  const globalDocs = allGlobalItemIds.length
+    ? await GlobalItem.find({ _id: { $in: allGlobalItemIds } })
+        .select("link productId affiliate status")
         .lean()
     : [];
   const globalById = new Map(globalDocs.map((g) => [String(g._id), g]));
@@ -69,27 +70,27 @@ async function addOfferFlags(items, userId) {
     : [];
   const offerProductIds = new Set(offerDocs.map((o) => String(o.productId)));
 
-  // 5) Assign hasOffer to each item
+  // 5) Assign hasOffer and globalItemStatus to each item
   return items.map((item) => {
+    const g = item.globalItem ? globalById.get(String(item.globalItem)) : null;
+    const globalItemStatus = g?.status ?? null;
+
     // Direct link on the GearItem → always has offer
-    if (item.link) return { ...item, hasOffer: true };
+    if (item.link) return { ...item, hasOffer: true, globalItemStatus };
 
     // GearItem has its own productId
     if (item.productId) {
-      return { ...item, hasOffer: offerProductIds.has(String(item.productId)) };
+      return { ...item, hasOffer: offerProductIds.has(String(item.productId)), globalItemStatus };
     }
 
     // Fall back to the linked GlobalItem
-    if (item.globalItem) {
-      const g = globalById.get(String(item.globalItem));
-      if (!g) return { ...item, hasOffer: false };
-
+    if (g) {
       // GlobalItem has a direct link
-      if (g.link) return { ...item, hasOffer: true };
+      if (g.link) return { ...item, hasOffer: true, globalItemStatus };
 
       // GlobalItem has a productId
       if (g.productId) {
-        return { ...item, hasOffer: offerProductIds.has(String(g.productId)) };
+        return { ...item, hasOffer: offerProductIds.has(String(g.productId)), globalItemStatus };
       }
 
       // Legacy affiliate link on GlobalItem
@@ -99,10 +100,10 @@ async function addOfferFlags(items, userId) {
         g.affiliate?.awDeepLink ||
         g.affiliate?.url ||
         null;
-      if (deep) return { ...item, hasOffer: true };
+      if (deep) return { ...item, hasOffer: true, globalItemStatus };
     }
 
-    return { ...item, hasOffer: false };
+    return { ...item, hasOffer: false, globalItemStatus };
   });
 }
 
