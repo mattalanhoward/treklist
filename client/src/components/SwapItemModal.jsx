@@ -428,7 +428,7 @@ export default function SwapItemModal({
 
   useEffect(() => {
     api
-      .get("/my-gear/items?includeImported=true")
+      .get("/my-gear/items")
       .then(({ data }) => setMyGearItems(data || []))
       .catch(() => toast.error(t("swapModal.toast.loadFailed")))
       .finally(() => setMyGearLoading(false));
