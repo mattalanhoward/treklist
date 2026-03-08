@@ -1,6 +1,7 @@
 // client/src/components/MyGearListItem.jsx
 import React from "react";
-import { FiTrash2, FiExternalLink, FiCheckSquare, FiSquare } from "react-icons/fi";
+import { FiTrash2, FiExternalLink, FiCheckSquare, FiSquare, FiStar } from "react-icons/fi";
+import { FaStar } from "react-icons/fa";
 import { tItemType } from "../config/catalogTaxonomy";
 
 export default function MyGearListItem({
@@ -11,6 +12,7 @@ export default function MyGearListItem({
   actionLoading,
   onViewEdit,
   onDelete,
+  onToggleWishlist,
   selectionMode = false,
   isSelected = false,
   onToggleSelect,
@@ -73,6 +75,18 @@ export default function MyGearListItem({
 
           {!selectionMode && (
             <div className="flex items-center gap-1">
+              {onToggleWishlist && (
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); onToggleWishlist(); }}
+                  className="p-1 rounded"
+                  title={item.status === "wishlisted" ? t("wishlist.actions.markOwned", "Mark as owned") : t("wishlist.actions.addToWishlist", "Add to wishlist")}
+                >
+                  {item.status === "wishlisted"
+                    ? <FaStar className="text-sm text-amber-400" />
+                    : <FiStar className="text-sm text-primary/40 hover:text-amber-400" />}
+                </button>
+              )}
               {merchantUrl && (
                 <a
                   href={merchantUrl}
@@ -173,9 +187,21 @@ export default function MyGearListItem({
           </div>
         </div>
 
-        {/* Right: Cart + Delete buttons */}
+        {/* Right: Star + Cart + Delete buttons */}
         {!selectionMode && (
           <div className="flex items-center gap-1 justify-self-end">
+            {onToggleWishlist && (
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onToggleWishlist(); }}
+                className="p-2 rounded"
+                title={item.status === "wishlisted" ? t("wishlist.actions.markOwned", "Mark as owned") : t("wishlist.actions.addToWishlist", "Add to wishlist")}
+              >
+                {item.status === "wishlisted"
+                  ? <FaStar className="text-sm text-amber-400" />
+                  : <FiStar className="text-sm text-primary/40 hover:text-amber-400" />}
+              </button>
+            )}
             {merchantUrl && (
               <a
                 href={merchantUrl}

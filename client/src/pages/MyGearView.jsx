@@ -3,7 +3,7 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import api from "../services/api";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { FiSearch, FiGrid, FiList, FiPlus, FiChevronDown, FiCheckSquare, FiTrash2, FiX, FiEye, FiEyeOff } from "react-icons/fi";
+import { FiSearch, FiGrid, FiList, FiPlus, FiChevronDown, FiCheckSquare, FiTrash2, FiX } from "react-icons/fi";
 import ConfirmDialog from "../components/ConfirmDialog";
 import GlobalItemEditModal from "../components/GlobalItemEditModal";
 import AddGearDrawer from "../components/AddGearDrawer";
@@ -30,7 +30,9 @@ export default function MyGearView({ collapsed }) {
     return window.matchMedia("(min-width: 768px)").matches ? "tiles" : "list";
   });
 
-  const [showImported, setShowImported] = useState(false);
+  const [gearTab, setGearTab] = useState("all"); // "all" | "owned" | "wishlist" | "shared"
+  const [wishlistItems, setWishlistItems] = useState([]);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [showDrawer, setShowDrawer] = useState(() =>
     window.matchMedia("(min-width: 1024px)").matches
@@ -80,12 +82,36 @@ export default function MyGearView({ collapsed }) {
     return () => controller.abort();
   }, [fetchItems]);
 
+  const fetchWishlistItems = useCallback(async () => {
+    setWishlistLoading(true);
+    try {
+      const { data } = await api.get("/wishlist/items");
+      setWishlistItems(data || []);
+    } catch (err) {
+      console.error("Failed to fetch wishlist", err);
+    } finally {
+      setWishlistLoading(false);
+    }
+  }, []);
+
+  // Fetch on mount so the count is correct even before visiting the wishlist tab
+  useEffect(() => {
+    fetchWishlistItems();
+  }, [fetchWishlistItems]);
+
+  useEffect(() => {
+    if (gearTab === "wishlist") fetchWishlistItems();
+  }, [gearTab, fetchWishlistItems]);
+
   // Listen for global item updates (e.g., when items are created from sidebar)
   useEffect(() => {
-    const handleGlobalUpdated = () => fetchItems();
+    const handleGlobalUpdated = () => {
+      fetchItems();
+      fetchWishlistItems(); // always keep wishlist in sync so "All Gear" tab stays current
+    };
     window.addEventListener("global-items:updated", handleGlobalUpdated);
     return () => window.removeEventListener("global-items:updated", handleGlobalUpdated);
-  }, [fetchItems]);
+  }, [fetchItems, fetchWishlistItems]);
 
   // Derive unique categories for filter dropdown
   const categories = useMemo(() => {
@@ -112,13 +138,8 @@ export default function MyGearView({ collapsed }) {
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "");
 
-  const hiddenImportedCount = useMemo(
-    () => (!showImported ? items.filter((i) => i.importedFromShare).length : 0),
-    [items, showImported],
-  );
-
   const filteredItems = useMemo(() => {
-    let result = showImported ? items : items.filter((i) => !i.importedFromShare);
+    let result = [...items];
 
     // Category filter
     if (categoryFilter !== "all") {
@@ -157,7 +178,79 @@ export default function MyGearView({ collapsed }) {
     });
 
     return sorted;
-  }, [items, showImported, searchQuery, categoryFilter, sortOption]);
+  }, [items, searchQuery, categoryFilter, sortOption]);
+
+  const filteredOwnedItems = useMemo(
+    () => filteredItems.filter((i) => !i.importedFromShare),
+    [filteredItems],
+  );
+
+  const filteredSharedItems = useMemo(
+    () => filteredItems.filter((i) => i.importedFromShare),
+    [filteredItems],
+  );
+
+  // Toggle wishlist status on a GlobalItem
+  const handleToggleWishlist = async (item) => {
+    const newStatus = item.status === "wishlisted" ? "owned" : "wishlisted";
+    try {
+      await api.patch(`/global/items/${item._id}`, { status: newStatus });
+      // Move the item between lists — avoids duplicate in the "All Gear" combined view
+      if (newStatus === "wishlisted") {
+        setItems((prev) => prev.filter((i) => i._id !== item._id));
+        setWishlistItems((prev) => [...prev, { ...item, status: newStatus }]);
+      } else {
+        setWishlistItems((prev) => prev.filter((i) => i._id !== item._id));
+        setItems((prev) => [{ ...item, status: newStatus }, ...prev]);
+      }
+      window.dispatchEvent(new CustomEvent("global-items:updated"));
+    } catch (err) {
+      console.error("Failed to toggle wishlist", err);
+      toast.error(t("wishlist.toasts.toggleFailed", "Failed to update wishlist"));
+    }
+  };
+
+  const filteredWishlistItems = useMemo(() => {
+    let result = [...wishlistItems];
+    if (searchQuery.trim()) {
+      const tokens = normalize(searchQuery).split(/\s+/).filter(Boolean);
+      result = result.filter((item) => {
+        const searchable = normalize([item.name, item.brand, item.itemType].join(" "));
+        return tokens.every((tok) => searchable.includes(tok));
+      });
+    }
+    const [field, direction] = sortOption.split("-");
+    result.sort((a, b) => {
+      let cmp = 0;
+      if (field === "name") cmp = (a.name || "").localeCompare(b.name || "");
+      else if (field === "weight") cmp = (a.weight || 0) - (b.weight || 0);
+      else if (field === "date") cmp = new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+      return direction === "desc" ? -cmp : cmp;
+    });
+    return result;
+  }, [wishlistItems, searchQuery, sortOption]);
+
+  const filteredAllItems = useMemo(() => {
+    // Combine non-wishlisted items with wishlist items, then re-sort
+    const combined = [...filteredItems, ...filteredWishlistItems];
+    const [field, direction] = sortOption.split("-");
+    return combined.sort((a, b) => {
+      let cmp = 0;
+      if (field === "name") cmp = (a.name || "").localeCompare(b.name || "");
+      else if (field === "weight") cmp = (a.weight || 0) - (b.weight || 0);
+      else if (field === "date") cmp = new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+      return direction === "desc" ? -cmp : cmp;
+    });
+  }, [filteredItems, filteredWishlistItems, sortOption]);
+
+  const displayItems = useMemo(() => {
+    if (gearTab === "wishlist") return filteredWishlistItems;
+    if (gearTab === "owned") return filteredOwnedItems;
+    if (gearTab === "shared") return filteredSharedItems;
+    return filteredAllItems; // "all"
+  }, [gearTab, filteredWishlistItems, filteredOwnedItems, filteredSharedItems, filteredAllItems]);
+
+  const displayLoading = (gearTab === "wishlist" || gearTab === "all") ? (loading || wishlistLoading) : loading;
 
   // Handle delete
   const handleDelete = async (item) => {
@@ -191,8 +284,8 @@ export default function MyGearView({ collapsed }) {
   }, []);
 
   const selectAll = useCallback(() => {
-    setSelectedIds(new Set(filteredItems.map((item) => item._id)));
-  }, [filteredItems]);
+    setSelectedIds(new Set(displayItems.map((item) => item._id)));
+  }, [displayItems]);
 
   const clearSelection = useCallback(() => {
     setSelectedIds(new Set());
@@ -244,9 +337,9 @@ export default function MyGearView({ collapsed }) {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [confirmDelete, confirmBulkDelete, selectionMode, exitSelectionMode]);
 
-  // Auto focus search input when view opens
+  // Auto focus search input when view opens (desktop only)
   useEffect(() => {
-    searchInputRef.current?.focus();
+    if (window.innerWidth >= 640) searchInputRef.current?.focus();
   }, []);
 
   return (
@@ -257,22 +350,11 @@ export default function MyGearView({ collapsed }) {
       <div className={`flex-shrink-0 px-4 py-2 border-b border-primary/10 bg-base-100 ${collapsed ? "sm:pl-12" : ""}`}>
         {/* Desktop: single row */}
         <div className="hidden sm:flex items-center justify-between gap-4">
-          {/* Left: Title + Select button */}
+          {/* Left: Title */}
           <div className="flex items-center gap-2">
             <h1 className="text-lg font-semibold text-primary whitespace-nowrap">
               {t("myGear.title", "My Gear")}
-              <span className="ml-2 text-base font-normal text-primary/60">
-                ({items.length})
-              </span>
             </h1>
-            <button
-              type="button"
-              onClick={() => selectionMode ? exitSelectionMode() : setSelectionMode(true)}
-              className={`p-1 rounded ${selectionMode ? "text-secondary bg-secondary/10" : "text-secondary hover:text-secondary/80"}`}
-              title={t("myGear.actions.select", "Select items")}
-            >
-              <FiCheckSquare className="text-sm" />
-            </button>
           </div>
 
           {/* Center: Search */}
@@ -324,21 +406,6 @@ export default function MyGearView({ collapsed }) {
               <FiChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-primary/50 pointer-events-none text-xs" />
             </div>
 
-            {/* Show imported toggle */}
-            <button
-              type="button"
-              onClick={() => setShowImported((v) => !v)}
-              className={`relative p-1 rounded ${showImported ? "text-secondary bg-secondary/10" : "text-primary/50 hover:text-primary"}`}
-              title={showImported ? t("myGear.actions.hideImported", "Hide items from shared lists") : t("myGear.actions.showImported", "Show items from shared lists")}
-            >
-              {showImported ? <FiEyeOff className="text-sm" /> : <FiEye className="text-sm" />}
-              {!showImported && hiddenImportedCount > 0 && (
-                <span className="absolute -top-1 -right-1 text-[9px] bg-amber-400 text-white rounded-full w-3.5 h-3.5 flex items-center justify-center leading-none">
-                  {hiddenImportedCount > 9 ? "9+" : hiddenImportedCount}
-                </span>
-              )}
-            </button>
-
             {/* View mode toggle */}
             <div className="inline-flex rounded border border-primary/30 overflow-hidden">
               <button
@@ -365,6 +432,16 @@ export default function MyGearView({ collapsed }) {
               </button>
             </div>
 
+            {/* Select items */}
+            <button
+              type="button"
+              onClick={() => selectionMode ? exitSelectionMode() : setSelectionMode(true)}
+              className={`p-1 rounded ${selectionMode ? "text-secondary bg-secondary/10" : "text-primary/50 hover:text-primary"}`}
+              title={t("myGear.actions.select", "Select items")}
+            >
+              <FiCheckSquare className="text-sm" />
+            </button>
+
             {/* Add / toggle drawer */}
             {!showDrawer && (
               <button
@@ -379,6 +456,29 @@ export default function MyGearView({ collapsed }) {
           </div>
         </div>
 
+        {/* Tab bar */}
+        <div className="hidden sm:flex gap-4 mt-2 pt-2 border-t border-primary/10">
+          {[
+            { key: "all", label: t("myGear.tabs.all", "All Gear"), count: items.length + wishlistItems.length },
+            { key: "owned", label: t("myGear.tabs.owned", "My Gear"), count: items.filter(i => !i.importedFromShare).length },
+            { key: "wishlist", label: t("myGear.tabs.wishlist", "Wishlist"), count: wishlistItems.length },
+            { key: "shared", label: t("myGear.tabs.shared", "From Packs"), count: items.filter(i => i.importedFromShare).length },
+          ].map(({ key, label, count }) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setGearTab(key)}
+              className={`text-sm font-medium pb-1 transition-colors ${gearTab === key ? "border-b-2 border-secondary text-secondary" : "text-primary/60 hover:text-primary"}`}
+            >
+              {label}
+              <span className="ml-1.5 text-xs text-primary/40">({count})</span>
+            </button>
+          ))}
+        </div>
+        <p className="hidden sm:block text-xs text-primary/50 mt-1">
+          {t(`myGear.tabs.desc.${gearTab}`)}
+        </p>
+
         {/* Desktop: Selection action bar */}
         {selectionMode && (
           <div className="hidden sm:flex items-center justify-between gap-4 mt-2 pt-2 border-t border-primary/10">
@@ -388,15 +488,6 @@ export default function MyGearView({ collapsed }) {
                   ? t("myGear.selected", "{{count}} selected", { count: selectedIds.size })
                   : t("myGear.selectItems", "Select items")}
               </span>
-              {selectedIds.size === 0 && filteredItems.length > 0 && (
-                <button
-                  type="button"
-                  onClick={selectAll}
-                  className="text-sm text-secondary hover:text-secondary/80"
-                >
-                  {t("myGear.actions.selectAll", "Select all")}
-                </button>
-              )}
               {selectedIds.size > 0 && (
                 <button
                   type="button"
@@ -419,6 +510,15 @@ export default function MyGearView({ collapsed }) {
                   {t("myGear.actions.deleteSelected", "Delete")}
                 </button>
               )}
+              {filteredItems.length > 0 && (
+                <button
+                  type="button"
+                  onClick={selectAll}
+                  className="text-sm text-secondary hover:text-secondary/80"
+                >
+                  {t("myGear.actions.selectAll", "Select all")}
+                </button>
+              )}
               <button
                 type="button"
                 onClick={exitSelectionMode}
@@ -432,23 +532,12 @@ export default function MyGearView({ collapsed }) {
         )}
 
         {/* Mobile: stacked layout */}
-        <div className={`sm:hidden space-y-2 ${collapsed ? "pl-8" : ""}`}>
-          <div className="flex items-center justify-between gap-4">
+        <div className="sm:hidden space-y-2">
+          <div className={`flex items-center justify-between gap-4 ${collapsed ? "pl-8" : ""}`}>
             <div className="flex items-center gap-2">
               <h1 className="text-lg font-semibold text-primary whitespace-nowrap">
                 {t("myGear.title", "My Gear")}
-                <span className="ml-2 text-base font-normal text-primary/60">
-                  ({items.length})
-                </span>
               </h1>
-              <button
-                type="button"
-                onClick={() => selectionMode ? exitSelectionMode() : setSelectionMode(true)}
-                className={`p-1 rounded ${selectionMode ? "text-secondary bg-secondary/10" : "text-secondary hover:text-secondary/80"}`}
-                title={t("myGear.actions.select", "Select items")}
-              >
-                <FiCheckSquare className="text-sm" />
-              </button>
             </div>
 
             <div className="flex items-center gap-2">
@@ -471,21 +560,15 @@ export default function MyGearView({ collapsed }) {
                   <FiGrid className="text-sm" />
                 </button>
               </div>
-              {/* Show imported toggle (mobile) */}
+              {/* Select items */}
               <button
                 type="button"
-                onClick={() => setShowImported((v) => !v)}
-                className={`relative p-1 rounded ${showImported ? "text-secondary bg-secondary/10" : "text-primary/50 hover:text-primary"}`}
-                title={showImported ? t("myGear.actions.hideImported", "Hide items from shared lists") : t("myGear.actions.showImported", "Show items from shared lists")}
+                onClick={() => selectionMode ? exitSelectionMode() : setSelectionMode(true)}
+                className={`p-1 rounded ${selectionMode ? "text-secondary bg-secondary/10" : "text-primary/50 hover:text-primary"}`}
+                title={t("myGear.actions.select", "Select items")}
               >
-                {showImported ? <FiEyeOff className="text-sm" /> : <FiEye className="text-sm" />}
-                {!showImported && hiddenImportedCount > 0 && (
-                  <span className="absolute -top-1 -right-1 text-[9px] bg-amber-400 text-white rounded-full w-3.5 h-3.5 flex items-center justify-center leading-none">
-                    {hiddenImportedCount > 9 ? "9+" : hiddenImportedCount}
-                  </span>
-                )}
+                <FiCheckSquare className="text-sm" />
               </button>
-
               {/* Add / toggle drawer */}
               {!showDrawer && (
                 <button
@@ -509,15 +592,6 @@ export default function MyGearView({ collapsed }) {
                     ? t("myGear.selected", "{{count}} selected", { count: selectedIds.size })
                     : t("myGear.selectItems", "Select items")}
                 </span>
-                {selectedIds.size === 0 && filteredItems.length > 0 && (
-                  <button
-                    type="button"
-                    onClick={selectAll}
-                    className="text-sm text-secondary hover:text-secondary/80"
-                  >
-                    {t("myGear.actions.selectAll", "Select all")}
-                  </button>
-                )}
                 {selectedIds.size > 0 && (
                   <button
                     type="button"
@@ -538,6 +612,15 @@ export default function MyGearView({ collapsed }) {
                     title={t("myGear.actions.deleteSelected", "Delete selected")}
                   >
                     <FiTrash2 className="text-sm" />
+                  </button>
+                )}
+                {filteredItems.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={selectAll}
+                    className="text-sm text-secondary hover:text-secondary/80"
+                  >
+                    {t("myGear.actions.selectAll", "Select all")}
                   </button>
                 )}
                 <button
@@ -601,6 +684,34 @@ export default function MyGearView({ collapsed }) {
               className="w-full pl-9 pr-3 border border-primary/30 rounded text-primary bg-base-100 placeholder:text-primary/50"
             />
           </div>
+
+          {/* Mobile: tab bar — row 1: All Gear, row 2: Owned / Wishlist / From Packs */}
+          <div className="pt-1 border-t border-primary/10 space-y-1">
+            <div className="flex gap-3">
+              {[{ key: "all", label: t("myGear.tabs.all", "All Gear"), count: items.length + wishlistItems.length }]
+                .map(({ key, label, count }) => (
+                  <button key={key} type="button" onClick={() => setGearTab(key)}
+                    className={`text-sm font-medium pb-1 transition-colors ${gearTab === key ? "border-b-2 border-secondary text-secondary" : "text-primary/60 hover:text-primary"}`}>
+                    {label}<span className="ml-1 text-xs text-primary/40">({count})</span>
+                  </button>
+                ))}
+            </div>
+            <div className="flex gap-3">
+              {[
+                { key: "owned", label: t("myGear.tabs.owned", "My Gear"), count: items.filter(i => !i.importedFromShare).length },
+                { key: "wishlist", label: t("myGear.tabs.wishlist", "Wishlist"), count: wishlistItems.length },
+                { key: "shared", label: t("myGear.tabs.shared", "From Packs"), count: items.filter(i => i.importedFromShare).length },
+              ].map(({ key, label, count }) => (
+                <button key={key} type="button" onClick={() => setGearTab(key)}
+                  className={`text-sm font-medium pb-1 transition-colors ${gearTab === key ? "border-b-2 border-secondary text-secondary" : "text-primary/60 hover:text-primary"}`}>
+                  {label}<span className="ml-1 text-xs text-primary/40">({count})</span>
+                </button>
+              ))}
+            </div>
+          </div>
+          <p className="text-xs text-primary/50 mt-0.5">
+            {t(`myGear.tabs.desc.${gearTab}`)}
+          </p>
         </div>
       </div>
 
@@ -613,22 +724,27 @@ export default function MyGearView({ collapsed }) {
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-4 py-3">
-        {loading ? (
+        {displayLoading ? (
           <div className="flex items-center justify-center h-32">
             <div className="h-8 w-8 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
           </div>
-        ) : filteredItems.length === 0 ? (
+        ) : displayItems.length === 0 ? (
           <div className="text-center py-8 text-primary/60">
-            {items.length === 0
-              ? t(
-                  "myGear.empty",
-                  "You haven't added any gear yet. Import items from the catalog or create custom items.",
-                )
-              : t("myGear.noResults", "No items match your search.")}
+            {gearTab === "wishlist"
+              ? t("myGear.wishlistEmpty", "No items on your wishlist yet. Star items from your gear lists to add them here.")
+              : gearTab === "shared"
+                ? t("myGear.sharedEmpty", "No items from packs yet. Browse shared packing lists and import items to see them here.")
+                : gearTab === "owned"
+                  ? (items.filter(i => !i.importedFromShare).length === 0
+                      ? t("myGear.empty", "You haven't added any gear yet. Import items from the catalog or create custom items.")
+                      : t("myGear.noResults", "No items match your search."))
+                  : (items.length === 0
+                      ? t("myGear.empty", "You haven't added any gear yet. Import items from the catalog or create custom items.")
+                      : t("myGear.noResults", "No items match your search."))}
           </div>
         ) : viewMode === "list" ? (
           <div className="space-y-2">
-            {filteredItems.map((item) => (
+            {displayItems.map((item) => (
               <div key={item._id}>
                 <MyGearListItem
                   item={item}
@@ -638,6 +754,7 @@ export default function MyGearView({ collapsed }) {
                   actionLoading={actionLoading}
                   onViewEdit={() => setEditingItem(item)}
                   onDelete={() => setConfirmDelete(item)}
+                  onToggleWishlist={() => handleToggleWishlist(item)}
                   selectionMode={selectionMode}
                   isSelected={selectedIds.has(item._id)}
                   onToggleSelect={() => toggleSelection(item._id)}
@@ -647,7 +764,7 @@ export default function MyGearView({ collapsed }) {
           </div>
         ) : (
           <div className={`grid gap-3 ${showDrawer ? "grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6" : "grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 2xl:grid-cols-8"}`}>
-            {filteredItems.map((item) => (
+            {displayItems.map((item) => (
               <div key={item._id}>
                 <MyGearTileCard
                   item={item}
@@ -657,6 +774,7 @@ export default function MyGearView({ collapsed }) {
                   actionLoading={actionLoading}
                   onViewEdit={() => setEditingItem(item)}
                   onDelete={() => setConfirmDelete(item)}
+                  onToggleWishlist={() => handleToggleWishlist(item)}
                   selectionMode={selectionMode}
                   isSelected={selectedIds.has(item._id)}
                   onToggleSelect={() => toggleSelection(item._id)}
@@ -670,15 +788,7 @@ export default function MyGearView({ collapsed }) {
       {/* Footer with count */}
       {!loading && items.length > 0 && (
         <div className="flex-shrink-0 px-4 py-2 border-t border-primary/10 bg-base-100 text-sm text-primary/60">
-          {t("myGear.itemCount", "{{count}} item(s)", { count: items.length })}
-          {filteredItems.length !== items.length && (
-            <span>
-              {" · "}
-              {t("myGear.showing", "showing {{count}}", {
-                count: filteredItems.length,
-              })}
-            </span>
-          )}
+          {t("myGear.itemCount", "{{count}} item(s)", { count: displayItems.length })}
         </div>
       )}
 

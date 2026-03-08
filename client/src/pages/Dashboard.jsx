@@ -103,7 +103,6 @@ export default function Dashboard() {
 
   const [isTourOpen, setIsTourOpen] = useState(false);
   const [tourStep, setTourStep] = useState(0);
-  const autoOnboardRef = useRef(false);
 
   const tourSteps = [
     {
@@ -253,7 +252,6 @@ export default function Dashboard() {
   }, [t]);
 
   const [creatingSample, setCreatingSample] = useState(false);
-  const [autoOnboarding, setAutoOnboarding] = useState(false);
 
   const handleCreateSampleList = useCallback(async () => {
     try {
@@ -277,6 +275,14 @@ export default function Dashboard() {
 
       // Navigate straight into the sample list
       navigate(`/dashboard/${newList._id}`);
+
+      // Start tour for first-time users
+      if (!hasSeenTour) {
+        setTimeout(() => {
+          setTourStep(0);
+          setIsTourOpen(true);
+        }, 350);
+      }
     } catch (err) {
       console.error("Failed to create sample list", err);
       toast.error(
@@ -286,7 +292,7 @@ export default function Dashboard() {
     } finally {
       setCreatingSample(false);
     }
-  }, [fetchLists, navigate, t]);
+  }, [fetchLists, navigate, t, hasSeenTour]);
 
   // if we’re not logged in, bounce straight back to /login
   useEffect(() => {
@@ -324,47 +330,6 @@ export default function Dashboard() {
     navigate(`/dashboard/${ids[0]}`, { replace: true });
   }, [lists, listId, navigate, listsLoading, isAuthenticated]);
 
-  // Auto-onboarding: if user has no lists AND hasn't seen the tour, create sample list and start tour.
-  useEffect(() => {
-    if (!isAuthenticated) return;
-    if (listsLoading) return;
-    if (autoOnboardRef.current) return;
-    if (hasSeenTour) return;
-    if (lists.length > 0) return;
-
-    autoOnboardRef.current = true;
-
-    (async () => {
-      try {
-        setAutoOnboarding(true);
-        const { data } = await api.post("/dashboard/sample-list");
-        const newList = data?.list;
-        if (!newList?._id) return;
-
-        await fetchLists();
-        window.dispatchEvent(new CustomEvent("global-items:updated"));
-        localStorage.setItem("lastListId", newList._id);
-        navigate(`/dashboard/${newList._id}`, { replace: true });
-
-        // Open tour shortly after navigation settles
-        setTimeout(() => {
-          setTourStep(0);
-          setIsTourOpen(true);
-        }, 350);
-      } catch (err) {
-        console.error("Auto-onboarding sample list failed:", err);
-      } finally {
-        setAutoOnboarding(false);
-      }
-    })();
-  }, [
-    isAuthenticated,
-    listsLoading,
-    lists.length,
-    hasSeenTour,
-    fetchLists,
-    navigate,
-  ]);
 
   // ─── viewMode persistence ───
   const { viewMode, setViewMode } = useUserSettings();
@@ -716,7 +681,7 @@ export default function Dashboard() {
             ) : (
               <DashboardEmptyState
                 hasLists={lists.length > 0}
-                listsLoading={listsLoading || autoOnboarding}
+                listsLoading={listsLoading}
                 onCreateSampleList={handleCreateSampleList}
                 creatingSample={creatingSample}
               />

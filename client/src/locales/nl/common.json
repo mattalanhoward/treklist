@@ -342,7 +342,7 @@
       "itemOptionsA11y": "Itemopties"
     },
     "actions": {
-      "swap": "Swap item"
+      "swap": "Artikel wisselen"
     }
   },
   "swapModal": {
@@ -526,7 +526,7 @@
       "delete": "Item verwijderen",
       "saving": "Bezig met opslaan…",
       "productPage": "Productpagina",
-      "claim": "Add to My Gear"
+      "claim": "Toevoegen aan Mijn uitrusting"
     },
     "toast": {
       "updated": "Item bijgewerkt",
@@ -535,8 +535,8 @@
       "deleteFailed": "Verwijderen mislukt",
       "saveFailed": "Opslaan mislukt. Probeer het opnieuw.",
       "stillLoading": "Artikeldetails worden nog geladen…",
-      "claimed": "Added to My Gear",
-      "claimFailed": "Failed to add to My Gear"
+      "claimed": "Toegevoegd aan Mijn uitrusting",
+      "claimFailed": "Kan niet toevoegen aan Mijn uitrusting"
     },
     "confirm": {
       "saveListTitle": "Wijzigingen aan dit item opslaan?",
@@ -1144,6 +1144,20 @@
       "dateDesc": "Nieuwste",
       "dateAsc": "Oudste"
     },
+    "tabs": {
+      "all": "Alle uitrusting",
+      "owned": "Bezit uitrusting",
+      "wishlist": "Verlanglijst",
+      "shared": "Uit packs",
+      "desc": {
+        "all": "Alle uitrusting die je in de app gebruikt.",
+        "owned": "Uitrusting die je nu bezit. Geef een artikel een ster om het naar je Verlanglijst te verplaatsen.",
+        "wishlist": "Uitrusting die je wilt kopen of nog nodig hebt. Verwijder de ster om het terug te verplaatsen naar Bezit uitrusting.",
+        "shared": "Uitrusting uit een ander pack dat je hebt opgeslagen. Geef een artikel een ster om het toe te voegen aan je Verlanglijst, of open het en klik op Toevoegen aan Mijn uitrusting."
+      }
+    },
+    "wishlistEmpty": "Nog geen items op je verlanglijst. Markeer items in je uitrustingslijsten om ze hier toe te voegen.",
+    "sharedEmpty": "Nog geen items uit packs. Blader door gedeelde paklijsten en importeer items om ze hier te zien.",
     "view": {
       "list": "Lijstweergave",
       "tiles": "Tegelweergave"
@@ -1156,11 +1170,11 @@
       "selectAll": "Alles selecteren",
       "clearSelection": "Wissen",
       "deleteSelected": "Verwijderen",
-      "showImported": "Show items from shared lists",
-      "hideImported": "Hide items from shared lists"
+      "showImported": "Toon items uit packs",
+      "hideImported": "Verberg items uit packs"
     },
     "badge": {
-      "fromSharedList": "Shared list"
+      "fromSharedList": "Uit packs"
     },
     "tiles": {
       "noImage": "Geen afbeelding"
@@ -1179,6 +1193,15 @@
       "bulkDeleteTitle": "Items verwijderen",
       "bulkDeleteMessage": "Weet je zeker dat je {{count}} items wilt verwijderen? Ze worden ook uit alle paklijsten verwijderd.",
       "bulkDeleteConfirm": "Alles verwijderen"
+    }
+  },
+  "wishlist": {
+    "actions": {
+      "addToWishlist": "Toevoegen aan verlanglijst",
+      "markOwned": "Markeren als eigendom"
+    },
+    "toasts": {
+      "toggleFailed": "Kon verlanglijst niet bijwerken"
     }
   }
 }

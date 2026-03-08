@@ -342,7 +342,7 @@
       "itemOptionsA11y": "Opzioni articolo"
     },
     "actions": {
-      "swap": "Swap item"
+      "swap": "Sostituisci articolo"
     }
   },
   "swapModal": {
@@ -526,7 +526,7 @@
       "delete": "Elimina articolo",
       "saving": "Salvataggio…",
       "productPage": "Pagina prodotto",
-      "claim": "Add to My Gear"
+      "claim": "Aggiungi a Il mio equipaggiamento"
     },
     "toast": {
       "updated": "Articolo aggiornato",
@@ -535,8 +535,8 @@
       "deleteFailed": "Eliminazione non riuscita",
       "saveFailed": "Salvataggio non riuscito. Riprova.",
       "stillLoading": "Caricamento dei dettagli dell'articolo…",
-      "claimed": "Added to My Gear",
-      "claimFailed": "Failed to add to My Gear"
+      "claimed": "Aggiunto a Il mio equipaggiamento",
+      "claimFailed": "Impossibile aggiungere a Il mio equipaggiamento"
     },
     "confirm": {
       "saveListTitle": "Salvare le modifiche a questo articolo?",
@@ -1144,6 +1144,20 @@
       "dateDesc": "Più recenti",
       "dateAsc": "Più vecchi"
     },
+    "tabs": {
+      "all": "Tutto l'equipaggiamento",
+      "owned": "Equipaggiamento posseduto",
+      "wishlist": "Lista dei desideri",
+      "shared": "Dai pack",
+      "desc": {
+        "all": "Tutto l'equipaggiamento che usi nell'app.",
+        "owned": "Equipaggiamento che possiedi ora. Aggiungi una stella a un articolo per spostarlo nella tua Lista dei desideri.",
+        "wishlist": "Equipaggiamento che vuoi comprare o di cui hai ancora bisogno. Rimuovi la stella per spostarlo in Equipaggiamento posseduto.",
+        "shared": "Equipaggiamento da un altro pack che hai salvato. Aggiungi una stella per aggiungerlo alla tua Lista dei desideri, oppure aprilo e clicca su Aggiungi a Il mio equipaggiamento."
+      }
+    },
+    "wishlistEmpty": "Nessun articolo nella tua lista dei desideri. Aggiungi una stella agli articoli nelle tue liste di equipaggiamento per aggiungerli qui.",
+    "sharedEmpty": "Nessun articolo dai pack ancora. Sfoglia le liste condivise e importa articoli per vederli qui.",
     "view": {
       "list": "Vista elenco",
       "tiles": "Vista riquadri"
@@ -1156,11 +1170,11 @@
       "selectAll": "Seleziona tutto",
       "clearSelection": "Cancella",
       "deleteSelected": "Elimina",
-      "showImported": "Show items from shared lists",
-      "hideImported": "Hide items from shared lists"
+      "showImported": "Mostra articoli dai pack",
+      "hideImported": "Nascondi articoli dai pack"
     },
     "badge": {
-      "fromSharedList": "Shared list"
+      "fromSharedList": "Dai pack"
     },
     "tiles": {
       "noImage": "Nessuna immagine"
@@ -1179,6 +1193,15 @@
       "bulkDeleteTitle": "Elimina articoli",
       "bulkDeleteMessage": "Sei sicuro di voler eliminare {{count}} articoli? Verranno rimossi anche da tutte le liste di attrezzatura.",
       "bulkDeleteConfirm": "Elimina tutto"
+    }
+  },
+  "wishlist": {
+    "actions": {
+      "addToWishlist": "Aggiungi alla lista dei desideri",
+      "markOwned": "Segna come posseduto"
+    },
+    "toasts": {
+      "toggleFailed": "Impossibile aggiornare la lista dei desideri"
     }
   }
 }

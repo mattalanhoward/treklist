@@ -1,5 +1,5 @@
 // src/components/TopBar.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 import DropdownMenu from "./DropdownMenu";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
@@ -22,6 +22,18 @@ const themes = [
 ];
 
 export default function TopBar({ title, openSettings, onOpenTour }) {
+  const headerRef = useRef(null);
+  useLayoutEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const update = () =>
+      document.documentElement.style.setProperty("--topbar-h", `${el.offsetHeight}px`);
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [isLegalOpen, setIsLegalOpen] = useState(false);
   const [legalInitialTab, setLegalInitialTab] = useState("privacy");
@@ -76,7 +88,7 @@ export default function TopBar({ title, openSettings, onOpenTour }) {
     user.trailname?.[0]?.toUpperCase() || user.email?.[0]?.toUpperCase() || "?";
 
   return (
-    <header className="sticky top-0 z-[60] bg-base-100 border-b">
+    <header ref={headerRef} className="sticky top-0 z-[60] bg-base-100 border-b">
       {/* Top row: logo + account menu */}
       <div className="flex items-center justify-between px-2 py-2">
         <div className="flex items-center space-x-3">

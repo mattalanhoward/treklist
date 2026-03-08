@@ -342,6 +342,8 @@ router.patch("/:id", async (req, res) => {
       "weight",
       "link",
       "imageUrls",
+      "status",
+      "wishlistNotes",
     ];
 
     // Ignore attributes in this endpoint (you said you don't want it editable here)
@@ -384,6 +386,16 @@ router.patch("/:id", async (req, res) => {
       if (!same) {
         updates.weightSource = "user";
       }
+    }
+
+    // When marking as owned, clear wishlist notes
+    if (updates.status === "owned") {
+      updates.wishlistNotes = "";
+    }
+
+    // Validate status value
+    if (updates.status && !["owned", "wishlisted"].includes(updates.status)) {
+      return res.status(400).json({ message: "Invalid status value." });
     }
 
     const updated = await GlobalItem.findOneAndUpdate(

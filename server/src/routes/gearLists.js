@@ -569,6 +569,7 @@ router.post("/sample-list", async (req, res) => {
                 worn: spec.worn,
                 consumable: spec.consumable,
                 quantity: spec.quantity,
+                importedFromShare: true, // sample items appear in "Shared List" tab, not "Owned Gear"
               },
             },
             upsert: true,

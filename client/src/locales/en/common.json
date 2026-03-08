@@ -1158,6 +1158,20 @@
       "dateDesc": "Newest",
       "dateAsc": "Oldest"
     },
+    "tabs": {
+      "all": "All Gear",
+      "owned": "Owned Gear",
+      "wishlist": "Wishlist",
+      "shared": "From Packs",
+      "desc": {
+        "all": "All gear you use within the app.",
+        "owned": "Gear you own now. Star an item to move it to your Wishlist.",
+        "wishlist": "Gear you want to buy or still need. Star an item to move it back to Owned Gear.",
+        "shared": "Gear from another pack you saved. Star an item to add it to your Wishlist, or open it and click Add to My Gear to claim it."
+      }
+    },
+    "wishlistEmpty": "No items on your wishlist yet. Star items from your gear lists to add them here.",
+    "sharedEmpty": "No items from packs yet. Browse shared packing lists and import items to see them here.",
     "view": {
       "list": "List view",
       "tiles": "Tile view"
@@ -1170,11 +1184,11 @@
       "selectAll": "Select all",
       "clearSelection": "Clear",
       "deleteSelected": "Delete",
-      "showImported": "Show items from shared lists",
-      "hideImported": "Hide items from shared lists"
+      "showImported": "Show From Packs items",
+      "hideImported": "Hide From Packs items"
     },
     "badge": {
-      "fromSharedList": "Shared list"
+      "fromSharedList": "From Packs"
     },
     "tiles": {
       "noImage": "No image"
@@ -1193,6 +1207,15 @@
       "bulkDeleteTitle": "Delete Items",
       "bulkDeleteMessage": "Are you sure you want to delete {{count}} items? This will also remove them from any gear lists.",
       "bulkDeleteConfirm": "Delete All"
+    }
+  },
+  "wishlist": {
+    "actions": {
+      "addToWishlist": "Add to wishlist",
+      "markOwned": "Mark as owned"
+    },
+    "toasts": {
+      "toggleFailed": "Failed to update wishlist"
     }
   }
 }

@@ -136,9 +136,9 @@ function ImportCatalogTab({ onImported }) {
     loadImported();
   }, []);
 
-  // Auto focus search input when tab is shown
+  // Auto focus search input when tab is shown (desktop only)
   useEffect(() => {
-    searchInputRef.current?.focus();
+    if (window.innerWidth >= 640) searchInputRef.current?.focus();
   }, []);
 
   // reload catalog when search/filters change
@@ -519,7 +519,7 @@ function AddItemRequestModal({ isOpen, onClose, onSend }) {
               onChange={(e) => setName(e.target.value)}
               placeholder={t("catalogRequest.fields.name.placeholder")}
               className="w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 disabled:opacity-60"
-              autoFocus
+              autoFocus={window.innerWidth >= 640}
             />
           </div>
 
@@ -633,9 +633,9 @@ export default function GlobalItemModal({
     localStorage.setItem("globalItemModal:tab", tab);
   }, [tab]);
 
-  // Auto focus itemType input when custom tab is shown
+  // Auto focus itemType input when custom tab is shown (desktop only)
   useEffect(() => {
-    if (tab === "custom") {
+    if (tab === "custom" && window.innerWidth >= 640) {
       itemTypeInputRef.current?.focus();
     }
   }, [tab]);
@@ -746,10 +746,10 @@ export default function GlobalItemModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-end sm:items-center justify-center z-50">
       <form
         onSubmit={handleSubmit}
-        className="bg-neutralAlt rounded-lg shadow-2xl max-w-3xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 flex flex-col overflow-hidden sm:h-[80vh] h-[80dvh]"
+        className="bg-neutralAlt sm:rounded-lg shadow-2xl max-w-3xl w-full px-4 py-4 sm:px-6 sm:py-6 sm:my-4 flex flex-col overflow-hidden modal-mobile-h sm:h-[80vh]"
       >
         {/* Header (smaller on phones) */}
         <div className="flex justify-between items-center mb-2 sm:mb-3">

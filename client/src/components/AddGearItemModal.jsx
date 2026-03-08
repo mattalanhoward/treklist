@@ -30,7 +30,7 @@ function MyGearTab({ items, loading, existingGlobalIds, selectedIds, onToggle })
   const searchInputRef = useRef(null);
 
   useEffect(() => {
-    searchInputRef.current?.focus();
+    if (window.innerWidth >= 640) searchInputRef.current?.focus();
   }, []);
 
   const filtered = useMemo(() => {
@@ -134,7 +134,7 @@ function CatalogTab({ selectedIds, onSelectionChange }) {
   const searchInputRef = useRef(null);
 
   useEffect(() => {
-    searchInputRef.current?.focus();
+    if (window.innerWidth >= 640) searchInputRef.current?.focus();
   }, []);
 
   useEffect(() => {
@@ -197,7 +197,7 @@ function CatalogTab({ selectedIds, onSelectionChange }) {
             className="w-full pl-9 pr-3 py-1.5 border border-primary/30 rounded text-primary bg-base-100 placeholder:text-primary/50 text-sm"
           />
         </div>
-        <div className="flex gap-1.5">
+        <div className="flex flex-col sm:flex-row gap-1.5">
           <select
             value={categoryFilter}
             onChange={(e) => {
@@ -315,7 +315,7 @@ function CustomTab({ form, onChange }) {
               type="text"
               value={form.name}
               onChange={(e) => onChange({ ...form, name: e.target.value })}
-              autoFocus
+              autoFocus={window.innerWidth >= 640}
               placeholder={t("globalItemModal.placeholders.name")}
               className="w-full border border-primary rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 text-sm"
             />
@@ -606,11 +606,11 @@ export default function AddGearItemModal({
 
   return (
     <div
-      className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-end sm:items-center justify-center z-50"
       onClick={onClose}
     >
       <div
-        className="bg-base-100 rounded-xl shadow-2xl max-w-2xl w-full mx-4 flex flex-col"
+        className="bg-base-100 sm:rounded-xl shadow-2xl sm:max-w-2xl w-full sm:mx-4 flex flex-col modal-mobile-h sm:h-auto sm:max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -650,7 +650,7 @@ export default function AddGearItemModal({
         </div>
 
         {/* Content — fixed height so tabs don't shift modal size */}
-        <div className="h-[360px] overflow-hidden flex flex-col px-5 pt-3">
+        <div className="flex-1 sm:h-[360px] sm:flex-none overflow-hidden flex flex-col px-5 pt-3">
           {tab === "myGear" && (
             <MyGearTab
               items={myGearItems}

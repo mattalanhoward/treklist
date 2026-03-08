@@ -122,10 +122,10 @@ export default function GearListDetailsModal({
     ].join(" ");
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-end sm:items-center justify-center z-50 sm:p-4">
       <form
         onSubmit={handleSave}
-        className="bg-neutralAlt rounded-lg shadow-2xl border border-neutral/60 max-w-2xl w-full flex flex-col max-h-[90dvh]"
+        className="bg-neutralAlt sm:rounded-lg shadow-2xl border border-neutral/60 max-w-2xl w-full flex flex-col modal-mobile-h sm:h-auto sm:max-h-[90dvh]"
       >
         {/* Header */}
         <div className="flex justify-between items-center px-4 py-3 sm:px-6 flex-shrink-0 border-b border-neutral/40">

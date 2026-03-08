@@ -342,7 +342,7 @@
       "itemOptionsA11y": "Opciones del artículo"
     },
     "actions": {
-      "swap": "Swap item"
+      "swap": "Intercambiar artículo"
     }
   },
   "swapModal": {
@@ -526,7 +526,7 @@
       "delete": "Eliminar artículo",
       "saving": "Guardando…",
       "productPage": "Página del producto",
-      "claim": "Add to My Gear"
+      "claim": "Añadir a Mi equipo"
     },
     "toast": {
       "updated": "Artículo actualizado",
@@ -535,8 +535,8 @@
       "deleteFailed": "La eliminación falló",
       "saveFailed": "No se pudo guardar. Inténtalo de nuevo.",
       "stillLoading": "Cargando detalles del artículo…",
-      "claimed": "Added to My Gear",
-      "claimFailed": "Failed to add to My Gear"
+      "claimed": "Añadido a Mi equipo",
+      "claimFailed": "Error al añadir a Mi equipo"
     },
     "confirm": {
       "saveListTitle": "¿Guardar cambios en este artículo?",
@@ -1144,6 +1144,20 @@
       "dateDesc": "Más recientes",
       "dateAsc": "Más antiguos"
     },
+    "tabs": {
+      "all": "Todo el equipo",
+      "owned": "Equipo poseído",
+      "wishlist": "Lista de deseos",
+      "shared": "De packs",
+      "desc": {
+        "all": "Todo el equipo que usas dentro de la aplicación.",
+        "owned": "Equipo que posees ahora. Marca un artículo con estrella para moverlo a tu Lista de deseos.",
+        "wishlist": "Equipo que quieres comprar o que todavía necesitas. Desmarca la estrella para moverlo de vuelta a Equipo poseído.",
+        "shared": "Equipo de otro pack que guardaste. Marca un artículo con estrella para añadirlo a tu Lista de deseos, o ábrelo y haz clic en Añadir a Mi equipo para reclamarlo."
+      }
+    },
+    "wishlistEmpty": "Aún no hay artículos en tu lista de deseos. Marca artículos en tus listas de equipo para añadirlos aquí.",
+    "sharedEmpty": "Aún no hay artículos de packs. Explora listas compartidas e importa artículos para verlos aquí.",
     "view": {
       "list": "Vista de lista",
       "tiles": "Vista de mosaico"
@@ -1156,11 +1170,11 @@
       "selectAll": "Seleccionar todo",
       "clearSelection": "Limpiar",
       "deleteSelected": "Eliminar",
-      "showImported": "Show items from shared lists",
-      "hideImported": "Hide items from shared lists"
+      "showImported": "Mostrar artículos de packs",
+      "hideImported": "Ocultar artículos de packs"
     },
     "badge": {
-      "fromSharedList": "Shared list"
+      "fromSharedList": "De packs"
     },
     "tiles": {
       "noImage": "Sin imagen"
@@ -1179,6 +1193,15 @@
       "bulkDeleteTitle": "Eliminar artículos",
       "bulkDeleteMessage": "¿Seguro que quieres eliminar {{count}} artículos? También se eliminarán de todas las listas de equipo.",
       "bulkDeleteConfirm": "Eliminar todo"
+    }
+  },
+  "wishlist": {
+    "actions": {
+      "addToWishlist": "Añadir a lista de deseos",
+      "markOwned": "Marcar como poseído"
+    },
+    "toasts": {
+      "toggleFailed": "Error al actualizar la lista de deseos"
     }
   }
 }

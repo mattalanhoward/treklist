@@ -7,7 +7,8 @@ import { toast } from "react-hot-toast";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { FaGripVertical, FaUtensils, FaTshirt } from "react-icons/fa";
-import { FiExternalLink, FiTrash2, FiRefreshCw } from "react-icons/fi";
+import { FiExternalLink, FiTrash2, FiRefreshCw, FiStar } from "react-icons/fi";
+import { FaStar } from "react-icons/fa";
 import AffiliateGateLink from "./AffiliateGateLink";
 import { useWeight } from "../hooks/useWeight";
 import GlobalItemEditModal from "./GlobalItemEditModal";
@@ -36,7 +37,21 @@ export default function SortableItem({
   const itemKey = `item-${catId}-${item._id}`;
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [swapOpen, setSwapOpen] = useState(false);
+  const [wishlisted, setWishlisted] = useState(item.globalItemStatus === "wishlisted");
   const { region: userRegion } = useUserSettings();
+
+  const handleWishlistToggle = async () => {
+    if (!item.globalItem) return;
+    const newStatus = wishlisted ? "owned" : "wishlisted";
+    setWishlisted(!wishlisted);
+    try {
+      await api.patch(`/global/items/${item.globalItem}`, { status: newStatus });
+      window.dispatchEvent(new CustomEvent("global-items:updated"));
+    } catch {
+      setWishlisted(wishlisted); // revert on error
+      toast.error(t("wishlist.toasts.toggleFailed", "Failed to update wishlist"));
+    }
+  };
 
   // If the item has a direct link (custom item), we should NOT call resolver.
   const hasDirectLink = Boolean(item?.link);
@@ -282,7 +297,7 @@ export default function SortableItem({
             <span className="tabular-nums text-left">{weightText}</span>
           </div>
 
-          {/* Right group (mobile): 🍴 | 👕 | qty | 🛒 */}
+          {/* Right group (mobile): 🍴 | 👕 | qty | 🛒 | ⭐ */}
           <div className="flex items-center gap-3">
             <FaUtensils
               title={t("gearList.items.toggleConsumable")}
@@ -310,14 +325,27 @@ export default function SortableItem({
               isLocked={isLocked}
             />
             <CartIconLink />
+            {item.globalItem && (
+              <button
+                type="button"
+                onClick={handleWishlistToggle}
+                title={wishlisted ? t("wishlist.actions.markOwned", "Mark as owned") : t("wishlist.actions.addToWishlist", "Add to wishlist")}
+                className="focus:outline-none"
+              >
+                {wishlisted
+                  ? <FaStar className="text-amber-400 text-sm" />
+                  : <FiStar className="text-sm opacity-30 hover:opacity-70" />}
+              </button>
+            )}
           </div>
         </div>
       </div>
       {/* ========== DESKTOP LIST MODE (single row) ========== */}
+      {/* cols: drag | type | name | weight | knife | shirt | qty | cart | star | swap | trash */}
       {isListMode && (
         <div
           className="hidden xl:grid items-center text-sm
-      grid-cols-[32px,160px,minmax(260px,1fr),96px,24px,24px,24px,48px,24px] gap-x-2"
+          grid-cols-[32px,160px,minmax(260px,1fr),96px,24px,24px,48px,24px,24px,24px,24px] gap-x-2"
         >
           {/* 1) Drag */}
           <div
@@ -348,12 +376,12 @@ export default function SortableItem({
             {item.name}
           </button>
 
-          {/* 4) Weight (fixed width, right-aligned, tabular nums) */}
+          {/* 4) Weight */}
           <div className="justify-self-end tabular-nums text-primary w-[96px] text-right">
             {weightText}
           </div>
 
-          {/* 6) Consumable */}
+          {/* 5) Consumable */}
           <div className="justify-self-center">
             <FaUtensils
               title={t("gearList.items.toggleConsumable")}
@@ -365,7 +393,7 @@ export default function SortableItem({
             />
           </div>
 
-          {/* 7) Worn */}
+          {/* 6) Worn */}
           <div className="justify-self-center">
             <FaTshirt
               title={t("gearList.items.toggleWorn")}
@@ -377,7 +405,7 @@ export default function SortableItem({
             />
           </div>
 
-          {/* 8) Qty */}
+          {/* 7) Qty */}
           <div className="justify-self-center">
             <QuantityInline
               qty={item.quantity}
@@ -390,127 +418,177 @@ export default function SortableItem({
             />
           </div>
 
-          {/* 9) Cart */}
+          {/* 8) Cart */}
           <div className="justify-self-center">
             <CartIconLink />
           </div>
 
-          {/* 10) Swap + Delete actions (desktop list) */}
-          {!isLocked && (
-            <div className="place-self-center flex items-center gap-1 mr-1">
+          {/* 9) Wishlist star */}
+          <div className="justify-self-center">
+            {item.globalItem && (
+              <button
+                type="button"
+                onClick={handleWishlistToggle}
+                title={wishlisted ? t("wishlist.actions.markOwned", "Mark as owned") : t("wishlist.actions.addToWishlist", "Add to wishlist")}
+                className="focus:outline-none"
+              >
+                {wishlisted
+                  ? <FaStar className="text-amber-400 text-sm" />
+                  : <FiStar className="text-sm opacity-30 hover:opacity-70" />}
+              </button>
+            )}
+          </div>
+
+          {/* 10) Swap */}
+          <div className="justify-self-center">
+            {!isLocked && (
               <button
                 type="button"
                 onClick={() => setSwapOpen(true)}
-                className="p-1 text-primary/60 hover:text-primary focus:outline-none"
+                className="text-primary/60 hover:text-primary focus:outline-none"
                 title={t("gearList.actions.swap", "Swap item")}
               >
                 <FiRefreshCw className="text-sm" />
               </button>
+            )}
+          </div>
+
+          {/* 11) Delete */}
+          <div className="justify-self-center">
+            {!isLocked && (
               <button
                 type="button"
                 onClick={() => onDelete?.(catId, item._id)}
-                className="p-1 text-primary/60 hover:text-primary focus:outline-none"
+                className="text-primary/60 hover:text-primary focus:outline-none"
                 title={t("gearList.confirm.removeItemConfirm")}
               >
                 <FiTrash2 className="text-sm" />
               </button>
-            </div>
-          )}
-        </div>
-      )}
-      {/* ========== DESKTOP COLUMN MODE (3 rows) ========== */}
-      {!isListMode && (
-        <div className="hidden sm:grid bg-base-100 px-2 grid-rows-[auto_auto_auto]">
-          {/* Row 1: Drag · Type · Delete */}
-          <div className="grid grid-cols-[auto_1fr_auto] items-center">
-            <div
-              className={`hide-on-touch text-secondary ${isLocked ? "invisible" : "cursor-grab"}`}
-              {...(isLocked ? {} : { ...attributes, ...listeners })}
-            >
-              <FaGripVertical />
-            </div>
-            <button
-              type="button"
-              onClick={() => setDetailsOpen(true)}
-              style={{ fontSize: 14 }}
-              className="font-semibold text-primary px-2 text-left hover:text-primary/80"
-            >
-              {tItemType(t, item.itemType) || "—"}
-            </button>
-            {!isLocked && (
-              <div className="-mr-0.5">
-                <button
-                  type="button"
-                  onClick={() => onDelete?.(catId, item._id)}
-                  className="text-primary/60 hover:text-primary focus:outline-none"
-                  title={t("gearList.confirm.removeItemConfirm")}
-                >
-                  <FiTrash2 className="text-sm" />
-                </button>
-              </div>
             )}
           </div>
-          {/* Row 2: Brand/Name (left) */}
-          <div className="grid grid-cols-[1fr] items-center">
+        </div>
+      )}
+      {/* ========== DESKTOP COLUMN MODE (unified 6-col grid across 3 rows) ========== */}
+      {/* cols: [grabber | type(1fr) | knife | shirt | qty | link] */}
+      {!isListMode && (
+        <div className="hidden sm:grid bg-base-100 px-2
+          grid-cols-[auto_1fr_16px_16px_auto_16px]
+          grid-rows-[auto_auto_auto]
+          gap-x-2 gap-y-0.5 items-center">
+
+          {/* R1 C1: Grabber */}
+          <div
+            className={`row-start-1 col-start-1 self-center hide-on-touch text-secondary ${isLocked ? "invisible" : "cursor-grab"}`}
+            {...(isLocked ? {} : { ...attributes, ...listeners })}
+          >
+            <FaGripVertical />
+          </div>
+
+          {/* R1 C2: Item type */}
+          <button
+            type="button"
+            onClick={() => setDetailsOpen(true)}
+            style={{ fontSize: 14 }}
+            className="row-start-1 col-start-2 font-semibold text-primary text-left min-w-0 truncate hover:text-primary/80"
+          >
+            {tItemType(t, item.itemType) || "—"}
+          </button>
+
+          {/* R1 C3: empty — holds the knife column width */}
+          <div className="row-start-1 col-start-3" />
+
+          {/* R1 C4: Star — aligns over shirt */}
+          {item.globalItem && (
             <button
               type="button"
-              onClick={() => setDetailsOpen(true)}
-              style={{ fontSize: 14 }}
-              className="truncate text-primary text-left hover:text-primary/80"
+              onClick={handleWishlistToggle}
+              title={wishlisted ? t("wishlist.actions.markOwned", "Mark as owned") : t("wishlist.actions.addToWishlist", "Add to wishlist")}
+              className="row-start-1 col-start-4 justify-self-center focus:outline-none"
             >
-              {item.brand && <span className="mr-1">{item.brand}</span>}
-              {item.name}
+              {wishlisted
+                ? <FaStar className="text-amber-400 text-sm" />
+                : <FiStar className="text-sm opacity-30 hover:opacity-70" />}
             </button>
+          )}
+
+          {/* R1 C5: Swap — aligns over qty */}
+          {!isLocked && (
+            <button
+              type="button"
+              onClick={() => setSwapOpen(true)}
+              className="row-start-1 col-start-5 justify-self-center text-primary/60 hover:text-primary focus:outline-none"
+              title={t("gearList.actions.swap", "Swap item")}
+            >
+              <FiRefreshCw className="text-sm" />
+            </button>
+          )}
+
+          {/* R1 C6: Trash — aligns over link */}
+          {!isLocked && (
+            <button
+              type="button"
+              onClick={() => onDelete?.(catId, item._id)}
+              className="row-start-1 col-start-6 justify-self-center text-primary/60 hover:text-primary focus:outline-none"
+              title={t("gearList.confirm.removeItemConfirm")}
+            >
+              <FiTrash2 className="text-sm" />
+            </button>
+          )}
+
+          {/* R2 C1-6: Brand / Name */}
+          <button
+            type="button"
+            onClick={() => setDetailsOpen(true)}
+            style={{ fontSize: 14 }}
+            className="row-start-2 col-start-1 col-span-6 min-w-0 truncate text-primary text-left hover:text-primary/80"
+          >
+            {item.brand && <span className="mr-1">{item.brand}</span>}
+            {item.name}
+          </button>
+
+          {/* R3 C1-2: Weight */}
+          <span className="row-start-3 col-start-1 col-span-2 text-sm text-primary tabular-nums">
+            {weightText}
+          </span>
+
+          {/* R3 C3: Knife (consumable) */}
+          <FaUtensils
+            title={t("gearList.items.toggleConsumable")}
+            aria-label={t("gearList.items.toggleConsumable")}
+            data-testid="utensils"
+            onClick={handleConsumableClick}
+            className={`row-start-3 col-start-3 justify-self-center cursor-pointer ${
+              consumableLocal ? "text-green-600" : "opacity-30"
+            }`}
+          />
+
+          {/* R3 C4: Shirt (worn) */}
+          <FaTshirt
+            title={t("gearList.items.toggleWorn")}
+            aria-label={t("gearList.items.toggleWorn")}
+            data-testid="tshirt"
+            onClick={handleWornClick}
+            className={`row-start-3 col-start-4 justify-self-center cursor-pointer ${
+              wornLocal ? "text-blue-600" : "opacity-30"
+            }`}
+          />
+
+          {/* R3 C5: Quantity */}
+          <div className="row-start-3 col-start-5 justify-self-center">
+            <QuantityInline
+              qty={item.quantity}
+              onChange={(n) => onQuantityChange(catId, item._id, n)}
+              catId={catId}
+              listId={listId}
+              itemId={item._id}
+              fetchItems={fetchItems}
+              isLocked={isLocked}
+            />
           </div>
-          {/* Row 3: Left (weight) — Right (🍴 · 👕 · Qty · …) */}
-          <div className="grid grid-cols-[1fr_auto] items-center">
-            <div className="flex items-center space-x-3">
-              <span className="text-sm text-primary tabular-nums">
-                {weightText}
-              </span>
-            </div>
-            <div className="grid grid-cols-[16px_16px_16px_auto_16px] items-center justify-end gap-x-3">
-              <FaUtensils
-                title={t("gearList.items.toggleConsumable")}
-                aria-label={t("gearList.items.toggleConsumable")}
-                data-testid="utensils"
-                onClick={handleConsumableClick}
-                className={`cursor-pointer ${
-                  consumableLocal ? "text-green-600" : "opacity-30"
-                }`}
-              />
-              <FaTshirt
-                title={t("gearList.items.toggleWorn")}
-                aria-label={t("gearList.items.toggleWorn")}
-                data-testid="tshirt"
-                onClick={handleWornClick}
-                className={`cursor-pointer ${
-                  wornLocal ? "text-blue-600" : "opacity-30"
-                }`}
-              />
-              {!isLocked ? (
-                <button
-                  type="button"
-                  onClick={() => setSwapOpen(true)}
-                  className="text-primary/60 hover:text-primary focus:outline-none"
-                  title={t("gearList.actions.swap", "Swap item")}
-                >
-                  <FiRefreshCw className="text-sm" />
-                </button>
-              ) : (
-                <div />
-              )}
-              <QuantityInline
-                qty={item.quantity}
-                onChange={(n) => onQuantityChange(catId, item._id, n)}
-                catId={catId}
-                listId={listId}
-                itemId={item._id}
-                fetchItems={fetchItems}
-                isLocked={isLocked}
-              />
-              <CartIconLink />
-            </div>
+
+          {/* R3 C6: Cart link */}
+          <div className="row-start-3 col-start-6 justify-self-center">
+            <CartIconLink />
           </div>
         </div>
       )}

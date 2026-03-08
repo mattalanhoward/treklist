@@ -342,7 +342,7 @@
       "itemOptionsA11y": "Item-Optionen"
     },
     "actions": {
-      "swap": "Swap item"
+      "swap": "Artikel tauschen"
     }
   },
   "swapModal": {
@@ -526,7 +526,7 @@
       "delete": "Item löschen",
       "saving": "Speichern…",
       "productPage": "Produktseite",
-      "claim": "Add to My Gear"
+      "claim": "Zu meiner Ausrüstung hinzufügen"
     },
     "toast": {
       "updated": "Item aktualisiert",
@@ -535,8 +535,8 @@
       "deleteFailed": "Löschen fehlgeschlagen",
       "saveFailed": "Speichern fehlgeschlagen. Bitte versuche es erneut.",
       "stillLoading": "Artikeldetails werden noch geladen…",
-      "claimed": "Added to My Gear",
-      "claimFailed": "Failed to add to My Gear"
+      "claimed": "Zu meiner Ausrüstung hinzugefügt",
+      "claimFailed": "Fehler beim Hinzufügen zu meiner Ausrüstung"
     },
     "confirm": {
       "saveListTitle": "Änderungen an diesem Item speichern?",
@@ -1144,6 +1144,20 @@
       "dateDesc": "Neueste",
       "dateAsc": "Älteste"
     },
+    "tabs": {
+      "all": "Gesamte Ausrüstung",
+      "owned": "Eigene Ausrüstung",
+      "wishlist": "Wunschliste",
+      "shared": "Von Packs",
+      "desc": {
+        "all": "Alle Ausrüstung, die du in der App verwendest.",
+        "owned": "Ausrüstung, die du jetzt besitzt. Markiere einen Artikel mit einem Stern, um ihn zur Wunschliste zu verschieben.",
+        "wishlist": "Ausrüstung, die du kaufen möchtest oder noch benötigst. Entferne den Stern, um einen Artikel zurück zu Eigene Ausrüstung zu verschieben.",
+        "shared": "Ausrüstung aus einem anderen Pack, das du gespeichert hast. Markiere einen Artikel mit einem Stern, um ihn zur Wunschliste hinzuzufügen, oder öffne ihn und klicke auf Zu meiner Ausrüstung hinzufügen."
+      }
+    },
+    "wishlistEmpty": "Noch keine Artikel auf deiner Wunschliste. Markiere Artikel in deinen Ausrüstungslisten, um sie hier hinzuzufügen.",
+    "sharedEmpty": "Noch keine Artikel aus Packs. Durchsuche geteilte Packlisten und importiere Artikel, um sie hier zu sehen.",
     "view": {
       "list": "Listenansicht",
       "tiles": "Kachelansicht"
@@ -1156,11 +1170,11 @@
       "selectAll": "Alle auswählen",
       "clearSelection": "Auswahl aufheben",
       "deleteSelected": "Löschen",
-      "showImported": "Show items from shared lists",
-      "hideImported": "Hide items from shared lists"
+      "showImported": "Pack-Artikel anzeigen",
+      "hideImported": "Pack-Artikel ausblenden"
     },
     "badge": {
-      "fromSharedList": "Shared list"
+      "fromSharedList": "Von Packs"
     },
     "tiles": {
       "noImage": "Kein Bild"
@@ -1179,6 +1193,15 @@
       "bulkDeleteTitle": "Artikel löschen",
       "bulkDeleteMessage": "Möchtest du {{count}} Artikel wirklich löschen? Sie werden auch aus allen Packlisten entfernt.",
       "bulkDeleteConfirm": "Alle löschen"
+    }
+  },
+  "wishlist": {
+    "actions": {
+      "addToWishlist": "Zur Wunschliste hinzufügen",
+      "markOwned": "Als besessen markieren"
+    },
+    "toasts": {
+      "toggleFailed": "Wunschliste konnte nicht aktualisiert werden"
     }
   }
 }

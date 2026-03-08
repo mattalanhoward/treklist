@@ -24,7 +24,7 @@ const { publicShareLimiter } = require("./middleware/rateLimiters");
 const supportRoutes = require("./routes/support");
 const passport = require("./config/passport");
 const myGearRoutes = require("./routes/myGear");
-// const wishlistRoutes = require("./routes/wishlist"); // TODO: add when wishlist feature is ready
+const wishlistRoutes = require("./routes/wishlist");
 
 const app = express();
 
@@ -100,7 +100,7 @@ app.use(
 app.use("/api/public/share", publicShareLimiter, publicShareRoutes);
 app.use("/api/global/items", authMiddleware, globalItemsRoutes);
 app.use("/api/my-gear", myGearRoutes);
-// app.use("/api/wishlist", wishlistRoutes); // TODO: add when wishlist feature is ready
+app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/affiliates", authMiddleware, affiliatesRouter); // auth required
 app.use(
   "/api/admin/catalog-items",

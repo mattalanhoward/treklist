@@ -342,7 +342,7 @@
       "itemOptionsA11y": "Options de l’article"
     },
     "actions": {
-      "swap": "Swap item"
+      "swap": "Échanger l'article"
     }
   },
   "swapModal": {
@@ -526,7 +526,7 @@
       "delete": "Supprimer l’article",
       "saving": "Enregistrement…",
       "productPage": "Page produit",
-      "claim": "Add to My Gear"
+      "claim": "Ajouter à mon équipement"
     },
     "toast": {
       "updated": "Article mis à jour",
@@ -535,8 +535,8 @@
       "deleteFailed": "Échec de la suppression",
       "saveFailed": "Échec de l’enregistrement. Veuillez réessayer.",
       "stillLoading": "Chargement des détails de l’article…",
-      "claimed": "Added to My Gear",
-      "claimFailed": "Failed to add to My Gear"
+      "claimed": "Ajouté à mon équipement",
+      "claimFailed": "Impossible d'ajouter à mon équipement"
     },
     "confirm": {
       "saveListTitle": "Enregistrer les modifications de cet article ?",
@@ -1144,6 +1144,20 @@
       "dateDesc": "Plus récents",
       "dateAsc": "Plus anciens"
     },
+    "tabs": {
+      "all": "Tout l'équipement",
+      "owned": "Équipement possédé",
+      "wishlist": "Liste de souhaits",
+      "shared": "Des packs",
+      "desc": {
+        "all": "Tout l'équipement que vous utilisez dans l'application.",
+        "owned": "Équipement que vous possédez actuellement. Ajoutez une étoile pour déplacer un article vers votre liste de souhaits.",
+        "wishlist": "Équipement que vous voulez acheter ou dont vous avez encore besoin. Retirez l'étoile pour le déplacer vers Équipement possédé.",
+        "shared": "Équipement provenant d'un autre pack que vous avez sauvegardé. Ajoutez une étoile pour l'ajouter à votre liste de souhaits, ou ouvrez-le et cliquez sur Ajouter à mon équipement pour le revendiquer."
+      }
+    },
+    "wishlistEmpty": "Aucun article dans votre liste de souhaits. Marquez des articles depuis vos listes d'équipement pour les ajouter ici.",
+    "sharedEmpty": "Aucun article de packs pour le moment. Parcourez les listes partagées et importez des articles pour les voir ici.",
     "view": {
       "list": "Vue liste",
       "tiles": "Vue mosaïque"
@@ -1156,11 +1170,11 @@
       "selectAll": "Tout sélectionner",
       "clearSelection": "Effacer",
       "deleteSelected": "Supprimer",
-      "showImported": "Show items from shared lists",
-      "hideImported": "Hide items from shared lists"
+      "showImported": "Afficher les articles des packs",
+      "hideImported": "Masquer les articles des packs"
     },
     "badge": {
-      "fromSharedList": "Shared list"
+      "fromSharedList": "Des packs"
     },
     "tiles": {
       "noImage": "Pas d'image"
@@ -1179,6 +1193,15 @@
       "bulkDeleteTitle": "Supprimer les articles",
       "bulkDeleteMessage": "Êtes-vous sûr de vouloir supprimer {{count}} articles ? Ils seront également retirés de toutes les listes d'équipement.",
       "bulkDeleteConfirm": "Tout supprimer"
+    }
+  },
+  "wishlist": {
+    "actions": {
+      "addToWishlist": "Ajouter à la liste de souhaits",
+      "markOwned": "Marquer comme possédé"
+    },
+    "toasts": {
+      "toggleFailed": "Échec de la mise à jour de la liste de souhaits"
     }
   }
 }
