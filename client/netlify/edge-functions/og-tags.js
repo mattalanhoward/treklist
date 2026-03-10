@@ -1,5 +1,5 @@
-// Netlify Edge Function to inject dynamic OG meta tags for social media crawlers
-// Detects bots crawling /share/:token pages and injects the correct meta tags
+// Netlify Edge Function: injects dynamic meta tags + pre-rendered body content
+// for search crawlers and social bots on /share/:token pages.
 
 const BOT_USER_AGENTS = [
   'facebookexternalhit',
@@ -11,6 +11,8 @@ const BOT_USER_AGENTS = [
   'WhatsApp',
   'DiscordBot',
   'Googlebot',
+  'Bingbot',
+  'DuckDuckBot',
   'Baiduspider',
   'ia_archiver', // Alexa
 ];
@@ -21,99 +23,181 @@ function isBot(userAgent) {
   return BOT_USER_AGENTS.some(bot => ua.includes(bot.toLowerCase()));
 }
 
+function formatWeight(grams) {
+  if (grams === null || grams === undefined) return null;
+  if (grams >= 1000) return `${(grams / 1000).toFixed(2)} kg`;
+  return `${grams} g`;
+}
+
+function generateListBody(data) {
+  const { list, categories, items } = data;
+
+  // Group items by category
+  const catMap = {};
+  for (const cat of categories) {
+    catMap[cat.id] = { title: cat.title, items: [] };
+  }
+  for (const item of items) {
+    if (item.categoryId && catMap[item.categoryId]) {
+      catMap[item.categoryId].items.push(item);
+    }
+  }
+
+  // Totals
+  const totalWeightG = items.reduce((sum, i) => sum + (i.weight_g || 0) * (i.qty || 1), 0);
+  const baseWeightG = items
+    .filter(i => !i.worn && !i.consumable)
+    .reduce((sum, i) => sum + (i.weight_g || 0) * (i.qty || 1), 0);
+
+  const metaParts = [];
+  if (list.location) metaParts.push(escapeHtml(list.location));
+  if (totalWeightG > 0) metaParts.push(`Total weight: ${formatWeight(totalWeightG)}`);
+  if (baseWeightG > 0) metaParts.push(`Base weight: ${formatWeight(baseWeightG)}`);
+  metaParts.push(`${items.length} items`);
+
+  let html = `<article>`;
+  html += `<h1>${escapeHtml(list.title)} — Gear List</h1>`;
+  html += `<p>${metaParts.join(' · ')}</p>`;
+
+  if (list.notes) {
+    html += `<p>${escapeHtml(list.notes)}</p>`;
+  }
+
+  for (const cat of categories) {
+    const catData = catMap[cat.id];
+    if (!catData || catData.items.length === 0) continue;
+
+    const catWeightG = catData.items.reduce((sum, i) => sum + (i.weight_g || 0) * (i.qty || 1), 0);
+    const catWeightStr = catWeightG > 0 ? ` (${formatWeight(catWeightG)})` : '';
+
+    html += `<section>`;
+    html += `<h2>${escapeHtml(cat.title)}${catWeightStr}</h2>`;
+    html += `<ul>`;
+
+    for (const item of catData.items) {
+      const parts = [];
+      if (item.brand) parts.push(escapeHtml(item.brand));
+      parts.push(escapeHtml(item.name || ''));
+      if (item.weight_g !== null && item.weight_g !== undefined) parts.push(formatWeight(item.weight_g));
+      if ((item.qty || 1) > 1) parts.push(`×${item.qty}`);
+      html += `<li>${parts.join(' ')}</li>`;
+    }
+
+    html += `</ul></section>`;
+  }
+
+  html += `<p>Plan your hiking and backpacking gear list at <a href="https://treklist.co">TrekList</a>.</p>`;
+  html += `</article>`;
+
+  return html;
+}
+
+function buildDescription(data) {
+  const { list, categories, items } = data;
+  const catNames = categories.slice(0, 4).map(c => c.title).join(', ');
+  const totalWeightG = items.reduce((sum, i) => sum + (i.weight_g || 0) * (i.qty || 1), 0);
+  const weightStr = totalWeightG > 0 ? ` Total weight: ${formatWeight(totalWeightG)}.` : '';
+  const catStr = catNames ? ` Categories: ${catNames}.` : '';
+  return `${escapeHtml(list.title)} gear list — ${items.length} items.${weightStr}${catStr} View and copy this list on TrekList.`;
+}
+
+function buildStructuredData(data, token) {
+  const { list, items } = data;
+  const shareUrl = `https://treklist.co/share/${token}/`;
+  const totalWeightG = items.reduce((sum, i) => sum + (i.weight_g || 0) * (i.qty || 1), 0);
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    'headline': `${list.title} — Gear List`,
+    'description': `Complete gear list for ${list.title}. ${items.length} items${totalWeightG > 0 ? `, total weight ${formatWeight(totalWeightG)}` : ''}.`,
+    'url': shareUrl,
+    'publisher': {
+      '@type': 'Organization',
+      'name': 'TrekList',
+      'url': 'https://treklist.co',
+    },
+  };
+}
+
 export default async function handler(request, context) {
   const url = new URL(request.url);
   const userAgent = request.headers.get('user-agent') || '';
 
-  // Only intercept bot requests to /share/:token pages
   const shareMatch = url.pathname.match(/^\/share\/([a-zA-Z0-9_-]+)/);
   if (!shareMatch || !isBot(userAgent)) {
-    // Pass through to normal routing for non-bots or non-share pages
     return context.next();
   }
 
   const token = shareMatch[1];
 
   try {
-    // Fetch the list data from your API
     const apiResponse = await fetch(`https://api.treklist.co/api/public/share/${token}/full`);
 
     if (!apiResponse.ok) {
-      // If list not found, just serve the default page
       return context.next();
     }
 
     const data = await apiResponse.json();
     const listTitle = data.list?.title || 'TrekList';
     const shareUrl = `https://treklist.co/share/${token}/`;
-    const description = 'Plan your hiking and backpacking trips with TrekList. Create gear lists, track pack weight, and share your setup with fellow trekkers.';
-    const imageUrl = 'https://res.cloudinary.com/treklist/image/upload/v1771075130/branding/treklist_1200x630_pclazv.png?v=' + Date.now();
+    const description = buildDescription(data);
+    const imageUrl = 'https://res.cloudinary.com/treklist/image/upload/v1771075130/branding/treklist_1200x630_pclazv.png';
 
-    // Get the original HTML
     const response = await context.next();
     const html = await response.text();
 
-    // Inject the correct OG meta tags (handle multi-line tags)
-    // Use [\s\S] to match across lines, but be specific about tag boundaries
+    const listBodyHtml = generateListBody(data);
+    const structuredData = buildStructuredData(data, token);
+
     const modifiedHtml = html
-      // Replace og:title (handles multi-line)
       .replace(
         /<meta\s+property="og:title"\s+content="[^"]*"\s*\/?>/s,
         `<meta property="og:title" content="${escapeHtml(listTitle)} - TrekList" />`
       )
-      // Replace og:description (handles multi-line)
       .replace(
         /<meta\s+property="og:description"\s+content="[^"]*"\s*\/?>/s,
-        `<meta property="og:description" content="${escapeHtml(description)}" />`
+        `<meta property="og:description" content="${description}" />`
       )
-      // Replace og:image (handles multi-line)
       .replace(
         /<meta\s+property="og:image"\s+content="[^"]*"\s*\/?>/s,
         `<meta property="og:image" content="${imageUrl}" />`
       )
-      // Add og:image dimensions after og:image
       .replace(
         /(<meta property="og:image" content="[^"]*"\s*\/?>)/,
         `$1\n    <meta property="og:image:width" content="1200" />\n    <meta property="og:image:height" content="630" />`
       )
-      // Replace og:url (handles multi-line)
       .replace(
         /<meta\s+property="og:url"\s+content="[^"]*"\s*\/?>/s,
         `<meta property="og:url" content="${shareUrl}" />`
       )
-      // Replace og:type (handles multi-line)
       .replace(
         /<meta\s+property="og:type"\s+content="[^"]*"\s*\/?>/s,
         `<meta property="og:type" content="article" />`
       )
-      // Replace og:site_name (handles multi-line)
       .replace(
         /<meta\s+property="og:site_name"\s+content="[^"]*"\s*\/?>/s,
         `<meta property="og:site_name" content="TrekList" />`
       )
-      // Replace title tag
       .replace(
         /<title>[^<]*<\/title>/,
         `<title>${escapeHtml(listTitle)} - TrekList</title>`
       )
-      // Replace meta description (handles multi-line)
       .replace(
         /<meta\s+name="description"\s+content="[^"]*"\s*\/?>/s,
-        `<meta name="description" content="${escapeHtml(description)}" />`
+        `<meta name="description" content="${description}" />`
       )
-      // Replace canonical URL (handles multi-line)
       .replace(
         /<link\s+rel="canonical"\s+href="[^"]*"\s*\/?>/s,
         `<link rel="canonical" href="${shareUrl}" />`
       )
-      // Replace Twitter card meta tags (handles multi-line)
       .replace(
         /<meta\s+name="twitter:title"\s+content="[^"]*"\s*\/?>/s,
         `<meta name="twitter:title" content="${escapeHtml(listTitle)} - TrekList" />`
       )
       .replace(
         /<meta\s+name="twitter:description"\s+content="[^"]*"\s*\/?>/s,
-        `<meta name="twitter:description" content="${escapeHtml(description)}" />`
+        `<meta name="twitter:description" content="${description}" />`
       )
       .replace(
         /<meta\s+name="twitter:image"\s+content="[^"]*"\s*\/?>/s,
@@ -122,29 +206,33 @@ export default async function handler(request, context) {
       .replace(
         /<meta\s+name="twitter:card"\s+content="[^"]*"\s*\/?>/s,
         `<meta name="twitter:card" content="summary_large_image" />`
+      )
+      // Inject structured data
+      .replace(
+        '</head>',
+        `  <script type="application/ld+json">${JSON.stringify(structuredData)}</script>\n  </head>`
+      )
+      // Inject pre-rendered gear list content into #root
+      .replace(
+        '<div id="root"></div>',
+        `<div id="root">${listBodyHtml}</div>`
       );
 
     return new Response(modifiedHtml, {
       status: 200,
       headers: {
         'content-type': 'text/html; charset=utf-8',
-        'cache-control': 'public, max-age=0, must-revalidate', // Don't cache dynamic content
+        'cache-control': 'public, max-age=300, stale-while-revalidate=3600',
       },
     });
   } catch (error) {
     console.error('Edge function error:', error);
-    // On error, just pass through to normal routing
     return context.next();
   }
 }
 
 function escapeHtml(text) {
-  const map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  };
-  return text.replace(/[&<>"']/g, m => map[m]);
+  if (!text) return '';
+  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+  return String(text).replace(/[&<>"']/g, m => map[m]);
 }
