@@ -4,6 +4,10 @@
 
 # Edge Functions configuration
 [[edge_functions]]
+  path = "/"
+  function = "landing"
+
+[[edge_functions]]
   path = "/share/*"
   function = "og-tags"
 
