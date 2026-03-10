@@ -60,7 +60,9 @@ function generateListBody(data) {
   html += `<p>${metaParts.join(' · ')}</p>`;
 
   if (list.notes) {
-    html += `<p>${escapeHtml(list.notes)}</p>`;
+    // Strip HTML tags from notes (notes field may contain HTML markup)
+    const plainNotes = String(list.notes).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    if (plainNotes) html += `<p>${escapeHtml(plainNotes)}</p>`;
   }
 
   for (const cat of categories) {
