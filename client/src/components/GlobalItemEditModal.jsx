@@ -497,15 +497,15 @@ export default function GlobalItemEditModal({
     showImageBlock || showCustomImageBlock ? "max-w-4xl" : "max-w-2xl";
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center z-[60]">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-end sm:items-center justify-center z-[60]">
       {showFullscreenSpinner ? (
         <Spinner tone="white" />
       ) : (
         <form
           onSubmit={handleSave}
           className={
-            "bg-base-100 rounded-lg shadow-2xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 " +
-            "border border-primary/15 max-h-[70vh] sm:max-h-[calc(100vh-5rem)] flex flex-col " +
+            "bg-base-100 sm:rounded-lg shadow-2xl w-full sm:mx-4 px-4 py-4 sm:px-6 sm:py-6 " +
+            "border border-primary/15 modal-mobile-h sm:h-auto sm:max-h-[90vh] flex flex-col " +
             modalWidthClass
           }
         >
@@ -675,6 +675,22 @@ export default function GlobalItemEditModal({
           ) : (
             <>
               {/* Imported layout (locked fields + optional images + specs) */}
+              {/* Mobile image — full width, hidden on desktop where the right column handles it */}
+              {showImageBlock && (
+                <div className="sm:hidden mb-3 flex items-center justify-center bg-white rounded border border-primary/15 py-2 px-2">
+                  <div className="h-[200px] w-full overflow-hidden flex items-center justify-center">
+                    {loadingImages || loadingImageAsset ? (
+                      <Spinner />
+                    ) : (
+                      <ImageCarousel
+                        images={safeCatalogImages.slice(0, 1)}
+                        alt={`${form.brand ? form.brand + " " : ""}${form.name || ""}`}
+                        loading={false}
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
               <div
                 className={`sm:grid sm:gap-6 ${
                   showImageBlock ? "sm:grid-cols-2" : "sm:grid-cols-1"

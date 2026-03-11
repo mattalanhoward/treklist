@@ -10,6 +10,7 @@ import { useUnit } from "../hooks/useUnit";
 import { useWeightInput } from "../hooks/useWeightInput";
 import Spinner from "./ui/Spinner";
 import LinkInput from "./LinkInput";
+import CatalogItemPreviewModal from "./CatalogItemPreviewModal";
 
 // Short labels for horizontal chip row
 const CHIPS = [
@@ -35,27 +36,40 @@ function normalize(str = "") {
 }
 
 // ── Item row ──────────────────────────────────────────────────────────────────
-function ItemRow({ item, selected, onToggle, multiSelect, disabled, badge, subLabel, priceLabel }) {
+function ItemRow({ item, selected, onToggle, onViewDetails, multiSelect, disabled, badge, subLabel, priceLabel }) {
+  const id = String(item._id);
   return (
     <li
-      onClick={() => !disabled && onToggle(String(item._id))}
-      className={`flex items-center px-3 py-2 rounded border cursor-pointer transition-colors ${
+      className={`flex items-center px-3 py-2 rounded border transition-colors ${
         disabled
-          ? "border-primary/10 opacity-50 cursor-default"
+          ? "border-primary/10 opacity-50"
           : selected
             ? "border-secondary/40 bg-secondary/10"
             : "border-primary/20 hover:bg-primary/5"
       }`}
     >
-      <input
-        type={multiSelect ? "checkbox" : "radio"}
-        checked={selected}
-        onChange={() => {}}
+      {/* Checkbox/radio — clicking this area toggles selection */}
+      <button
+        type="button"
+        onClick={() => !disabled && onToggle(id)}
         disabled={disabled}
-        className="mr-3 h-4 w-4 text-secondary border-primary rounded flex-shrink-0 pointer-events-none"
-      />
-      <div className="flex-1 min-w-0">
-        <div className="text-sm font-medium text-primary truncate">
+        className="mr-3 flex-shrink-0 flex items-center cursor-pointer"
+        tabIndex={-1}
+      >
+        <input
+          type={multiSelect ? "checkbox" : "radio"}
+          checked={selected}
+          onChange={() => {}}
+          disabled={disabled}
+          className="h-4 w-4 text-secondary border-primary rounded pointer-events-none"
+        />
+      </button>
+      {/* Name/brand — clicking opens details if handler provided */}
+      <div
+        className={`flex-1 min-w-0 ${onViewDetails && !disabled ? "cursor-pointer" : ""}`}
+        onClick={() => onViewDetails && !disabled && onViewDetails(item)}
+      >
+        <div className={`text-sm font-medium text-primary truncate ${onViewDetails && !disabled ? "hover:underline" : ""}`}>
           {item.brand && <span className="mr-1">{item.brand}</span>}
           {item.name}
         </div>
@@ -72,7 +86,7 @@ function ItemRow({ item, selected, onToggle, multiSelect, disabled, badge, subLa
 }
 
 // ── Section (My Gear or Catalog) ──────────────────────────────────────────────
-function ResultSection({ title, items, type, myGearSelected, catalogSelected, onToggleMyGear, onToggleCatalog, multiSelect, existingGlobalIds, loading }) {
+function ResultSection({ title, items, type, myGearSelected, catalogSelected, onToggleMyGear, onToggleCatalog, onViewCatalogDetails, multiSelect, existingGlobalIds, loading }) {
   if (loading) {
     return (
       <div className="mb-3">
@@ -113,6 +127,7 @@ function ResultSection({ title, items, type, myGearSelected, catalogSelected, on
                 item={item}
                 selected={catalogSelected.has(id)}
                 onToggle={onToggleCatalog}
+                onViewDetails={onViewCatalogDetails}
                 multiSelect={multiSelect}
                 subLabel={item.itemType || item.subcategory || null}
                 priceLabel={priceLabel}
@@ -355,6 +370,37 @@ export default function SmartItemSearch({
 
   // Submitting state for confirm button
   const [confirming, setConfirming] = useState(false);
+
+  // Catalog item preview
+  const [previewItem, setPreviewItem] = useState(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+  const [previewError, setPreviewError] = useState(null);
+  const [previewImporting, setPreviewImporting] = useState(false);
+
+  const handleViewCatalogDetails = async (item) => {
+    setPreviewItem(item);
+    setPreviewLoading(true);
+    setPreviewError(null);
+    try {
+      const { data } = await api.get(`/catalog/items/${item._id}`);
+      setPreviewItem(data);
+    } catch {
+      setPreviewError("Failed to load item details.");
+    } finally {
+      setPreviewLoading(false);
+    }
+  };
+
+  const handlePreviewImport = async () => {
+    if (!previewItem || previewImporting) return;
+    setPreviewImporting(true);
+    try {
+      await onConfirm({ source: "catalog", catalogIds: [String(previewItem._id)] });
+      setPreviewItem(null);
+    } finally {
+      setPreviewImporting(false);
+    }
+  };
 
   // Focus search on mount
   useEffect(() => {
@@ -713,6 +759,7 @@ export default function SmartItemSearch({
                 catalogSelected={catalogSelected}
                 onToggleMyGear={toggleMyGear}
                 onToggleCatalog={toggleCatalog}
+                onViewCatalogDetails={handleViewCatalogDetails}
                 multiSelect={multiSelect}
                 existingGlobalIds={existingGlobalIds}
                 loading={catalogLoading}
@@ -755,6 +802,17 @@ export default function SmartItemSearch({
           </button>
         </div>
       )}
+
+      {/* Catalog item preview modal */}
+      <CatalogItemPreviewModal
+        isOpen={!!previewItem}
+        onClose={() => setPreviewItem(null)}
+        item={previewItem}
+        loading={previewLoading}
+        error={previewError}
+        onImport={handlePreviewImport}
+        importing={previewImporting}
+      />
     </div>
   );
 }

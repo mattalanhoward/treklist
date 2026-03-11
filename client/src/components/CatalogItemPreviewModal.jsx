@@ -112,7 +112,7 @@ export default function CatalogItemPreviewModal({
   const isPending = loading || (!item && !error);
   if (isPending) {
     return createPortal(
-      <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-[60]">
+      <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-end sm:items-center justify-center z-[60]">
         <div className="h-10 w-10 rounded-full border-2 border-white/40 border-t-white animate-spin" />
       </div>,
       document.body
@@ -122,10 +122,9 @@ export default function CatalogItemPreviewModal({
   // NOTE: z-index slightly higher than GlobalItemModal so it sits above it.
   // Style/layout matches GlobalItemEditModal imported layout.
   return createPortal(
-    <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-[60]">
+    <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-end sm:items-center justify-center z-[60]">
       <div
-        className={`bg-white rounded-lg shadow-2xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 max-h-[70vh] sm:max-h-[calc(100vh-5rem)] flex flex-col
-    ${modalWidthClass}`}
+        className={`bg-white sm:rounded-lg shadow-2xl w-full sm:mx-4 px-4 py-4 sm:px-6 sm:py-6 flex flex-col modal-mobile-h sm:h-auto sm:max-h-[90vh] ${modalWidthClass}`}
       >
         {/* Header - fixed at top */}
         <div className="flex justify-between items-center mb-2 sm:mb-3 flex-shrink-0">
@@ -159,6 +158,22 @@ export default function CatalogItemPreviewModal({
           {
             <>
               {/* Imported layout (locked fields + images + specs display-only) */}
+              {/* Mobile image — full width, hidden on desktop where the right column handles it */}
+              {showImageBlock && (
+                <div className="sm:hidden mb-3 flex items-center justify-center bg-white rounded border border-primary/15 py-2 px-2">
+                  <div className="h-[200px] w-full overflow-hidden flex items-center justify-center">
+                    {loadingImages ? (
+                      <div className="h-10 w-10 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+                    ) : (
+                      <ImageCarousel
+                        images={catalogImages}
+                        alt={`${item.brand ? item.brand + " " : ""}${item.name || ""}`}
+                        loading={false}
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
             <div
               className={`sm:grid sm:gap-6 ${
                 showImageBlock ? "sm:grid-cols-2" : "sm:grid-cols-1"
