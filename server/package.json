@@ -39,6 +39,7 @@
   "author": "Your Name <you@example.com>",
   "license": "MIT",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.78.0",
     "bcrypt": "^5.1.0",
     "cloudinary": "^1.41.3",
     "cookie-parser": "^1.4.7",

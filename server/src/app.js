@@ -25,6 +25,7 @@ const supportRoutes = require("./routes/support");
 const passport = require("./config/passport");
 const myGearRoutes = require("./routes/myGear");
 const wishlistRoutes = require("./routes/wishlist");
+const aiRoutes = require("./routes/ai");
 
 const app = express();
 
@@ -120,6 +121,7 @@ app.use(
 app.use("/api/catalog", require("./routes/catalog"));
 app.use("/api/uploads", require("./routes/uploads"));
 app.use("/api/support", supportRoutes);
+app.use("/api/ai", authMiddleware, aiRoutes);
 
 // Central error handler
 app.use((err, req, res, next) => {

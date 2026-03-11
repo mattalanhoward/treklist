@@ -14,7 +14,7 @@ const {
   getPartnerTagForMarketplace,
   buildAmazonAffiliateUrl,
 } = require("../services/amazonCreatorsApi");
-const { rewriteDescription } = require("../services/openaiService");
+const { rewriteDescription } = require("../services/anthropicService");
 const { detectItemType } = require("../services/itemTypeDetector");
 
 const router = express.Router();
