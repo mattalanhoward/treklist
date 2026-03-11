@@ -64,7 +64,7 @@ export default function AddGearDrawer({ isOpen, onClose, onItemsChanged }) {
 
       {/* Desktop: slide-in drawer from right */}
       <div
-        className={`hidden sm:fixed sm:top-12 sm:bottom-0 sm:right-0 sm:flex sm:flex-col w-[420px] bg-base-100 border-l border-primary/20 shadow-xl transition-transform duration-300 ease-out z-40 ${
+        className={`hidden sm:fixed sm:top-12 sm:bottom-0 sm:right-0 sm:flex sm:flex-col w-[520px] bg-base-100 border-l border-primary/20 shadow-xl transition-transform duration-300 ease-out z-40 ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >

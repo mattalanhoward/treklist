@@ -2,7 +2,7 @@
 // Unified item search: My Gear + Catalog + AI fill-in fallback.
 // Drop this inside any modal/drawer shell — it manages its own search state.
 import React, { useState, useEffect, useMemo, useRef } from "react";
-import { FiSearch, FiX, FiAlertCircle, FiPlus, FiLoader } from "react-icons/fi";
+import { FiSearch, FiX, FiPlus, FiLoader } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 import api from "../services/api";
 import { CATALOG_CATEGORIES } from "../config/catalogTaxonomy";
@@ -140,69 +140,6 @@ function ResultSection({ title, items, type, myGearSelected, catalogSelected, on
   );
 }
 
-// ── AI confirm card (Option B) ─────────────────────────────────────────────────
-function AiCard({ suggestion, onConfirm, onEdit, onDismiss, confirming }) {
-  return (
-    <div className="rounded-lg border border-secondary/30 bg-secondary/5 p-4 my-2">
-      <div className="flex items-start justify-between mb-2">
-        <div className="flex-1 min-w-0">
-          <p className="text-xs text-secondary font-medium mb-1.5">✨ AI Suggestion</p>
-          <p className="text-sm font-semibold text-primary">
-            {suggestion.brand && <span className="mr-1">{suggestion.brand}</span>}
-            {suggestion.name}
-          </p>
-          <div className="flex flex-wrap gap-2 mt-1">
-            {suggestion.weightGrams != null && (
-              <span className="text-xs text-primary/60">{suggestion.weightGrams}g</span>
-            )}
-            {suggestion.category && (
-              <span className="text-xs text-primary/60">{suggestion.category}</span>
-            )}
-          </div>
-          {suggestion.description && (
-            <p className="text-xs text-primary/50 mt-1.5 line-clamp-2">{suggestion.description}</p>
-          )}
-        </div>
-        <div className="flex items-start gap-2 ml-3 flex-shrink-0">
-          {suggestion.imageUrl && (
-            <img
-              src={suggestion.imageUrl}
-              alt={suggestion.name}
-              className="w-16 h-16 object-contain rounded bg-white border border-primary/10"
-              onError={(e) => { e.currentTarget.style.display = "none"; }}
-            />
-          )}
-          <button
-            onClick={onDismiss}
-            className="text-primary/30 hover:text-primary/60 mt-0.5"
-          >
-            <FiX size={14} />
-          </button>
-        </div>
-      </div>
-      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-primary/10">
-        <FiAlertCircle size={11} className="text-amber-500 flex-shrink-0" />
-        <span className="text-xs text-amber-600 flex-1">Please verify before saving</span>
-        <button
-          onClick={onEdit}
-          disabled={confirming}
-          className="px-2.5 py-1 text-xs border border-primary/20 rounded text-primary hover:bg-primary/5 disabled:opacity-50"
-        >
-          Edit
-        </button>
-        <button
-          onClick={onConfirm}
-          disabled={confirming}
-          className="px-2.5 py-1 text-xs bg-secondary text-white rounded hover:bg-secondary/80 disabled:opacity-50 flex items-center gap-1"
-        >
-          {confirming ? <FiLoader size={11} className="animate-spin" /> : null}
-          Add ✓
-        </button>
-      </div>
-    </div>
-  );
-}
-
 // ── No results view ───────────────────────────────────────────────────────────
 function NoResults({ query, onAiSearch, onManual, aiLoading }) {
   return (
@@ -238,10 +175,11 @@ function NoResults({ query, onAiSearch, onManual, aiLoading }) {
 function CustomForm({ form, onChange, unitLabel }) {
   return (
     <div className="overflow-y-auto h-full">
-      <div className="space-y-2 py-1 pb-4">
-        <div className="grid grid-cols-2 gap-2">
+      <div className="space-y-3 py-2 pb-4">
+        {/* Row 1: Name + Brand */}
+        <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-medium text-primary mb-1">
+            <label className="block text-sm font-medium text-primary mb-1">
               Name <span className="text-error">*</span>
             </label>
             <input
@@ -249,24 +187,27 @@ function CustomForm({ form, onChange, unitLabel }) {
               value={form.name}
               onChange={(e) => onChange({ ...form, name: e.target.value })}
               autoFocus
-              className="w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100 placeholder:text-primary/50 text-sm"
+              className="w-full border border-base-300 rounded-lg px-3 py-2 text-primary bg-base-100 placeholder:text-primary/40 text-sm"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-primary mb-1">Brand</label>
+            <label className="block text-sm font-medium text-primary mb-1">Brand</label>
             <input
               type="text"
               value={form.brand}
               onChange={(e) => onChange({ ...form, brand: e.target.value })}
-              className="w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100 text-sm"
+              className="w-full border border-base-300 rounded-lg px-3 py-2 text-primary bg-base-100 text-sm"
             />
           </div>
+        </div>
+        {/* Row 2: Category + Item Type */}
+        <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-medium text-primary mb-1">Category</label>
+            <label className="block text-sm font-medium text-primary mb-1">Category</label>
             <select
               value={form.catalogCategory}
               onChange={(e) => onChange({ ...form, catalogCategory: e.target.value })}
-              className="w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100 text-sm"
+              className="w-full border border-base-300 rounded-lg px-3 py-2 text-primary bg-base-100 text-sm"
             >
               <option value="">Uncategorized</option>
               {CATALOG_CATEGORIES.map((cat) => (
@@ -275,17 +216,20 @@ function CustomForm({ form, onChange, unitLabel }) {
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-primary mb-1">Item Type</label>
+            <label className="block text-sm font-medium text-primary mb-1">Item type</label>
             <input
               type="text"
               value={form.itemType}
               onChange={(e) => onChange({ ...form, itemType: e.target.value })}
               placeholder="e.g. Canister Stove"
-              className="w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100 text-sm"
+              className="w-full border border-base-300 rounded-lg px-3 py-2 text-primary bg-base-100 text-sm"
             />
           </div>
+        </div>
+        {/* Row 3: Weight + Link */}
+        <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-medium text-primary mb-1">
+            <label className="block text-sm font-medium text-primary mb-1">
               Weight ({unitLabel})
             </label>
             <input
@@ -294,26 +238,37 @@ function CustomForm({ form, onChange, unitLabel }) {
               value={form.weight}
               onChange={(e) => onChange({ ...form, weight: e.target.value })}
               placeholder={unitLabel === "g" ? "0" : "0.0"}
-              className="w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100 text-sm"
+              className="w-full border border-base-300 rounded-lg px-3 py-2 text-primary bg-base-100 text-sm"
             />
           </div>
+          <LinkInput
+            value={form.link}
+            onChange={(v) => onChange({ ...form, link: v })}
+            label="Link"
+            placeholder="https://"
+            required={false}
+          />
         </div>
+        {/* Image URL - full width */}
         <div>
-          <label className="block text-xs font-medium text-primary mb-1">Description</label>
+          <label className="block text-sm font-medium text-primary mb-1">Image URL</label>
+          <input
+            type="text"
+            value={form.imageUrl}
+            onChange={(e) => onChange({ ...form, imageUrl: e.target.value })}
+            placeholder="example.com/image.jpg"
+            className="w-full border border-base-300 rounded-lg px-3 py-2 text-primary bg-base-100 text-sm"
+          />
+        </div>
+        {/* Description - full width */}
+        <div>
+          <label className="block text-sm font-medium text-primary mb-1">Description</label>
           <textarea
             value={form.description}
             onChange={(e) => onChange({ ...form, description: e.target.value })}
-            className="w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100 text-sm resize-none h-14"
+            className="w-full border border-base-300 rounded-lg px-3 py-2 text-primary bg-base-100 text-sm resize-none h-24"
           />
         </div>
-        <LinkInput
-          value={form.link}
-          onChange={(v) => onChange({ ...form, link: v })}
-          label="Link"
-          placeholder="https://"
-          required={false}
-          className="text-sm"
-        />
       </div>
     </div>
   );
@@ -360,12 +315,11 @@ export default function SmartItemSearch({
 
   // AI state
   const [aiLoading, setAiLoading] = useState(false);
-  const [aiCard, setAiCard] = useState(null);
 
   // Custom form (AI edit or manual creation)
   const [customMode, setCustomMode] = useState(null); // null | 'ai' | 'manual'
   const [customForm, setCustomForm] = useState({
-    name: "", brand: "", catalogCategory: "", itemType: "", weight: "", description: "", link: "",
+    name: "", brand: "", catalogCategory: "", itemType: "", weight: "", description: "", link: "", imageUrl: "",
   });
 
   // Submitting state for confirm button
@@ -443,7 +397,6 @@ export default function SmartItemSearch({
 
   // Reset AI state when query changes
   useEffect(() => {
-    setAiCard(null);
     if (customMode !== "manual") setCustomMode(null);
   }, [debouncedQuery, categoryFilter]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -460,15 +413,18 @@ export default function SmartItemSearch({
     let items = excludeGlobalItemId
       ? myGearItems.filter((i) => String(i._id) !== String(excludeGlobalItemId))
       : myGearItems;
+    if (categoryFilter) {
+      items = items.filter((i) => i.catalogCategory === categoryFilter);
+    }
     if (!debouncedQuery) return items;
     const tokens = normalize(debouncedQuery).split(/\s+/).filter(Boolean);
     return items.filter((item) => {
       const hay = normalize(
-        [item.name, item.brand, item.itemType].filter(Boolean).join(" "),
+        [item.name, item.brand, item.itemType, item.description].filter(Boolean).join(" "),
       );
       return tokens.every((tok) => hay.includes(tok));
     });
-  }, [myGearItems, debouncedQuery, excludeGlobalItemId, showMyGear]);
+  }, [myGearItems, debouncedQuery, excludeGlobalItemId, showMyGear, categoryFilter]);
 
   // Toggle selection
   const toggleMyGear = (id) => {
@@ -497,55 +453,28 @@ export default function SmartItemSearch({
     }
   };
 
-  // AI fill
+  // AI fill — skips the preview card and goes straight to the prefilled form
   const handleAiSearch = async () => {
     if (!query.trim() || aiLoading) return;
     setAiLoading(true);
     try {
       const { data } = await api.post("/ai/fill-item", { query: query.trim() });
-      setAiCard(data);
+      setCustomMode("ai");
+      setCustomForm({
+        name: data.name || "",
+        brand: data.brand || "",
+        catalogCategory: data.category || "",
+        itemType: data.itemType || "",
+        weight: data.weightGrams != null ? formatInput(data.weightGrams) : "",
+        description: data.description || "",
+        link: data.link || "",
+        imageUrl: data.imageUrl || "",
+      });
     } catch {
       toast.error("AI search failed. Try adding manually.");
     } finally {
       setAiLoading(false);
     }
-  };
-
-  const handleAiConfirm = async () => {
-    if (!aiCard || confirming) return;
-    setConfirming(true);
-    try {
-      await onConfirm({
-        source: "newItem",
-        fields: {
-          name: aiCard.name,
-          brand: aiCard.brand || "",
-          catalogCategory: aiCard.category || "",
-          itemType: aiCard.itemType || "",
-          weight: aiCard.weightGrams ?? null,
-          description: aiCard.description || "",
-          link: aiCard.link || "",
-          imageUrl: aiCard.imageUrl || "",
-        },
-      });
-    } finally {
-      setConfirming(false);
-    }
-  };
-
-  const handleAiEdit = () => {
-    setCustomMode("ai");
-    setCustomForm({
-      name: aiCard.name || "",
-      brand: aiCard.brand || "",
-      catalogCategory: aiCard.category || "",
-      // Convert grams to display unit for the form
-      itemType: aiCard.itemType || "",
-      weight: aiCard.weightGrams != null ? formatInput(aiCard.weightGrams) : "",
-      description: aiCard.description || "",
-      link: aiCard.link || "",
-    });
-    setAiCard(null);
   };
 
   // Footer confirm
@@ -577,6 +506,7 @@ export default function SmartItemSearch({
             weight: typeof weightGrams === "number" ? weightGrams : null,
             description: customForm.description.trim(),
             link: customForm.link.trim(),
+            imageUrl: customForm.imageUrl.trim(),
           },
         });
       } finally {
@@ -629,7 +559,6 @@ export default function SmartItemSearch({
     !aiLoading &&
     filteredMyGear.length === 0 &&
     catalogResults.length === 0 &&
-    !aiCard &&
     !customMode;
 
   return (
@@ -654,7 +583,6 @@ export default function SmartItemSearch({
               onClick={() => {
                 setQuery("");
                 setCustomMode(null);
-                setAiCard(null);
               }}
               className="absolute right-2.5 top-1/2 -translate-y-1/2 text-primary/40 hover:text-primary/70"
             >
@@ -667,8 +595,8 @@ export default function SmartItemSearch({
         )}
       </div>
 
-      {/* Category chips */}
-      <div className="px-5 pb-2 flex-shrink-0">
+      {/* Mobile category chips */}
+      <div className="sm:hidden px-5 pb-2 flex-shrink-0">
         <div className="flex gap-1.5 overflow-x-auto pb-0.5" style={{ scrollbarWidth: "none" }}>
           {CHIPS.map((chip) => (
             <button
@@ -688,8 +616,41 @@ export default function SmartItemSearch({
         </div>
       </div>
 
-      {/* Results area */}
-      <div className="flex-1 overflow-y-auto min-h-0 px-5">
+      {/* Body: sidebar + results */}
+      <div className="flex-1 flex min-h-0">
+        {/* Left sidebar — desktop only */}
+        <div className="hidden sm:flex flex-col w-44 border-r border-primary/10 overflow-y-auto flex-shrink-0 py-2">
+          <button
+            type="button"
+            onClick={() => setCategoryFilter(null)}
+            className={`text-left px-4 py-1.5 text-sm transition-colors border-l-2 ${
+              !categoryFilter
+                ? "border-secondary bg-secondary/10 text-secondary font-medium"
+                : "border-transparent text-primary/60 hover:text-primary hover:bg-primary/5"
+            }`}
+          >
+            All Categories
+          </button>
+          {CHIPS.map((chip) => (
+            <button
+              key={chip.value}
+              type="button"
+              onClick={() =>
+                setCategoryFilter(categoryFilter === chip.value ? null : chip.value)
+              }
+              className={`text-left px-4 py-1.5 text-sm transition-colors border-l-2 ${
+                categoryFilter === chip.value
+                  ? "border-secondary bg-secondary/10 text-secondary font-medium"
+                  : "border-transparent text-primary/60 hover:text-primary hover:bg-primary/5"
+              }`}
+            >
+              {chip.value}
+            </button>
+          ))}
+        </div>
+
+        {/* Results area */}
+        <div className="flex-1 overflow-y-auto min-h-0 px-5">
         {customMode ? (
           <CustomForm
             form={customForm}
@@ -701,14 +662,6 @@ export default function SmartItemSearch({
             <FiLoader size={20} className="animate-spin text-secondary" />
             <p className="text-sm text-primary/50">Searching with AI...</p>
           </div>
-        ) : aiCard ? (
-          <AiCard
-            suggestion={aiCard}
-            onConfirm={handleAiConfirm}
-            onEdit={handleAiEdit}
-            onDismiss={() => setAiCard(null)}
-            confirming={confirming}
-          />
         ) : hasNoResults ? (
           <NoResults
             query={debouncedQuery}
@@ -717,7 +670,7 @@ export default function SmartItemSearch({
               setCustomMode("manual");
               setCustomForm({
                 name: debouncedQuery.trim(),
-                brand: "", catalogCategory: "", itemType: "", weight: "", description: "", link: "",
+                brand: "", catalogCategory: "", itemType: "", weight: "", description: "", link: "", imageUrl: "",
               });
             }}
             aiLoading={aiLoading}
@@ -775,10 +728,10 @@ export default function SmartItemSearch({
           </>
         )}
       </div>
+      </div>{/* end sidebar+results wrapper */}
 
-      {/* Footer — hidden while AI card is showing (it has its own buttons) */}
-      {!aiCard && (
-        <div className="flex justify-end gap-2 px-5 py-3 border-t border-primary/10 flex-shrink-0">
+      {/* Footer */}
+      <div className="flex justify-end gap-2 px-5 py-3 border-t border-primary/10 flex-shrink-0">
           <button
             type="button"
             onClick={onClose}
@@ -801,7 +754,6 @@ export default function SmartItemSearch({
             {confirmLabel}
           </button>
         </div>
-      )}
 
       {/* Catalog item preview modal */}
       <CatalogItemPreviewModal
