@@ -38,7 +38,7 @@ export default function AddGearDrawer({ isOpen, onClose, onItemsChanged }) {
   return (
     <>
       {/* Mobile: full-screen overlay */}
-      <div className="sm:hidden fixed inset-0 bg-base-100 z-[70] flex flex-col">
+      <div className="sm:hidden fixed top-[var(--topbar-h,48px)] inset-x-0 bottom-0 bg-base-100 z-[70] flex flex-col">
         <div className="flex items-center justify-between px-4 py-3 border-b border-primary/10 flex-shrink-0">
           <h2 className="text-lg font-semibold text-primary">
             {t("globalItemModal.title", "Add Gear")}
