@@ -24,11 +24,7 @@ export default function MyGearView({ collapsed }) {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
-  const [sortOption, setSortOption] = useState("name-asc");
-  const [viewMode, setViewMode] = useState(() => {
-    // Default to list on mobile, tiles on iPad and above (768px)
-    return window.matchMedia("(min-width: 768px)").matches ? "tiles" : "list";
-  });
+  const [viewMode, setViewMode] = useState("tiles");
 
   const [gearTab, setGearTab] = useState("all"); // "all" | "owned" | "wishlist" | "shared"
   const [wishlistItems, setWishlistItems] = useState([]);
@@ -163,22 +159,8 @@ export default function MyGearView({ collapsed }) {
       }
     }
 
-    // Sort
-    const [field, direction] = sortOption.split("-");
-    const sorted = [...result].sort((a, b) => {
-      let cmp = 0;
-      if (field === "name") {
-        cmp = (a.name || "").localeCompare(b.name || "");
-      } else if (field === "weight") {
-        cmp = (a.weight || 0) - (b.weight || 0);
-      } else if (field === "date") {
-        cmp = new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
-      }
-      return direction === "desc" ? -cmp : cmp;
-    });
-
-    return sorted;
-  }, [items, searchQuery, categoryFilter, sortOption]);
+    return result;
+  }, [items, searchQuery, categoryFilter]);
 
   const filteredOwnedItems = useMemo(
     () => filteredItems.filter((i) => !i.importedFromShare),
@@ -219,29 +201,12 @@ export default function MyGearView({ collapsed }) {
         return tokens.every((tok) => searchable.includes(tok));
       });
     }
-    const [field, direction] = sortOption.split("-");
-    result.sort((a, b) => {
-      let cmp = 0;
-      if (field === "name") cmp = (a.name || "").localeCompare(b.name || "");
-      else if (field === "weight") cmp = (a.weight || 0) - (b.weight || 0);
-      else if (field === "date") cmp = new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
-      return direction === "desc" ? -cmp : cmp;
-    });
     return result;
-  }, [wishlistItems, searchQuery, sortOption]);
+  }, [wishlistItems, searchQuery]);
 
   const filteredAllItems = useMemo(() => {
-    // Combine non-wishlisted items with wishlist items, then re-sort
-    const combined = [...filteredItems, ...filteredWishlistItems];
-    const [field, direction] = sortOption.split("-");
-    return combined.sort((a, b) => {
-      let cmp = 0;
-      if (field === "name") cmp = (a.name || "").localeCompare(b.name || "");
-      else if (field === "weight") cmp = (a.weight || 0) - (b.weight || 0);
-      else if (field === "date") cmp = new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
-      return direction === "desc" ? -cmp : cmp;
-    });
-  }, [filteredItems, filteredWishlistItems, sortOption]);
+    return [...filteredItems, ...filteredWishlistItems];
+  }, [filteredItems, filteredWishlistItems]);
 
   const displayItems = useMemo(() => {
     if (gearTab === "wishlist") return filteredWishlistItems;
@@ -251,6 +216,21 @@ export default function MyGearView({ collapsed }) {
   }, [gearTab, filteredWishlistItems, filteredOwnedItems, filteredSharedItems, filteredAllItems]);
 
   const displayLoading = (gearTab === "wishlist" || gearTab === "all") ? (loading || wishlistLoading) : loading;
+
+  const groupedItems = useMemo(() => {
+    const groups = new Map();
+    displayItems.forEach((item) => {
+      const cat = item.catalogCategory || "Uncategorized";
+      if (!groups.has(cat)) groups.set(cat, []);
+      groups.get(cat).push(item);
+    });
+    const sorted = [...groups.entries()].sort(([a], [b]) => {
+      if (a === "Uncategorized") return 1;
+      if (b === "Uncategorized") return -1;
+      return a.localeCompare(b);
+    });
+    return sorted.map(([category, items]) => ({ category, items }));
+  }, [displayItems]);
 
   // Handle delete
   const handleDelete = async (item) => {
@@ -385,23 +365,6 @@ export default function MyGearView({ collapsed }) {
                     {cat}
                   </option>
                 ))}
-              </select>
-              <FiChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-primary/50 pointer-events-none text-xs" />
-            </div>
-
-            {/* Sort dropdown */}
-            <div className="relative">
-              <select
-                value={sortOption}
-                onChange={(e) => setSortOption(e.target.value)}
-                className="appearance-none pl-3 pr-8 border border-primary/30 rounded text-primary bg-base-100 text-sm cursor-pointer"
-              >
-                <option value="name-asc">{t("myGear.sort.nameAsc", "Name A-Z")}</option>
-                <option value="name-desc">{t("myGear.sort.nameDesc", "Name Z-A")}</option>
-                <option value="weight-asc">{t("myGear.sort.weightAsc", "Weight ↑")}</option>
-                <option value="weight-desc">{t("myGear.sort.weightDesc", "Weight ↓")}</option>
-                <option value="date-desc">{t("myGear.sort.dateDesc", "Newest")}</option>
-                <option value="date-asc">{t("myGear.sort.dateAsc", "Oldest")}</option>
               </select>
               <FiChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-primary/50 pointer-events-none text-xs" />
             </div>
@@ -635,6 +598,19 @@ export default function MyGearView({ collapsed }) {
             </div>
           )}
 
+          {/* Search - full width on mobile */}
+          <div className="relative">
+            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/40" />
+            <input
+              ref={searchInputRef}
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t("myGear.searchPlaceholder", "Search my gear...")}
+              className="w-full pl-9 pr-3 border border-primary/30 rounded text-primary bg-base-100 placeholder:text-primary/50"
+            />
+          </div>
+
           {/* Mobile: Filter and Sort row */}
           <div className="flex items-center gap-2">
             {/* Category filter dropdown */}
@@ -654,64 +630,27 @@ export default function MyGearView({ collapsed }) {
               <FiChevronDown className="absolute right-1.5 top-1/2 -translate-y-1/2 text-primary/50 pointer-events-none text-xs" />
             </div>
 
-            {/* Sort dropdown */}
-            <div className="relative flex-1">
+          </div>
+
+          {/* Mobile: tab dropdown */}
+          <div className="pt-1 border-t border-primary/10">
+            <div className="relative">
               <select
-                value={sortOption}
-                onChange={(e) => setSortOption(e.target.value)}
-                className="w-full appearance-none pl-2 pr-6 border border-primary/30 rounded text-primary bg-base-100 text-sm cursor-pointer"
+                value={gearTab}
+                onChange={(e) => setGearTab(e.target.value)}
+                className="w-full appearance-none pl-3 pr-8 border border-primary/30 rounded text-primary bg-base-100 text-sm cursor-pointer"
               >
-                <option value="name-asc">{t("myGear.sort.nameAsc", "Name A-Z")}</option>
-                <option value="name-desc">{t("myGear.sort.nameDesc", "Name Z-A")}</option>
-                <option value="weight-asc">{t("myGear.sort.weightAsc", "Weight ↑")}</option>
-                <option value="weight-desc">{t("myGear.sort.weightDesc", "Weight ↓")}</option>
-                <option value="date-desc">{t("myGear.sort.dateDesc", "Newest")}</option>
-                <option value="date-asc">{t("myGear.sort.dateAsc", "Oldest")}</option>
+                <option value="all">{t("myGear.tabs.all", "All Gear")} ({items.length + wishlistItems.length})</option>
+                <option value="owned">{t("myGear.tabs.owned", "My Gear")} ({items.filter(i => !i.importedFromShare).length})</option>
+                <option value="wishlist">{t("myGear.tabs.wishlist", "Wishlist")} ({wishlistItems.length})</option>
+                <option value="shared">{t("myGear.tabs.shared", "From Packs")} ({items.filter(i => i.importedFromShare).length})</option>
               </select>
-              <FiChevronDown className="absolute right-1.5 top-1/2 -translate-y-1/2 text-primary/50 pointer-events-none text-xs" />
+              <FiChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-primary/50 pointer-events-none text-xs" />
             </div>
+            <p className="text-xs text-primary/50 mt-0.5">
+              {t(`myGear.tabs.desc.${gearTab}`)}
+            </p>
           </div>
-
-          {/* Search - full width on mobile */}
-          <div className="relative">
-            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/40" />
-            <input
-              ref={searchInputRef}
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t("myGear.searchPlaceholder", "Search my gear...")}
-              className="w-full pl-9 pr-3 border border-primary/30 rounded text-primary bg-base-100 placeholder:text-primary/50"
-            />
-          </div>
-
-          {/* Mobile: tab bar — row 1: All Gear, row 2: Owned / Wishlist / From Packs */}
-          <div className="pt-1 border-t border-primary/10 space-y-1">
-            <div className="flex gap-3">
-              {[{ key: "all", label: t("myGear.tabs.all", "All Gear"), count: items.length + wishlistItems.length }]
-                .map(({ key, label, count }) => (
-                  <button key={key} type="button" onClick={() => setGearTab(key)}
-                    className={`text-sm font-medium pb-1 transition-colors ${gearTab === key ? "border-b-2 border-secondary text-secondary" : "text-primary/60 hover:text-primary"}`}>
-                    {label}<span className="ml-1 text-xs text-primary/40">({count})</span>
-                  </button>
-                ))}
-            </div>
-            <div className="flex gap-3">
-              {[
-                { key: "owned", label: t("myGear.tabs.owned", "My Gear"), count: items.filter(i => !i.importedFromShare).length },
-                { key: "wishlist", label: t("myGear.tabs.wishlist", "Wishlist"), count: wishlistItems.length },
-                { key: "shared", label: t("myGear.tabs.shared", "From Packs"), count: items.filter(i => i.importedFromShare).length },
-              ].map(({ key, label, count }) => (
-                <button key={key} type="button" onClick={() => setGearTab(key)}
-                  className={`text-sm font-medium pb-1 transition-colors ${gearTab === key ? "border-b-2 border-secondary text-secondary" : "text-primary/60 hover:text-primary"}`}>
-                  {label}<span className="ml-1 text-xs text-primary/40">({count})</span>
-                </button>
-              ))}
-            </div>
-          </div>
-          <p className="text-xs text-primary/50 mt-0.5">
-            {t(`myGear.tabs.desc.${gearTab}`)}
-          </p>
         </div>
       </div>
 
@@ -743,42 +682,58 @@ export default function MyGearView({ collapsed }) {
                       : t("myGear.noResults", "No items match your search."))}
           </div>
         ) : viewMode === "list" ? (
-          <div className="space-y-2">
-            {displayItems.map((item) => (
-              <div key={item._id}>
-                <MyGearListItem
-                  item={item}
-                  formatWeight={formatInput}
-                  unitLabel={unitLabel}
-                  t={t}
-                  actionLoading={actionLoading}
-                  onViewEdit={() => setEditingItem(item)}
-                  onDelete={() => setConfirmDelete(item)}
-                  onToggleWishlist={() => handleToggleWishlist(item)}
-                  selectionMode={selectionMode}
-                  isSelected={selectedIds.has(item._id)}
-                  onToggleSelect={() => toggleSelection(item._id)}
-                />
+          <div className="space-y-4">
+            {groupedItems.map(({ category, items: groupItems }) => (
+              <div key={category}>
+                {groupedItems.length > 1 && (
+                  <div className="text-sm font-semibold text-primary/50 uppercase tracking-wider px-1 mb-1.5">{category}</div>
+                )}
+                <div className="space-y-2">
+                  {groupItems.map((item) => (
+                    <MyGearListItem
+                      key={item._id}
+                      item={item}
+                      formatWeight={formatInput}
+                      unitLabel={unitLabel}
+                      t={t}
+                      actionLoading={actionLoading}
+                      onViewEdit={() => setEditingItem(item)}
+                      onDelete={() => setConfirmDelete(item)}
+                      onToggleWishlist={() => handleToggleWishlist(item)}
+                      selectionMode={selectionMode}
+                      isSelected={selectedIds.has(item._id)}
+                      onToggleSelect={() => toggleSelection(item._id)}
+                    />
+                  ))}
+                </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className={`grid gap-3 ${showDrawer ? "grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6" : "grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 2xl:grid-cols-8"}`}>
-            {displayItems.map((item) => (
-              <div key={item._id}>
-                <MyGearTileCard
-                  item={item}
-                  formatWeight={formatInput}
-                  unitLabel={unitLabel}
-                  t={t}
-                  actionLoading={actionLoading}
-                  onViewEdit={() => setEditingItem(item)}
-                  onDelete={() => setConfirmDelete(item)}
-                  onToggleWishlist={() => handleToggleWishlist(item)}
-                  selectionMode={selectionMode}
-                  isSelected={selectedIds.has(item._id)}
-                  onToggleSelect={() => toggleSelection(item._id)}
-                />
+          <div className="space-y-4">
+            {groupedItems.map(({ category, items: groupItems }) => (
+              <div key={category}>
+                {groupedItems.length > 1 && (
+                  <div className="text-sm font-semibold text-primary/50 uppercase tracking-wider px-1 mb-2">{category}</div>
+                )}
+                <div className={`grid gap-3 ${showDrawer ? "grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6" : "grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 2xl:grid-cols-8"}`}>
+                  {groupItems.map((item) => (
+                    <MyGearTileCard
+                      key={item._id}
+                      item={item}
+                      formatWeight={formatInput}
+                      unitLabel={unitLabel}
+                      t={t}
+                      actionLoading={actionLoading}
+                      onViewEdit={() => setEditingItem(item)}
+                      onDelete={() => setConfirmDelete(item)}
+                      onToggleWishlist={() => handleToggleWishlist(item)}
+                      selectionMode={selectionMode}
+                      isSelected={selectedIds.has(item._id)}
+                      onToggleSelect={() => toggleSelection(item._id)}
+                    />
+                  ))}
+                </div>
               </div>
             ))}
           </div>
