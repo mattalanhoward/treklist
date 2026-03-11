@@ -14,6 +14,14 @@ function escapeRegex(s) {
   return String(s || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+// Build a regex for a search token that tolerates missing hyphens.
+// "xmid" and "x-mid" both produce /x[-]?m[-]?i[-]?d/i so they match "X-Mid".
+function tokenRegex(token) {
+  const normalized = token.replace(/[-\s]+/g, "");
+  const pattern = normalized.split("").map((c) => escapeRegex(c)).join("[-]?");
+  return new RegExp(pattern, "i");
+}
+
 // Small normalization helper (server-side)
 function normalizeRegion(region) {
   if (!region) return "global";
@@ -112,16 +120,19 @@ router.get("/items", auth, async (req, res) => {
     if (brand) query.brand = brand;
 
     if (q && q.trim()) {
-      const qNorm = q.trim().replace(/\s+/g, " ");
-      const regex = new RegExp(escapeRegex(qNorm), "i");
-      query.$or = [
+      const tokens = q.trim().replace(/\s+/g, " ").split(" ").filter(Boolean);
+      const fields = (regex) => [
         { name: regex },
         { brand: regex },
         { tags: regex },
-        { category: regex },
         { subcategory: regex },
-        { itemType: regex },
       ];
+      if (tokens.length === 1) {
+        query.$or = fields(tokenRegex(tokens[0]));
+      } else {
+        // Each token must match at least one field (handles "Osprey Exos" → brand + name)
+        query.$and = tokens.map((token) => ({ $or: fields(tokenRegex(token)) }));
+      }
     }
 
     const items = await CatalogItem.find(query)
@@ -131,7 +142,7 @@ router.get("/items", auth, async (req, res) => {
       .skip(Number(skip))
       .limit(Math.min(Number(limit), 200))
       .select(
-        "name brand category subcategory itemType description weightGrams tags updatedAt",
+        "name brand category subcategory itemType description weightGrams imageUrls tags updatedAt",
       );
 
     const offers = await MerchantOffer.find({
