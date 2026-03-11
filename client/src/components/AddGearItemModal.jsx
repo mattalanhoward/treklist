@@ -106,7 +106,7 @@ export default function AddGearItemModal({ listId, categoryId, onClose, onAdded 
       onClick={onClose}
     >
       <div
-        className="bg-base-100 sm:rounded-xl shadow-2xl sm:max-w-2xl w-full sm:mx-4 flex flex-col modal-mobile-h sm:h-auto sm:max-h-[90vh]"
+        className="bg-base-100 sm:rounded-xl shadow-2xl w-full sm:w-[70vw] sm:mx-4 flex flex-col modal-mobile-h sm:h-[70vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -124,7 +124,7 @@ export default function AddGearItemModal({ listId, categoryId, onClose, onAdded 
         </div>
 
         {/* Content */}
-        <div className="flex-1 sm:h-[480px] sm:flex-none overflow-hidden flex flex-col">
+        <div className="flex-1 overflow-hidden flex flex-col">
           <SmartItemSearch
             multiSelect
             showMyGear

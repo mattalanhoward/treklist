@@ -497,7 +497,7 @@ export default function GlobalItemEditModal({
     showImageBlock || showCustomImageBlock ? "max-w-4xl" : "max-w-2xl";
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-end sm:items-center justify-center z-[60]">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-end sm:items-center justify-center z-50">
       {showFullscreenSpinner ? (
         <Spinner tone="white" />
       ) : (

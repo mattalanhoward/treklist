@@ -38,7 +38,7 @@ export default function AddGearDrawer({ isOpen, onClose, onItemsChanged }) {
   return (
     <>
       {/* Mobile: full-screen overlay */}
-      <div className="sm:hidden fixed inset-0 bg-base-100 z-[70] flex flex-col">
+      <div className="sm:hidden fixed top-[var(--topbar-h,48px)] inset-x-0 bottom-0 bg-base-100 z-[70] flex flex-col">
         <div className="flex items-center justify-between px-4 py-3 border-b border-primary/10 flex-shrink-0">
           <h2 className="text-lg font-semibold text-primary">
             {t("globalItemModal.title", "Add Gear")}
@@ -64,7 +64,7 @@ export default function AddGearDrawer({ isOpen, onClose, onItemsChanged }) {
 
       {/* Desktop: slide-in drawer from right */}
       <div
-        className={`hidden sm:fixed sm:top-12 sm:bottom-0 sm:right-0 sm:flex sm:flex-col w-[420px] bg-base-100 border-l border-primary/20 shadow-xl transition-transform duration-300 ease-out z-40 ${
+        className={`hidden sm:fixed sm:top-12 sm:bottom-0 sm:right-0 sm:flex sm:flex-col w-[520px] bg-base-100 border-l border-primary/20 shadow-xl transition-transform duration-300 ease-out z-40 ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
