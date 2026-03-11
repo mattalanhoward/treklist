@@ -275,7 +275,6 @@ Given a product name query, return a JSON object with these exact fields:
 - weightGrams: always null — do not guess weights, they change between model years
 - category: exactly one of these values or null: ${CATALOG_CATEGORIES.join(", ")}
 - description: a specific, technical 1–2 sentence description mentioning key specs for the product type (string or null)
-- link: the official manufacturer product page URL — only if you are certain of the exact current URL, otherwise null
 
 DESCRIPTION — be specific, never generic:
 • Sleeping pads: R-value, insulation type, packed size
@@ -322,7 +321,6 @@ Return only valid JSON. No explanation, no markdown.`;
       return res.status(500).json({ error: "Failed to parse AI response" });
     }
 
-    const rawLink = typeof raw.link === "string" ? raw.link.trim() : null;
     const resultName = typeof raw.name === "string" ? raw.name.trim() : null;
     const resultBrand = typeof raw.brand === "string" ? raw.brand.trim() || null : null;
 
@@ -330,14 +328,10 @@ Return only valid JSON. No explanation, no markdown.`;
       return res.status(422).json({ error: "Could not extract item name from query" });
     }
 
-    // Try to get product image: scraped URL → Google Image Search → AI link og:image
+    // Try to get product image: scraped URL → Google Image Search
     let imageUrl = scrapedImageUrl;
     if (!imageUrl) {
       imageUrl = await fetchGoogleImage(resultBrand, resultName);
-    }
-    if (!imageUrl && rawLink && /^https?:\/\//i.test(rawLink)) {
-      const linkData = await fetchProductPage(rawLink);
-      if (linkData?.imageUrl) imageUrl = linkData.imageUrl;
     }
 
     const result = {
@@ -348,7 +342,7 @@ Return only valid JSON. No explanation, no markdown.`;
       category: CATALOG_CATEGORIES.includes(raw.category) ? raw.category : null,
       description:
         typeof raw.description === "string" ? raw.description.trim() || null : null,
-      link: rawLink && /^https?:\/\//i.test(rawLink) ? rawLink : null,
+      link: null,
       imageUrl,
     };
 
