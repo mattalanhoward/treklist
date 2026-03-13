@@ -406,7 +406,7 @@
     "nav": {
       "features": "Funzioni",
       "recommendedGearList": "Lista consigliata",
-      "howItWorks": "Come funziona"
+      "howItWorks": "The story"
     },
     "auth": {
       "login": "Accedi",
@@ -1006,7 +1006,6 @@
       "desktopAlt": "Vista desktop di TrekList con più categorie in colonne"
     },
     "features": {
-      "sectionTitle": "Funzioni",
       "mobile": {
         "title": "Fatto per il sentiero",
         "subtitle": "Esperienza mobile first. Aggiungi, modifica e riordina senza attriti.",
@@ -1041,13 +1040,21 @@
             "title": "Trascina tra categorie",
             "text": "Sposta gli elementi nel tuo kit mentre il piano cambia."
           },
+          "gearLibrary": {
+            "title": "La tua libreria di attrezzatura, riutilizzata per ogni viaggio",
+            "text": "Aggiungi qualcosa una volta e resta nella tua libreria personale. Usala in qualsiasi lista futura senza reinserire nulla."
+          },
+          "backgrounds": {
+            "title": "Personalizzalo",
+            "text": "Imposta una foto di sfondo o un colore per ogni lista. Tieni la pianificazione come un'avventura e meno come un foglio di calcolo."
+          },
           "share": {
             "title": "Link pubblici",
             "text": "Condividi pagine in sola lettura per forum, amici o pianificazione."
           },
-          "embed": {
-            "title": "Embed",
-            "text": "Inserisci la tua lista nei post."
+          "template": {
+            "title": "Ogni lista è un punto di partenza",
+            "text": "Guarda una lista pubblica, salvala nel tuo account e sostituisci l'attrezzatura con la tua. Il tuo sentiero, il tuo kit."
           }
         }
       }
@@ -1085,15 +1092,17 @@
       }
     },
     "howItWorks": {
-      "title": "Come funziona TrekList",
-      "paragraph": "Ho creato TrekList perché prima dei viaggi importanti mettevo tutto sul pavimento, mi venivano mille dubbi e avevo comunque la sensazione di dimenticare proprio la cosa che avrebbe contato di più. TrekList è gratuito e si sostiene con link di affiliazione facoltativi. Se acquisti tramite un link, aiuti a coprire l'hosting, a migliorare il progetto e per me significa davvero tanto.",
+      "title": "Why I built TrekList.",
+      "paragraph1": "I've been hiking long enough to know that the planning is half the adventure. Getting your pack dialed in, thinking through every piece of gear, imagining the trail ahead. There's something genuinely satisfying about it.",
+      "paragraph2": "I'm Tall Joe. I've hiked over 8,000 miles across trails in North America and Europe, and somewhere along the way I started loving the process as much as the hiking itself.",
+      "paragraph3": "The part that always gave me a little anxiety was the night before. Everything on the floor, reorganized twice, still walking out the door wondering if I'd forgotten the one thing that would matter.",
+      "paragraph4": "So I built TrekList. Something more useful than a spreadsheet, more customizable, visually appealing, and fast enough that you're not fighting the tool when you should be thinking about the trail.",
       "signature": "Tall Joe"
     },
     "finalCta": {
       "title": "Pronto a prepararti meglio per il tuo prossimo viaggio?",
       "subtitle": "Inizia una lista per il tuo prossimo trek, ottimizza il kit e esci di casa sapendo di non aver dimenticato nulla.",
-      "primary": "Inizia la tua lista gratis",
-      "secondary": "Guarda un esempio"
+      "primary": "Inizia la tua lista gratis"
     }
   },
   "catalogRequest": {

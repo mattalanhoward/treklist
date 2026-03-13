@@ -415,7 +415,7 @@
     "nav": {
       "features": "Features",
       "recommendedGearList": "Recommended Gear List",
-      "howItWorks": "How it works"
+      "howItWorks": "The story"
     },
     "auth": {
       "login": "Log in",
@@ -1009,9 +1009,9 @@
       "description": "Plan your hiking and backpacking trips with TrekList. Create gear lists, track pack weight, and share your setup with fellow trekkers. Free for hikers exploring Europe and beyond."
     },
     "hero": {
-      "title": "Pack Smart. Travel Light.",
-      "subtitle": "Create your gear list, dial in your pack, and hit the trail prepared. Designed for long-distance hikers, weekenders, and hut-to-hut trekkers exploring Europe and beyond.",
-      "cta": "Start Your List"
+      "title": "Get the pack right.",
+      "subtitle": "TrekList is the free gear planner for hikers heading into the Alps, across Spain, or anywhere really. Build your list, track your weight, check off before you go and show up ready.",
+      "cta": "Build Your Free Gear List"
     },
     "images": {
       "heroAlt": "Hiker at Cinque Torri in the Dolomites",
@@ -1020,55 +1020,62 @@
       "desktopAlt": "TrekList desktop view with multiple gear categories in columns"
     },
     "features": {
-      "sectionTitle": "Features",
       "mobile": {
-        "title": "Built for the trail",
-        "subtitle": "Mobile first UX. Add, edit, and reorder without friction.",
+        "title": "Your kit, dialed in before you leave home",
+        "subtitle": "Build and edit on the go. Track your weight. Show up ready.",
         "bullets": {
           "mobileFirst": {
-            "title": "Mobile first design",
-            "text": "Create and edit gear lists on the go."
+            "title": "Works on your phone",
+            "text": "Build and edit from the couch, the train, wherever. No desktop required."
           },
           "catalogCustom": {
-            "title": "Catalog and custom gear",
-            "text": "Import common items from the catalog, or add your own gear with weight, notes, and a link."
-          },
-          "weightTotals": {
-            "title": "Smart weight totals",
-            "text": "Base, worn, consumables in real time."
+            "title": "Pull from the catalog or add your own",
+            "text": "Common gear is already in there. Add anything custom with weight, notes, and a link."
           },
           "quickAdd": {
-            "title": "Quick add and search",
-            "text": "Find gear fast, edit from anywhere."
+            "title": "Don't see your item? Just type it.",
+            "text": "AI fills in the name, brand, category, and description. You review and add in seconds. No form slog."
+          },
+          "weightTotals": {
+            "title": "Know your pack weight before you go",
+            "text": "Base weight, worn weight, consumables tracked in real time. No spreadsheet formulas, no guesswork."
           },
           "checklist": {
-            "title": "Packing checklist",
-            "text": "One tap packing, clean PDF export."
+            "title": "Check items off as you pack",
+            "text": "One tap to mark it done. Export a clean PDF or share a read only link."
           }
         }
       },
       "desktop": {
-        "title": "Built for planning",
-        "subtitle": "Column view or list view, whichever matches how you plan.",
+        "title": "More than a spreadsheet",
+        "subtitle": "Your lists, your library, your style.",
         "bullets": {
+          "gearLibrary": {
+            "title": "Your gear library, reused across every trip",
+            "text": "Add something once and it lives in your personal library. Pull it into any future list without re-entering anything."
+          },
+          "backgrounds": {
+            "title": "Make it yours",
+            "text": "Set a background photo or color for each list. Keep planning feeling like an adventure and less like a spreadsheet."
+          },
+          "share": {
+            "title": "Share your list anywhere",
+            "text": "Public links for trail forums, Reddit, Facebook groups, or your hiking friends. No account required to view."
+          },
+          "template": {
+            "title": "Any list is a starting point",
+            "text": "View a public list, save it to your account, and swap out gear with your own. Your trail, your kit."
+          },
           "drag": {
             "title": "Drag between categories",
             "text": "Move items across your kit as your plan evolves."
-          },
-          "share": {
-            "title": "Public share links",
-            "text": "Share read only pages for forums, friends, or trip planning."
-          },
-          "embed": {
-            "title": "Embeds",
-            "text": "Drop your list into posts."
           }
         }
       }
     },
     "recommended": {
-      "title": "Recommended Gear Lists",
-      "subtitle": "Explore curated gear lists for Europe’s most iconic long distance trails. View them instantly, or customize and save them to your account.",
+      "title": "Start with one of these templates.",
+      "subtitle": "Ready made gear lists for Europe’s popular routes. Save one as your template, swap out what doesn’t fit, and you’re ready to start packing.",
       "cards": {
         "viewCta": "View Gear List",
         "ariaOpen": "Open {{title}} gear list",
@@ -1099,15 +1106,17 @@
       }
     },
     "howItWorks": {
-      "title": "How TrekList Works",
-      "paragraph": "I built TrekList because when planning for big trips I'd lay everything out, second guess myself, and still feel like I was forgetting the one gear item that would matter most. TrekList is free to use, and it's supported by optional affiliate links. If you purchase through a link, it helps cover hosting, keeps the project improving, and it genuinely means a lot to me.",
+      "title": "Why I built TrekList.",
+      "paragraph1": "I've been hiking long enough to know that the planning is half the adventure. Getting your pack dialed in, thinking through every piece of gear, imagining the trail ahead. There's something genuinely satisfying about it.",
+      "paragraph2": "I'm Tall Joe. I've hiked over 8,000 miles across trails in North America and Europe, and somewhere along the way I started loving the process as much as the hiking itself.",
+      "paragraph3": "The part that always gave me a little anxiety was the night before. Everything on the floor, reorganized twice, still walking out the door wondering if I'd forgotten the one thing that would matter.",
+      "paragraph4": "So I built TrekList. Something more useful than a spreadsheet, more customizable, visually appealing, and fast enough that you're not fighting the tool when you should be thinking about the trail.",
       "signature": "Tall Joe"
     },
     "finalCta": {
-      "title": "Ready to pack smarter for your next trip?",
-      "subtitle": "Start a gear list for your upcoming trek, fine tune your kit, and walk out the door knowing you haven't forgotten anything.",
-      "primary": "Start your free gear list",
-      "secondary": "Preview an example list"
+      "title": "Ready to sort your kit?",
+      "subtitle": "Always and completely free to use.",
+      "primary": "Build Your Free Gear List"
     }
   },
   "catalogRequest": {

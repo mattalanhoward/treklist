@@ -35,6 +35,7 @@ export default function PublicHeader({
   const { t } = useTranslation("common");
   const { language, setLanguage } = useUserSettings();
   const [langOpen, setLangOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const langRef = useRef(null);
 
   // Close dropdown on outside click
@@ -49,14 +50,27 @@ export default function PublicHeader({
     return () => document.removeEventListener("mousedown", handleClick);
   }, [langOpen]);
 
+  // Scroll-aware sticky — overlay variant only
+  useEffect(() => {
+    if (variant !== "overlay") return;
+    function handleScroll() {
+      setScrolled(window.scrollY > 80);
+    }
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [variant]);
+
   const currentLang =
     LANG_OPTIONS.find((l) => l.code === language) ?? LANG_OPTIONS[0];
 
-  const base = "w-full flex items-center justify-between px-6 py-2 z-30";
+  const base =
+    "w-full flex items-center justify-between px-6 py-2 z-50 transition-colors duration-200";
 
   const variantClasses =
     variant === "overlay"
-      ? "absolute top-0 left-0 bg-white/10 backdrop-blur-md"
+      ? scrolled
+        ? "fixed top-0 left-0 bg-white border-b border-gray-200 shadow-sm"
+        : "absolute top-0 left-0 bg-white/10 backdrop-blur-md"
       : "relative bg-base-100 border-b border-base-300 shadow-sm";
 
   return (
@@ -141,7 +155,7 @@ export default function PublicHeader({
           <button
             type="button"
             onClick={onLogin}
-            className="font-medium hover:underline"
+            className="font-medium hover:underline text-gray-800"
           >
             {t("publicHeader.auth.login")}
           </button>
