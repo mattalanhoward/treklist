@@ -406,7 +406,7 @@
     "nav": {
       "features": "Funktionen",
       "recommendedGearList": "Empfohlene Packliste",
-      "howItWorks": "So funktioniert es"
+      "howItWorks": "The story"
     },
     "auth": {
       "login": "Anmelden",
@@ -1006,7 +1006,6 @@
       "desktopAlt": "TrekList Desktopansicht mit mehreren Ausrüstungskategorien in Spalten"
     },
     "features": {
-      "sectionTitle": "Funktionen",
       "mobile": {
         "title": "Für den Trail gemacht",
         "subtitle": "Mobile-first UX. Hinzufügen, bearbeiten und sortieren ohne Reibung.",
@@ -1041,13 +1040,21 @@
             "title": "Zwischen Kategorien ziehen",
             "text": "Verschiebe Items in deinem Setup, wenn sich dein Plan verändert."
           },
+          "gearLibrary": {
+            "title": "Deine Ausrüstungsbibliothek, für jede Tour wiederverwendet",
+            "text": "Füge etwas einmal hinzu und es bleibt in deiner persönlichen Bibliothek. Füge es in jede zukünftige Liste ein, ohne es erneut eingeben zu müssen."
+          },
+          "backgrounds": {
+            "title": "Mach es zu deinem",
+            "text": "Setze ein Hintergrundbild oder eine Farbe für jede Liste. Lass die Planung wie ein Abenteuer anfühlen und weniger wie eine Tabellenkalkulation."
+          },
           "share": {
             "title": "Öffentliche Share-Links",
             "text": "Teile schreibgeschützte Seiten für Foren, Freunde oder Planung."
           },
-          "embed": {
-            "title": "Einbettungen",
-            "text": "Füge deine Liste in Beiträge ein."
+          "template": {
+            "title": "Jede Liste ist ein Ausgangspunkt",
+            "text": "Sieh dir eine öffentliche Liste an, speichere sie in deinem Konto und tausche die Ausrüstung gegen deine eigene. Dein Trail, dein Kit."
           }
         }
       }
@@ -1085,15 +1092,17 @@
       }
     },
     "howItWorks": {
-      "title": "So funktioniert TrekList",
-      "paragraph": "Ich habe TrekList gebaut, weil ich vor großen Touren alles ausgebreitet habe, mich ständig hinterfragt habe und trotzdem das Gefühl hatte, dass genau das eine wichtige Teil fehlt. TrekList ist kostenlos und wird durch optionale Affiliate-Links unterstützt. Wenn du über einen Link kaufst, hilft das beim Hosting, hält das Projekt in Bewegung und ich bin wirklich dankbar.",
+      "title": "Why I built TrekList.",
+      "paragraph1": "I've been hiking long enough to know that the planning is half the adventure. Getting your pack dialed in, thinking through every piece of gear, imagining the trail ahead. There's something genuinely satisfying about it.",
+      "paragraph2": "I'm Tall Joe. I've hiked over 8,000 miles across trails in North America and Europe, and somewhere along the way I started loving the process as much as the hiking itself.",
+      "paragraph3": "The part that always gave me a little anxiety was the night before. Everything on the floor, reorganized twice, still walking out the door wondering if I'd forgotten the one thing that would matter.",
+      "paragraph4": "So I built TrekList. Something more useful than a spreadsheet, more customizable, visually appealing, and fast enough that you're not fighting the tool when you should be thinking about the trail.",
       "signature": "Tall Joe"
     },
     "finalCta": {
       "title": "Bereit, für deine nächste Tour cleverer zu packen?",
       "subtitle": "Starte eine Packliste für deine nächste Tour, feile an deinem Setup und geh los mit dem Gefühl, nichts vergessen zu haben.",
-      "primary": "Starte deine kostenlose Packliste",
-      "secondary": "Beispiel ansehen"
+      "primary": "Starte deine kostenlose Packliste"
     }
   },
   "catalogRequest": {

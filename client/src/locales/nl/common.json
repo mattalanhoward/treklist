@@ -418,7 +418,7 @@
     "nav": {
       "features": "Functies",
       "recommendedGearList": "Aanbevolen paklijst",
-      "howItWorks": "Hoe het werkt"
+      "howItWorks": "The story"
     },
     "auth": {
       "login": "Inloggen",
@@ -1006,7 +1006,6 @@
       "desktopAlt": "TrekList desktop weergave met meerdere categorieën in kolommen"
     },
     "features": {
-      "sectionTitle": "Functies",
       "mobile": {
         "title": "Gemaakt voor het pad",
         "subtitle": "Mobiel eerst. Voeg toe, bewerk en herorden zonder gedoe.",
@@ -1041,13 +1040,21 @@
             "title": "Sleep tussen categorieën",
             "text": "Verplaats items terwijl je je uitrusting bijstelt."
           },
+          "gearLibrary": {
+            "title": "Jouw uitrustingsbibliotheek, hergebruikt voor elke trip",
+            "text": "Voeg iets één keer toe en het staat in je persoonlijke bibliotheek. Gebruik het in elke volgende lijst zonder opnieuw in te voeren."
+          },
+          "backgrounds": {
+            "title": "Maak het van jou",
+            "text": "Stel een achtergrondafbeelding of kleur in voor elke lijst. Laat het plannen aanvoelen als een avontuur en minder als een spreadsheet."
+          },
           "share": {
             "title": "Deel links",
             "text": "Deel alleen lezen pagina’s voor forums, vrienden of planning."
           },
-          "embed": {
-            "title": "Insluiten",
-            "text": "Zet je paklijst in je posts."
+          "template": {
+            "title": "Elke lijst is een beginpunt",
+            "text": "Bekijk een openbare lijst, sla hem op in je account en wissel de uitrusting in voor je eigen spullen. Jouw route, jouw kit."
           }
         }
       }
@@ -1085,15 +1092,17 @@
       }
     },
     "howItWorks": {
-      "title": "Hoe TrekList werkt",
-      "paragraph": "Ik heb TrekList gemaakt omdat ik voor grote tochten alles uitstalde, bleef twijfelen, en toch het gevoel had dat ik dat ene belangrijke ding vergat. TrekList is gratis te gebruiken, en wordt ondersteund door optionele affiliate links. Als je via een link iets koopt, helpt dat om de hosting te betalen, het project te verbeteren, en dat betekent oprecht veel voor mij.",
+      "title": "Why I built TrekList.",
+      "paragraph1": "I've been hiking long enough to know that the planning is half the adventure. Getting your pack dialed in, thinking through every piece of gear, imagining the trail ahead. There's something genuinely satisfying about it.",
+      "paragraph2": "I'm Tall Joe. I've hiked over 8,000 miles across trails in North America and Europe, and somewhere along the way I started loving the process as much as the hiking itself.",
+      "paragraph3": "The part that always gave me a little anxiety was the night before. Everything on the floor, reorganized twice, still walking out the door wondering if I'd forgotten the one thing that would matter.",
+      "paragraph4": "So I built TrekList. Something more useful than a spreadsheet, more customizable, visually appealing, and fast enough that you're not fighting the tool when you should be thinking about the trail.",
       "signature": "Tall Joe"
     },
     "finalCta": {
       "title": "Klaar om slimmer in te pakken voor je volgende trip?",
       "subtitle": "Maak een paklijst voor je volgende tocht, stel je uitrusting bij, en loop de deur uit met het gevoel dat je niets vergeten bent.",
-      "primary": "Start je gratis paklijst",
-      "secondary": "Bekijk een voorbeeldlijst"
+      "primary": "Start je gratis paklijst"
     }
   },
   "catalogRequest": {

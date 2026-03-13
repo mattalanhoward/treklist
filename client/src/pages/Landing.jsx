@@ -285,16 +285,36 @@ export default function Landing() {
         </div>
       </header>
 
+      {/* Founder / How it Works */}
+      <section id="howItWorks" className="py-16 px-6 bg-slate-50 text-center">
+        <div className="mx-auto max-w-2xl">
+          <h2 className="text-3xl font-bold mb-6">
+            {t("landing.howItWorks.title")}
+          </h2>
+          <p className="text-gray-700 text-lg leading-relaxed">
+            {t("landing.howItWorks.paragraph1")}
+          </p>
+          <p className="text-gray-700 text-lg leading-relaxed mt-4">
+            {t("landing.howItWorks.paragraph2")}
+          </p>
+          <p className="text-gray-700 text-lg leading-relaxed mt-4">
+            {t("landing.howItWorks.paragraph3")}
+          </p>
+          <p className="text-gray-700 text-lg leading-relaxed mt-4 font-medium">
+            {t("landing.howItWorks.paragraph4")}
+          </p>
+          <p className="mt-6 text-gray-500 text-sm font-medium">
+            {t("landing.howItWorks.signature")}
+          </p>
+        </div>
+      </section>
+
       {/* ===== Section A: Image (phones) -> Text ===== */}
       <section
         id="features"
         aria-labelledby="features-mobile"
         className="mx-auto max-w-7xl px-6 py-12 md:py-16 lg:py-20 pb-24 md:pb-28 lg:pb-32"
       >
-        <h2 className="text-center text-3xl font-bold mb-4">
-          {t("landing.features.sectionTitle")}
-        </h2>
-
         <div
           className="
             grid items-center gap-10 md:gap-16
@@ -344,16 +364,8 @@ export default function Landing() {
 
             <ul className="mt-8 space-y-6">
               <Bullet
-                title={t("landing.features.mobile.bullets.mobileFirst.title")}
-                text={t("landing.features.mobile.bullets.mobileFirst.text")}
-              />
-              <Bullet
                 title={t("landing.features.mobile.bullets.catalogCustom.title")}
                 text={t("landing.features.mobile.bullets.catalogCustom.text")}
-              />
-              <Bullet
-                title={t("landing.features.mobile.bullets.weightTotals.title")}
-                text={t("landing.features.mobile.bullets.weightTotals.text")}
               />
               <Bullet
                 title={t("landing.features.mobile.bullets.quickAdd.title")}
@@ -362,6 +374,14 @@ export default function Landing() {
               <Bullet
                 title={t("landing.features.mobile.bullets.checklist.title")}
                 text={t("landing.features.mobile.bullets.checklist.text")}
+              />
+              <Bullet
+                title={t("landing.features.mobile.bullets.weightTotals.title")}
+                text={t("landing.features.mobile.bullets.weightTotals.text")}
+              />
+              <Bullet
+                title={t("landing.features.mobile.bullets.mobileFirst.title")}
+                text={t("landing.features.mobile.bullets.mobileFirst.text")}
               />
             </ul>
           </div>
@@ -388,8 +408,13 @@ export default function Landing() {
 
             <ul className="mt-8 space-y-6">
               <Bullet
-                title={t("landing.features.desktop.bullets.drag.title")}
-                text={t("landing.features.desktop.bullets.drag.text")}
+                title={t("landing.features.desktop.bullets.gearLibrary.title")}
+                text={t("landing.features.desktop.bullets.gearLibrary.text")}
+                color="text-emerald-600"
+              />
+              <Bullet
+                title={t("landing.features.desktop.bullets.backgrounds.title")}
+                text={t("landing.features.desktop.bullets.backgrounds.text")}
                 color="text-emerald-600"
               />
               <Bullet
@@ -398,8 +423,13 @@ export default function Landing() {
                 color="text-emerald-600"
               />
               <Bullet
-                title={t("landing.features.desktop.bullets.embed.title")}
-                text={t("landing.features.desktop.bullets.embed.text")}
+                title={t("landing.features.desktop.bullets.template.title")}
+                text={t("landing.features.desktop.bullets.template.text")}
+                color="text-emerald-600"
+              />
+              <Bullet
+                title={t("landing.features.desktop.bullets.drag.title")}
+                text={t("landing.features.desktop.bullets.drag.text")}
                 color="text-emerald-600"
               />
             </ul>
@@ -476,31 +506,16 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* How it Works / Free + affiliate-funded */}
-      <section id="howItWorks" className="py-16 px-6 bg-slate-50 text-center">
-        <div className="mx-auto max-w-3xl">
-          <h2 className="text-3xl font-bold mb-4">
-            {t("landing.howItWorks.title")}
-          </h2>
-          <p className="text-gray-700 text-lg leading-relaxed">
-            {t("landing.howItWorks.paragraph")}
-          </p>
-          <p className="mt-4 text-gray-500 text-sm">
-            {t("landing.howItWorks.signature")}
-          </p>
-        </div>
-      </section>
-
       {/* === Final CTA Band === */}
-      {/* <section className="py-16 px-6 bg-slate-900 text-white">
+      <section className="py-16 px-6 bg-slate-900 text-white">
         <div className="mx-auto max-w-4xl text-center">
-          <h2 className="text-3xl font-bold mb-4">
+          <h2 className="text-3xl font-bold mb-3">
             {t("landing.finalCta.title")}
           </h2>
-          <p className="max-w-2xl mx-auto text-slate-200 mb-8">
+          <p className="max-w-2xl mx-auto text-slate-400 mb-8 text-sm">
             {t("landing.finalCta.subtitle")}
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <div className="flex items-center justify-center">
             <button
               type="button"
               onClick={() => openAuth("register")}
@@ -508,15 +523,9 @@ export default function Landing() {
             >
               {t("landing.finalCta.primary")}
             </button>
-            <Link
-              to={sharePath(FEATURED_TOKENS.av1) || "/gearlist/alta-via-1"}
-              className="inline-flex items-center justify-center rounded-full border border-slate-400 px-6 py-2.5 text-sm font-semibold text-slate-100 hover:bg-slate-800 hover:border-slate-300 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-200 focus-visible:ring-offset-slate-900"
-            >
-              {t("landing.finalCta.secondary")}
-            </Link>
           </div>
         </div>
-      </section> */}
+      </section>
 
       {/* Footer (public view) */}
       <FooterLegal variant="dark" containerWidth="max-w-4xl" />
