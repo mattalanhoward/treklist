@@ -2,7 +2,7 @@
 // Unified item search: My Gear + Catalog + AI fill-in fallback.
 // Drop this inside any modal/drawer shell — it manages its own search state.
 import React, { useState, useEffect, useMemo, useRef } from "react";
-import { FiSearch, FiX, FiPlus, FiLoader } from "react-icons/fi";
+import { FiSearch, FiX, FiPlus, FiLoader, FiCamera } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 import api from "../services/api";
 import { CATALOG_CATEGORIES } from "../config/catalogTaxonomy";
@@ -11,6 +11,8 @@ import { useWeightInput } from "../hooks/useWeightInput";
 import Spinner from "./ui/Spinner";
 import LinkInput from "./LinkInput";
 import CatalogItemPreviewModal from "./CatalogItemPreviewModal";
+import PhotoScanModal from "./PhotoScanModal";
+import useAuth from "../hooks/useAuth";
 
 // Short labels for horizontal chip row
 const CHIPS = [
@@ -294,6 +296,7 @@ export default function SmartItemSearch({
 }) {
   const unit = useUnit();
   const { parseInput, formatInput, unitLabel } = useWeightInput(unit);
+  const { user } = useAuth();
 
   // Search
   const [query, setQuery] = useState("");
@@ -324,6 +327,9 @@ export default function SmartItemSearch({
 
   // Submitting state for confirm button
   const [confirming, setConfirming] = useState(false);
+
+  // Photo scan modal
+  const [showScanModal, setShowScanModal] = useState(false);
 
   // Catalog item preview
   const [previewItem, setPreviewItem] = useState(null);
@@ -565,28 +571,40 @@ export default function SmartItemSearch({
     <div className="flex flex-col h-full">
       {/* Search input */}
       <div className="px-5 pt-3 pb-2 flex-shrink-0">
-        <div className="relative">
-          <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/40 text-sm" />
-          <input
-            ref={searchRef}
-            type="text"
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setCustomMode(null);
-            }}
-            placeholder="e.g. Osprey Talon 33 Men's Backpack"
-            className="w-full pl-9 pr-8 py-2 border border-primary/30 rounded-lg text-primary bg-base-100 placeholder:text-primary/40 text-sm"
-          />
-          {query && (
-            <button
-              onClick={() => {
-                setQuery("");
+        <div className="flex items-center gap-2">
+          <div className="relative flex-1">
+            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-primary/40 text-sm" />
+            <input
+              ref={searchRef}
+              type="text"
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
                 setCustomMode(null);
               }}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-primary/40 hover:text-primary/70"
+              placeholder="e.g. Osprey Talon 33 Men's Backpack"
+              className="w-full pl-9 pr-8 py-2 border border-primary/30 rounded-lg text-primary bg-base-100 placeholder:text-primary/40 text-sm"
+            />
+            {query && (
+              <button
+                onClick={() => {
+                  setQuery("");
+                  setCustomMode(null);
+                }}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-primary/40 hover:text-primary/70"
+              >
+                <FiX size={14} />
+              </button>
+            )}
+          </div>
+          {user?.isAdmin && (
+            <button
+              type="button"
+              onClick={() => setShowScanModal(true)}
+              title="Scan item with camera"
+              className="flex-shrink-0 p-2 border border-primary/30 rounded-lg text-primary/50 hover:text-secondary hover:border-secondary/50 transition-colors"
             >
-              <FiX size={14} />
+              <FiCamera size={16} />
             </button>
           )}
         </div>
@@ -765,6 +783,27 @@ export default function SmartItemSearch({
         onImport={handlePreviewImport}
         importing={previewImporting}
       />
+
+      {/* Photo scan modal */}
+      {showScanModal && (
+        <PhotoScanModal
+          onClose={() => setShowScanModal(false)}
+          onResult={(scanData) => {
+            setShowScanModal(false);
+            setCustomMode("ai");
+            setCustomForm({
+              name: scanData.name || "",
+              brand: scanData.brand || "",
+              catalogCategory: scanData.category || "",
+              itemType: scanData.itemType || "",
+              weight: scanData.weightGrams != null ? formatInput(scanData.weightGrams) : "",
+              description: scanData.description || "",
+              link: "",
+              imageUrl: scanData.imageUrl || "",
+            });
+          }}
+        />
+      )}
     </div>
   );
 }
