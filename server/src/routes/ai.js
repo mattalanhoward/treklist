@@ -421,8 +421,8 @@ DESCRIPTION rules:
 • Stoves: fuel type, boil time if known
 • Never write generic phrases like "designed for outdoor adventures"${descLangInstruction}
 
-If this is NOT outdoor gear or you cannot identify it, return: {"name":null}
-Return only valid JSON. No explanation, no markdown.`;
+CRITICAL: Your response must be ONLY a valid JSON object — no text before or after, no apology, no explanation.
+If this is NOT outdoor gear or you cannot identify it, return exactly: {"name":null}`;
 
   try {
     let messages;
@@ -477,12 +477,12 @@ Return only valid JSON. No explanation, no markdown.`;
     try {
       raw = JSON.parse(cleaned);
     } catch {
-      return res.status(500).json({ error: "Failed to parse AI response" });
+      return res.status(422).json({ error: "Item not recognized as outdoor gear" });
     }
 
     const resultName = typeof raw.name === "string" ? raw.name.trim() : null;
     if (!resultName) {
-      return res.status(422).json({ error: "Could not identify gear item" });
+      return res.status(422).json({ error: "Item not recognized as outdoor gear" });
     }
 
     const resultBrand = typeof raw.brand === "string" ? raw.brand.trim() || null : null;
