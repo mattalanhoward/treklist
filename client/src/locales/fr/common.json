@@ -353,7 +353,7 @@
     "actions": {
       "swap": "Échanger l'article"
     },
-    "newListCallout": "Add trip dates, location, and notes using the ··· menu."
+    "newListCallout": "Ajoutez les dates du voyage, le lieu et des notes via le menu ···."
   },
   "swapModal": {
     "title": "Remplacer l'article",
@@ -1224,26 +1224,26 @@
     }
   },
   "createListModal": {
-    "title": "Create a new list",
+    "title": "Créer une nouvelle liste",
     "labels": {
-      "name": "List name",
-      "tripStart": "Trip start",
-      "tripEnd": "Trip end",
-      "location": "Location",
-      "optional": "optional"
+      "name": "Nom de la liste",
+      "tripStart": "Début du voyage",
+      "tripEnd": "Fin du voyage",
+      "location": "Lieu",
+      "optional": "optionnel"
     },
     "placeholders": {
-      "name": "e.g. Tour du Mont Blanc",
-      "location": "e.g. Chamonix, France",
-      "date": "Select date"
+      "name": "ex. Tour du Mont Blanc",
+      "location": "ex. Chamonix, France",
+      "date": "Sélectionner une date"
     },
     "actions": {
-      "create": "Create list",
-      "cancel": "Cancel"
+      "create": "Créer la liste",
+      "cancel": "Annuler"
     },
     "toast": {
-      "nameRequired": "List name cannot be empty.",
-      "failed": "Could not create list. Please try again."
+      "nameRequired": "Le nom de la liste ne peut pas être vide.",
+      "failed": "Impossible de créer la liste. Veuillez réessayer."
     }
   }
 }
