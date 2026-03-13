@@ -82,7 +82,7 @@
       },
       "lists": {
         "title": "Tes listes d’équipement",
-        "body": "Chaque sortie ou sac possède sa propre liste. Tu peux en créer une nouvelle depuis la barre latérale."
+        "body": "Click + to create a new list and fill in trip details right away."
       },
       "myGear": {
         "title": "Mon équipement",
@@ -98,7 +98,7 @@
       },
       "addItems": {
         "title": "Ajouter des articles à une catégorie",
-        "body": "Clique sur + Ajouter des articles pour ajouter des éléments de “Mon équipement” à une catégorie."
+        "body": "Click + Add Items to add gear from your inventory, search the catalog, or create a new item on the spot."
       },
       "preferences": {
         "title": "Préférences de la liste",
@@ -109,6 +109,15 @@
         "body": "Les paramètres globaux du compte sont accessibles via le menu de la barre supérieure."
       }
     }
+  },
+  "listsOverview": {
+    "title": "Listes d’équipement",
+    "newList": "Nouvelle liste",
+    "checklist": "Checklist",
+    "details": "Détails",
+    "empty": "Aucune liste d’équipement. Créez-en une pour commencer.",
+    "itemCount": "{{count}} articles",
+    "itemCount_one": "{{count}} article"
   },
   "sidebar": {
     "gearListsTitle": "Listes d’équipement",
@@ -343,7 +352,8 @@
     },
     "actions": {
       "swap": "Échanger l'article"
-    }
+    },
+    "newListCallout": "Add trip dates, location, and notes using the ··· menu."
   },
   "swapModal": {
     "title": "Remplacer l'article",
@@ -1211,6 +1221,29 @@
     },
     "toasts": {
       "toggleFailed": "Échec de la mise à jour de la liste de souhaits"
+    }
+  },
+  "createListModal": {
+    "title": "Create a new list",
+    "labels": {
+      "name": "List name",
+      "tripStart": "Trip start",
+      "tripEnd": "Trip end",
+      "location": "Location",
+      "optional": "optional"
+    },
+    "placeholders": {
+      "name": "e.g. Tour du Mont Blanc",
+      "location": "e.g. Chamonix, France",
+      "date": "Select date"
+    },
+    "actions": {
+      "create": "Create list",
+      "cancel": "Cancel"
+    },
+    "toast": {
+      "nameRequired": "List name cannot be empty.",
+      "failed": "Could not create list. Please try again."
     }
   }
 }

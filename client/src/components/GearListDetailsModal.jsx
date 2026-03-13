@@ -150,6 +150,7 @@ export default function GearListDetailsModal({
         {/* Scrollable body */}
         <div className="overflow-y-auto flex-1 px-4 sm:px-6 py-4">
           {/* Weight Breakdown */}
+          {breakdowns && (
           <div className="flex flex-col items-center mb-4 pb-4 border-b border-neutral/40">
             <label className="block font-medium text-primary mb-3 text-sm">
               {t("gearListDetailsModal.labels.weightBreakdown")}
@@ -177,6 +178,7 @@ export default function GearListDetailsModal({
               />
             </div>
           </div>
+          )}
 
           {/* Fields grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">

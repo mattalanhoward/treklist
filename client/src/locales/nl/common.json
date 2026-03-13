@@ -82,7 +82,7 @@
       },
       "lists": {
         "title": "Je paklijsten",
-        "body": "Elke trip of rugzak heeft zijn eigen paklijst. Je kunt een nieuwe lijst maken via de zijbalk."
+        "body": "Click + to create a new list and fill in trip details right away."
       },
       "myGear": {
         "title": "Mijn uitrusting",
@@ -98,7 +98,7 @@
       },
       "addItems": {
         "title": "Items toevoegen aan een categorie",
-        "body": "Klik op + Items toevoegen om items uit “Mijn uitrusting” aan een categorie toe te voegen."
+        "body": "Click + Add Items to add gear from your inventory, search the catalog, or create a new item on the spot."
       },
       "preferences": {
         "title": "Paklijst-instellingen",
@@ -109,6 +109,15 @@
         "body": "Algemene accountinstellingen vind je in het menu in de bovenbalk."
       }
     }
+  },
+  "listsOverview": {
+    "title": "Paklijsten",
+    "newList": "Nieuwe lijst",
+    "checklist": "Checklist",
+    "details": "Details",
+    "empty": "Nog geen paklijsten. Maak er een om te beginnen.",
+    "itemCount": "{{count}} items",
+    "itemCount_one": "{{count}} item"
   },
   "sidebar": {
     "gearListsTitle": "Paklijsten",
@@ -343,7 +352,8 @@
     },
     "actions": {
       "swap": "Artikel wisselen"
-    }
+    },
+    "newListCallout": "Add trip dates, location, and notes using the ··· menu."
   },
   "swapModal": {
     "title": "Item vervangen",
@@ -1211,6 +1221,29 @@
     },
     "toasts": {
       "toggleFailed": "Kon verlanglijst niet bijwerken"
+    }
+  },
+  "createListModal": {
+    "title": "Create a new list",
+    "labels": {
+      "name": "List name",
+      "tripStart": "Trip start",
+      "tripEnd": "Trip end",
+      "location": "Location",
+      "optional": "optional"
+    },
+    "placeholders": {
+      "name": "e.g. Tour du Mont Blanc",
+      "location": "e.g. Chamonix, France",
+      "date": "Select date"
+    },
+    "actions": {
+      "create": "Create list",
+      "cancel": "Cancel"
+    },
+    "toast": {
+      "nameRequired": "List name cannot be empty.",
+      "failed": "Could not create list. Please try again."
     }
   }
 }

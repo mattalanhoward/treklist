@@ -1,11 +1,13 @@
 // src/components/Sidebar.jsx
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import api from "../services/api";
 import { FaGripVertical } from "react-icons/fa";
-import { FiChevronLeft, FiChevronRight, FiPlus, FiChevronDown, FiChevronUp } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiPlus, FiChevronDown, FiChevronUp, FiLayers, FiSettings } from "react-icons/fi";
+import { BsBackpack4 } from "react-icons/bs";
 import { useDraggable } from "@dnd-kit/core";
 import GlobalItemModal from "./GlobalItemModal";
 import GlobalItemEditModal from "./GlobalItemEditModal";
+import CreateListModal from "./CreateListModal";
 import { toast } from "react-hot-toast";
 import { useUserSettings } from "../contexts/UserSettings";
 import { useTranslation } from "react-i18next";
@@ -59,9 +61,7 @@ export default function Sidebar({
 }) {
   const { t } = useTranslation("common");
 
-  const [newListTitle, setNewListTitle] = useState("");
-  const newListInputRef = useRef(null);
-
+  const [showCreateListModal, setShowCreateListModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingGlobalItem, setEditingGlobalItem] = useState(null);
 
@@ -72,21 +72,6 @@ export default function Sidebar({
     sidebarMyGearCollapsed,
     setSidebarMyGearCollapsed,
   } = useUserSettings();
-
-  // Autofocus "New list" input when Gear Lists section opens (desktop only)
-  useEffect(() => {
-    if (collapsed) return;
-    if (sidebarGearListsCollapsed) return;
-    if (isMobile()) return;
-
-    // Defer to next tick so the input is mounted/visible
-    const id = window.setTimeout(() => {
-      newListInputRef.current?.focus();
-      newListInputRef.current?.select?.();
-    }, 0);
-
-    return () => window.clearTimeout(id);
-  }, [collapsed, sidebarGearListsCollapsed]);
 
   // global gear items & debounced search
   const [items, setItems] = useState([]);
@@ -146,25 +131,6 @@ export default function Sidebar({
   }
 
   // === Gear‐list CRUD ===
-
-  const createList = async () => {
-    const title = newListTitle.trim();
-    if (!title) return toast.error(t("sidebar.listNameEmpty"));
-
-    try {
-      const { data } = await api.post("/dashboard", { title, region });
-      setNewListTitle("");
-      await fetchLists();
-      localStorage.setItem("lastListId", data.list._id);
-      onSelectList(data.list._id);
-      // toast.success(t("sidebar.listCreated"));
-    } catch (err) {
-      console.error("Error creating list:", err);
-      toast.error(
-        err.response?.data?.message || t("sidebar.couldNotCreateList"),
-      );
-    }
-  };
 
   // === gear item actions ===
 
@@ -247,7 +213,7 @@ export default function Sidebar({
     });
   }, [items, searchQuery]);
 
-  const widthClass = collapsed ? "w-0" : "w-full sm:w-80";
+  const widthClass = collapsed ? "w-0 sm:w-12" : "w-full sm:w-80";
   const overlay = !collapsed
     ? // on mobile: take it out of the flow and cover
       "fixed top-12 left-0 right-0 bottom-0 z-[40] \
@@ -266,32 +232,79 @@ export default function Sidebar({
           relative
           bg-neutral
           ${widthClass}
-          ${collapsed ? "" : "min-w-[1.25rem]"}
           transition-[width] duration-300 ease-in-out
         `}
       >
-        {/* collapse toggle */}
+        {/* Circular edge toggle — desktop only */}
         <button
-          onClick={() => setCollapsed((c) => {
-            // When expanding on mobile, signal the gear drawer to close
-            if (c && window.innerWidth < 1024) {
+          onClick={() => {
+            if (collapsed) {
               window.dispatchEvent(new CustomEvent("sidebar:expanded"));
+              setCollapsed(false);
+            } else {
+              setCollapsed(true);
             }
-            return !c;
-          })}
-          className={
-            `absolute z-50 top-2 text-primaryAlt hover:text-primaryAlt/80 p-1 transform ` +
-            (collapsed ? "right-[-1rem] translate-x-full" : "right-4")
-          }
+          }}
+          className="hidden sm:flex absolute z-50 top-14 right-0 translate-x-1/2 w-5 h-5 rounded-full bg-neutral border border-base-100 shadow-sm items-center justify-center text-primaryAlt hover:text-primary hover:border-primary/40 transition-colors"
+          title={collapsed ? "Open sidebar" : "Collapse sidebar"}
         >
-          {collapsed ? <FiChevronRight /> : <FiChevronLeft />}
+          {collapsed ? (
+            <FiChevronRight className="w-3 h-3" />
+          ) : (
+            <FiChevronLeft className="w-3 h-3" />
+          )}
         </button>
+
+        {/* Icon rail — desktop only, shown when collapsed */}
+        {collapsed && (
+          <div className="hidden sm:flex flex-col items-center pt-3 gap-1 overflow-hidden">
+            <button
+              type="button"
+              title={t("sidebar.gearListsTitle")}
+              onClick={() => {
+                setSidebarGearListsCollapsed(false);
+                window.dispatchEvent(new CustomEvent("sidebar:expanded"));
+                setCollapsed(false);
+                onShowGearPane();
+              }}
+              className="w-9 h-9 flex items-center justify-center rounded-lg text-primaryAlt hover:text-primary hover:bg-primary/5 transition-colors"
+            >
+              <FiLayers className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              title={t("sidebar.myGearTitle")}
+              onClick={() => {
+                setSidebarMyGearCollapsed(false);
+                window.dispatchEvent(new CustomEvent("sidebar:expanded"));
+                setCollapsed(false);
+                onOpenMyGear();
+              }}
+              className="w-9 h-9 flex items-center justify-center rounded-lg text-primaryAlt hover:text-primary hover:bg-primary/5 transition-colors"
+            >
+              <BsBackpack4 className="w-4 h-4" />
+            </button>
+            {isAdmin && (
+              <button
+                type="button"
+                title="Admin"
+                onClick={() => {
+                  setCollapsed(false);
+                  onOpenAdmin();
+                }}
+                className="w-9 h-9 flex items-center justify-center rounded-lg text-primaryAlt hover:text-primary hover:bg-primary/5 transition-colors"
+              >
+                <FiSettings className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+        )}
 
         {!collapsed && (
           <div className="h-full flex flex-col overflow-hidden">
-            {/* Admin header pinned at the top */}
+            {/* Top bar — Admin link for admins only */}
             {isAdmin && (
-              <section className="px-4 py-2 border-b border-base-100">
+              <section className="flex items-center px-4 border-b border-base-100 flex-shrink-0 h-10">
                 <button
                   type="button"
                   onClick={() => {
@@ -312,7 +325,6 @@ export default function Sidebar({
               }
             >
               <div
-                data-tour="sidebar-create-list"
                 className="flex items-center text-primaryAlt rounded-lg p-1 -m-1"
               >
                 <button
@@ -337,34 +349,20 @@ export default function Sidebar({
                     <FiChevronUp className="text-xs" />
                   )}
                 </button>
+                <div className="flex-1" />
+                <button
+                  data-tour="sidebar-create-list"
+                  type="button"
+                  aria-label="Create new list"
+                  onClick={() => setShowCreateListModal(true)}
+                  className="p-1 text-primaryAlt hover:text-primaryAlt/80"
+                >
+                  <FiPlus />
+                </button>
               </div>
               {!sidebarGearListsCollapsed && (
                 <>
-                  <div className="flex mb-3">
-                    <input
-                    ref={newListInputRef}
-                      className="flex-1 rounded-lg mt-2 py-1 px-2 bg-base-100 text-primary border-primary"
-                      placeholder={t("sidebar.newListPlaceholder")}
-                      value={newListTitle}
-                      onChange={(e) => setNewListTitle(e.target.value)}
-                      onKeyDown={(e) => {
-     if (e.key === "Enter") {
-       e.preventDefault();
-       if (newListTitle.trim()) createList();
-     } else if (e.key === "Escape") {
-       setNewListTitle("");
-     }
-   }}
-                    />
-                    <button
-                      aria-label="Create list"
-                      onClick={createList}
-                      className="ml-2 p-1 text-primaryAlt hover:text-primaryAlt/80"
-                    >
-                      <FiPlus />
-                    </button>
-                  </div>
-                  <ul className="overflow-y-auto flex-1 space-y-1 text-secondaryAlt">
+                  <ul className="overflow-y-auto flex-1 space-y-1 text-secondaryAlt mt-2">
                     {sortedLists.map((l) => (
                       <li key={l._id} className="flex items-center">
                         <button
@@ -485,6 +483,17 @@ export default function Sidebar({
                 />
               )}
             </section>
+
+            <CreateListModal
+              isOpen={showCreateListModal}
+              onClose={() => setShowCreateListModal(false)}
+              onCreated={(id) => {
+                setShowCreateListModal(false);
+                fetchLists();
+                localStorage.setItem("lastListId", id);
+                onSelectList(id);
+              }}
+            />
             {/* Bottom actions group: Forum (future) Wishlist + Admin */}
             {/* <div className="mt-auto">
               <section className="px-4 py-2 border-t border-base-100">

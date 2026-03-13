@@ -4,7 +4,7 @@ import TopBar from "../components/TopBar"; // Standard TopBar integrated
 import { useUserSettings } from "../contexts/UserSettings";
 
 import { FaTshirt, FaUtensils } from "react-icons/fa";
-import { FiPrinter, FiRotateCcw, FiChevronLeft } from "react-icons/fi";
+import { FiPrinter, FiRotateCcw } from "react-icons/fi";
 import api from "../services/api";
 import useAuth from "../hooks/useAuth";
 import useChecklistProgress from "../hooks/useChecklistProgress";
@@ -135,10 +135,17 @@ export default function ChecklistView() {
 
         {/* NEW ACTION BAR PLACEHOLDER for loading state (max-w-3xl) */}
         <div className="border-b bg-base-100 print:hidden sticky top-[52px] z-50">
-          <div className="mx-auto max-w-3xl px-4 py-3 flex items-center justify-between gap-4">
-            <div className="h-5 w-20 bg-base-200 rounded animate-pulse" />
-            <div className="flex items-center gap-3">
-              <div className="h-8 w-28 bg-base-200 rounded animate-pulse" />
+          <div className="max-w-5xl mx-auto px-4 py-2 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-1.5">
+              <div className="h-4 w-16 bg-base-200 rounded animate-pulse" />
+              <div className="h-4 w-2 bg-base-200 rounded animate-pulse" />
+              <div className="h-4 w-32 bg-base-200 rounded animate-pulse" />
+              <div className="h-4 w-2 bg-base-200 rounded animate-pulse" />
+              <div className="h-4 w-16 bg-base-200 rounded animate-pulse" />
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="h-4 w-14 bg-base-200 rounded animate-pulse" />
+              <div className="h-4 w-12 bg-base-200 rounded animate-pulse" />
             </div>
           </div>
         </div>
@@ -195,31 +202,43 @@ export default function ChecklistView() {
 
       <div className="border-b bg-base-100 print:hidden sticky top-[48px] z-50">
         <div className="max-w-5xl mx-auto px-4 py-2 flex items-center justify-between gap-4">
-          <button
-            // Navigation remains to the specific list dashboard view
-            onClick={() => navigate(`/dashboard/${listId}`)}
-            className="flex items-center gap-2 px-2 py-1 bg-white text-secondary rounded hover:bg-secondary-700 text-sm sm:text-base"
-            aria-label={t("checklistView.a11y.backToDashboard")}
-          >
-            <FiChevronLeft /> {t("checklistView.buttons.backToDashboard")}
-          </button>
+          {/* Breadcrumb */}
+          <nav className="flex items-center gap-1.5 text-sm min-w-0">
+            <button
+              type="button"
+              onClick={() => navigate("/dashboard", { state: { pane: "lists" } })}
+              className="text-primaryAlt hover:text-primary hover:underline transition-colors flex-shrink-0"
+            >
+              {t("listsOverview.title")}
+            </button>
+            <span className="text-primaryAlt/60 flex-shrink-0">/</span>
+            <button
+              type="button"
+              onClick={() => navigate(`/dashboard/${listId}`)}
+              className="text-primaryAlt hover:text-primary hover:underline transition-colors truncate"
+            >
+              {tripMeta.title}
+            </button>
+            <span className="text-primaryAlt/60 flex-shrink-0">/</span>
+            <span className="text-primary flex-shrink-0">{t("checklistView.titleSuffix")}</span>
+          </nav>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4 flex-shrink-0">
             <button
               type="button"
               onClick={reset}
-              className="flex items-center gap-2 px-2 py-1 bg-secondary text-white rounded hover:bg-secondary-700 text-sm sm:text-base"
+              className="flex items-center gap-1.5 text-sm text-primaryAlt hover:text-primary transition-colors"
               aria-label={t("checklistView.a11y.reset")}
             >
-              <FiRotateCcw /> {t("checklistView.buttons.reset")}{" "}
+              <FiRotateCcw className="w-4 h-4" /> {t("checklistView.buttons.reset")}
             </button>
             <button
               type="button"
               onClick={() => window.print()}
-              className="flex items-center gap-2 px-2 py-1 bg-white text-secondary rounded hover:bg-secondary-700 text-sm sm:text-base"
+              className="flex items-center gap-1.5 text-sm text-primaryAlt hover:text-primary transition-colors"
               aria-label={t("checklistView.a11y.print")}
             >
-              <FiPrinter /> {t("checklistView.buttons.print")}{" "}
+              <FiPrinter className="w-4 h-4" /> {t("checklistView.buttons.print")}
             </button>
           </div>
         </div>
