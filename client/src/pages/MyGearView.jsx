@@ -714,7 +714,7 @@ export default function MyGearView({ collapsed }) {
                 {groupedItems.length > 1 && (
                   <div className="text-sm font-semibold text-primary/50 uppercase tracking-wider px-1 mb-2">{category}</div>
                 )}
-                <div className={`grid gap-3 ${showDrawer ? "grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6" : "grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 2xl:grid-cols-8"}`}>
+                <div className={`grid gap-3 ${showDrawer ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6" : "grid-cols-1 sm:grid-cols-4 lg:grid-cols-6 2xl:grid-cols-8"}`}>
                   {groupItems.map((item) => (
                     <MyGearTileCard
                       key={item._id}

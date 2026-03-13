@@ -1,5 +1,4 @@
 // client/src/components/MyGearTileCard.jsx
-import React from "react";
 import { FiTrash2, FiExternalLink, FiCheckSquare, FiSquare, FiStar } from "react-icons/fi";
 import { FaStar } from "react-icons/fa";
 import { tItemType } from "../config/catalogTaxonomy";
@@ -75,9 +74,29 @@ export default function MyGearTileCard({
     }
   };
 
+  const handleContentClick = (e) => {
+    if (selectionMode) {
+      e.stopPropagation();
+      onToggleSelect?.();
+    } else {
+      onViewEdit();
+    }
+  };
+
+  const handleContentKeyDown = (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      if (selectionMode) {
+        onToggleSelect?.();
+      } else {
+        onViewEdit();
+      }
+    }
+  };
+
   return (
     <div
-      className={`bg-base-100 rounded shadow border transition-colors overflow-hidden ${
+      className={`bg-base-100 rounded shadow border transition-colors overflow-hidden flex flex-row sm:flex-col ${
         selectionMode ? "cursor-pointer" : ""
       } ${
         isSelected
@@ -86,145 +105,148 @@ export default function MyGearTileCard({
       }`}
       onClick={handleCardClick}
     >
-      {/* Top bar: ItemType left, checkbox/cart+delete button right */}
-      <div className="flex items-center justify-between px-3 py-2 border-b border-primary/10">
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onViewEdit();
-          }}
-          style={{ fontSize: 14 }}
-          className="font-semibold text-primary truncate hover:text-primary/80"
-        >
-          {tItemType(t, item.itemType) || "—"}
-        </button>
-
-        {selectionMode ? (
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleSelect?.();
-            }}
-            className="p-1 text-secondary"
-          >
-            {isSelected ? (
-              <FiCheckSquare className="text-base" />
-            ) : (
-              <FiSquare className="text-base text-primary/40" />
-            )}
-          </button>
-        ) : (
-          <div className="flex items-center gap-1">
-            {onToggleWishlist && (
-              <button
-                type="button"
-                onClick={(e) => { e.stopPropagation(); onToggleWishlist(); }}
-                className="p-1 rounded"
-                title={item.status === "wishlisted" ? t("wishlist.actions.markOwned", "Mark as owned") : t("wishlist.actions.addToWishlist", "Add to wishlist")}
-              >
-                {item.status === "wishlisted"
-                  ? <FaStar className="text-sm text-amber-400" />
-                  : <FiStar className="text-sm text-primary/40 hover:text-amber-400" />}
-              </button>
-            )}
-            {merchantUrl && (
-              <a
-                href={merchantUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="p-1 text-primary/60 hover:text-primary rounded"
-                title={t("myGear.actions.openLink", "Open product link")}
-              >
-                <FiExternalLink className="w-3 h-3" />
-              </a>
-            )}
-            <button
-              type="button"
-              disabled={actionLoading === item._id}
-              onClick={handleDelete}
-              className="p-1 text-primary/60 hover:text-primary rounded"
-              title={t("myGear.actions.delete", "Delete")}
-            >
-              <FiTrash2 className="text-sm" />
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Image area - clickable to edit (disabled in selection mode) */}
-      {/* Uses <div> instead of <button> because iOS Safari ignores aspect-ratio on buttons */}
+      {/* Image area */}
       <div
         role="button"
         tabIndex={0}
-        onClick={(e) => {
-          if (selectionMode) {
-            e.stopPropagation();
-            onToggleSelect?.();
-          } else {
-            onViewEdit();
-          }
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            if (selectionMode) {
-              onToggleSelect?.();
-            } else {
-              onViewEdit();
-            }
-          }
-        }}
-        className="relative bg-neutral/10 aspect-[4/3] flex items-center justify-center w-full cursor-pointer hover:bg-neutral/20 transition-colors"
+        onClick={handleContentClick}
+        onKeyDown={handleContentKeyDown}
+        className="relative bg-neutral/10 w-24 flex-shrink-0 sm:w-full sm:flex-none sm:aspect-[4/3] sm:overflow-hidden flex items-center justify-center cursor-pointer hover:bg-neutral/20 transition-colors"
       >
         {imageUrl ? (
           <img
             src={imageUrl}
             alt={item.name || "Gear item"}
-            className="max-h-full max-w-full object-contain p-3"
+            className="w-full h-full object-cover sm:object-contain sm:p-3 sm:max-h-full sm:max-w-full"
             loading="lazy"
           />
         ) : (
-          <div className="text-primary/40 text-sm px-4 text-center">
+          <div className="text-primary/40 text-xs px-2 text-center">
             {t("myGear.tiles.noImage", "No image")}
           </div>
         )}
 
+        {/* Shared list badge: desktop only (on mobile it's in the content area) */}
         {item.importedFromShare && (
-          <div className="absolute top-2 right-2 text-[10px] px-1.5 py-0.5 rounded bg-amber-100/90 border border-amber-200 text-amber-700 pointer-events-none">
+          <div className="hidden sm:block absolute top-1 right-1 text-[9px] px-1 py-0.5 rounded bg-amber-100/90 border border-amber-200 text-amber-700 pointer-events-none leading-tight">
             {t("myGear.badge.fromSharedList", "Shared list")}
           </div>
         )}
+
+        {/* Weight badge: desktop only (on mobile it's in the content area) */}
         {item.weight ? (
-          <div className="absolute bottom-2 right-2 text-xs px-2 py-1 rounded bg-base-100/90 border border-primary/10 text-primary tabular-nums">
+          <div className="hidden sm:block absolute bottom-2 right-2 text-xs px-2 py-1 rounded bg-base-100/90 border border-primary/10 text-primary tabular-nums">
             {formatWeight(item.weight)} {unitLabel}
           </div>
         ) : null}
       </div>
 
-      {/* Details - clickable to open edit */}
-      <button
-        type="button"
-        onClick={(e) => {
-          if (selectionMode) {
-            e.stopPropagation();
-            onToggleSelect?.();
-          } else {
-            onViewEdit();
-          }
-        }}
-        className="px-3 py-3 space-y-1 w-full text-left hover:bg-neutral/5 transition-colors"
-      >
-        {item.brand ? (
-          <div className="text-sm text-primary/70 truncate">{item.brand}</div>
-        ) : null}
+      {/* Content area (right on mobile, bottom on sm+) */}
+      <div className="flex-1 flex flex-col min-w-0 relative">
+        {/* Top bar: ItemType left, checkbox/cart+delete button right */}
+        <div className="flex items-center justify-between px-3 py-2 border-b border-primary/10">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onViewEdit();
+            }}
+            style={{ fontSize: 14 }}
+            className="font-semibold text-primary truncate hover:text-primary/80"
+          >
+            {tItemType(t, item.itemType) || "—"}
+          </button>
 
-        <div style={{ fontSize: 14 }} className="font-semibold text-primary leading-snug line-clamp-2">
-          {item.name}
+          {selectionMode ? (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleSelect?.();
+              }}
+              className="p-1 text-secondary"
+            >
+              {isSelected ? (
+                <FiCheckSquare className="text-base" />
+              ) : (
+                <FiSquare className="text-base text-primary/40" />
+              )}
+            </button>
+          ) : (
+            <div className="flex items-center gap-1 flex-shrink-0">
+              {onToggleWishlist && (
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); onToggleWishlist(); }}
+                  className="p-1 rounded"
+                  title={item.status === "wishlisted" ? t("wishlist.actions.markOwned", "Mark as owned") : t("wishlist.actions.addToWishlist", "Add to wishlist")}
+                >
+                  {item.status === "wishlisted"
+                    ? <FaStar className="text-sm text-amber-400" />
+                    : <FiStar className="text-sm text-primary/40 hover:text-amber-400" />}
+                </button>
+              )}
+              {merchantUrl && (
+                <a
+                  href={merchantUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="p-1 text-primary/60 hover:text-primary rounded"
+                  title={t("myGear.actions.openLink", "Open product link")}
+                >
+                  <FiExternalLink className="w-3 h-3" />
+                </a>
+              )}
+              <button
+                type="button"
+                disabled={actionLoading === item._id}
+                onClick={handleDelete}
+                className="p-1 text-primary/60 hover:text-primary rounded"
+                title={t("myGear.actions.delete", "Delete")}
+              >
+                <FiTrash2 className="text-sm" />
+              </button>
+            </div>
+          )}
         </div>
-      </button>
+
+        {/* Details - clickable to open edit */}
+        <button
+          type="button"
+          onClick={(e) => {
+            if (selectionMode) {
+              e.stopPropagation();
+              onToggleSelect?.();
+            } else {
+              onViewEdit();
+            }
+          }}
+          className="px-3 py-2 flex-1 sm:flex-none sm:h-20 flex flex-col justify-center space-y-0.5 w-full text-left hover:bg-neutral/5 transition-colors"
+        >
+          {item.brand ? (
+            <div className="text-sm text-primary/70 truncate">{item.brand}</div>
+          ) : null}
+
+          <div style={{ fontSize: 14 }} className="font-semibold text-primary leading-snug line-clamp-2">
+            {item.name}
+          </div>
+
+          {/* Weight badge: mobile only */}
+          {item.weight ? (
+            <div className="sm:hidden text-xs text-primary/50 tabular-nums pt-0.5">
+              {formatWeight(item.weight)} {unitLabel}
+            </div>
+          ) : null}
+        </button>
+
+        {/* Shared list badge: mobile only, bottom-right of content area */}
+        {item.importedFromShare && (
+          <div className="sm:hidden absolute bottom-2 right-2 text-[9px] px-1 py-0.5 rounded bg-amber-100/90 border border-amber-200 text-amber-700 pointer-events-none leading-tight">
+            {t("myGear.badge.fromSharedList", "Shared list")}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
