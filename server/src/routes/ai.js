@@ -245,7 +245,34 @@ function formatPageDataForPrompt(data) {
   return lines.join("\n");
 }
 
-// ── Route ─────────────────────────────────────────────────────────────────────
+// ── UPC barcode lookup ─────────────────────────────────────────────────────────
+
+async function lookupUPC(barcode) {
+  try {
+    const res = await fetch(
+      `https://api.upcitemdb.com/prod/trial/lookup?upc=${encodeURIComponent(barcode)}`,
+      {
+        signal: AbortSignal.timeout(6000),
+        headers: { Accept: "application/json", "User-Agent": "Treklist/1.0" },
+      }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    const item = data.items?.[0];
+    if (!item) return null;
+    return {
+      title: item.title || null,
+      brand: item.brand || null,
+      description: item.description || null,
+      imageUrl: item.images?.[0] || null,
+    };
+  } catch (err) {
+    console.warn("[scan-item] UPC lookup failed:", err.message);
+    return null;
+  }
+}
+
+// ── Routes ─────────────────────────────────────────────────────────────────────
 
 router.post("/fill-item", async (req, res) => {
   const { query } = req.body;
@@ -349,6 +376,136 @@ Return only valid JSON. No explanation, no markdown.`;
     res.json(result);
   } catch (err) {
     console.error("[Anthropic] fill-item failed:", err.message);
+    res.status(500).json({ error: "AI request failed" });
+  }
+});
+
+// ── POST /scan-item ────────────────────────────────────────────────────────────
+// Body: { barcode?: string, image?: string (data URL) }
+// Returns the same shape as /fill-item, plus scanMethod and barcodeValue
+
+router.post("/scan-item", async (req, res) => {
+  const { barcode, image } = req.body;
+  if (!barcode && !image) {
+    return res.status(400).json({ error: "barcode or image required" });
+  }
+
+  const anthropic = getClient();
+  if (!anthropic) {
+    return res.status(503).json({ error: "AI not available — ANTHROPIC_API_KEY not set" });
+  }
+
+  const userRecord = await User.findById(req.userId).select("language").lean();
+  const userLang = userRecord?.language || "en";
+  const languageName = LANGUAGE_NAMES[userLang] || "English";
+  const descLangInstruction =
+    userLang === "en"
+      ? ""
+      : `\nWrite the \`description\` field in ${languageName}. All other fields stay in standard format.`;
+
+  const systemPrompt = `You are an expert outdoor gear product database with detailed knowledge of hiking, backpacking, camping, and outdoor gear.
+
+Given product information (text or image), return a JSON object with these exact fields:
+- name: model name without brand prefix (string, required)
+- brand: manufacturer name with correct capitalization (string or null)
+- itemType: specific product type in plain English, e.g. "Canister Stove", "Frameless Backpack", "Inflatable Sleeping Pad" (string or null)
+- weightGrams: weight in grams as an integer if clearly known, otherwise null — do not guess
+- category: exactly one of these values or null: ${CATALOG_CATEGORIES.join(", ")}
+- description: specific 1–2 sentence technical description mentioning key specs (string or null)
+
+DESCRIPTION rules:
+• Sleeping pads: R-value, insulation type, packed size
+• Sleeping bags: temperature rating, fill type, fill power if known
+• Backpacks: volume in liters, frame type
+• Tents/shelters: capacity, pole material, freestanding or not
+• Stoves: fuel type, boil time if known
+• Never write generic phrases like "designed for outdoor adventures"${descLangInstruction}
+
+If this is NOT outdoor gear or you cannot identify it, return: {"name":null}
+Return only valid JSON. No explanation, no markdown.`;
+
+  try {
+    let messages;
+    let barcodeProductData = null;
+
+    if (barcode) {
+      barcodeProductData = await lookupUPC(barcode);
+      if (barcodeProductData) {
+        const lines = [
+          barcodeProductData.title && `Product title: ${barcodeProductData.title}`,
+          barcodeProductData.brand && `Brand: ${barcodeProductData.brand}`,
+          barcodeProductData.description && `Description: ${barcodeProductData.description}`,
+        ].filter(Boolean);
+        messages = [{ role: "user", content: lines.join("\n") }];
+      } else {
+        messages = [{
+          role: "user",
+          content: `Product barcode: ${barcode}\nThis barcode was not found in product databases. Return {"name":null} if you cannot identify it.`,
+        }];
+      }
+    } else {
+      const base64Match = image.match(/^data:([^;]+);base64,(.+)$/s);
+      if (!base64Match) {
+        return res.status(400).json({ error: "Invalid image format" });
+      }
+      const mediaType = base64Match[1];
+      const base64Data = base64Match[2];
+      if (!["image/jpeg", "image/png", "image/webp", "image/gif"].includes(mediaType)) {
+        return res.status(400).json({ error: "Unsupported image type. Use JPEG, PNG, or WebP." });
+      }
+      messages = [{
+        role: "user",
+        content: [
+          { type: "image", source: { type: "base64", media_type: mediaType, data: base64Data } },
+          { type: "text", text: "Identify this outdoor gear item. Look for visible brand logos, model numbers, tags, labels, or distinguishing physical features. Return the JSON as specified." },
+        ],
+      }];
+    }
+
+    const message = await anthropic.messages.create({
+      model: "claude-haiku-4-5-20251001",
+      max_tokens: 400,
+      system: systemPrompt,
+      messages,
+    });
+
+    const text = message.content[0]?.text?.trim();
+    if (!text) return res.status(500).json({ error: "Empty AI response" });
+
+    const cleaned = text.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim();
+    let raw;
+    try {
+      raw = JSON.parse(cleaned);
+    } catch {
+      return res.status(500).json({ error: "Failed to parse AI response" });
+    }
+
+    const resultName = typeof raw.name === "string" ? raw.name.trim() : null;
+    if (!resultName) {
+      return res.status(422).json({ error: "Could not identify gear item" });
+    }
+
+    const resultBrand = typeof raw.brand === "string" ? raw.brand.trim() || null : null;
+
+    let imageUrl = barcodeProductData?.imageUrl || null;
+    if (!imageUrl) {
+      imageUrl = await fetchGoogleImage(resultBrand, resultName);
+    }
+
+    res.json({
+      name: resultName,
+      brand: resultBrand,
+      itemType: typeof raw.itemType === "string" ? raw.itemType.trim() || null : null,
+      weightGrams: typeof raw.weightGrams === "number" ? Math.round(raw.weightGrams) : null,
+      category: CATALOG_CATEGORIES.includes(raw.category) ? raw.category : null,
+      description: typeof raw.description === "string" ? raw.description.trim() || null : null,
+      link: null,
+      imageUrl,
+      scanMethod: barcode ? "barcode" : "vision",
+      barcodeValue: barcode || null,
+    });
+  } catch (err) {
+    console.error("[Anthropic] scan-item failed:", err.message);
     res.status(500).json({ error: "AI request failed" });
   }
 });
