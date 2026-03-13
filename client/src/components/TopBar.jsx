@@ -1,5 +1,6 @@
 // src/components/TopBar.jsx
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
+import { FiMenu, FiX } from "react-icons/fi";
 import DropdownMenu from "./DropdownMenu";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
@@ -21,7 +22,7 @@ const themes = [
   { name: "dark", color: "#0f172a" },
 ];
 
-export default function TopBar({ title, openSettings, onOpenTour }) {
+export default function TopBar({ title, openSettings, onOpenTour, onToggleSidebar, sidebarCollapsed }) {
   const headerRef = useRef(null);
   useLayoutEffect(() => {
     const el = headerRef.current;
@@ -91,7 +92,17 @@ export default function TopBar({ title, openSettings, onOpenTour }) {
     <header ref={headerRef} className="sticky top-0 z-[60] bg-base-100 border-b">
       {/* Top row: logo + account menu */}
       <div className="flex items-center justify-between px-2 py-2">
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center gap-2">
+          {onToggleSidebar && (
+            <button
+              type="button"
+              onClick={onToggleSidebar}
+              className="sm:hidden p-1.5 text-primaryAlt hover:text-primary transition-colors"
+              aria-label={sidebarCollapsed ? "Open sidebar" : "Close sidebar"}
+            >
+              {sidebarCollapsed ? <FiMenu className="w-5 h-5" /> : <FiX className="w-5 h-5" />}
+            </button>
+          )}
           <img
             src={isDark ? logoDark : logo}
             alt={t("app.name")}

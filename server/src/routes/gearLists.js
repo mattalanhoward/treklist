@@ -215,11 +215,45 @@ router.get("/:listId/full", async (req, res) => {
   }
 });
 
-// GET /api/dashboard — only this user’s lists
+// GET /api/dashboard — only this user’s lists (with itemCount + baseWeight)
 router.get("/", async (req, res) => {
   try {
     const lists = await GearList.find({ owner: req.userId });
-    res.json(lists);
+
+    const listIds = lists.map((l) => l._id);
+    const stats = await Item.aggregate([
+      { $match: { gearList: { $in: listIds } } },
+      {
+        $group: {
+          _id: "$gearList",
+          itemCount: { $sum: 1 },
+          baseWeight: {
+            $sum: {
+              $cond: [
+                { $ne: ["$worn", true] },
+                {
+                  $multiply: [
+                    { $ifNull: ["$weight", 0] },
+                    { $ifNull: ["$quantity", 1] },
+                  ],
+                },
+                0,
+              ],
+            },
+          },
+        },
+      },
+    ]);
+    const statsMap = Object.fromEntries(
+      stats.map((s) => [String(s._id), s])
+    );
+    const listsWithStats = lists.map((l) => ({
+      ...l.toObject(),
+      itemCount: statsMap[String(l._id)]?.itemCount ?? 0,
+      baseWeight: statsMap[String(l._id)]?.baseWeight ?? 0,
+    }));
+
+    res.json(listsWithStats);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: err.message });
@@ -229,7 +263,7 @@ router.get("/", async (req, res) => {
 // POST /api/dashboard — create a new gear list + one sample category
 router.post("/", async (req, res) => {
   try {
-    const { title, region } = req.body;
+    const { title, region, tripStart, tripEnd, location } = req.body;
     if (!title) return res.status(400).json({ message: "Title is required." });
 
     // 1) create the gear list
@@ -238,6 +272,9 @@ router.post("/", async (req, res) => {
       title,
       // region is optional; if client doesn’t send it we store null
       region: region || null,
+      tripStart: tripStart || null,
+      tripEnd: tripEnd || null,
+      location: location || null,
     });
 
     // 2) seed exactly one category at position 0

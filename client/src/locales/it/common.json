@@ -82,7 +82,7 @@
       },
       "lists": {
         "title": "Le tue liste",
-        "body": "Ogni viaggio o zaino ha la propria lista. Puoi crearne una nuova dalla barra laterale."
+        "body": "Click + to create a new list and fill in trip details right away."
       },
       "myGear": {
         "title": "La mia attrezzatura",
@@ -98,7 +98,7 @@
       },
       "addItems": {
         "title": "Aggiungi articoli a una categoria",
-        "body": "Clicca su + Aggiungi articoli per inserire elementi da “La mia attrezzatura” in una categoria."
+        "body": "Click + Add Items to add gear from your inventory, search the catalog, or create a new item on the spot."
       },
       "preferences": {
         "title": "Preferenze della lista",
@@ -109,6 +109,15 @@
         "body": "Le impostazioni globali dell’account sono disponibili nel menu della barra superiore."
       }
     }
+  },
+  "listsOverview": {
+    "title": "Liste attrezzatura",
+    "newList": "Nuova lista",
+    "checklist": "Checklist",
+    "details": "Dettagli",
+    "empty": "Nessuna lista ancora. Creane una per iniziare.",
+    "itemCount": "{{count}} articoli",
+    "itemCount_one": "{{count}} articolo"
   },
   "sidebar": {
     "gearListsTitle": "Liste attrezzatura",
@@ -343,7 +352,8 @@
     },
     "actions": {
       "swap": "Sostituisci articolo"
-    }
+    },
+    "newListCallout": "Aggiungi date del viaggio, luogo e note tramite il menu ···."
   },
   "swapModal": {
     "title": "Sostituisci articolo",
@@ -1211,6 +1221,29 @@
     },
     "toasts": {
       "toggleFailed": "Impossibile aggiornare la lista dei desideri"
+    }
+  },
+  "createListModal": {
+    "title": "Crea una nuova lista",
+    "labels": {
+      "name": "Nome lista",
+      "tripStart": "Inizio viaggio",
+      "tripEnd": "Fine viaggio",
+      "location": "Luogo",
+      "optional": "opzionale"
+    },
+    "placeholders": {
+      "name": "es. Tour du Mont Blanc",
+      "location": "es. Chamonix, Francia",
+      "date": "Seleziona data"
+    },
+    "actions": {
+      "create": "Crea lista",
+      "cancel": "Annulla"
+    },
+    "toast": {
+      "nameRequired": "Il nome della lista non può essere vuoto.",
+      "failed": "Impossibile creare la lista. Riprova."
     }
   }
 }

@@ -1,6 +1,6 @@
 // src/pages/GearListView.jsx
 import React, { useState, useEffect, useCallback } from "react";
-import { FiShare2, FiInfo, FiLock, FiUnlock, FiMoreHorizontal, FiPlus, FiCheck } from "react-icons/fi";
+import { FiShare2, FiInfo, FiLock, FiUnlock, FiMoreHorizontal, FiPlus, FiCheck, FiX } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { DragOverlay } from "@dnd-kit/core";
@@ -41,6 +41,7 @@ export default function GearListView({
   collapsed,
   dndRef,
   sidebarDragOverCatId,
+  onBackToLists,
 }) {
   const { t } = useTranslation("common");
   const navigate = useNavigate();
@@ -98,6 +99,18 @@ export default function GearListView({
 
   // Lock state to prevent accidental edits
   const [isLocked, setIsLocked] = useState(list.isLocked || false);
+
+  // New-list callout: show once after creation, dismissed via localStorage
+  const [showCallout, setShowCallout] = useState(
+    () => localStorage.getItem("newListCallout") === listId,
+  );
+  useEffect(() => {
+    setShowCallout(localStorage.getItem("newListCallout") === listId);
+  }, [listId]);
+  const dismissCallout = () => {
+    localStorage.removeItem("newListCallout");
+    setShowCallout(false);
+  };
 
 
   // Prevent "stale list prop" from overwriting optimistic background changes.
@@ -909,6 +922,7 @@ export default function GearListView({
 
       // Kick a refresh, but DON'T await it (keeps UI snappy)
       onRefresh?.();
+      fetchLists?.();
 
       // Preload the final url; only then clear preview (no flash)
       // If it takes a while, user still sees the preview (not a spinner).
@@ -967,6 +981,7 @@ export default function GearListView({
         backgroundColor: color,
       });
       onRefresh?.();
+      fetchLists?.();
     } catch (err) {
       pendingBgRef.current = {
         bgColor: null,
@@ -1001,6 +1016,7 @@ export default function GearListView({
         backgroundImageUrl: url,
       });
       onRefresh?.();
+      fetchLists?.();
     } catch (error) {
       pendingBgRef.current = {
         bgColor: null,
@@ -1133,19 +1149,35 @@ export default function GearListView({
               />
             ) : (
               <>
-                <h2
-                  onClick={() => !isLocked && setIsEditingTitle(true)}
-                  className={`hide-on-touch text-primary ${isLocked ? "cursor-default" : "cursor-text"}`}
-                >
-                  {list.title}
-                </h2>
-                <PackStats
-                  base={stats.baseWeight}
-                  worn={stats.wornWeight}
-                  consumable={stats.consumableWeight}
-                  total={stats.totalWeight}
-                  breakdowns={breakdowns}
-                />
+                <div className="flex items-center gap-1.5">
+                  {onBackToLists && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={onBackToLists}
+                        className="hide-on-touch text-xs text-primaryAlt hover:underline transition-colors flex-shrink-0"
+                      >
+                        {t("listsOverview.title")}
+                      </button>
+                      <span className="hide-on-touch text-xs text-primaryAlt/60">/</span>
+                    </>
+                  )}
+                  <h2
+                    onClick={() => !isLocked && setIsEditingTitle(true)}
+                    className={`hide-on-touch text-primary ${isLocked ? "cursor-default" : "cursor-text"}`}
+                  >
+                    {list.title}
+                  </h2>
+                </div>
+                <div className="hidden sm:block">
+                  <PackStats
+                    base={stats.baseWeight}
+                    worn={stats.wornWeight}
+                    consumable={stats.consumableWeight}
+                    total={stats.totalWeight}
+                    breakdowns={breakdowns}
+                  />
+                </div>
               </>
             )}
           </div>
@@ -1393,6 +1425,19 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
       >
         {viewMode === "list" ? (
           <div ref={listContainerRef} className="flex-1 overflow-y-auto px-2 py-2 sm:w-4/5 sm:mx-auto">
+            {showCallout && (
+              <div className="flex items-center justify-between px-3 py-2 mb-3 rounded-lg bg-primary/10 border border-primary/20 text-sm text-primary">
+                <span>{t("gearList.newListCallout")}</span>
+                <button
+                  type="button"
+                  onClick={dismissCallout}
+                  aria-label="Dismiss"
+                  className="ml-2 text-primary/60 hover:text-primary flex-shrink-0"
+                >
+                  <FiX size={14} />
+                </button>
+              </div>
+            )}
             {categories.map((cat) => (
               <SortableSection
                 key={cat._id}

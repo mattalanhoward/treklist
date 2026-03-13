@@ -1,7 +1,7 @@
 // src/pages/Dashboard.jsx
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import api from "../services/api";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import TopBar from "../components/TopBar";
 import Sidebar from "../components/Sidebar";
@@ -10,6 +10,7 @@ import AdminView from "../pages/AdminView";
 import ForumView from "../pages/ForumView";
 import WishlistView from "../pages/WishlistView";
 import MyGearView from "../pages/MyGearView";
+import GearListsOverview from "../pages/GearListsOverview";
 import { toast } from "react-hot-toast";
 import { useUserSettings } from "../contexts/UserSettings";
 import { useTranslation } from "react-i18next";
@@ -97,6 +98,7 @@ export default function Dashboard() {
   const { t } = useTranslation("common");
   const { listId } = useParams(); // from /dashboard/:listId
   const navigate = useNavigate();
+  const location = useLocation();
   const TOUR_VERSION = 1;
   const hasSeenTour =
     Number(user?.onboarding?.tourVersionSeen || 0) >= TOUR_VERSION;
@@ -217,7 +219,7 @@ export default function Dashboard() {
     useUserSettings();
 
   // ─── Which main panel is active: "gear" "admin" "forum" "wishlist" ───
-  const [activePane, setActivePane] = useState("gear");
+  const [activePane, setActivePane] = useState(location.state?.pane ?? "gear");
 
   useEffect(() => {
     if (!listId) return;
@@ -318,6 +320,8 @@ export default function Dashboard() {
     if (listsLoading) return;
     if (listId) return;
     if (lists.length === 0) return;
+    // User explicitly navigated to the overview — don't redirect to a list
+    if (location.state?.pane === "lists") return;
 
     const ids = lists.map((l) => l._id);
     const stored = localStorage.getItem("lastListId");
@@ -328,7 +332,7 @@ export default function Dashboard() {
     }
 
     navigate(`/dashboard/${ids[0]}`, { replace: true });
-  }, [lists, listId, navigate, listsLoading, isAuthenticated]);
+  }, [lists, listId, navigate, listsLoading, isAuthenticated, location.state]);
 
 
   // ─── viewMode persistence ───
@@ -555,8 +559,10 @@ export default function Dashboard() {
   );
 
   // load on mount—and whenever listId changes
+  // Clear stale data first so GearListView never renders with the wrong list
   useEffect(() => {
     if (!isAuthenticated) return;
+    setFullData({ list: null, categories: [], items: [] });
     fetchFullData();
   }, [fetchFullData, listId, isAuthenticated]);
 
@@ -566,22 +572,6 @@ export default function Dashboard() {
     window.addEventListener("global-items:updated", handler);
     return () => window.removeEventListener("global-items:updated", handler);
   }, [fetchFullData]);
-
-  // const handleSelectList = useCallback(
-  //   (id) => {
-  //     // clear current list data so the new list can load fresh
-  //     setFullData({ list: null, categories: [], items: [] });
-
-  //     if (id) {
-  //       localStorage.setItem("lastListId", id);
-  //     } else {
-  //       localStorage.removeItem("lastListId");
-  //     }
-
-  //     navigate(`/dashboard/${id}`);
-  //   },
-  //   [navigate]
-  // );
 
   const handleSelectList = useCallback(
     (id) => {
@@ -596,9 +586,6 @@ export default function Dashboard() {
   if (!isAuthenticated) {
     return null;
   }
-
-  const isSwitchingLists =
-    fullLoading && fullData.list?._id && fullData.list._id !== listId;
 
   return (
     <div className="flex flex-col h-d-screen overflow-hidden bg-neutral/50 text-primary">
@@ -615,6 +602,8 @@ export default function Dashboard() {
         viewMode={viewMode}
         setViewMode={setViewMode}
         onOpenTour={openTour}
+        onToggleSidebar={() => setSidebarCollapsed((v) => !v)}
+        sidebarCollapsed={collapsed}
       />
 
       <DndContext
@@ -640,18 +629,13 @@ export default function Dashboard() {
             onOpenForum={() => setActivePane("forum")}
             onOpenWishlist={() => setActivePane("wishlist")}
             onOpenMyGear={() => setActivePane("myGear")}
-            onShowGearPane={() => setActivePane("gear")}
+            onShowGearPane={() => setActivePane("lists")}
             onSelectList={handleSelectList}
             onRefresh={fetchFullData}
             isLocked={fullData.list?.isLocked || false}
           />
 
           <main className="relative flex-1 overflow-hidden">
-            {activePane === "gear" && listId && isSwitchingLists && (
-              <div className="absolute inset-0 z-50 bg-base-100/40 backdrop-blur-[1px] flex items-center justify-center">
-                <Spinner />
-              </div>
-            )}
             {activePane === "admin" && isAdmin ? (
               <AdminView />
             ) : activePane === "forum" ? (
@@ -660,6 +644,13 @@ export default function Dashboard() {
               <WishlistView />
             ) : activePane === "myGear" ? (
               <MyGearView collapsed={collapsed} />
+            ) : activePane === "lists" ? (
+              <GearListsOverview
+                lists={lists}
+                onSelectList={handleSelectList}
+                fetchLists={fetchLists}
+                collapsed={collapsed}
+              />
             ) : listId ? (
               fullData.list === null ? (
                 <Spinner centered label={t("dashboard.loadingLists")} />
@@ -676,6 +667,7 @@ export default function Dashboard() {
                   collapsed={collapsed}
                   dndRef={gearListDndRef}
                   sidebarDragOverCatId={sidebarDragOverCatId}
+                  onBackToLists={() => setActivePane("lists")}
                 />
               )
             ) : (

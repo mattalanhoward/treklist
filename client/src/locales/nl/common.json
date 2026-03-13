@@ -82,7 +82,7 @@
       },
       "lists": {
         "title": "Je paklijsten",
-        "body": "Elke trip of rugzak heeft zijn eigen paklijst. Je kunt een nieuwe lijst maken via de zijbalk."
+        "body": "Click + to create a new list and fill in trip details right away."
       },
       "myGear": {
         "title": "Mijn uitrusting",
@@ -98,7 +98,7 @@
       },
       "addItems": {
         "title": "Items toevoegen aan een categorie",
-        "body": "Klik op + Items toevoegen om items uit “Mijn uitrusting” aan een categorie toe te voegen."
+        "body": "Click + Add Items to add gear from your inventory, search the catalog, or create a new item on the spot."
       },
       "preferences": {
         "title": "Paklijst-instellingen",
@@ -109,6 +109,15 @@
         "body": "Algemene accountinstellingen vind je in het menu in de bovenbalk."
       }
     }
+  },
+  "listsOverview": {
+    "title": "Paklijsten",
+    "newList": "Nieuwe lijst",
+    "checklist": "Checklist",
+    "details": "Details",
+    "empty": "Nog geen paklijsten. Maak er een om te beginnen.",
+    "itemCount": "{{count}} items",
+    "itemCount_one": "{{count}} item"
   },
   "sidebar": {
     "gearListsTitle": "Paklijsten",
@@ -343,7 +352,8 @@
     },
     "actions": {
       "swap": "Artikel wisselen"
-    }
+    },
+    "newListCallout": "Voeg reisdata, locatie en notities toe via het ··· menu."
   },
   "swapModal": {
     "title": "Item vervangen",
@@ -1211,6 +1221,29 @@
     },
     "toasts": {
       "toggleFailed": "Kon verlanglijst niet bijwerken"
+    }
+  },
+  "createListModal": {
+    "title": "Nieuwe lijst aanmaken",
+    "labels": {
+      "name": "Lijstnaam",
+      "tripStart": "Vertrekdatum",
+      "tripEnd": "Einddatum",
+      "location": "Locatie",
+      "optional": "optioneel"
+    },
+    "placeholders": {
+      "name": "bijv. Tour du Mont Blanc",
+      "location": "bijv. Chamonix, Frankrijk",
+      "date": "Selecteer datum"
+    },
+    "actions": {
+      "create": "Lijst aanmaken",
+      "cancel": "Annuleren"
+    },
+    "toast": {
+      "nameRequired": "Lijstnaam mag niet leeg zijn.",
+      "failed": "Lijst kon niet worden aangemaakt. Probeer het opnieuw."
     }
   }
 }

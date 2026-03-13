@@ -82,7 +82,7 @@
       },
       "lists": {
         "title": "Your Gear Lists",
-        "body": "Each trip or pack gets its own gear list. You can create a new one from the sidebar."
+        "body": "Click + to create a new list and fill in trip details right away."
       },
       "myGear": {
         "title": "My Gear",
@@ -98,7 +98,7 @@
       },
       "addItems": {
         "title": "Add items to a category",
-        "body": "Click + Add Items to add items from “My Gear” to a category."
+        "body": "Click + Add Items to add gear from your inventory, search the catalog, or create a new item on the spot."
       },
       "preferences": {
         "title": "Gear List Preferences",
@@ -109,6 +109,15 @@
         "body": "Global account settings are available in the top bar menu."
       }
     }
+  },
+  "listsOverview": {
+    "title": "Gear Lists",
+    "newList": "New List",
+    "checklist": "Checklist",
+    "details": "Details",
+    "empty": "No gear lists yet. Create one to get started.",
+    "itemCount": "{{count}} items",
+    "itemCount_one": "{{count}} item"
   },
   "sidebar": {
     "gearListsTitle": "Gear Lists",
@@ -352,7 +361,8 @@
     },
     "actions": {
       "swap": "Swap item"
-    }
+    },
+    "newListCallout": "Add trip dates, location, and notes using the ··· menu."
   },
   "swapModal": {
     "title": "Swap Item",
@@ -1225,6 +1235,29 @@
     },
     "toasts": {
       "toggleFailed": "Failed to update wishlist"
+    }
+  },
+  "createListModal": {
+    "title": "Create a new list",
+    "labels": {
+      "name": "List name",
+      "tripStart": "Trip start",
+      "tripEnd": "Trip end",
+      "location": "Location",
+      "optional": "optional"
+    },
+    "placeholders": {
+      "name": "e.g. Tour du Mont Blanc",
+      "location": "e.g. Chamonix, France",
+      "date": "Select date"
+    },
+    "actions": {
+      "create": "Create list",
+      "cancel": "Cancel"
+    },
+    "toast": {
+      "nameRequired": "List name cannot be empty.",
+      "failed": "Could not create list. Please try again."
     }
   }
 }

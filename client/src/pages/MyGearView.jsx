@@ -30,9 +30,7 @@ export default function MyGearView({ collapsed }) {
   const [wishlistItems, setWishlistItems] = useState([]);
   const [wishlistLoading, setWishlistLoading] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
-  const [showDrawer, setShowDrawer] = useState(() =>
-    window.matchMedia("(min-width: 1024px)").matches
-  );
+  const [showDrawer, setShowDrawer] = useState(false);
 
   const openDrawer = useCallback(() => {
     if (window.innerWidth < 1024) setSidebarCollapsed(true);
@@ -327,7 +325,7 @@ export default function MyGearView({ collapsed }) {
       showDrawer ? "sm:w-[calc(100%-420px)]" : "w-full"
     }`}>
       {/* Header - single row on desktop, stacked on mobile */}
-      <div className={`flex-shrink-0 px-4 py-2 border-b border-primary/10 bg-base-100 ${collapsed ? "sm:pl-12" : ""}`}>
+      <div className="flex-shrink-0 px-4 py-2 border-b border-primary/10 bg-base-100">
         {/* Desktop: single row */}
         <div className="hidden sm:flex items-center justify-between gap-4">
           {/* Left: Title */}

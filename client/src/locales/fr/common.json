@@ -82,7 +82,7 @@
       },
       "lists": {
         "title": "Tes listes d’équipement",
-        "body": "Chaque sortie ou sac possède sa propre liste. Tu peux en créer une nouvelle depuis la barre latérale."
+        "body": "Click + to create a new list and fill in trip details right away."
       },
       "myGear": {
         "title": "Mon équipement",
@@ -98,7 +98,7 @@
       },
       "addItems": {
         "title": "Ajouter des articles à une catégorie",
-        "body": "Clique sur + Ajouter des articles pour ajouter des éléments de “Mon équipement” à une catégorie."
+        "body": "Click + Add Items to add gear from your inventory, search the catalog, or create a new item on the spot."
       },
       "preferences": {
         "title": "Préférences de la liste",
@@ -109,6 +109,15 @@
         "body": "Les paramètres globaux du compte sont accessibles via le menu de la barre supérieure."
       }
     }
+  },
+  "listsOverview": {
+    "title": "Listes d’équipement",
+    "newList": "Nouvelle liste",
+    "checklist": "Checklist",
+    "details": "Détails",
+    "empty": "Aucune liste d’équipement. Créez-en une pour commencer.",
+    "itemCount": "{{count}} articles",
+    "itemCount_one": "{{count}} article"
   },
   "sidebar": {
     "gearListsTitle": "Listes d’équipement",
@@ -343,7 +352,8 @@
     },
     "actions": {
       "swap": "Échanger l'article"
-    }
+    },
+    "newListCallout": "Ajoutez les dates du voyage, le lieu et des notes via le menu ···."
   },
   "swapModal": {
     "title": "Remplacer l'article",
@@ -1211,6 +1221,29 @@
     },
     "toasts": {
       "toggleFailed": "Échec de la mise à jour de la liste de souhaits"
+    }
+  },
+  "createListModal": {
+    "title": "Créer une nouvelle liste",
+    "labels": {
+      "name": "Nom de la liste",
+      "tripStart": "Début du voyage",
+      "tripEnd": "Fin du voyage",
+      "location": "Lieu",
+      "optional": "optionnel"
+    },
+    "placeholders": {
+      "name": "ex. Tour du Mont Blanc",
+      "location": "ex. Chamonix, France",
+      "date": "Sélectionner une date"
+    },
+    "actions": {
+      "create": "Créer la liste",
+      "cancel": "Annuler"
+    },
+    "toast": {
+      "nameRequired": "Le nom de la liste ne peut pas être vide.",
+      "failed": "Impossible de créer la liste. Veuillez réessayer."
     }
   }
 }
