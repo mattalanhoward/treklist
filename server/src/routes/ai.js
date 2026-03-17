@@ -348,12 +348,8 @@ Return only valid JSON. No explanation, no markdown.`;
       return res.status(500).json({ error: "Failed to parse AI response" });
     }
 
-    const resultName = typeof raw.name === "string" ? raw.name.trim() : null;
+    const resultName = (typeof raw.name === "string" ? raw.name.trim() : null) || query.trim();
     const resultBrand = typeof raw.brand === "string" ? raw.brand.trim() || null : null;
-
-    if (!resultName) {
-      return res.status(422).json({ error: "Could not extract item name from query" });
-    }
 
     // Try to get product image: scraped URL → Google Image Search
     let imageUrl = scrapedImageUrl;

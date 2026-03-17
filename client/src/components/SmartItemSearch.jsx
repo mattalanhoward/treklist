@@ -162,6 +162,11 @@ function NoResults({ query, onAiSearch, onManual, aiLoading }) {
         )}
         {aiLoading ? "Searching with AI..." : "Fill with AI"}
       </button>
+      {!aiLoading && (
+        <p className="text-xs text-primary/35 text-center">
+          Tip: include brand, model &amp; size for better results
+        </p>
+      )}
       <button
         onClick={onManual}
         className="flex items-center gap-1.5 text-sm text-primary/50 hover:text-primary transition-colors"
