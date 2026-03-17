@@ -258,13 +258,22 @@ export default function Sidebar({
         {/* Icon rail — desktop only, shown when collapsed */}
         {collapsed && (
           <div className="hidden sm:flex flex-col items-center pt-3 gap-1 overflow-hidden">
+            {isAdmin && (
+              <button
+                type="button"
+                title="Admin"
+                onClick={() => {
+                  onOpenAdmin();
+                }}
+                className="w-9 h-9 flex items-center justify-center rounded-lg text-primaryAlt hover:text-primary hover:bg-primary/5 transition-colors"
+              >
+                <FiSettings className="w-4 h-4" />
+              </button>
+            )}
             <button
               type="button"
               title={t("sidebar.gearListsTitle")}
               onClick={() => {
-                setSidebarGearListsCollapsed(false);
-                window.dispatchEvent(new CustomEvent("sidebar:expanded"));
-                setCollapsed(false);
                 onShowGearPane();
               }}
               className="w-9 h-9 flex items-center justify-center rounded-lg text-primaryAlt hover:text-primary hover:bg-primary/5 transition-colors"
@@ -275,28 +284,12 @@ export default function Sidebar({
               type="button"
               title={t("sidebar.myGearTitle")}
               onClick={() => {
-                setSidebarMyGearCollapsed(false);
-                window.dispatchEvent(new CustomEvent("sidebar:expanded"));
-                setCollapsed(false);
                 onOpenMyGear();
               }}
               className="w-9 h-9 flex items-center justify-center rounded-lg text-primaryAlt hover:text-primary hover:bg-primary/5 transition-colors"
             >
               <BsBackpack4 className="w-4 h-4" />
             </button>
-            {isAdmin && (
-              <button
-                type="button"
-                title="Admin"
-                onClick={() => {
-                  setCollapsed(false);
-                  onOpenAdmin();
-                }}
-                className="w-9 h-9 flex items-center justify-center rounded-lg text-primaryAlt hover:text-primary hover:bg-primary/5 transition-colors"
-              >
-                <FiSettings className="w-4 h-4" />
-              </button>
-            )}
           </div>
         )}
 
