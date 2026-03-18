@@ -61,6 +61,8 @@ const defaultOrigins = [
   "https://treklist.netlify.app",
   "https://treklist.co",
   "https://www.treklist.co",
+  "https://app.treklist.co",
+  "https://treklist-marketing.netlify.app",
 ];
 
 const envOrigins = parseOrigins(process.env.CLIENT_URLS);
