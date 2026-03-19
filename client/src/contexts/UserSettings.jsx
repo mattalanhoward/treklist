@@ -32,6 +32,7 @@ export function SettingsProvider({ children }) {
     const urlLang = new URLSearchParams(window.location.search).get("lang");
     if (urlLang && SUPPORTED_LANGS.includes(urlLang)) {
       localStorage.setItem("language", urlLang);
+      i18n.changeLanguage(urlLang);
       return urlLang;
     }
 
