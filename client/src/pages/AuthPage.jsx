@@ -1,0 +1,29 @@
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import AuthModal from "../components/AuthModal";
+
+const HERO_URL =
+  "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1920/gear-list-hero-images/hero-hiker-cinque-torri_hpe3lz";
+
+export default function AuthPage({ mode = "login" }) {
+  const navigate = useNavigate();
+
+  return (
+    <div className="relative min-h-screen">
+      <img
+        src={HERO_URL}
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+      <div className="absolute inset-0 bg-black/30" />
+      <AuthModal
+        isOpen={true}
+        showLogo={true}
+        defaultMode={mode}
+        onClose={() => navigate("/")}
+        onAuthed={() => navigate("/dashboard")}
+      />
+    </div>
+  );
+}

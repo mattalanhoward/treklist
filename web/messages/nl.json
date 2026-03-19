@@ -1,0 +1,145 @@
+{
+  "app": {
+    "name": "TrekList",
+    "tagline": "Plan en deel je paklijsten voor hikes"
+  },
+  "landing": {
+    "pageTitle": "Slim inpakken. Licht reizen.",
+    "seo": {
+      "description": "Plan je wandel- en backpacktrips met TrekList. Maak paklijsten, houd je rugzakgewicht bij en deel je uitrusting met mede-wandelaars. Gratis voor hikers die Europa en verder verkennen."
+    },
+    "hero": {
+      "title": "Pak het goed aan.",
+      "subtitle": "TrekList is de gratis uitrustingsplanner voor wandelaars op weg naar de Alpen, door Spanje of eigenlijk overal. Maak je lijst, houd je gewicht bij, vink alles af voor vertrek en ga goed voorbereid op pad.",
+      "cta": "Maak je gratis paklijst"
+    },
+    "images": {
+      "heroAlt": "Hiker bij Cinque Torri in de Dolomieten",
+      "mobileSidebarAlt": "TrekList mobiele weergave met paklijsten en Mijn uitrusting zoeken",
+      "mobileColumnAlt": "TrekList mobiele categorie kolommen",
+      "desktopAlt": "TrekList desktop weergave met meerdere categorieën in kolommen"
+    },
+    "features": {
+      "mobile": {
+        "title": "Jouw kit, klaar voor je het huis verlaat",
+        "subtitle": "Maak en bewerk onderweg. Houd je gewicht bij. Vertrek voorbereid.",
+        "bullets": {
+          "mobileFirst": {
+            "title": "Werkt op je telefoon",
+            "text": "Maak en bewerk op de bank, in de trein, overal. Geen desktop nodig."
+          },
+          "catalogCustom": {
+            "title": "Kies uit de catalogus of voeg je eigen toe",
+            "text": "Veelgebruikte uitrusting staat er al in. Voeg maatwerk toe met gewicht, notities en een link."
+          },
+          "quickAdd": {
+            "title": "Je artikel niet gevonden? Typ het gewoon.",
+            "text": "AI vult naam, merk, categorie en beschrijving in. Controleer en voeg toe in seconden. Geen formuliergedoe."
+          },
+          "weightTotals": {
+            "title": "Ken je pakgewicht voor vertrek",
+            "text": "Basisgewicht, gedragen gewicht, verbruiksartikelen in realtime. Geen spreadsheetformules, geen giswerk."
+          },
+          "checklist": {
+            "title": "Vink artikelen af terwijl je inpakt",
+            "text": "Één tik om af te vinken. Exporteer een nette PDF of deel een alleen-lezen link."
+          }
+        }
+      },
+      "desktop": {
+        "title": "Meer dan een spreadsheet",
+        "subtitle": "Jouw lijsten, jouw bibliotheek, jouw stijl.",
+        "bullets": {
+          "gearLibrary": {
+            "title": "Jouw uitrustingsbibliotheek, hergebruikt voor elke trip",
+            "text": "Voeg iets eenmalig toe en het staat in je persoonlijke bibliotheek. Gebruik het in elke toekomstige lijst zonder opnieuw in te voeren."
+          },
+          "backgrounds": {
+            "title": "Maak het van jou",
+            "text": "Stel een achtergrondafbeelding of kleur in voor elke lijst. Laat plannen aanvoelen als een avontuur en minder als een spreadsheet."
+          },
+          "share": {
+            "title": "Deel je lijst overal",
+            "text": "Openbare links voor wandelforums, Reddit, Facebook-groepen of wandelvrienden. Geen account nodig om te bekijken."
+          },
+          "template": {
+            "title": "Elke lijst is een startpunt",
+            "text": "Bekijk een publieke lijst, sla hem op in je account en wissel uitrusting in voor de jouwe. Jouw route, jouw kit."
+          },
+          "drag": {
+            "title": "Slepen tussen categorieën",
+            "text": "Verplaats items in je kit terwijl je plan evolueert."
+          }
+        }
+      }
+    },
+    "recommended": {
+      "title": "Begin met een van deze sjablonen.",
+      "subtitle": "Kant-en-klare paklijsten voor Europa's populaire routes. Sla er een op als sjabloon, wissel uit wat niet past en je bent klaar om in te pakken.",
+      "cards": {
+        "viewCta": "Bekijk paklijst",
+        "ariaOpen": "Open {title} paklijst",
+        "av1": {
+          "title": "Alta Via 1",
+          "alt": "Alta Via 1 paklijst in de Dolomieten, Italië"
+        },
+        "camino": {
+          "title": "Camino de Santiago",
+          "alt": "Camino de Santiago paklijst voor wandelen door Spanje"
+        },
+        "tmb": {
+          "title": "Tour du Mont Blanc",
+          "alt": "Tour du Mont Blanc paklijst"
+        },
+        "whw": {
+          "title": "West Highland Way",
+          "alt": "West Highland Way paklijst"
+        },
+        "kungsleden": {
+          "title": "Kungsleden",
+          "alt": "Kungsleden paklijst"
+        },
+        "gr20": {
+          "title": "GR20 Corsica",
+          "alt": "GR20 paklijst"
+        }
+      }
+    },
+    "howItWorks": {
+      "title": "Why I built TrekList.",
+      "paragraph1": "I've been hiking long enough to know that the planning is half the adventure. Getting your pack dialed in, thinking through every piece of gear, imagining the trail ahead. There's something genuinely satisfying about it.",
+      "paragraph2": "I'm Tall Joe. I've hiked over 8,000 miles across trails in North America and Europe, and somewhere along the way I started loving the process as much as the hiking itself.",
+      "paragraph3": "The part that always gave me a little anxiety was the night before. Everything on the floor, reorganized twice, still walking out the door wondering if I'd forgotten the one thing that would matter.",
+      "paragraph4": "So I built TrekList. Something more useful than a spreadsheet, more customizable, visually appealing, and fast enough that you're not fighting the tool when you should be thinking about the trail.",
+      "signature": "Tall Joe"
+    },
+    "finalCta": {
+      "title": "Klaar om je kit te sorteren?",
+      "subtitle": "Altijd en volledig gratis.",
+      "primary": "Maak je gratis paklijst"
+    }
+  },
+  "publicHeader": {
+    "nav": {
+      "features": "Functies",
+      "recommendedGearList": "Aanbevolen paklijst",
+      "howItWorks": "The story"
+    },
+    "auth": {
+      "login": "Inloggen",
+      "getStarted": "Aan de slag"
+    }
+  },
+  "footerLegal": {
+    "brandLine": "© {year} TrekList",
+    "companyLine": "Tall Joe Hikes — KvK 98785419",
+    "links": {
+      "privacy": "Privacy",
+      "cookies": "Cookiebeleid",
+      "cookieSettings": "Cookie-instellingen",
+      "terms": "Voorwaarden",
+      "affiliateDisclosure": "Affiliate-verklaring",
+      "imprint": "Imprint / contact"
+    }
+  }
+}

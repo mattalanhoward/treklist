@@ -1,0 +1,145 @@
+{
+  "app": {
+    "name": "TrekList",
+    "tagline": "Plan and share your hiking gear lists"
+  },
+  "landing": {
+    "pageTitle": "Pack Smart. Travel Light.",
+    "seo": {
+      "description": "Plan your hiking and backpacking trips with TrekList. Create gear lists, track pack weight, and share your setup with fellow trekkers. Free for hikers exploring Europe and beyond."
+    },
+    "hero": {
+      "title": "Get the pack right.",
+      "subtitle": "TrekList is the free gear planner for hikers heading into the Alps, across Spain, or anywhere really. Build your list, track your weight, check off before you go and show up ready.",
+      "cta": "Build Your Free Gear List"
+    },
+    "images": {
+      "heroAlt": "Hiker at Cinque Torri in the Dolomites",
+      "mobileSidebarAlt": "TrekList mobile view showing gear lists and My Gear search",
+      "mobileColumnAlt": "TrekList mobile category columns",
+      "desktopAlt": "TrekList desktop view with multiple gear categories in columns"
+    },
+    "features": {
+      "mobile": {
+        "title": "Your kit, dialed in before you leave home",
+        "subtitle": "Build and edit on the go. Track your weight. Show up ready.",
+        "bullets": {
+          "mobileFirst": {
+            "title": "Works on your phone",
+            "text": "Build and edit from the couch, the train, wherever. No desktop required."
+          },
+          "catalogCustom": {
+            "title": "Pull from the catalog or add your own",
+            "text": "Common gear is already in there. Add anything custom with weight, notes, and a link."
+          },
+          "quickAdd": {
+            "title": "Don't see your item? Just type it.",
+            "text": "AI fills in the name, brand, category, and description. You review and add in seconds. No form slog."
+          },
+          "weightTotals": {
+            "title": "Know your pack weight before you go",
+            "text": "Base weight, worn weight, consumables tracked in real time. No spreadsheet formulas, no guesswork."
+          },
+          "checklist": {
+            "title": "Check items off as you pack",
+            "text": "One tap to mark it done. Export a clean PDF or share a read only link."
+          }
+        }
+      },
+      "desktop": {
+        "title": "More than a spreadsheet",
+        "subtitle": "Your lists, your library, your style.",
+        "bullets": {
+          "gearLibrary": {
+            "title": "Your gear library, reused across every trip",
+            "text": "Add something once and it lives in your personal library. Pull it into any future list without re-entering anything."
+          },
+          "backgrounds": {
+            "title": "Make it yours",
+            "text": "Set a background photo or color for each list. Keep planning feeling like an adventure and less like a spreadsheet."
+          },
+          "share": {
+            "title": "Share your list anywhere",
+            "text": "Public links for trail forums, Reddit, Facebook groups, or your hiking friends. No account required to view."
+          },
+          "template": {
+            "title": "Any list is a starting point",
+            "text": "View a public list, save it to your account, and swap out gear with your own. Your trail, your kit."
+          },
+          "drag": {
+            "title": "Drag between categories",
+            "text": "Move items across your kit as your plan evolves."
+          }
+        }
+      }
+    },
+    "recommended": {
+      "title": "Start with one of these templates.",
+      "subtitle": "Ready made gear lists for Europe's popular routes. Save one as your template, swap out what doesn't fit, and you're ready to start packing.",
+      "cards": {
+        "viewCta": "View Gear List",
+        "ariaOpen": "Open {title} gear list",
+        "av1": {
+          "title": "Alta Via 1",
+          "alt": "Alta Via 1 gear list in the Dolomites, Italy"
+        },
+        "camino": {
+          "title": "Camino de Santiago",
+          "alt": "Camino de Santiago gear list for walking across Spain"
+        },
+        "tmb": {
+          "title": "Tour du Mont Blanc",
+          "alt": "Tour du Mont Blanc gear list"
+        },
+        "whw": {
+          "title": "West Highland Way",
+          "alt": "West Highland Way gear list"
+        },
+        "kungsleden": {
+          "title": "Kungsleden",
+          "alt": "Kungsleden gear list"
+        },
+        "gr20": {
+          "title": "GR20 Corsica",
+          "alt": "GR20 gear list"
+        }
+      }
+    },
+    "howItWorks": {
+      "title": "Why I built TrekList.",
+      "paragraph1": "I've been hiking long enough to know that the planning is half the adventure. Getting your pack dialed in, thinking through every piece of gear, imagining the trail ahead. There's something genuinely satisfying about it.",
+      "paragraph2": "I'm Tall Joe. I've hiked over 8,000 miles across trails in North America and Europe, and somewhere along the way I started loving the process as much as the hiking itself.",
+      "paragraph3": "The part that always gave me a little anxiety was the night before. Everything on the floor, reorganized twice, still walking out the door wondering if I'd forgotten the one thing that would matter.",
+      "paragraph4": "So I built TrekList. Something more useful than a spreadsheet, more customizable, visually appealing, and fast enough that you're not fighting the tool when you should be thinking about the trail.",
+      "signature": "Tall Joe"
+    },
+    "finalCta": {
+      "title": "Ready to sort your kit?",
+      "subtitle": "Always and completely free to use.",
+      "primary": "Build Your Free Gear List"
+    }
+  },
+  "publicHeader": {
+    "nav": {
+      "features": "Features",
+      "recommendedGearList": "Recommended Gear List",
+      "howItWorks": "The story"
+    },
+    "auth": {
+      "login": "Log in",
+      "getStarted": "Get started"
+    }
+  },
+  "footerLegal": {
+    "brandLine": "© {year} TrekList",
+    "companyLine": "Tall Joe Hikes — KvK 98785419",
+    "links": {
+      "privacy": "Privacy",
+      "cookies": "Cookie Policy",
+      "cookieSettings": "Cookie Settings",
+      "terms": "Terms",
+      "affiliateDisclosure": "Affiliate Disclosure",
+      "imprint": "Imprint / Contact"
+    }
+  }
+}

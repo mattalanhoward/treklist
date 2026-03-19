@@ -420,7 +420,7 @@ export default function PublicGearList() {
         description={t("publicList.seo.description", {
           title: data.list.title,
         })}
-        url={`https://treklist.co/share/${token}/`}
+        url={`https://app.treklist.co/share/${token}/`}
         type="article"
         image="https://res.cloudinary.com/treklist/image/upload/v1771075130/branding/treklist_1200x630_pclazv.png"
         noindex={!data.list.isFeatured}
@@ -430,7 +430,7 @@ export default function PublicGearList() {
             "@context": "https://schema.org",
             "@type": "Article",
             "headline": data.list.title,
-            "url": `https://treklist.co/share/${token}/`,
+            "url": `https://app.treklist.co/share/${token}/`,
             "description": t("publicList.seo.description", { title: data.list.title }),
             "image": "https://res.cloudinary.com/treklist/image/upload/v1771075130/branding/treklist_1200x630_pclazv.png",
             "publisher": {
@@ -915,7 +915,7 @@ export default function PublicGearList() {
       {isEmbed ? (
         <div className="text-center py-2">
           <a
-            href={`https://treklist.co/share/${token}/`}
+            href={`https://app.treklist.co/share/${token}/`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs text-gray-400 hover:text-gray-600"

@@ -7,12 +7,14 @@ import api from "../services/api";
 import { toast } from "react-hot-toast";
 import { useUserSettings } from "../contexts/UserSettings";
 import { useTranslation } from "react-i18next";
+import logo from "../assets/images/media-kit/treklist_horizontal.png";
 
 export default function AuthModal({
   isOpen,
   defaultMode = "login", // "login" | "register"
   onClose,
   onAuthed,
+  showLogo = false,
 }) {
   // --- Hooks (order must never change between renders) ---
   const [mode, setMode] = useState(defaultMode); // "login" | "register" | "verify"
@@ -306,6 +308,11 @@ export default function AuthModal({
         className="bg-neutralAlt rounded-lg shadow-2xl w-full max-w-md px-6 py-6"
         onClick={(e) => e.stopPropagation()} // prevent close when clicking inside
       >
+        {showLogo && (
+          <div className="flex justify-center mb-5">
+            <img src={logo} alt="TrekList" className="h-8" />
+          </div>
+        )}
         {/* Header */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-primary">{title}</h2>

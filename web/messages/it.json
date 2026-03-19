@@ -1,0 +1,145 @@
+{
+  "app": {
+    "name": "TrekList",
+    "tagline": "Pianifica e condividi le tue liste di attrezzatura da trekking"
+  },
+  "landing": {
+    "pageTitle": "Prepara meglio. Viaggia leggero.",
+    "seo": {
+      "description": "Pianifica le tue escursioni e trekking con TrekList. Crea liste di attrezzatura, monitora il peso dello zaino e condividi la tua configurazione con altri escursionisti. Gratuito per escursionisti in Europa e nel mondo."
+    },
+    "hero": {
+      "title": "Prepara il kit giusto.",
+      "subtitle": "TrekList è il pianificatore di attrezzatura gratuito per gli escursionisti diretti alle Alpi, attraverso la Spagna o davvero ovunque. Crea la tua lista, tieni traccia del peso, spunta tutto prima di partire e arriva pronto.",
+      "cta": "Crea la tua lista gratis"
+    },
+    "images": {
+      "heroAlt": "Escursionista a Cinque Torri nelle Dolomiti",
+      "mobileSidebarAlt": "Vista mobile di TrekList con liste e ricerca in La mia attrezzatura",
+      "mobileColumnAlt": "Colonne delle categorie su TrekList in mobile",
+      "desktopAlt": "Vista desktop di TrekList con più categorie in colonne"
+    },
+    "features": {
+      "mobile": {
+        "title": "Il tuo kit, pronto prima di uscire di casa",
+        "subtitle": "Crea e modifica in movimento. Tieni traccia del peso. Parti pronto.",
+        "bullets": {
+          "mobileFirst": {
+            "title": "Funziona sul tuo telefono",
+            "text": "Crea e modifica dal divano, dal treno, ovunque. Nessun desktop necessario."
+          },
+          "catalogCustom": {
+            "title": "Scegli dal catalogo o aggiungi il tuo",
+            "text": "L'attrezzatura comune è già lì. Aggiungi elementi personalizzati con peso, note e link."
+          },
+          "quickAdd": {
+            "title": "Non trovi il tuo articolo? Digitalo e basta.",
+            "text": "L'IA compila nome, marca, categoria e descrizione. Controlla e aggiungi in pochi secondi. Nessun modulo noioso."
+          },
+          "weightTotals": {
+            "title": "Conosci il peso dello zaino prima di partire",
+            "text": "Peso base, peso indossato, consumabili in tempo reale. Nessuna formula, nessuna congettura."
+          },
+          "checklist": {
+            "title": "Spunta gli articoli mentre fai lo zaino",
+            "text": "Un tap per spuntare. Esporta un PDF pulito o condividi un link di sola lettura."
+          }
+        }
+      },
+      "desktop": {
+        "title": "Più di un foglio di calcolo",
+        "subtitle": "Le tue liste, la tua libreria, il tuo stile.",
+        "bullets": {
+          "gearLibrary": {
+            "title": "La tua libreria di attrezzatura, riutilizzata per ogni viaggio",
+            "text": "Aggiungi qualcosa una volta e resta nella tua libreria personale. Usala in qualsiasi lista futura senza reinserire nulla."
+          },
+          "backgrounds": {
+            "title": "Personalizzalo",
+            "text": "Imposta una foto di sfondo o un colore per ogni lista. Tieni la pianificazione come un'avventura e meno come un foglio di calcolo."
+          },
+          "share": {
+            "title": "Condividi la tua lista ovunque",
+            "text": "Link pubblici per forum escursionistici, Reddit, gruppi Facebook o amici. Nessun account necessario per visualizzare."
+          },
+          "template": {
+            "title": "Ogni lista è un punto di partenza",
+            "text": "Guarda una lista pubblica, salvala nel tuo account e sostituisci l'attrezzatura con la tua. Il tuo sentiero, il tuo kit."
+          },
+          "drag": {
+            "title": "Trascina tra categorie",
+            "text": "Sposta gli elementi nel tuo kit mentre il piano cambia."
+          }
+        }
+      }
+    },
+    "recommended": {
+      "title": "Inizia con uno di questi modelli.",
+      "subtitle": "Liste attrezzatura pronte per le rotte popolari d'Europa. Salvane una come modello, sostituisci ciò che non va e sei pronto a fare lo zaino.",
+      "cards": {
+        "viewCta": "Vedi lista",
+        "ariaOpen": "Apri la lista di {title}",
+        "av1": {
+          "title": "Alta Via 1",
+          "alt": "Lista attrezzatura per Alta Via 1 nelle Dolomiti, Italia"
+        },
+        "camino": {
+          "title": "Camino de Santiago",
+          "alt": "Lista attrezzatura per il Camino de Santiago in Spagna"
+        },
+        "tmb": {
+          "title": "Tour du Mont Blanc",
+          "alt": "Lista attrezzatura per il Tour du Mont Blanc"
+        },
+        "whw": {
+          "title": "West Highland Way",
+          "alt": "Lista attrezzatura per la West Highland Way"
+        },
+        "kungsleden": {
+          "title": "Kungsleden",
+          "alt": "Lista attrezzatura per il Kungsleden"
+        },
+        "gr20": {
+          "title": "GR20 Corsica",
+          "alt": "Lista attrezzatura per il GR20"
+        }
+      }
+    },
+    "howItWorks": {
+      "title": "Why I built TrekList.",
+      "paragraph1": "I've been hiking long enough to know that the planning is half the adventure. Getting your pack dialed in, thinking through every piece of gear, imagining the trail ahead. There's something genuinely satisfying about it.",
+      "paragraph2": "I'm Tall Joe. I've hiked over 8,000 miles across trails in North America and Europe, and somewhere along the way I started loving the process as much as the hiking itself.",
+      "paragraph3": "The part that always gave me a little anxiety was the night before. Everything on the floor, reorganized twice, still walking out the door wondering if I'd forgotten the one thing that would matter.",
+      "paragraph4": "So I built TrekList. Something more useful than a spreadsheet, more customizable, visually appealing, and fast enough that you're not fighting the tool when you should be thinking about the trail.",
+      "signature": "Tall Joe"
+    },
+    "finalCta": {
+      "title": "Pronto a organizzare il tuo kit?",
+      "subtitle": "Sempre e completamente gratuito.",
+      "primary": "Crea la tua lista gratis"
+    }
+  },
+  "publicHeader": {
+    "nav": {
+      "features": "Funzioni",
+      "recommendedGearList": "Lista consigliata",
+      "howItWorks": "The story"
+    },
+    "auth": {
+      "login": "Accedi",
+      "getStarted": "Inizia"
+    }
+  },
+  "footerLegal": {
+    "brandLine": "© {year} TrekList",
+    "companyLine": "Tall Joe Hikes — KvK 98785419",
+    "links": {
+      "privacy": "Privacy",
+      "cookies": "Cookie Policy",
+      "cookieSettings": "Impostazioni cookie",
+      "terms": "Termini",
+      "affiliateDisclosure": "Informativa affiliati",
+      "imprint": "Imprint / Contatti"
+    }
+  }
+}
