@@ -2,12 +2,25 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
+import { useRouter, usePathname } from '@/navigation';
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://app.treklist.co';
 
+const LOCALES = [
+  { code: 'en', label: 'English' },
+  { code: 'de', label: 'Deutsch' },
+  { code: 'es', label: 'Español' },
+  { code: 'fr', label: 'Français' },
+  { code: 'it', label: 'Italiano' },
+  { code: 'nl', label: 'Nederlands' },
+];
+
 export default function PublicHeader({ variant = 'solid', showSections = true }) {
   const t = useTranslations('publicHeader');
+  const locale = useLocale();
+  const router = useRouter();
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -18,6 +31,14 @@ export default function PublicHeader({ variant = 'solid', showSections = true })
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [variant]);
+
+  const handleLocaleChange = (e) => {
+    const newLocale = e.target.value;
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('language', newLocale);
+    }
+    router.replace(pathname, { locale: newLocale });
+  };
 
   const base = 'w-full flex items-center justify-between px-6 py-2 z-50 transition-colors duration-200';
 
@@ -54,8 +75,18 @@ export default function PublicHeader({ variant = 'solid', showSections = true })
         </div>
       )}
 
-      {/* Auth actions */}
+      {/* Auth actions + language picker */}
       <div className="flex items-center space-x-4">
+        <select
+          value={locale}
+          onChange={handleLocaleChange}
+          className="text-sm text-gray-700 bg-transparent border-none cursor-pointer focus:outline-none"
+          aria-label="Language"
+        >
+          {LOCALES.map(({ code, label }) => (
+            <option key={code} value={code}>{label}</option>
+          ))}
+        </select>
         <a
           href={`${APP_URL}/auth/login`}
           className="font-medium hover:underline text-gray-800"

@@ -8,6 +8,7 @@ import ResetPassword from "./pages/ResetPassword";
 import AuthCallback from "./pages/AuthCallback";
 import Dashboard from "./pages/Dashboard";
 import Landing from "./pages/Landing";
+import AuthPage from "./pages/AuthPage";
 import ChecklistView from "./pages/ChecklistView";
 import PublicGearList from "./pages/PublicGearList";
 import AffiliateDisclosurePage from "./pages/legal/AffiliateDisclosure";
@@ -23,12 +24,7 @@ import { hasStoredConsent, saveConsent, loadConsent } from "./utils/cookieConsen
 
 function PrivateRoute({ children }) {
   const { isAuthenticated } = useAuth();
-  return isAuthenticated ? (
-    children
-  ) : (
-    // send state that tells Landing to open the modal
-    <Navigate to="/" state={{ auth: "login", reason: "protected" }} replace />
-  );
+  return isAuthenticated ? children : <Navigate to="/auth/login" replace />;
 }
 
 export default function App() {
@@ -64,8 +60,8 @@ export default function App() {
       {!isEmbedded && <CookieBanner />}
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="/auth/register" element={<Landing />} />
-        <Route path="/auth/login" element={<Landing />} />
+        <Route path="/auth/register" element={<AuthPage mode="register" />} />
+        <Route path="/auth/login" element={<AuthPage mode="login" />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />

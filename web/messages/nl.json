@@ -1,0 +1,145 @@
+{
+  "app": {
+    "name": "TrekList",
+    "tagline": "Plan en deel je paklijsten voor hikes"
+  },
+  "landing": {
+    "pageTitle": "Slim inpakken. Licht reizen.",
+    "seo": {
+      "description": "Plan je wandel- en backpacktrips met TrekList. Maak paklijsten, houd je rugzakgewicht bij en deel je uitrusting met mede-wandelaars. Gratis voor hikers die Europa en verder verkennen."
+    },
+    "hero": {
+      "title": "Slim inpakken. Licht reizen.",
+      "subtitle": "Stel je paklijst samen, stem je rugzak perfect af en ga goed voorbereid op pad. Ontworpen voor langeafstandswandelaars, weekendhikers en hut-tot-hut trekkers die Europa en verder verkennen.",
+      "cta": "Begin je Paklijst"
+    },
+    "images": {
+      "heroAlt": "Hiker bij Cinque Torri in de Dolomieten",
+      "mobileSidebarAlt": "TrekList mobiele weergave met paklijsten en Mijn uitrusting zoeken",
+      "mobileColumnAlt": "TrekList mobiele categorie kolommen",
+      "desktopAlt": "TrekList desktop weergave met meerdere categorieën in kolommen"
+    },
+    "features": {
+      "mobile": {
+        "title": "Gemaakt voor het pad",
+        "subtitle": "Mobiel eerst. Voeg toe, bewerk en herorden zonder gedoe.",
+        "bullets": {
+          "mobileFirst": {
+            "title": "Mobiel ontwerp",
+            "text": "Maak en bewerk paklijsten onderweg."
+          },
+          "catalogCustom": {
+            "title": "Catalogus en eigen items",
+            "text": "Importeer bekende items uit de catalogus, of voeg je eigen uitrusting toe met gewicht, notities en een link."
+          },
+          "weightTotals": {
+            "title": "Slimme gewichtstotalen",
+            "text": "Basis, gedragen en verbruikbaar in realtime."
+          },
+          "quickAdd": {
+            "title": "Snel toevoegen en zoeken",
+            "text": "Vind uitrusting snel en bewerk overal."
+          },
+          "checklist": {
+            "title": "Pak checklist",
+            "text": "Met één tik afvinken en een nette PDF export."
+          }
+        }
+      },
+      "desktop": {
+        "title": "Gemaakt om te plannen",
+        "subtitle": "Kolomweergave of lijstweergave, kies wat bij je past.",
+        "bullets": {
+          "drag": {
+            "title": "Sleep tussen categorieën",
+            "text": "Verplaats items terwijl je je uitrusting bijstelt."
+          },
+          "gearLibrary": {
+            "title": "Jouw uitrustingsbibliotheek, hergebruikt voor elke trip",
+            "text": "Voeg iets één keer toe en het staat in je persoonlijke bibliotheek. Gebruik het in elke volgende lijst zonder opnieuw in te voeren."
+          },
+          "backgrounds": {
+            "title": "Maak het van jou",
+            "text": "Stel een achtergrondafbeelding of kleur in voor elke lijst. Laat het plannen aanvoelen als een avontuur en minder als een spreadsheet."
+          },
+          "share": {
+            "title": "Deel links",
+            "text": "Deel alleen lezen pagina's voor forums, vrienden of planning."
+          },
+          "template": {
+            "title": "Elke lijst is een beginpunt",
+            "text": "Bekijk een openbare lijst, sla hem op in je account en wissel de uitrusting in voor je eigen spullen. Jouw route, jouw kit."
+          }
+        }
+      }
+    },
+    "recommended": {
+      "title": "Aanbevolen paklijsten",
+      "subtitle": "Bekijk samengestelde paklijsten voor de bekendste langeafstandsroutes van Europa. Bekijk direct, of pas aan en sla op in je account.",
+      "cards": {
+        "viewCta": "Bekijk paklijst",
+        "ariaOpen": "Open {title} paklijst",
+        "av1": {
+          "title": "Alta Via 1",
+          "alt": "Alta Via 1 paklijst in de Dolomieten, Italië"
+        },
+        "camino": {
+          "title": "Camino de Santiago",
+          "alt": "Camino de Santiago paklijst voor wandelen door Spanje"
+        },
+        "tmb": {
+          "title": "Tour du Mont Blanc",
+          "alt": "Tour du Mont Blanc paklijst"
+        },
+        "whw": {
+          "title": "West Highland Way",
+          "alt": "West Highland Way paklijst"
+        },
+        "kungsleden": {
+          "title": "Kungsleden",
+          "alt": "Kungsleden paklijst"
+        },
+        "gr20": {
+          "title": "GR20 Corsica",
+          "alt": "GR20 paklijst"
+        }
+      }
+    },
+    "howItWorks": {
+      "title": "Why I built TrekList.",
+      "paragraph1": "I've been hiking long enough to know that the planning is half the adventure. Getting your pack dialed in, thinking through every piece of gear, imagining the trail ahead. There's something genuinely satisfying about it.",
+      "paragraph2": "I'm Tall Joe. I've hiked over 8,000 miles across trails in North America and Europe, and somewhere along the way I started loving the process as much as the hiking itself.",
+      "paragraph3": "The part that always gave me a little anxiety was the night before. Everything on the floor, reorganized twice, still walking out the door wondering if I'd forgotten the one thing that would matter.",
+      "paragraph4": "So I built TrekList. Something more useful than a spreadsheet, more customizable, visually appealing, and fast enough that you're not fighting the tool when you should be thinking about the trail.",
+      "signature": "Tall Joe"
+    },
+    "finalCta": {
+      "title": "Klaar om slimmer in te pakken voor je volgende trip?",
+      "subtitle": "Maak een paklijst voor je volgende tocht, stel je uitrusting bij, en loop de deur uit met het gevoel dat je niets vergeten bent.",
+      "primary": "Start je gratis paklijst"
+    }
+  },
+  "publicHeader": {
+    "nav": {
+      "features": "Functies",
+      "recommendedGearList": "Aanbevolen paklijst",
+      "howItWorks": "The story"
+    },
+    "auth": {
+      "login": "Inloggen",
+      "getStarted": "Aan de slag"
+    }
+  },
+  "footerLegal": {
+    "brandLine": "© {year} TrekList",
+    "companyLine": "Tall Joe Hikes — KvK 98785419",
+    "links": {
+      "privacy": "Privacy",
+      "cookies": "Cookiebeleid",
+      "cookieSettings": "Cookie-instellingen",
+      "terms": "Voorwaarden",
+      "affiliateDisclosure": "Affiliate-verklaring",
+      "imprint": "Imprint / contact"
+    }
+  }
+}

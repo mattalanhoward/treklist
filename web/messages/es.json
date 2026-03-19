@@ -1,0 +1,145 @@
+{
+  "app": {
+    "name": "TrekList",
+    "tagline": "Planifica y comparte tus listas de equipo de senderismo"
+  },
+  "landing": {
+    "pageTitle": "Empaca inteligente. Viaja ligero.",
+    "seo": {
+      "description": "Planifica tus excursiones y rutas de senderismo con TrekList. Crea listas de equipo, controla el peso de tu mochila y comparte tu configuración con otros senderistas. Gratis para excursionistas en Europa y más allá."
+    },
+    "hero": {
+      "title": "Empaca inteligente. Viaja ligero.",
+      "subtitle": "Crea tu lista de equipo, ajusta tu mochila y sal al sendero bien preparado. Diseñado para senderistas de larga distancia, excursionistas de fin de semana y trekker de refugio en refugio que exploran Europa y más allá.",
+      "cta": "Empieza tu lista"
+    },
+    "images": {
+      "heroAlt": "Senderista en Cinque Torri, en las Dolomitas",
+      "mobileSidebarAlt": "Vista móvil de TrekList mostrando listas de equipo y búsqueda en Mi equipo",
+      "mobileColumnAlt": "Columnas de categorías de TrekList en móvil",
+      "desktopAlt": "Vista de escritorio de TrekList con varias categorías de equipo en columnas"
+    },
+    "features": {
+      "mobile": {
+        "title": "Hecho para el sendero",
+        "subtitle": "Experiencia móvil primero. Añade, edita y reordena sin fricción.",
+        "bullets": {
+          "mobileFirst": {
+            "title": "Diseño móvil primero",
+            "text": "Crea y edita listas de equipo sobre la marcha."
+          },
+          "catalogCustom": {
+            "title": "Catálogo y equipo personalizado",
+            "text": "Importa artículos comunes del catálogo o añade tu propio equipo con peso, notas y un enlace."
+          },
+          "weightTotals": {
+            "title": "Totales de peso inteligentes",
+            "text": "Base, llevado y consumibles en tiempo real."
+          },
+          "quickAdd": {
+            "title": "Añadir y buscar rápido",
+            "text": "Encuentra equipo rápido y edita desde cualquier parte."
+          },
+          "checklist": {
+            "title": "Checklist de empaque",
+            "text": "Empaca con un toque y exporta un PDF limpio."
+          }
+        }
+      },
+      "desktop": {
+        "title": "Hecho para planificar",
+        "subtitle": "Vista por columnas o por lista, la que encaje con tu forma de planificar.",
+        "bullets": {
+          "drag": {
+            "title": "Arrastra entre categorías",
+            "text": "Mueve artículos por tu kit a medida que tu plan evoluciona."
+          },
+          "gearLibrary": {
+            "title": "Tu biblioteca de equipo, reutilizada en cada viaje",
+            "text": "Añade algo una vez y queda en tu biblioteca personal. Agrégalo a cualquier lista futura sin volver a introducir nada."
+          },
+          "backgrounds": {
+            "title": "Hazlo tuyo",
+            "text": "Pon una foto de fondo o un color para cada lista. Que planificar siga sintiéndose como una aventura y no como una hoja de cálculo."
+          },
+          "share": {
+            "title": "Enlaces públicos para compartir",
+            "text": "Comparte páginas de solo lectura para foros, amigos o planificación."
+          },
+          "template": {
+            "title": "Cualquier lista es un punto de partida",
+            "text": "Consulta una lista pública, guárdala en tu cuenta y cambia el equipo por el tuyo. Tu ruta, tu kit."
+          }
+        }
+      }
+    },
+    "recommended": {
+      "title": "Listas recomendadas",
+      "subtitle": "Explora listas seleccionadas para los senderos de larga distancia más icónicos de Europa. Míralas al instante o personalízalas y guárdalas en tu cuenta.",
+      "cards": {
+        "viewCta": "Ver lista",
+        "ariaOpen": "Abrir lista de equipo de {title}",
+        "av1": {
+          "title": "Alta Via 1",
+          "alt": "Lista de equipo para Alta Via 1 en las Dolomitas, Italia"
+        },
+        "camino": {
+          "title": "Camino de Santiago",
+          "alt": "Lista de equipo para el Camino de Santiago caminando por España"
+        },
+        "tmb": {
+          "title": "Tour du Mont Blanc",
+          "alt": "Lista de equipo para el Tour du Mont Blanc"
+        },
+        "whw": {
+          "title": "West Highland Way",
+          "alt": "Lista de equipo para el West Highland Way"
+        },
+        "kungsleden": {
+          "title": "Kungsleden",
+          "alt": "Lista de equipo para el Kungsleden"
+        },
+        "gr20": {
+          "title": "GR20 Córcega",
+          "alt": "Lista de equipo para el GR20"
+        }
+      }
+    },
+    "howItWorks": {
+      "title": "Why I built TrekList.",
+      "paragraph1": "I've been hiking long enough to know that the planning is half the adventure. Getting your pack dialed in, thinking through every piece of gear, imagining the trail ahead. There's something genuinely satisfying about it.",
+      "paragraph2": "I'm Tall Joe. I've hiked over 8,000 miles across trails in North America and Europe, and somewhere along the way I started loving the process as much as the hiking itself.",
+      "paragraph3": "The part that always gave me a little anxiety was the night before. Everything on the floor, reorganized twice, still walking out the door wondering if I'd forgotten the one thing that would matter.",
+      "paragraph4": "So I built TrekList. Something more useful than a spreadsheet, more customizable, visually appealing, and fast enough that you're not fighting the tool when you should be thinking about the trail.",
+      "signature": "Tall Joe"
+    },
+    "finalCta": {
+      "title": "¿Listo para empacar mejor para tu próximo viaje?",
+      "subtitle": "Empieza una lista de equipo para tu próxima ruta, ajusta tu kit y sal por la puerta sabiendo que no olvidaste nada.",
+      "primary": "Empieza tu lista gratis"
+    }
+  },
+  "publicHeader": {
+    "nav": {
+      "features": "Funciones",
+      "recommendedGearList": "Lista recomendada",
+      "howItWorks": "The story"
+    },
+    "auth": {
+      "login": "Iniciar sesión",
+      "getStarted": "Empezar"
+    }
+  },
+  "footerLegal": {
+    "brandLine": "© {year} TrekList",
+    "companyLine": "Tall Joe Hikes — KvK 98785419",
+    "links": {
+      "privacy": "Privacidad",
+      "cookies": "Política de cookies",
+      "cookieSettings": "Ajustes de cookies",
+      "terms": "Términos",
+      "affiliateDisclosure": "Divulgación de afiliados",
+      "imprint": "Aviso legal / Contacto"
+    }
+  }
+}

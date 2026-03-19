@@ -121,20 +121,13 @@ export default function Landing() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // auto-open modal when routed to /auth/register or /auth/login,
-  // or when arriving with a ?next= param (share → auth flow).
+  // auto-open modal when arriving with a ?next= param (share → auth flow).
   useEffect(() => {
-    const path = location.pathname;
     const params = new URLSearchParams(location.search);
     const hasNext = !!params.get("next");
 
-    if (path === "/auth/register" || (hasNext && !authOpen)) {
+    if (hasNext && !authOpen) {
       setAuthMode("register");
-      setAuthOpen(true);
-      return;
-    }
-    if (path === "/auth/login") {
-      setAuthMode("login");
       setAuthOpen(true);
     }
   }, [location.pathname, location.search]); // eslint-disable-line react-hooks/exhaustive-deps
