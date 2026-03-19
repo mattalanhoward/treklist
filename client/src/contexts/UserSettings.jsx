@@ -28,6 +28,13 @@ export function SettingsProvider({ children }) {
     () => localStorage.getItem("theme") || "light"
   );
   const [language, setLanguage] = useState(() => {
+    // Accept lang param from marketing site (treklist.co passes ?lang=nl etc.)
+    const urlLang = new URLSearchParams(window.location.search).get("lang");
+    if (urlLang && SUPPORTED_LANGS.includes(urlLang)) {
+      localStorage.setItem("language", urlLang);
+      return urlLang;
+    }
+
     // Prefer an explicit stored choice
     const stored = localStorage.getItem("language");
     if (stored && SUPPORTED_LANGS.includes(stored)) return stored;
