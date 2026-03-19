@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 
-export function GET(request, { params }) {
+export async function GET(request, { params }) {
+  const { id } = await params;
   const url = new URL(request.url);
   return NextResponse.redirect(
-    `https://app.treklist.co/share/${params.id}${url.search}`,
+    `https://app.treklist.co/share/${id}${url.search}`,
     { status: 302 }
   );
 }
