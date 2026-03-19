@@ -7,3 +7,9 @@
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+[[redirects]]
+  from = "/share/*"
+  to = "https://app.treklist.co/share/:splat"
+  status = 302
+  force = true
