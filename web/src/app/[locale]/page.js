@@ -76,7 +76,7 @@ const IPhoneFrame = ({ src, alt = '', className = '' }) => (
   <figure className={`relative aspect-[9/19] ${className}`}>
     <div className="absolute inset-0 rounded-[2rem] bg-[#0B1220] shadow-[0_18px_44px_rgba(0,0,0,0.35)]">
       <div className="pointer-events-none absolute inset-0 rounded-[2rem] ring-1 ring-white/10" />
-      <div className="absolute inset-[12px] sm:inset-[13px] md:inset-[14px] rounded-[1.5rem] overflow-hidden bg-black outline outline-1 outline-black">
+      <div className="absolute inset-[12px] sm:inset-[13px] md:inset-[14px] rounded-[1.5rem] overflow-hidden bg-black outline-1 outline-black">
         <img src={src} alt={alt} className="block h-full w-full object-cover object-top" loading="lazy" />
       </div>
       <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-[8px] sm:top-[9px] md:top-[10px] h-3.5 sm:h-4 w-[34%] md:w-[32%] rounded-b-2xl bg-[#0B1220]" />
