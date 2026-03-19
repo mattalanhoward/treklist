@@ -9,9 +9,9 @@
       "description": "Planifica tus excursiones y rutas de senderismo con TrekList. Crea listas de equipo, controla el peso de tu mochila y comparte tu configuración con otros senderistas. Gratis para excursionistas en Europa y más allá."
     },
     "hero": {
-      "title": "Empaca inteligente. Viaja ligero.",
-      "subtitle": "Crea tu lista de equipo, ajusta tu mochila y sal al sendero bien preparado. Diseñado para senderistas de larga distancia, excursionistas de fin de semana y trekker de refugio en refugio que exploran Europa y más allá.",
-      "cta": "Empieza tu lista"
+      "title": "Acierta con la mochila.",
+      "subtitle": "TrekList es el planificador de equipo gratuito para senderistas que van a los Alpes, por España o a cualquier otra parte. Crea tu lista, controla tu peso, marca todo antes de salir y llega preparado.",
+      "cta": "Crea tu lista gratis"
     },
     "images": {
       "heroAlt": "Senderista en Cinque Torri, en las Dolomitas",
@@ -21,39 +21,35 @@
     },
     "features": {
       "mobile": {
-        "title": "Hecho para el sendero",
-        "subtitle": "Experiencia móvil primero. Añade, edita y reordena sin fricción.",
+        "title": "Tu kit, a punto antes de salir de casa",
+        "subtitle": "Crea y edita sobre la marcha. Controla tu peso. Sal preparado.",
         "bullets": {
           "mobileFirst": {
-            "title": "Diseño móvil primero",
-            "text": "Crea y edita listas de equipo sobre la marcha."
+            "title": "Funciona en tu móvil",
+            "text": "Crea y edita desde el sofá, el tren, donde sea. No hace falta escritorio."
           },
           "catalogCustom": {
-            "title": "Catálogo y equipo personalizado",
-            "text": "Importa artículos comunes del catálogo o añade tu propio equipo con peso, notas y un enlace."
-          },
-          "weightTotals": {
-            "title": "Totales de peso inteligentes",
-            "text": "Base, llevado y consumibles en tiempo real."
+            "title": "Elige del catálogo o añade el tuyo",
+            "text": "El equipo común ya está ahí. Añade lo personalizado con peso, notas y enlace."
           },
           "quickAdd": {
-            "title": "Añadir y buscar rápido",
-            "text": "Encuentra equipo rápido y edita desde cualquier parte."
+            "title": "¿No encuentras tu artículo? Solo escríbelo.",
+            "text": "La IA rellena nombre, marca, categoría y descripción. Revisa y añade en segundos. Sin formularios lentos."
+          },
+          "weightTotals": {
+            "title": "Conoce el peso de tu mochila antes de salir",
+            "text": "Peso base, peso llevado, consumibles en tiempo real. Sin fórmulas de hoja de cálculo, sin suposiciones."
           },
           "checklist": {
-            "title": "Checklist de empaque",
-            "text": "Empaca con un toque y exporta un PDF limpio."
+            "title": "Marca los artículos mientras empacas",
+            "text": "Un toque para marcar. Exporta un PDF limpio o comparte un enlace de solo lectura."
           }
         }
       },
       "desktop": {
-        "title": "Hecho para planificar",
-        "subtitle": "Vista por columnas o por lista, la que encaje con tu forma de planificar.",
+        "title": "Más que una hoja de cálculo",
+        "subtitle": "Tus listas, tu biblioteca, tu estilo.",
         "bullets": {
-          "drag": {
-            "title": "Arrastra entre categorías",
-            "text": "Mueve artículos por tu kit a medida que tu plan evoluciona."
-          },
           "gearLibrary": {
             "title": "Tu biblioteca de equipo, reutilizada en cada viaje",
             "text": "Añade algo una vez y queda en tu biblioteca personal. Agrégalo a cualquier lista futura sin volver a introducir nada."
@@ -63,19 +59,23 @@
             "text": "Pon una foto de fondo o un color para cada lista. Que planificar siga sintiéndose como una aventura y no como una hoja de cálculo."
           },
           "share": {
-            "title": "Enlaces públicos para compartir",
-            "text": "Comparte páginas de solo lectura para foros, amigos o planificación."
+            "title": "Comparte tu lista donde quieras",
+            "text": "Enlaces públicos para foros de rutas, Reddit, grupos de Facebook o tus amigos senderistas. No hace falta cuenta para ver."
           },
           "template": {
             "title": "Cualquier lista es un punto de partida",
             "text": "Consulta una lista pública, guárdala en tu cuenta y cambia el equipo por el tuyo. Tu ruta, tu kit."
+          },
+          "drag": {
+            "title": "Arrastra entre categorías",
+            "text": "Mueve artículos por tu kit a medida que tu plan evoluciona."
           }
         }
       }
     },
     "recommended": {
-      "title": "Listas recomendadas",
-      "subtitle": "Explora listas seleccionadas para los senderos de larga distancia más icónicos de Europa. Míralas al instante o personalízalas y guárdalas en tu cuenta.",
+      "title": "Empieza con una de estas plantillas.",
+      "subtitle": "Listas de equipo listas para las rutas más populares de Europa. Guarda una como plantilla, cambia lo que no encaje y estarás listo para empacar.",
       "cards": {
         "viewCta": "Ver lista",
         "ariaOpen": "Abrir lista de equipo de {title}",
@@ -114,9 +114,9 @@
       "signature": "Tall Joe"
     },
     "finalCta": {
-      "title": "¿Listo para empacar mejor para tu próximo viaje?",
-      "subtitle": "Empieza una lista de equipo para tu próxima ruta, ajusta tu kit y sal por la puerta sabiendo que no olvidaste nada.",
-      "primary": "Empieza tu lista gratis"
+      "title": "¿Listo para organizar tu kit?",
+      "subtitle": "Siempre y completamente gratis.",
+      "primary": "Crea tu lista gratis"
     }
   },
   "publicHeader": {

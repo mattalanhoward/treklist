@@ -9,9 +9,9 @@
       "description": "Planifiez vos randonnées et treks avec TrekList. Créez des listes d'équipement, suivez le poids de votre sac et partagez votre configuration avec d'autres randonneurs. Gratuit pour les randonneurs en Europe et ailleurs."
     },
     "hero": {
-      "title": "Préparez malin. Voyagez léger.",
-      "subtitle": "Créez votre liste d'équipement, ajustez votre sac et partez sur les sentiers bien préparé. Conçu pour les randonneurs longue distance, les aventuriers du week-end et les trekkeurs de refuge en refuge à travers l'Europe et au-delà.",
-      "cta": "Commencer ma liste"
+      "title": "Préparez votre sac comme il faut.",
+      "subtitle": "TrekList est le planificateur d'équipement gratuit pour les randonneurs qui partent dans les Alpes, à travers l'Espagne ou vraiment n'importe où. Créez votre liste, suivez votre poids, cochez tout avant le départ et partez prêt.",
+      "cta": "Créez votre liste gratuite"
     },
     "images": {
       "heroAlt": "Randonneur aux Cinque Torri dans les Dolomites",
@@ -21,39 +21,35 @@
     },
     "features": {
       "mobile": {
-        "title": "Conçu pour le sentier",
-        "subtitle": "Expérience mobile-first. Ajoutez, modifiez et réorganisez sans friction.",
+        "title": "Votre kit, au point avant de quitter la maison",
+        "subtitle": "Créez et modifiez en déplacement. Suivez votre poids. Partez prêt.",
         "bullets": {
           "mobileFirst": {
-            "title": "Design mobile-first",
-            "text": "Créez et modifiez vos listes d'équipement en déplacement."
+            "title": "Fonctionne sur votre téléphone",
+            "text": "Créez et modifiez depuis le canapé, le train, n'importe où. Pas besoin d'ordinateur."
           },
           "catalogCustom": {
-            "title": "Catalogue et équipement personnalisé",
-            "text": "Importez des articles courants depuis le catalogue, ou ajoutez votre propre équipement avec poids, notes et lien."
-          },
-          "weightTotals": {
-            "title": "Totaux de poids intelligents",
-            "text": "Poids de base, porté et consommables en temps réel."
+            "title": "Choisissez dans le catalogue ou ajoutez le vôtre",
+            "text": "L'équipement courant est déjà là. Ajoutez du personnalisé avec poids, notes et lien."
           },
           "quickAdd": {
-            "title": "Ajout rapide et recherche",
-            "text": "Trouvez votre équipement rapidement et modifiez depuis n'importe où."
+            "title": "Vous ne trouvez pas votre article ? Tapez-le simplement.",
+            "text": "L'IA remplit le nom, la marque, la catégorie et la description. Vérifiez et ajoutez en quelques secondes. Pas de formulaire fastidieux."
+          },
+          "weightTotals": {
+            "title": "Connaissez le poids de votre sac avant de partir",
+            "text": "Poids de base, poids porté, consommables en temps réel. Pas de formules, pas de devinettes."
           },
           "checklist": {
-            "title": "Checklist de préparation",
-            "text": "Un tap pour cocher, export PDF propre."
+            "title": "Cochez les articles en faisant votre sac",
+            "text": "Un tap pour cocher. Exportez un PDF propre ou partagez un lien en lecture seule."
           }
         }
       },
       "desktop": {
-        "title": "Conçu pour planifier",
-        "subtitle": "Vue colonnes ou vue liste, selon votre façon de planifier.",
+        "title": "Plus qu'un tableur",
+        "subtitle": "Vos listes, votre bibliothèque, votre style.",
         "bullets": {
-          "drag": {
-            "title": "Glisser entre catégories",
-            "text": "Déplacez des articles dans votre kit au fil de l'évolution de votre plan."
-          },
           "gearLibrary": {
             "title": "Votre bibliothèque d'équipement, réutilisée à chaque voyage",
             "text": "Ajoutez un article une fois et il reste dans votre bibliothèque personnelle. Ajoutez-le à n'importe quelle liste future sans rien ressaisir."
@@ -63,19 +59,23 @@
             "text": "Définissez une photo de fond ou une couleur pour chaque liste. Donnez à la planification l'esprit d'une aventure, pas d'un tableur."
           },
           "share": {
-            "title": "Liens de partage publics",
-            "text": "Partagez des pages en lecture seule pour des forums, des amis ou la planification."
+            "title": "Partagez votre liste partout",
+            "text": "Liens publics pour les forums de randonnée, Reddit, groupes Facebook ou vos amis. Pas de compte requis pour voir."
           },
           "template": {
             "title": "Toute liste est un point de départ",
             "text": "Consultez une liste publique, enregistrez-la dans votre compte et remplacez l'équipement par le vôtre. Votre sentier, votre kit."
+          },
+          "drag": {
+            "title": "Glisser entre catégories",
+            "text": "Déplacez des articles dans votre kit au fil de l'évolution de votre plan."
           }
         }
       }
     },
     "recommended": {
-      "title": "Listes d'équipement recommandées",
-      "subtitle": "Explorez des listes d'équipement sélectionnées pour les sentiers longue distance les plus emblématiques d'Europe. Consultez-les immédiatement, ou personnalisez-les et enregistrez-les dans votre compte.",
+      "title": "Commencez avec l'un de ces modèles.",
+      "subtitle": "Des listes d'équipement prêtes pour les routes populaires d'Europe. Enregistrez-en une comme modèle, échangez ce qui ne convient pas et vous êtes prêt à faire vos bagages.",
       "cards": {
         "viewCta": "Voir la liste",
         "ariaOpen": "Ouvrir la liste d'équipement {title}",
@@ -114,9 +114,9 @@
       "signature": "Tall Joe"
     },
     "finalCta": {
-      "title": "Prêt à préparer votre sac plus intelligemment pour votre prochain voyage ?",
-      "subtitle": "Créez une liste d'équipement pour votre prochain trek, peaufinez votre kit, et partez en sachant que vous n'avez rien oublié.",
-      "primary": "Créer ma liste gratuite"
+      "title": "Prêt à préparer votre kit ?",
+      "subtitle": "Toujours et entièrement gratuit.",
+      "primary": "Créez votre liste gratuite"
     }
   },
   "publicHeader": {
