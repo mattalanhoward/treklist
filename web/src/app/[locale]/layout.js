@@ -8,7 +8,7 @@ export const metadata = { metadataBase: new URL('https://treklist.co') };
 
 export default async function LocaleLayout({ children, params }) {
   const { locale } = await params;
-  if (!routing.locales.includes(locale)) notFound();
+  if (!locale || !routing.locales.includes(locale)) notFound();
   const messages = await getMessages();
   return (
     <html lang={locale}>

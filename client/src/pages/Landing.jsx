@@ -132,20 +132,6 @@ export default function Landing() {
     }
   }, [location.pathname, location.search]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    const auth = location.state?.auth; // "login" | "register"
-    const reason = location.state?.reason; // "protected" | "expired" | undefined
-    const shouldOpen =
-      (auth === "login" || auth === "register") &&
-      (reason === "protected" || reason === "expired");
-
-    if (shouldOpen) {
-      setAuthMode(auth);
-      setAuthOpen(true);
-      // clear state so refresh/back doesn’t re-open
-      navigate(location.pathname, { replace: true, state: {} });
-    }
-  }, [location, navigate]);
 
   const openAuth = (mode) => {
     setAuthMode(mode);
