@@ -165,7 +165,7 @@ export default async function LandingPage() {
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 drop-shadow-[0_2px_10px_rgba(0,0,0,0.55)]">
             {t('hero.title')}
           </h1>
-          <p className="max-w-2xl text-white text-xl mb-8 drop-shadow-[0_2px_10px_rgba(0,0,0,0.55)]">
+          <p className="max-w-2xl mx-auto text-white text-xl mb-8 drop-shadow-[0_2px_10px_rgba(0,0,0,0.55)]">
             {t('hero.subtitle')}
           </p>
           <a
