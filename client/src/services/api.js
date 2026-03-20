@@ -10,7 +10,7 @@ const BASE_HOST = (import.meta.env.VITE_API_URL || "")
   .trim()
   .replace(/\/+$/, ""); // strip trailing slash
 const BASE_URL = `${BASE_HOST}/api`;
-if (!BASE_HOST) {
+if (!BASE_HOST && import.meta.env.DEV) {
   // eslint-disable-next-line no-console
   console.warn("VITE_API_URL is not set; requests will likely fail.");
 }
