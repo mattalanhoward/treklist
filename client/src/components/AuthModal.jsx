@@ -98,8 +98,11 @@ export default function AuthModal({
     try {
       await login(email, password);
       // toast.success(t("auth.toasts.welcomeBack"));
-      onAuthed?.();
-      onClose?.();
+      if (onAuthed) {
+        onAuthed();
+      } else {
+        onClose?.();
+      }
     } catch (e) {
       setErr(e?.response?.data?.message || t("auth.errors.loginFailed"));
     } finally {
@@ -173,8 +176,11 @@ export default function AuthModal({
 
         // 2) Normal authed flow: toast + onAuthed (which navigates to /dashboard)
         // toast.success("Email verified — welcome to TrekList!");
-        onAuthed?.();
-        onClose?.();
+        if (onAuthed) {
+          onAuthed();
+        } else {
+          onClose?.();
+        }
       } else {
         toast(t("auth.toasts.notVerifiedYet"));
       }
