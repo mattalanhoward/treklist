@@ -1,6 +1,8 @@
 export const metadata = {
-  title: 'Imprint – TrekList',
+  title: 'Imprint',
+  description: 'Legal notice and contact information for TrekList (Tall Joe Hikes).',
   alternates: { canonical: 'https://treklist.co/legal/imprint' },
+  robots: { index: false },
 };
 
 export default function ImprintPage() {

@@ -1,6 +1,8 @@
 export const metadata = {
-  title: 'Affiliate Disclosure – TrekList',
+  title: 'Affiliate Disclosure',
+  description: 'TrekList may earn a commission on gear purchases made through links on this site.',
   alternates: { canonical: 'https://treklist.co/legal/affiliate-disclosure' },
+  robots: { index: false },
 };
 
 export default function AffiliateDisclosurePage() {

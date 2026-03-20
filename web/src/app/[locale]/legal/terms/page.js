@@ -1,6 +1,8 @@
 export const metadata = {
-  title: 'Terms of Use – TrekList',
+  title: 'Terms of Use',
+  description: 'The terms and conditions governing your use of TrekList.',
   alternates: { canonical: 'https://treklist.co/legal/terms' },
+  robots: { index: false },
 };
 
 export default function TermsPage() {

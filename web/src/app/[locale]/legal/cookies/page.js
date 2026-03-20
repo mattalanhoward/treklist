@@ -1,6 +1,8 @@
 export const metadata = {
-  title: 'Cookie Policy – TrekList',
+  title: 'Cookie Policy',
+  description: 'Information about how TrekList uses cookies and similar tracking technologies.',
   alternates: { canonical: 'https://treklist.co/legal/cookies' },
+  robots: { index: false },
 };
 
 export default function CookiesPage() {
