@@ -52,6 +52,14 @@
   </head>
   <body class="no-ios-zoom">
     <div id="root"></div>
+    <!-- Unregister any stale service workers from previous app versions -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for (var r of registrations) { r.unregister(); }
+        });
+      }
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
