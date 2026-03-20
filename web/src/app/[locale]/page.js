@@ -25,21 +25,31 @@ const heroSrc = {
   1920: cloudinaryUrl(HERO_PUBLIC_ID, 1920),
 };
 
+const BASE = 'https://treklist.co';
+const LOCALES = ['en', 'de', 'es', 'fr', 'it', 'nl'];
+
 // --- SEO ---
-export async function generateMetadata() {
+export async function generateMetadata({ params }) {
+  const { locale } = await params;
   const t = await getTranslations('landing');
   const ogImage =
     'https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,w_1200,h_630,f_jpg,q_auto/gear-list-hero-images/hero-hiker-cinque-torri_hpe3lz';
+  const canonicalUrl = locale === 'en' ? BASE : `${BASE}/${locale}`;
+  const hreflangMap = Object.fromEntries(
+    LOCALES.map((l) => [l, l === 'en' ? BASE : `${BASE}/${l}`])
+  );
+  hreflangMap['x-default'] = BASE;
+
   return {
     title: t('pageTitle'),
     description: t('seo.description'),
-    alternates: { canonical: 'https://treklist.co' },
+    alternates: { canonical: canonicalUrl, languages: hreflangMap },
     openGraph: {
       title: t('pageTitle'),
       description: t('seo.description'),
-      url: 'https://treklist.co',
+      url: canonicalUrl,
       siteName: 'TrekList',
-      images: [{ url: ogImage, width: 1200, height: 630 }],
+      images: [{ url: ogImage, width: 1200, height: 630, alt: 'TrekList hiking gear planner — hiker in the Dolomites' }],
       type: 'website',
     },
     twitter: {
@@ -124,23 +134,43 @@ export default async function LandingPage() {
     },
   ];
 
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
-    name: 'TrekList',
-    url: 'https://treklist.co',
-    description: t('seo.description'),
-    applicationCategory: 'TravelApplication',
-    operatingSystem: 'Web',
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-  };
+  const structuredData = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'SoftwareApplication',
+      name: 'TrekList',
+      url: 'https://treklist.co',
+      description: t('seo.description'),
+      applicationCategory: 'TravelApplication',
+      operatingSystem: 'Web',
+      featureList: [
+        'Hiking gear list builder',
+        'Pack weight tracker',
+        'Gear library',
+        'Shareable gear lists',
+        'Gear list templates',
+        'Packing checklist',
+        'Mobile-friendly',
+      ],
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'TrekList',
+      url: 'https://treklist.co',
+    },
+  ];
 
   return (
     <div className="relative flex flex-col min-h-screen bg-white text-gray-800">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
+      {structuredData.map((schema, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      ))}
 
       <PublicHeader variant="overlay" showSections={true} />
 

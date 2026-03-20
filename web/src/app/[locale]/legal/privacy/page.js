@@ -1,6 +1,8 @@
 export const metadata = {
-  title: 'Privacy Policy – TrekList',
+  title: 'Privacy Policy',
+  description: 'How TrekList collects, uses, and protects your personal data.',
   alternates: { canonical: 'https://treklist.co/legal/privacy' },
+  robots: { index: false },
 };
 
 export default function PrivacyPage() {
