@@ -139,13 +139,13 @@ export default function PublicHeader({ variant = 'solid', showSections = true })
 
         <a
           href={`${APP_URL}/auth/login${locale !== 'en' ? `?lang=${locale}` : ''}`}
-          className="font-medium hover:underline text-gray-800"
+          className="hidden sm:block font-medium hover:underline text-gray-800"
         >
           {t('auth.login')}
         </a>
         <a
           href={`${APP_URL}/auth/register${locale !== 'en' ? `?lang=${locale}` : ''}`}
-          className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-full hover:opacity-90 transition"
+          className="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 text-white text-sm sm:text-base font-semibold rounded-full hover:opacity-90 transition"
         >
           {t('auth.getStarted')}
         </a>
