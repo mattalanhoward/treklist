@@ -324,6 +324,16 @@ export default function GlobalItemEditModal({
     setImageUrl((prev) => prev || globalTemplate.imageUrls[0]);
   }, [viewMode, globalTemplate]);
 
+  // catalogCategory lives on the GlobalItem, not the GearItem — backfill once globalTemplate loads.
+  useEffect(() => {
+    if (viewMode !== "custom") return;
+    if (!globalTemplate?.catalogCategory) return;
+    setForm((prev) => ({
+      ...prev,
+      catalogCategory: prev.catalogCategory || globalTemplate.catalogCategory,
+    }));
+  }, [viewMode, globalTemplate]);
+
   // Hydrate imported read-only fields from the *template*
   useEffect(() => {
     if (!item) return;

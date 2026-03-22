@@ -1,6 +1,8 @@
 // src/pages/GearListView.jsx
 import React, { useState, useEffect, useCallback } from "react";
 import { FiShare2, FiInfo, FiLock, FiUnlock, FiMoreHorizontal, FiPlus, FiCheck, FiX } from "react-icons/fi";
+import { BsBackpack4 } from "react-icons/bs";
+import StatWithDetails from "../components/StatWithDetails";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { DragOverlay } from "@dnd-kit/core";
@@ -240,6 +242,12 @@ export default function GearListView({
   const refreshListAfterEdit = useCallback(() => {
     if (typeof onRefresh === "function") onRefresh();
   }, [onRefresh]);
+
+  function baseColorClass(grams) {
+    if (grams < 5_000) return "text-green-600";
+    if (grams < 15_000) return "text-orange-500";
+    return "text-red-500";
+  }
 
   function computeStats(itemsMapArg) {
     let baseWeight = 0;
@@ -1130,7 +1138,7 @@ export default function GearListView({
             </div>
           )}
           {/* Title + stats, inline-editable */}
-          <div className="flex-1 flex items-center justify-center space-x-8 sm:flex-none sm:justify-start">
+          <div className="flex-1 flex items-center sm:flex-none sm:space-x-8">
             {isEditingTitle ? (
               <input
                 type="text"
@@ -1178,6 +1186,10 @@ export default function GearListView({
                     breakdowns={breakdowns}
                   />
                 </div>
+                {/* Mobile-only: list name */}
+                <div className="sm:hidden w-full flex items-center pl-3">
+                  <span className="truncate text-primary font-medium text-sm">{list.title}</span>
+                </div>
               </>
             )}
           </div>
@@ -1214,6 +1226,18 @@ export default function GearListView({
             >
               {isLocked ? <FiLock /> : <FiUnlock />}
             </button>
+
+            {/* Base weight - mobile only, next to ellipsis */}
+            <div className="sm:hidden">
+              <StatWithDetails
+                icon={BsBackpack4}
+                raw={stats.baseWeight}
+                label={t("packStats.base")}
+                items={[]}
+                colorClass={baseColorClass(stats.baseWeight)}
+                disablePopover
+              />
+            </div>
 
             {/* Ellipsis menu */}
             <DropdownMenu
