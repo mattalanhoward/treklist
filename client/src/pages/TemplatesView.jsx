@@ -10,6 +10,7 @@ const FEATURED_TOKENS = {
   av1: import.meta.env.VITE_SHARE_AV1_TOKEN,
   camino: import.meta.env.VITE_SHARE_CAMINO_TOKEN,
   tmb: import.meta.env.VITE_SHARE_TMB_TOKEN,
+  whw: import.meta.env.VITE_SHARE_WHW_TOKEN,
 };
 
 export default function TemplatesView({ fetchLists }) {
@@ -37,6 +38,13 @@ export default function TemplatesView({ fetchLists }) {
       img: "https://res.cloudinary.com/treklist/image/upload/gear-list-landing/gear-list-tour-du-mont-blanc.jpg",
       alt: t("landing.recommended.cards.tmb.alt"),
       token: FEATURED_TOKENS.tmb,
+    },
+    {
+      key: "whw",
+      title: t("landing.recommended.cards.whw.title"),
+      img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/gear-list-landing/gear-list-west-highland-way.jpg",
+      alt: t("landing.recommended.cards.whw.alt"),
+      token: FEATURED_TOKENS.whw,
     },
   ];
 
