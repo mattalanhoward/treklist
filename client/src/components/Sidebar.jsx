@@ -222,6 +222,7 @@ export default function Sidebar({
     : // when collapsed (or on desktop) nothing special
       "";
 
+
   // inside Sidebar.jsx, just above your component fn
   const isMobile = () =>
     typeof window !== "undefined" && window.innerWidth < 640;
@@ -497,7 +498,7 @@ export default function Sidebar({
               }}
             />
             {/* Templates link */}
-            <section className="px-4 py-2 border-t border-base-100 flex-shrink-0">
+            <section className="px-4 pt-2 pb-24 sm:pb-2 border-t border-base-100 flex-shrink-0">
               <div
                 data-tour="sidebar-templates"
                 className="flex items-center text-primaryAlt rounded-lg p-1 -m-1"
