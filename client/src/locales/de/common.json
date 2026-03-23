@@ -78,7 +78,7 @@
     "steps": {
       "welcome": {
         "title": "Willkommen bei TrekList",
-        "body": "Wir haben eine Beispiel-Packliste geladen, damit du siehst, wie alles zusammenpasst. Du kannst sie jederzeit erkunden, bearbeiten oder löschen."
+        "body": "TrekList hilft dir, deine Ausrüstung für jedes Abenteuer zu planen, zu organisieren und zu teilen. Lass uns kurz umschauen."
       },
       "lists": {
         "title": "Deine Packlisten",
@@ -87,6 +87,10 @@
       "myGear": {
         "title": "Meine Ausrüstung",
         "body": "Klicke auf „Meine Ausrüstung“, um dein Inventar zu öffnen und zu verwalten. Nutze den „+“-Button, um Katalogartikel hinzuzufügen oder eigene über die Seitenleiste zu erstellen."
+      },
+      "templates": {
+        "title": "Vorlagen",
+        "body": "Neu bei der Reiseplanung? Durchsuche kuratierte Packlisten unter Vorlagen und nutze eine als Ausgangspunkt für deine Tour."
       },
       "categories": {
         "title": "Kategorien",
@@ -99,6 +103,14 @@
       "addItems": {
         "title": "Ausrüstung zu einer Kategorie hinzufügen",
         "body": "Click + Add Items to add gear from your inventory, search the catalog, or create a new item on the spot."
+      },
+      "wishlist": {
+        "title": "Wunschliste / Noch zu kaufen",
+        "body": "Klicke auf den Stern bei einem Artikel, um ihn zur Wunschliste hinzuzufügen – praktisch für Ausrüstung, die du noch vor der Reise kaufen musst."
+      },
+      "swap": {
+        "title": "Artikel tauschen",
+        "body": "Klicke auf das Tausch-Symbol, um diesen Artikel durch einen aus deinem eigenen Ausrüstungsinventar zu ersetzen."
       },
       "preferences": {
         "title": "Packlisten-Optionen",
@@ -131,7 +143,8 @@
     "mustSelectListFirst": "Wähle oder erstelle zuerst eine Liste mit mindestens einer Kategorie.",
     "addToListFailed": "Element konnte nicht zu deiner Liste hinzugefügt werden.",
     "itemAlreadyInList": "Dieses Element ist bereits in deiner Liste. Verwende das Mengenfeld, um mehr hinzuzufügen.",
-    "editGlobalTemplate": "Globale Vorlage bearbeiten"
+    "editGlobalTemplate": "Globale Vorlage bearbeiten",
+    "templatesTitle": "Vorlagen"
   },
   "auth": {
     "title": {
@@ -1245,5 +1258,12 @@
       "nameRequired": "Der Listenname darf nicht leer sein.",
       "failed": "Liste konnte nicht erstellt werden. Bitte versuche es erneut."
     }
+  },
+  "templates": {
+    "title": "Vorlagen",
+    "subtitle": "Starte mit einer kuratierten Packliste. Schau sie dir an und nutze sie als Ausgangspunkt für deine eigene Tour.",
+    "previewCta": "Liste ansehen",
+    "openAriaLabel": "Vorlage {{title}} öffnen",
+    "backBreadcrumb": "Zurück zu Vorlagen"
   }
 }

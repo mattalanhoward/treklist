@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import api from "../services/api";
 import { FaGripVertical } from "react-icons/fa";
-import { FiChevronLeft, FiChevronRight, FiPlus, FiChevronDown, FiChevronUp, FiLayers, FiSettings } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiPlus, FiChevronDown, FiChevronUp, FiLayers, FiSettings, FiBookmark } from "react-icons/fi";
 import { BsBackpack4 } from "react-icons/bs";
 import { useDraggable } from "@dnd-kit/core";
 import GlobalItemModal from "./GlobalItemModal";
@@ -56,6 +56,7 @@ export default function Sidebar({
   onOpenWishlist = () => {},
   onOpenMyGear = () => {},
   onShowGearPane = () => {},
+  onOpenTemplates = () => {},
   isAdmin = false,
   isLocked = false,
 }) {
@@ -290,6 +291,16 @@ export default function Sidebar({
             >
               <BsBackpack4 className="w-4 h-4" />
             </button>
+            <button
+              type="button"
+              title={t("sidebar.templatesTitle")}
+              onClick={() => {
+                onOpenTemplates();
+              }}
+              className="w-9 h-9 flex items-center justify-center rounded-lg text-primaryAlt hover:text-primary hover:bg-primary/5 transition-colors"
+            >
+              <FiBookmark className="w-4 h-4" />
+            </button>
           </div>
         )}
 
@@ -312,12 +323,10 @@ export default function Sidebar({
             )}
             {/* Gear Lists section */}
             <section
-              className={
-                "flex flex-col flex-none px-4 py-2 border-b border-base-100 overflow-hidden " +
-                (sidebarGearListsCollapsed ? "" : "h-1/3")
-              }
+              className="flex flex-col flex-none px-4 py-2 border-b border-base-100 overflow-hidden"
             >
               <div
+                data-tour="sidebar-lists-header"
                 className="flex items-center text-primaryAlt rounded-lg p-1 -m-1"
               >
                 <button
@@ -355,7 +364,7 @@ export default function Sidebar({
               </div>
               {!sidebarGearListsCollapsed && (
                 <>
-                  <ul className="overflow-y-auto flex-1 space-y-1 text-secondaryAlt mt-2">
+                  <ul className="overflow-y-auto max-h-48 space-y-1 text-secondaryAlt mt-2">
                     {sortedLists.map((l) => (
                       <li key={l._id} className="flex items-center">
                         <button
@@ -487,6 +496,25 @@ export default function Sidebar({
                 onSelectList(id);
               }}
             />
+            {/* Templates link */}
+            <section className="px-4 py-2 border-t border-base-100 flex-shrink-0">
+              <div
+                data-tour="sidebar-templates"
+                className="flex items-center text-primaryAlt rounded-lg p-1 -m-1"
+              >
+                <button
+                  type="button"
+                  onClick={() => {
+                    onOpenTemplates();
+                    if (isMobile()) setCollapsed(true);
+                  }}
+                  className="flex items-center gap-2 font-bold truncate text-left hover:underline transition-colors"
+                >
+                  <FiBookmark className="w-3.5 h-3.5 flex-shrink-0" />
+                  {t("sidebar.templatesTitle")}
+                </button>
+              </div>
+            </section>
             {/* Bottom actions group: Forum (future) Wishlist + Admin */}
             {/* <div className="mt-auto">
               <section className="px-4 py-2 border-t border-base-100">

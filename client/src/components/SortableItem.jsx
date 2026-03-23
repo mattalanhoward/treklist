@@ -272,6 +272,7 @@ export default function SortableItem({
           {!isLocked && (
             <div className="flex items-center gap-1 flex-shrink-0">
               <button
+                data-tour="item-swap"
                 type="button"
                 onClick={() => setSwapOpen(true)}
                 className="p-1 text-primary/60 hover:text-primary focus:outline-none"
@@ -327,6 +328,7 @@ export default function SortableItem({
             <CartIconLink />
             {item.globalItem && (
               <button
+                data-tour="item-wishlist"
                 type="button"
                 onClick={handleWishlistToggle}
                 title={wishlisted ? t("wishlist.actions.markOwned", "Mark as owned") : t("wishlist.actions.addToWishlist", "Add to wishlist")}
@@ -427,6 +429,7 @@ export default function SortableItem({
           <div className="justify-self-center">
             {item.globalItem && (
               <button
+                data-tour="item-wishlist"
                 type="button"
                 onClick={handleWishlistToggle}
                 title={wishlisted ? t("wishlist.actions.markOwned", "Mark as owned") : t("wishlist.actions.addToWishlist", "Add to wishlist")}
@@ -443,6 +446,7 @@ export default function SortableItem({
           <div className="justify-self-center">
             {!isLocked && (
               <button
+                data-tour="item-swap"
                 type="button"
                 onClick={() => setSwapOpen(true)}
                 className="text-primary/60 hover:text-primary focus:outline-none"
@@ -500,6 +504,7 @@ export default function SortableItem({
           {/* R1 C4: Star — aligns over shirt */}
           {item.globalItem && (
             <button
+              data-tour="item-wishlist"
               type="button"
               onClick={handleWishlistToggle}
               title={wishlisted ? t("wishlist.actions.markOwned", "Mark as owned") : t("wishlist.actions.addToWishlist", "Add to wishlist")}
@@ -514,6 +519,7 @@ export default function SortableItem({
           {/* R1 C5: Swap — aligns over qty */}
           {!isLocked && (
             <button
+              data-tour="item-swap"
               type="button"
               onClick={() => setSwapOpen(true)}
               className="row-start-1 col-start-5 justify-self-center text-primary/60 hover:text-primary focus:outline-none"

@@ -11,6 +11,7 @@ import ForumView from "../pages/ForumView";
 import WishlistView from "../pages/WishlistView";
 import MyGearView from "../pages/MyGearView";
 import GearListsOverview from "../pages/GearListsOverview";
+import TemplatesView from "../pages/TemplatesView";
 import { toast } from "react-hot-toast";
 import { useUserSettings } from "../contexts/UserSettings";
 import { useTranslation } from "react-i18next";
@@ -99,7 +100,7 @@ export default function Dashboard() {
   const { listId } = useParams(); // from /dashboard/:listId
   const navigate = useNavigate();
   const location = useLocation();
-  const TOUR_VERSION = 1;
+  const TOUR_VERSION = 2;
   const hasSeenTour =
     Number(user?.onboarding?.tourVersionSeen || 0) >= TOUR_VERSION;
 
@@ -118,7 +119,7 @@ export default function Dashboard() {
     {
       title: t("tour.steps.lists.title"),
       body: t("tour.steps.lists.body"),
-      target: '[data-tour="sidebar-create-list"]',
+      target: '[data-tour="sidebar-lists-header"]',
       onEnter: ({ isMobile }) => {
         setActivePane("gear");
         if (isMobile) setSidebarCollapsed(false); // keep open
@@ -128,6 +129,15 @@ export default function Dashboard() {
       title: t("tour.steps.myGear.title"),
       body: t("tour.steps.myGear.body"),
       target: '[data-tour="sidebar-my-gear"]',
+      onEnter: ({ isMobile }) => {
+        setActivePane("gear");
+        if (isMobile) setSidebarCollapsed(false); // keep open
+      },
+    },
+    {
+      title: t("tour.steps.templates.title"),
+      body: t("tour.steps.templates.body"),
+      target: '[data-tour="sidebar-templates"]',
       onEnter: ({ isMobile }) => {
         setActivePane("gear");
         if (isMobile) setSidebarCollapsed(false); // keep open
@@ -155,6 +165,24 @@ export default function Dashboard() {
       title: t("tour.steps.addItems.title"),
       body: t("tour.steps.addItems.body"),
       target: '[data-tour="category-add-item"]',
+      onEnter: ({ isMobile }) => {
+        setActivePane("gear");
+        if (isMobile) setSidebarCollapsed(true); // keep closed
+      },
+    },
+    {
+      title: t("tour.steps.wishlist.title"),
+      body: t("tour.steps.wishlist.body"),
+      target: '[data-tour="item-wishlist"]',
+      onEnter: ({ isMobile }) => {
+        setActivePane("gear");
+        if (isMobile) setSidebarCollapsed(true); // keep closed
+      },
+    },
+    {
+      title: t("tour.steps.swap.title"),
+      body: t("tour.steps.swap.body"),
+      target: '[data-tour="item-swap"]',
       onEnter: ({ isMobile }) => {
         setActivePane("gear");
         if (isMobile) setSidebarCollapsed(true); // keep closed
@@ -220,6 +248,7 @@ export default function Dashboard() {
 
   // ─── Which main panel is active: "gear" "admin" "forum" "wishlist" ───
   const [activePane, setActivePane] = useState(location.state?.pane ?? "gear");
+  const [templatesKey, setTemplatesKey] = useState(0);
 
   useEffect(() => {
     if (!listId) return;
@@ -630,6 +659,7 @@ export default function Dashboard() {
             onOpenWishlist={() => setActivePane("wishlist")}
             onOpenMyGear={() => setActivePane("myGear")}
             onShowGearPane={() => setActivePane("lists")}
+            onOpenTemplates={() => { setActivePane("templates"); setTemplatesKey((k) => k + 1); }}
             onSelectList={handleSelectList}
             onRefresh={fetchFullData}
             isLocked={fullData.list?.isLocked || false}
@@ -644,6 +674,8 @@ export default function Dashboard() {
               <WishlistView />
             ) : activePane === "myGear" ? (
               <MyGearView collapsed={collapsed} />
+            ) : activePane === "templates" ? (
+              <TemplatesView key={templatesKey} fetchLists={fetchLists} />
             ) : activePane === "lists" ? (
               <GearListsOverview
                 lists={lists}

@@ -78,7 +78,7 @@
     "steps": {
       "welcome": {
         "title": "Welkom bij TrekList",
-        "body": "We hebben een voorbeeldlijst geladen zodat je kunt zien hoe alles samenwerkt. Je kunt deze vrij verkennen, aanpassen of verwijderen."
+        "body": "TrekList helpt je bij het plannen, organiseren en delen van je uitrusting voor elk avontuur. Laten we snel rondkijken."
       },
       "lists": {
         "title": "Je paklijsten",
@@ -87,6 +87,10 @@
       "myGear": {
         "title": "Mijn uitrusting",
         "body": "Klik op “Mijn uitrusting” om je uitrusting te openen en te beheren. Gebruik de “+”-knop om catalogusitems toe te voegen of eigen items aan te maken via de zijbalk."
+      },
+      "templates": {
+        "title": "Sjablonen",
+        "body": "Nieuw bij het plannen van reizen? Bekijk samengestelde paklijsten bij Sjablonen en gebruik er een als startpunt voor je avontuur."
       },
       "categories": {
         "title": "Categorieën",
@@ -99,6 +103,14 @@
       "addItems": {
         "title": "Items toevoegen aan een categorie",
         "body": "Click + Add Items to add gear from your inventory, search the catalog, or create a new item on the spot."
+      },
+      "wishlist": {
+        "title": "Verlanglijst / Nog te kopen",
+        "body": "Klik op de ster bij een item om het aan je verlanglijst toe te voegen, handig voor uitrusting die je nog moet kopen voor de reis."
+      },
+      "swap": {
+        "title": "Item wisselen",
+        "body": "Klik op het wisselicoon om dit item te vervangen door een item uit je eigen uitrustingsinventaris."
       },
       "preferences": {
         "title": "Paklijst-instellingen",
@@ -131,7 +143,8 @@
     "mustSelectListFirst": "Kies of maak eerst een lijst met ten minste één categorie.",
     "addToListFailed": "Item kon niet aan je lijst worden toegevoegd.",
     "itemAlreadyInList": "Dit item staat al in je lijst. Gebruik het aantal-veld om meer toe te voegen.",
-    "editGlobalTemplate": "Globaal sjabloon bewerken"
+    "editGlobalTemplate": "Globaal sjabloon bewerken",
+    "templatesTitle": "Sjablonen"
   },
   "auth": {
     "title": {
@@ -1245,5 +1258,12 @@
       "nameRequired": "Lijstnaam mag niet leeg zijn.",
       "failed": "Lijst kon niet worden aangemaakt. Probeer het opnieuw."
     }
+  },
+  "templates": {
+    "title": "Sjablonen",
+    "subtitle": "Begin met een samengestelde paklijst. Bekijk hem en gebruik hem als startpunt voor je eigen avontuur.",
+    "previewCta": "Lijst bekijken",
+    "openAriaLabel": "Sjabloon {{title}} openen",
+    "backBreadcrumb": "Terug naar Sjablonen"
   }
 }

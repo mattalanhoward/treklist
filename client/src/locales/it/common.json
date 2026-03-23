@@ -78,7 +78,7 @@
     "steps": {
       "welcome": {
         "title": "Benvenuto su TrekList",
-        "body": "Abbiamo caricato una lista di esempio per mostrarti come funziona tutto. Puoi esplorarla, modificarla o eliminarla liberamente."
+        "body": "TrekList ti aiuta a pianificare, organizzare e condividere il tuo equipaggiamento per ogni avventura. Diamo un'occhiata rapida."
       },
       "lists": {
         "title": "Le tue liste",
@@ -87,6 +87,10 @@
       "myGear": {
         "title": "La mia attrezzatura",
         "body": "Clicca su “La mia attrezzatura” per aprire e gestire il tuo inventario. Usa il pulsante “+” per aggiungere articoli dal catalogo o crearne di personalizzati dalla barra laterale."
+      },
+      "templates": {
+        "title": "Modelli",
+        "body": "Nuovo nella pianificazione dei viaggi? Esplora liste di equipaggiamento curate nei Modelli e usane una come punto di partenza per il tuo viaggio."
       },
       "categories": {
         "title": "Categorie",
@@ -99,6 +103,14 @@
       "addItems": {
         "title": "Aggiungi articoli a una categoria",
         "body": "Click + Add Items to add gear from your inventory, search the catalog, or create a new item on the spot."
+      },
+      "wishlist": {
+        "title": "Lista dei desideri / Da acquistare",
+        "body": "Clicca sulla stella di un articolo per aggiungerlo alla lista dei desideri, utile per l'equipaggiamento che devi ancora acquistare prima del viaggio."
+      },
+      "swap": {
+        "title": "Sostituisci articolo",
+        "body": "Clicca sull'icona di scambio per sostituire questo articolo con uno del tuo inventario personale."
       },
       "preferences": {
         "title": "Preferenze della lista",
@@ -131,7 +143,8 @@
     "mustSelectListFirst": "Seleziona o crea prima una lista con almeno una categoria.",
     "addToListFailed": "Impossibile aggiungere l'articolo alla lista.",
     "itemAlreadyInList": "Questo articolo è già nella tua lista. Usa il campo quantità per aggiungerne di più.",
-    "editGlobalTemplate": "Modifica modello globale"
+    "editGlobalTemplate": "Modifica modello globale",
+    "templatesTitle": "Modelli"
   },
   "auth": {
     "title": {
@@ -1245,5 +1258,12 @@
       "nameRequired": "Il nome della lista non può essere vuoto.",
       "failed": "Impossibile creare la lista. Riprova."
     }
+  },
+  "templates": {
+    "title": "Modelli",
+    "subtitle": "Inizia con una lista di equipaggiamento curata. Esplorarla e usarla come punto di partenza per il tuo viaggio.",
+    "previewCta": "Vedi lista",
+    "openAriaLabel": "Apri modello {{title}}",
+    "backBreadcrumb": "Torna ai Modelli"
   }
 }

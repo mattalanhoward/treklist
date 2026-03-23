@@ -45,7 +45,8 @@ export default function TourModal({
   const [spotRadius, setSpotRadius] = useState("16px");
   const [remeasureTick, setRemeasureTick] = useState(0);
 
-  // Find target element
+  // Find target element — also re-queries on remeasureTick so conditionally-rendered
+  // elements (e.g. item buttons) are found even if they weren't in the DOM on first render.
   const targetEl = useMemo(() => {
     if (!isOpen) return null;
     if (!targetSelector) return null;
@@ -54,7 +55,8 @@ export default function TourModal({
     } catch {
       return null;
     }
-  }, [isOpen, targetSelector]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, targetSelector, remeasureTick]);
 
   // Scroll target into view on step change
   useEffect(() => {
