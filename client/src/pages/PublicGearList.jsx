@@ -2,7 +2,7 @@
 import React from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { FaUtensils, FaTshirt } from "react-icons/fa";
-import { FiExternalLink, FiEdit2, FiMapPin, FiCalendar, FiNavigation } from "react-icons/fi";
+import { FiExternalLink, FiEdit2, FiMapPin, FiCalendar, FiNavigation, FiX } from "react-icons/fi";
 import PackStats from "../components/PackStats";
 import { useUserSettings } from "../contexts/UserSettings";
 import AffiliateGateLink from "../components/AffiliateGateLink";
@@ -64,6 +64,126 @@ function catTotalG(items) {
   return base + worn + cons;
 }
 
+function PublicItemModal({ item, onClose, unit }) {
+  const { t } = useTranslation("common");
+
+  React.useEffect(() => {
+    const handler = (e) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  const linkHref =
+    item.affiliate?.deepLink || item.affiliate?.url || item.link || null;
+  const g = Number(item.weight_g) || 0;
+
+  return (
+    <div
+      className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-end sm:items-center justify-center z-50"
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div className="bg-[rgb(var(--color-base-100-rgb))] sm:rounded-lg shadow-2xl w-full sm:mx-4 sm:max-w-lg px-4 py-4 sm:px-6 sm:py-6 border border-[rgba(var(--color-primary-rgb),0.15)] max-h-[90vh] flex flex-col">
+        {/* Header */}
+        <div className="flex items-start justify-between mb-3 flex-shrink-0">
+          <div className="min-w-0 pr-3">
+            {item.itemType && (
+              <div className="text-sm font-medium text-[rgb(var(--color-secondary-rgb))] mb-0.5">
+                {item.itemType}
+              </div>
+            )}
+            <h2 className="text-xl font-semibold text-[rgb(var(--color-primary-rgb))] leading-tight">
+              {item.brand && (
+                <span className="mr-1">{item.brand}</span>
+              )}
+              {item.name}
+            </h2>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-shrink-0 text-[rgb(var(--color-error-rgb))] hover:opacity-70"
+            aria-label={t("actions.close")}
+          >
+            <FiX className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto min-h-0 space-y-3 text-sm">
+          <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 items-center">
+            <span className="font-semibold text-[rgb(var(--color-primary-rgb))]">
+              {t("globalItemModal.labels.weight", { unit })}:
+            </span>
+            <span className="text-[rgb(var(--color-primary-rgb))] tabular-nums">
+              {fmtWeight(g, unit) || "—"}
+            </span>
+
+            <span className="font-semibold text-[rgb(var(--color-primary-rgb))]">
+              {t("publicList.item.quantity")}:
+            </span>
+            <span className="text-[rgb(var(--color-primary-rgb))] tabular-nums">
+              {item.qty ?? 1}
+            </span>
+
+            {item.consumable && (
+              <>
+                <span className="font-semibold text-[rgb(var(--color-primary-rgb))]">
+                  {t("publicList.item.consumable")}:
+                </span>
+                <span className="text-green-600">{t("common.yes", "Yes")}</span>
+              </>
+            )}
+            {item.worn && (
+              <>
+                <span className="font-semibold text-[rgb(var(--color-primary-rgb))]">
+                  {t("publicList.item.worn")}:
+                </span>
+                <span className="text-blue-600">{t("common.yes", "Yes")}</span>
+              </>
+            )}
+          </div>
+
+          {item.description && (
+            <div>
+              <div className="font-semibold text-[rgb(var(--color-primary-rgb))] mb-1">
+                {t("globalItemModal.labels.description")}
+              </div>
+              <div className="text-[rgb(var(--color-primary-rgb))]/90 whitespace-pre-line leading-6">
+                {item.description}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="mt-4 flex justify-between items-center flex-shrink-0">
+          <div>
+            {linkHref && (
+              <AffiliateGateLink
+                href={linkHref}
+                context="public"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm rounded bg-[rgba(var(--color-secondary-rgb),0.12)] text-[rgb(var(--color-secondary-rgb))] hover:bg-[rgba(var(--color-secondary-rgb),0.2)]"
+                title={t("publicList.item.viewProduct")}
+                ariaLabel={t("publicList.item.viewProductPaid")}
+              >
+                <FiExternalLink className="h-3.5 w-3.5" aria-hidden />
+                {t("publicList.item.viewProduct")}
+              </AffiliateGateLink>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-3 py-1.5 rounded bg-[rgb(var(--color-neutral-rgb))] hover:opacity-80 text-[rgb(var(--color-primary-rgb))] text-sm"
+          >
+            {t("actions.close")}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function PublicGearList() {
   const { t } = useTranslation("common");
   const { token } = useParams();
@@ -79,6 +199,7 @@ export default function PublicGearList() {
   const unit = weightUnit === "oz" ? "oz" : "g";
   const setUnit = (u) => setWeightUnit(u);
   const [copying, setCopying] = React.useState(false);
+  const [selectedItem, setSelectedItem] = React.useState(null);
 
   // IMPORTANT: used for embed height measurement
   const rootRef = React.useRef(null);
@@ -703,12 +824,16 @@ export default function PublicGearList() {
                               <div className="font-semibold text-primary flex-shrink-0 mr-1">
                                 {it.itemType || "—"}
                               </div>
-                              <div className="truncate text-primary flex-1 overflow-hidden">
+                              <button
+                                type="button"
+                                onClick={() => setSelectedItem(it)}
+                                className="truncate text-primary flex-1 overflow-hidden text-left hover:underline cursor-pointer"
+                              >
                                 {it.brand && (
                                   <span className="mr-1">{it.brand}</span>
                                 )}
                                 {it.name}
-                              </div>
+                              </button>
                             </div>
 
                             {/* Row 2 */}
@@ -826,12 +951,16 @@ export default function PublicGearList() {
                             {it.itemType || "—"}
                           </div>
 
-                          <div className="truncate text-primary">
+                          <button
+                            type="button"
+                            onClick={() => setSelectedItem(it)}
+                            className="truncate text-primary text-left hover:underline cursor-pointer"
+                          >
                             {it.brand && (
                               <span className="mr-1">{it.brand}</span>
                             )}
                             {it.name}
-                          </div>
+                          </button>
 
                           <div className="justify-self-end tabular-nums text-primary w-[96px] text-right pr-2">
                             {fmtWeight(g, unit)}
@@ -928,6 +1057,14 @@ export default function PublicGearList() {
           variant="light"
           containerWidth="max-w-5xl"
           className="mt-10"
+        />
+      )}
+
+      {selectedItem && (
+        <PublicItemModal
+          item={selectedItem}
+          onClose={() => setSelectedItem(null)}
+          unit={unit}
         />
       )}
     </div>
