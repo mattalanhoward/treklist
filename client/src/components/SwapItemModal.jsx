@@ -36,6 +36,7 @@ export default function SwapItemModal({ item, listId, catId, onClose, onSwapped 
         const f = selection.fields;
         const payload = { name: f.name };
         if (f.brand) payload.brand = f.brand;
+        if (f.itemType) payload.itemType = f.itemType;
         if (f.catalogCategory) payload.catalogCategory = f.catalogCategory;
         if (typeof f.weight === "number") payload.weight = f.weight;
         if (f.description) payload.description = f.description;

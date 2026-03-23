@@ -6,6 +6,7 @@ const GearList = require("../models/gearList");
 const Category = require("../models/category");
 const Item = require("../models/gearItem");
 const GlobalItem = require("../models/globalItem");
+const CatalogItem = require("../models/catalogItem");
 const { resolveOfferForProduct } = require("../services/affiliateResolver");
 const { detectViewerRegion } = require("../utils/regionDetection");
 
@@ -109,11 +110,26 @@ router.get("/:token/full", async (req, res) => {
 
   const globalItems = globalItemIds.length
     ? await GlobalItem.find({ _id: { $in: globalItemIds } })
-        .select({ _id: 1, productId: 1, link: 1, affiliate: 1 })
+        .select({ _id: 1, productId: 1, link: 1, affiliate: 1, imageUrls: 1, description: 1 })
         .lean()
     : [];
 
   const globalById = new Map(globalItems.map((g) => [g._id.toString(), g]));
+
+  // Batch-fetch catalog images for items with a productId
+  const productIds = [
+    ...new Set(
+      items
+        .map((i) => i.productId?.toString() || globalById.get(i.globalItem?.toString())?.productId?.toString())
+        .filter(Boolean),
+    ),
+  ];
+  const catalogItems = productIds.length
+    ? await CatalogItem.find({ _id: { $in: productIds }, isActive: true })
+        .select({ _id: 1, imageUrls: 1 })
+        .lean()
+    : [];
+  const catalogById = new Map(catalogItems.map((c) => [c._id.toString(), c]));
 
   // Memoize resolver calls so we don't spam DB
   const offerCache = new Map();
@@ -177,6 +193,8 @@ router.get("/:token/full", async (req, res) => {
         }
       }
 
+      const globalItem = i.globalItem ? globalById.get(i.globalItem.toString()) : null;
+
       return {
         id: i._id.toString(),
         categoryId: i.category?.toString() || null,
@@ -190,6 +208,12 @@ router.get("/:token/full", async (req, res) => {
         affiliate,
         link,
         productId: i.productId?.toString() || null,
+        description: i.description || globalItem?.description || null,
+        imageUrls: (() => {
+          const pid = i.productId?.toString() || globalItem?.productId?.toString();
+          const catalogUrls = pid ? catalogById.get(pid)?.imageUrls : null;
+          return catalogUrls?.length ? catalogUrls : (globalItem?.imageUrls?.length ? globalItem.imageUrls : []);
+        })(),
       };
     }),
   );
