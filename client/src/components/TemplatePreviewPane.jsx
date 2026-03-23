@@ -168,53 +168,78 @@ export default function TemplatePreviewPane({ token, onBack, fetchLists }) {
       </div>
 
       {/* Sub-header: stats + metadata + CTA + unit toggle */}
-      <div className="flex-shrink-0 px-4 py-3 border-b border-primary/10 bg-base-100 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-4 min-w-0 flex-wrap">
-          <PackStats
-            base={stats.base}
-            worn={stats.worn}
-            consumable={stats.consumable}
-            total={stats.total}
-            disablePopover
-          />
-          {data.list.location && (
-            <span className="hidden sm:flex items-center gap-1.5 text-sm text-secondary">
-              <FiMapPin className="text-xs flex-shrink-0" aria-hidden />
-              {data.list.location}
-            </span>
-          )}
-          {(data.list.tripStart || data.list.tripEnd) && (
-            <span className="hidden sm:flex items-center gap-1.5 text-sm text-secondary">
-              <FiCalendar className="text-xs flex-shrink-0" aria-hidden />
-              {fmtDateRange(data.list.tripStart, data.list.tripEnd)}
-            </span>
-          )}
-        </div>
+      <div className="flex-shrink-0 px-4 py-3 border-b border-primary/10 bg-base-100">
 
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <div className="inline-flex border border-primary/10 rounded overflow-hidden" aria-live="polite">
-            <button
-              className={`px-2 py-1 text-xs ${unit === "g" ? "bg-primary text-base-100" : "bg-base-100"}`}
-              onClick={() => setWeightUnit("g")}
-              aria-pressed={unit === "g"}
-            >g</button>
-            <button
-              className={`px-2 py-1 text-xs ${unit === "oz" ? "bg-primary text-base-100" : "bg-base-100"}`}
-              onClick={() => setWeightUnit("oz")}
-              aria-pressed={unit === "oz"}
-            >oz</button>
+        {/* Desktop layout */}
+        <div className="hidden md:flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-4 min-w-0 flex-wrap">
+            <PackStats
+              base={stats.base}
+              worn={stats.worn}
+              consumable={stats.consumable}
+              total={stats.total}
+              disablePopover
+            />
+            {data.list.location && (
+              <span className="flex items-center gap-1.5 text-sm text-secondary">
+                <FiMapPin className="text-xs flex-shrink-0" aria-hidden />
+                {data.list.location}
+              </span>
+            )}
+            {(data.list.tripStart || data.list.tripEnd) && (
+              <span className="flex items-center gap-1.5 text-sm text-secondary">
+                <FiCalendar className="text-xs flex-shrink-0" aria-hidden />
+                {fmtDateRange(data.list.tripStart, data.list.tripEnd)}
+              </span>
+            )}
           </div>
-
-          <button
-            type="button"
-            onClick={handleUseTemplate}
-            disabled={copying}
-            className="inline-flex items-center gap-2 rounded-md bg-accent text-base-100 hover:bg-accent/90 px-3 py-1.5 text-sm font-medium transition disabled:opacity-60"
-          >
-            <FiEdit2 className="w-3.5 h-3.5" aria-hidden />
-            {t("publicList.cta.labelDesktop")}
-          </button>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <div className="inline-flex border border-primary/10 rounded overflow-hidden" aria-live="polite">
+              <button className={`px-2 py-1 text-xs ${unit === "g" ? "bg-primary text-base-100" : "bg-base-100"}`} onClick={() => setWeightUnit("g")} aria-pressed={unit === "g"}>g</button>
+              <button className={`px-2 py-1 text-xs ${unit === "oz" ? "bg-primary text-base-100" : "bg-base-100"}`} onClick={() => setWeightUnit("oz")} aria-pressed={unit === "oz"}>oz</button>
+            </div>
+            <button
+              type="button"
+              onClick={handleUseTemplate}
+              disabled={copying}
+              className="inline-flex items-center gap-2 rounded-md bg-accent text-base-100 hover:bg-accent/90 px-3 py-1.5 text-sm font-medium transition disabled:opacity-60"
+            >
+              <FiEdit2 className="w-3.5 h-3.5" aria-hidden />
+              {t("publicList.cta.labelDesktop")}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile layout */}
+        <div className="md:hidden space-y-2">
+          <div className="flex justify-center">
+            <PackStats
+              base={stats.base}
+              worn={stats.worn}
+              consumable={stats.consumable}
+              total={stats.total}
+              disablePopover
+            />
+          </div>
+          <div className="flex justify-center">
+            <button
+              type="button"
+              onClick={handleUseTemplate}
+              disabled={copying}
+              className="inline-flex items-center gap-2 rounded-md bg-accent text-base-100 hover:bg-accent/90 px-3 py-1.5 text-sm font-medium transition disabled:opacity-60"
+            >
+              <FiEdit2 className="w-3.5 h-3.5" aria-hidden />
+              {t("publicList.cta.labelMobile")}
+            </button>
+          </div>
+          <div className="flex justify-center">
+            <div className="inline-flex border border-primary/10 rounded overflow-hidden" aria-live="polite">
+              <button className={`px-2 py-1 text-xs ${unit === "g" ? "bg-primary text-base-100" : "bg-base-100"}`} onClick={() => setWeightUnit("g")} aria-pressed={unit === "g"}>g</button>
+              <button className={`px-2 py-1 text-xs ${unit === "oz" ? "bg-primary text-base-100" : "bg-base-100"}`} onClick={() => setWeightUnit("oz")} aria-pressed={unit === "oz"}>oz</button>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       {/* Categories + items */}
