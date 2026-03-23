@@ -78,7 +78,7 @@
     "steps": {
       "welcome": {
         "title": "Welcome to TrekList",
-        "body": "We loaded a sample list so you can see how everything fits together. Feel free to explore, edit, or delete it."
+        "body": "TrekList helps you plan, organize, and share your gear for any adventure. Let's take a quick look around."
       },
       "lists": {
         "title": "Your Gear Lists",
@@ -87,6 +87,10 @@
       "myGear": {
         "title": "My Gear",
         "body": "Click “My Gear” to open and manage your gear inventory. Use the “+” button to add catalog items or create custom ones from the sidebar."
+      },
+      "templates": {
+        "title": "Templates",
+        "body": "New to trip planning? Browse curated gear lists under Templates and use one as a starting point for your own trip."
       },
       "categories": {
         "title": "Categories",
@@ -99,6 +103,14 @@
       "addItems": {
         "title": "Add items to a category",
         "body": "Click + Add Items to add gear from your inventory, search the catalog, or create a new item on the spot."
+      },
+      "wishlist": {
+        "title": "Wishlist / Need to Buy",
+        "body": "Click the star on any item to add it to your wishlist — useful for gear you still need to buy before your trip."
+      },
+      "swap": {
+        "title": "Swap an Item",
+        "body": "Click the swap icon to replace this item with one from your own gear inventory."
       },
       "preferences": {
         "title": "Gear List Preferences",
@@ -131,7 +143,15 @@
     "mustSelectListFirst": "Pick or create a list with at least one category first.",
     "addToListFailed": "Failed to add item into your list.",
     "itemAlreadyInList": "This item is already in your list. Use the quantity field to add more.",
-    "editGlobalTemplate": "Edit global template"
+    "editGlobalTemplate": "Edit global template",
+    "templatesTitle": "Templates"
+  },
+  "templates": {
+    "title": "Templates",
+    "subtitle": "Start with a curated gear list. Preview it, then use it as a starting point for your own trip.",
+    "previewCta": "Preview List",
+    "openAriaLabel": "Open {{title}} template",
+    "backBreadcrumb": "Back to Templates"
   },
   "auth": {
     "title": {

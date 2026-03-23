@@ -78,7 +78,7 @@
     "steps": {
       "welcome": {
         "title": "Bienvenido a TrekList",
-        "body": "Hemos cargado una lista de ejemplo para que veas cómo funciona todo. Puedes explorarla, editarla o eliminarla cuando quieras."
+        "body": "TrekList te ayuda a planificar, organizar y compartir tu equipo para cualquier aventura. Echemos un vistazo rápido."
       },
       "lists": {
         "title": "Tus listas de equipo",
@@ -87,6 +87,10 @@
       "myGear": {
         "title": "Mi equipo",
         "body": "Haz clic en “Mi equipo” para abrir y gestionar tu inventario. Usa el botón “+” para añadir artículos del catálogo o crear los tuyos desde la barra lateral."
+      },
+      "templates": {
+        "title": "Plantillas",
+        "body": "¿Nuevo en la planificación de viajes? Explora listas de equipaje curadas en Plantillas y usa una como punto de partida para tu aventura."
       },
       "categories": {
         "title": "Categorías",
@@ -99,6 +103,14 @@
       "addItems": {
         "title": "Añadir artículos a una categoría",
         "body": "Click + Add Items to add gear from your inventory, search the catalog, or create a new item on the spot."
+      },
+      "wishlist": {
+        "title": "Lista de deseos / Por comprar",
+        "body": "Haz clic en la estrella de un artículo para añadirlo a tu lista de deseos, ideal para el equipo que aún necesitas comprar antes del viaje."
+      },
+      "swap": {
+        "title": "Cambiar artículo",
+        "body": "Haz clic en el icono de cambio para reemplazar este artículo por uno de tu propio inventario de equipo."
       },
       "preferences": {
         "title": "Preferencias de la lista",
@@ -131,7 +143,8 @@
     "mustSelectListFirst": "Elige o crea primero una lista con al menos una categoría.",
     "addToListFailed": "No se pudo añadir el artículo a tu lista.",
     "itemAlreadyInList": "Este artículo ya está en tu lista. Usa el campo de cantidad para añadir más.",
-    "editGlobalTemplate": "Editar plantilla global"
+    "editGlobalTemplate": "Editar plantilla global",
+    "templatesTitle": "Plantillas"
   },
   "auth": {
     "title": {
@@ -1245,5 +1258,12 @@
       "nameRequired": "El nombre de la lista no puede estar vacío.",
       "failed": "No se pudo crear la lista. Por favor, inténtalo de nuevo."
     }
+  },
+  "templates": {
+    "title": "Plantillas",
+    "subtitle": "Empieza con una lista de equipaje curada. Explórala y úsala como punto de partida para tu propia aventura.",
+    "previewCta": "Ver lista",
+    "openAriaLabel": "Abrir plantilla {{title}}",
+    "backBreadcrumb": "Volver a Plantillas"
   }
 }
