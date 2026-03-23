@@ -167,11 +167,11 @@ export default function TemplatePreviewPane({ token, onBack, fetchLists }) {
         <span className="text-sm font-semibold text-primary truncate">{data.list.title}</span>
       </div>
 
-      {/* Sub-header: stats + metadata + CTA + unit toggle */}
-      <div className="flex-shrink-0 px-4 py-3 border-b border-primary/10 bg-base-100">
+      {/* Sub-header: stats + metadata + CTA + unit toggle — desktop only sticky */}
+      <div className="flex-shrink-0 px-4 py-3 border-b border-primary/10 bg-base-100 hidden md:block">
 
         {/* Desktop layout */}
-        <div className="hidden md:flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-4 min-w-0 flex-wrap">
             <PackStats
               base={stats.base}
@@ -210,8 +210,14 @@ export default function TemplatePreviewPane({ token, onBack, fetchLists }) {
           </div>
         </div>
 
-        {/* Mobile layout */}
-        <div className="md:hidden space-y-2">
+
+      </div>
+
+      {/* Categories + items */}
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+
+        {/* Mobile sub-header — scrolls with content */}
+        <div className="md:hidden space-y-2 pb-2 border-b border-primary/10">
           <div className="flex justify-center">
             <PackStats
               base={stats.base}
@@ -240,10 +246,6 @@ export default function TemplatePreviewPane({ token, onBack, fetchLists }) {
           </div>
         </div>
 
-      </div>
-
-      {/* Categories + items */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
         {catOrder.map((catId) => {
           const title =
             catId === "__uncategorized__"
