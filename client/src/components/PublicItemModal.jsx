@@ -19,7 +19,11 @@ export default function PublicItemModal({ item, onClose, unit }) {
   React.useEffect(() => {
     const handler = (e) => { if (e.key === "Escape") onClose(); };
     document.addEventListener("keydown", handler);
-    return () => document.removeEventListener("keydown", handler);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", handler);
+      document.body.style.overflow = "";
+    };
   }, [onClose]);
 
   const g = Number(item.weight_g) || 0;
@@ -32,14 +36,14 @@ export default function PublicItemModal({ item, onClose, unit }) {
 
   return (
     <div
-      className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-end sm:items-center justify-center z-50"
+      className="fixed inset-0 sm:bg-black/40 sm:backdrop-blur-[1px] flex items-end sm:items-center justify-center z-[70]"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div
         className={
           "bg-[rgb(var(--color-base-100-rgb))] sm:rounded-lg shadow-2xl w-full sm:mx-4 " +
           "px-4 py-4 sm:px-6 sm:py-6 border border-[rgba(var(--color-primary-rgb),0.15)] " +
-          "modal-mobile-h sm:h-auto sm:max-h-[90vh] flex flex-col " +
+          "h-dvh sm:h-auto sm:max-h-[90vh] flex flex-col " +
           (hasImage ? "sm:max-w-4xl" : "sm:max-w-2xl")
         }
       >
