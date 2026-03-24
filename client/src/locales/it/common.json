@@ -316,7 +316,7 @@
       "removeItemConfirm": "Rimuovi articolo",
       "deleteCategoryTitle": "Eliminare “{{title}}”?",
       "deleteCategoryTitleGeneric": "Eliminare questa categoria?",
-      "deleteCategoryMessage": "Gli articoli in questa categoria resteranno nella lista ma verranno spostati in “Non ordinati”.",
+      "deleteCategoryMessage": "La categoria e tutti gli articoli al suo interno verranno eliminati definitivamente.",
       "deleteCategoryConfirm": "Elimina categoria",
       "deleteListTitle": "Eliminare “{{title}}”?",
       "deleteListMessage": "Questa operazione eliminerà definitivamente la lista e tutti i suoi articoli.",
