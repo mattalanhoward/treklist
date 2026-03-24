@@ -323,7 +323,7 @@
       "removeItemConfirm": "Supprimer l’article",
       "deleteCategoryTitle": "Supprimer « {{title}} » ?",
       "deleteCategoryTitleGeneric": "Supprimer cette catégorie ?",
-      "deleteCategoryMessage": "Les articles de cette catégorie resteront dans votre liste mais seront déplacés vers « Non triés ».",
+      "deleteCategoryMessage": "Cela supprimera définitivement la catégorie et tous les articles qu'elle contient.",
       "deleteCategoryConfirm": "Supprimer la catégorie",
       "deleteListTitle": "Supprimer « {{title}} » ?",
       "deleteListMessage": "Cela supprimera définitivement cette liste et tous ses articles.",

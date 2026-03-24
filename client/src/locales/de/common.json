@@ -316,7 +316,7 @@
       "removeItemConfirm": "Element entfernen",
       "deleteCategoryTitle": "„{{title}}“ löschen?",
       "deleteCategoryTitleGeneric": "Diese Kategorie löschen?",
-      "deleteCategoryMessage": "Items in dieser Kategorie bleiben in deiner Liste, werden aber nach „Unsortiert“ verschoben.",
+      “deleteCategoryMessage”: “Die Kategorie und alle darin enthaltenen Items werden dauerhaft gelöscht.”,
       "deleteCategoryConfirm": "Kategorie löschen",
       "deleteListTitle": "„{{title}}“ löschen?",
       "deleteListMessage": "Damit wird diese Liste und alle enthaltenen Items dauerhaft gelöscht.",

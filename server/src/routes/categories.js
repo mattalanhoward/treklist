@@ -2,6 +2,7 @@ const express = require("express");
 const auth = require("../middleware/auth");
 const GearList = require("../models/gearList");
 const Category = require("../models/category");
+const GearItem = require("../models/gearItem");
 
 const router = express.Router({ mergeParams: true });
 router.use(auth);
@@ -142,6 +143,8 @@ router.delete("/:catId", async (req, res) => {
     });
     if (!deleted)
       return res.status(404).json({ message: "Category not found." });
+
+    await GearItem.deleteMany({ gearList: listId, category: catId });
 
     res.json({ message: "Category deleted." });
   } catch (err) {

@@ -316,7 +316,7 @@
       "removeItemConfirm": "Item verwijderen",
       "deleteCategoryTitle": "‘{{title}}’ verwijderen?",
       "deleteCategoryTitleGeneric": "Deze categorie verwijderen?",
-      "deleteCategoryMessage": "Items in deze categorie blijven in je lijst maar worden verplaatst naar ‘Unsorted’.",
+      "deleteCategoryMessage": "Dit verwijdert de categorie en alle items erin permanent.",
       "deleteCategoryConfirm": "Categorie verwijderen",
       "deleteListTitle": "‘{{title}}’ verwijderen?",
       "deleteListMessage": "Hiermee verwijder je deze lijst en alle items daarin permanent.",

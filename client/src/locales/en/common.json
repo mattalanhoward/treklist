@@ -329,7 +329,7 @@
       "removeItemConfirm": "Remove item",
       "deleteCategoryTitle": "Delete “{{title}}”?",
       "deleteCategoryTitleGeneric": "Delete this category?",
-      "deleteCategoryMessage": "Items in this category will stay in your list but move to “Unsorted”.",
+      “deleteCategoryMessage”: “This will permanently delete the category and all items inside it.”,
       "deleteCategoryConfirm": "Delete category",
       "deleteListTitle": "Delete “{{title}}”?",
       "deleteListMessage": "This will permanently delete this list and all of its items.",
