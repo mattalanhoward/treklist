@@ -50,6 +50,7 @@ const NETWORK_OPTIONS = [
 
 const REGION_OPTIONS = [
   { value: "global", label: "Global" },
+  { value: "eu", label: "EU (all EU countries)" },
   { value: "us", label: "US" },
   { value: "uk", label: "UK" },
   { value: "de", label: "DE" },
