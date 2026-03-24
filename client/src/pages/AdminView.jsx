@@ -2228,13 +2228,22 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
       return;
     }
 
-    if (!Array.isArray(form.offers) || form.offers.length === 0) {
+    // Only consider offers the user actually started filling out
+    const meaningfulOffers = (Array.isArray(form.offers) ? form.offers : []).filter(
+      (o) =>
+        String(o.url || "").trim() ||
+        String(o.merchantName || "").trim() ||
+        String(o.externalId || "").trim() ||
+        String(o.priority ?? "").trim(),
+    );
+
+    if (meaningfulOffers.length === 0) {
       toast.error("At least one offer is required.");
       return;
     }
 
     if (
-      form.offers.some(
+      meaningfulOffers.some(
         (o) => !String(o.network || "").trim() || !String(o.url || "").trim(),
       )
     ) {
