@@ -313,7 +313,7 @@ function GearCatalogSection({
       ...prev,
       offers: [
         ...(Array.isArray(prev.offers) ? prev.offers : []),
-        blankOffer(),
+        { ...blankOffer(), network: "amazon" },
       ],
     }));
   };
@@ -2047,7 +2047,7 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
       ...prev,
       offers: [
         ...(Array.isArray(prev.offers) ? prev.offers : []),
-        blankOffer(),
+        { ...blankOffer(), network: "amazon" },
       ],
     }));
   };
