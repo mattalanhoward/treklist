@@ -256,6 +256,7 @@ export default function PublicGearList() {
   React.useEffect(() => {
     if (!isEmbed) return;
     if (selectedItem) {
+      console.log("[treklist] sending modal-open to parent", selectedItem?.name);
       window.parent?.postMessage(
         { type: "treklist:modal-open", token, item: selectedItem, unit },
         "*",

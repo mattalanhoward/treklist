@@ -176,6 +176,10 @@
     state.listenerAttached = true;
 
     window.addEventListener("message", (event) => {
+      // Log all treklist messages for debugging
+      if (event.data && typeof event.data.type === "string" && event.data.type.startsWith("treklist:")) {
+        console.log("[treklist/embed.js] received", event.data.type, "from origin:", event.origin, "| allowed:", JSON.stringify([...state.allowedOrigins]));
+      }
       // Only accept messages from TrekList origins we created iframes for.
       if (!state.allowedOrigins.has(event.origin)) return;
 
