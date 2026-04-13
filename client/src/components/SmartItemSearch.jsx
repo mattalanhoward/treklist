@@ -178,6 +178,38 @@ function NoResults({ query, onAiSearch, onManual, aiLoading }) {
   );
 }
 
+// ── Create row (shown at bottom of results when a search is active) ───────────
+function CreateRow({ query, onManual, onAiSearch, aiLoading }) {
+  const label = "Add item manually";
+  return (
+    <div className="flex items-center gap-2 px-5 py-2 border-b border-primary/10 flex-shrink-0">
+      <button
+        type="button"
+        onClick={onManual}
+        className="flex items-center gap-1.5 text-sm text-primary/50 hover:text-primary transition-colors"
+      >
+        <FiPlus size={13} className="flex-shrink-0" />
+        {label}
+      </button>
+      <span className="text-primary/20 text-xs">·</span>
+      <button
+        type="button"
+        onClick={onAiSearch}
+        disabled={aiLoading || !query}
+        className="flex items-center gap-1 text-sm text-secondary/70 hover:text-secondary disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        title={!query ? "Type a name first to use AI fill" : undefined}
+      >
+        {aiLoading ? (
+          <FiLoader size={12} className="animate-spin" />
+        ) : (
+          <span className="text-xs">✨</span>
+        )}
+        {aiLoading ? "Searching…" : "Fill with AI"}
+      </button>
+    </div>
+  );
+}
+
 // ── Custom / edit form ────────────────────────────────────────────────────────
 function CustomForm({ form, onChange, unitLabel }) {
   return (
@@ -639,6 +671,22 @@ export default function SmartItemSearch({
         </div>
       </div>
 
+      {/* Create row — always visible, above results */}
+      {!customMode && !aiLoading && (
+        <CreateRow
+          query={debouncedQuery.trim()}
+          onManual={() => {
+            setCustomMode("manual");
+            setCustomForm({
+              name: debouncedQuery.trim(),
+              brand: "", catalogCategory: "", itemType: "", weight: "", description: "", link: "", imageUrl: "",
+            });
+          }}
+          onAiSearch={handleAiSearch}
+          aiLoading={aiLoading}
+        />
+      )}
+
       {/* Body: sidebar + results */}
       <div className="flex-1 flex min-h-0">
         {/* Left sidebar — desktop only */}
@@ -748,6 +796,7 @@ export default function SmartItemSearch({
                 Search the catalog above, or tap a category to browse.
               </p>
             )}
+
           </>
         )}
       </div>
