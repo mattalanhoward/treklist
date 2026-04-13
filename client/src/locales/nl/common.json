@@ -572,6 +572,74 @@
       "deleteConfirm": "Item verwijderen"
     }
   },
+  "smartItemSearch": {
+    "searchPlaceholder": "bijv. Osprey Talon 33 heren rugzak",
+    "searchHint": "Merk · Model · Maat of variant",
+    "scanItem": "Artikel scannen met camera",
+    "allCategories": "Alle categorieën",
+    "myGear": "Mijn uitrusting",
+    "fromCatalog": "Uit de catalogus",
+    "added": "Toegevoegd",
+    "noGearYet": "Nog geen uitrusting. Zoek in de catalogus of beschrijf een artikel hierboven.",
+    "browseHint": "Zoek in de catalogus of tik op een categorie om te bladeren.",
+    "aiSearching": "Zoeken met AI...",
+    "aiSearchingShort": "Zoeken…",
+    "aiFill": "Invullen met AI",
+    "aiTip": "Tip: voeg merk, model en maat toe voor betere resultaten",
+    "aiTypeFirst": "Typ eerst een naam om AI te gebruiken",
+    "addManually": "Handmatig toevoegen",
+    "addItemManually": "Artikel handmatig toevoegen",
+    "saving": "Opslaan...",
+    "createAndAdd": "Maken en toevoegen",
+    "add": "Toevoegen",
+    "importAndAdd": "Importeren & toevoegen",
+    "noResultsFor": "Geen resultaten voor",
+    "chips": {
+      "sleep": "Slaap",
+      "shelter": "Onderdak",
+      "packs": "Rugzakken",
+      "clothing": "Kleding",
+      "footwear": "Schoeisel",
+      "kitchen": "Keuken",
+      "hydration": "Hydratatie",
+      "electronics": "Elektronica",
+      "tools": "Gereedschap",
+      "health": "Gezondheid",
+      "navigation": "Navigatie"
+    },
+    "sidebarCategories": {
+      "sleep": "Slaapsysteem",
+      "shelter": "Onderdak",
+      "packs": "Rugzakken & tassen",
+      "clothing": "Unisex kleding",
+      "footwear": "Schoeisel",
+      "kitchen": "Keuken & koken",
+      "hydration": "Hydratatie",
+      "electronics": "Elektronica & energie",
+      "tools": "Accessoires & gereedschap",
+      "health": "Gezondheid & hygiëne",
+      "navigation": "Navigatie & planning"
+    },
+    "form": {
+      "name": "Naam",
+      "brand": "Merk",
+      "category": "Categorie",
+      "uncategorized": "Zonder categorie",
+      "itemType": "Artikeltype",
+      "itemTypePlaceholder": "bijv. Gasbrander",
+      "weight": "Gewicht",
+      "link": "Link",
+      "imageUrl": "Afbeelding-URL",
+      "imageUrlPlaceholder": "voorbeeld.com/afbeelding.jpg",
+      "description": "Beschrijving"
+    },
+    "toasts": {
+      "aiFailed": "AI-zoekopdracht mislukt. Probeer handmatig toe te voegen.",
+      "nameRequired": "Naam is verplicht",
+      "invalidWeight": "Ongeldig gewicht",
+      "previewLoadFailed": "Artikeldetails konden niet worden geladen."
+    }
+  },
   "addGearItemModal": {
     "title": "Uitrustingsitems toevoegen",
     "a11y": {

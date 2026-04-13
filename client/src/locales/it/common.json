@@ -572,6 +572,74 @@
       "deleteConfirm": "Elimina articolo"
     }
   },
+  "smartItemSearch": {
+    "searchPlaceholder": "es. Osprey Talon 33 zaino uomo",
+    "searchHint": "Marca · Modello · Taglia o variante",
+    "scanItem": "Scansiona articolo con fotocamera",
+    "allCategories": "Tutte le categorie",
+    "myGear": "Il mio equipaggiamento",
+    "fromCatalog": "Dal catalogo",
+    "added": "Aggiunto",
+    "noGearYet": "Nessun equipaggiamento. Cerca nel catalogo o descrivi un articolo sopra.",
+    "browseHint": "Cerca nel catalogo o tocca una categoria per sfogliare.",
+    "aiSearching": "Ricerca con IA...",
+    "aiSearchingShort": "Ricerca…",
+    "aiFill": "Compila con IA",
+    "aiTip": "Suggerimento: includi marca, modello e taglia per risultati migliori",
+    "aiTypeFirst": "Digita prima un nome per usare l'IA",
+    "addManually": "Aggiungi manualmente",
+    "addItemManually": "Aggiungi articolo manualmente",
+    "saving": "Salvataggio...",
+    "createAndAdd": "Crea e aggiungi",
+    "add": "Aggiungi",
+    "importAndAdd": "Importa e aggiungi",
+    "noResultsFor": "Nessun risultato per",
+    "chips": {
+      "sleep": "Sonno",
+      "shelter": "Riparo",
+      "packs": "Zaini",
+      "clothing": "Abbigliamento",
+      "footwear": "Calzature",
+      "kitchen": "Cucina",
+      "hydration": "Idratazione",
+      "electronics": "Elettronica",
+      "tools": "Attrezzi",
+      "health": "Salute",
+      "navigation": "Navigazione"
+    },
+    "sidebarCategories": {
+      "sleep": "Sistema sonno",
+      "shelter": "Riparo",
+      "packs": "Zaini e borse",
+      "clothing": "Abbigliamento unisex",
+      "footwear": "Calzature",
+      "kitchen": "Cucina e cottura",
+      "hydration": "Idratazione",
+      "electronics": "Elettronica ed energia",
+      "tools": "Accessori e attrezzi",
+      "health": "Salute e igiene",
+      "navigation": "Navigazione e pianificazione"
+    },
+    "form": {
+      "name": "Nome",
+      "brand": "Marca",
+      "category": "Categoria",
+      "uncategorized": "Senza categoria",
+      "itemType": "Tipo di articolo",
+      "itemTypePlaceholder": "es. Fornello a gas",
+      "weight": "Peso",
+      "link": "Link",
+      "imageUrl": "URL immagine",
+      "imageUrlPlaceholder": "esempio.com/immagine.jpg",
+      "description": "Descrizione"
+    },
+    "toasts": {
+      "aiFailed": "Ricerca IA fallita. Prova ad aggiungere manualmente.",
+      "nameRequired": "Il nome è obbligatorio",
+      "invalidWeight": "Peso non valido",
+      "previewLoadFailed": "Impossibile caricare i dettagli dell'articolo."
+    }
+  },
   "addGearItemModal": {
     "title": "Aggiungi articolo/i",
     "a11y": {

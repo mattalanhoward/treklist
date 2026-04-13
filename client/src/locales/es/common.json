@@ -572,6 +572,74 @@
       "deleteConfirm": "Eliminar artículo"
     }
   },
+  "smartItemSearch": {
+    "searchPlaceholder": "ej. Osprey Talon 33 mochila hombre",
+    "searchHint": "Marca · Modelo · Talla o variante",
+    "scanItem": "Escanear artículo con cámara",
+    "allCategories": "Todas las categorías",
+    "myGear": "Mi equipo",
+    "fromCatalog": "Del catálogo",
+    "added": "Añadido",
+    "noGearYet": "Sin equipo aún. Busca en el catálogo o describe un artículo arriba.",
+    "browseHint": "Busca en el catálogo o toca una categoría para explorar.",
+    "aiSearching": "Buscando con IA...",
+    "aiSearchingShort": "Buscando…",
+    "aiFill": "Rellenar con IA",
+    "aiTip": "Consejo: incluye marca, modelo y talla para mejores resultados",
+    "aiTypeFirst": "Escribe un nombre primero para usar la IA",
+    "addManually": "Añadir manualmente",
+    "addItemManually": "Añadir artículo manualmente",
+    "saving": "Guardando...",
+    "createAndAdd": "Crear y añadir",
+    "add": "Añadir",
+    "importAndAdd": "Importar y añadir",
+    "noResultsFor": "Sin resultados para",
+    "chips": {
+      "sleep": "Sueño",
+      "shelter": "Refugio",
+      "packs": "Mochilas",
+      "clothing": "Ropa",
+      "footwear": "Calzado",
+      "kitchen": "Cocina",
+      "hydration": "Hidratación",
+      "electronics": "Electrónica",
+      "tools": "Herramientas",
+      "health": "Salud",
+      "navigation": "Navegación"
+    },
+    "sidebarCategories": {
+      "sleep": "Sistema de sueño",
+      "shelter": "Refugio",
+      "packs": "Mochilas y bolsas",
+      "clothing": "Ropa unisex",
+      "footwear": "Calzado",
+      "kitchen": "Cocina y alimentación",
+      "hydration": "Hidratación",
+      "electronics": "Electrónica y energía",
+      "tools": "Accesorios y herramientas",
+      "health": "Salud e higiene",
+      "navigation": "Navegación y planificación"
+    },
+    "form": {
+      "name": "Nombre",
+      "brand": "Marca",
+      "category": "Categoría",
+      "uncategorized": "Sin categoría",
+      "itemType": "Tipo de artículo",
+      "itemTypePlaceholder": "ej. Hornillo de gas",
+      "weight": "Peso",
+      "link": "Enlace",
+      "imageUrl": "URL de imagen",
+      "imageUrlPlaceholder": "ejemplo.com/imagen.jpg",
+      "description": "Descripción"
+    },
+    "toasts": {
+      "aiFailed": "Búsqueda IA fallida. Intenta añadir manualmente.",
+      "nameRequired": "El nombre es obligatorio",
+      "invalidWeight": "Peso no válido",
+      "previewLoadFailed": "No se pudieron cargar los detalles del artículo."
+    }
+  },
   "addGearItemModal": {
     "title": "Añadir artículo(s) de equipo",
     "a11y": {

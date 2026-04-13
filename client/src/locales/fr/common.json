@@ -579,6 +579,74 @@
       "deleteConfirm": "Supprimer l’article"
     }
   },
+  "smartItemSearch": {
+    "searchPlaceholder": "ex. Osprey Talon 33 sac à dos homme",
+    "searchHint": "Marque · Modèle · Taille ou variante",
+    "scanItem": "Scanner l'article avec la caméra",
+    "allCategories": "Toutes les catégories",
+    "myGear": "Mon équipement",
+    "fromCatalog": "Du catalogue",
+    "added": "Ajouté",
+    "noGearYet": "Pas encore d'équipement. Cherchez dans le catalogue ou décrivez un article.",
+    "browseHint": "Cherchez dans le catalogue ou appuyez sur une catégorie.",
+    "aiSearching": "Recherche avec l'IA...",
+    "aiSearchingShort": "Recherche…",
+    "aiFill": "Remplir avec l'IA",
+    "aiTip": "Astuce : incluez la marque, le modèle et la taille pour de meilleurs résultats",
+    "aiTypeFirst": "Tapez un nom d'abord pour utiliser l'IA",
+    "addManually": "Ajouter manuellement",
+    "addItemManually": "Ajouter un article manuellement",
+    "saving": "Enregistrement...",
+    "createAndAdd": "Créer et ajouter",
+    "add": "Ajouter",
+    "importAndAdd": "Importer & ajouter",
+    "noResultsFor": "Aucun résultat pour",
+    "chips": {
+      "sleep": "Sommeil",
+      "shelter": "Abri",
+      "packs": "Sacs",
+      "clothing": "Vêtements",
+      "footwear": "Chaussures",
+      "kitchen": "Cuisine",
+      "hydration": "Hydratation",
+      "electronics": "Électronique",
+      "tools": "Outils",
+      "health": "Santé",
+      "navigation": "Navigation"
+    },
+    "sidebarCategories": {
+      "sleep": "Système de couchage",
+      "shelter": "Abri",
+      "packs": "Sacs à dos & bagages",
+      "clothing": "Vêtements unisexe",
+      "footwear": "Chaussures",
+      "kitchen": "Cuisine & cuisson",
+      "hydration": "Hydratation",
+      "electronics": "Électronique & énergie",
+      "tools": "Accessoires & outils",
+      "health": "Santé & hygiène",
+      "navigation": "Navigation & planification"
+    },
+    "form": {
+      "name": "Nom",
+      "brand": "Marque",
+      "category": "Catégorie",
+      "uncategorized": "Non catégorisé",
+      "itemType": "Type d'article",
+      "itemTypePlaceholder": "ex. Réchaud à gaz",
+      "weight": "Poids",
+      "link": "Lien",
+      "imageUrl": "URL de l'image",
+      "imageUrlPlaceholder": "exemple.com/image.jpg",
+      "description": "Description"
+    },
+    "toasts": {
+      "aiFailed": "Recherche IA échouée. Essayez d'ajouter manuellement.",
+      "nameRequired": "Le nom est requis",
+      "invalidWeight": "Poids invalide",
+      "previewLoadFailed": "Impossible de charger les détails de l'article."
+    }
+  },
   "addGearItemModal": {
     "title": "Ajouter des articles d’équipement",
     "a11y": {

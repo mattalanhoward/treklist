@@ -588,6 +588,74 @@
       "deleteConfirm": "Delete item"
     }
   },
+  "smartItemSearch": {
+    "searchPlaceholder": "e.g. Osprey Talon 33 Men's Backpack",
+    "searchHint": "Brand · Model · Size or variant",
+    "scanItem": "Scan item with camera",
+    "allCategories": "All Categories",
+    "myGear": "My Gear",
+    "fromCatalog": "From Catalog",
+    "added": "Added",
+    "noGearYet": "No gear yet. Search the catalog or describe an item above.",
+    "browseHint": "Search the catalog above, or tap a category to browse.",
+    "aiSearching": "Searching with AI...",
+    "aiSearchingShort": "Searching…",
+    "aiFill": "Fill with AI",
+    "aiTip": "Tip: include brand, model & size for better results",
+    "aiTypeFirst": "Type a name first to use AI fill",
+    "addManually": "Add manually",
+    "addItemManually": "Add item manually",
+    "saving": "Saving...",
+    "createAndAdd": "Create and Add",
+    "add": "Add",
+    "importAndAdd": "Import & Add",
+    "noResultsFor": "No results for",
+    "chips": {
+      "sleep": "Sleep",
+      "shelter": "Shelter",
+      "packs": "Packs",
+      "clothing": "Clothing",
+      "footwear": "Footwear",
+      "kitchen": "Kitchen",
+      "hydration": "Hydration",
+      "electronics": "Electronics",
+      "tools": "Tools",
+      "health": "Health",
+      "navigation": "Navigation"
+    },
+    "sidebarCategories": {
+      "sleep": "Sleep System",
+      "shelter": "Shelter",
+      "packs": "Backpacks & Bags",
+      "clothing": "Unisex Clothing",
+      "footwear": "Footwear",
+      "kitchen": "Kitchen & Cooking",
+      "hydration": "Hydration",
+      "electronics": "Electronics & Power",
+      "tools": "Accessories & Tools",
+      "health": "Health & Hygiene",
+      "navigation": "Navigation & Planning"
+    },
+    "form": {
+      "name": "Name",
+      "brand": "Brand",
+      "category": "Category",
+      "uncategorized": "Uncategorized",
+      "itemType": "Item type",
+      "itemTypePlaceholder": "e.g. Canister Stove",
+      "weight": "Weight",
+      "link": "Link",
+      "imageUrl": "Image URL",
+      "imageUrlPlaceholder": "example.com/image.jpg",
+      "description": "Description"
+    },
+    "toasts": {
+      "aiFailed": "AI search failed. Try adding manually.",
+      "nameRequired": "Name is required",
+      "invalidWeight": "Invalid weight",
+      "previewLoadFailed": "Failed to load item details."
+    }
+  },
   "addGearItemModal": {
     "title": "Add gear item(s)",
     "a11y": {
