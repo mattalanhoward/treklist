@@ -194,7 +194,7 @@ function CreateRow({ query, onManual, onAiSearch, aiLoading }) {
         className="flex items-center gap-1.5 text-sm text-primary/50 hover:text-primary transition-colors"
       >
         <FiPlus size={13} className="flex-shrink-0" />
-        {t("smartItemSearch.addItemManually", "Add item manually")}
+        {t("smartItemSearch.addManually", "Add manually")}
       </button>
       <span className="text-primary/20 text-xs">·</span>
       <button
