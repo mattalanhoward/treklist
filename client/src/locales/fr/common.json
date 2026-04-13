@@ -287,7 +287,8 @@
     "loadingLists": "Chargement de vos listes…",
     "empty": {
       "simpleTitle": "Créez une liste pour commencer",
-      "simpleBody": "Commencez avec une liste d’exemple ou créez la vôtre depuis la barre latérale.",
+      "simpleBody": "Commencez avec une liste d’exemple ou créez-en une vierge pour la personnaliser.",
+      "buttonNewList": "Nouvelle liste",
       "buttonSampleList": "Charger la liste d’exemple",
       "buttonSampleListLoading": "Chargement de la liste d’exemple…"
     },

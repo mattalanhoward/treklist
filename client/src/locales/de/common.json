@@ -280,7 +280,8 @@
     "loadingLists": "Deine Packlisten werden geladen…",
     "empty": {
       "simpleTitle": "Erstelle eine Liste, um zu beginnen",
-      "simpleBody": "Starte mit einer Beispielliste oder erstelle deine eigene über die Seitenleiste.",
+      "simpleBody": "Starte mit einer Beispielliste oder erstelle eine leere Liste nach deinen Wünschen.",
+      "buttonNewList": "Neue Liste",
       "buttonSampleList": "Beispielliste laden",
       "buttonSampleListLoading": "Beispielliste wird geladen…"
     },

@@ -36,22 +36,26 @@ import {
   restrictToVerticalAxis,
 } from "@dnd-kit/modifiers";
 import PreviewCard from "../components/PreviewCard";
+import CreateListModal from "../components/CreateListModal";
 
 function DashboardEmptyState({
   hasLists,
   listsLoading,
   onCreateSampleList,
   creatingSample,
+  onCreateNewList,
 }) {
   const { t } = useTranslation("common");
+  const [showCreateModal, setShowCreateModal] = useState(false);
+
   // While lists are loading (or we already have lists and redirect is about to run),
   // don’t flash the welcome/empty state.
   if (listsLoading) {
     return <Spinner centered label={t("dashboard.loadingLists")} />;
   }
 
-  // If we have lists and we're not loading, the redirect effect should
-  // immediately navigate. But if something goes wrong, don't trap them on a spinner.
+  // If we have lists and we’re not loading, the redirect effect should
+  // immediately navigate. But if something goes wrong, don’t trap them on a spinner.
   if (hasLists) {
     return (
       <div className="h-full flex items-center justify-center text-primary text-sm">
@@ -70,11 +74,18 @@ function DashboardEmptyState({
         <p className="text-sm text-primary/80">
           {t(
             "dashboard.empty.simpleBody",
-            "Start with a sample list, or create your own from the sidebar.",
+            "Start with a sample list, or create a blank one to build your own.",
           )}
         </p>
 
         <div className="flex items-center justify-center gap-2">
+          <button
+            type="button"
+            onClick={() => setShowCreateModal(true)}
+            className="inline-flex items-center justify-center rounded px-4 py-2 text-sm font-medium border border-primary/30 text-primary hover:bg-primary/5"
+          >
+            {t("dashboard.empty.buttonNewList", "New list")}
+          </button>
           <button
             type="button"
             onClick={onCreateSampleList}
@@ -89,6 +100,15 @@ function DashboardEmptyState({
           </button>
         </div>
       </div>
+
+      <CreateListModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onCreated={(id) => {
+          setShowCreateModal(false);
+          onCreateNewList(id);
+        }}
+      />
     </div>
   );
 }
@@ -708,6 +728,11 @@ export default function Dashboard() {
                 listsLoading={listsLoading}
                 onCreateSampleList={handleCreateSampleList}
                 creatingSample={creatingSample}
+                onCreateNewList={(id) => {
+                  fetchLists();
+                  localStorage.setItem("lastListId", id);
+                  handleSelectList(id);
+                }}
               />
             )}
           </main>

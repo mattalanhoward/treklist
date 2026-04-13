@@ -287,7 +287,8 @@
     "loadingLists": "Loading your gear lists…",
     "empty": {
       "simpleTitle": "Create a list to begin",
-      "simpleBody": "Start with a sample list, or create your own from the sidebar.",
+      "simpleBody": "Start with a sample list, or create a blank one to build your own.",
+      "buttonNewList": "New list",
       "buttonSampleList": "Load sample list",
       "buttonSampleListLoading": "Loading sample list…"
     },

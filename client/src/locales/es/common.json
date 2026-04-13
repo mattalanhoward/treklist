@@ -280,7 +280,8 @@
     "loadingLists": "Cargando tus listas de equipo…",
     "empty": {
       "simpleTitle": "Crea una lista para comenzar",
-      "simpleBody": "Empieza con una lista de ejemplo o crea la tuya desde la barra lateral.",
+      "simpleBody": "Empieza con una lista de ejemplo o crea una en blanco para personalizarla.",
+      "buttonNewList": "Nueva lista",
       "buttonSampleList": "Cargar lista de ejemplo",
       "buttonSampleListLoading": "Cargando lista de ejemplo…"
     },

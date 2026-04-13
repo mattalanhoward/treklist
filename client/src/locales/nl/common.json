@@ -280,7 +280,8 @@
     "loadingLists": "Je paklijsten worden geladen…",
     "empty": {
       "simpleTitle": "Maak een lijst om te beginnen",
-      "simpleBody": "Begin met een voorbeeldlijst of maak er zelf één via de zijbalk.",
+      "simpleBody": "Begin met een voorbeeldlijst of maak een lege lijst naar jouw wensen.",
+      "buttonNewList": "Nieuwe lijst",
       "buttonSampleList": "Voorbeeldlijst laden",
       "buttonSampleListLoading": "Voorbeeldlijst laden…"
     },
