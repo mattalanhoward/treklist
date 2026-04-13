@@ -251,6 +251,30 @@ export default function PublicGearList() {
     };
   }, [isEmbed, token, data, unit]);
 
+  // When embedded, delegate item modal to the parent page via postMessage
+  // (fixed positioning inside an iframe is relative to the iframe, not the screen).
+  React.useEffect(() => {
+    if (!isEmbed) return;
+    if (selectedItem) {
+      window.parent?.postMessage(
+        { type: "treklist:modal-open", token, item: selectedItem, unit },
+        "*",
+      );
+    } else {
+      window.parent?.postMessage({ type: "treklist:modal-close", token }, "*");
+    }
+  }, [isEmbed, selectedItem, token, unit]);
+
+  // Listen for close signal from parent (e.g. user clicks backdrop in parent overlay)
+  React.useEffect(() => {
+    if (!isEmbed) return;
+    const handler = (e) => {
+      if (e.data?.type === "treklist:modal-closed") setSelectedItem(null);
+    };
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler);
+  }, [isEmbed]);
+
   // ---- Compute stats for PackStats (grams in, component handles display) ----
   function computeStatsPublic(items = []) {
     let baseWeight = 0;
@@ -942,7 +966,7 @@ export default function PublicGearList() {
         />
       )}
 
-      {selectedItem && (
+      {selectedItem && !isEmbed && (
         <PublicItemModal
           item={selectedItem}
           onClose={() => setSelectedItem(null)}
