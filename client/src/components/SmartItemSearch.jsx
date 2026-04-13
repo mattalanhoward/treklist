@@ -4,6 +4,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { FiSearch, FiX, FiPlus, FiLoader, FiCamera } from "react-icons/fi";
 import { toast } from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import api from "../services/api";
 import { CATALOG_CATEGORIES } from "../config/catalogTaxonomy";
 import { useUnit } from "../hooks/useUnit";
@@ -14,19 +15,19 @@ import CatalogItemPreviewModal from "./CatalogItemPreviewModal";
 import PhotoScanModal from "./PhotoScanModal";
 import useAuth from "../hooks/useAuth";
 
-// Short labels for horizontal chip row
+// key = translation lookup key; value = API filter value (must stay English)
 const CHIPS = [
-  { label: "Sleep", value: "Sleep System" },
-  { label: "Shelter", value: "Shelter" },
-  { label: "Packs", value: "Backpacks & Bags" },
-  { label: "Clothing", value: "Unisex Clothing" },
-  { label: "Footwear", value: "Footwear" },
-  { label: "Kitchen", value: "Kitchen & Cooking" },
-  { label: "Hydration", value: "Hydration" },
-  { label: "Electronics", value: "Electronics & Power" },
-  { label: "Tools", value: "Accessories & Tools" },
-  { label: "Health", value: "Health & Hygiene" },
-  { label: "Navigation", value: "Navigation & Planning" },
+  { key: "sleep",       value: "Sleep System" },
+  { key: "shelter",     value: "Shelter" },
+  { key: "packs",       value: "Backpacks & Bags" },
+  { key: "clothing",    value: "Unisex Clothing" },
+  { key: "footwear",    value: "Footwear" },
+  { key: "kitchen",     value: "Kitchen & Cooking" },
+  { key: "hydration",   value: "Hydration" },
+  { key: "electronics", value: "Electronics & Power" },
+  { key: "tools",       value: "Accessories & Tools" },
+  { key: "health",      value: "Health & Hygiene" },
+  { key: "navigation",  value: "Navigation & Planning" },
 ];
 
 function normalize(str = "") {
@@ -89,6 +90,7 @@ function ItemRow({ item, selected, onToggle, onViewDetails, multiSelect, disable
 
 // ── Section (My Gear or Catalog) ──────────────────────────────────────────────
 function ResultSection({ title, items, type, myGearSelected, catalogSelected, onToggleMyGear, onToggleCatalog, onViewCatalogDetails, multiSelect, existingGlobalIds, loading }) {
+  const { t } = useTranslation("common");
   if (loading) {
     return (
       <div className="mb-3">
@@ -115,7 +117,7 @@ function ResultSection({ title, items, type, myGearSelected, catalogSelected, on
                 onToggle={onToggleMyGear}
                 multiSelect={multiSelect}
                 disabled={disabled}
-                badge={disabled ? "Added" : null}
+                badge={disabled ? t("smartItemSearch.added", "Added") : null}
                 subLabel={item.itemType || null}
               />
             );
@@ -144,10 +146,11 @@ function ResultSection({ title, items, type, myGearSelected, catalogSelected, on
 
 // ── No results view ───────────────────────────────────────────────────────────
 function NoResults({ query, onAiSearch, onManual, aiLoading }) {
+  const { t } = useTranslation("common");
   return (
     <div className="flex flex-col items-center justify-center h-full gap-3 py-10">
       <p className="text-sm text-primary/50 text-center">
-        No results for{" "}
+        {t("smartItemSearch.noResultsFor", "No results for")}{" "}
         <span className="font-medium text-primary">"{query}"</span>
       </p>
       <button
@@ -160,11 +163,13 @@ function NoResults({ query, onAiSearch, onManual, aiLoading }) {
         ) : (
           <span>✨</span>
         )}
-        {aiLoading ? "Searching with AI..." : "Fill with AI"}
+        {aiLoading
+          ? t("smartItemSearch.aiSearching", "Searching with AI...")
+          : t("smartItemSearch.aiFill", "Fill with AI")}
       </button>
       {!aiLoading && (
         <p className="text-xs text-primary/35 text-center">
-          Tip: include brand, model &amp; size for better results
+          {t("smartItemSearch.aiTip", "Tip: include brand, model & size for better results")}
         </p>
       )}
       <button
@@ -172,7 +177,41 @@ function NoResults({ query, onAiSearch, onManual, aiLoading }) {
         className="flex items-center gap-1.5 text-sm text-primary/50 hover:text-primary transition-colors"
       >
         <FiPlus size={14} />
-        Add manually
+        {t("smartItemSearch.addManually", "Add manually")}
+      </button>
+    </div>
+  );
+}
+
+// ── Create row (always visible above results) ─────────────────────────────────
+function CreateRow({ query, onManual, onAiSearch, aiLoading }) {
+  const { t } = useTranslation("common");
+  return (
+    <div className="flex items-center gap-2 px-5 py-2 border-b border-primary/10 flex-shrink-0">
+      <button
+        type="button"
+        onClick={onManual}
+        className="flex items-center gap-1.5 text-sm text-primary/50 hover:text-primary transition-colors"
+      >
+        <FiPlus size={13} className="flex-shrink-0" />
+        {t("smartItemSearch.addManually", "Add manually")}
+      </button>
+      <span className="text-primary/20 text-xs">·</span>
+      <button
+        type="button"
+        onClick={onAiSearch}
+        disabled={aiLoading || !query}
+        className="flex items-center gap-1 text-sm text-secondary/70 hover:text-secondary disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        title={!query ? t("smartItemSearch.aiTypeFirst", "Type a name first to use AI fill") : undefined}
+      >
+        {aiLoading ? (
+          <FiLoader size={12} className="animate-spin" />
+        ) : (
+          <span className="text-xs">✨</span>
+        )}
+        {aiLoading
+          ? t("smartItemSearch.aiSearchingShort", "Searching…")
+          : t("smartItemSearch.aiFill", "Fill with AI")}
       </button>
     </div>
   );
@@ -180,6 +219,7 @@ function NoResults({ query, onAiSearch, onManual, aiLoading }) {
 
 // ── Custom / edit form ────────────────────────────────────────────────────────
 function CustomForm({ form, onChange, unitLabel }) {
+  const { t } = useTranslation("common");
   return (
     <div className="overflow-y-auto h-full">
       <div className="space-y-3 py-2 pb-4">
@@ -187,7 +227,7 @@ function CustomForm({ form, onChange, unitLabel }) {
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-sm font-medium text-primary mb-1">
-              Name <span className="text-error">*</span>
+              {t("smartItemSearch.form.name", "Name")} <span className="text-error">*</span>
             </label>
             <input
               type="text"
@@ -198,7 +238,9 @@ function CustomForm({ form, onChange, unitLabel }) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-primary mb-1">Brand</label>
+            <label className="block text-sm font-medium text-primary mb-1">
+              {t("smartItemSearch.form.brand", "Brand")}
+            </label>
             <input
               type="text"
               value={form.brand}
@@ -210,25 +252,29 @@ function CustomForm({ form, onChange, unitLabel }) {
         {/* Row 2: Category + Item Type */}
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium text-primary mb-1">Category</label>
+            <label className="block text-sm font-medium text-primary mb-1">
+              {t("smartItemSearch.form.category", "Category")}
+            </label>
             <select
               value={form.catalogCategory}
               onChange={(e) => onChange({ ...form, catalogCategory: e.target.value })}
               className="w-full border border-base-300 rounded-lg px-3 py-2 text-primary bg-base-100 text-sm"
             >
-              <option value="">Uncategorized</option>
+              <option value="">{t("smartItemSearch.form.uncategorized", "Uncategorized")}</option>
               {CATALOG_CATEGORIES.map((cat) => (
                 <option key={cat} value={cat}>{cat}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-primary mb-1">Item type</label>
+            <label className="block text-sm font-medium text-primary mb-1">
+              {t("smartItemSearch.form.itemType", "Item type")}
+            </label>
             <input
               type="text"
               value={form.itemType}
               onChange={(e) => onChange({ ...form, itemType: e.target.value })}
-              placeholder="e.g. Canister Stove"
+              placeholder={t("smartItemSearch.form.itemTypePlaceholder", "e.g. Canister Stove")}
               className="w-full border border-base-300 rounded-lg px-3 py-2 text-primary bg-base-100 text-sm"
             />
           </div>
@@ -237,7 +283,7 @@ function CustomForm({ form, onChange, unitLabel }) {
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-sm font-medium text-primary mb-1">
-              Weight ({unitLabel})
+              {t("smartItemSearch.form.weight", "Weight")} ({unitLabel})
             </label>
             <input
               type="text"
@@ -251,25 +297,29 @@ function CustomForm({ form, onChange, unitLabel }) {
           <LinkInput
             value={form.link}
             onChange={(v) => onChange({ ...form, link: v })}
-            label="Link"
+            label={t("smartItemSearch.form.link", "Link")}
             placeholder="https://"
             required={false}
           />
         </div>
         {/* Image URL - full width */}
         <div>
-          <label className="block text-sm font-medium text-primary mb-1">Image URL</label>
+          <label className="block text-sm font-medium text-primary mb-1">
+            {t("smartItemSearch.form.imageUrl", "Image URL")}
+          </label>
           <input
             type="text"
             value={form.imageUrl}
             onChange={(e) => onChange({ ...form, imageUrl: e.target.value })}
-            placeholder="example.com/image.jpg"
+            placeholder={t("smartItemSearch.form.imageUrlPlaceholder", "example.com/image.jpg")}
             className="w-full border border-base-300 rounded-lg px-3 py-2 text-primary bg-base-100 text-sm"
           />
         </div>
         {/* Description - full width */}
         <div>
-          <label className="block text-sm font-medium text-primary mb-1">Description</label>
+          <label className="block text-sm font-medium text-primary mb-1">
+            {t("smartItemSearch.form.description", "Description")}
+          </label>
           <textarea
             value={form.description}
             onChange={(e) => onChange({ ...form, description: e.target.value })}
@@ -299,6 +349,7 @@ export default function SmartItemSearch({
   onConfirm,
   onClose,
 }) {
+  const { t } = useTranslation("common");
   const unit = useUnit();
   const { parseInput, formatInput, unitLabel } = useWeightInput(unit);
   const { user } = useAuth();
@@ -350,7 +401,7 @@ export default function SmartItemSearch({
       const { data } = await api.get(`/catalog/items/${item._id}`);
       setPreviewItem(data);
     } catch {
-      setPreviewError("Failed to load item details.");
+      setPreviewError(t("smartItemSearch.toasts.previewLoadFailed", "Failed to load item details."));
     } finally {
       setPreviewLoading(false);
     }
@@ -482,7 +533,7 @@ export default function SmartItemSearch({
         imageUrl: data.imageUrl || "",
       });
     } catch {
-      toast.error("AI search failed. Try adding manually.");
+      toast.error(t("smartItemSearch.toasts.aiFailed", "AI search failed. Try adding manually."));
     } finally {
       setAiLoading(false);
     }
@@ -494,14 +545,14 @@ export default function SmartItemSearch({
 
     if (customMode) {
       if (!customForm.name.trim()) {
-        toast.error("Name is required");
+        toast.error(t("smartItemSearch.toasts.nameRequired", "Name is required"));
         return;
       }
       let weightGrams;
       if (customForm.weight !== "") {
         weightGrams = parseInput(customForm.weight);
         if (weightGrams == null || weightGrams < 0) {
-          toast.error("Invalid weight");
+          toast.error(t("smartItemSearch.toasts.invalidWeight", "Invalid weight"));
           return;
         }
       }
@@ -550,18 +601,18 @@ export default function SmartItemSearch({
     : totalSelected > 0;
 
   const confirmLabel = confirming
-    ? "Saving..."
+    ? t("smartItemSearch.saving", "Saving...")
     : customMode
-      ? "Create and Add"
+      ? t("smartItemSearch.createAndAdd", "Create and Add")
       : myGearSelected.size > 0
         ? multiSelect && myGearSelected.size > 1
-          ? `Add (${myGearSelected.size})`
-          : "Add"
+          ? `${t("smartItemSearch.add", "Add")} (${myGearSelected.size})`
+          : t("smartItemSearch.add", "Add")
         : catalogSelected.size > 0
           ? multiSelect && catalogSelected.size > 1
-            ? `Import & Add (${catalogSelected.size})`
-            : "Import & Add"
-          : "Add";
+            ? `${t("smartItemSearch.importAndAdd", "Import & Add")} (${catalogSelected.size})`
+            : t("smartItemSearch.importAndAdd", "Import & Add")
+          : t("smartItemSearch.add", "Add");
 
   const hasSearchIntent = debouncedQuery.trim() || categoryFilter;
   const hasNoResults =
@@ -587,7 +638,7 @@ export default function SmartItemSearch({
                 setQuery(e.target.value);
                 setCustomMode(null);
               }}
-              placeholder="e.g. Osprey Talon 33 Men's Backpack"
+              placeholder={t("smartItemSearch.searchPlaceholder", "e.g. Osprey Talon 33 Men's Backpack")}
               className="w-full pl-9 pr-8 py-2 border border-primary/30 rounded-lg text-primary bg-base-100 placeholder:text-primary/40 text-sm"
             />
             {query && (
@@ -606,7 +657,7 @@ export default function SmartItemSearch({
             <button
               type="button"
               onClick={() => setShowScanModal(true)}
-              title="Scan item with camera"
+              title={t("smartItemSearch.scanItem", "Scan item with camera")}
               className="flex-shrink-0 p-2 border border-primary/30 rounded-lg text-primary/50 hover:text-secondary hover:border-secondary/50 transition-colors"
             >
               <FiCamera size={16} />
@@ -614,7 +665,9 @@ export default function SmartItemSearch({
           )}
         </div>
         {!query && (
-          <p className="text-xs text-primary/35 mt-1.5 px-1">Brand · Model · Size or variant</p>
+          <p className="text-xs text-primary/35 mt-1.5 px-1">
+            {t("smartItemSearch.searchHint", "Brand · Model · Size or variant")}
+          </p>
         )}
       </div>
 
@@ -633,11 +686,27 @@ export default function SmartItemSearch({
                   : "border-primary/20 text-primary/60 hover:border-secondary/50 hover:text-primary"
               }`}
             >
-              {chip.label}
+              {t(`smartItemSearch.chips.${chip.key}`, chip.key)}
             </button>
           ))}
         </div>
       </div>
+
+      {/* Create row — always visible, above results */}
+      {!customMode && !aiLoading && (
+        <CreateRow
+          query={debouncedQuery.trim()}
+          onManual={() => {
+            setCustomMode("manual");
+            setCustomForm({
+              name: debouncedQuery.trim(),
+              brand: "", catalogCategory: "", itemType: "", weight: "", description: "", link: "", imageUrl: "",
+            });
+          }}
+          onAiSearch={handleAiSearch}
+          aiLoading={aiLoading}
+        />
+      )}
 
       {/* Body: sidebar + results */}
       <div className="flex-1 flex min-h-0">
@@ -652,7 +721,7 @@ export default function SmartItemSearch({
                 : "border-transparent text-primary/60 hover:text-primary hover:bg-primary/5"
             }`}
           >
-            All Categories
+            {t("smartItemSearch.allCategories", "All Categories")}
           </button>
           {CHIPS.map((chip) => (
             <button
@@ -667,7 +736,7 @@ export default function SmartItemSearch({
                   : "border-transparent text-primary/60 hover:text-primary hover:bg-primary/5"
               }`}
             >
-              {chip.value}
+              {t(`smartItemSearch.sidebarCategories.${chip.key}`, chip.value)}
             </button>
           ))}
         </div>
@@ -683,7 +752,9 @@ export default function SmartItemSearch({
         ) : aiLoading ? (
           <div className="flex flex-col items-center justify-center h-full gap-2">
             <FiLoader size={20} className="animate-spin text-secondary" />
-            <p className="text-sm text-primary/50">Searching with AI...</p>
+            <p className="text-sm text-primary/50">
+              {t("smartItemSearch.aiSearching", "Searching with AI...")}
+            </p>
           </div>
         ) : hasNoResults ? (
           <NoResults
@@ -707,11 +778,11 @@ export default function SmartItemSearch({
                   <div className="py-4"><Spinner centered /></div>
                 ) : !hasSearchIntent && filteredMyGear.length === 0 ? (
                   <p className="text-sm text-primary/40 text-center py-8">
-                    No gear yet. Search the catalog or describe an item above.
+                    {t("smartItemSearch.noGearYet", "No gear yet. Search the catalog or describe an item above.")}
                   </p>
                 ) : filteredMyGear.length > 0 ? (
                   <ResultSection
-                    title={hasSearchIntent ? "My Gear" : "My Gear"}
+                    title={t("smartItemSearch.myGear", "My Gear")}
                     items={filteredMyGear}
                     type="myGear"
                     myGearSelected={myGearSelected}
@@ -728,7 +799,7 @@ export default function SmartItemSearch({
             {/* Catalog — shown when searching or category chip active */}
             {hasSearchIntent && (
               <ResultSection
-                title="From Catalog"
+                title={t("smartItemSearch.fromCatalog", "From Catalog")}
                 items={catalogResults}
                 type="catalog"
                 myGearSelected={myGearSelected}
@@ -745,9 +816,10 @@ export default function SmartItemSearch({
             {/* Empty state for library mode (no My Gear shown) */}
             {!showMyGear && !hasSearchIntent && (
               <p className="text-sm text-primary/40 text-center py-8">
-                Search the catalog above, or tap a category to browse.
+                {t("smartItemSearch.browseHint", "Search the catalog above, or tap a category to browse.")}
               </p>
             )}
+
           </>
         )}
       </div>
@@ -761,7 +833,7 @@ export default function SmartItemSearch({
             disabled={confirming}
             className="px-3 py-1.5 rounded bg-neutralAlt hover:bg-neutralAlt/90 text-primary text-sm"
           >
-            Cancel
+            {t("common.cancel", "Cancel")}
           </button>
           <button
             type="button"

@@ -280,7 +280,8 @@
     "loadingLists": "Deine Packlisten werden geladen…",
     "empty": {
       "simpleTitle": "Erstelle eine Liste, um zu beginnen",
-      "simpleBody": "Starte mit einer Beispielliste oder erstelle deine eigene über die Seitenleiste.",
+      "simpleBody": "Starte mit einer Beispielliste oder erstelle eine leere Liste nach deinen Wünschen.",
+      "buttonNewList": "Neue Liste",
       "buttonSampleList": "Beispielliste laden",
       "buttonSampleListLoading": "Beispielliste wird geladen…"
     },
@@ -569,6 +570,74 @@
       "deleteTitle": "Dieses Ausrüstungs-Item löschen?",
       "deleteMessage": "Dadurch wird es aus deiner Ausrüstung und aus allen Packlisten entfernt.",
       "deleteConfirm": "Item löschen"
+    }
+  },
+  "smartItemSearch": {
+    "searchPlaceholder": "z.B. Osprey Talon 33 Herren-Rucksack",
+    "searchHint": "Marke · Modell · Größe oder Variante",
+    "scanItem": "Artikel mit Kamera scannen",
+    "allCategories": "Alle Kategorien",
+    "myGear": "Meine Ausrüstung",
+    "fromCatalog": "Aus dem Katalog",
+    "added": "Hinzugefügt",
+    "noGearYet": "Noch keine Ausrüstung. Durchsuche den Katalog oder beschreibe einen Artikel oben.",
+    "browseHint": "Durchsuche den Katalog oben oder tippe auf eine Kategorie.",
+    "aiSearching": "Suche mit KI...",
+    "aiSearchingShort": "Suche…",
+    "aiFill": "Mit KI ausfüllen",
+    "aiTip": "Tipp: Marke, Modell & Größe angeben für bessere Ergebnisse",
+    "aiTypeFirst": "Zuerst einen Namen eingeben, um KI zu nutzen",
+    "addManually": "Manuell hinzufügen",
+    "addItemManually": "Artikel manuell hinzufügen",
+    "saving": "Speichern...",
+    "createAndAdd": "Erstellen und hinzufügen",
+    "add": "Hinzufügen",
+    "importAndAdd": "Importieren & hinzufügen",
+    "noResultsFor": "Keine Ergebnisse für",
+    "chips": {
+      "sleep": "Schlafen",
+      "shelter": "Unterkunft",
+      "packs": "Rucksäcke",
+      "clothing": "Kleidung",
+      "footwear": "Schuhe",
+      "kitchen": "Küche",
+      "hydration": "Trinken",
+      "electronics": "Elektronik",
+      "tools": "Werkzeug",
+      "health": "Gesundheit",
+      "navigation": "Navigation"
+    },
+    "sidebarCategories": {
+      "sleep": "Schlafsystem",
+      "shelter": "Unterkunft",
+      "packs": "Rucksäcke & Taschen",
+      "clothing": "Kleidung",
+      "footwear": "Schuhe",
+      "kitchen": "Küche & Kochen",
+      "hydration": "Trinken",
+      "electronics": "Elektronik & Energie",
+      "tools": "Zubehör & Werkzeug",
+      "health": "Gesundheit & Hygiene",
+      "navigation": "Navigation & Planung"
+    },
+    "form": {
+      "name": "Name",
+      "brand": "Marke",
+      "category": "Kategorie",
+      "uncategorized": "Ohne Kategorie",
+      "itemType": "Artikeltyp",
+      "itemTypePlaceholder": "z.B. Gaskocher",
+      "weight": "Gewicht",
+      "link": "Link",
+      "imageUrl": "Bild-URL",
+      "imageUrlPlaceholder": "example.com/bild.jpg",
+      "description": "Beschreibung"
+    },
+    "toasts": {
+      "aiFailed": "KI-Suche fehlgeschlagen. Manuell hinzufügen versuchen.",
+      "nameRequired": "Name ist erforderlich",
+      "invalidWeight": "Ungültiges Gewicht",
+      "previewLoadFailed": "Artikeldetails konnten nicht geladen werden."
     }
   },
   "addGearItemModal": {
