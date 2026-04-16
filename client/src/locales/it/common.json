@@ -1173,6 +1173,10 @@
           "title": "West Highland Way",
           "alt": "Lista attrezzatura per la West Highland Way"
         },
+        "whwWild": {
+          "title": "West Highland Way Campeggio Libero",
+          "alt": "Lista attrezzatura per la West Highland Way campeggio libero"
+        },
         "kungsleden": {
           "title": "Kungsleden",
           "alt": "Lista attrezzatura per il Kungsleden"
