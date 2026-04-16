@@ -11,6 +11,7 @@ const FEATURED_TOKENS = {
   camino: import.meta.env.VITE_SHARE_CAMINO_TOKEN,
   tmb: import.meta.env.VITE_SHARE_TMB_TOKEN,
   whw: import.meta.env.VITE_SHARE_WHW_TOKEN,
+  whwWild: import.meta.env.VITE_SHARE_WHW_WILD_TOKEN,
 };
 
 export default function TemplatesView({ fetchLists }) {
@@ -45,6 +46,13 @@ export default function TemplatesView({ fetchLists }) {
       img: "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_800/gear-list-landing/gear-list-west-highland-way.jpg",
       alt: t("landing.recommended.cards.whw.alt"),
       token: FEATURED_TOKENS.whw,
+    },
+    {
+      key: "whwWild",
+      title: t("landing.recommended.cards.whwWild.title"),
+      img: "https://res.cloudinary.com/treklist/image/upload/v1776339003/gear-list-landing/gearlist-west-highland-way-wild-camping.jpg",
+      alt: t("landing.recommended.cards.whwWild.alt"),
+      token: FEATURED_TOKENS.whwWild,
     },
   ];
 
