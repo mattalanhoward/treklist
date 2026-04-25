@@ -17,7 +17,7 @@ import { useUserSettings } from "../contexts/UserSettings";
 import { useTranslation } from "react-i18next";
 import Spinner from "../components/ui/Spinner";
 import TourModal from "../components/TourModal";
-import usePageTitle from "../hooks/usePageTitle";
+import SEO from "../components/SEO";
 import {
   DndContext,
   DragOverlay,
@@ -282,7 +282,14 @@ export default function Dashboard() {
     items: [],
   });
 
-  usePageTitle(fullData.list?.title ?? null);
+  const pageTitle = (() => {
+    if (activePane === "myGear") return "My Gear";
+    if (activePane === "templates") return "Templates";
+    if (activePane === "lists") return "My Lists";
+    if (activePane === "admin") return "Admin";
+    if (activePane === "wishlist") return "Wishlist";
+    return fullData.list?.title ?? "My Lists";
+  })();
 
   // ─── Lists state & fetchLists fn ───
   const [lists, setLists] = useState([]);
@@ -638,6 +645,7 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col h-d-screen overflow-hidden bg-neutral/50 text-primary">
+      <SEO title={pageTitle} noindex />
       <TourModal
         isOpen={isTourOpen}
         stepIndex={tourStep}

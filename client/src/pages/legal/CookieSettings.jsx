@@ -1,13 +1,12 @@
 import React from "react";
 import LegalLayout from "../../components/LegalLayout";
 import CookieSettingsContent from "../../components/legal/CookieSettingsContent";
-import usePageTitle from "../../hooks/usePageTitle";
+import SEO from "../../components/SEO";
 
 export default function CookieSettingsPage() {
-  usePageTitle("Cookie Settings");
-
   return (
     <LegalLayout>
+      <SEO title="Cookie Settings" noindex />
       <CookieSettingsContent />
     </LegalLayout>
   );

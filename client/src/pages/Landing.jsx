@@ -10,7 +10,6 @@ import AuthModal from "../components/AuthModal";
 import FooterLegal from "../components/FooterLegal";
 import PublicHeader from "../components/PublicHeader";
 import SEO from "../components/SEO";
-import usePageTitle from "../hooks/usePageTitle";
 
 // helper to build share path safely
 const sharePath = (token) => (token ? `/share/${token}/` : null);
@@ -107,7 +106,6 @@ const Bullet = ({ title, text, color = "text-blue-600" }) => (
 
 export default function Landing() {
   const { t } = useTranslation("common");
-  usePageTitle(t("landing.pageTitle"));
 
   // Preload hero for faster first paint
   useEffect(() => {

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import TopBar from "../components/TopBar"; // Standard TopBar integrated
+import TopBar from "../components/TopBar";
+import SEO from "../components/SEO";
 import { useUserSettings } from "../contexts/UserSettings";
 
 import { FaTshirt, FaUtensils } from "react-icons/fa";
@@ -197,7 +198,7 @@ export default function ChecklistView() {
 
   return (
     <div className="min-h-screen bg-neutral/50 text-primary print:bg-white">
-      {/* 1. NEW: Render the standard TopBar component */}
+      <SEO title={full.list?.title ? `${full.list.title} – Checklist` : "Checklist"} noindex />
       <TopBar title={t("app.name")} />
 
       <div className="border-b bg-base-100 print:hidden sticky top-[48px] z-50">
