@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import AuthModal from "../components/AuthModal";
+import SEO from "../components/SEO";
 
 const HERO_URL =
   "https://res.cloudinary.com/treklist/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_1920/gear-list-hero-images/hero-hiker-cinque-torri_hpe3lz";
@@ -10,6 +11,7 @@ export default function AuthPage({ mode = "login" }) {
 
   return (
     <div className="relative min-h-screen">
+      <SEO title={mode === "register" ? "Create Account" : "Sign In"} noindex />
       <img
         src={HERO_URL}
         alt=""
