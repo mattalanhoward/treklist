@@ -49,9 +49,13 @@ export function AuthProvider({ children }) {
         })
         .catch((err) => {
           console.error("Failed to fetch current user:", err);
-          clearGlobalItemCache();
-          setUser(null);
-          setToken(null);
+          const status = err?.response?.status;
+          if (status === 401 || status === 403) {
+            clearGlobalItemCache();
+            setUser(null);
+            setToken(null);
+          }
+          // Network errors / 5xx: keep the token so the user stays logged in
         });
     } else {
       setUser(null);
