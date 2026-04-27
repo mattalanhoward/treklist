@@ -29,6 +29,7 @@ function PrivateRoute({ children }) {
 
 export default function App() {
   const location = useLocation();
+  const { isAuthenticated } = useAuth();
 
   // Treat both `?embed=1` and iframe context as embedded.
   // We suppress cookie banner + analytics inside embeds.
@@ -59,7 +60,7 @@ export default function App() {
     <>
       {!isEmbedded && <CookieBanner />}
       <Routes>
-        <Route path="/" element={<Landing />} />
+        <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Landing />} />
         <Route path="/auth/register" element={<AuthPage mode="register" />} />
         <Route path="/auth/login" element={<AuthPage mode="login" />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
