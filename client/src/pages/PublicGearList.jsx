@@ -697,12 +697,12 @@ export default function PublicGearList() {
                   <div
                     className={cx(
                       "flex items-center min-w-0",
-                      isEmbed ? "py-2" : "mb-3",
+                      isEmbed ? "pt-3 mb-2" : "mb-3",
                     )}
                   >
                     <h2
                       className={cx(
-                        isEmbed ? "text-[13px]" : "text-lg",
+                        isEmbed ? "text-[17px]" : "text-lg",
                         "font-semibold flex-1 min-w-0 truncate pr-2 text-primaryAlt",
                       )}
                     >
@@ -826,12 +826,12 @@ export default function PublicGearList() {
                   <div
                     className={cx(
                       "flex items-center min-w-0",
-                      isEmbed ? "py-2" : "mb-3",
+                      isEmbed ? "pt-3 mb-2" : "mb-3",
                     )}
                   >
                     <h2
                       className={cx(
-                        isEmbed ? "text-[16px] pt-4" : "text-lg",
+                        isEmbed ? "text-[17px]" : "text-lg",
                         "font-semibold flex-1 min-w-0 truncate pr-2 text-primaryAlt",
                       )}
                     >
