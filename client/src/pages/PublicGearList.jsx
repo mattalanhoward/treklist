@@ -313,7 +313,7 @@ export default function PublicGearList() {
 
   // In embeds: flatter sections (no big gray blocks), more like a simple table.
   const sectionShellClass = cx(
-    isEmbed ? "bg-transparent rounded-none py-0" : "bg-neutral rounded-lg py-2",
+    isEmbed ? "bg-transparent rounded-none py-0 mt-4 first:mt-0" : "bg-neutral rounded-lg py-2",
   );
 
   const desktopRowClass = cx(
