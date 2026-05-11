@@ -16,6 +16,8 @@ const router = express.Router();
  *   - limit (default 25, max 100)
  *   - skip (default 0)
  *   - q: optional search on list title, user email/trailname, or token
+ *   - sortField: "title" | "owner" | "views" | "lastViewedAt" | "createdAt" (default "createdAt")
+ *   - sortDir: "asc" | "desc" (default "desc")
  */
 router.get("/", async (req, res) => {
   try {
@@ -28,6 +30,8 @@ router.get("/", async (req, res) => {
     const skip = Number.isFinite(rawSkip) ? Math.max(rawSkip, 0) : 0;
 
     const q = (req.query.q || "").trim().toLowerCase();
+    const sortField = req.query.sortField || "createdAt";
+    const sortDir = req.query.sortDir === "asc" ? 1 : -1;
 
     // Volume of public lists is expected to be small, so we can do
     // in-memory filtering + pagination for now.
@@ -64,6 +68,37 @@ router.get("/", async (req, res) => {
         );
       });
     }
+
+    rows.sort((a, b) => {
+      switch (sortField) {
+        case "title": {
+          const at = (a.list.title || "").toLowerCase();
+          const bt = (b.list.title || "").toLowerCase();
+          return at.localeCompare(bt) * sortDir;
+        }
+        case "owner": {
+          const ae = (a.owner.email || "").toLowerCase();
+          const be = (b.owner.email || "").toLowerCase();
+          return ae.localeCompare(be) * sortDir;
+        }
+        case "views": {
+          const av = a.viewsCount ?? 0;
+          const bv = b.viewsCount ?? 0;
+          return (av - bv) * sortDir;
+        }
+        case "lastViewedAt": {
+          const al = a.lastViewedAt ? new Date(a.lastViewedAt).getTime() : 0;
+          const bl = b.lastViewedAt ? new Date(b.lastViewedAt).getTime() : 0;
+          return (al - bl) * sortDir;
+        }
+        case "createdAt":
+        default: {
+          const ac = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const bc = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          return (ac - bc) * sortDir;
+        }
+      }
+    });
 
     const total = rows.length;
     const pageRows = rows.slice(skip, skip + limit);

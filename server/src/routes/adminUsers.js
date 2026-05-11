@@ -24,9 +24,21 @@ function escapeRegex(s) {
 // All routes below require auth + admin
 router.use(auth, requireAdmin);
 
+const USER_SORT_FIELD_MAP = {
+  email: "email",
+  trailname: "trailname",
+  role: "isAdmin",
+  verified: "isVerified",
+  marketing: "marketing.optedIn",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+  lastLoginAt: "lastLoginAt",
+  lastActiveAt: "lastActiveAt",
+};
+
 /**
  * GET /api/admin/users
- * List users with search, filters, pagination, and listsCount
+ * List users with search, filters, pagination, sorting, and listsCount
  *
  * Query params:
  *  - q           (optional) search term (email / trailname)
@@ -34,6 +46,8 @@ router.use(auth, requireAdmin);
  *  - role        (optional) "admin" | "user"
  *  - limit       (optional) default 50, max 200
  *  - skip        (optional) default 0
+ *  - sortField   (optional) field to sort by (see USER_SORT_FIELD_MAP)
+ *  - sortDir     (optional) "asc" | "desc" (default "desc")
  */
 router.get("/", async (req, res) => {
   try {
@@ -43,6 +57,8 @@ router.get("/", async (req, res) => {
       role = "all",
       limit = 50,
       skip = 0,
+      sortField = "createdAt",
+      sortDir = "desc",
     } = req.query;
 
     const query = {};
@@ -64,10 +80,13 @@ router.get("/", async (req, res) => {
     const safeLimit = Math.min(Number(limit) || 50, 200);
     const safeSkip = Number(skip) || 0;
 
+    const dbSortField = USER_SORT_FIELD_MAP[sortField] || "createdAt";
+    const dbSortDir = sortDir === "asc" ? 1 : -1;
+
     // Fetch users (lean for speed, project only needed fields)
     const [users, total] = await Promise.all([
       User.find(query)
-        .sort({ createdAt: -1 })
+        .sort({ [dbSortField]: dbSortDir })
         .skip(safeSkip)
         .limit(safeLimit)
         .select(
