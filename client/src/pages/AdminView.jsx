@@ -3566,12 +3566,14 @@ function UsersSection() {
     searchOverride,
     roleOverride,
     verifiedOverride,
+    sortOverride,
   } = {}) => {
     const nextPage = pageOverride ?? page;
     const nextPageSize = pageSizeOverride ?? pageSize;
     const nextSearch = searchOverride ?? search;
     const nextRole = roleOverride ?? roleFilter;
     const nextVerified = verifiedOverride ?? verifiedFilter;
+    const nextSort = sortOverride ?? sort;
 
     setLoading(true);
     setError("");
@@ -3579,6 +3581,8 @@ function UsersSection() {
       const params = {
         limit: nextPageSize,
         skip: nextPage * nextPageSize,
+        sortField: nextSort.field,
+        sortDir: nextSort.dir,
       };
 
       if (nextSearch.trim()) params.q = nextSearch.trim();
@@ -3606,18 +3610,12 @@ function UsersSection() {
   }, []);
 
   const handleSort = (field) => {
-    setSort((prev) => {
-      if (prev.field === field) {
-        return {
-          field,
-          dir: prev.dir === "asc" ? "desc" : "asc",
-        };
-      }
-      return {
-        field,
-        dir: "asc",
-      };
-    });
+    const newSort =
+      sort.field === field
+        ? { field, dir: sort.dir === "asc" ? "desc" : "asc" }
+        : { field, dir: "asc" };
+    setSort(newSort);
+    loadUsers({ pageOverride: 0, sortOverride: newSort });
   };
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
@@ -3881,8 +3879,9 @@ function UsersSection() {
                     className="select select-xs select-bordered flex-1"
                     value={sort.field}
                     onChange={(e) => {
-                      const f = e.target.value;
-                      setSort({ field: f, dir: "asc" });
+                      const newSort = { field: e.target.value, dir: "asc" };
+                      setSort(newSort);
+                      loadUsers({ pageOverride: 0, sortOverride: newSort });
                     }}
                   >
                     <option value="createdAt">Sort: Created</option>
@@ -3899,12 +3898,11 @@ function UsersSection() {
                   <button
                     type="button"
                     className="btn btn-ghost btn-xs"
-                    onClick={() =>
-                      setSort((prev) => ({
-                        ...prev,
-                        dir: prev.dir === "asc" ? "desc" : "asc",
-                      }))
-                    }
+                    onClick={() => {
+                      const newSort = { ...sort, dir: sort.dir === "asc" ? "desc" : "asc" };
+                      setSort(newSort);
+                      loadUsers({ pageOverride: 0, sortOverride: newSort });
+                    }}
                     title={sort.dir === "asc" ? "Ascending" : "Descending"}
                   >
                     {sort.dir === "asc" ? "↑" : "↓"}
@@ -4313,10 +4311,12 @@ function PublicListsSection() {
     pageOverride,
     pageSizeOverride,
     searchOverride,
+    sortOverride,
   } = {}) => {
     const nextPage = pageOverride ?? page;
     const nextPageSize = pageSizeOverride ?? pageSize;
     const nextSearch = searchOverride ?? search;
+    const nextSort = sortOverride ?? sort;
 
     setLoading(true);
     setError("");
@@ -4324,6 +4324,8 @@ function PublicListsSection() {
       const params = {
         limit: nextPageSize,
         skip: nextPage * nextPageSize,
+        sortField: nextSort.field,
+        sortDir: nextSort.dir,
       };
       if (nextSearch.trim()) {
         params.q = nextSearch.trim();
@@ -4351,18 +4353,12 @@ function PublicListsSection() {
   }, []);
 
   const handleSort = (field) => {
-    setSort((prev) => {
-      if (prev.field === field) {
-        return {
-          field,
-          dir: prev.dir === "asc" ? "desc" : "asc",
-        };
-      }
-      return {
-        field,
-        dir: "asc",
-      };
-    });
+    const newSort =
+      sort.field === field
+        ? { field, dir: sort.dir === "asc" ? "desc" : "asc" }
+        : { field, dir: "asc" };
+    setSort(newSort);
+    loadLists({ pageOverride: 0, sortOverride: newSort });
   };
 
   const boolToNum = (val) => (val ? 1 : 0);
@@ -4652,8 +4648,9 @@ function PublicListsSection() {
                     className="select select-xs select-bordered flex-1"
                     value={sort.field}
                     onChange={(e) => {
-                      const f = e.target.value;
-                      setSort({ field: f, dir: "asc" });
+                      const newSort = { field: e.target.value, dir: "asc" };
+                      setSort(newSort);
+                      loadLists({ pageOverride: 0, sortOverride: newSort });
                     }}
                   >
                     <option value="createdAt">Sort: Created</option>
@@ -4665,12 +4662,11 @@ function PublicListsSection() {
                   <button
                     type="button"
                     className="btn btn-ghost btn-xs"
-                    onClick={() =>
-                      setSort((prev) => ({
-                        ...prev,
-                        dir: prev.dir === "asc" ? "desc" : "asc",
-                      }))
-                    }
+                    onClick={() => {
+                      const newSort = { ...sort, dir: sort.dir === "asc" ? "desc" : "asc" };
+                      setSort(newSort);
+                      loadLists({ pageOverride: 0, sortOverride: newSort });
+                    }}
                     title={sort.dir === "asc" ? "Ascending" : "Descending"}
                   >
                     {sort.dir === "asc" ? "↑" : "↓"}
