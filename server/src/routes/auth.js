@@ -10,6 +10,7 @@ const User = require("../models/user");
 // ✅ Reuse shared mailer (single source of truth)
 // Adjust the path if your mailer lives elsewhere.
 const { sendSupportEmail } = require("../utils/mailer");
+const { subscribeToKit } = require("../utils/kitSubscribe");
 
 const router = express.Router();
 router.use(cookieParser());
@@ -431,6 +432,10 @@ router.post("/verify-email", async (req, res) => {
   user.isVerified = true;
   user.verifyEmailToken = undefined;
   user.verifyEmailExpires = undefined;
+
+  if (user.marketing?.optedIn) {
+    subscribeToKit(user.email, user.trailname || '');
+  }
 
   const tokens = issueTokens(user);
 
