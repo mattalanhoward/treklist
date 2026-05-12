@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
 const { authenticate } = require("./auth"); // import your JWT middleware
-const { subscribeToKit } = require("../utils/kitSubscribe");
+const { subscribeToKit, unsubscribeFromKit } = require("../utils/kitSubscribe");
 
 // All /settings routes require a valid Bearer token
 router.use(authenticate);
@@ -124,7 +124,7 @@ router.patch("/", async (req, res) => {
       } else if (!nextOptIn && prevOptIn) {
         // user is opting out
         user.marketing.optedIn = false;
-        // keep optedInAt/source for history; we can wipe later if we prefer
+        unsubscribeFromKit(user.email);
       }
     }
 
