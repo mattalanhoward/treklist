@@ -212,7 +212,7 @@ export default async function handler(request, context) {
       // Inject structured data
       .replace(
         '</head>',
-        `  <script type="application/ld+json">${JSON.stringify(structuredData)}</script>\n  </head>`
+        `  <script type="application/ld+json">${JSON.stringify(structuredData).replace(/<\/script>/gi, '<\\/script>')}</script>\n  </head>`
       )
       // Inject pre-rendered gear list content into #root
       .replace(

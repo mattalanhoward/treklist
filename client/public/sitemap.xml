@@ -21,6 +21,9 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+  <!-- NOTE: this static file is superseded in production by the dynamic
+       sitemap at https://api.treklist.co/sitemap.xml (see netlify.toml).
+       Edit server/src/routes/sitemap.js instead. -->
   <!-- Legal Pages -->
   <url>
     <loc>https://treklist.co/legal/privacy</loc>

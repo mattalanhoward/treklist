@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import api from "../services/api";
 import { FaGripVertical } from "react-icons/fa";
-import { FiChevronLeft, FiChevronRight, FiPlus, FiChevronDown, FiChevronUp, FiLayers, FiSettings, FiBookmark } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiPlus, FiChevronDown, FiChevronUp, FiLayers, FiSettings, FiBookmark, FiUsers } from "react-icons/fi";
 import { BsBackpack4 } from "react-icons/bs";
 import { useDraggable } from "@dnd-kit/core";
 import GlobalItemModal from "./GlobalItemModal";
@@ -11,6 +11,8 @@ import CreateListModal from "./CreateListModal";
 import { toast } from "react-hot-toast";
 import { useUserSettings } from "../contexts/UserSettings";
 import { useTranslation } from "react-i18next";
+import { useNavigate, useLocation } from "react-router-dom";
+import { getCommunities } from "../services/community";
 
 function SidebarDraggableItem({ item, onClickDetails, isLocked }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
@@ -57,10 +59,13 @@ export default function Sidebar({
   onOpenMyGear = () => {},
   onShowGearPane = () => {},
   onOpenTemplates = () => {},
+  onOpenCommunity = () => {},
   isAdmin = false,
   isLocked = false,
 }) {
   const { t } = useTranslation("common");
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const [showCreateListModal, setShowCreateListModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -73,6 +78,19 @@ export default function Sidebar({
     sidebarMyGearCollapsed,
     setSidebarMyGearCollapsed,
   } = useUserSettings();
+
+  const [communities, setCommunities] = useState([]);
+  const [communitiesCollapsed, setCommunitiesCollapsed] = useState(false);
+
+  function fetchCommunities() {
+    getCommunities().then(setCommunities).catch(() => {});
+  }
+
+  useEffect(() => {
+    fetchCommunities();
+    window.addEventListener("community:favorites-updated", fetchCommunities);
+    return () => window.removeEventListener("community:favorites-updated", fetchCommunities);
+  }, []);
 
   // global gear items & debounced search
   const [items, setItems] = useState([]);
@@ -274,6 +292,14 @@ export default function Sidebar({
             )}
             <button
               type="button"
+              title="Community"
+              onClick={() => onOpenCommunity(null)}
+              className="w-9 h-9 flex items-center justify-center rounded-lg text-primaryAlt hover:text-primary hover:bg-primary/5 transition-colors"
+            >
+              <FiUsers className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
               title={t("sidebar.gearListsTitle")}
               onClick={() => {
                 onShowGearPane();
@@ -284,16 +310,6 @@ export default function Sidebar({
             </button>
             <button
               type="button"
-              title={t("sidebar.myGearTitle")}
-              onClick={() => {
-                onOpenMyGear();
-              }}
-              className="w-9 h-9 flex items-center justify-center rounded-lg text-primaryAlt hover:text-primary hover:bg-primary/5 transition-colors"
-            >
-              <BsBackpack4 className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
               title={t("sidebar.templatesTitle")}
               onClick={() => {
                 onOpenTemplates();
@@ -301,6 +317,16 @@ export default function Sidebar({
               className="w-9 h-9 flex items-center justify-center rounded-lg text-primaryAlt hover:text-primary hover:bg-primary/5 transition-colors"
             >
               <FiBookmark className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              title={t("sidebar.myGearTitle")}
+              onClick={() => {
+                onOpenMyGear();
+              }}
+              className="w-9 h-9 flex items-center justify-center rounded-lg text-primaryAlt hover:text-primary hover:bg-primary/5 transition-colors"
+            >
+              <BsBackpack4 className="w-4 h-4" />
             </button>
           </div>
         )}
@@ -322,6 +348,59 @@ export default function Sidebar({
                 </button>
               </section>
             )}
+            {/* Community section */}
+            <section className="flex flex-col flex-none px-4 py-2 border-b border-base-100 overflow-hidden">
+              <div className="flex items-center text-primaryAlt rounded-lg p-1 -m-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    onOpenCommunity(null);
+                    if (isMobile()) setCollapsed(true);
+                  }}
+                  className="flex items-center gap-2 font-bold truncate mr-1 text-left hover:underline transition-colors"
+                >
+                  <FiUsers className="w-3.5 h-3.5 flex-shrink-0" />
+                  Community
+                </button>
+                <button
+                  type="button"
+                  aria-label="Toggle communities"
+                  onClick={() => setCommunitiesCollapsed((p) => !p)}
+                  className="p-1 hover:text-primaryAlt/80"
+                >
+                  {communitiesCollapsed ? (
+                    <FiChevronDown className="text-xs" />
+                  ) : (
+                    <FiChevronUp className="text-xs" />
+                  )}
+                </button>
+              </div>
+              {!communitiesCollapsed && (() => {
+                const favorites = communities.filter((c) => c.favorited);
+                if (favorites.length === 0) {
+                  return (
+                    <p className="text-xs opacity-40 px-2 mt-2">
+                      Star a community to pin it here.
+                    </p>
+                  );
+                }
+                return (
+                  <ul className="overflow-y-auto max-h-48 space-y-1 text-secondaryAlt mt-2">
+                    {favorites.map((c) => (
+                      <li key={c._id}>
+                        <button
+                          type="button"
+                          onClick={() => { onOpenCommunity(c.slug); if (isMobile()) setCollapsed(true); }}
+                          className="w-full text-left block py-1 px-2 rounded-lg whitespace-nowrap overflow-hidden truncate text-sm hover:bg-primaryAlt hover:text-neutral"
+                        >
+                          {c.name}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                );
+              })()}
+            </section>
             {/* Gear Lists section */}
             <section
               className="flex flex-col flex-none px-4 py-2 border-b border-base-100 overflow-hidden"
@@ -336,8 +415,9 @@ export default function Sidebar({
                     onShowGearPane();
                     if (isMobile()) setCollapsed(true);
                   }}
-                  className="font-bold truncate mr-1 text-left hover:underline transition-colors"
+                  className="flex items-center gap-2 font-bold truncate mr-1 text-left hover:underline transition-colors"
                 >
+                  <FiLayers className="w-3.5 h-3.5 flex-shrink-0" />
                   {t("sidebar.gearListsTitle")}
                 </button>
                 <button
@@ -393,6 +473,25 @@ export default function Sidebar({
               )}
             </section>
 
+            {/* Templates link */}
+            <section className="px-4 pt-2 pb-2 border-b border-base-100 flex-shrink-0">
+              <div
+                data-tour="sidebar-templates"
+                className="flex items-center text-primaryAlt rounded-lg p-1 -m-1"
+              >
+                <button
+                  type="button"
+                  onClick={() => {
+                    onOpenTemplates();
+                    if (isMobile()) setCollapsed(true);
+                  }}
+                  className="flex items-center gap-2 font-bold truncate text-left hover:underline transition-colors"
+                >
+                  <FiBookmark className="w-3.5 h-3.5 flex-shrink-0" />
+                  {t("sidebar.templatesTitle")}
+                </button>
+              </div>
+            </section>
             {/* Gear Items / Global Items */}
             <section className="flex flex-col flex-1 px-4 py-2 overflow-hidden">
               <div
@@ -405,8 +504,9 @@ export default function Sidebar({
                     onOpenMyGear();
                     if (isMobile()) setCollapsed(true);
                   }}
-                  className="font-bold truncate mr-1 text-left hover:underline transition-colors"
+                  className="flex items-center gap-2 font-bold truncate mr-1 text-left hover:underline transition-colors"
                 >
+                  <BsBackpack4 className="w-3.5 h-3.5 flex-shrink-0" />
                   {t("sidebar.myGearTitle")}
                 </button>
                 <button
@@ -497,25 +597,6 @@ export default function Sidebar({
                 onSelectList(id);
               }}
             />
-            {/* Templates link */}
-            <section className="px-4 pt-2 pb-24 sm:pb-2 border-t border-base-100 flex-shrink-0">
-              <div
-                data-tour="sidebar-templates"
-                className="flex items-center text-primaryAlt rounded-lg p-1 -m-1"
-              >
-                <button
-                  type="button"
-                  onClick={() => {
-                    onOpenTemplates();
-                    if (isMobile()) setCollapsed(true);
-                  }}
-                  className="flex items-center gap-2 font-bold truncate text-left hover:underline transition-colors"
-                >
-                  <FiBookmark className="w-3.5 h-3.5 flex-shrink-0" />
-                  {t("sidebar.templatesTitle")}
-                </button>
-              </div>
-            </section>
             {/* Bottom actions group: Forum (future) Wishlist + Admin */}
             {/* <div className="mt-auto">
               <section className="px-4 py-2 border-t border-base-100">

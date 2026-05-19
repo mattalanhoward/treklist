@@ -11,6 +11,7 @@ import AccountModal from "./AccountModal";
 import ViewToggle from "./ViewToggle";
 import LegalModal from "./LegalModal";
 import EmailOptInBanner from "./EmailOptInBanner";
+import NotificationBell from "./NotificationBell";
 import { useTranslation } from "react-i18next";
 
 const themes = [
@@ -110,7 +111,8 @@ export default function TopBar({ title, openSettings, onOpenTour, onToggleSideba
           />
         </div>
 
-        <div className="flex items-center print:hidden">
+        <div className="flex items-center gap-3 print:hidden">
+          <NotificationBell />
           <DropdownMenu
             trigger={
               <button

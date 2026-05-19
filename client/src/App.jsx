@@ -1,6 +1,6 @@
 //src/App.jsx
 import React, { useEffect } from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, useParams } from "react-router-dom";
 import useAuth from "./hooks/useAuth";
 import VerifyEmail from "./pages/VerifyEmail";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -11,6 +11,9 @@ import Landing from "./pages/Landing";
 import AuthPage from "./pages/AuthPage";
 import ChecklistView from "./pages/ChecklistView";
 import PublicGearList from "./pages/PublicGearList";
+import CommunityLayout from "./pages/CommunityLayout";
+import CommunityFeedView from "./pages/CommunityFeedView";
+import PostDetailView from "./pages/PostDetailView";
 import AffiliateDisclosurePage from "./pages/legal/AffiliateDisclosure";
 import PrivacyPage from "./pages/legal/Privacy";
 import CookiesPage from "./pages/legal/Cookies";
@@ -25,6 +28,17 @@ import { hasStoredConsent, saveConsent, loadConsent } from "./utils/cookieConsen
 function PrivateRoute({ children }) {
   const { isAuthenticated } = useAuth();
   return isAuthenticated ? children : <Navigate to="/auth/login" replace />;
+}
+
+// Authenticated users landing on /community/* get sent to the Dashboard pane.
+// Unauthenticated users see the public layout as-is.
+function CommunityAuthRedirect({ children }) {
+  const { isAuthenticated } = useAuth();
+  const { slug, postId } = useParams();
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace state={{ pane: "community", communitySlug: slug || null, communityPostId: postId || null }} />;
+  }
+  return children;
 }
 
 export default function App() {
@@ -104,6 +118,14 @@ export default function App() {
         />
         {/* Public, read-only shared view */}
         <Route path="/share/:token" element={<PublicGearList />} />
+
+        {/* Community forum — publicly readable; authenticated users redirected to Dashboard pane */}
+        <Route path="/community" element={<CommunityLayout />}>
+          <Route index element={<CommunityAuthRedirect><CommunityFeedView /></CommunityAuthRedirect>} />
+          <Route path=":slug" element={<CommunityAuthRedirect><CommunityFeedView /></CommunityAuthRedirect>} />
+          <Route path=":slug/:postId" element={<CommunityAuthRedirect><PostDetailView /></CommunityAuthRedirect>} />
+        </Route>
+
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>

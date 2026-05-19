@@ -26,6 +26,10 @@ const passport = require("./config/passport");
 const myGearRoutes = require("./routes/myGear");
 const wishlistRoutes = require("./routes/wishlist");
 const aiRoutes = require("./routes/ai");
+const communityRoutes = require("./routes/communities");
+const postsRoutes = require("./routes/posts");
+const commentsRoutes = require("./routes/comments");
+const notificationsRoutes = require("./routes/notifications");
 
 const app = express();
 
@@ -124,6 +128,15 @@ app.use("/api/catalog", require("./routes/catalog"));
 app.use("/api/uploads", require("./routes/uploads"));
 app.use("/api/support", supportRoutes);
 app.use("/api/ai", authMiddleware, aiRoutes);
+app.use("/api/community", communityRoutes);
+app.use("/api/community", postsRoutes);
+app.use("/api/posts", postsRoutes);
+app.use("/api/posts/:postId/comments", commentsRoutes);
+app.use("/api/comments", commentsRoutes);
+app.use("/api/notifications", notificationsRoutes);
+app.use("/api/admin/community", authMiddleware, requireAdmin, require("./routes/adminCommunity"));
+
+app.use("/sitemap.xml", require("./routes/sitemap"));
 
 // Central error handler
 app.use((err, req, res, next) => {

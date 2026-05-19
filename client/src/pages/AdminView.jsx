@@ -38,6 +38,7 @@ const TABS = [
   { id: "gearCreate", label: "Add catalog item" },
   { id: "users", label: "Users" },
   { id: "lists", label: "Public lists" },
+  { id: "community", label: "Community" },
 ];
 
 const NETWORK_OPTIONS = [
@@ -5076,6 +5077,184 @@ function PublicListsSection() {
   );
 }
 
+function CommunityModerationSection() {
+  const [flagged, setFlagged] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  async function fetch() {
+    setLoading(true);
+    try {
+      const { data } = await api.get("/admin/community/flagged");
+      setFlagged(data);
+    } catch {
+      toast.error("Could not load flagged content");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => { fetch(); }, []);
+
+  async function removePost(postId) {
+    if (!window.confirm("Remove this post?")) return;
+    await api.delete(`/admin/community/posts/${postId}`);
+    setFlagged((f) => ({ ...f, posts: f.posts.filter((p) => p._id !== postId) }));
+  }
+
+  async function clearPostFlags(postId) {
+    await api.put(`/admin/community/posts/${postId}/clear-flags`);
+    setFlagged((f) => ({
+      ...f,
+      posts: f.posts.map((p) => (p._id === postId ? { ...p, flagCount: 0 } : p)),
+    }));
+  }
+
+  async function removeComment(commentId) {
+    if (!window.confirm("Remove this comment?")) return;
+    await api.delete(`/admin/community/comments/${commentId}`);
+    setFlagged((f) => ({ ...f, comments: f.comments.filter((c) => c._id !== commentId) }));
+  }
+
+  async function clearCommentFlags(commentId) {
+    await api.put(`/admin/community/comments/${commentId}/clear-flags`);
+    setFlagged((f) => ({
+      ...f,
+      comments: f.comments.map((c) => (c._id === commentId ? { ...c, flagCount: 0 } : c)),
+    }));
+  }
+
+  if (loading) return <div className="py-8 text-center opacity-40 text-sm">Loading…</div>;
+
+  const totalFlags = (flagged?.posts.length || 0) + (flagged?.comments.length || 0);
+
+  return (
+    <div className="space-y-6 py-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-base font-semibold">Community moderation</h2>
+        {totalFlags === 0 && (
+          <span className="text-sm text-success">No flagged content</span>
+        )}
+      </div>
+
+      {/* Flagged posts */}
+      {flagged?.posts.length > 0 && (
+        <section>
+          <h3 className="text-sm font-semibold mb-2 text-warning">
+            Flagged posts ({flagged.posts.length})
+          </h3>
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-xs sm:text-sm">
+              <thead>
+                <tr className="border-b border-base-200 text-left">
+                  <th className="py-2 pr-4 font-medium">Title</th>
+                  <th className="py-2 pr-4 font-medium">Author</th>
+                  <th className="py-2 pr-4 font-medium">Community</th>
+                  <th className="py-2 pr-4 font-medium text-center">Flags</th>
+                  <th className="py-2 font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {flagged.posts.map((post) => (
+                  <tr key={post._id} className="border-b border-base-200 hover:bg-base-200/50">
+                    <td className="py-2 pr-4 max-w-xs truncate">
+                      <a
+                        href={`/community/${post.communityId?.slug}/${post._id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        {post.title}
+                      </a>
+                    </td>
+                    <td className="py-2 pr-4">{post.userId?.trailname || "—"}</td>
+                    <td className="py-2 pr-4">{post.communityId?.name || "—"}</td>
+                    <td className="py-2 pr-4 text-center">
+                      <span className="badge badge-warning badge-sm">{post.flagCount}</span>
+                    </td>
+                    <td className="py-2 flex gap-2">
+                      <button
+                        onClick={() => clearPostFlags(post._id)}
+                        className="btn btn-ghost btn-xs"
+                      >
+                        Clear flags
+                      </button>
+                      <button
+                        onClick={() => removePost(post._id)}
+                        className="btn btn-error btn-xs"
+                      >
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
+      {/* Flagged comments */}
+      {flagged?.comments.length > 0 && (
+        <section>
+          <h3 className="text-sm font-semibold mb-2 text-warning">
+            Flagged comments ({flagged.comments.length})
+          </h3>
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-xs sm:text-sm">
+              <thead>
+                <tr className="border-b border-base-200 text-left">
+                  <th className="py-2 pr-4 font-medium">Comment</th>
+                  <th className="py-2 pr-4 font-medium">Author</th>
+                  <th className="py-2 pr-4 font-medium">Post</th>
+                  <th className="py-2 pr-4 font-medium text-center">Flags</th>
+                  <th className="py-2 font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {flagged.comments.map((comment) => (
+                  <tr key={comment._id} className="border-b border-base-200 hover:bg-base-200/50">
+                    <td className="py-2 pr-4 max-w-xs truncate opacity-80">{comment.body}</td>
+                    <td className="py-2 pr-4">{comment.userId?.trailname || "—"}</td>
+                    <td className="py-2 pr-4 max-w-xs truncate">
+                      {comment.postId?.title || "—"}
+                    </td>
+                    <td className="py-2 pr-4 text-center">
+                      <span className="badge badge-warning badge-sm">{comment.flagCount}</span>
+                    </td>
+                    <td className="py-2 flex gap-2">
+                      <button
+                        onClick={() => clearCommentFlags(comment._id)}
+                        className="btn btn-ghost btn-xs"
+                      >
+                        Clear flags
+                      </button>
+                      <button
+                        onClick={() => removeComment(comment._id)}
+                        className="btn btn-error btn-xs"
+                      >
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
+      {/* Community management */}
+      <section>
+        <h3 className="text-sm font-semibold mb-1">Community management</h3>
+        <p className="text-xs opacity-50">
+          Use the API or database to create/archive communities.
+          Visit <a href="/community" className="text-primary hover:underline">/community</a> to browse the forum.
+        </p>
+      </section>
+    </div>
+  );
+}
+
 function AdminView() {
   const [activeTab, setActiveTab] = useState("gearCatalog");
   const [duplicateSeed, setDuplicateSeed] = useState(null);
@@ -5140,6 +5319,7 @@ function AdminView() {
         )}
         {activeTab === "users" && <UsersSection />}
         {activeTab === "lists" && <PublicListsSection />}
+        {activeTab === "community" && <CommunityModerationSection />}
       </main>
     </div>
   );

@@ -12,6 +12,7 @@ import WishlistView from "../pages/WishlistView";
 import MyGearView from "../pages/MyGearView";
 import GearListsOverview from "../pages/GearListsOverview";
 import TemplatesView from "../pages/TemplatesView";
+import CommunityView from "../pages/CommunityView";
 import { toast } from "react-hot-toast";
 import { useUserSettings } from "../contexts/UserSettings";
 import { useTranslation } from "react-i18next";
@@ -269,6 +270,8 @@ export default function Dashboard() {
   // ─── Which main panel is active: "gear" "admin" "forum" "wishlist" ───
   const [activePane, setActivePane] = useState(location.state?.pane ?? "gear");
   const [templatesKey, setTemplatesKey] = useState(0);
+  const [activeCommunitySlug, setActiveCommunitySlug] = useState(location.state?.communitySlug ?? null);
+  const [activeCommunityPostId, setActiveCommunityPostId] = useState(location.state?.communityPostId ?? null);
 
   useEffect(() => {
     if (!listId) return;
@@ -288,6 +291,7 @@ export default function Dashboard() {
     if (activePane === "lists") return "My Lists";
     if (activePane === "admin") return "Admin";
     if (activePane === "wishlist") return "Wishlist";
+    if (activePane === "community") return "Community";
     return fullData.list?.title ?? "My Lists";
   })();
 
@@ -378,6 +382,7 @@ export default function Dashboard() {
     if (lists.length === 0) return;
     // User explicitly navigated to the overview — don't redirect to a list
     if (location.state?.pane === "lists") return;
+    if (location.state?.pane === "community") return;
 
     const ids = lists.map((l) => l._id);
     const stored = localStorage.getItem("lastListId");
@@ -688,6 +693,7 @@ export default function Dashboard() {
             onOpenMyGear={() => setActivePane("myGear")}
             onShowGearPane={() => setActivePane("lists")}
             onOpenTemplates={() => { setActivePane("templates"); setTemplatesKey((k) => k + 1); }}
+            onOpenCommunity={(slug) => { setActiveCommunitySlug(slug || null); setActiveCommunityPostId(null); setActivePane("community"); }}
             onSelectList={handleSelectList}
             onRefresh={fetchFullData}
             isLocked={fullData.list?.isLocked || false}
@@ -702,6 +708,8 @@ export default function Dashboard() {
               <WishlistView />
             ) : activePane === "myGear" ? (
               <MyGearView collapsed={collapsed} />
+            ) : activePane === "community" ? (
+              <CommunityView initialSlug={activeCommunitySlug} initialPostId={activeCommunityPostId} />
             ) : activePane === "templates" ? (
               <TemplatesView key={templatesKey} fetchLists={fetchLists} />
             ) : activePane === "lists" ? (
