@@ -1,71 +1,65 @@
-// // server/src/models/affiliateProduct.js
-// const { Schema, model } = require("mongoose");
+const { Schema, model } = require("mongoose");
 
-// /**
-//  * Canonical store for ingested product rows from affiliate networks.
-//  * v1 supports Awin; the schema stays network-agnostic so we can add AvantLink later.
-//  */
-// const AffiliateProductSchema = new Schema(
-//   {
-//     network: { type: String, enum: ["awin"], required: true },
+/**
+ * Stores every product row ingested from an affiliate network feed.
+ * Acts as a searchable product index — CatalogItems are created from here
+ * when an admin explicitly imports a product.
+ */
+const AffiliateProductSchema = new Schema(
+  {
+    network:      { type: String, enum: ["awin"], required: true },
+    region:       { type: String, required: true },       // e.g. "GB"
+    merchantId:   { type: String, required: true },       // Awin advertiser id
+    merchantName: { type: String },
 
-//     region: { type: String, required: true }, // e.g., "GB","NL","DE"
-//     merchantId: { type: String, required: true }, // Awin advertiser id
-//     merchantName: { type: String },
+    // Awin's unique product id (aw_product_id)
+    externalProductId: { type: String, required: true },
 
-//     // External product ID from the network (Awin product id)
-//     externalProductId: { type: String, required: true },
+    // Merchant's base product code — first segment of merchant_product_id
+    // e.g. merchant_product_id "8852999-5075752" → merchantProductId "8852999"
+    // Matches the code in Decathlon URLs: /p/product-name/_/R-p-8852999
+    merchantProductId: { type: String, index: true },
 
-//     name: { type: String, required: true },
-//     brand: { type: String },
-//     // derived, denormalized
-//     brandLC: { type: String, index: true }, // "osprey", "black diamond", ...
-//     description: { type: String },
-//     categoryPath: [{ type: String }],
-//     // derived, denormalized
-//     itemType: { type: String, index: true }, // e.g., "Headlamps", "Daypacks"
+    name:        { type: String, required: true },
+    brand:       { type: String },
+    brandLC:     { type: String, index: true },
+    description: { type: String },
 
-//     awDeepLink: { type: String, required: true },
-//     imageUrl: { type: String },
+    merchantCategory: { type: String },
+    modelNumber:      { type: String },
+    colour:           { type: String },
 
-//     // Matching helpers for alternates/grouping
-//     ean: { type: String },
-//     sku: { type: String },
-//     itemGroupId: { type: String },
+    awDeepLink:  { type: String, required: true },
+    imageUrl:    { type: String },
+    imageUrls:   [{ type: String }],
 
-//     lastUpdated: { type: Date, default: Date.now },
-//   },
-//   { timestamps: true }
-// );
+    price:            { type: Number },
+    deliveryWeightKg: { type: Number },
 
-// // Normalize/derive fields
-// AffiliateProductSchema.pre("save", function normalize(next) {
-//   if (this.region) this.region = String(this.region).toUpperCase();
-//   if (this.brand) this.brandLC = String(this.brand).toLowerCase().trim();
-//   if (this.itemType) this.itemType = String(this.itemType).trim();
-//   if (this.itemGroupId != null) this.itemGroupId = String(this.itemGroupId);
-//   next();
-// });
+    ean:         { type: String, index: true },
+    sku:         { type: String },
+    itemGroupId: { type: String },
+  },
+  { timestamps: true }
+);
 
-// // Uniqueness per network/region/merchant/product
-// AffiliateProductSchema.index(
-//   { network: 1, region: 1, merchantId: 1, externalProductId: 1 },
-//   { unique: true, name: "uniq_network_region_merchant_prod" }
-// );
+AffiliateProductSchema.pre("save", function (next) {
+  if (this.region)  this.region  = String(this.region).toUpperCase();
+  if (this.brand)   this.brandLC = String(this.brand).toLowerCase().trim();
+  if (this.itemGroupId)        this.itemGroupId        = String(this.itemGroupId);
+  if (this.merchantProductId)  this.merchantProductId  = String(this.merchantProductId);
+  next();
+});
 
-// // Search & filters
-// AffiliateProductSchema.index({ name: "text", brand: "text" });
-// AffiliateProductSchema.index({ region: 1, merchantId: 1});
-// // Helpful compound indexes for common filters (keep it lean)
-// AffiliateProductSchema.index({ network: 1, region: 1, brandLC: 1 });
-// AffiliateProductSchema.index({ network: 1, region: 1, itemType: 1 });
-// AffiliateProductSchema.index({ network: 1, region: 1, merchantId: 1 });
-// // For /affiliates/resolve fallback by group+region
-// AffiliateProductSchema.index({
-//   network: 1,
-//   itemGroupId: 1,
-//   region: 1,
-//   updatedAt: -1,
-// });
+// One row per network/region/merchant/product
+AffiliateProductSchema.index(
+  { network: 1, region: 1, merchantId: 1, externalProductId: 1 },
+  { unique: true }
+);
 
-// module.exports = model("AffiliateProduct", AffiliateProductSchema);
+AffiliateProductSchema.index({ network: 1, region: 1, merchantId: 1, merchantProductId: 1 });
+AffiliateProductSchema.index({ name: "text", brand: "text", description: "text" });
+AffiliateProductSchema.index({ network: 1, region: 1, brandLC: 1 });
+AffiliateProductSchema.index({ network: 1, region: 1, merchantCategory: 1 });
+
+module.exports = model("AffiliateProduct", AffiliateProductSchema);

@@ -11,10 +11,21 @@
   path = "/share/*"
   function = "og-tags"
 
+[[edge_functions]]
+  path = "/community/*"
+  function = "community-meta"
+
 # Proxy API calls to your Render API subdomain
 [[redirects]]
   from = "/api/*"
   to = "https://api.treklist.co/api/:splat"
+  status = 200
+  force = true
+
+# Dynamic sitemap served from the API (auto-includes new communities)
+[[redirects]]
+  from = "/sitemap.xml"
+  to = "https://api.treklist.co/sitemap.xml"
   status = 200
   force = true
 

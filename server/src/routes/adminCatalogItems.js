@@ -266,27 +266,36 @@ router.get("/", async (req, res) => {
     const {
       q,
       category,
+      brand,
       itemType,
       isActive = "true",
-      limit = 100,
+      limit = 50,
       skip = 0,
+      sortField = "updatedAt",
+      sortDir = "desc",
     } = req.query;
 
     const query = {};
     if (isActive === "true") query.isActive = true;
     if (isActive === "false") query.isActive = false;
     if (category) query.category = category;
-    if (itemType) query.itemType = itemType; // NEW: filter by itemType
+    if (itemType) query.itemType = itemType;
+    if (brand) query.brandLC = brand.trim().toLowerCase();
 
     if (q && q.trim()) {
       const regex = new RegExp(escapeRegex(q.trim()), "i");
       query.$or = [{ name: regex }, { brand: regex }, { tags: regex }];
     }
 
+    const sortSpec = {};
+    if (sortField === "name") sortSpec.name = sortDir === "asc" ? 1 : -1;
+    else if (sortField === "brand") sortSpec.brandLC = sortDir === "asc" ? 1 : -1;
+    else sortSpec.updatedAt = sortDir === "desc" ? -1 : 1;
+
     const items = await CatalogItem.find(query)
-      .sort({ updatedAt: -1 })
+      .sort(sortSpec)
       .skip(Number(skip) || 0)
-      .limit(Math.min(Number(limit) || 100, 2000))
+      .limit(Math.min(Number(limit) || 50, 200))
       .lean();
 
     const ids = items.map((i) => i._id);
