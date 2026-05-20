@@ -666,6 +666,7 @@ export default function Dashboard() {
         onOpenTour={openTour}
         onToggleSidebar={() => setSidebarCollapsed((v) => !v)}
         sidebarCollapsed={collapsed}
+        isAdmin={isAdmin}
       />
 
       <DndContext
@@ -708,7 +709,7 @@ export default function Dashboard() {
               <WishlistView />
             ) : activePane === "myGear" ? (
               <MyGearView collapsed={collapsed} />
-            ) : activePane === "community" ? (
+            ) : activePane === "community" && isAdmin ? (
               <CommunityView initialSlug={activeCommunitySlug} initialPostId={activeCommunityPostId} />
             ) : activePane === "templates" ? (
               <TemplatesView key={templatesKey} fetchLists={fetchLists} />

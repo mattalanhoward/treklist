@@ -23,7 +23,7 @@ const themes = [
   { name: "dark", color: "#0f172a" },
 ];
 
-export default function TopBar({ title, openSettings, onOpenTour, onToggleSidebar, sidebarCollapsed }) {
+export default function TopBar({ title, openSettings, onOpenTour, onToggleSidebar, sidebarCollapsed, isAdmin = false }) {
   const headerRef = useRef(null);
   useLayoutEffect(() => {
     const el = headerRef.current;
@@ -112,7 +112,7 @@ export default function TopBar({ title, openSettings, onOpenTour, onToggleSideba
         </div>
 
         <div className="flex items-center gap-3 print:hidden">
-          <NotificationBell />
+          {isAdmin && <NotificationBell />}
           <DropdownMenu
             trigger={
               <button
