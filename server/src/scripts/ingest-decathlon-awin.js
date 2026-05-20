@@ -88,14 +88,16 @@ function parseRow(raw) {
     description: String(raw["description"]         || "").trim(),
     awDeepLink:  String(raw["aw_deep_link"]        || "").trim(),
     imageUrl:    String(raw["merchant_image_url"]  || raw["aw_image_url"] || "").trim(),
-    imageUrls:   [
-      raw["merchant_image_url"],
-      raw["aw_image_url"],
-      raw["alternate_image"],
-      raw["alternate_image_two"],
-      raw["alternate_image_three"],
-      raw["alternate_image_four"],
-    ].map(u => String(u || "").trim()).filter(Boolean).filter((u, i, a) => a.indexOf(u) === i),
+    imageUrls:   deduplicateImageUrls(
+      [
+        raw["merchant_image_url"],
+        raw["aw_image_url"],
+        raw["alternate_image"],
+        raw["alternate_image_two"],
+        raw["alternate_image_three"],
+        raw["alternate_image_four"],
+      ].map(u => String(u || "").trim()).filter(Boolean)
+    ),
     merchantCategory: String(raw["merchant_category"] || raw["category_name"] || "").trim(),
     modelNumber: String(raw["model_number"]        || "").trim(),
     colour:      String(raw["colour"]              || "").trim(),
@@ -110,6 +112,29 @@ function parseRow(raw) {
 
 function isValid(row) {
   return Boolean(row.externalProductId && row.awDeepLink && row.name);
+}
+
+// productserve.com is Awin's image proxy. Resolve the inner URL so we can
+// deduplicate against the original CDN URL collected from merchant_image_url.
+function resolveImageUrl(url) {
+  try {
+    const u = new URL(url);
+    if (u.hostname === "images2.productserve.com") {
+      const inner = decodeURIComponent(u.searchParams.get("url") || "");
+      return inner.replace(/^ssl:/, "https://");
+    }
+  } catch {}
+  return url;
+}
+
+function deduplicateImageUrls(urls) {
+  const seen = new Set();
+  return urls.filter(url => {
+    const key = resolveImageUrl(url);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 function isInStock(row) {
