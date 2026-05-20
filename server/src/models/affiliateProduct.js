@@ -29,8 +29,9 @@ const AffiliateProductSchema = new Schema(
     modelNumber:      { type: String },
     colour:           { type: String },
 
-    awDeepLink: { type: String, required: true },
-    imageUrl:   { type: String },
+    awDeepLink:  { type: String, required: true },
+    imageUrl:    { type: String },
+    imageUrls:   [{ type: String }],
 
     price:            { type: Number },
     deliveryWeightKg: { type: Number },
