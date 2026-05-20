@@ -1,5 +1,5 @@
 // client/src/pages/AdminView.jsx
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import api from "../services/api";
 import {
   CATALOG_CATEGORIES,
@@ -132,6 +132,142 @@ function toOptionalNumber(val) {
   return Number.isFinite(n) ? n : undefined;
 }
 
+// ---------------------------------------------------------------------------
+// Decathlon import panel
+// ---------------------------------------------------------------------------
+function DecathlonImportPanel({ onImported, onEditItem }) {
+  const [open, setOpen] = useState(true);
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [searching, setSearching] = useState(false);
+  const [importingId, setImportingId] = useState(null);
+  const [searchError, setSearchError] = useState("");
+
+  const isCode = /^\d+$/.test(query.trim());
+
+  async function handleSearch(e) {
+    e.preventDefault();
+    if (!query.trim()) return;
+    setSearching(true);
+    setSearchError("");
+    setResults([]);
+    try {
+      const params = isCode ? { code: query.trim() } : { q: query.trim() };
+      const { data } = await api.get("/admin/awin/search", { params });
+      setResults(data);
+      if (data.length === 0) setSearchError("No products found.");
+    } catch (err) {
+      setSearchError(err?.response?.data?.message || "Search failed.");
+    } finally {
+      setSearching(false);
+    }
+  }
+
+  async function handleImport(product) {
+    setImportingId(product.externalProductId);
+    try {
+      const { data } = await api.post("/admin/awin/import", { externalProductId: product.externalProductId });
+      toast.success(`Imported: ${product.name}`);
+      setResults((prev) =>
+        prev.map((r) =>
+          r.externalProductId === product.externalProductId
+            ? { ...r, alreadyImported: true }
+            : r
+        )
+      );
+      onImported?.();
+      if (data?.catalogItem) onEditItem?.(data.catalogItem);
+    } catch (err) {
+      const msg = err?.response?.data?.message || "Import failed.";
+      if (err?.response?.status === 409) {
+        toast(`Already in catalog: ${product.name}`);
+      } else {
+        toast.error(msg);
+      }
+    } finally {
+      setImportingId(null);
+    }
+  }
+
+  return (
+    <div className="bg-neutralAlt rounded-lg shadow-2xl border border-primary overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-3 sm:px-6 border-b border-base-200">
+        <div>
+          <h3 className="text-sm font-semibold text-primary">Import from Decathlon UK</h3>
+          <p className="text-[11px] text-primary/70">
+            Enter a product code (from the Decathlon URL) or search by name.
+          </p>
+        </div>
+        <button type="button" onClick={() => setOpen((v) => !v)} className="btn btn-ghost btn-xs text-primary">
+          {open ? <FiChevronUp /> : <FiChevronDown />}
+        </button>
+      </div>
+
+      {open && (
+        <div className="px-4 py-4 sm:px-6 space-y-4">
+          <form onSubmit={handleSearch} className="flex gap-2">
+            <input
+              type="text"
+              className="input input-sm input-bordered flex-1"
+              placeholder="Decathlon product ID (shown on product page, e.g. 8882673) or name"
+              value={query}
+              onChange={(e) => { setQuery(e.target.value); setResults([]); setSearchError(""); }}
+            />
+            <button type="submit" className="btn btn-sm btn-primary" disabled={searching || !query.trim()}>
+              {searching ? "Searching..." : "Search"}
+            </button>
+          </form>
+
+          {searchError && <p className="text-xs text-error">{searchError}</p>}
+
+          {results.length > 0 && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {results.map((product) => (
+                <div key={product.externalProductId} className="border border-base-200 rounded-lg overflow-hidden flex flex-col">
+                  {product.imageUrl && (
+                    <img
+                      src={product.imageUrl}
+                      alt={product.name}
+                      className="w-full h-36 object-contain bg-base-100 p-2"
+                    />
+                  )}
+                  <div className="p-3 flex flex-col gap-1 flex-1">
+                    <p className="text-xs font-semibold text-primary leading-snug">{product.name}</p>
+                    <p className="text-[11px] text-primary/60">{product.brand}</p>
+                    {product.colour && <p className="text-[11px] text-primary/50">{product.colour}</p>}
+                    <div className="flex items-center justify-between mt-auto pt-2">
+                      <div className="text-[11px] text-primary/60 space-y-0.5">
+                        {product.price != null && <p>£{product.price.toFixed(2)}</p>}
+                        {product.deliveryWeightKg != null && (
+                          <p>{Math.round(product.deliveryWeightKg * 1000)}g</p>
+                        )}
+                      </div>
+                      {product.alreadyImported ? (
+                        <span className="text-[11px] text-success flex items-center gap-1">
+                          <FiCheck size={12} /> In catalog
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          className="btn btn-xs btn-primary"
+                          disabled={importingId === product.externalProductId}
+                          onClick={() => handleImport(product)}
+                        >
+                          {importingId === product.externalProductId ? "Importing..." : "Import"}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function GearCatalogSection({
   mode = "both",
   onDuplicate,
@@ -139,8 +275,10 @@ function GearCatalogSection({
   onSeedConsumed,
 }) {
   const [items, setItems] = useState([]);
+  const [serverTotal, setServerTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const searchTimerRef = useRef(null);
   const [editingItem, setEditingItem] = useState(null);
   const [archivingId, setArchivingId] = useState(null);
 
@@ -202,14 +340,21 @@ function GearCatalogSection({
     setLoading(true);
     setError("");
     try {
-      const shouldInclude = includeArchived ?? showArchived;
-      const { data } = await api.get("/admin/catalog-items", {
-        params: {
-          isActive: shouldInclude ? "all" : "true",
-          limit: 1000,
-        },
-      });
+      const archived = includeArchived ?? showArchived;
+      const params = {
+        isActive: archived ? "all" : "true",
+        skip: page * pageSize,
+        limit: pageSize,
+        sortField: sort.field,
+        sortDir: sort.dir,
+      };
+      if (search.trim()) params.q = search.trim();
+      if (filterCategory !== "all") params.category = filterCategory;
+      if (filterBrand !== "all") params.brand = filterBrand;
+
+      const { data } = await api.get("/admin/catalog-items", { params });
       setItems(data?.items || []);
+      setServerTotal(data?.total ?? 0);
     } catch (err) {
       console.error("Failed to load CatalogItems", err);
       const msg =
@@ -222,10 +367,13 @@ function GearCatalogSection({
     }
   };
 
+  // Re-fetch on page or sort change immediately; debounce search/filter changes
   useEffect(() => {
-    loadItems();
+    clearTimeout(searchTimerRef.current);
+    searchTimerRef.current = setTimeout(loadItems, search.trim() ? 300 : 0);
+    return () => clearTimeout(searchTimerRef.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [page, search, filterCategory, filterBrand, showArchived, sort.field, sort.dir]);
 
   useEffect(() => {
     if (!duplicateSeed) return;
@@ -688,41 +836,21 @@ function GearCatalogSection({
     return Array.from(new Set(nets)).sort();
   }, [items]);
 
+  // Search, category, brand are handled server-side.
+  // Network and image filters apply client-side to the current page.
   const filteredItems = useMemo(() => {
-    const q = search.trim().toLowerCase();
     return items.filter((item) => {
       const mainOffer = getPrimaryItemOffer(item);
       const itemNetwork = mainOffer?.network || "";
-
-      const searchMatches =
-        !q ||
-        [
-          item.name,
-          item.brand,
-          item.category,
-          item.subcategory,
-          item.itemType,
-          item.modelNumber,
-          (item.tags || []).join(" "),
-        ]
-          .filter(Boolean)
-          .some((field) => String(field).toLowerCase().includes(q));
-
-      const categoryMatches =
-        filterCategory === "all" || item.category === filterCategory;
-      const brandMatches = filterBrand === "all" || item.brand === filterBrand;
-      const networkMatches =
-        filterNetwork === "all" || itemNetwork === filterNetwork;
-
+      const networkMatches = filterNetwork === "all" || itemNetwork === filterNetwork;
       const hasImage = Array.isArray(item.imageUrls) && item.imageUrls.length > 0;
       const imageMatches =
         filterImage === "all" ||
         (filterImage === "has_image" && hasImage) ||
         (filterImage === "no_image" && !hasImage);
-
-      return searchMatches && categoryMatches && brandMatches && networkMatches && imageMatches;
+      return networkMatches && imageMatches;
     });
-  }, [items, search, filterCategory, filterBrand, filterNetwork, filterImage]);
+  }, [items, filterNetwork, filterImage]);
 
   const sortedItems = useMemo(() => {
     const dir = sort.dir === "asc" ? 1 : -1;
@@ -785,12 +913,10 @@ function GearCatalogSection({
     });
   }, [filteredItems, sort]);
 
-  const totalItems = sortedItems.length;
+  const totalItems = serverTotal;
   const pageCount = Math.max(1, Math.ceil(totalItems / pageSize));
   const currentPage = Math.min(page, pageCount - 1);
-  const startIndex = currentPage * pageSize;
-  const endIndex = Math.min(startIndex + pageSize, totalItems);
-  const pageItems = sortedItems.slice(startIndex, endIndex);
+  const pageItems = sortedItems;
 
   const sortArrow = (field) => {
     if (sort.field !== field) return null;
@@ -820,6 +946,14 @@ function GearCatalogSection({
           </p>
         </div>
       </div>
+
+      {/* DECATHLON IMPORT */}
+      {mode !== "list" && (
+        <DecathlonImportPanel
+          onImported={loadItems}
+          onEditItem={(item) => setEditingItem(item)}
+        />
+      )}
 
       {/* CREATE */}
       {mode !== "list" && (
@@ -1522,8 +1656,8 @@ function GearCatalogSection({
               {loading
                 ? "Loading catalog items..."
                 : showArchived
-                  ? `Catalog items (including archived): ${items.length}`
-                  : `Active catalog items: ${items.length}`}
+                  ? `Catalog items (including archived): ${serverTotal}`
+                  : `Active catalog items: ${serverTotal}`}
             </span>
             <div className="flex items-center gap-2">
               <label className="flex items-center gap-1 cursor-pointer">
@@ -1851,7 +1985,7 @@ function GearCatalogSection({
                   {/* Pagination */}
                   <div className="flex items-center justify-between px-3 py-2 border-t border-base-200 text-xs text-primary/80">
                     <span>
-                      Showing {totalItems === 0 ? 0 : startIndex + 1}–{endIndex}{" "}
+                      Showing {totalItems === 0 ? 0 : currentPage * pageSize + 1}–{Math.min((currentPage + 1) * pageSize, totalItems)}{" "}
                       of {totalItems}
                     </span>
 

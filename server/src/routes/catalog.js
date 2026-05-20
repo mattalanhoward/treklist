@@ -28,8 +28,9 @@ function normalizeRegion(region) {
   const r = String(region).trim().toLowerCase();
   if (r === "netherlands") return "nl";
   if (r === "united states" || r === "usa") return "us";
+  if (r === "gb") return "uk";
   if (r.length === 2) return r;
-  return r; // fallback (still works if your DB stores "nl", "us", etc.)
+  return r;
 }
 
 // GET /api/catalog/items/:id
