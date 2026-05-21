@@ -369,8 +369,10 @@ function GearCatalogSection({
 
   // Re-fetch on page or sort change immediately; debounce search/filter changes
   useEffect(() => {
+    const trimmed = search.trim();
+    if (trimmed && trimmed.length < 3) return; // wait for at least 3 chars
     clearTimeout(searchTimerRef.current);
-    searchTimerRef.current = setTimeout(loadItems, search.trim() ? 300 : 0);
+    searchTimerRef.current = setTimeout(loadItems, trimmed ? 500 : 0);
     return () => clearTimeout(searchTimerRef.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, search, filterCategory, filterBrand, showArchived, sort.field, sort.dir]);
