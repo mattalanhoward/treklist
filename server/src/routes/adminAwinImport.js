@@ -133,11 +133,9 @@ router.post(
     } = req.body;
 
     try {
-      const product = await AffiliateProduct.findOne({
-        network: "awin",
-        merchantId: String(merchantId),
-        externalProductId,
-      }).lean();
+      const productFilter = { network: "awin", externalProductId };
+      if (merchantId) productFilter.merchantId = String(merchantId);
+      const product = await AffiliateProduct.findOne(productFilter).lean();
 
       if (!product) {
         return res.status(404).json({ message: "Product not found in affiliate index." });
