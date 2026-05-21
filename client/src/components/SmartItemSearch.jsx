@@ -354,6 +354,27 @@ export default function SmartItemSearch({
   const { parseInput, formatInput, unitLabel } = useWeightInput(unit);
   const { user } = useAuth();
 
+  // Item request form
+  const [showRequestForm, setShowRequestForm] = useState(false);
+  const [requestForm, setRequestForm] = useState({ name: "", brand: "", link: "" });
+  const [requestSending, setRequestSending] = useState(false);
+
+  async function handleSubmitRequest(e) {
+    e.preventDefault();
+    if (!requestForm.name.trim() || !requestForm.brand.trim()) return;
+    setRequestSending(true);
+    try {
+      await api.post("/support/catalog-item-requests", requestForm);
+      toast.success("Request sent! We'll look into adding it.");
+      setShowRequestForm(false);
+      setRequestForm({ name: "", brand: "", link: "" });
+    } catch {
+      toast.error("Failed to send request. Please try again.");
+    } finally {
+      setRequestSending(false);
+    }
+  }
+
   // Search
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
@@ -825,8 +846,68 @@ export default function SmartItemSearch({
       </div>
       </div>{/* end sidebar+results wrapper */}
 
+      {/* Item request form */}
+      {showRequestForm && (
+        <form
+          onSubmit={handleSubmitRequest}
+          className="px-5 py-3 border-t border-primary/10 flex-shrink-0 bg-neutralAlt"
+        >
+          <p className="text-xs font-semibold text-primary mb-2">Request a catalog item</p>
+          <div className="flex gap-2 mb-2">
+            <input
+              type="text"
+              placeholder="Item name *"
+              value={requestForm.name}
+              onChange={e => setRequestForm(p => ({ ...p, name: e.target.value }))}
+              className="flex-1 border border-primary/20 rounded px-2 py-1 text-sm text-primary bg-neutral"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Brand *"
+              value={requestForm.brand}
+              onChange={e => setRequestForm(p => ({ ...p, brand: e.target.value }))}
+              className="flex-1 border border-primary/20 rounded px-2 py-1 text-sm text-primary bg-neutral"
+              required
+            />
+          </div>
+          <input
+            type="url"
+            placeholder="Link (optional)"
+            value={requestForm.link}
+            onChange={e => setRequestForm(p => ({ ...p, link: e.target.value }))}
+            className="w-full border border-primary/20 rounded px-2 py-1 text-sm text-primary bg-neutral mb-2"
+          />
+          <div className="flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => { setShowRequestForm(false); setRequestForm({ name: "", brand: "", link: "" }); }}
+              className="px-3 py-1.5 rounded bg-neutralAlt hover:bg-neutralAlt/90 text-primary text-sm"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={requestSending || !requestForm.name.trim() || !requestForm.brand.trim()}
+              className="px-3 py-1.5 rounded bg-secondary text-white text-sm disabled:opacity-50 flex items-center gap-1.5"
+            >
+              {requestSending && <FiLoader size={12} className="animate-spin" />}
+              Send Request
+            </button>
+          </div>
+        </form>
+      )}
+
       {/* Footer */}
-      <div className="flex justify-end gap-2 px-5 py-3 border-t border-primary/10 flex-shrink-0">
+      <div className="flex items-center justify-between gap-2 px-5 py-3 border-t border-primary/10 flex-shrink-0">
+          <button
+            type="button"
+            onClick={() => setShowRequestForm(v => !v)}
+            className="text-xs text-primary/50 hover:text-primary/80 underline underline-offset-2"
+          >
+            Can't find it? Request it
+          </button>
+          <div className="flex gap-2">
           <button
             type="button"
             onClick={onClose}
@@ -848,6 +929,7 @@ export default function SmartItemSearch({
             {confirming && <FiLoader size={12} className="animate-spin" />}
             {confirmLabel}
           </button>
+          </div>
         </div>
 
       {/* Catalog item preview modal */}
