@@ -2,6 +2,7 @@
 // Unified item search: My Gear + Catalog + AI fill-in fallback.
 // Drop this inside any modal/drawer shell — it manages its own search state.
 import React, { useState, useEffect, useMemo, useRef } from "react";
+import { createPortal } from "react-dom";
 import { FiSearch, FiX, FiPlus, FiLoader, FiCamera } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -846,56 +847,72 @@ export default function SmartItemSearch({
       </div>
       </div>{/* end sidebar+results wrapper */}
 
-      {/* Item request form */}
-      {showRequestForm && (
-        <form
-          onSubmit={handleSubmitRequest}
-          className="px-5 py-3 border-t border-primary/10 flex-shrink-0 bg-neutralAlt"
-        >
-          <p className="text-xs font-semibold text-primary mb-2">Request a catalog item</p>
-          <div className="flex gap-2 mb-2">
-            <input
-              type="text"
-              placeholder="Item name *"
-              value={requestForm.name}
-              onChange={e => setRequestForm(p => ({ ...p, name: e.target.value }))}
-              className="flex-1 border border-primary/20 rounded px-2 py-1 text-sm text-primary bg-neutral"
-              required
-            />
-            <input
-              type="text"
-              placeholder="Brand *"
-              value={requestForm.brand}
-              onChange={e => setRequestForm(p => ({ ...p, brand: e.target.value }))}
-              className="flex-1 border border-primary/20 rounded px-2 py-1 text-sm text-primary bg-neutral"
-              required
-            />
-          </div>
-          <input
-            type="url"
-            placeholder="Link (optional)"
-            value={requestForm.link}
-            onChange={e => setRequestForm(p => ({ ...p, link: e.target.value }))}
-            className="w-full border border-primary/20 rounded px-2 py-1 text-sm text-primary bg-neutral mb-2"
-          />
-          <div className="flex justify-end gap-2">
-            <button
-              type="button"
-              onClick={() => { setShowRequestForm(false); setRequestForm({ name: "", brand: "", link: "" }); }}
-              className="px-3 py-1.5 rounded bg-neutralAlt hover:bg-neutralAlt/90 text-primary text-sm"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={requestSending || !requestForm.name.trim() || !requestForm.brand.trim()}
-              className="px-3 py-1.5 rounded bg-secondary text-white text-sm disabled:opacity-50 flex items-center gap-1.5"
-            >
-              {requestSending && <FiLoader size={12} className="animate-spin" />}
-              Send Request
-            </button>
-          </div>
-        </form>
+      {/* Request a Gear Item modal */}
+      {showRequestForm && createPortal(
+        <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-end sm:items-center justify-center z-[70]">
+          <form
+            onSubmit={handleSubmitRequest}
+            className="bg-white sm:rounded-lg shadow-2xl w-full sm:mx-4 sm:max-w-md px-6 py-6 flex flex-col gap-4"
+          >
+            <h3 className="text-base font-semibold text-primary">Request a Gear Item</h3>
+            <p className="text-sm text-primary/60 -mt-2">
+              Can't find what you're looking for? Let us know and we'll look into adding it.
+            </p>
+            <div className="flex gap-3">
+              <div className="flex-1">
+                <label className="block text-xs font-medium text-primary/70 mb-1">Item Name *</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Nemo Tensor"
+                  value={requestForm.name}
+                  onChange={e => setRequestForm(p => ({ ...p, name: e.target.value }))}
+                  className="w-full border border-primary/20 rounded px-3 py-1.5 text-sm text-primary"
+                  required
+                  autoFocus
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block text-xs font-medium text-primary/70 mb-1">Brand *</label>
+                <input
+                  type="text"
+                  placeholder="e.g. Nemo"
+                  value={requestForm.brand}
+                  onChange={e => setRequestForm(p => ({ ...p, brand: e.target.value }))}
+                  className="w-full border border-primary/20 rounded px-3 py-1.5 text-sm text-primary"
+                  required
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-primary/70 mb-1">Link (optional)</label>
+              <input
+                type="url"
+                placeholder="https://..."
+                value={requestForm.link}
+                onChange={e => setRequestForm(p => ({ ...p, link: e.target.value }))}
+                className="w-full border border-primary/20 rounded px-3 py-1.5 text-sm text-primary"
+              />
+            </div>
+            <div className="flex justify-end gap-2 pt-1">
+              <button
+                type="button"
+                onClick={() => { setShowRequestForm(false); setRequestForm({ name: "", brand: "", link: "" }); }}
+                className="px-3 py-1.5 rounded bg-neutralAlt hover:bg-neutralAlt/90 text-primary text-sm"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={requestSending || !requestForm.name.trim() || !requestForm.brand.trim()}
+                className="px-3 py-1.5 rounded bg-secondary text-white text-sm disabled:opacity-50 flex items-center gap-1.5"
+              >
+                {requestSending && <FiLoader size={12} className="animate-spin" />}
+                Send Request
+              </button>
+            </div>
+          </form>
+        </div>,
+        document.body
       )}
 
       {/* Footer */}
@@ -905,7 +922,7 @@ export default function SmartItemSearch({
             onClick={() => setShowRequestForm(v => !v)}
             className="text-xs text-primary/50 hover:text-primary/80 underline underline-offset-2"
           >
-            Can't find it? Request it
+            Request a Gear Item
           </button>
           <div className="flex gap-2">
           <button
