@@ -106,13 +106,13 @@ export default function AddGearItemModal({ listId, categoryId, onClose, onAdded 
       onClick={onClose}
     >
       <div
-        className="bg-base-100 sm:rounded-xl shadow-2xl w-full sm:w-[70vw] sm:mx-4 flex flex-col modal-mobile-h sm:h-[70vh]"
+        className="bg-base-100 sm:rounded-xl shadow-2xl w-full sm:w-[90vw] sm:max-w-[720px] sm:mx-4 flex flex-col modal-mobile-h sm:h-[85vh] sm:max-h-[800px]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex justify-between items-center px-5 pt-4 pb-3 border-b border-primary/10 flex-shrink-0">
           <h2 className="text-lg font-semibold text-primary">
-            {t("addGearItemModal.title", "Add Gear")}
+            {t("addGearItemModal.title", "New gear item")}
           </h2>
           <button
             onClick={onClose}
@@ -128,6 +128,7 @@ export default function AddGearItemModal({ listId, categoryId, onClose, onAdded 
           <SmartItemSearch
             multiSelect
             showMyGear
+            tabLayout
             existingGlobalIds={existingGlobalIds}
             onConfirm={handleConfirm}
             onClose={onClose}

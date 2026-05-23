@@ -593,6 +593,8 @@
     "searchHint": "Brand · Model · Size or variant",
     "scanItem": "Scan item with camera",
     "allCategories": "All Categories",
+    "allTypes": "All Types",
+    "allBrands": "All Brands",
     "myGear": "My Gear",
     "fromCatalog": "From Catalog",
     "added": "Added",
@@ -655,6 +657,26 @@
       "invalidWeight": "Invalid weight",
       "previewLoadFailed": "Failed to load item details."
     }
+  },
+  "photoScanModal": {
+    "title": "Scan Gear",
+    "subtitle": "Product packaging or product info screenshot",
+    "takePhoto": "Take Photo",
+    "uploadScreenshot": "Upload Screenshot",
+    "hint": "Works best with product packaging and product info screenshots",
+    "scanningBarcode": "Barcode detected — looking up…",
+    "scanningVision": "Identifying with AI…",
+    "tryAgain": "Try again",
+    "useThisItem": "Use this item",
+    "errorFallback": "Scan failed. Try again or add manually.",
+    "badgeBarcodePrefix": "Barcode",
+    "badgeVision": "AI Vision",
+    "fieldName": "Name",
+    "fieldBrand": "Brand",
+    "fieldCategory": "Category",
+    "fieldType": "Type",
+    "fieldWeight": "Weight",
+    "fieldDesc": "Desc"
   },
   "addGearItemModal": {
     "title": "Add gear item(s)",

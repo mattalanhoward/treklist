@@ -584,6 +584,8 @@
     "searchHint": "Marque · Modèle · Taille ou variante",
     "scanItem": "Scanner l'article avec la caméra",
     "allCategories": "Toutes les catégories",
+    "allTypes": "Tous les types",
+    "allBrands": "Toutes les marques",
     "myGear": "Mon équipement",
     "fromCatalog": "Du catalogue",
     "added": "Ajouté",
@@ -646,6 +648,26 @@
       "invalidWeight": "Poids invalide",
       "previewLoadFailed": "Impossible de charger les détails de l'article."
     }
+  },
+  "photoScanModal": {
+    "title": "Scanner l'équipement",
+    "subtitle": "Emballage produit ou capture d'écran de la fiche produit",
+    "takePhoto": "Prendre une photo",
+    "uploadScreenshot": "Importer une capture",
+    "hint": "Fonctionne mieux avec les emballages produits et les captures d'écran",
+    "scanningBarcode": "Code-barres détecté — recherche en cours…",
+    "scanningVision": "Identification par IA…",
+    "tryAgain": "Réessayer",
+    "useThisItem": "Utiliser cet article",
+    "errorFallback": "Échec du scan. Réessayez ou ajoutez manuellement.",
+    "badgeBarcodePrefix": "Code-barres",
+    "badgeVision": "Vision IA",
+    "fieldName": "Nom",
+    "fieldBrand": "Marque",
+    "fieldCategory": "Catégorie",
+    "fieldType": "Type",
+    "fieldWeight": "Poids",
+    "fieldDesc": "Desc."
   },
   "addGearItemModal": {
     "title": "Ajouter des articles d’équipement",

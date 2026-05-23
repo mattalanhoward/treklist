@@ -1,11 +1,13 @@
 // client/src/components/PhotoScanModal.jsx
-// Prototype: barcode + AI vision gear scanner
+// Barcode + AI vision gear scanner.
 // Scan flow: capture/upload → BarcodeDetector (if available) → /api/ai/scan-item
 import React, { useState, useRef } from "react";
 import { FiCamera, FiUpload, FiX, FiRefreshCw, FiCheck } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
 import api from "../services/api";
 
 export default function PhotoScanModal({ onResult, onClose }) {
+  const { t } = useTranslation("common");
   const [phase, setPhase] = useState("idle"); // idle | scanning | result | error
   const [imagePreview, setImagePreview] = useState(null);
   const [scanMethod, setScanMethod] = useState(null); // 'barcode' | 'vision'
@@ -35,7 +37,6 @@ export default function PhotoScanModal({ onResult, onClose }) {
     setBarcodeValue(null);
     setScanMethod(null);
 
-    // Load image element for BarcodeDetector
     const img = new Image();
     img.src = dataUrl;
     await new Promise((resolve) => { img.onload = resolve; img.onerror = resolve; });
@@ -56,7 +57,7 @@ export default function PhotoScanModal({ onResult, onClose }) {
         setPhase("result");
       }
     } catch (err) {
-      const msg = err.response?.data?.error || "Scan failed. Try again or add manually.";
+      const msg = err.response?.data?.error || t("photoScanModal.errorFallback", "Scan failed. Try again or add manually.");
       setErrorMsg(msg);
       setPhase("error");
     }
@@ -68,7 +69,7 @@ export default function PhotoScanModal({ onResult, onClose }) {
     const reader = new FileReader();
     reader.onload = (ev) => processImage(ev.target.result);
     reader.readAsDataURL(file);
-    e.target.value = ""; // allow re-selecting same file
+    e.target.value = "";
   }
 
   function reset() {
@@ -86,10 +87,9 @@ export default function PhotoScanModal({ onResult, onClose }) {
 
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-base-300">
-          <div>
-            <h2 className="text-sm font-semibold text-primary">Scan Gear</h2>
-            <p className="text-xs text-primary/40">Barcode or photo of the item</p>
-          </div>
+          <h2 className="text-sm font-semibold text-primary">
+            {t("photoScanModal.title", "Scan Gear")}
+          </h2>
           <button onClick={onClose} className="text-primary/40 hover:text-primary p-1">
             <FiX size={18} />
           </button>
@@ -106,18 +106,22 @@ export default function PhotoScanModal({ onResult, onClose }) {
                   className="flex flex-col items-center gap-2 py-8 border-2 border-dashed border-primary/20 rounded-lg hover:border-secondary/50 hover:bg-secondary/5 transition-colors"
                 >
                   <FiCamera size={26} className="text-primary/40" />
-                  <span className="text-xs text-primary/60 font-medium">Take Photo</span>
+                  <span className="text-xs text-primary/60 font-medium">
+                    {t("photoScanModal.takePhoto", "Take Photo")}
+                  </span>
                 </button>
                 <button
                   onClick={() => uploadInputRef.current?.click()}
                   className="flex flex-col items-center gap-2 py-8 border-2 border-dashed border-primary/20 rounded-lg hover:border-secondary/50 hover:bg-secondary/5 transition-colors"
                 >
                   <FiUpload size={26} className="text-primary/40" />
-                  <span className="text-xs text-primary/60 font-medium">Upload Photo</span>
+                  <span className="text-xs text-primary/60 font-medium">
+                    {t("photoScanModal.uploadScreenshot", "Upload Screenshot")}
+                  </span>
                 </button>
               </div>
               <p className="text-xs text-primary/30 text-center">
-                Works with barcodes, tags, or worn gear
+                {t("photoScanModal.hint", "Works best with product packaging and product info screenshots")}
               </p>
               <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleFileChange} />
               <input ref={uploadInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
@@ -133,7 +137,9 @@ export default function PhotoScanModal({ onResult, onClose }) {
               <div className="flex items-center justify-center gap-2 py-2">
                 <div className="w-4 h-4 border-2 border-secondary border-t-transparent rounded-full animate-spin" />
                 <span className="text-sm text-primary/60">
-                  {scanMethod === "barcode" ? `Barcode detected — looking up…` : "Identifying with AI…"}
+                  {scanMethod === "barcode"
+                    ? t("photoScanModal.scanningBarcode", "Barcode detected — looking up…")
+                    : t("photoScanModal.scanningVision", "Identifying with AI…")}
                 </span>
               </div>
             </div>
@@ -145,49 +151,47 @@ export default function PhotoScanModal({ onResult, onClose }) {
               {imagePreview && (
                 <img src={imagePreview} alt="" className="w-full h-32 object-cover rounded-lg" />
               )}
-
-              {/* Method badge */}
               <span className={`inline-block text-xs px-2 py-0.5 rounded-full font-medium ${
                 scanMethod === "barcode"
                   ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
                   : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
               }`}>
-                {scanMethod === "barcode" ? `Barcode · ${barcodeValue}` : "AI Vision"}
+                {scanMethod === "barcode"
+                  ? `${t("photoScanModal.badgeBarcodePrefix", "Barcode")} · ${barcodeValue}`
+                  : t("photoScanModal.badgeVision", "AI Vision")}
               </span>
-
-              {/* Fields */}
               <dl className="space-y-1.5 text-sm">
                 <div className="flex gap-2">
-                  <dt className="text-primary/40 w-16 flex-shrink-0 text-xs pt-0.5">Name</dt>
+                  <dt className="text-primary/40 w-16 flex-shrink-0 text-xs pt-0.5">{t("photoScanModal.fieldName", "Name")}</dt>
                   <dd className="text-primary font-medium">{result.name}</dd>
                 </div>
                 {result.brand && (
                   <div className="flex gap-2">
-                    <dt className="text-primary/40 w-16 flex-shrink-0 text-xs pt-0.5">Brand</dt>
+                    <dt className="text-primary/40 w-16 flex-shrink-0 text-xs pt-0.5">{t("photoScanModal.fieldBrand", "Brand")}</dt>
                     <dd className="text-primary">{result.brand}</dd>
                   </div>
                 )}
                 {result.category && (
                   <div className="flex gap-2">
-                    <dt className="text-primary/40 w-16 flex-shrink-0 text-xs pt-0.5">Category</dt>
+                    <dt className="text-primary/40 w-16 flex-shrink-0 text-xs pt-0.5">{t("photoScanModal.fieldCategory", "Category")}</dt>
                     <dd className="text-primary">{result.category}</dd>
                   </div>
                 )}
                 {result.itemType && (
                   <div className="flex gap-2">
-                    <dt className="text-primary/40 w-16 flex-shrink-0 text-xs pt-0.5">Type</dt>
+                    <dt className="text-primary/40 w-16 flex-shrink-0 text-xs pt-0.5">{t("photoScanModal.fieldType", "Type")}</dt>
                     <dd className="text-primary">{result.itemType}</dd>
                   </div>
                 )}
                 {result.weightGrams != null && (
                   <div className="flex gap-2">
-                    <dt className="text-primary/40 w-16 flex-shrink-0 text-xs pt-0.5">Weight</dt>
+                    <dt className="text-primary/40 w-16 flex-shrink-0 text-xs pt-0.5">{t("photoScanModal.fieldWeight", "Weight")}</dt>
                     <dd className="text-primary">{result.weightGrams}g</dd>
                   </div>
                 )}
                 {result.description && (
                   <div className="flex gap-2">
-                    <dt className="text-primary/40 w-16 flex-shrink-0 text-xs pt-0.5">Desc</dt>
+                    <dt className="text-primary/40 w-16 flex-shrink-0 text-xs pt-0.5">{t("photoScanModal.fieldDesc", "Desc")}</dt>
                     <dd className="text-primary/70 text-xs leading-relaxed">{result.description}</dd>
                   </div>
                 )}
@@ -214,7 +218,7 @@ export default function PhotoScanModal({ onResult, onClose }) {
               className="flex items-center gap-1.5 px-3 py-2 text-sm border border-base-300 rounded-lg text-primary/60 hover:text-primary transition-colors"
             >
               <FiRefreshCw size={13} />
-              Try again
+              {t("photoScanModal.tryAgain", "Try again")}
             </button>
             {phase === "result" && (
               <button
@@ -222,7 +226,7 @@ export default function PhotoScanModal({ onResult, onClose }) {
                 className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-sm bg-secondary text-white rounded-lg hover:bg-secondary/90 font-medium transition-colors"
               >
                 <FiCheck size={14} />
-                Use this item
+                {t("photoScanModal.useThisItem", "Use this item")}
               </button>
             )}
           </div>
