@@ -380,6 +380,11 @@
     "noResults": "Keine passenden Items",
     "noGear": "Keine Items in Meine Ausrüstung",
     "confirm": "Ersetzen",
+    "actions": {
+      "swap": "Ersetzen",
+      "importAndSwap": "Importieren & Ersetzen",
+      "createAndSwap": "Erstellen & Ersetzen"
+    },
     "swapping": "Ersetzen…",
     "catalog": {
       "searchPlaceholder": "Katalog durchsuchen…",
@@ -592,9 +597,9 @@
     "addManually": "Manuell hinzufügen",
     "addItemManually": "Artikel manuell hinzufügen",
     "saving": "Speichern...",
-    "createAndAdd": "Erstellen und hinzufügen",
+    "create": "Erstellen",
     "add": "Hinzufügen",
-    "importAndAdd": "Importieren & hinzufügen",
+    "import": "Importieren",
     "noResultsFor": "Keine Ergebnisse für",
     "chips": {
       "sleep": "Schlafen",

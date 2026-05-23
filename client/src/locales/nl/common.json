@@ -380,6 +380,11 @@
     "noResults": "Geen overeenkomende items",
     "noGear": "Geen items in Mijn uitrusting",
     "confirm": "Vervangen",
+    "actions": {
+      "swap": "Vervangen",
+      "importAndSwap": "Importeer en vervang",
+      "createAndSwap": "Maak aan en vervang"
+    },
     "swapping": "Vervangen...",
     "catalog": {
       "searchPlaceholder": "Zoek in catalogus…",
@@ -592,9 +597,9 @@
     "addManually": "Handmatig toevoegen",
     "addItemManually": "Artikel handmatig toevoegen",
     "saving": "Opslaan...",
-    "createAndAdd": "Maken en toevoegen",
+    "create": "Maken",
     "add": "Toevoegen",
-    "importAndAdd": "Importeren & toevoegen",
+    "import": "Importeren",
     "noResultsFor": "Geen resultaten voor",
     "chips": {
       "sleep": "Slaap",

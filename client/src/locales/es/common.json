@@ -380,6 +380,11 @@
     "noResults": "No se encontraron artículos",
     "noGear": "No hay artículos en Mi equipo",
     "confirm": "Reemplazar",
+    "actions": {
+      "swap": "Reemplazar",
+      "importAndSwap": "Importar y reemplazar",
+      "createAndSwap": "Crear y reemplazar"
+    },
     "swapping": "Reemplazando...",
     "catalog": {
       "searchPlaceholder": "Buscar en el catálogo…",
@@ -592,9 +597,9 @@
     "addManually": "Añadir manualmente",
     "addItemManually": "Añadir artículo manualmente",
     "saving": "Guardando...",
-    "createAndAdd": "Crear y añadir",
+    "create": "Crear",
     "add": "Añadir",
-    "importAndAdd": "Importar y añadir",
+    "import": "Importar",
     "noResultsFor": "Sin resultados para",
     "chips": {
       "sleep": "Sueño",
@@ -683,7 +688,7 @@
       "adding": "Añadiendo…",
       "importAndAdd_one": "Importar y añadir {{count}}",
       "importAndAdd_other": "Importar y añadir {{count}}",
-      "createAndAdd": "Crear y añadir"
+      "create": "Crear"
     },
     "catalog": {
       "searchPlaceholder": "Buscar en el catálogo…",

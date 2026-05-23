@@ -88,6 +88,11 @@ export default function SwapItemModal({ item, listId, catId, onClose, onSwapped 
             showMyGear
             tabLayout
             excludeGlobalItemId={excludeGlobalItemId}
+            confirmLabels={{
+              add: t("swapModal.actions.swap", "Swap"),
+              import: t("swapModal.actions.importAndSwap", "Import & Swap"),
+              create: t("swapModal.actions.createAndSwap", "Create & Swap"),
+            }}
             onConfirm={handleConfirm}
             onClose={onClose}
           />

@@ -397,6 +397,11 @@
     "noGear": "No items in My Gear",
     "confirm": "Swap",
     "swapping": "Swapping...",
+    "actions": {
+      "swap": "Swap",
+      "importAndSwap": "Import & Swap",
+      "createAndSwap": "Create & Swap"
+    },
     "catalog": {
       "searchPlaceholder": "Search catalog…",
       "empty": "No catalog items found",
@@ -608,9 +613,9 @@
     "addManually": "Add manually",
     "addItemManually": "Add item manually",
     "saving": "Saving...",
-    "createAndAdd": "Create and Add",
+    "create": "Create",
     "add": "Add",
-    "importAndAdd": "Import & Add",
+    "import": "Import",
     "noResultsFor": "No results for",
     "chips": {
       "sleep": "Sleep",

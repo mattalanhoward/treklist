@@ -1,6 +1,6 @@
 // src/pages/GearListView.jsx
 import React, { useState, useEffect, useCallback } from "react";
-import { FiShare2, FiInfo, FiLock, FiUnlock, FiMoreHorizontal, FiPlus, FiCheck, FiX } from "react-icons/fi";
+import { FiShare2, FiInfo, FiLock, FiUnlock, FiMoreHorizontal, FiPlus, FiCheck, FiX, FiCheckSquare } from "react-icons/fi";
 import { BsBackpack4 } from "react-icons/bs";
 import StatWithDetails from "../components/StatWithDetails";
 import { toast } from "react-hot-toast";
@@ -1212,6 +1212,15 @@ export default function GearListView({
               aria-label={t("gearList.menu.viewEditDetails")}
             >
               <FiInfo />
+            </button>
+
+            {/* Checklist button - desktop only */}
+            <button
+              onClick={handleCheckList}
+              className="hidden sm:inline-flex items-center justify-center text-primaryAlt hover:text-primaryAlt/80 leading-none"
+              aria-label={t("gearList.menu.checklist", "Checklist")}
+            >
+              <FiCheckSquare />
             </button>
 
             {/* Lock toggle button - desktop only */}

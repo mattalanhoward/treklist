@@ -360,6 +360,7 @@ export default function SmartItemSearch({
   onConfirm,
   onClose,
   tabLayout = false,
+  confirmLabels = {},
 }) {
   const { t } = useTranslation("common");
   const unit = useUnit();
@@ -678,19 +679,23 @@ export default function SmartItemSearch({
     ? customForm.name.trim().length > 0
     : totalSelected > 0;
 
+  const labelAdd    = confirmLabels.add    ?? t("smartItemSearch.add",    "Add");
+  const labelImport = confirmLabels.import ?? t("smartItemSearch.import", "Import");
+  const labelCreate = confirmLabels.create ?? t("smartItemSearch.create", "Create");
+
   const confirmLabel = confirming
     ? t("smartItemSearch.saving", "Saving...")
     : showingCustomForm
-      ? t("smartItemSearch.createAndAdd", "Create and Add")
+      ? labelCreate
       : myGearSelected.size > 0
         ? multiSelect && myGearSelected.size > 1
-          ? `${t("smartItemSearch.add", "Add")} (${myGearSelected.size})`
-          : t("smartItemSearch.add", "Add")
+          ? `${labelAdd} (${myGearSelected.size})`
+          : labelAdd
         : catalogSelected.size > 0
           ? multiSelect && catalogSelected.size > 1
-            ? `${t("smartItemSearch.importAndAdd", "Import & Add")} (${catalogSelected.size})`
-            : t("smartItemSearch.importAndAdd", "Import & Add")
-          : t("smartItemSearch.add", "Add");
+            ? `${labelImport} (${catalogSelected.size})`
+            : labelImport
+          : labelAdd;
 
   const hasSearchIntent = debouncedQuery.trim() || categoryFilter || subcategoryFilter || brandFilter;
   const hasNoResults =
@@ -778,11 +783,11 @@ export default function SmartItemSearch({
 
           {/* Category / Subcategory / Brand dropdowns — tabLayout Import tab only */}
           {tabLayout && (
-            <div className="mt-2 flex flex-col sm:flex-row gap-2">
+            <div className="mt-2 flex gap-1.5">
               <select
                 value={categoryFilter || ""}
                 onChange={(e) => setCategoryFilter(e.target.value || null)}
-                className="sm:flex-1 border border-primary/20 rounded-lg px-3 py-2 text-sm text-primary bg-base-100 cursor-pointer"
+                className="flex-1 min-w-0 border border-primary/20 rounded-lg px-2 py-1.5 text-xs text-primary bg-base-100 cursor-pointer"
               >
                 <option value="">{t("smartItemSearch.allCategories", "All Categories")}</option>
                 {CHIPS.map((chip) => (
@@ -795,7 +800,7 @@ export default function SmartItemSearch({
                 value={subcategoryFilter || ""}
                 onChange={(e) => setSubcategoryFilter(e.target.value || null)}
                 disabled={!categoryFilter || !(CATALOG_SUBCATEGORIES[categoryFilter]?.length)}
-                className="sm:flex-1 border border-primary/20 rounded-lg px-3 py-2 text-sm text-primary bg-base-100 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                className="flex-1 min-w-0 border border-primary/20 rounded-lg px-2 py-1.5 text-xs text-primary bg-base-100 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 <option value="">{t("smartItemSearch.allTypes", "All Types")}</option>
                 {(CATALOG_SUBCATEGORIES[categoryFilter] || []).map((sub) => (
@@ -806,7 +811,7 @@ export default function SmartItemSearch({
                 value={brandFilter || ""}
                 onChange={(e) => setBrandFilter(e.target.value || null)}
                 disabled={brandOptions.length === 0}
-                className="sm:flex-1 border border-primary/20 rounded-lg px-3 py-2 text-sm text-primary bg-base-100 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                className="flex-1 min-w-0 border border-primary/20 rounded-lg px-2 py-1.5 text-xs text-primary bg-base-100 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 <option value="">{t("smartItemSearch.allBrands", "All Brands")}</option>
                 {brandOptions.map((b) => (
