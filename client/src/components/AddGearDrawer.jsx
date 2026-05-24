@@ -56,6 +56,7 @@ export default function AddGearDrawer({ isOpen, onClose, onItemsChanged }) {
           <SmartItemSearch
             multiSelect
             showMyGear={false}
+            tabLayout
             onConfirm={handleConfirm}
             onClose={onClose}
           />
@@ -85,6 +86,7 @@ export default function AddGearDrawer({ isOpen, onClose, onItemsChanged }) {
           <SmartItemSearch
             multiSelect
             showMyGear={false}
+            tabLayout
             onConfirm={handleConfirm}
             onClose={onClose}
           />

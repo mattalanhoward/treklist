@@ -380,6 +380,11 @@
     "noResults": "Geen overeenkomende items",
     "noGear": "Geen items in Mijn uitrusting",
     "confirm": "Vervangen",
+    "actions": {
+      "swap": "Vervangen",
+      "importAndSwap": "Importeer en vervang",
+      "createAndSwap": "Maak aan en vervang"
+    },
     "swapping": "Vervangen...",
     "catalog": {
       "searchPlaceholder": "Zoek in catalogus…",
@@ -577,6 +582,8 @@
     "searchHint": "Merk · Model · Maat of variant",
     "scanItem": "Artikel scannen met camera",
     "allCategories": "Alle categorieën",
+    "allTypes": "Alle types",
+    "allBrands": "Alle merken",
     "myGear": "Mijn uitrusting",
     "fromCatalog": "Uit de catalogus",
     "added": "Toegevoegd",
@@ -590,9 +597,9 @@
     "addManually": "Handmatig toevoegen",
     "addItemManually": "Artikel handmatig toevoegen",
     "saving": "Opslaan...",
-    "createAndAdd": "Maken en toevoegen",
+    "create": "Maken",
     "add": "Toevoegen",
-    "importAndAdd": "Importeren & toevoegen",
+    "import": "Importeren",
     "noResultsFor": "Geen resultaten voor",
     "chips": {
       "sleep": "Slaap",
@@ -639,6 +646,26 @@
       "invalidWeight": "Ongeldig gewicht",
       "previewLoadFailed": "Artikeldetails konden niet worden geladen."
     }
+  },
+  "photoScanModal": {
+    "title": "Uitrusting scannen",
+    "subtitle": "Productverpakking of productinfo-screenshot",
+    "takePhoto": "Foto nemen",
+    "uploadScreenshot": "Screenshot uploaden",
+    "hint": "Werkt het beste met productverpakkingen en screenshots",
+    "scanningBarcode": "Barcode gedetecteerd — opzoeken…",
+    "scanningVision": "Identificeren met AI…",
+    "tryAgain": "Opnieuw proberen",
+    "useThisItem": "Dit artikel gebruiken",
+    "errorFallback": "Scannen mislukt. Probeer opnieuw of voeg handmatig toe.",
+    "badgeBarcodePrefix": "Barcode",
+    "badgeVision": "AI-visie",
+    "fieldName": "Naam",
+    "fieldBrand": "Merk",
+    "fieldCategory": "Categorie",
+    "fieldType": "Type",
+    "fieldWeight": "Gewicht",
+    "fieldDesc": "Beschr."
   },
   "addGearItemModal": {
     "title": "Uitrustingsitems toevoegen",

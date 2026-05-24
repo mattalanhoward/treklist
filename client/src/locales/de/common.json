@@ -380,6 +380,11 @@
     "noResults": "Keine passenden Items",
     "noGear": "Keine Items in Meine Ausrüstung",
     "confirm": "Ersetzen",
+    "actions": {
+      "swap": "Ersetzen",
+      "importAndSwap": "Importieren & Ersetzen",
+      "createAndSwap": "Erstellen & Ersetzen"
+    },
     "swapping": "Ersetzen…",
     "catalog": {
       "searchPlaceholder": "Katalog durchsuchen…",
@@ -577,6 +582,8 @@
     "searchHint": "Marke · Modell · Größe oder Variante",
     "scanItem": "Artikel mit Kamera scannen",
     "allCategories": "Alle Kategorien",
+    "allTypes": "Alle Typen",
+    "allBrands": "Alle Marken",
     "myGear": "Meine Ausrüstung",
     "fromCatalog": "Aus dem Katalog",
     "added": "Hinzugefügt",
@@ -590,9 +597,9 @@
     "addManually": "Manuell hinzufügen",
     "addItemManually": "Artikel manuell hinzufügen",
     "saving": "Speichern...",
-    "createAndAdd": "Erstellen und hinzufügen",
+    "create": "Erstellen",
     "add": "Hinzufügen",
-    "importAndAdd": "Importieren & hinzufügen",
+    "import": "Importieren",
     "noResultsFor": "Keine Ergebnisse für",
     "chips": {
       "sleep": "Schlafen",
@@ -639,6 +646,26 @@
       "invalidWeight": "Ungültiges Gewicht",
       "previewLoadFailed": "Artikeldetails konnten nicht geladen werden."
     }
+  },
+  "photoScanModal": {
+    "title": "Ausrüstung scannen",
+    "subtitle": "Produktverpackung oder Produkt-Info-Screenshot",
+    "takePhoto": "Foto aufnehmen",
+    "uploadScreenshot": "Screenshot hochladen",
+    "hint": "Funktioniert am besten mit Produktverpackungen und Screenshots",
+    "scanningBarcode": "Barcode erkannt – wird gesucht…",
+    "scanningVision": "Wird per KI identifiziert…",
+    "tryAgain": "Erneut versuchen",
+    "useThisItem": "Diesen Artikel verwenden",
+    "errorFallback": "Scan fehlgeschlagen. Erneut versuchen oder manuell hinzufügen.",
+    "badgeBarcodePrefix": "Barcode",
+    "badgeVision": "KI-Bilderkennung",
+    "fieldName": "Name",
+    "fieldBrand": "Marke",
+    "fieldCategory": "Kategorie",
+    "fieldType": "Typ",
+    "fieldWeight": "Gewicht",
+    "fieldDesc": "Beschr."
   },
   "addGearItemModal": {
     "title": "Ausrüstungs-Item(s) hinzufügen",

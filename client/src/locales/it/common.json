@@ -380,6 +380,11 @@
     "noResults": "Nessun articolo trovato",
     "noGear": "Nessun articolo nel mio equipaggiamento",
     "confirm": "Sostituisci",
+    "actions": {
+      "swap": "Sostituisci",
+      "importAndSwap": "Importa e sostituisci",
+      "createAndSwap": "Crea e sostituisci"
+    },
     "swapping": "Sostituzione...",
     "catalog": {
       "searchPlaceholder": "Cerca nel catalogo…",
@@ -577,6 +582,8 @@
     "searchHint": "Marca · Modello · Taglia o variante",
     "scanItem": "Scansiona articolo con fotocamera",
     "allCategories": "Tutte le categorie",
+    "allTypes": "Tutti i tipi",
+    "allBrands": "Tutti i marchi",
     "myGear": "Il mio equipaggiamento",
     "fromCatalog": "Dal catalogo",
     "added": "Aggiunto",
@@ -590,9 +597,9 @@
     "addManually": "Aggiungi manualmente",
     "addItemManually": "Aggiungi articolo manualmente",
     "saving": "Salvataggio...",
-    "createAndAdd": "Crea e aggiungi",
+    "create": "Crea",
     "add": "Aggiungi",
-    "importAndAdd": "Importa e aggiungi",
+    "import": "Importa",
     "noResultsFor": "Nessun risultato per",
     "chips": {
       "sleep": "Sonno",
@@ -640,6 +647,26 @@
       "previewLoadFailed": "Impossibile caricare i dettagli dell'articolo."
     }
   },
+  "photoScanModal": {
+    "title": "Scansiona attrezzatura",
+    "subtitle": "Confezione del prodotto o screenshot della scheda prodotto",
+    "takePhoto": "Scatta una foto",
+    "uploadScreenshot": "Carica screenshot",
+    "hint": "Funziona meglio con imballaggi di prodotti e screenshot",
+    "scanningBarcode": "Codice rilevato — ricerca in corso…",
+    "scanningVision": "Identificazione tramite IA…",
+    "tryAgain": "Riprova",
+    "useThisItem": "Usa questo articolo",
+    "errorFallback": "Scansione fallita. Riprova o aggiungi manualmente.",
+    "badgeBarcodePrefix": "Codice a barre",
+    "badgeVision": "Visione IA",
+    "fieldName": "Nome",
+    "fieldBrand": "Marca",
+    "fieldCategory": "Categoria",
+    "fieldType": "Tipo",
+    "fieldWeight": "Peso",
+    "fieldDesc": "Descr."
+  },
   "addGearItemModal": {
     "title": "Aggiungi articolo/i",
     "a11y": {
@@ -661,7 +688,7 @@
       "adding": "Aggiunta…",
       "importAndAdd_one": "Importa e aggiungi {{count}}",
       "importAndAdd_other": "Importa e aggiungi {{count}}",
-      "createAndAdd": "Crea e aggiungi"
+      "create": "Crea"
     },
     "catalog": {
       "searchPlaceholder": "Cerca nel catalogo…",

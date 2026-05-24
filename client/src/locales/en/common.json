@@ -397,6 +397,11 @@
     "noGear": "No items in My Gear",
     "confirm": "Swap",
     "swapping": "Swapping...",
+    "actions": {
+      "swap": "Swap",
+      "importAndSwap": "Import & Swap",
+      "createAndSwap": "Create & Swap"
+    },
     "catalog": {
       "searchPlaceholder": "Search catalog…",
       "empty": "No catalog items found",
@@ -593,6 +598,8 @@
     "searchHint": "Brand · Model · Size or variant",
     "scanItem": "Scan item with camera",
     "allCategories": "All Categories",
+    "allTypes": "All Types",
+    "allBrands": "All Brands",
     "myGear": "My Gear",
     "fromCatalog": "From Catalog",
     "added": "Added",
@@ -606,9 +613,9 @@
     "addManually": "Add manually",
     "addItemManually": "Add item manually",
     "saving": "Saving...",
-    "createAndAdd": "Create and Add",
+    "create": "Create",
     "add": "Add",
-    "importAndAdd": "Import & Add",
+    "import": "Import",
     "noResultsFor": "No results for",
     "chips": {
       "sleep": "Sleep",
@@ -655,6 +662,26 @@
       "invalidWeight": "Invalid weight",
       "previewLoadFailed": "Failed to load item details."
     }
+  },
+  "photoScanModal": {
+    "title": "Scan Gear",
+    "subtitle": "Product packaging or product info screenshot",
+    "takePhoto": "Take Photo",
+    "uploadScreenshot": "Upload Screenshot",
+    "hint": "Works best with product packaging and product info screenshots",
+    "scanningBarcode": "Barcode detected — looking up…",
+    "scanningVision": "Identifying with AI…",
+    "tryAgain": "Try again",
+    "useThisItem": "Use this item",
+    "errorFallback": "Scan failed. Try again or add manually.",
+    "badgeBarcodePrefix": "Barcode",
+    "badgeVision": "AI Vision",
+    "fieldName": "Name",
+    "fieldBrand": "Brand",
+    "fieldCategory": "Category",
+    "fieldType": "Type",
+    "fieldWeight": "Weight",
+    "fieldDesc": "Desc"
   },
   "addGearItemModal": {
     "title": "Add gear item(s)",

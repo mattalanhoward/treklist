@@ -380,6 +380,11 @@
     "noResults": "No se encontraron artículos",
     "noGear": "No hay artículos en Mi equipo",
     "confirm": "Reemplazar",
+    "actions": {
+      "swap": "Reemplazar",
+      "importAndSwap": "Importar y reemplazar",
+      "createAndSwap": "Crear y reemplazar"
+    },
     "swapping": "Reemplazando...",
     "catalog": {
       "searchPlaceholder": "Buscar en el catálogo…",
@@ -577,6 +582,8 @@
     "searchHint": "Marca · Modelo · Talla o variante",
     "scanItem": "Escanear artículo con cámara",
     "allCategories": "Todas las categorías",
+    "allTypes": "Todos los tipos",
+    "allBrands": "Todas las marcas",
     "myGear": "Mi equipo",
     "fromCatalog": "Del catálogo",
     "added": "Añadido",
@@ -590,9 +597,9 @@
     "addManually": "Añadir manualmente",
     "addItemManually": "Añadir artículo manualmente",
     "saving": "Guardando...",
-    "createAndAdd": "Crear y añadir",
+    "create": "Crear",
     "add": "Añadir",
-    "importAndAdd": "Importar y añadir",
+    "import": "Importar",
     "noResultsFor": "Sin resultados para",
     "chips": {
       "sleep": "Sueño",
@@ -640,6 +647,26 @@
       "previewLoadFailed": "No se pudieron cargar los detalles del artículo."
     }
   },
+  "photoScanModal": {
+    "title": "Escanear equipo",
+    "subtitle": "Embalaje del producto o captura de información del producto",
+    "takePhoto": "Tomar foto",
+    "uploadScreenshot": "Subir captura",
+    "hint": "Funciona mejor con embalajes de productos y capturas de pantalla",
+    "scanningBarcode": "Código detectado — buscando…",
+    "scanningVision": "Identificando con IA…",
+    "tryAgain": "Intentar de nuevo",
+    "useThisItem": "Usar este artículo",
+    "errorFallback": "Error al escanear. Inténtalo de nuevo o añade manualmente.",
+    "badgeBarcodePrefix": "Código de barras",
+    "badgeVision": "Visión IA",
+    "fieldName": "Nombre",
+    "fieldBrand": "Marca",
+    "fieldCategory": "Categoría",
+    "fieldType": "Tipo",
+    "fieldWeight": "Peso",
+    "fieldDesc": "Desc."
+  },
   "addGearItemModal": {
     "title": "Añadir artículo(s) de equipo",
     "a11y": {
@@ -661,7 +688,7 @@
       "adding": "Añadiendo…",
       "importAndAdd_one": "Importar y añadir {{count}}",
       "importAndAdd_other": "Importar y añadir {{count}}",
-      "createAndAdd": "Crear y añadir"
+      "create": "Crear"
     },
     "catalog": {
       "searchPlaceholder": "Buscar en el catálogo…",

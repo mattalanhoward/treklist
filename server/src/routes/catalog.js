@@ -97,6 +97,22 @@ router.get("/items/:id", auth, async (req, res) => {
   }
 });
 
+// GET /api/catalog/brands
+// Returns distinct brand names, optionally filtered by category/subcategory
+router.get("/brands", auth, async (req, res) => {
+  try {
+    const { category, subcategory } = req.query;
+    const match = { isActive: true };
+    if (category) match.category = category;
+    if (subcategory) match.subcategory = subcategory;
+    const brands = await CatalogItem.distinct("brand", match);
+    brands.sort((a, b) => a.localeCompare(b));
+    res.json(brands.filter(Boolean));
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch brands" });
+  }
+});
+
 // GET /api/catalog/items
 // Public read-only list of active catalog items
 router.get("/items", auth, async (req, res) => {
