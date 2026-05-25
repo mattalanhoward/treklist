@@ -30,6 +30,7 @@ const CHIPS = [
   { key: "tools",          value: "Accessories & Tools" },
   { key: "health",         value: "Health & Hygiene" },
   { key: "navigation",     value: "Navigation & Planning" },
+  { key: "travel",         value: "Travel" },
 ];
 
 function normalize(str = "") {
