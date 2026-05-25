@@ -18,6 +18,7 @@ const settingsRouter = require("./routes/settings");
 const affiliatesRouter = require("./routes/affiliates");
 const adminCatalogItemsRouter = require("./routes/adminCatalogItems");
 const adminAmazon = require("./routes/adminAmazon");
+const adminAwinImport = require("./routes/adminAwinImport");
 const adminUsersRouter = require("./routes/adminUsers");
 const adminPublicListsRouter = require("./routes/adminPublicLists");
 const { publicShareLimiter } = require("./middleware/rateLimiters");
@@ -26,6 +27,10 @@ const passport = require("./config/passport");
 const myGearRoutes = require("./routes/myGear");
 const wishlistRoutes = require("./routes/wishlist");
 const aiRoutes = require("./routes/ai");
+const communityRoutes = require("./routes/communities");
+const postsRoutes = require("./routes/posts");
+const commentsRoutes = require("./routes/comments");
+const notificationsRoutes = require("./routes/notifications");
 
 const app = express();
 
@@ -112,6 +117,7 @@ app.use(
   adminCatalogItemsRouter,
 );
 app.use("/api/admin/amazon", authMiddleware, requireAdmin, adminAmazon);
+app.use("/api/admin/awin",   authMiddleware, requireAdmin, adminAwinImport);
 app.use("/api/admin/users", authMiddleware, requireAdmin, adminUsersRouter);
 app.use(
   "/api/admin/public-lists",
@@ -124,6 +130,15 @@ app.use("/api/catalog", require("./routes/catalog"));
 app.use("/api/uploads", require("./routes/uploads"));
 app.use("/api/support", supportRoutes);
 app.use("/api/ai", authMiddleware, aiRoutes);
+app.use("/api/community", authMiddleware, requireAdmin, communityRoutes);
+app.use("/api/community", authMiddleware, requireAdmin, postsRoutes);
+app.use("/api/posts", authMiddleware, requireAdmin, postsRoutes);
+app.use("/api/posts/:postId/comments", authMiddleware, requireAdmin, commentsRoutes);
+app.use("/api/comments", authMiddleware, requireAdmin, commentsRoutes);
+app.use("/api/notifications", authMiddleware, requireAdmin, notificationsRoutes);
+app.use("/api/admin/community", authMiddleware, requireAdmin, require("./routes/adminCommunity"));
+
+app.use("/sitemap.xml", require("./routes/sitemap"));
 
 // Central error handler
 app.use((err, req, res, next) => {

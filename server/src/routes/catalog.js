@@ -28,8 +28,9 @@ function normalizeRegion(region) {
   const r = String(region).trim().toLowerCase();
   if (r === "netherlands") return "nl";
   if (r === "united states" || r === "usa") return "us";
+  if (r === "gb") return "uk";
   if (r.length === 2) return r;
-  return r; // fallback (still works if your DB stores "nl", "us", etc.)
+  return r;
 }
 
 // GET /api/catalog/items/:id
@@ -93,6 +94,22 @@ router.get("/items/:id", auth, async (req, res) => {
   } catch (err) {
     console.error("GET /api/catalog/items/:id error", err);
     return res.status(500).json({ message: "Failed to load catalog item." });
+  }
+});
+
+// GET /api/catalog/brands
+// Returns distinct brand names, optionally filtered by category/subcategory
+router.get("/brands", auth, async (req, res) => {
+  try {
+    const { category, subcategory } = req.query;
+    const match = { isActive: true };
+    if (category) match.category = category;
+    if (subcategory) match.subcategory = subcategory;
+    const brands = await CatalogItem.distinct("brand", match);
+    brands.sort((a, b) => a.localeCompare(b));
+    res.json(brands.filter(Boolean));
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch brands" });
   }
 });
 

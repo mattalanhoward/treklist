@@ -100,6 +100,28 @@ const oauthLimiter = makeLimiter({
   message: "Too many OAuth attempts. Please try again later.",
 });
 
+// Community write limiters — keyed by userId so limits are per-user, not per-IP
+const communityPostLimiter = makeLimiter({
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  max: 5,
+  message: "You're posting too frequently. Please wait a moment.",
+  keyGenerator: (req) => `cpost:${req.userId || req.ip}`,
+});
+
+const communityCommentLimiter = makeLimiter({
+  windowMs: 60 * 1000, // 1 minute
+  max: 15,
+  message: "You're commenting too frequently. Please wait a moment.",
+  keyGenerator: (req) => `ccomment:${req.userId || req.ip}`,
+});
+
+const communityUpvoteLimiter = makeLimiter({
+  windowMs: 60 * 1000, // 1 minute
+  max: 60,
+  message: "You're voting too frequently. Please wait a moment.",
+  keyGenerator: (req) => `cupvote:${req.userId || req.ip}`,
+});
+
 module.exports = {
   registerLimiter,
   forgotPasswordLimiter,
@@ -111,4 +133,7 @@ module.exports = {
   searchLimiter,
   resolveLimiter,
   oauthLimiter,
+  communityPostLimiter,
+  communityCommentLimiter,
+  communityUpvoteLimiter,
 };

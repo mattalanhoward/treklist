@@ -105,7 +105,18 @@ export const CATALOG_SUBCATEGORIES = {
   ],
   Travel: ["Documents", "Personal Care", "Towels", "Wallet"],
   "Unisex Clothing": ["Accessories", "Headwear", "Neck Gaiter", "Rain Gear"],
-  "Women's Clothing": ["Base Layers", "Jackets", "Socks"],
+  "Women's Clothing": [
+    "Base Layers",
+    "Hands",
+    "Jackets",
+    "Long-Sleeved T-Shirt",
+    "Pants",
+    "Rain Gear",
+    "Shirts",
+    "Shorts",
+    "Socks",
+    "Underwear",
+  ],
 };
 
 // UI helper: translate a canonical subcategory value
