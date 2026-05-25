@@ -82,11 +82,11 @@
       },
       "lists": {
         "title": "Your Gear Lists",
-        "body": "Click + to create a new list and fill in trip details right away."
+        "body": "Your gear list is where the planning happens — organize gear by category, track weights, and build the perfect kit for each trip."
       },
       "myGear": {
         "title": "My Gear",
-        "body": "Click “My Gear” to open and manage your gear inventory. Use the “+” button to add catalog items or create custom ones from the sidebar."
+        "body": "Click My Gear to switch to your personal gear inventory — every item you've ever added across all your lists, all in one place."
       },
       "templates": {
         "title": "Templates",

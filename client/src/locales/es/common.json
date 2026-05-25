@@ -82,11 +82,11 @@
       },
       "lists": {
         "title": "Tus listas de equipo",
-        "body": "Click + to create a new list and fill in trip details right away."
+        "body": "Tu lista de equipo es donde ocurre la planificación — organiza el equipo por categorías, controla los pesos y prepara el kit perfecto para cada aventura."
       },
       "myGear": {
         "title": "Mi equipo",
-        "body": "Haz clic en “Mi equipo” para abrir y gestionar tu inventario. Usa el botón “+” para añadir artículos del catálogo o crear los tuyos desde la barra lateral."
+        "body": "Haz clic en Mi equipo para cambiar a tu inventario personal — todos los artículos que hayas añadido en todas tus listas, en un solo lugar."
       },
       "templates": {
         "title": "Plantillas",

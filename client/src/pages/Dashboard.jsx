@@ -199,15 +199,6 @@ export default function Dashboard() {
       },
     },
     {
-      title: t("tour.steps.myGear.title"),
-      body: t("tour.steps.myGear.body"),
-      target: '[data-tour="sidebar-my-gear"]',
-      onEnter: ({ isMobile }) => {
-        setActivePane("gear");
-        if (isMobile) setSidebarCollapsed(false); // keep open
-      },
-    },
-    {
       title: t("tour.steps.templates.title"),
       body: t("tour.steps.templates.body"),
       target: '[data-tour="sidebar-templates"]',
@@ -274,6 +265,15 @@ export default function Dashboard() {
       onEnter: ({ isMobile }) => {
         setActivePane("gear");
         if (isMobile) setSidebarCollapsed(true); // keep closed
+      },
+    },
+    {
+      title: t("tour.steps.myGear.title"),
+      body: t("tour.steps.myGear.body"),
+      target: '[data-tour="sidebar-my-gear"]',
+      onEnter: ({ isMobile }) => {
+        setActivePane("gear");
+        if (isMobile) setSidebarCollapsed(false); // open sidebar so the link is visible
       },
     },
     {

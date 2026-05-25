@@ -81,12 +81,12 @@
         "body": "TrekList hilft dir, deine Ausrüstung für jedes Abenteuer zu planen, zu organisieren und zu teilen. Lass uns kurz umschauen."
       },
       "lists": {
-        "title": "Deine Packlisten",
-        "body": "Click + to create a new list and fill in trip details right away."
+        "title": "Deine Ausrüstungslisten",
+        "body": "In deiner Ausrüstungsliste findet die Planung statt — organisiere Ausrüstung nach Kategorien, verfolge Gewichte und stelle das perfekte Kit zusammen."
       },
       "myGear": {
         "title": "Meine Ausrüstung",
-        "body": "Klicke auf „Meine Ausrüstung“, um dein Inventar zu öffnen und zu verwalten. Nutze den „+“-Button, um Katalogartikel hinzuzufügen oder eigene über die Seitenleiste zu erstellen."
+        "body": "Wechsle zu deinem persönlichen Ausrüstungsinventar — alle Gegenstände aus all deinen Listen an einem Ort."
       },
       "templates": {
         "title": "Vorlagen",
