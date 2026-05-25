@@ -2001,6 +2001,34 @@ const SCHEMAS = {
     },
   },
 
+  Bra: {
+    fields: {
+      style: {
+        type: "enum",
+        required: true,
+        label: "Style",
+        options: ["Sports Bra", "Underwire", "Bralette", "Racerback", "Strapless"],
+      },
+      material: {
+        type: "enum",
+        required: true,
+        label: "Material",
+        options: ["Merino Wool", "Synthetic", "Wool Blend", "Cotton", "Nylon"],
+      },
+      impactLevel: {
+        type: "enum",
+        required: false,
+        label: "Impact Level",
+        options: ["Low", "Medium", "High"],
+      },
+      underwire: {
+        type: "boolean",
+        required: false,
+        label: "Underwire",
+      },
+    },
+  },
+
   "Hiking Socks": {
     fields: {
       sockType: {
@@ -2931,6 +2959,7 @@ export const CATEGORY_ITEM_TYPE_MAPPING = {
     "Fleece Jacket",
     "Base Layer Top",
     "Base Layer Bottom",
+    "Bra",
     "Underwear",
     "Hiking Socks",
     "Hat/Headwear",
