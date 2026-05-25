@@ -374,6 +374,7 @@ router.post("/register", registerLimiter, async (req, res) => {
     const user = new User({
       email: normalizedEmail,
       trailname: trimmedTrailname,
+      trailnameConfirmed: !!trimmedTrailname,
       isVerified: false,
       authProviders: [
         {
