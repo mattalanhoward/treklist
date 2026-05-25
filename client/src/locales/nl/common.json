@@ -81,12 +81,12 @@
         "body": "TrekList helpt je bij het plannen, organiseren en delen van je uitrusting voor elk avontuur. Laten we snel rondkijken."
       },
       "lists": {
-        "title": "Je paklijsten",
-        "body": "Click + to create a new list and fill in trip details right away."
+        "title": "Jouw uitrustingslijsten",
+        "body": "Je uitrustingslijst is waar de planning plaatsvindt — organiseer uitrusting per categorie, volg gewichten en stel de perfecte kit samen voor elke tocht."
       },
       "myGear": {
         "title": "Mijn uitrusting",
-        "body": "Klik op “Mijn uitrusting” om je uitrusting te openen en te beheren. Gebruik de “+”-knop om catalogusitems toe te voegen of eigen items aan te maken via de zijbalk."
+        "body": "Klik op Mijn uitrusting om naar je persoonlijke uitrustingsinventaris te gaan."
       },
       "templates": {
         "title": "Sjablonen",
@@ -102,7 +102,7 @@
       },
       "addItems": {
         "title": "Items toevoegen aan een categorie",
-        "body": "Click + Add Items to add gear from your inventory, search the catalog, or create a new item on the spot."
+        "body": "Klik op + Items toevoegen om uitrusting uit je inventaris toe te voegen, door de catalogus te zoeken of een nieuw item direct aan te maken."
       },
       "wishlist": {
         "title": "Verlanglijst / Nog te kopen",
@@ -114,11 +114,19 @@
       },
       "preferences": {
         "title": "Paklijst-instellingen",
-        "body": "Specifieke instellingen voor deze paklijst vind je in het menu met de drie puntjes. Bekijk details, schakel de checklist-modus in, deel je lijst en meer."
+        "body": "Delen, details bekijken, checklistmodus, achtergrond aanpassen en meer — allemaal in deze balk."
       },
       "settings": {
         "title": "Algemene instellingen",
         "body": "Algemene accountinstellingen vind je in het menu in de bovenbalk."
+      },
+      "myGearView": {
+        "title": "Jouw uitrustingsinventaris",
+        "body": "Al het uitrusting dat je aan al je lijsten hebt toegevoegd, staat hier. Filter op bezit, verlanglijst of uitrusting opgeslagen vanuit een ander pack."
+      },
+      "addGear": {
+        "title": "Toevoegen aan je inventaris",
+        "body": "Tik op + om de snel-toevoegen-lade te openen en je persoonlijke uitrustingsbibliotheek snel op te bouwen zonder items eerst aan een specifieke lijst toe te voegen."
       }
     }
   },

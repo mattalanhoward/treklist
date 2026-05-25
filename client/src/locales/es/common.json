@@ -82,11 +82,11 @@
       },
       "lists": {
         "title": "Tus listas de equipo",
-        "body": "Click + to create a new list and fill in trip details right away."
+        "body": "Tu lista de equipo es donde ocurre la planificación — organiza el equipo por categorías, controla los pesos y prepara el kit perfecto para cada aventura."
       },
       "myGear": {
         "title": "Mi equipo",
-        "body": "Haz clic en “Mi equipo” para abrir y gestionar tu inventario. Usa el botón “+” para añadir artículos del catálogo o crear los tuyos desde la barra lateral."
+        "body": "Haz clic en Mi equipo para cambiar a tu inventario personal."
       },
       "templates": {
         "title": "Plantillas",
@@ -102,7 +102,7 @@
       },
       "addItems": {
         "title": "Añadir artículos a una categoría",
-        "body": "Click + Add Items to add gear from your inventory, search the catalog, or create a new item on the spot."
+        "body": "Haz clic en + Añadir artículos para agregar equipo desde tu inventario, buscar en el catálogo o crear un artículo nuevo al momento."
       },
       "wishlist": {
         "title": "Lista de deseos / Por comprar",
@@ -114,11 +114,19 @@
       },
       "preferences": {
         "title": "Preferencias de la lista",
-        "body": "Las opciones específicas de la lista están en el menú de los tres puntos. Ver detalles, modo checklist, compartir la lista y más."
+        "body": "Compartir, ver detalles, modo lista de verificación, personalizar el fondo de la lista y más — todo en esta barra."
       },
       "settings": {
         "title": "Configuración global",
         "body": "La configuración global de la cuenta está disponible en el menú de la barra superior."
+      },
+      "myGearView": {
+        "title": "Tu inventario de equipo",
+        "body": "Todo el equipo que hayas añadido en todas tus listas está aquí. Filtra por equipo propio, lista de deseos o equipo guardado de otro pack."
+      },
+      "addGear": {
+        "title": "Añadir a tu inventario",
+        "body": "Toca + para abrir el panel de adición rápida y construir tu biblioteca personal de equipo sin tener que añadir artículos a una lista específica primero."
       }
     }
   },

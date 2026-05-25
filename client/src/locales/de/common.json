@@ -81,12 +81,12 @@
         "body": "TrekList hilft dir, deine Ausrüstung für jedes Abenteuer zu planen, zu organisieren und zu teilen. Lass uns kurz umschauen."
       },
       "lists": {
-        "title": "Deine Packlisten",
-        "body": "Click + to create a new list and fill in trip details right away."
+        "title": "Deine Ausrüstungslisten",
+        "body": "In deiner Ausrüstungsliste findet die Planung statt — organisiere Ausrüstung nach Kategorien, verfolge Gewichte und stelle das perfekte Kit zusammen."
       },
       "myGear": {
         "title": "Meine Ausrüstung",
-        "body": "Klicke auf „Meine Ausrüstung“, um dein Inventar zu öffnen und zu verwalten. Nutze den „+“-Button, um Katalogartikel hinzuzufügen oder eigene über die Seitenleiste zu erstellen."
+        "body": "Klicke auf Meine Ausrüstung, um zu deinem persönlichen Ausrüstungsinventar zu wechseln."
       },
       "templates": {
         "title": "Vorlagen",
@@ -102,7 +102,7 @@
       },
       "addItems": {
         "title": "Ausrüstung zu einer Kategorie hinzufügen",
-        "body": "Click + Add Items to add gear from your inventory, search the catalog, or create a new item on the spot."
+        "body": "Klicke auf + Ausrüstung hinzufügen, um Gegenstände aus deinem Inventar hinzuzufügen, den Katalog zu durchsuchen oder einen neuen Artikel direkt zu erstellen."
       },
       "wishlist": {
         "title": "Wunschliste / Noch zu kaufen",
@@ -114,11 +114,19 @@
       },
       "preferences": {
         "title": "Packlisten-Optionen",
-        "body": "Spezielle Optionen für diese Packliste findest du im Drei-Punkte-Menü. Details ansehen, Checklistenmodus aktivieren, Liste teilen und mehr."
+        "body": "Teilen, Details anzeigen, Checklistenmodus, Listenhintergrund anpassen und mehr — alles in dieser Leiste."
       },
       "settings": {
         "title": "Globale Einstellungen",
         "body": "Globale Kontoeinstellungen findest du im Menü der oberen Leiste."
+      },
+      "myGearView": {
+        "title": "Dein Ausrüstungs-Inventar",
+        "body": "Jedes Ausrüstungsstück aus all deinen Listen findest du hier. Filtere nach eigener Ausrüstung, Wunschliste oder Ausrüstung aus einem anderen gespeicherten Pack."
+      },
+      "addGear": {
+        "title": "Zum Inventar hinzufügen",
+        "body": "Tippe auf +, um das Schnellhinzufüge-Fenster zu öffnen und deine persönliche Ausrüstungsbibliothek schnell aufzubauen, ohne Gegenstände zuerst einer bestimmten Liste hinzufügen zu müssen."
       }
     }
   },

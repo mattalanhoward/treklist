@@ -47,11 +47,19 @@ export default function TourModal({
 
   // Find target element — also re-queries on remeasureTick so conditionally-rendered
   // elements (e.g. item buttons) are found even if they weren't in the DOM on first render.
+  // Multiple layout variants may share the same data-tour attribute (e.g. mobile vs desktop
+  // rows in SortableItem); querySelector returns the first in DOM order which may be hidden.
+  // We walk all matches and return the first one with non-zero dimensions instead.
   const targetEl = useMemo(() => {
     if (!isOpen) return null;
     if (!targetSelector) return null;
     try {
-      return document.querySelector(targetSelector);
+      const all = document.querySelectorAll(targetSelector);
+      for (const el of all) {
+        const r = el.getBoundingClientRect();
+        if (r.width > 0 && r.height > 0) return el;
+      }
+      return null;
     } catch {
       return null;
     }
@@ -95,12 +103,17 @@ export default function TourModal({
 
       setTargetRect(clipped);
 
-      // Keep spotlight shape aligned with the element
-      try {
-        const cs = window.getComputedStyle(targetEl);
-        setSpotRadius(cs.borderRadius || "16px");
-      } catch {
-        setSpotRadius("16px");
+      // Keep spotlight shape aligned with the element; step.spotlightRadius overrides computed value
+      if (step?.spotlightRadius) {
+        setSpotRadius(step.spotlightRadius);
+      } else {
+        try {
+          const cs = window.getComputedStyle(targetEl);
+          const r = cs.borderRadius;
+          setSpotRadius(r && r !== "0px" ? r : "8px");
+        } catch {
+          setSpotRadius("8px");
+        }
       }
     };
 

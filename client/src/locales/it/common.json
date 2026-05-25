@@ -81,12 +81,12 @@
         "body": "TrekList ti aiuta a pianificare, organizzare e condividere il tuo equipaggiamento per ogni avventura. Diamo un'occhiata rapida."
       },
       "lists": {
-        "title": "Le tue liste",
-        "body": "Click + to create a new list and fill in trip details right away."
+        "title": "Le tue liste attrezzatura",
+        "body": "La tua lista attrezzatura è dove avviene la pianificazione — organizza l'attrezzatura per categoria, tieni traccia dei pesi e prepara il kit perfetto per ogni avventura."
       },
       "myGear": {
         "title": "La mia attrezzatura",
-        "body": "Clicca su “La mia attrezzatura” per aprire e gestire il tuo inventario. Usa il pulsante “+” per aggiungere articoli dal catalogo o crearne di personalizzati dalla barra laterale."
+        "body": "Clicca su La mia attrezzatura per accedere al tuo inventario personale."
       },
       "templates": {
         "title": "Modelli",
@@ -102,7 +102,7 @@
       },
       "addItems": {
         "title": "Aggiungi articoli a una categoria",
-        "body": "Click + Add Items to add gear from your inventory, search the catalog, or create a new item on the spot."
+        "body": "Clicca su + Aggiungi articoli per aggiungere attrezzatura dal tuo inventario, cercare nel catalogo o creare un nuovo articolo al momento."
       },
       "wishlist": {
         "title": "Lista dei desideri / Da acquistare",
@@ -114,11 +114,19 @@
       },
       "preferences": {
         "title": "Preferenze della lista",
-        "body": "Le opzioni specifiche della lista si trovano nel menu con i tre puntini. Visualizza i dettagli, passa alla checklist, condividi la lista e altro."
+        "body": "Condividi, visualizza dettagli, modalità checklist, personalizza lo sfondo della lista e altro — tutto in questa barra."
       },
       "settings": {
         "title": "Impostazioni globali",
         "body": "Le impostazioni globali dell’account sono disponibili nel menu della barra superiore."
+      },
+      "myGearView": {
+        "title": "Il tuo inventario attrezzatura",
+        "body": "Tutta l'attrezzatura aggiunta in tutte le tue liste si trova qui. Filtra per attrezzatura posseduta, lista desideri o attrezzatura salvata da un altro pack."
+      },
+      "addGear": {
+        "title": "Aggiungi al tuo inventario",
+        "body": "Tocca + per aprire il cassetto di aggiunta rapida e costruire rapidamente la tua libreria personale di attrezzatura senza dover aggiungere articoli a una lista specifica prima."
       }
     }
   },

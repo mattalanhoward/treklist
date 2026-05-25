@@ -82,11 +82,11 @@
       },
       "lists": {
         "title": "Your Gear Lists",
-        "body": "Click + to create a new list and fill in trip details right away."
+        "body": "Your gear list is where the planning happens — organize gear by category, track weights, and build the perfect kit for each trip."
       },
       "myGear": {
         "title": "My Gear",
-        "body": "Click “My Gear” to open and manage your gear inventory. Use the “+” button to add catalog items or create custom ones from the sidebar."
+        "body": "Click My Gear to switch to your personal gear inventory."
       },
       "templates": {
         "title": "Templates",
@@ -114,11 +114,19 @@
       },
       "preferences": {
         "title": "Gear List Preferences",
-        "body": "Gear-list-specific options live in the ellipsis menu. View details, switch to checklist mode, share your list, and more."
+        "body": "Share, view details, switch to checklist mode, customize your list background, and more — all in this toolbar."
       },
       "settings": {
         "title": "Global Settings",
         "body": "Global account settings are available in the top bar menu."
+      },
+      "myGearView": {
+        "title": "Your Gear Inventory",
+        "body": "Every item you've added across all your lists lives here. Filter by owned gear, wishlist, or gear saved from another pack."
+      },
+      "addGear": {
+        "title": "Add to Your Inventory",
+        "body": "Tap + to open the quick-add drawer and build your personal gear library quickly without having to add items to a specific list first."
       }
     }
   },
