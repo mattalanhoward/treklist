@@ -17,17 +17,19 @@ import useAuth from "../hooks/useAuth";
 
 // key = translation lookup key; value = API filter value (must stay English)
 const CHIPS = [
-  { key: "sleep",       value: "Sleep System" },
-  { key: "shelter",     value: "Shelter" },
-  { key: "packs",       value: "Backpacks & Bags" },
-  { key: "clothing",    value: "Unisex Clothing" },
-  { key: "footwear",    value: "Footwear" },
-  { key: "kitchen",     value: "Kitchen & Cooking" },
-  { key: "hydration",   value: "Hydration" },
-  { key: "electronics", value: "Electronics & Power" },
-  { key: "tools",       value: "Accessories & Tools" },
-  { key: "health",      value: "Health & Hygiene" },
-  { key: "navigation",  value: "Navigation & Planning" },
+  { key: "sleep",          value: "Sleep System" },
+  { key: "shelter",        value: "Shelter" },
+  { key: "packs",          value: "Backpacks & Bags" },
+  { key: "mensClothing",   value: "Men's Clothing" },
+  { key: "womensClothing", value: "Women's Clothing" },
+  { key: "clothing",       value: "Unisex Clothing" },
+  { key: "footwear",       value: "Footwear" },
+  { key: "kitchen",        value: "Kitchen & Cooking" },
+  { key: "hydration",      value: "Hydration" },
+  { key: "electronics",    value: "Electronics & Power" },
+  { key: "tools",          value: "Accessories & Tools" },
+  { key: "health",         value: "Health & Hygiene" },
+  { key: "navigation",     value: "Navigation & Planning" },
 ];
 
 function normalize(str = "") {
