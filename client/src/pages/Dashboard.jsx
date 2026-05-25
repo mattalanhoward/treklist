@@ -248,6 +248,7 @@ export default function Dashboard() {
       body: t("tour.steps.wishlist.body"),
       target: '[data-tour="item-wishlist"]',
       spotlightRadius: "8px",
+      spotlightPadding: 10,
       onEnter: ({ isMobile }) => {
         setActivePane("gear");
         if (isMobile) setSidebarCollapsed(true); // keep closed
@@ -258,6 +259,7 @@ export default function Dashboard() {
       body: t("tour.steps.swap.body"),
       target: '[data-tour="item-swap"]',
       spotlightRadius: "8px",
+      spotlightPadding: 10,
       onEnter: ({ isMobile }) => {
         setActivePane("gear");
         if (isMobile) setSidebarCollapsed(true); // keep closed
@@ -268,6 +270,7 @@ export default function Dashboard() {
       body: t("tour.steps.preferences.body"),
       target: '[data-tour="list-preferences-bar"]',
       spotlightRadius: "8px",
+      spotlightPadding: 10,
       onEnter: ({ isMobile }) => {
         setActivePane("gear");
         if (isMobile) setSidebarCollapsed(true); // keep closed
