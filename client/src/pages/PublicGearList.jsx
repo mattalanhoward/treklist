@@ -164,7 +164,7 @@ export default function PublicGearList() {
       ); // success → go to new list
       const newId = resp.listId || resp.list?._id;
       if (newId) {
-        navigate(`/dashboard/${newId}`, { replace: true });
+        navigate(`/dashboard/${newId}`, { replace: true, state: { fromShareCopy: true } });
       } else {
         // Safety net: if API shape changes
         window.location.href = "/dashboard";
@@ -181,7 +181,7 @@ export default function PublicGearList() {
           );
           const newId2 = retry.listId || retry.list?._id;
           if (newId2) {
-            navigate(`/dashboard/${newId2}`, { replace: true });
+            navigate(`/dashboard/${newId2}`, { replace: true, state: { fromShareCopy: true } });
             return;
           }
         } catch {

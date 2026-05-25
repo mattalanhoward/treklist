@@ -426,6 +426,23 @@ export default function Dashboard() {
     localStorage.setItem("lastListId", listId);
   }, [listId]);
 
+  // ─── Start tour for users who arrive via share-link copy+signup ───
+  const fromShareCopy = location.state?.fromShareCopy ?? false;
+  const copyTourStartedRef = useRef(false);
+  useEffect(() => {
+    if (!fromShareCopy) return;
+    if (!user) return;
+    if (hasSeenTour) return;
+    if (!listId) return;
+    if (copyTourStartedRef.current) return;
+    copyTourStartedRef.current = true;
+    const timer = setTimeout(() => {
+      setTourStep(0);
+      setIsTourOpen(true);
+    }, 350);
+    return () => clearTimeout(timer);
+  }, [listId, fromShareCopy, user, hasSeenTour]);
+
   // ─── Redirect logic ───
   useEffect(() => {
     if (!isAuthenticated) return;
