@@ -2420,6 +2420,45 @@ const SCHEMAS = {
   },
 
   // ===========================================================================
+  // CLOTHING - WOMEN'S
+  // ===========================================================================
+
+  Bra: {
+    fields: {
+      style: {
+        type: "enum",
+        required: true,
+        label: "Style",
+        options: [
+          "Sports Bra",
+          "Underwire",
+          "Bralette",
+          "Racerback",
+          "Strapless",
+        ],
+      },
+      material: {
+        type: "enum",
+        required: true,
+        label: "Material",
+        options: ["Merino Wool", "Synthetic", "Wool Blend", "Cotton", "Nylon"],
+      },
+      impactLevel: {
+        type: "enum",
+        required: false,
+        label: "Impact Level",
+        options: ["Low", "Medium", "High"],
+      },
+      underwire: {
+        type: "boolean",
+        required: false,
+        label: "Underwire",
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  // ===========================================================================
   // CLOTHING - SOCKS
   // ===========================================================================
 
