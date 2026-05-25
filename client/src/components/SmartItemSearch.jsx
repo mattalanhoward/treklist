@@ -7,7 +7,7 @@ import { FiSearch, FiX, FiPlus, FiLoader, FiCamera } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import api from "../services/api";
-import { CATALOG_CATEGORIES, CATALOG_SUBCATEGORIES } from "../config/catalogTaxonomy";
+import { CATALOG_CATEGORIES, CATALOG_SUBCATEGORIES, tCategory } from "../config/catalogTaxonomy";
 import { useUnit } from "../hooks/useUnit";
 import { useWeightInput } from "../hooks/useWeightInput";
 import Spinner from "./ui/Spinner";
@@ -790,9 +790,9 @@ export default function SmartItemSearch({
                 className="flex-1 min-w-0 border border-primary/20 rounded-lg px-2 py-1.5 text-xs text-primary bg-base-100 cursor-pointer"
               >
                 <option value="">{t("smartItemSearch.allCategories", "All Categories")}</option>
-                {CHIPS.map((chip) => (
-                  <option key={chip.value} value={chip.value}>
-                    {t(`smartItemSearch.sidebarCategories.${chip.key}`, chip.value)}
+                {CATALOG_CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {tCategory(t, cat)}
                   </option>
                 ))}
               </select>
