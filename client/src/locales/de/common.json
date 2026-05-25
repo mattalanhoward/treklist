@@ -305,7 +305,10 @@
       "simpleBody": "Starte mit einer Beispielliste oder erstelle eine leere Liste nach deinen Wünschen.",
       "buttonNewList": "Neue Liste",
       "buttonSampleList": "Beispielliste laden",
-      "buttonSampleListLoading": "Beispielliste wird geladen…"
+      "buttonSampleListLoading": "Beispielliste wird geladen…",
+      "tourPromptTitle": "Möchtest du zuerst eine geführte Tour?",
+      "tourPromptBody": "Lade eine Beispielliste, um alles zu sehen, was TrekList kann — du kannst sie danach löschen.",
+      "tourPromptContinue": "Ohne Tour fortfahren"
     },
     "toasts": {
       "loadListsFailed": "Deine Packlisten konnten nicht geladen werden",

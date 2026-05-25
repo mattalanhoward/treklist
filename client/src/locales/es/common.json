@@ -305,7 +305,10 @@
       "simpleBody": "Empieza con una lista de ejemplo o crea una en blanco para personalizarla.",
       "buttonNewList": "Nueva lista",
       "buttonSampleList": "Cargar lista de ejemplo",
-      "buttonSampleListLoading": "Cargando lista de ejemplo…"
+      "buttonSampleListLoading": "Cargando lista de ejemplo…",
+      "tourPromptTitle": "¿Quieres un tour guiado primero?",
+      "tourPromptBody": "Carga una lista de ejemplo para ver todo lo que TrekList puede hacer — puedes eliminarla cuando quieras.",
+      "tourPromptContinue": "Continuar sin tour"
     },
     "toasts": {
       "loadListsFailed": "No se pudieron cargar tus listas de equipo",

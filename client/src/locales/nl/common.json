@@ -305,7 +305,10 @@
       "simpleBody": "Begin met een voorbeeldlijst of maak een lege lijst naar jouw wensen.",
       "buttonNewList": "Nieuwe lijst",
       "buttonSampleList": "Voorbeeldlijst laden",
-      "buttonSampleListLoading": "Voorbeeldlijst laden…"
+      "buttonSampleListLoading": "Voorbeeldlijst laden…",
+      "tourPromptTitle": "Wil je eerst een rondleiding?",
+      "tourPromptBody": "Laad een voorbeeldlijst om alles te zien wat TrekList kan — je kunt hem daarna verwijderen.",
+      "tourPromptContinue": "Doorgaan zonder rondleiding"
     },
     "toasts": {
       "loadListsFailed": "Je paklijsten konden niet worden geladen",

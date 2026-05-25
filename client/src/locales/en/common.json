@@ -312,7 +312,10 @@
       "simpleBody": "Start with a sample list, or create a blank one to build your own.",
       "buttonNewList": "New list",
       "buttonSampleList": "Load sample list",
-      "buttonSampleListLoading": "Loading sample list…"
+      "buttonSampleListLoading": "Loading sample list…",
+      "tourPromptTitle": "Want a guided tour first?",
+      "tourPromptBody": "Load a sample list to see everything TrekList can do — you can delete it when you're done.",
+      "tourPromptContinue": "Continue without tour"
     },
     "toasts": {
       "loadListsFailed": "Could not load your gear lists",
