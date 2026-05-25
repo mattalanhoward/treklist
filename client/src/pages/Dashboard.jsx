@@ -247,6 +247,7 @@ export default function Dashboard() {
       title: t("tour.steps.wishlist.title"),
       body: t("tour.steps.wishlist.body"),
       target: '[data-tour="item-wishlist"]',
+      spotlightRadius: "8px",
       onEnter: ({ isMobile }) => {
         setActivePane("gear");
         if (isMobile) setSidebarCollapsed(true); // keep closed
@@ -256,6 +257,7 @@ export default function Dashboard() {
       title: t("tour.steps.swap.title"),
       body: t("tour.steps.swap.body"),
       target: '[data-tour="item-swap"]',
+      spotlightRadius: "8px",
       onEnter: ({ isMobile }) => {
         setActivePane("gear");
         if (isMobile) setSidebarCollapsed(true); // keep closed
@@ -264,7 +266,8 @@ export default function Dashboard() {
     {
       title: t("tour.steps.preferences.title"),
       body: t("tour.steps.preferences.body"),
-      target: '[data-tour="list-preferences-menu"]',
+      target: '[data-tour="list-preferences-bar"]',
+      spotlightRadius: "8px",
       onEnter: ({ isMobile }) => {
         setActivePane("gear");
         if (isMobile) setSidebarCollapsed(true); // keep closed

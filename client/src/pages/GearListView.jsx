@@ -1195,7 +1195,7 @@ export default function GearListView({
           </div>
 
           {/* Share + Details + Lock + Ellipsis menu grouped together */}
-          <div className="flex items-center gap-4">
+          <div data-tour="list-preferences-bar" className="flex items-center gap-4">
             {/* Share button - desktop only */}
             <button
               onClick={() => setShareOpen(true)}
