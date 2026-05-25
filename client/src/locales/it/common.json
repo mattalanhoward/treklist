@@ -250,7 +250,7 @@
     },
     "messages": {
       "emailImmutable": "L'email non può essere modificata qui",
-      "contactSupportPrompt": "Hai bisogno di aiuto con la tua email o nome utente? Scrivici a",
+      "contactSupportPrompt": "Hai bisogno di aiuto con la tua email o nome da trail? Scrivici a",
       "trailnameLocked": "Potrai cambiare il tuo nome da trail il {{date}}."
     },
     "errors": {
@@ -305,7 +305,10 @@
       "simpleBody": "Inizia con una lista di esempio oppure creane una vuota da personalizzare.",
       "buttonNewList": "Nuova lista",
       "buttonSampleList": "Carica lista di esempio",
-      "buttonSampleListLoading": "Caricamento lista di esempio…"
+      "buttonSampleListLoading": "Caricamento lista di esempio…",
+      "tourPromptTitle": "Vuoi prima un tour guidato?",
+      "tourPromptBody": "Carica una lista di esempio per vedere tutto ciò che TrekList può fare — puoi eliminarla quando vuoi.",
+      "tourPromptContinue": "Continua senza tour"
     },
     "toasts": {
       "loadListsFailed": "Impossibile caricare le tue liste",

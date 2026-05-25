@@ -45,9 +45,19 @@ function DashboardEmptyState({
   onCreateSampleList,
   creatingSample,
   onCreateNewList,
+  hasSeenTour,
 }) {
   const { t } = useTranslation("common");
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showTourPrompt, setShowTourPrompt] = useState(false);
+
+  const handleNewListClick = () => {
+    if (!hasSeenTour) {
+      setShowTourPrompt(true);
+    } else {
+      setShowCreateModal(true);
+    }
+  };
 
   // While lists are loading (or we already have lists and redirect is about to run),
   // don’t flash the welcome/empty state.
@@ -68,38 +78,80 @@ function DashboardEmptyState({
   // True first-time / zero-list state
   return (
     <div className="h-full flex items-center justify-center px-4">
-      <div className="text-center space-y-3">
-        <h1 className="text-lg sm:text-xl font-semibold text-primary">
-          {t("dashboard.empty.simpleTitle", "Create a list to begin")}
-        </h1>
-        <p className="text-sm text-primary/80">
-          {t(
-            "dashboard.empty.simpleBody",
-            "Start with a sample list, or create a blank one to build your own.",
-          )}
-        </p>
-
-        <div className="flex items-center justify-center gap-2">
-          <button
-            type="button"
-            onClick={() => setShowCreateModal(true)}
-            className="inline-flex items-center justify-center rounded px-4 py-2 text-sm font-medium border border-primary/30 text-primary hover:bg-primary/5"
-          >
-            {t("dashboard.empty.buttonNewList", "New list")}
-          </button>
-          <button
-            type="button"
-            onClick={onCreateSampleList}
-            disabled={creatingSample}
-            className={`inline-flex items-center justify-center rounded px-4 py-2 text-sm font-medium text-white bg-secondary hover:bg-secondary/80 ${
-              creatingSample ? "opacity-60 cursor-not-allowed" : ""
-            }`}
-          >
-            {creatingSample
-              ? t("dashboard.empty.buttonSampleListLoading")
-              : t("dashboard.empty.buttonSampleList", "Load sample list")}
-          </button>
-        </div>
+      <div className="text-center space-y-3 max-w-sm">
+        {showTourPrompt ? (
+          <>
+            <h1 className="text-lg sm:text-xl font-semibold text-primary">
+              {t("dashboard.empty.tourPromptTitle", "Want a guided tour first?")}
+            </h1>
+            <p className="text-sm text-primary/80">
+              {t(
+                "dashboard.empty.tourPromptBody",
+                "Load a sample list to see everything TrekList can do — you can delete it when you’re done.",
+              )}
+            </p>
+            <div className="flex items-center justify-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowTourPrompt(false);
+                  setShowCreateModal(true);
+                }}
+                className="inline-flex items-center justify-center rounded px-4 py-2 text-sm font-medium border border-primary/30 text-primary hover:bg-primary/5"
+              >
+                {t("dashboard.empty.tourPromptContinue", "Continue without tour")}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowTourPrompt(false);
+                  onCreateSampleList();
+                }}
+                disabled={creatingSample}
+                className={`inline-flex items-center justify-center rounded px-4 py-2 text-sm font-medium text-white bg-secondary hover:bg-secondary/80 ${
+                  creatingSample ? "opacity-60 cursor-not-allowed" : ""
+                }`}
+              >
+                {creatingSample
+                  ? t("dashboard.empty.buttonSampleListLoading")
+                  : t("dashboard.empty.buttonSampleList", "Load sample list")}
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <h1 className="text-lg sm:text-xl font-semibold text-primary">
+              {t("dashboard.empty.simpleTitle", "Create a list to begin")}
+            </h1>
+            <p className="text-sm text-primary/80">
+              {t(
+                "dashboard.empty.simpleBody",
+                "Start with a sample list, or create a blank one to build your own.",
+              )}
+            </p>
+            <div className="flex items-center justify-center gap-2">
+              <button
+                type="button"
+                onClick={handleNewListClick}
+                className="inline-flex items-center justify-center rounded px-4 py-2 text-sm font-medium border border-primary/30 text-primary hover:bg-primary/5"
+              >
+                {t("dashboard.empty.buttonNewList", "New list")}
+              </button>
+              <button
+                type="button"
+                onClick={onCreateSampleList}
+                disabled={creatingSample}
+                className={`inline-flex items-center justify-center rounded px-4 py-2 text-sm font-medium text-white bg-secondary hover:bg-secondary/80 ${
+                  creatingSample ? "opacity-60 cursor-not-allowed" : ""
+                }`}
+              >
+                {creatingSample
+                  ? t("dashboard.empty.buttonSampleListLoading")
+                  : t("dashboard.empty.buttonSampleList", "Load sample list")}
+              </button>
+            </div>
+          </>
+        )}
       </div>
 
       <CreateListModal
@@ -745,6 +797,7 @@ export default function Dashboard() {
                 listsLoading={listsLoading}
                 onCreateSampleList={handleCreateSampleList}
                 creatingSample={creatingSample}
+                hasSeenTour={hasSeenTour}
                 onCreateNewList={(id) => {
                   fetchLists();
                   localStorage.setItem("lastListId", id);
