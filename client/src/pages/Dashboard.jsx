@@ -277,6 +277,28 @@ export default function Dashboard() {
       },
     },
     {
+      title: t("tour.steps.myGearView.title"),
+      body: t("tour.steps.myGearView.body"),
+      target: '[data-tour="mygear-header"]',
+      spotlightRadius: "8px",
+      spotlightPadding: 6,
+      onEnter: ({ isMobile }) => {
+        setActivePane("myGear");
+        if (isMobile) setSidebarCollapsed(true);
+      },
+    },
+    {
+      title: t("tour.steps.addGear.title"),
+      body: t("tour.steps.addGear.body"),
+      target: '[data-tour="mygear-add-item"]',
+      spotlightRadius: "8px",
+      spotlightPadding: 10,
+      onEnter: ({ isMobile }) => {
+        setActivePane("myGear");
+        if (isMobile) setSidebarCollapsed(true);
+      },
+    },
+    {
       title: t("tour.steps.settings.title"),
       body: t("tour.steps.settings.body"),
       target: '[data-tour="settings-menu"]',

@@ -325,7 +325,7 @@ export default function MyGearView({ collapsed }) {
       showDrawer ? "sm:w-[calc(100%-420px)]" : "w-full"
     }`}>
       {/* Header - single row on desktop, stacked on mobile */}
-      <div className="flex-shrink-0 px-4 py-2 border-b border-primary/10 bg-base-100">
+      <div data-tour="mygear-header" className="flex-shrink-0 px-4 py-2 border-b border-primary/10 bg-base-100">
         {/* Desktop: single row */}
         <div className="hidden sm:flex items-center justify-between gap-4">
           {/* Left: Title */}
@@ -406,6 +406,7 @@ export default function MyGearView({ collapsed }) {
             {/* Add / toggle drawer */}
             {!showDrawer && (
               <button
+                data-tour="mygear-add-item"
                 type="button"
                 onClick={openDrawer}
                 className="p-1 text-secondary hover:text-secondary/80 rounded"
@@ -533,6 +534,7 @@ export default function MyGearView({ collapsed }) {
               {/* Add / toggle drawer */}
               {!showDrawer && (
                 <button
+                  data-tour="mygear-add-item"
                   type="button"
                   onClick={openDrawer}
                   className="p-1 text-secondary hover:text-secondary/80 rounded"

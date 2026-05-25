@@ -119,6 +119,14 @@
       "settings": {
         "title": "Algemene instellingen",
         "body": "Algemene accountinstellingen vind je in het menu in de bovenbalk."
+      },
+      "myGearView": {
+        "title": "Jouw uitrustingsinventaris",
+        "body": "Al het uitrusting dat je aan al je lijsten hebt toegevoegd, staat hier. Filter op bezit, verlanglijst of uitrusting opgeslagen vanuit een ander pack."
+      },
+      "addGear": {
+        "title": "Toevoegen aan je inventaris",
+        "body": "Tik op + om de snel-toevoegen-lade te openen — bouw je persoonlijke uitrustingsbibliotheek zonder items eerst aan een specifieke lijst toe te voegen."
       }
     }
   },

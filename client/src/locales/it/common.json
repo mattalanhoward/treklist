@@ -119,6 +119,14 @@
       "settings": {
         "title": "Impostazioni globali",
         "body": "Le impostazioni globali dell’account sono disponibili nel menu della barra superiore."
+      },
+      "myGearView": {
+        "title": "Il tuo inventario attrezzatura",
+        "body": "Tutta l'attrezzatura aggiunta in tutte le tue liste si trova qui. Filtra per attrezzatura posseduta, lista desideri o attrezzatura salvata da un altro pack."
+      },
+      "addGear": {
+        "title": "Aggiungi al tuo inventario",
+        "body": "Tocca + per aprire il cassetto di aggiunta rapida — costruisci la tua libreria personale di attrezzatura senza dover aggiungere articoli a una lista specifica prima."
       }
     }
   },

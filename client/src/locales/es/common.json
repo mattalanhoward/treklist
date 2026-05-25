@@ -119,6 +119,14 @@
       "settings": {
         "title": "Configuración global",
         "body": "La configuración global de la cuenta está disponible en el menú de la barra superior."
+      },
+      "myGearView": {
+        "title": "Tu inventario de equipo",
+        "body": "Todo el equipo que hayas añadido en todas tus listas está aquí. Filtra por equipo propio, lista de deseos o equipo guardado de otro pack."
+      },
+      "addGear": {
+        "title": "Añadir a tu inventario",
+        "body": "Toca + para abrir el panel de adición rápida — construye tu biblioteca personal de equipo sin tener que añadir artículos a una lista específica primero."
       }
     }
   },

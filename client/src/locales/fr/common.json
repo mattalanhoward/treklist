@@ -119,6 +119,14 @@
       "settings": {
         "title": "Paramètres globaux",
         "body": "Les paramètres globaux du compte sont accessibles via le menu de la barre supérieure."
+      },
+      "myGearView": {
+        "title": "Votre inventaire de matériel",
+        "body": "Tout le matériel ajouté dans toutes vos listes se trouve ici. Filtrez par matériel possédé, liste de souhaits ou matériel enregistré depuis un autre pack."
+      },
+      "addGear": {
+        "title": "Ajouter à votre inventaire",
+        "body": "Appuyez sur + pour ouvrir le tiroir d'ajout rapide — constituez votre bibliothèque personnelle de matériel sans avoir à ajouter des articles à une liste spécifique d'abord."
       }
     }
   },

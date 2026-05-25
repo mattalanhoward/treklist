@@ -119,6 +119,14 @@
       "settings": {
         "title": "Globale Einstellungen",
         "body": "Globale Kontoeinstellungen findest du im Menü der oberen Leiste."
+      },
+      "myGearView": {
+        "title": "Dein Ausrüstungs-Inventar",
+        "body": "Jedes Ausrüstungsstück aus all deinen Listen findest du hier. Filtere nach eigener Ausrüstung, Wunschliste oder Ausrüstung aus einem anderen gespeicherten Pack."
+      },
+      "addGear": {
+        "title": "Zum Inventar hinzufügen",
+        "body": "Tippe auf +, um das Schnellhinzufüge-Fenster zu öffnen – füge Gegenstände deiner persönlichen Ausrüstungsbibliothek hinzu, ohne sie einer bestimmten Liste zuordnen zu müssen."
       }
     }
   },

@@ -119,6 +119,14 @@
       "settings": {
         "title": "Global Settings",
         "body": "Global account settings are available in the top bar menu."
+      },
+      "myGearView": {
+        "title": "Your Gear Inventory",
+        "body": "Every item you've added across all your lists lives here. Filter by owned gear, wishlist, or gear saved from another pack."
+      },
+      "addGear": {
+        "title": "Add to Your Inventory",
+        "body": "Tap + to open the quick-add drawer — build your personal gear library without having to add items to a specific list first."
       }
     }
   },
