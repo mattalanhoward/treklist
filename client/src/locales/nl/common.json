@@ -250,7 +250,7 @@
     },
     "messages": {
       "emailImmutable": "E-mail kan hier niet worden aangepast",
-      "contactSupportPrompt": "Hulp nodig met uw e-mail of gebruikersnaam? Mail ons op",
+      "contactSupportPrompt": "Hulp nodig met uw e-mail of trailnaam? Mail ons op",
       "trailnameLocked": "Je kunt je trailnaam weer wijzigen op {{date}}."
     },
     "errors": {

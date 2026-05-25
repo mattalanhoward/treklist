@@ -257,7 +257,7 @@
     },
     "messages": {
       "emailImmutable": "L’email ne peut pas être modifié ici",
-      "contactSupportPrompt": "Besoin d’aide avec votre e-mail ou nom d’utilisateur ? Écrivez-nous à",
+      "contactSupportPrompt": "Besoin d’aide avec votre e-mail ou nom de trail ? Écrivez-nous à",
       "trailnameLocked": "Vous pourrez changer votre nom de trail le {{date}}."
     },
     "errors": {

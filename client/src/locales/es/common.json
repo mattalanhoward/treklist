@@ -250,7 +250,7 @@
     },
     "messages": {
       "emailImmutable": "El correo no se puede cambiar aquí",
-      "contactSupportPrompt": "¿Necesita ayuda con su correo o nombre de usuario? Escríbanos a",
+      "contactSupportPrompt": "¿Necesita ayuda con su correo o nombre de sendero? Escríbanos a",
       "trailnameLocked": "Podrás cambiar tu nombre de sendero el {{date}}."
     },
     "errors": {
