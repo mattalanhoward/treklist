@@ -46,6 +46,14 @@ const UserSchema = new mongoose.Schema(
       required: false,
       trim: true,
     },
+    trailnameConfirmed: {
+      type: Boolean,
+      default: false,
+    },
+    trailnameChangedAt: {
+      type: Date,
+      default: null,
+    },
     passwordHash: {
       type: String,
       required: false, // Optional to support OAuth users (Google, etc.)
@@ -98,6 +106,18 @@ const UserSchema = new mongoose.Schema(
   {
     timestamps: true,
   },
+);
+
+// Unique index on non-empty trailnames only (case-insensitive).
+// partialFilterExpression excludes null, undefined, and empty-string trailnames so
+// users without a confirmed trailname don't collide.
+UserSchema.index(
+  { trailname: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { trailname: { $type: "string", $gt: "" } },
+    collation: { locale: "en", strength: 2 },
+  }
 );
 
 // Helper to set the password

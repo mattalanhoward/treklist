@@ -129,6 +129,24 @@ export default function AuthModal({
       return;
     }
 
+    const trimmedTrailname = trailname.trim();
+    if (!trimmedTrailname) {
+      setErr(t("trailnamePrompt.errorEmpty"));
+      return;
+    }
+    if (trimmedTrailname.length < 2) {
+      setErr(t("trailnamePrompt.errorTooShort"));
+      return;
+    }
+    if (trimmedTrailname.length > 30) {
+      setErr(t("trailnamePrompt.errorTooLong"));
+      return;
+    }
+    if (!/^[a-zA-Z0-9_'-]+$/.test(trimmedTrailname)) {
+      setErr(t("trailnamePrompt.errorChars"));
+      return;
+    }
+
     setLoading(true);
     const safeRegion = String(region || "gb").toLowerCase();
     const safeLanguage = String(language || "en").toLowerCase();
@@ -136,7 +154,7 @@ export default function AuthModal({
     try {
       await api.post("/auth/register", {
         email,
-        trailname,
+        trailname: trimmedTrailname,
         password,
         acceptTerms,
         marketingOptIn,
@@ -150,9 +168,17 @@ export default function AuthModal({
     } catch (e) {
       const backendMsg = e?.response?.data?.message;
 
+      const code = e?.response?.data?.code;
       if (backendMsg === "Email already in use.") {
-        // Map known backend message to a translated string
         setErr(t("auth.errors.emailInUse"));
+      } else if (code === "TRAILNAME_TAKEN") {
+        setErr(t("trailnamePrompt.errorTaken"));
+      } else if (code === "TRAILNAME_CHARS") {
+        setErr(t("trailnamePrompt.errorChars"));
+      } else if (code === "TRAILNAME_LENGTH") {
+        setErr(t("trailnamePrompt.errorTooShort"));
+      } else if (code === "TRAILNAME_EMPTY") {
+        setErr(t("trailnamePrompt.errorEmpty"));
       } else {
         setErr(backendMsg || t("auth.errors.registerFailed"));
       }
@@ -427,6 +453,7 @@ export default function AuthModal({
                   className="mt-1 w-full border border-primary rounded p-2 text-primary text-sm bg-white"
                   value={trailname}
                   onChange={(e) => setTrailname(e.target.value)}
+                  maxLength={30}
                   autoComplete="nickname"
                 />
               </label>

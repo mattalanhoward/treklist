@@ -160,7 +160,7 @@
     "labels": {
       "email": "Correo electrónico",
       "password": "Contraseña",
-      "trailNameOptional": "Apodo / Nombre de sendero (opcional)"
+      "trailNameOptional": "Nombre de usuario (tu nombre de sendero)"
     },
     "links": {
       "forgotPassword": "¿Olvidaste tu contraseña?"
@@ -243,14 +243,15 @@
     },
     "labels": {
       "email": "Correo electrónico",
-      "trailname": "Apodo / Nombre de sendero",
+      "trailname": "Nombre de sendero",
       "currentPassword": "Contraseña actual",
       "newPassword": "Nueva contraseña",
       "confirmNewPassword": "Confirmar nueva contraseña"
     },
     "messages": {
       "emailImmutable": "El correo no se puede cambiar aquí",
-      "marketingHint": "Puedes cambiar esta preferencia en cualquier momento."
+      "contactSupportPrompt": "¿Necesita ayuda con su correo o nombre de usuario? Escríbanos a",
+      "trailnameLocked": "Podrás cambiar tu nombre de sendero el {{date}}."
     },
     "errors": {
       "passwordMismatch": "La nueva contraseña y la confirmación no coinciden.",
@@ -263,6 +264,27 @@
       "saveFailed": "No se pudieron guardar los ajustes. Inténtalo de nuevo."
     },
     "loading": "Cargando…"
+  },
+  "trailnamePrompt": {
+    "title": "Elige tu nombre de sendero",
+    "description": "Tu nombre de sendero es tu identidad pública en la comunidad. Elige uno con el que estés satisfecho — puede actualizarse en cualquier momento en la configuración de la cuenta, pero solo una vez cada 30 días.",
+    "label": "Nombre de sendero",
+    "placeholder": "p. ej. CaminanteSalvaje",
+    "charCount": "{{count}}/30 caracteres",
+    "continue": "Continuar",
+    "confirmTitle": "Confirmar nombre de sendero",
+    "confirmSetting": "Vas a establecer tu nombre de sendero como:",
+    "confirmWarning": "Por favor, comprueba que es correcto. No podrás cambiar tu nombre de sendero durante 30 días.",
+    "goBack": "Volver",
+    "saving": "Guardando…",
+    "yesConfirm": "Sí, confirmar",
+    "errorEmpty": "El nombre de sendero no puede estar vacío.",
+    "errorTooShort": "Debe tener al menos 2 caracteres.",
+    "errorTooLong": "Debe tener 30 caracteres o menos.",
+    "errorChars": "Solo se permiten letras, números, guiones, apóstrofes y guiones bajos.",
+    "errorTaken": "Ese nombre de sendero ya está en uso. Por favor, elige otro.",
+    "errorRateLimit": "Solo puedes cambiar tu nombre de sendero una vez cada 30 días.",
+    "errorGeneric": "Algo salió mal. Por favor, inténtalo de nuevo."
   },
   "verifyEmailPage": {
     "loading": "Verificando tu correo…",

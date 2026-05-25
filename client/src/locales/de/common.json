@@ -160,7 +160,7 @@
     "labels": {
       "email": "E-Mail",
       "password": "Passwort",
-      "trailNameOptional": "Spitzname / Trailname (optional)"
+      "trailNameOptional": "Benutzername (dein Trailname)"
     },
     "links": {
       "forgotPassword": "Passwort vergessen?"
@@ -243,14 +243,15 @@
     },
     "labels": {
       "email": "E-Mail",
-      "trailname": "Spitzname / Trailname)",
+      "trailname": "Trailname",
       "currentPassword": "Aktuelles Passwort",
       "newPassword": "Neues Passwort",
       "confirmNewPassword": "Neues Passwort bestätigen"
     },
     "messages": {
       "emailImmutable": "E-Mail kann hier nicht geändert werden",
-      "marketingHint": "Du kannst diese Einstellung jederzeit ändern."
+      "contactSupportPrompt": "Hilfe mit Ihrer E-Mail oder Ihrem Benutzernamen? Schreiben Sie uns an",
+      "trailnameLocked": "Du kannst deinen Trailnamen wieder am {{date}} ändern."
     },
     "errors": {
       "passwordMismatch": "Neues Passwort und Bestätigung stimmen nicht überein.",
@@ -263,6 +264,27 @@
       "saveFailed": "Einstellungen konnten nicht gespeichert werden. Bitte versuche es erneut."
     },
     "loading": "Laden…"
+  },
+  "trailnamePrompt": {
+    "title": "Lege deinen Trailnamen fest",
+    "description": "Dein Trailname ist deine öffentliche Identität in der Community. Wähle einen Namen, mit dem du zufrieden bist — er kann jederzeit in den Kontoeinstellungen geändert werden, aber nur einmal alle 30 Tage.",
+    "label": "Trailname",
+    "placeholder": "z. B. WildnisWanderer",
+    "charCount": "{{count}}/30 Zeichen",
+    "continue": "Weiter",
+    "confirmTitle": "Trailnamen bestätigen",
+    "confirmSetting": "Du legst deinen Trailnamen fest auf:",
+    "confirmWarning": "Bitte überprüfe dies sorgfältig. Du kannst deinen Trailnamen erst nach 30 Tagen wieder ändern.",
+    "goBack": "Zurück",
+    "saving": "Wird gespeichert…",
+    "yesConfirm": "Ja, bestätigen",
+    "errorEmpty": "Trailname darf nicht leer sein.",
+    "errorTooShort": "Muss mindestens 2 Zeichen lang sein.",
+    "errorTooLong": "Darf maximal 30 Zeichen lang sein.",
+    "errorChars": "Nur Buchstaben, Zahlen, Bindestriche, Apostrophe und Unterstriche erlaubt.",
+    "errorTaken": "Dieser Trailname ist bereits vergeben. Bitte wähle einen anderen.",
+    "errorRateLimit": "Du kannst deinen Trailnamen nur einmal alle 30 Tage ändern.",
+    "errorGeneric": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
   },
   "verifyEmailPage": {
     "loading": "Deine E-Mail wird bestätigt…",

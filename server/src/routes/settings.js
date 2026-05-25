@@ -21,6 +21,8 @@ router.get("/", async (req, res) => {
     const {
       email,
       trailname,
+      trailnameConfirmed,
+      trailnameChangedAt,
       createdAt,
       viewMode,
       locale,
@@ -38,6 +40,8 @@ router.get("/", async (req, res) => {
     res.json({
       email,
       trailname,
+      trailnameConfirmed: !!trailnameConfirmed,
+      trailnameChangedAt: trailnameChangedAt || null,
       createdAt,
       viewMode,
       locale,
@@ -149,8 +153,58 @@ router.patch("/", async (req, res) => {
       delete updates.currentPassword;
     }
 
+    // --- Handle trailname separately: validate, unique check, rate limit ---
+    if (updates.trailname !== undefined) {
+      const rawTrailname = updates.trailname;
+      delete updates.trailname;
+
+      const next = typeof rawTrailname === "string" ? rawTrailname.trim() : "";
+
+      if (!next) {
+        return res.status(400).json({ message: "Trail name cannot be empty.", code: "TRAILNAME_EMPTY" });
+      }
+      if (next.length < 2 || next.length > 30) {
+        return res.status(400).json({ message: "Trail name must be 2–30 characters.", code: "TRAILNAME_LENGTH" });
+      }
+      if (!/^[a-zA-Z0-9_'-]+$/.test(next)) {
+        return res.status(400).json({ message: "Trail name may only contain letters, numbers, hyphens, apostrophes, and underscores.", code: "TRAILNAME_CHARS" });
+      }
+
+      const currentTrailname = user.trailname || "";
+      const isChanging = next.toLowerCase() !== currentTrailname.toLowerCase();
+
+      if (isChanging) {
+        // 30-day rate limit (admins are exempt)
+        if (!user.isAdmin && user.trailnameChangedAt) {
+          const daysSinceLast = (Date.now() - user.trailnameChangedAt.getTime()) / (1000 * 60 * 60 * 24);
+          if (daysSinceLast < 30) {
+            const daysLeft = Math.ceil(30 - daysSinceLast);
+            return res.status(429).json({
+              message: `You can only change your trail name once every 30 days. Try again in ${daysLeft} day${daysLeft === 1 ? "" : "s"}.`,
+              code: "TRAILNAME_RATE_LIMIT",
+              daysLeft,
+            });
+          }
+        }
+
+        // Uniqueness check (case-insensitive via collation)
+        const conflict = await User.findOne(
+          { _id: { $ne: user._id }, trailname: next },
+          null,
+          { collation: { locale: "en", strength: 2 } }
+        ).lean();
+        if (conflict) {
+          return res.status(409).json({ message: "That trail name is already taken.", code: "TRAILNAME_TAKEN" });
+        }
+
+        user.trailnameChangedAt = new Date();
+      }
+
+      user.trailname = next;
+      user.trailnameConfirmed = true;
+    }
+
     const editable = [
-      "trailname",
       "viewMode",
       "locale",
       "theme",
@@ -169,7 +223,7 @@ router.patch("/", async (req, res) => {
     });
 
     await user.save();
-    res.json({ message: "Settings updated." });
+    res.json({ message: "Settings updated.", trailname: user.trailname, trailnameConfirmed: user.trailnameConfirmed });
   } catch (err) {
     console.error("PATCH /settings error:", err);
     if (err && err.name === "ValidationError") {
@@ -179,6 +233,10 @@ router.patch("/", async (req, res) => {
           Object.entries(err.errors || {}).map(([k, v]) => [k, v?.message])
         ),
       });
+    }
+    // MongoDB duplicate key (race condition on trailname unique index)
+    if (err && err.code === 11000 && err.keyPattern?.trailname) {
+      return res.status(409).json({ message: "That trail name is already taken.", code: "TRAILNAME_TAKEN" });
     }
     res.status(500).json({ message: "Could not update settings." });
   }

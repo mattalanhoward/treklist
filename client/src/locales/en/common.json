@@ -167,7 +167,7 @@
     "labels": {
       "email": "Email",
       "password": "Password",
-      "trailNameOptional": "Nickname / Trail Name (optional)"
+      "trailNameOptional": "Username (your trail name)"
     },
     "links": {
       "forgotPassword": "Forgot password?"
@@ -250,14 +250,15 @@
     },
     "labels": {
       "email": "Email",
-      "trailname": "Nickname / Trail Name",
+      "trailname": "Trail Name",
       "currentPassword": "Current password",
       "newPassword": "New password",
       "confirmNewPassword": "Confirm new password"
     },
     "messages": {
       "emailImmutable": "Email can’t be changed here",
-      "marketingHint": "You can change this preference anytime."
+      "contactSupportPrompt": "Need help with your email or username? Email us at",
+      "trailnameLocked": "You can change your trail name again on {{date}}."
     },
     "errors": {
       "passwordMismatch": "New password and confirmation do not match.",
@@ -270,6 +271,27 @@
       "saveFailed": "Failed to save settings. Please try again."
     },
     "loading": "Loading…"
+  },
+  "trailnamePrompt": {
+    "title": "Set your trail name",
+    "description": "Your trail name is your public identity in the community. Choose something you're happy with — it can be updated anytime in account settings, but only once every 30 days.",
+    "label": "Trail name",
+    "placeholder": "e.g. WildernessWalker",
+    "charCount": "{{count}}/30 characters",
+    "continue": "Continue",
+    "confirmTitle": "Confirm your trail name",
+    "confirmSetting": "You're setting your trail name to:",
+    "confirmWarning": "Please double-check this is correct. You won't be able to change your trail name again for 30 days.",
+    "goBack": "Go back",
+    "saving": "Saving…",
+    "yesConfirm": "Yes, confirm",
+    "errorEmpty": "Trail name cannot be empty.",
+    "errorTooShort": "Must be at least 2 characters.",
+    "errorTooLong": "Must be 30 characters or fewer.",
+    "errorChars": "Only letters, numbers, hyphens, apostrophes, and underscores allowed.",
+    "errorTaken": "That trail name is already taken. Please choose another.",
+    "errorRateLimit": "You can only change your trail name once every 30 days.",
+    "errorGeneric": "Something went wrong. Please try again."
   },
   "verifyEmailPage": {
     "loading": "Verifying your email…",
