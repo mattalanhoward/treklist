@@ -7,6 +7,7 @@ const MerchantOffer = require("../models/merchantOffer");
 
 const auth = require("../middleware/auth");
 const User = require("../models/user");
+const AffiliateProduct = require("../models/affiliateProduct");
 
 const router = express.Router();
 
@@ -137,18 +138,33 @@ router.get("/items", auth, async (req, res) => {
     if (brand) query.brand = brand;
 
     if (q && q.trim()) {
-      const tokens = q.trim().replace(/\s+/g, " ").split(" ").filter(Boolean);
-      const fields = (regex) => [
-        { name: regex },
-        { brand: regex },
-        { tags: regex },
-        { subcategory: regex },
-      ];
-      if (tokens.length === 1) {
-        query.$or = fields(tokenRegex(tokens[0]));
+      const raw = q.trim();
+      // Decathlon item numbers are pure digits (e.g. 8608666 or R-p-8608666)
+      const decathlonMatch = raw.match(/(?:^|R-p-)(\d{6,})$/);
+      if (decathlonMatch) {
+        const code = decathlonMatch[1];
+        const affiliates = await AffiliateProduct.find({ merchantProductId: code })
+          .select("externalProductId")
+          .lean();
+        const skus = affiliates.map((p) => p.externalProductId);
+        if (skus.length === 0) {
+          return res.json([]);
+        }
+        query["externalIds.sku"] = { $in: skus };
       } else {
-        // Each token must match at least one field (handles "Osprey Exos" → brand + name)
-        query.$and = tokens.map((token) => ({ $or: fields(tokenRegex(token)) }));
+        const tokens = raw.replace(/\s+/g, " ").split(" ").filter(Boolean);
+        const fields = (regex) => [
+          { name: regex },
+          { brand: regex },
+          { tags: regex },
+          { subcategory: regex },
+        ];
+        if (tokens.length === 1) {
+          query.$or = fields(tokenRegex(tokens[0]));
+        } else {
+          // Each token must match at least one field (handles "Osprey Exos" → brand + name)
+          query.$and = tokens.map((token) => ({ $or: fields(tokenRegex(token)) }));
+        }
       }
     }
 

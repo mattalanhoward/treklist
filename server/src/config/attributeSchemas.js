@@ -416,7 +416,7 @@ const SCHEMAS = {
         label: "Volume",
         unit: "L",
         min: 20,
-        max: 80,
+        max: 150,
       },
       loadCapacityKg: {
         type: "number",
