@@ -160,7 +160,7 @@
     "labels": {
       "email": "E-mail",
       "password": "Wachtwoord",
-      "trailNameOptional": "Bijnaam / Trailnaam (optioneel)"
+      "trailNameOptional": "Gebruikersnaam (je trailnaam)"
     },
     "links": {
       "forgotPassword": "Wachtwoord vergeten?"
@@ -243,14 +243,15 @@
     },
     "labels": {
       "email": "E-mail",
-      "trailname": "Bijnaam / Trailnaam",
+      "trailname": "Trailnaam",
       "currentPassword": "Huidig wachtwoord",
       "newPassword": "Nieuw wachtwoord",
       "confirmNewPassword": "Nieuw wachtwoord bevestigen"
     },
     "messages": {
       "emailImmutable": "E-mail kan hier niet worden aangepast",
-      "marketingHint": "Je kunt deze voorkeur op elk moment aanpassen."
+      "contactSupportPrompt": "Hulp nodig met uw e-mail of gebruikersnaam? Mail ons op",
+      "trailnameLocked": "Je kunt je trailnaam weer wijzigen op {{date}}."
     },
     "errors": {
       "passwordMismatch": "Nieuw wachtwoord en bevestiging komen niet overeen.",
@@ -263,6 +264,27 @@
       "saveFailed": "Instellingen opslaan mislukt. Probeer het opnieuw."
     },
     "loading": "Bezig met laden…"
+  },
+  "trailnamePrompt": {
+    "title": "Kies je trailnaam",
+    "description": "Je trailnaam is je openbare identiteit in de community. Kies er een waar je tevreden mee bent — het kan altijd worden bijgewerkt in de accountinstellingen, maar slechts één keer per 30 dagen.",
+    "label": "Trailnaam",
+    "placeholder": "bijv. WildeWandelaar",
+    "charCount": "{{count}}/30 tekens",
+    "continue": "Doorgaan",
+    "confirmTitle": "Bevestig je trailnaam",
+    "confirmSetting": "Je stelt je trailnaam in als:",
+    "confirmWarning": "Controleer of dit correct is. Je kunt je trailnaam gedurende 30 dagen niet meer wijzigen.",
+    "goBack": "Terug",
+    "saving": "Opslaan…",
+    "yesConfirm": "Ja, bevestigen",
+    "errorEmpty": "Trailnaam mag niet leeg zijn.",
+    "errorTooShort": "Moet minimaal 2 tekens bevatten.",
+    "errorTooLong": "Mag maximaal 30 tekens bevatten.",
+    "errorChars": "Alleen letters, cijfers, koppeltekens, apostrofs en underscores zijn toegestaan.",
+    "errorTaken": "Deze trailnaam is al in gebruik. Kies een andere.",
+    "errorRateLimit": "Je kunt je trailnaam slechts één keer per 30 dagen wijzigen.",
+    "errorGeneric": "Er is iets misgegaan. Probeer het opnieuw."
   },
   "verifyEmailPage": {
     "loading": "Je e-mailadres wordt gecontroleerd…",

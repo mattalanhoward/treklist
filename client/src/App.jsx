@@ -21,13 +21,21 @@ import TermsPage from "./pages/legal/Terms";
 import ImprintPage from "./pages/legal/Imprint";
 import CookieSettingsPage from "./pages/legal/CookieSettings";
 import CookieBanner from "./components/CookieBanner";
+import TrailnamePrompt from "./components/TrailnamePrompt";
 import { initAnalytics } from "./utils/analytics";
 import { isBannerRegion } from "./utils/region";
 import { hasStoredConsent, saveConsent, loadConsent } from "./utils/cookieConsent";
 
 function PrivateRoute({ children }) {
-  const { isAuthenticated } = useAuth();
-  return isAuthenticated ? children : <Navigate to="/auth/login" replace />;
+  const { isAuthenticated, user, userFetching } = useAuth();
+  if (!isAuthenticated) return <Navigate to="/auth/login" replace />;
+  if (userFetching) return null;
+  return (
+    <>
+      {children}
+      {user && user.trailnameConfirmed === false && <TrailnamePrompt />}
+    </>
+  );
 }
 
 // Authenticated users landing on /community/* get sent to the Dashboard pane.

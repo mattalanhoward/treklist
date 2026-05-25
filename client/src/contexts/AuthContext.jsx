@@ -9,7 +9,9 @@ export const AuthContext = createContext({
   logout: async () => {},
   verifyEmail: async () => {},
   hydrateFromStorage: () => {},
+  updateUser: () => {},
   loading: false,
+  userFetching: false,
   isAuthenticated: false,
 });
 
@@ -17,6 +19,7 @@ export function AuthProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem("accessToken"));
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [userFetching, setUserFetching] = useState(() => Boolean(localStorage.getItem("accessToken")));
   const isAuthenticated = Boolean(token);
 
   const hydrateFromStorage = () => {
@@ -42,6 +45,7 @@ export function AuthProvider({ children }) {
   // Fetch current user when token changes
   useEffect(() => {
     if (token) {
+      setUserFetching(true);
       api
         .get("/auth/me")
         .then(({ data }) => {
@@ -56,9 +60,13 @@ export function AuthProvider({ children }) {
             setToken(null);
           }
           // Network errors / 5xx: keep the token so the user stays logged in
+        })
+        .finally(() => {
+          setUserFetching(false);
         });
     } else {
       setUser(null);
+      setUserFetching(false);
     }
   }, [token]);
 
@@ -86,6 +94,11 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // Merge partial user fields into current user state (e.g., after trailname confirmation)
+  const updateUser = (patch) => {
+    setUser((prev) => (prev ? { ...prev, ...patch } : prev));
+  };
+
   // Logout user
   const logout = async () => {
     setLoading(true);
@@ -109,7 +122,9 @@ export function AuthProvider({ children }) {
         logout,
         verifyEmail,
         hydrateFromStorage,
+        updateUser,
         loading,
+        userFetching,
         isAuthenticated,
       }}
     >

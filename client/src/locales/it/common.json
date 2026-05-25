@@ -160,7 +160,7 @@
     "labels": {
       "email": "Email",
       "password": "Password",
-      "trailNameOptional": "Soprannome / Nome da trail (opzionale)"
+      "trailNameOptional": "Nome utente (il tuo nome da trail)"
     },
     "links": {
       "forgotPassword": "Hai dimenticato la password?"
@@ -243,14 +243,15 @@
     },
     "labels": {
       "email": "Email",
-      "trailname": "Soprannome / Nome da trail",
+      "trailname": "Nome da trail",
       "currentPassword": "Password attuale",
       "newPassword": "Nuova password",
       "confirmNewPassword": "Conferma nuova password"
     },
     "messages": {
       "emailImmutable": "L'email non può essere modificata qui",
-      "marketingHint": "Puoi cambiare questa preferenza in qualsiasi momento."
+      "contactSupportPrompt": "Hai bisogno di aiuto con la tua email o nome utente? Scrivici a",
+      "trailnameLocked": "Potrai cambiare il tuo nome da trail il {{date}}."
     },
     "errors": {
       "passwordMismatch": "Nuova password e conferma non coincidono.",
@@ -263,6 +264,27 @@
       "saveFailed": "Impossibile salvare le impostazioni. Riprova."
     },
     "loading": "Caricamento…"
+  },
+  "trailnamePrompt": {
+    "title": "Scegli il tuo nome da trail",
+    "description": "Il tuo nome da trail è la tua identità pubblica nella community. Scegline uno con cui sei soddisfatto — può essere aggiornato in qualsiasi momento nelle impostazioni dell'account, ma solo una volta ogni 30 giorni.",
+    "label": "Nome da trail",
+    "placeholder": "es. EscursionistaSelvaggio",
+    "charCount": "{{count}}/30 caratteri",
+    "continue": "Continua",
+    "confirmTitle": "Conferma il tuo nome da trail",
+    "confirmSetting": "Stai impostando il tuo nome da trail come:",
+    "confirmWarning": "Controlla che sia corretto. Non potrai cambiare il tuo nome da trail per 30 giorni.",
+    "goBack": "Torna indietro",
+    "saving": "Salvataggio…",
+    "yesConfirm": "Sì, conferma",
+    "errorEmpty": "Il nome da trail non può essere vuoto.",
+    "errorTooShort": "Deve contenere almeno 2 caratteri.",
+    "errorTooLong": "Deve contenere al massimo 30 caratteri.",
+    "errorChars": "Sono consentiti solo lettere, numeri, trattini, apostrofi e underscore.",
+    "errorTaken": "Questo nome da trail è già in uso. Scegline un altro.",
+    "errorRateLimit": "Puoi cambiare il tuo nome da trail solo una volta ogni 30 giorni.",
+    "errorGeneric": "Qualcosa è andato storto. Riprova."
   },
   "verifyEmailPage": {
     "loading": "Verifica della tua email…",

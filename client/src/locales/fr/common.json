@@ -167,7 +167,7 @@
     "labels": {
       "email": "Email",
       "password": "Mot de passe",
-      "trailNameOptional": "Surnom / Nom de trail (facultatif)"
+      "trailNameOptional": "Nom d'utilisateur (votre nom de trail)"
     },
     "links": {
       "forgotPassword": "Mot de passe oublié ?"
@@ -250,14 +250,15 @@
     },
     "labels": {
       "email": "Email",
-      "trailname": "Surnom / Nom de trail",
+      "trailname": "Nom de trail",
       "currentPassword": "Mot de passe actuel",
       "newPassword": "Nouveau mot de passe",
       "confirmNewPassword": "Confirmer le nouveau mot de passe"
     },
     "messages": {
       "emailImmutable": "L’email ne peut pas être modifié ici",
-      "marketingHint": "Vous pouvez changer cette préférence à tout moment."
+      "contactSupportPrompt": "Besoin d’aide avec votre e-mail ou nom d’utilisateur ? Écrivez-nous à",
+      "trailnameLocked": "Vous pourrez changer votre nom de trail le {{date}}."
     },
     "errors": {
       "passwordMismatch": "Le nouveau mot de passe et la confirmation ne correspondent pas.",
@@ -270,6 +271,27 @@
       "saveFailed": "Échec de l’enregistrement des paramètres. Veuillez réessayer."
     },
     "loading": "Chargement…"
+  },
+  "trailnamePrompt": {
+    "title": "Choisissez votre nom de trail",
+    "description": "Votre nom de trail est votre identité publique dans la communauté. Choisissez-en un qui vous convient — il peut être mis à jour à tout moment dans les paramètres du compte, mais seulement une fois tous les 30 jours.",
+    "label": "Nom de trail",
+    "placeholder": "ex. RandonneurSauvage",
+    "charCount": "{{count}}/30 caractères",
+    "continue": "Continuer",
+    "confirmTitle": "Confirmer votre nom de trail",
+    "confirmSetting": "Vous allez définir votre nom de trail comme :",
+    "confirmWarning": "Veuillez vérifier que c'est correct. Vous ne pourrez pas changer votre nom de trail pendant 30 jours.",
+    "goBack": "Retour",
+    "saving": "Enregistrement…",
+    "yesConfirm": "Oui, confirmer",
+    "errorEmpty": "Le nom de trail ne peut pas être vide.",
+    "errorTooShort": "Doit comporter au moins 2 caractères.",
+    "errorTooLong": "Doit comporter 30 caractères ou moins.",
+    "errorChars": "Seuls les lettres, chiffres, tirets, apostrophes et underscores sont autorisés.",
+    "errorTaken": "Ce nom de trail est déjà pris. Veuillez en choisir un autre.",
+    "errorRateLimit": "Vous ne pouvez changer votre nom de trail qu'une fois tous les 30 jours.",
+    "errorGeneric": "Une erreur s'est produite. Veuillez réessayer."
   },
   "verifyEmailPage": {
     "loading": "Vérification de votre email…",

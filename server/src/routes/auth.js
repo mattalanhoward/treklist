@@ -210,7 +210,7 @@ async function authenticate(req, res, next) {
 router.get("/me", authenticate, async (req, res) => {
   try {
     const user = await User.findById(req.userId).select(
-      "email trailname isAdmin onboarding",
+      "email trailname trailnameConfirmed isAdmin onboarding",
     );
     if (!user) return res.status(404).json({ message: "User not found." });
     res.json({ user });
@@ -347,6 +347,17 @@ router.post("/register", registerLimiter, async (req, res) => {
       });
     }
 
+    const trimmedTrailname = typeof trailname === "string" ? trailname.trim() : "";
+    if (!trimmedTrailname) {
+      return res.status(400).json({ message: "Trail name is required.", code: "TRAILNAME_EMPTY" });
+    }
+    if (trimmedTrailname.length < 2 || trimmedTrailname.length > 30) {
+      return res.status(400).json({ message: "Trail name must be 2–30 characters.", code: "TRAILNAME_LENGTH" });
+    }
+    if (!/^[a-zA-Z0-9_'-]+$/.test(trimmedTrailname)) {
+      return res.status(400).json({ message: "Trail name may only contain letters, numbers, hyphens, apostrophes, and underscores.", code: "TRAILNAME_CHARS" });
+    }
+
     const existingUser = await User.findOne({ email: normalizedEmail });
     if (existingUser) {
       // Check if user has Google auth but no password
@@ -362,8 +373,7 @@ router.post("/register", registerLimiter, async (req, res) => {
 
     const user = new User({
       email: normalizedEmail,
-      // trailname is optional; only set it if provided
-      ...(trailname ? { trailname } : {}),
+      trailname: trimmedTrailname,
       isVerified: false,
       authProviders: [
         {
@@ -415,6 +425,9 @@ router.post("/register", registerLimiter, async (req, res) => {
     res.status(201).json({ message: "Registered! Check your email." });
   } catch (err) {
     console.error(err);
+    if (err?.code === 11000 && err?.keyPattern?.trailname) {
+      return res.status(409).json({ message: "That trail name is already taken. Please choose a different one.", code: "TRAILNAME_TAKEN" });
+    }
     res.status(500).json({ message: "Registration error." });
   }
 });
