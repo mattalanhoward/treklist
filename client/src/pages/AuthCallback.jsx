@@ -34,7 +34,11 @@ export default function AuthCallback() {
       .then(({ data }) => {
         localStorage.setItem("accessToken", data.accessToken);
         hydrateFromStorage();
-        navigate("/dashboard", { replace: true });
+        const oauthNext = localStorage.getItem("oauthNext");
+        localStorage.removeItem("oauthNext");
+        const safeNext =
+          oauthNext && oauthNext.startsWith("/") ? oauthNext : null;
+        navigate(safeNext || "/dashboard", { replace: true });
       })
       .catch(() => {
         navigate("/?authError=token_exchange_failed", { replace: true });

@@ -234,6 +234,9 @@ export default function AuthModal({
 
   const handleGoogleLogin = () => {
     const apiUrl = import.meta.env.VITE_API_URL || "";
+    if (next) {
+      localStorage.setItem("oauthNext", next);
+    }
     window.location.href = `${apiUrl}/api/auth/google`;
   };
 
