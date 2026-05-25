@@ -86,7 +86,7 @@
       },
       "myGear": {
         "title": "Mon matériel",
-        "body": "Cliquez sur Mon matériel pour accéder à votre inventaire personnel — chaque article ajouté dans toutes vos listes, réuni en un seul endroit."
+        "body": "Cliquez sur Mon matériel pour accéder à votre inventaire personnel."
       },
       "templates": {
         "title": "Modèles",
@@ -126,7 +126,7 @@
       },
       "addGear": {
         "title": "Ajouter à votre inventaire",
-        "body": "Appuyez sur + pour ouvrir le tiroir d'ajout rapide — constituez votre bibliothèque personnelle de matériel sans avoir à ajouter des articles à une liste spécifique d'abord."
+        "body": "Appuyez sur + pour ouvrir le tiroir d'ajout rapide et constituer rapidement votre bibliothèque personnelle de matériel sans avoir à ajouter des articles à une liste spécifique d'abord."
       }
     }
   },

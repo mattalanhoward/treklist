@@ -199,15 +199,6 @@ export default function Dashboard() {
       },
     },
     {
-      title: t("tour.steps.templates.title"),
-      body: t("tour.steps.templates.body"),
-      target: '[data-tour="sidebar-templates"]',
-      onEnter: ({ isMobile }) => {
-        setActivePane("gear");
-        if (isMobile) setSidebarCollapsed(false); // keep open
-      },
-    },
-    {
       title: t("tour.steps.categories.title"),
       body: t("tour.steps.categories.body"),
       target: '[data-tour="gearlist-category"]',
@@ -265,6 +256,15 @@ export default function Dashboard() {
       onEnter: ({ isMobile }) => {
         setActivePane("gear");
         if (isMobile) setSidebarCollapsed(true); // keep closed
+      },
+    },
+    {
+      title: t("tour.steps.templates.title"),
+      body: t("tour.steps.templates.body"),
+      target: '[data-tour="sidebar-templates"]',
+      onEnter: ({ isMobile }) => {
+        setActivePane("gear");
+        if (isMobile) setSidebarCollapsed(false); // open sidebar
       },
     },
     {

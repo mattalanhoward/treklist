@@ -86,7 +86,7 @@
       },
       "myGear": {
         "title": "Mijn uitrusting",
-        "body": "Klik op Mijn uitrusting om naar je persoonlijke uitrustingsinventaris te gaan — elk item dat je ooit hebt toegevoegd in al je lijsten, op één plek."
+        "body": "Klik op Mijn uitrusting om naar je persoonlijke uitrustingsinventaris te gaan."
       },
       "templates": {
         "title": "Sjablonen",
@@ -126,7 +126,7 @@
       },
       "addGear": {
         "title": "Toevoegen aan je inventaris",
-        "body": "Tik op + om de snel-toevoegen-lade te openen — bouw je persoonlijke uitrustingsbibliotheek zonder items eerst aan een specifieke lijst toe te voegen."
+        "body": "Tik op + om de snel-toevoegen-lade te openen en je persoonlijke uitrustingsbibliotheek snel op te bouwen zonder items eerst aan een specifieke lijst toe te voegen."
       }
     }
   },

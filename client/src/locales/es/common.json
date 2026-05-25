@@ -86,7 +86,7 @@
       },
       "myGear": {
         "title": "Mi equipo",
-        "body": "Haz clic en Mi equipo para cambiar a tu inventario personal — todos los artículos que hayas añadido en todas tus listas, en un solo lugar."
+        "body": "Haz clic en Mi equipo para cambiar a tu inventario personal."
       },
       "templates": {
         "title": "Plantillas",
@@ -126,7 +126,7 @@
       },
       "addGear": {
         "title": "Añadir a tu inventario",
-        "body": "Toca + para abrir el panel de adición rápida — construye tu biblioteca personal de equipo sin tener que añadir artículos a una lista específica primero."
+        "body": "Toca + para abrir el panel de adición rápida y construir tu biblioteca personal de equipo sin tener que añadir artículos a una lista específica primero."
       }
     }
   },

@@ -86,7 +86,7 @@
       },
       "myGear": {
         "title": "Meine Ausrüstung",
-        "body": "Wechsle zu deinem persönlichen Ausrüstungsinventar — alle Gegenstände aus all deinen Listen an einem Ort."
+        "body": "Klicke auf Meine Ausrüstung, um zu deinem persönlichen Ausrüstungsinventar zu wechseln."
       },
       "templates": {
         "title": "Vorlagen",
@@ -126,7 +126,7 @@
       },
       "addGear": {
         "title": "Zum Inventar hinzufügen",
-        "body": "Tippe auf +, um das Schnellhinzufüge-Fenster zu öffnen – füge Gegenstände deiner persönlichen Ausrüstungsbibliothek hinzu, ohne sie einer bestimmten Liste zuordnen zu müssen."
+        "body": "Tippe auf +, um das Schnellhinzufüge-Fenster zu öffnen und deine persönliche Ausrüstungsbibliothek schnell aufzubauen, ohne Gegenstände zuerst einer bestimmten Liste hinzufügen zu müssen."
       }
     }
   },

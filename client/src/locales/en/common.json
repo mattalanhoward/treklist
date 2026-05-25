@@ -86,7 +86,7 @@
       },
       "myGear": {
         "title": "My Gear",
-        "body": "Click My Gear to switch to your personal gear inventory — every item you've ever added across all your lists, all in one place."
+        "body": "Click My Gear to switch to your personal gear inventory."
       },
       "templates": {
         "title": "Templates",
@@ -126,7 +126,7 @@
       },
       "addGear": {
         "title": "Add to Your Inventory",
-        "body": "Tap + to open the quick-add drawer — build your personal gear library without having to add items to a specific list first."
+        "body": "Tap + to open the quick-add drawer and build your personal gear library quickly without having to add items to a specific list first."
       }
     }
   },

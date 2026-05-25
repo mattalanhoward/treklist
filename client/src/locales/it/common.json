@@ -86,7 +86,7 @@
       },
       "myGear": {
         "title": "La mia attrezzatura",
-        "body": "Clicca su La mia attrezzatura per accedere al tuo inventario personale — ogni articolo aggiunto in tutte le tue liste, tutto in un unico posto."
+        "body": "Clicca su La mia attrezzatura per accedere al tuo inventario personale."
       },
       "templates": {
         "title": "Modelli",
@@ -126,7 +126,7 @@
       },
       "addGear": {
         "title": "Aggiungi al tuo inventario",
-        "body": "Tocca + per aprire il cassetto di aggiunta rapida — costruisci la tua libreria personale di attrezzatura senza dover aggiungere articoli a una lista specifica prima."
+        "body": "Tocca + per aprire il cassetto di aggiunta rapida e costruire rapidamente la tua libreria personale di attrezzatura senza dover aggiungere articoli a una lista specifica prima."
       }
     }
   },
