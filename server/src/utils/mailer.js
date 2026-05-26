@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+const { buildWelcomeEmail } = require("./welcomeEmailTemplate");
 
 function getTransporter() {
   const host = process.env.SMTP_HOST;
@@ -41,4 +42,25 @@ async function sendSupportEmail({ to, subject, text, html, from }) {
   return { skipped: false, messageId: info.messageId };
 }
 
-module.exports = { sendSupportEmail };
+async function sendWelcomeEmail({ to, trailname, listUrl, unsubscribeUrl }) {
+  const transporter = getTransporter();
+  if (!transporter) {
+    console.warn("[mailer] SMTP not configured — skipping welcome email.");
+    return { skipped: true };
+  }
+
+  const from = process.env.SMTP_FROM || process.env.SMTP_USER;
+  const { html, text } = buildWelcomeEmail({ trailname, listUrl, unsubscribeUrl });
+
+  const info = await transporter.sendMail({
+    from,
+    to,
+    subject: "Your TrekList is ready — add your first item",
+    text,
+    html,
+  });
+
+  return { skipped: false, messageId: info.messageId };
+}
+
+module.exports = { sendSupportEmail, sendWelcomeEmail };

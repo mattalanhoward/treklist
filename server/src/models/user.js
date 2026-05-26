@@ -28,6 +28,8 @@ const UserSchema = new mongoose.Schema(
     onboarding: {
       tourVersionSeen: { type: Number, default: 0 },
       tourDismissedAt: { type: Date, default: null },
+      welcomeEmailSentAt: { type: Date, default: null },
+      transactionalOptOut: { type: Boolean, default: false },
     },
     // If true, this account is blocked from logging in
     isDisabled: {

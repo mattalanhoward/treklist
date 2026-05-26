@@ -10,7 +10,7 @@ const User = require("../models/user");
 // ✅ Reuse shared mailer (single source of truth)
 // Adjust the path if your mailer lives elsewhere.
 const { sendSupportEmail } = require("../utils/mailer");
-const { subscribeToKit } = require("../utils/kitSubscribe");
+const { subscribeToKit, unsubscribeFromKit } = require("../utils/kitSubscribe");
 
 const router = express.Router();
 router.use(cookieParser());
@@ -694,6 +694,50 @@ router.post("/exchange", oauthLimiter, async (req, res) => {
     console.error("POST /auth/exchange error:", err);
     res.status(500).json({ message: "Token exchange failed." });
   }
+});
+
+// GET /auth/unsubscribe-onboarding?uid=...&sig=...
+// One-click unsubscribe for transactional onboarding emails (no login required)
+router.get("/unsubscribe-onboarding", async (req, res) => {
+  const { uid, sig } = req.query;
+  if (!uid || !sig) {
+    return res.status(400).send("Invalid unsubscribe link.");
+  }
+
+  const expected = crypto
+    .createHmac("sha256", process.env.JWT_SECRET)
+    .update(uid)
+    .digest("hex")
+    .slice(0, 32);
+
+  if (sig !== expected) {
+    return res.status(400).send("Invalid unsubscribe link.");
+  }
+
+  let userEmail;
+  try {
+    const user = await User.findByIdAndUpdate(
+      uid,
+      {
+        $set: {
+          "onboarding.transactionalOptOut": true,
+          "marketing.optedIn": false,
+        },
+      },
+      { new: false, select: "email" }
+    );
+    userEmail = user?.email;
+  } catch {
+    return res.status(500).send("Something went wrong. Please try again.");
+  }
+
+  if (userEmail) {
+    unsubscribeFromKit(userEmail).catch(() => {}); // fire-and-forget
+  }
+
+  // Redirect to the client with a confirmation flag
+  const base = (process.env.CLIENT_URL || process.env.CLIENT_URLS || "").split(",")[0].trim();
+  return res.redirect(`${base}/?unsubscribed=1`);
 });
 
 router.authenticate = authenticate;
