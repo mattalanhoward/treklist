@@ -119,6 +119,8 @@ export default function Landing() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const [showUnsubscribedBanner, setShowUnsubscribedBanner] = useState(false);
+
   // auto-open modal when arriving with a ?next= param (share → auth flow).
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -127,6 +129,11 @@ export default function Landing() {
     if (hasNext && !authOpen) {
       setAuthMode("register");
       setAuthOpen(true);
+    }
+
+    if (params.get("unsubscribed") === "1") {
+      setShowUnsubscribedBanner(true);
+      navigate("/", { replace: true });
     }
   }, [location.pathname, location.search]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -211,6 +218,18 @@ export default function Landing() {
           }
         })}</script>
       </SEO>
+      {showUnsubscribedBanner && (
+        <div className="relative z-50 bg-green-50 border-b border-green-200 px-4 py-3 flex items-center justify-between gap-4">
+          <p className="text-sm text-green-800">You've been unsubscribed from TrekList emails.</p>
+          <button
+            onClick={() => setShowUnsubscribedBanner(false)}
+            className="text-green-700 hover:text-green-900 text-lg leading-none"
+            aria-label="Dismiss"
+          >
+            &times;
+          </button>
+        </div>
+      )}
       <PublicHeader
         variant="overlay"
         showSections={true}
