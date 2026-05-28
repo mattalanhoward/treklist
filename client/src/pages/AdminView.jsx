@@ -1703,14 +1703,7 @@ function GearCatalogSection({
                 <div className="px-3 py-2 text-xs text-error">{error}</div>
               )}
 
-              {!error && !loading && items.length === 0 && (
-                <div className="px-3 py-2 text-xs text-primary/70">
-                  No catalog items yet. Use the form above to add your first
-                  affiliate-backed gear item.
-                </div>
-              )}
-
-              {!loading && !error && items.length > 0 && (
+              {!loading && !error && (
                 <>
                   {/* Filters */}
                   <div className="px-3 py-2 border-b border-base-200 flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between text-xs">
@@ -1791,6 +1784,16 @@ function GearCatalogSection({
                     </div>
                   </div>
 
+                  {items.length === 0 && (
+                    <div className="px-3 py-2 text-xs text-primary/70">
+                      {search.trim() || filterCategory !== "all" || filterBrand !== "all" || filterNetwork !== "all" || filterImage !== "all"
+                        ? "No items match your search. Try a different term or clear the filters."
+                        : "No catalog items yet. Use the form above to add your first affiliate-backed gear item."}
+                    </div>
+                  )}
+
+                  {items.length > 0 && (
+                  <>
                   {/* Table */}
                   <table className="min-w-full text-xs sm:text-sm">
                     <thead className="bg-base-200/80">
@@ -2035,6 +2038,8 @@ function GearCatalogSection({
                       </div>
                     </div>
                   </div>
+                  </>
+                  )}
                 </>
               )}
             </>
