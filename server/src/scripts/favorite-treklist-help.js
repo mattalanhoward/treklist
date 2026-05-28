@@ -16,7 +16,7 @@ const Community = require("../models/community");
 const User = require("../models/user");
 
 async function run() {
-  await mongoose.connect(process.env.MONGO_URI);
+  await mongoose.connect(process.env.MONGO_URI, { dbName: process.env.MONGO_DB_NAME });
   console.log("Connected to MongoDB");
 
   const community = await Community.findOne({ slug: "treklist-help" }).lean();
