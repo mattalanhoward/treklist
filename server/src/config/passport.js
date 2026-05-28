@@ -1,6 +1,7 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const User = require("../models/user");
+const Community = require("../models/community");
 
 // Serialize user ID into session (minimal data)
 passport.serializeUser((user, done) => {
@@ -63,6 +64,9 @@ passport.use(
             isVerified: true, // Google emails are pre-verified
             trailname: profile.displayName || null,
           });
+
+          const defaultCommunity = await Community.findOne({ slug: "treklist-help" }).select("_id").lean();
+          if (defaultCommunity) user.favoriteCommunities = [defaultCommunity._id];
 
           await user.save();
           console.log("Created new user via Google OAuth:", normalizedEmail);

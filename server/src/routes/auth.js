@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const { promisify } = require("util");
 
 const User = require("../models/user");
+const Community = require("../models/community");
 
 // ✅ Reuse shared mailer (single source of truth)
 // Adjust the path if your mailer lives elsewhere.
@@ -418,6 +419,9 @@ router.post("/register", registerLimiter, async (req, res) => {
     const verifyToken = crypto.randomBytes(20).toString("hex");
     user.verifyEmailToken = verifyToken;
     user.verifyEmailExpires = Date.now() + 24 * 60 * 60 * 1000;
+
+    const defaultCommunity = await Community.findOne({ slug: "treklist-help" }).select("_id").lean();
+    if (defaultCommunity) user.favoriteCommunities = [defaultCommunity._id];
 
     await user.save();
 
