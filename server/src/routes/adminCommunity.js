@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Post = require("../models/post");
 const Comment = require("../models/comment");
+const Community = require("../models/community");
 const authMiddleware = require("../middleware/auth");
 const requireAdmin = require("../middleware/requireAdmin");
 
@@ -69,6 +70,57 @@ router.put("/comments/:commentId/clear-flags", async (req, res) => {
   try {
     await Comment.updateOne({ _id: req.params.commentId }, { $set: { flagCount: 0 } });
     res.json({ message: "Flags cleared" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// GET /api/admin/community/forums — list all communities including archived
+router.get("/forums", async (req, res) => {
+  try {
+    const forums = await Community.find().sort({ sortOrder: 1, name: 1 }).lean();
+    res.json(forums);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// POST /api/admin/community/forums — create a new community
+router.post("/forums", async (req, res) => {
+  try {
+    const { name, slug, description, sortOrder } = req.body;
+    if (!name || !slug) return res.status(400).json({ message: "name and slug required" });
+    const community = new Community({ name, slug, description: description || "", sortOrder: sortOrder || 0 });
+    await community.save();
+    res.status(201).json(community);
+  } catch (err) {
+    if (err.code === 11000) return res.status(409).json({ message: "Slug already exists" });
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// PUT /api/admin/community/forums/:id — update a community by ID
+router.put("/forums/:id", async (req, res) => {
+  try {
+    const { name, description, isArchived, sortOrder } = req.body;
+    const community = await Community.findByIdAndUpdate(
+      req.params.id,
+      { $set: { name, description, isArchived, sortOrder } },
+      { new: true }
+    );
+    if (!community) return res.status(404).json({ message: "Community not found" });
+    res.json(community);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// DELETE /api/admin/community/forums/:id — hard delete a community
+router.delete("/forums/:id", async (req, res) => {
+  try {
+    const community = await Community.findByIdAndDelete(req.params.id);
+    if (!community) return res.status(404).json({ message: "Community not found" });
+    res.json({ message: "Community deleted" });
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }

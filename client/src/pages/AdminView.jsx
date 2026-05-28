@@ -5216,6 +5216,13 @@ function PublicListsSection() {
 function CommunityModerationSection() {
   const [flagged, setFlagged] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [forums, setForums] = useState([]);
+  const [forumsLoading, setForumsLoading] = useState(true);
+  const [showAddForum, setShowAddForum] = useState(false);
+  const [newForum, setNewForum] = useState({ name: "", slug: "", description: "", sortOrder: 0 });
+  const [editingForumId, setEditingForumId] = useState(null);
+  const [editForum, setEditForum] = useState({ name: "", description: "", sortOrder: 0 });
+  const [confirmForum, setConfirmForum] = useState(null); // { action: "delete"|"archive", forum }
 
   async function fetch() {
     setLoading(true);
@@ -5229,7 +5236,19 @@ function CommunityModerationSection() {
     }
   }
 
-  useEffect(() => { fetch(); }, []);
+  async function fetchForums() {
+    setForumsLoading(true);
+    try {
+      const { data } = await api.get("/admin/community/forums");
+      setForums(data);
+    } catch {
+      toast.error("Could not load forums");
+    } finally {
+      setForumsLoading(false);
+    }
+  }
+
+  useEffect(() => { fetch(); fetchForums(); }, []);
 
   async function removePost(postId) {
     if (!window.confirm("Remove this post?")) return;
@@ -5257,6 +5276,62 @@ function CommunityModerationSection() {
       ...f,
       comments: f.comments.map((c) => (c._id === commentId ? { ...c, flagCount: 0 } : c)),
     }));
+  }
+
+  function handleNewForumNameChange(e) {
+    const name = e.target.value;
+    const autoSlug = name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+    setNewForum((f) => ({ ...f, name, slug: autoSlug }));
+  }
+
+  async function handleCreateForum(e) {
+    e.preventDefault();
+    try {
+      const { data } = await api.post("/admin/community/forums", newForum);
+      setForums((f) => [...f, data].sort((a, b) => (a.sortOrder - b.sortOrder) || a.name.localeCompare(b.name)));
+      setNewForum({ name: "", slug: "", description: "", sortOrder: 0 });
+      setShowAddForum(false);
+      toast.success("Forum created");
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Could not create forum");
+    }
+  }
+
+  async function handleUpdateForum(e, id) {
+    e.preventDefault();
+    try {
+      const { data } = await api.put(`/admin/community/forums/${id}`, editForum);
+      setForums((f) => f.map((fo) => (fo._id === id ? data : fo)));
+      setEditingForumId(null);
+      toast.success("Forum updated");
+    } catch {
+      toast.error("Could not update forum");
+    }
+  }
+
+  async function handleToggleArchive(forum) {
+    try {
+      const { data } = await api.put(`/admin/community/forums/${forum._id}`, {
+        name: forum.name,
+        description: forum.description,
+        sortOrder: forum.sortOrder,
+        isArchived: !forum.isArchived,
+      });
+      setForums((f) => f.map((fo) => (fo._id === forum._id ? data : fo)));
+      toast.success(data.isArchived ? "Forum archived" : "Forum restored");
+    } catch {
+      toast.error("Could not update forum");
+    }
+  }
+
+  async function handleDeleteForum(id) {
+    try {
+      await api.delete(`/admin/community/forums/${id}`);
+      setForums((f) => f.filter((fo) => fo._id !== id));
+      toast.success("Forum deleted");
+    } catch {
+      toast.error("Could not delete forum");
+    }
   }
 
   if (loading) return <div className="py-8 text-center opacity-40 text-sm">Loading…</div>;
@@ -5379,13 +5454,190 @@ function CommunityModerationSection() {
         </section>
       )}
 
-      {/* Community management */}
+      {/* Forum management */}
+      <div className="divider my-2" />
       <section>
-        <h3 className="text-sm font-semibold mb-1">Community management</h3>
-        <p className="text-xs opacity-50">
-          Use the API or database to create/archive communities.
-          Visit <a href="/community" className="text-primary hover:underline">/community</a> to browse the forum.
-        </p>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-base font-semibold">Forum management</h2>
+          <button
+            onClick={() => { setShowAddForum((v) => !v); setNewForum({ name: "", slug: "", description: "", sortOrder: 0 }); }}
+            className="btn btn-primary btn-xs"
+          >
+            + Add forum
+          </button>
+        </div>
+
+        {showAddForum && (
+          <form onSubmit={handleCreateForum} className="bg-base-200 rounded-lg p-3 mb-4 space-y-2">
+            <div className="flex gap-2 flex-wrap">
+              <input
+                placeholder="Name"
+                value={newForum.name}
+                onChange={handleNewForumNameChange}
+                className="input input-sm input-bordered flex-1 min-w-[140px]"
+                required
+              />
+              <input
+                placeholder="Slug (e.g. hiking)"
+                value={newForum.slug}
+                onChange={(e) => setNewForum((f) => ({ ...f, slug: e.target.value }))}
+                className="input input-sm input-bordered flex-1 min-w-[140px] font-mono"
+                required
+              />
+              <input
+                placeholder="Sort order"
+                type="number"
+                value={newForum.sortOrder}
+                onChange={(e) => setNewForum((f) => ({ ...f, sortOrder: Number(e.target.value) }))}
+                className="input input-sm input-bordered w-24"
+              />
+            </div>
+            <input
+              placeholder="Description (optional)"
+              value={newForum.description}
+              onChange={(e) => setNewForum((f) => ({ ...f, description: e.target.value }))}
+              className="input input-sm input-bordered w-full"
+            />
+            <div className="flex gap-2">
+              <button type="submit" className="btn btn-primary btn-xs">Create</button>
+              <button type="button" onClick={() => setShowAddForum(false)} className="btn btn-ghost btn-xs">Cancel</button>
+            </div>
+          </form>
+        )}
+
+        {forumsLoading ? (
+          <div className="text-xs opacity-40 py-2">Loading…</div>
+        ) : forums.length === 0 ? (
+          <p className="text-xs opacity-50">No forums yet. Click "+ Add forum" to create one.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-xs sm:text-sm">
+              <thead>
+                <tr className="border-b border-base-200 text-left">
+                  <th className="py-2 pr-4 font-medium">Name</th>
+                  <th className="py-2 pr-4 font-medium">Slug</th>
+                  <th className="py-2 pr-4 font-medium">Description</th>
+                  <th className="py-2 pr-4 font-medium text-center">Order</th>
+                  <th className="py-2 pr-4 font-medium text-center">Status</th>
+                  <th className="py-2 font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {forums.map((forum) =>
+                  editingForumId === forum._id ? (
+                    <tr key={forum._id} className="border-b border-base-200 bg-base-200/50">
+                      <td colSpan={6} className="py-2 px-1">
+                        <form onSubmit={(e) => handleUpdateForum(e, forum._id)} className="flex flex-wrap gap-2 items-center">
+                          <input
+                            value={editForum.name}
+                            onChange={(e) => setEditForum((f) => ({ ...f, name: e.target.value }))}
+                            className="input input-xs input-bordered min-w-[120px]"
+                            placeholder="Name"
+                            required
+                          />
+                          <input
+                            value={editForum.description}
+                            onChange={(e) => setEditForum((f) => ({ ...f, description: e.target.value }))}
+                            className="input input-xs input-bordered flex-1 min-w-[160px]"
+                            placeholder="Description"
+                          />
+                          <input
+                            type="number"
+                            value={editForum.sortOrder}
+                            onChange={(e) => setEditForum((f) => ({ ...f, sortOrder: Number(e.target.value) }))}
+                            className="input input-xs input-bordered w-16"
+                            placeholder="Order"
+                          />
+                          <button type="submit" className="btn btn-primary btn-xs">Save</button>
+                          <button type="button" onClick={() => setEditingForumId(null)} className="btn btn-ghost btn-xs">Cancel</button>
+                        </form>
+                      </td>
+                    </tr>
+                  ) : (
+                    <tr key={forum._id} className={`border-b border-base-200 hover:bg-base-200/50 ${forum.isArchived ? "opacity-50" : ""}`}>
+                      <td className="py-2 pr-4 font-medium">{forum.name}</td>
+                      <td className="py-2 pr-4 font-mono text-xs opacity-70">{forum.slug}</td>
+                      <td className="py-2 pr-4 max-w-xs truncate opacity-60">{forum.description || "—"}</td>
+                      <td className="py-2 pr-4 text-center">{forum.sortOrder}</td>
+                      <td className="py-2 pr-4 text-center">
+                        {forum.isArchived ? (
+                          <span className="badge badge-ghost badge-sm">Archived</span>
+                        ) : (
+                          <span className="badge badge-success badge-sm">Active</span>
+                        )}
+                      </td>
+                      <td className="py-2">
+                        <div className="flex gap-1 flex-wrap">
+                          <button
+                            onClick={() => {
+                              setEditingForumId(forum._id);
+                              setEditForum({ name: forum.name, description: forum.description || "", sortOrder: forum.sortOrder || 0 });
+                            }}
+                            className="px-2 py-1 text-xs rounded border border-base-300 hover:bg-base-200 transition-colors"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => setConfirmForum({ action: "archive", forum })}
+                            className={`px-2 py-1 text-xs rounded border transition-colors ${forum.isArchived ? "border-success/50 text-success hover:bg-success/10" : "border-warning/50 text-warning hover:bg-warning/10"}`}
+                          >
+                            {forum.isArchived ? "Restore" : "Archive"}
+                          </button>
+                          <a
+                            href={`/community/${forum.slug}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-2 py-1 text-xs rounded border border-base-300 hover:bg-base-200 transition-colors inline-flex items-center justify-center text-inherit no-underline"
+                          >
+                            View
+                          </a>
+                          <button
+                            onClick={() => setConfirmForum({ action: "delete", forum })}
+                            className="px-2 py-1 text-xs rounded bg-error/90 text-white hover:bg-error transition-colors font-medium"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        <ConfirmDialog
+          isOpen={!!confirmForum}
+          title={
+            confirmForum?.action === "delete"
+              ? "Delete forum?"
+              : confirmForum?.forum?.isArchived
+              ? "Restore forum?"
+              : "Archive forum?"
+          }
+          message={
+            confirmForum?.action === "delete"
+              ? `Permanently delete "${confirmForum?.forum?.name}"? All posts in this forum will also be deleted. This cannot be undone.`
+              : confirmForum?.forum?.isArchived
+              ? `Restore "${confirmForum?.forum?.name}"? It will become visible to users again.`
+              : `Archive "${confirmForum?.forum?.name}"? It will be hidden from users but all posts will be preserved.`
+          }
+          confirmText={
+            confirmForum?.action === "delete"
+              ? "Delete forum"
+              : confirmForum?.forum?.isArchived
+              ? "Restore"
+              : "Archive"
+          }
+          cancelText="Cancel"
+          onConfirm={() => {
+            if (confirmForum?.action === "delete") handleDeleteForum(confirmForum.forum._id);
+            else handleToggleArchive(confirmForum.forum);
+            setConfirmForum(null);
+          }}
+          onCancel={() => setConfirmForum(null)}
+        />
       </section>
     </div>
   );
