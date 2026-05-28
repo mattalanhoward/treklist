@@ -101,7 +101,8 @@ async function refreshAmazonImages() {
 
           await CatalogItem.updateOne(
             { _id: catalogItem._id },
-            { $set: { imageUrls: newImageUrls } }
+            { $set: { imageUrls: newImageUrls } },
+            { timestamps: false }
           );
           successCount++;
         }
