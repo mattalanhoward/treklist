@@ -5,7 +5,7 @@ import {
   getCommunities, getPosts, getPost, getComments, searchPosts,
   createPost, updatePost, deletePost, upvotePost, flagPost,
   createComment, updateComment, deleteComment, upvoteComment, flagComment,
-  favoriteCommunity,
+  favoriteCommunity, translateText,
 } from "../services/community";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -631,6 +631,9 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
   const [replying, setReplying] = useState(false);
   const [replyBody, setReplyBody] = useState("");
   const [saving, setSaving] = useState(false);
+  const [translatedBody, setTranslatedBody] = useState(null);
+  const [showTranslated, setShowTranslated] = useState(false);
+  const [translating, setTranslating] = useState(false);
   const isOwner = currentUserId && comment.userId?._id === currentUserId;
   const { confirm, dialog } = useConfirm();
 
@@ -677,6 +680,19 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
     finally { setSaving(false); }
   }
 
+  async function handleTranslate() {
+    if (showTranslated) { setShowTranslated(false); return; }
+    if (translatedBody) { setShowTranslated(true); return; }
+    setTranslating(true);
+    try {
+      const targetLang = localStorage.getItem("language") || navigator.language?.split("-")[0] || "en";
+      const { translated } = await translateText(comment.body, targetLang);
+      setTranslatedBody(translated);
+      setShowTranslated(true);
+    } catch { toast.error("Could not translate"); }
+    finally { setTranslating(false); }
+  }
+
   function copyLink() {
     const base = shareBaseUrl || `${window.location.origin}${window.location.pathname}`;
     navigator.clipboard.writeText(`${base}#comment-${comment._id}`).then(() => toast.success("Link copied"));
@@ -701,7 +717,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
             </div>
           </form>
         ) : (
-          <p className="text-sm whitespace-pre-wrap break-words">{comment.body}</p>
+          <p className="text-sm whitespace-pre-wrap break-words">{showTranslated && translatedBody ? translatedBody : comment.body}</p>
         )}
         {!editing && (
           <div className="flex items-center gap-3 mt-1 text-xs opacity-50 flex-wrap">
@@ -712,6 +728,9 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
               <button onClick={() => setReplying((r) => !r)} className="hover:opacity-100">Reply</button>
             )}
             <button onClick={copyLink} className="hover:opacity-100" title="Copy link"><FiLink size={14} /></button>
+            <button onClick={handleTranslate} className="hover:opacity-100" disabled={translating}>
+              {translating ? "…" : showTranslated ? "Show original" : "Translate"}
+            </button>
             {isAuthenticated && !isOwner && (
               <button onClick={handleFlag} className={flagged ? "text-error opacity-70" : "hover:opacity-100"} title="Flag">
                 <FiFlag size={14} />
