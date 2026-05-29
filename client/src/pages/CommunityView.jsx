@@ -21,7 +21,7 @@ import { formatDistanceToNow } from "date-fns";
 // ─── Shared helpers ──────────────────────────────────────────────────────────
 
 function getUserLang() {
-  return getUserLang();
+  return localStorage.getItem("language") || navigator.language?.split("-")[0] || "en";
 }
 
 function timeAgo(date) {
