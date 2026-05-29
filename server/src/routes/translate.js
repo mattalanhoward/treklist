@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../middleware/auth");
+const { translateLimiter } = require("../middleware/rateLimiters");
 
 const SUPPORTED_LANGS = new Set(["en", "nl", "de", "fr", "it", "es"]);
 
-router.post("/", authMiddleware, async (req, res) => {
+router.post("/", authMiddleware, translateLimiter, async (req, res) => {
   const { text, targetLang } = req.body;
   if (!text || !targetLang) return res.status(400).json({ message: "text and targetLang required" });
   if (!SUPPORTED_LANGS.has(targetLang)) return res.status(400).json({ message: "Unsupported language" });

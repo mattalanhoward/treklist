@@ -395,7 +395,7 @@ export default function Sidebar({
                           onClick={() => { onOpenCommunity(c.slug); if (isMobile()) setCollapsed(true); }}
                           className="w-full text-left block py-1 px-2 rounded-lg whitespace-nowrap overflow-hidden truncate text-sm hover:bg-primaryAlt hover:text-neutral"
                         >
-                          {c.name}
+                          {t(`communities.${c.slug}.name`, { defaultValue: c.name })}
                         </button>
                       </li>
                     ))}

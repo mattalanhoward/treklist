@@ -122,6 +122,13 @@ const communityUpvoteLimiter = makeLimiter({
   keyGenerator: (req) => `cupvote:${req.userId || req.ip}`,
 });
 
+const translateLimiter = makeLimiter({
+  windowMs: 60 * 1000, // 1 minute
+  max: 30,
+  message: "Too many translation requests. Please wait a moment.",
+  keyGenerator: (req) => `translate:${req.userId || req.ip}`,
+});
+
 module.exports = {
   registerLimiter,
   forgotPasswordLimiter,
@@ -136,4 +143,5 @@ module.exports = {
   communityPostLimiter,
   communityCommentLimiter,
   communityUpvoteLimiter,
+  translateLimiter,
 };

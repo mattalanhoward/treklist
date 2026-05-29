@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FiArrowUp, FiFlag, FiEdit2, FiTrash2, FiCornerDownRight, FiLink } from "react-icons/fi";
+import { FiArrowUp, FiFlag, FiEdit2, FiTrash2, FiCornerDownRight, FiLink, FiGlobe, FiX, FiLoader } from "react-icons/fi";
 import { upvoteComment, flagComment, deleteComment, updateComment, createComment, translateText } from "../services/community";
 import useAuth from "../hooks/useAuth";
 import { toast } from "react-hot-toast";
@@ -18,6 +18,8 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
   const [translatedBody, setTranslatedBody] = useState(null);
   const [showTranslated, setShowTranslated] = useState(false);
   const [translating, setTranslating] = useState(false);
+  const userLang = localStorage.getItem("language") || navigator.language?.split("-")[0] || "en";
+  const showTranslateButton = !comment.lang || comment.lang !== userLang;
 
   const isOwner = isAuthenticated && user?._id === comment.userId?._id;
   const timeAgo = formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true });
@@ -175,13 +177,15 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
               <FiLink size={11} />
             </button>
 
-            <button
-              onClick={handleTranslate}
-              className="text-xs opacity-40 hover:opacity-70"
-              disabled={translating}
-            >
-              {translating ? "…" : showTranslated ? "Show original" : "Translate"}
-            </button>
+            {showTranslateButton && (
+              <button
+                onClick={handleTranslate}
+                className="text-xs text-sky-400 hover:text-sky-500 transition-colors"
+                disabled={translating}
+              >
+                {translating ? <FiLoader size={14} className="animate-spin" /> : showTranslated ? <FiX size={14} /> : <FiGlobe size={14} />}
+              </button>
+            )}
 
             {isAuthenticated && !isOwner && (
               <button

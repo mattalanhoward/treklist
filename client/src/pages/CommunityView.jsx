@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { FiArrowLeft, FiArrowUp, FiMessageSquare, FiPlus, FiLoader, FiFlag, FiEdit2, FiTrash2, FiExternalLink, FiLink, FiCornerDownRight, FiShare2, FiStar, FiSearch, FiX, FiImage, FiBold, FiItalic, FiList } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
+import { FiArrowLeft, FiArrowUp, FiMessageSquare, FiPlus, FiLoader, FiFlag, FiEdit2, FiTrash2, FiExternalLink, FiLink, FiCornerDownRight, FiShare2, FiStar, FiSearch, FiX, FiSend, FiGlobe, FiImage, FiBold, FiItalic, FiList } from "react-icons/fi";
 import { FaStar } from "react-icons/fa";
 import {
   getCommunities, getPosts, getPost, getComments, searchPosts,
@@ -270,6 +271,8 @@ function SearchResults({ query, onSelectPost, onSelectCommunity, searchProps }) 
 
 function CommunityLanding({ communities, onSelect, onToggleFavorite, onSelectPost, searchProps }) {
   const { isAuthenticated } = useAuth();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.language?.split("-")[0] || "en";
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       <div className="flex-shrink-0 px-4 py-2 border-b border-primary/10 bg-base-100 flex items-center">
@@ -288,9 +291,9 @@ function CommunityLanding({ communities, onSelect, onToggleFavorite, onSelectPos
               className="relative group text-left p-4 rounded-xl border border-base-200 border-t-[3px] border-t-primary/30 hover:border-t-primary/60 hover:border-primary/30 hover:bg-base-200/30 transition-colors cursor-pointer"
               onClick={() => onSelect(c.slug)}
             >
-              <h3 className="font-semibold text-sm text-primary pr-6">{c.name}</h3>
+              <h3 className="font-semibold text-sm text-primary pr-6">{t(`communities.${c.slug}.name`, { defaultValue: c.name })}</h3>
               {c.description && (
-                <p className="text-xs opacity-60 mt-1 line-clamp-2">{c.description}</p>
+                <p className="text-xs opacity-60 mt-1 line-clamp-2">{c.i18n?.[lang]?.description || c.description}</p>
               )}
               {isAuthenticated && (
                 <button
@@ -319,9 +322,15 @@ function CommunityLanding({ communities, onSelect, onToggleFavorite, onSelectPos
 
 function PostCard({ post, onSelect, onDeleted, currentUserId }) {
   const { isAuthenticated } = useAuth();
+  const userLang = localStorage.getItem("language") || navigator.language?.split("-")[0] || "en";
+  const showTranslateButton = !post.lang || post.lang !== userLang;
   const [upvoteCount, setUpvoteCount] = useState(post.upvoteCount);
   const [upvoted, setUpvoted] = useState(post.upvoted);
   const [flagged, setFlagged] = useState(false);
+  const [translatedTitle, setTranslatedTitle] = useState(null);
+  const [translatedBody, setTranslatedBody] = useState(null);
+  const [showTranslated, setShowTranslated] = useState(false);
+  const [translatingPost, setTranslatingPost] = useState(false);
   const isOwner = currentUserId && post.userId?._id === currentUserId;
   const { confirm, dialog } = useConfirm();
 
@@ -357,6 +366,24 @@ function PostCard({ post, onSelect, onDeleted, currentUserId }) {
     } catch { toast.error("Could not delete post"); }
   }
 
+  async function handleTranslatePost(e) {
+    e.stopPropagation();
+    if (showTranslated) { setShowTranslated(false); return; }
+    if (translatedTitle) { setShowTranslated(true); return; }
+    setTranslatingPost(true);
+    try {
+      const targetLang = localStorage.getItem("language") || navigator.language?.split("-")[0] || "en";
+      const plainBody = post.body ? post.body.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim() : "";
+      const textToTranslate = [post.title, plainBody].filter(Boolean).join("\n\n");
+      const { translated } = await translateText(textToTranslate, targetLang);
+      const parts = translated.split("\n\n");
+      setTranslatedTitle(parts[0] || post.title);
+      setTranslatedBody(parts[1] || "");
+      setShowTranslated(true);
+    } catch { toast.error("Could not translate"); }
+    finally { setTranslatingPost(false); }
+  }
+
   return (
     <>
     <article
@@ -376,7 +403,7 @@ function PostCard({ post, onSelect, onDeleted, currentUserId }) {
         </div>
         <div className="flex-1 min-w-0">
           <h2 className="font-semibold text-sm text-primary leading-snug">
-            {post.title}
+            {showTranslated && translatedTitle ? translatedTitle : post.title}
             {post.isEdited && <span className="ml-2 text-xs opacity-40 font-normal">(edited)</span>}
           </h2>
           {post.url && (
@@ -392,11 +419,18 @@ function PostCard({ post, onSelect, onDeleted, currentUserId }) {
             </a>
           )}
           {post.body && (
-            <p className="text-xs opacity-60 mt-1 line-clamp-2">{post.body.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim()}</p>
+            <p className="text-xs opacity-60 mt-1 line-clamp-2">
+              {showTranslated && translatedBody ? translatedBody : post.body.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim()}
+            </p>
           )}
           <div className="flex items-center gap-3 mt-2 text-xs opacity-50 flex-wrap" onClick={(e) => e.stopPropagation()}>
             <span>{post.userId?.trailname} &middot; {timeAgo(post.createdAt)}</span>
             <span className="flex items-center gap-1"><FiMessageSquare size={14} />{post.commentCount}</span>
+            {showTranslateButton && (
+              <button onClick={handleTranslatePost} disabled={translatingPost} className="p-0 leading-none text-sky-400 hover:text-sky-500 transition-colors">
+                {translatingPost ? <FiLoader size={14} className="animate-spin" /> : showTranslated ? <FiX size={14} /> : <FiGlobe size={14} />}
+              </button>
+            )}
             {isAuthenticated && !isOwner && (
               <button onClick={handleFlag} className={flagged ? "text-error" : "hover:opacity-100"} title="Flag">
                 <FiFlag size={14} />
@@ -434,6 +468,7 @@ function PostCard({ post, onSelect, onDeleted, currentUserId }) {
 
 function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggleFavorite, onSelectRecentPost, searchProps }) {
   const { isAuthenticated } = useAuth();
+  const { t } = useTranslation();
   const [posts, setPosts] = useState([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -502,7 +537,7 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
           Community
         </button>
         <span className="text-primary/20 select-none">/</span>
-        <span className="text-sm font-semibold text-primary truncate">{community.name}</span>
+        <span className="text-sm font-semibold text-primary truncate">{t(`communities.${community.slug}.name`, { defaultValue: community.name })}</span>
         {isAuthenticated && (
           <button
             type="button"
@@ -532,7 +567,7 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
               <div className="bg-primary/15 group-hover:bg-primary/25 rounded-full p-1 transition-colors shrink-0">
                 <FiPlus size={13} className="text-primary" />
               </div>
-              <span className="text-sm text-primary/60 group-hover:text-primary/80 transition-colors">Share something with {community.name}…</span>
+              <span className="text-sm text-primary/60 group-hover:text-primary/80 transition-colors">Share something with {t(`communities.${community.slug}.name`, { defaultValue: community.name })}…</span>
             </button>
           )}
           {showCreate && (
@@ -623,6 +658,8 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
 
 function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, onReplyAdded, currentUserId, shareBaseUrl }) {
   const { isAuthenticated } = useAuth();
+  const userLang = localStorage.getItem("language") || navigator.language?.split("-")[0] || "en";
+  const showTranslateButton = !comment.lang || comment.lang !== userLang;
   const [upvoteCount, setUpvoteCount] = useState(comment.upvoteCount);
   const [upvoted, setUpvoted] = useState(comment.upvoted);
   const [flagged, setFlagged] = useState(false);
@@ -725,12 +762,14 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
               <FiArrowUp size={14} /> {upvoteCount}
             </button>
             {isAuthenticated && !isOwner && !isReply && (
-              <button onClick={() => setReplying((r) => !r)} className="hover:opacity-100">Reply</button>
+              <button onClick={() => setReplying((r) => !r)} className="hover:opacity-100" title="Reply"><FiCornerDownRight size={15} /></button>
             )}
             <button onClick={copyLink} className="hover:opacity-100" title="Copy link"><FiLink size={14} /></button>
-            <button onClick={handleTranslate} className="hover:opacity-100" disabled={translating}>
-              {translating ? "…" : showTranslated ? "Show original" : "Translate"}
-            </button>
+            {showTranslateButton && (
+              <button onClick={handleTranslate} className="p-0 leading-none text-sky-400 hover:text-sky-500 transition-colors" disabled={translating}>
+                {translating ? <FiLoader size={14} className="animate-spin" /> : showTranslated ? <FiX size={14} /> : <FiGlobe size={14} />}
+              </button>
+            )}
             {isAuthenticated && !isOwner && (
               <button onClick={handleFlag} className={flagged ? "text-error opacity-70" : "hover:opacity-100"} title="Flag">
                 <FiFlag size={14} />
@@ -747,9 +786,13 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
         {replying && (
           <form onSubmit={handleReply} className="mt-2 space-y-2">
             <textarea value={replyBody} onChange={(e) => setReplyBody(e.target.value)} placeholder="Write a reply…" rows={2} className="textarea textarea-bordered textarea-sm w-full resize-none p-3" autoFocus />
-            <div className="flex gap-2">
-              <button type="submit" disabled={saving} className="btn btn-primary btn-xs">{saving ? "Posting…" : "Reply"}</button>
-              <button type="button" onClick={() => setReplying(false)} className="btn btn-ghost btn-xs">Cancel</button>
+            <div className="flex gap-4">
+              <button type="submit" disabled={saving} className="btn btn-primary btn-sm btn-square" title="Reply">
+                {saving ? <FiLoader size={18} className="animate-spin" /> : <FiSend size={18} />}
+              </button>
+              <button type="button" onClick={() => setReplying(false)} className="btn btn-ghost btn-sm btn-square" title="Cancel">
+                <FiX size={18} />
+              </button>
             </div>
           </form>
         )}
@@ -764,6 +807,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
 
 function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) {
   const { isAuthenticated } = useAuth();
+  const { t } = useTranslation();
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -779,7 +823,12 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
   const editImageInputRef = useRef(null);
   const [newComment, setNewComment] = useState("");
   const [posting, setPosting] = useState(false);
+  const [translatedTitle, setTranslatedTitle] = useState(null);
+  const [translatedBody, setTranslatedBody] = useState(null);
+  const [showTranslated, setShowTranslated] = useState(false);
+  const [translatingPost, setTranslatingPost] = useState(false);
   const { confirm, dialog } = useConfirm();
+  const userLang = localStorage.getItem("language") || navigator.language?.split("-")[0] || "en";
 
   const fetchAll = useCallback(async () => {
     try {
@@ -815,6 +864,23 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
     if (!ok) return;
     try { await deletePost(postId); onBack(); }
     catch { toast.error("Could not delete"); }
+  }
+
+  async function handleTranslatePost() {
+    if (showTranslated) { setShowTranslated(false); return; }
+    if (translatedTitle) { setShowTranslated(true); return; }
+    setTranslatingPost(true);
+    try {
+      const targetLang = localStorage.getItem("language") || navigator.language?.split("-")[0] || "en";
+      const plainBody = post.body ? post.body.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim() : "";
+      const textToTranslate = [post.title, plainBody].filter(Boolean).join("\n\n");
+      const { translated } = await translateText(textToTranslate, targetLang);
+      const parts = translated.split("\n\n");
+      setTranslatedTitle(parts[0] || post.title);
+      setTranslatedBody(parts[1] || "");
+      setShowTranslated(true);
+    } catch { toast.error("Could not translate"); }
+    finally { setTranslatingPost(false); }
   }
 
   async function handleEditImageSelect(e) {
@@ -872,7 +938,7 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
       <div className="flex-shrink-0 px-4 py-2 border-b border-primary/10 bg-base-100 flex items-center gap-3">
         <button onClick={onBack} className="flex items-center gap-1.5 text-sm text-primaryAlt hover:text-primary transition-colors">
           <FiArrowLeft className="w-4 h-4" />
-          {community?.name || "Community"}
+          {community ? t(`communities.${community.slug}.name`, { defaultValue: community.name }) : "Community"}
         </button>
         {post && (
           <>
@@ -949,7 +1015,7 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
                   </div>
                   <div className="flex-1 min-w-0">
                     <h1 className="text-lg font-bold text-primary leading-snug">
-                      {post.title}
+                      {showTranslated && translatedTitle ? translatedTitle : post.title}
                       {post.isEdited && <span className="ml-2 text-xs opacity-40 font-normal">(edited)</span>}
                     </h1>
                     <div className="flex items-center gap-2 text-xs opacity-50 mt-1">
@@ -964,7 +1030,9 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
                       </a>
                     )}
                     {post.body && (
-                      <div className="prose-notes text-sm mt-3 opacity-80" dangerouslySetInnerHTML={{ __html: post.body }} />
+                      showTranslated && translatedBody
+                        ? <p className="text-sm mt-3 opacity-80 whitespace-pre-wrap">{translatedBody}</p>
+                        : <div className="prose-notes text-sm mt-3 opacity-80" dangerouslySetInnerHTML={{ __html: post.body }} />
                     )}
                     {post.imageUrls?.length > 0 && (
                       <div className="mt-3">
@@ -972,6 +1040,11 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
                       </div>
                     )}
                     <div className="flex items-center gap-3 mt-4 text-xs opacity-50">
+                      {(!post.lang || post.lang !== userLang) && (
+                        <button onClick={handleTranslatePost} disabled={translatingPost} className="p-0 leading-none text-sky-400 hover:text-sky-500 transition-colors">
+                          {translatingPost ? <FiLoader size={14} className="animate-spin" /> : showTranslated ? <FiX size={14} /> : <FiGlobe size={14} />}
+                        </button>
+                      )}
                       {isOwner && (
                         <>
                           <button onClick={() => { setEditTitle(post.title); setEditBody(post.body || ""); setEditUrl(post.url || ""); setEditImageUrls(post.imageUrls || []); setEditing(true); }} title="Edit" className="hover:opacity-100">
@@ -995,7 +1068,9 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
                 <form onSubmit={handlePostComment} className="space-y-2">
                   <textarea value={newComment} onChange={(e) => setNewComment(e.target.value)} placeholder="Add a comment…" rows={3} className="textarea textarea-bordered textarea-sm w-full resize-none p-3" />
                   <div className="flex justify-end">
-                    <button type="submit" disabled={posting || !newComment.trim()} className="btn btn-primary btn-sm">{posting ? "Posting…" : "Comment"}</button>
+                    <button type="submit" disabled={posting || !newComment.trim()} className="btn btn-primary btn-sm px-4 gap-2" title="Comment">
+                      {posting ? <FiLoader size={18} className="animate-spin" /> : <FiSend size={18} />}
+                    </button>
                   </div>
                 </form>
               ) : (
@@ -1027,6 +1102,7 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
 
 export default function CommunityView({ initialSlug, initialPostId }) {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const currentUserId = user?._id;
 
   const [searchInput, setSearchInput] = useState("");
@@ -1130,7 +1206,7 @@ export default function CommunityView({ initialSlug, initialPostId }) {
         <div className="flex-shrink-0 px-4 py-2 border-b border-primary/10 bg-base-100 flex items-center gap-3">
           <button onClick={clearSearch} className="flex items-center gap-1.5 text-sm text-primaryAlt hover:text-primary transition-colors">
             <FiArrowLeft className="w-4 h-4" />
-            {community ? community.name : "Community"}
+            {community ? t(`communities.${community.slug}.name`, { defaultValue: community.name }) : "Community"}
           </button>
           <span className="text-primary/20 select-none">/</span>
           <span className="text-sm font-semibold text-primary truncate">"{activeQuery}"</span>
