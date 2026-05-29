@@ -1399,5 +1399,28 @@
     "previewCta": "Vedi lista",
     "openAriaLabel": "Apri modello {{title}}",
     "backBreadcrumb": "Torna ai Modelli"
+  },
+  "communities": {
+    "treklist-help": {
+      "name": "Treklist Help"
+    },
+    "shakedown": {
+      "name": "Shakedown"
+    },
+    "gear-talk": {
+      "name": "Gear Talk"
+    },
+    "ultralight": {
+      "name": "Ultralight"
+    },
+    "tmb": {
+      "name": "TMB"
+    },
+    "av1": {
+      "name": "AV1"
+    },
+    "whw": {
+      "name": "WHW"
+    }
   }
 }

@@ -31,6 +31,7 @@ const communityRoutes = require("./routes/communities");
 const postsRoutes = require("./routes/posts");
 const commentsRoutes = require("./routes/comments");
 const notificationsRoutes = require("./routes/notifications");
+const translateRoutes = require("./routes/translate");
 
 const app = express();
 
@@ -137,6 +138,7 @@ app.use("/api/posts/:postId/comments", authMiddleware, requireAdmin, commentsRou
 app.use("/api/comments", authMiddleware, requireAdmin, commentsRoutes);
 app.use("/api/notifications", authMiddleware, requireAdmin, notificationsRoutes);
 app.use("/api/admin/community", authMiddleware, requireAdmin, require("./routes/adminCommunity"));
+app.use("/api/translate", translateRoutes);
 
 app.use("/sitemap.xml", require("./routes/sitemap"));
 

@@ -93,6 +93,12 @@ export async function flagComment(commentId) {
   return data;
 }
 
+// Translation
+export async function translateText(text, targetLang) {
+  const { data } = await api.post("/translate", { text, targetLang });
+  return data; // { translated, detectedSourceLanguage }
+}
+
 // Notifications
 export async function getNotifications() {
   const { data } = await api.get("/notifications");

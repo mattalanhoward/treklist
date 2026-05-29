@@ -12,6 +12,7 @@ const {
   communityCommentLimiter,
   communityUpvoteLimiter,
 } = require("../middleware/rateLimiters");
+const { detectLanguage } = require("../utils/googleTranslate");
 
 // GET /api/posts/:postId/comments — fetch all comments for a post
 router.get("/", optionalAuth, async (req, res) => {
@@ -78,11 +79,14 @@ router.post("/", authMiddleware, communityCommentLimiter, async (req, res) => {
       if (parent.parentCommentId) return res.status(400).json({ message: "Cannot reply more than one level deep" });
     }
 
+    const lang = await detectLanguage(body.trim()).catch(() => null);
+
     const comment = new Comment({
       postId: post._id,
       userId: req.userId,
       parentCommentId: parentCommentId || null,
       body: body.trim(),
+      lang,
     });
     await comment.save();
 
@@ -133,6 +137,7 @@ router.put("/:commentId", authMiddleware, async (req, res) => {
     if (!body || !body.trim()) return res.status(400).json({ message: "Body required" });
 
     comment.body = body.trim();
+    comment.lang = await detectLanguage(body.trim()).catch(() => comment.lang);
     comment.isEdited = true;
     comment.editedAt = new Date();
     await comment.save();

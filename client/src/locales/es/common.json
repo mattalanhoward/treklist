@@ -1399,5 +1399,28 @@
     "previewCta": "Ver lista",
     "openAriaLabel": "Abrir plantilla {{title}}",
     "backBreadcrumb": "Volver a Plantillas"
+  },
+  "communities": {
+    "treklist-help": {
+      "name": "Treklist Help"
+    },
+    "shakedown": {
+      "name": "Shakedown"
+    },
+    "gear-talk": {
+      "name": "Gear Talk"
+    },
+    "ultralight": {
+      "name": "Ultralight"
+    },
+    "tmb": {
+      "name": "TMB"
+    },
+    "av1": {
+      "name": "AV1"
+    },
+    "whw": {
+      "name": "WHW"
+    }
   }
 }

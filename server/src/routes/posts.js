@@ -13,6 +13,7 @@ const {
   communityPostLimiter,
   communityUpvoteLimiter,
 } = require("../middleware/rateLimiters");
+const { detectLanguage } = require("../utils/googleTranslate");
 
 const PAGE_SIZE = 20;
 
@@ -97,6 +98,9 @@ router.post("/:slug/posts", authMiddleware, communityPostLimiter, async (req, re
       try { new URL(cleanUrl); } catch { return res.status(400).json({ message: "Invalid URL" }); }
     }
 
+    const plainText = `${title.trim()} ${(body || "").replace(/<[^>]+>/g, " ")}`.trim();
+    const lang = await detectLanguage(plainText).catch(() => null);
+
     const post = new Post({
       communityId: community._id,
       userId: req.userId,
@@ -104,6 +108,7 @@ router.post("/:slug/posts", authMiddleware, communityPostLimiter, async (req, re
       body: sanitizeBody(body),
       url: cleanUrl,
       imageUrls: parseImageUrls(imageUrls),
+      lang,
     });
     await post.save();
     await post.populate("userId", "trailname");
@@ -188,6 +193,7 @@ router.put("/:postId", authMiddleware, async (req, res) => {
     if (post.userId.toString() !== req.userId) return res.status(403).json({ message: "Forbidden" });
 
     const { title, body, url, imageUrls } = req.body;
+    const contentChanged = (title !== undefined) || (body !== undefined);
     if (title !== undefined) post.title = title.trim();
     if (body !== undefined) post.body = sanitizeBody(body);
     if (url !== undefined) {
@@ -198,6 +204,10 @@ router.put("/:postId", authMiddleware, async (req, res) => {
       post.url = cleanUrl;
     }
     if (imageUrls !== undefined) post.imageUrls = parseImageUrls(imageUrls);
+    if (contentChanged) {
+      const plainText = `${post.title} ${post.body.replace(/<[^>]+>/g, " ")}`.trim();
+      post.lang = await detectLanguage(plainText).catch(() => post.lang);
+    }
     post.isEdited = true;
     post.editedAt = new Date();
 

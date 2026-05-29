@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { FiArrowUp, FiFlag, FiEdit2, FiTrash2, FiCornerDownRight, FiLink } from "react-icons/fi";
-import { upvoteComment, flagComment, deleteComment, updateComment, createComment } from "../services/community";
+import { FiArrowUp, FiFlag, FiEdit2, FiTrash2, FiCornerDownRight, FiLink, FiGlobe, FiX, FiLoader } from "react-icons/fi";
+import { upvoteComment, flagComment, deleteComment, updateComment, createComment, translateText } from "../services/community";
 import useAuth from "../hooks/useAuth";
 import { toast } from "react-hot-toast";
 import { formatDistanceToNow } from "date-fns";
@@ -15,6 +15,11 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
   const [replying, setReplying] = useState(false);
   const [replyBody, setReplyBody] = useState("");
   const [saving, setSaving] = useState(false);
+  const [translatedBody, setTranslatedBody] = useState(null);
+  const [showTranslated, setShowTranslated] = useState(false);
+  const [translating, setTranslating] = useState(false);
+  const userLang = localStorage.getItem("language") || navigator.language?.split("-")[0] || "en";
+  const showTranslateButton = !comment.lang || comment.lang !== userLang;
 
   const isOwner = isAuthenticated && user?._id === comment.userId?._id;
   const timeAgo = formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true });
@@ -82,6 +87,22 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
     }
   }
 
+  async function handleTranslate() {
+    if (showTranslated) { setShowTranslated(false); return; }
+    if (translatedBody) { setShowTranslated(true); return; }
+    setTranslating(true);
+    try {
+      const targetLang = localStorage.getItem("language") || navigator.language?.split("-")[0] || "en";
+      const { translated } = await translateText(comment.body, targetLang);
+      setTranslatedBody(translated);
+      setShowTranslated(true);
+    } catch {
+      toast.error("Could not translate");
+    } finally {
+      setTranslating(false);
+    }
+  }
+
   function handleCopyLink() {
     const url = `${window.location.origin}${window.location.pathname}#comment-${comment._id}`;
     navigator.clipboard.writeText(url).then(() => toast.success("Link copied"));
@@ -122,7 +143,9 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
             </div>
           </form>
         ) : (
-          <p className="text-sm whitespace-pre-wrap break-words">{comment.body}</p>
+          <p className="text-sm whitespace-pre-wrap break-words">
+            {showTranslated && translatedBody ? translatedBody : comment.body}
+          </p>
         )}
 
         {/* Actions */}
@@ -153,6 +176,16 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
             >
               <FiLink size={11} />
             </button>
+
+            {showTranslateButton && (
+              <button
+                onClick={handleTranslate}
+                className="text-xs text-sky-400 hover:text-sky-500 transition-colors"
+                disabled={translating}
+              >
+                {translating ? <FiLoader size={14} className="animate-spin" /> : showTranslated ? <FiX size={14} /> : <FiGlobe size={14} />}
+              </button>
+            )}
 
             {isAuthenticated && !isOwner && (
               <button

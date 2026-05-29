@@ -8,6 +8,7 @@ const CommentSchema = new mongoose.Schema(
     body: { type: String, required: true, trim: true, maxlength: 5000 },
     upvoteCount: { type: Number, default: 0 },
     flagCount: { type: Number, default: 0 },
+    lang: { type: String, default: null, index: true },
     isEdited: { type: Boolean, default: false },
     editedAt: { type: Date, default: null },
     deletedAt: { type: Date, default: null },
