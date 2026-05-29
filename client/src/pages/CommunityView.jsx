@@ -20,6 +20,10 @@ import { formatDistanceToNow } from "date-fns";
 
 // ─── Shared helpers ──────────────────────────────────────────────────────────
 
+function getUserLang() {
+  return getUserLang();
+}
+
 function timeAgo(date) {
   return formatDistanceToNow(new Date(date), { addSuffix: true });
 }
@@ -271,8 +275,8 @@ function SearchResults({ query, onSelectPost, onSelectCommunity, searchProps }) 
 
 function CommunityLanding({ communities, onSelect, onToggleFavorite, onSelectPost, searchProps }) {
   const { isAuthenticated } = useAuth();
-  const { t, i18n } = useTranslation();
-  const lang = i18n.language?.split("-")[0] || "en";
+  const { t } = useTranslation();
+  const lang = getUserLang();
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       <div className="flex-shrink-0 px-4 py-2 border-b border-primary/10 bg-base-100 flex items-center">
@@ -322,7 +326,7 @@ function CommunityLanding({ communities, onSelect, onToggleFavorite, onSelectPos
 
 function PostCard({ post, onSelect, onDeleted, currentUserId }) {
   const { isAuthenticated } = useAuth();
-  const userLang = localStorage.getItem("language") || navigator.language?.split("-")[0] || "en";
+  const userLang = getUserLang();
   const showTranslateButton = !post.lang || post.lang !== userLang;
   const [upvoteCount, setUpvoteCount] = useState(post.upvoteCount);
   const [upvoted, setUpvoted] = useState(post.upvoted);
@@ -372,13 +376,13 @@ function PostCard({ post, onSelect, onDeleted, currentUserId }) {
     if (translatedTitle) { setShowTranslated(true); return; }
     setTranslatingPost(true);
     try {
-      const targetLang = localStorage.getItem("language") || navigator.language?.split("-")[0] || "en";
+      const targetLang = getUserLang();
       const plainBody = post.body ? post.body.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim() : "";
-      const textToTranslate = [post.title, plainBody].filter(Boolean).join("\n\n");
-      const { translated } = await translateText(textToTranslate, targetLang);
-      const parts = translated.split("\n\n");
-      setTranslatedTitle(parts[0] || post.title);
-      setTranslatedBody(parts[1] || "");
+      const calls = [translateText(post.title, targetLang)];
+      if (plainBody) calls.push(translateText(plainBody, targetLang));
+      const [titleResult, bodyResult] = await Promise.all(calls);
+      setTranslatedTitle(titleResult.translated || post.title);
+      setTranslatedBody(bodyResult?.translated || "");
       setShowTranslated(true);
     } catch { toast.error("Could not translate"); }
     finally { setTranslatingPost(false); }
@@ -658,7 +662,7 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
 
 function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, onReplyAdded, currentUserId, shareBaseUrl }) {
   const { isAuthenticated } = useAuth();
-  const userLang = localStorage.getItem("language") || navigator.language?.split("-")[0] || "en";
+  const userLang = getUserLang();
   const showTranslateButton = !comment.lang || comment.lang !== userLang;
   const [upvoteCount, setUpvoteCount] = useState(comment.upvoteCount);
   const [upvoted, setUpvoted] = useState(comment.upvoted);
@@ -722,7 +726,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
     if (translatedBody) { setShowTranslated(true); return; }
     setTranslating(true);
     try {
-      const targetLang = localStorage.getItem("language") || navigator.language?.split("-")[0] || "en";
+      const targetLang = getUserLang();
       const { translated } = await translateText(comment.body, targetLang);
       setTranslatedBody(translated);
       setShowTranslated(true);
@@ -828,7 +832,7 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
   const [showTranslated, setShowTranslated] = useState(false);
   const [translatingPost, setTranslatingPost] = useState(false);
   const { confirm, dialog } = useConfirm();
-  const userLang = localStorage.getItem("language") || navigator.language?.split("-")[0] || "en";
+  const userLang = getUserLang();
 
   const fetchAll = useCallback(async () => {
     try {
@@ -871,13 +875,13 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
     if (translatedTitle) { setShowTranslated(true); return; }
     setTranslatingPost(true);
     try {
-      const targetLang = localStorage.getItem("language") || navigator.language?.split("-")[0] || "en";
+      const targetLang = getUserLang();
       const plainBody = post.body ? post.body.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim() : "";
-      const textToTranslate = [post.title, plainBody].filter(Boolean).join("\n\n");
-      const { translated } = await translateText(textToTranslate, targetLang);
-      const parts = translated.split("\n\n");
-      setTranslatedTitle(parts[0] || post.title);
-      setTranslatedBody(parts[1] || "");
+      const calls = [translateText(post.title, targetLang)];
+      if (plainBody) calls.push(translateText(plainBody, targetLang));
+      const [titleResult, bodyResult] = await Promise.all(calls);
+      setTranslatedTitle(titleResult.translated || post.title);
+      setTranslatedBody(bodyResult?.translated || "");
       setShowTranslated(true);
     } catch { toast.error("Could not translate"); }
     finally { setTranslatingPost(false); }

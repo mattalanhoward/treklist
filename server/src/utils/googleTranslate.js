@@ -1,10 +1,19 @@
 const SUPPORTED_LANGS = ["nl", "de", "fr", "it", "es"];
 
+const BASE = "https://translation.googleapis.com/language/translate/v2";
+
+function getApiKey() {
+  const key = process.env.GOOGLE_TRANSLATE_API_KEY;
+  if (!key) throw new Error("GOOGLE_TRANSLATE_API_KEY is not set");
+  return key;
+}
+
+// Key passed as query param per Google's REST API requirement — ensure your
+// HTTP client / APM does not log outbound URLs in production.
 async function detectLanguage(text) {
   if (!text) return null;
-  const apiKey = process.env.GOOGLE_TRANSLATE_API_KEY;
-  const url = `https://translation.googleapis.com/language/translate/v2/detect?key=${apiKey}`;
-  const response = await fetch(url, {
+  const apiKey = getApiKey();
+  const response = await fetch(`${BASE}/detect?key=${apiKey}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ q: text.slice(0, 200) }),
@@ -15,9 +24,8 @@ async function detectLanguage(text) {
 }
 
 async function translateToLang(text, targetLang) {
-  const apiKey = process.env.GOOGLE_TRANSLATE_API_KEY;
-  const url = `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`;
-  const response = await fetch(url, {
+  const apiKey = getApiKey();
+  const response = await fetch(`${BASE}?key=${apiKey}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ q: text, target: targetLang, format: "text" }),
@@ -27,16 +35,16 @@ async function translateToLang(text, targetLang) {
   return data.data?.translations?.[0]?.translatedText || text;
 }
 
-// Returns { nl: { description }, de: { description }, fr: { description }, it: { description }, es: { description } }
+// Returns { nl: { description }, de: { description }, ... } — missing languages
+// are omitted rather than aborting the whole call if one language fails.
 async function translateAllLanguages(text) {
   if (!text) return {};
-  const entries = await Promise.all(
-    SUPPORTED_LANGS.map(async (lang) => {
-      const translated = await translateToLang(text, lang);
-      return [lang, { description: translated }];
-    })
+  const results = await Promise.allSettled(
+    SUPPORTED_LANGS.map(async (lang) => [lang, { description: await translateToLang(text, lang) }])
   );
-  return Object.fromEntries(entries);
+  return Object.fromEntries(
+    results.filter((r) => r.status === "fulfilled").map((r) => r.value)
+  );
 }
 
 module.exports = { translateAllLanguages, translateToLang, detectLanguage, SUPPORTED_LANGS };

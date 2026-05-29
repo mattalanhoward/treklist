@@ -108,7 +108,7 @@ router.put("/forums/:id", async (req, res) => {
     const existing = await Community.findById(req.params.id);
     if (!existing) return res.status(404).json({ message: "Community not found" });
     const update = { name, description, isArchived, sortOrder };
-    if (description !== existing.description) {
+    if (description !== undefined && description !== existing.description) {
       update.i18n = await translateAllLanguages(description || "");
     }
     const community = await Community.findByIdAndUpdate(
