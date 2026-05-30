@@ -280,6 +280,7 @@ function GearCatalogSection({
   const [error, setError] = useState("");
   const searchTimerRef = useRef(null);
   const [editingItem, setEditingItem] = useState(null);
+  const [viewingItem, setViewingItem] = useState(null);
   const [archivingId, setArchivingId] = useState(null);
 
   const [showArchived, setShowArchived] = useState(false);
@@ -1890,7 +1891,15 @@ function GearCatalogSection({
                             <td className="px-3 py-2 align-top">
                               {item.brand || "–"}
                             </td>
-                            <td className="px-3 py-2 align-top">{item.name}</td>
+                            <td className="px-3 py-2 align-top">
+                              <button
+                                type="button"
+                                onClick={() => setViewingItem(item)}
+                                className="text-left text-primary hover:opacity-60 transition-opacity"
+                              >
+                                {item.name}
+                              </button>
+                            </td>
                             <td className="px-3 py-2 align-top">
                               {item.category || "–"}
                             </td>
@@ -2054,7 +2063,154 @@ function GearCatalogSection({
           onSaved={handleEditSaved}
         />
       )}
+
+      {viewingItem && (
+        <ViewCatalogItemModal
+          item={viewingItem}
+          onClose={() => setViewingItem(null)}
+        />
+      )}
     </section>
+  );
+}
+
+function ViewCatalogItemModal({ item, onClose }) {
+  const imageUrl = Array.isArray(item.imageUrls) && item.imageUrls[0];
+  const weightOz = item.weightGrams
+    ? (item.weightGrams / 28.3495).toFixed(1)
+    : null;
+
+  const offers = Array.isArray(item.offers) ? item.offers : [];
+
+  const attrEntries = item.attributes
+    ? Object.entries(item.attributes).filter(([, v]) => v !== null && v !== undefined && v !== "")
+    : [];
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      <div className="bg-base-100 rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-base-200">
+          <h2 className="text-base font-semibold text-primary">Item Details</h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className="btn btn-ghost btn-xs text-error"
+          >
+            <FiX />
+          </button>
+        </div>
+
+        <div className="px-5 py-5 space-y-4">
+          {/* Image */}
+          {imageUrl && (
+            <div className="flex justify-center">
+              <img
+                src={imageUrl}
+                alt={item.name}
+                className="max-h-48 max-w-full object-contain rounded"
+              />
+            </div>
+          )}
+
+          {/* Core fields */}
+          <div className="space-y-2 text-sm">
+            {item.itemType && (
+              <div className="flex gap-2">
+                <span className="font-medium text-primary w-28 shrink-0">Item type:</span>
+                <span className="text-primary">{item.itemType}</span>
+              </div>
+            )}
+            <div className="flex gap-2">
+              <span className="font-medium text-primary w-28 shrink-0">Name:</span>
+              <span className="text-primary">{item.name}</span>
+            </div>
+            {item.brand && (
+              <div className="flex gap-2">
+                <span className="font-medium text-primary w-28 shrink-0">Brand:</span>
+                <span className="text-primary">{item.brand}</span>
+              </div>
+            )}
+            {item.modelNumber && (
+              <div className="flex gap-2">
+                <span className="font-medium text-primary w-28 shrink-0">Model #:</span>
+                <span className="text-primary">{item.modelNumber}</span>
+              </div>
+            )}
+            {item.category && (
+              <div className="flex gap-2">
+                <span className="font-medium text-primary w-28 shrink-0">Category:</span>
+                <span className="text-primary">
+                  {item.category}{item.subcategory ? ` / ${item.subcategory}` : ""}
+                </span>
+              </div>
+            )}
+            {weightOz && (
+              <div className="flex gap-2">
+                <span className="font-medium text-primary w-28 shrink-0">Weight:</span>
+                <span className="text-primary">{weightOz} oz ({item.weightGrams} g)</span>
+              </div>
+            )}
+          </div>
+
+          {/* Attributes */}
+          {attrEntries.length > 0 && (
+            <div className="space-y-1">
+              <div className="text-xs font-semibold text-primary uppercase tracking-wide">Attributes</div>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+                {attrEntries.map(([k, v]) => (
+                  <div key={k} className="flex gap-1">
+                    <span className="font-medium text-primary capitalize shrink-0">{k}:</span>
+                    <span className="text-primary">{String(v)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Description */}
+          {item.description && (
+            <div className="space-y-1">
+              <div className="text-xs font-semibold text-primary uppercase tracking-wide">Description</div>
+              <p className="text-sm text-primary whitespace-pre-line">{item.description}</p>
+            </div>
+          )}
+
+          {/* Affiliate links */}
+          {offers.length > 0 && (
+            <div className="space-y-1">
+              <div className="text-xs font-semibold text-primary uppercase tracking-wide">Affiliate Links</div>
+              <div className="space-y-1">
+                {offers.map((offer, i) => {
+                  const url = offer.deepLink || offer.url || "";
+                  return (
+                    <div key={i} className="flex items-center gap-2 text-sm">
+                      <span className="text-primary shrink-0">
+                        {[offer.merchantName, offer.network, offer.region]
+                          .filter(Boolean)
+                          .join(" / ")}
+                        {url ? ":" : ""}
+                      </span>
+                      {url && (
+                        <a
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 underline truncate hover:opacity-70"
+                          title={url}
+                        >
+                          {url.length > 50 ? url.slice(0, 50) + "…" : url}
+                        </a>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 
