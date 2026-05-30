@@ -1056,6 +1056,83 @@ const SCHEMAS = {
     },
   },
 
+  "Torch Light": {
+    fields: {
+      maxLumens: {
+        type: "number",
+        required: true,
+        label: "Max Output",
+        unit: "lumens",
+        min: 10,
+        max: 3000,
+      },
+      maxBeamDistance: {
+        type: "number",
+        required: false,
+        label: "Max Beam Distance",
+        unit: "m",
+        min: 10,
+        max: 500,
+      },
+      batteryType: {
+        type: "enum",
+        required: true,
+        label: "Battery Type",
+        options: [
+          "Rechargeable (USB-C)",
+          "Rechargeable (Micro USB)",
+          "Rechargeable (Proprietary)",
+          "AAA",
+          "AA",
+          "CR123A",
+          "18650",
+          "Hybrid",
+        ],
+      },
+      batteryCapacityMah: {
+        type: "number",
+        required: false,
+        label: "Battery Capacity",
+        unit: "mAh",
+        min: 500,
+        max: 10000,
+      },
+      burnTimeHigh: {
+        type: "number",
+        required: false,
+        label: "Burn Time (High)",
+        unit: "hrs",
+        min: 0.5,
+        max: 20,
+      },
+      burnTimeLow: {
+        type: "number",
+        required: false,
+        label: "Burn Time (Low)",
+        unit: "hrs",
+        min: 5,
+        max: 500,
+      },
+      beamType: {
+        type: "enum",
+        required: false,
+        label: "Beam Type",
+        options: ["Spot", "Flood", "Spot + Flood", "Adjustable"],
+      },
+      lockoutMode: {
+        type: "boolean",
+        required: false,
+        label: "Lockout Mode",
+      },
+      ipRating: {
+        type: "enum",
+        required: false,
+        label: "IP Rating",
+        options: ["IPX4", "IPX5", "IPX6", "IPX7", "IPX8", "IP67", "IP68"],
+      },
+    },
+  },
+
   "Water Filter": {
     fields: {
       filterType: {
@@ -2929,7 +3006,7 @@ export const CATEGORY_ITEM_TYPE_MAPPING = {
   "Backpacks & Bags": ["Backpack", "Daypack", "Hip Pack"],
   "Kitchen & Cooking": ["Backpacking Pot", "Backpacking Stove (Canister)", "Coffee Mug", "Utensil", "Stove Fuel"],
   Shelter: ["Backpacking Tent", "Tarp Shelter", "Tent Stakes", "Ground Sheet"],
-  "Electronics & Power": ["Headlamp", "Camp Lantern", "Power Bank", "Travel Charger"],
+  "Electronics & Power": ["Headlamp", "Torch Light", "Camp Lantern", "Power Bank", "Travel Charger"],
   Hydration: ["Water Filter", "Water Bottle", "Hydration Reservoir"],
   Footwear: ["Hiking Boots", "Trail Running Shoes", "Sandals"],
   "Men's Clothing": [

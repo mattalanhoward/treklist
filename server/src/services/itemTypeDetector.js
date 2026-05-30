@@ -35,6 +35,7 @@ const KEYWORD_MAP = [
 
   // --- Electronics & Power ---
   { keywords: ["headlamp", "head lamp", "head torch"], category: "Electronics & Power", itemType: "Headlamp" },
+  { keywords: ["torch light", "flashlight", "torch", "handheld torch", "hand torch"], category: "Electronics & Power", itemType: "Torch Light" },
   { keywords: ["camp lantern", "camping lantern", "tent lantern"], category: "Electronics & Power", itemType: "Camp Lantern" },
   { keywords: ["power bank", "battery pack", "portable charger", "portable battery"], category: "Electronics & Power", itemType: "Power Bank" },
   { keywords: ["travel charger", "usb charger", "wall charger", "charging adapter"], category: "Electronics & Power", itemType: "Travel Charger" },
