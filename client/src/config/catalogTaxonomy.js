@@ -56,6 +56,7 @@ export const CATALOG_SUBCATEGORIES = {
     "Headlamps",
     "Headphones & Earbuds",
     "Lighting",
+    "Torch Lights",
     "Phones & GPS",
     "Photo & Video",
     "Wearables & GPS",
