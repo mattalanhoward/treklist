@@ -105,28 +105,28 @@ const communityPostLimiter = makeLimiter({
   windowMs: 10 * 60 * 1000, // 10 minutes
   max: 5,
   message: "You're posting too frequently. Please wait a moment.",
-  keyGenerator: (req) => `cpost:${req.userId || req.ip}`,
+  keyGenerator: (req) => `cpost:${req.userId || ipKeyGenerator(req.ip)}`,
 });
 
 const communityCommentLimiter = makeLimiter({
   windowMs: 60 * 1000, // 1 minute
   max: 15,
   message: "You're commenting too frequently. Please wait a moment.",
-  keyGenerator: (req) => `ccomment:${req.userId || req.ip}`,
+  keyGenerator: (req) => `ccomment:${req.userId || ipKeyGenerator(req.ip)}`,
 });
 
 const communityUpvoteLimiter = makeLimiter({
   windowMs: 60 * 1000, // 1 minute
   max: 60,
   message: "You're voting too frequently. Please wait a moment.",
-  keyGenerator: (req) => `cupvote:${req.userId || req.ip}`,
+  keyGenerator: (req) => `cupvote:${req.userId || ipKeyGenerator(req.ip)}`,
 });
 
 const translateLimiter = makeLimiter({
   windowMs: 60 * 1000, // 1 minute
   max: 30,
   message: "Too many translation requests. Please wait a moment.",
-  keyGenerator: (req) => `translate:${req.userId || req.ip}`,
+  keyGenerator: (req) => `translate:${req.userId || ipKeyGenerator(req.ip)}`,
 });
 
 module.exports = {
