@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
 const SUPPORTED_LANGS = ["en", "nl", "de", "fr", "it", "es"];
-const SUPPORTED_REGIONS = ["nl", "us", "ca", "gb", "de", "fr", "it"];
 
 const UserSchema = new mongoose.Schema(
   {
@@ -96,8 +95,9 @@ const UserSchema = new mongoose.Schema(
 
     region: {
       type: String,
-      enum: SUPPORTED_REGIONS,
       default: "us",
+      lowercase: true,
+      trim: true,
     },
 
     locale: {

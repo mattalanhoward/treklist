@@ -65,17 +65,15 @@ function detectRegionFromIp(ip) {
 }
 
 /**
- * Detect viewer's region from Express request
+ * Detect viewer's country from Express request.
+ * Returns the raw 2-letter country code (e.g. "au", "de") or "global".
+ * Affiliate routing is handled downstream by buildRegionPreferenceChain.
  * @param {Object} req - Express request object
- * @returns {string} - Normalized region code (us, nl, uk, etc.) or 'global'
+ * @returns {string} - Lowercase 2-letter country code or 'global'
  */
 function detectViewerRegion(req) {
   const ip = getClientIp(req);
-  const countryCode = detectRegionFromIp(ip);
-  const normalized = normalizeRegion(countryCode);
-
-  // Map to a supported region so downstream code always gets a known value
-  return mapToSupportedRegion(normalized);
+  return detectRegionFromIp(ip);
 }
 
 /**

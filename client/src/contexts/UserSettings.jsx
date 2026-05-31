@@ -12,7 +12,6 @@ import { detectRegion, normalizeRegion } from "../utils/region";
 
 const SettingsCtx = createContext();
 const SUPPORTED_LANGS = ["en", "nl", "de", "fr", "it", "es"];
-const SUPPORTED_REGIONS = ["nl", "us", "ca", "gb", "de", "fr", "it"];
 
 export function SettingsProvider({ children }) {
   const { isAuthenticated } = useAuth();
@@ -48,20 +47,16 @@ export function SettingsProvider({ children }) {
     return "en";
   });
   const [region, setRegion] = useState(() => {
-    // 1) Prefer explicit stored choice (normalize -> ISO -> lowercase)
+    // 1) Prefer explicit stored choice
     const stored = normalizeRegion(localStorage.getItem("region"));
-    if (stored) {
-      const lc = stored.toLowerCase();
-      if (SUPPORTED_REGIONS.includes(lc)) return lc;
-    }
+    if (stored && /^[a-z]{2}$/.test(stored.toLowerCase())) return stored.toLowerCase();
 
-    // 2) Auto-detect on first visit
+    // 2) Auto-detect from browser locale/language
     const detected = normalizeRegion(detectRegion());
-    const detectedLc = detected ? detected.toLowerCase() : "";
-    if (SUPPORTED_REGIONS.includes(detectedLc)) return detectedLc;
+    if (detected && /^[a-z]{2}$/.test(detected.toLowerCase())) return detected.toLowerCase();
 
-    // 3) Safe fallback (must be supported everywhere)
-    return "gb";
+    // 3) Fallback
+    return "us";
   });
   const [viewMode, setViewMode] = useState(
     () => localStorage.getItem("viewMode") || "column"
@@ -121,15 +116,8 @@ export function SettingsProvider({ children }) {
   }, [language]);
 
   useEffect(() => {
-    const normalized = normalizeRegion(region);
-    const lc = (normalized || "").toLowerCase();
-    const safe = SUPPORTED_REGIONS.includes(lc) ? lc : "gb";
-
-    if (safe !== region) {
-      setRegion(safe);
-      return;
-    }
-    localStorage.setItem("region", safe);
+    const lc = (region || "us").toLowerCase();
+    localStorage.setItem("region", lc);
   }, [region]);
 
   useEffect(() => {
@@ -185,7 +173,7 @@ export function SettingsProvider({ children }) {
       const resolvedLang =
         localLang && SUPPORTED_LANGS.includes(localLang) ? localLang : dbLang;
       setLanguage(resolvedLang);
-      setRegion((s.region || "nl").toLowerCase());
+      setRegion((s.region || "us").toLowerCase());
       setViewMode(s.viewMode || "column");
       setSidebarCollapsed(Boolean(s.sidebarCollapsed));
       setSidebarGearListsCollapsed(Boolean(s.sidebarGearListsCollapsed));
@@ -209,7 +197,7 @@ export function SettingsProvider({ children }) {
       measurementSystem,
       theme,
       language,
-      region: (region || "nl").toLowerCase(),
+      region: (region || "us").toLowerCase(),
       viewMode,
       locale,
       sidebarCollapsed,
