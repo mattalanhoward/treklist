@@ -1452,6 +1452,8 @@
     "loadMore": "Charger plus",
     "postNotFound": "Post introuvable.",
     "logIn": "Se connecter",
+    "recentlyVisited": "Récemment visité",
+    "shareSomethingWith": "Partagez quelque chose avec {{name}}…",
     "toolbar": { "bold": "Gras", "italic": "Italique", "bulletList": "Liste à puces" },
     "post": {
       "createTitle": "Créer un post",

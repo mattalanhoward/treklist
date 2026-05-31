@@ -1452,6 +1452,8 @@
     "loadMore": "Meer laden",
     "postNotFound": "Bericht niet gevonden.",
     "logIn": "Inloggen",
+    "recentlyVisited": "Onlangs bezocht",
+    "shareSomethingWith": "Deel iets met {{name}}…",
     "toolbar": { "bold": "Vet", "italic": "Cursief", "bulletList": "Ongeordende lijst" },
     "post": {
       "createTitle": "Bericht plaatsen",

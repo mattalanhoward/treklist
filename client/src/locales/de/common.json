@@ -1452,6 +1452,8 @@
     "loadMore": "Mehr laden",
     "postNotFound": "Beitrag nicht gefunden.",
     "logIn": "Anmelden",
+    "recentlyVisited": "Zuletzt besucht",
+    "shareSomethingWith": "Teile etwas mit {{name}}…",
     "toolbar": { "bold": "Fett", "italic": "Kursiv", "bulletList": "Aufzählungsliste" },
     "post": {
       "createTitle": "Beitrag erstellen",

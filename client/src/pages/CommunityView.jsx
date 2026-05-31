@@ -166,6 +166,7 @@ function saveRecentPost(post, community) {
 }
 
 function RecentActivity({ onSelectPost }) {
+  const { t } = useTranslation();
   const [recent, setRecent] = useState([]);
 
   function load() {
@@ -184,7 +185,7 @@ function RecentActivity({ onSelectPost }) {
 
   return (
     <aside className="hidden lg:block w-52 xl:w-60 shrink-0 self-start sticky top-4">
-      <p className="text-xs font-semibold uppercase tracking-wider opacity-40 px-1 mb-2">Recently visited</p>
+      <p className="text-xs font-semibold uppercase tracking-wider opacity-40 px-1 mb-2">{t("community.recentlyVisited")}</p>
       <div className="space-y-0.5">
         {recent.map((item) => (
           <button
@@ -574,7 +575,7 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
               <div className="bg-primary/15 group-hover:bg-primary/25 rounded-full p-1 transition-colors shrink-0">
                 <FiPlus size={13} className="text-primary" />
               </div>
-              <span className="text-sm text-primary/60 group-hover:text-primary/80 transition-colors">Share something with {t(`communities.${community.slug}.name`, { defaultValue: community.name })}…</span>
+              <span className="text-sm text-primary/60 group-hover:text-primary/80 transition-colors">{t("community.shareSomethingWith", { name: t(`communities.${community.slug}.name`, { defaultValue: community.name }) })}</span>
             </button>
           )}
           {showCreate && (

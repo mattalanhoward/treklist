@@ -1452,6 +1452,8 @@
     "loadMore": "Cargar más",
     "postNotFound": "Publicación no encontrada.",
     "logIn": "Iniciar sesión",
+    "recentlyVisited": "Visitado recientemente",
+    "shareSomethingWith": "Comparte algo con {{name}}…",
     "toolbar": { "bold": "Negrita", "italic": "Cursiva", "bulletList": "Lista con viñetas" },
     "post": {
       "createTitle": "Crear publicación",

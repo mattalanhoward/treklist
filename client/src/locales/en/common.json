@@ -1466,6 +1466,8 @@
     "loadMore": "Load more",
     "postNotFound": "Post not found.",
     "logIn": "Log in",
+    "recentlyVisited": "Recently visited",
+    "shareSomethingWith": "Share something with {{name}}…",
     "toolbar": { "bold": "Bold", "italic": "Italic", "bulletList": "Bullet list" },
     "post": {
       "createTitle": "Create post",

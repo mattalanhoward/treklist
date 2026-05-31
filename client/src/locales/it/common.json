@@ -1452,6 +1452,8 @@
     "loadMore": "Carica altro",
     "postNotFound": "Post non trovato.",
     "logIn": "Accedi",
+    "recentlyVisited": "Visitato di recente",
+    "shareSomethingWith": "Condividi qualcosa con {{name}}…",
     "toolbar": { "bold": "Grassetto", "italic": "Corsivo", "bulletList": "Elenco puntato" },
     "post": {
       "createTitle": "Crea post",
