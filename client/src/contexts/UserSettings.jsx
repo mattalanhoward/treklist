@@ -173,7 +173,8 @@ export function SettingsProvider({ children }) {
       const resolvedLang =
         localLang && SUPPORTED_LANGS.includes(localLang) ? localLang : dbLang;
       setLanguage(resolvedLang);
-      setRegion((s.region || "us").toLowerCase());
+      const serverRegion = (s.region || "").toLowerCase();
+      setRegion(/^[a-z]{2}$/.test(serverRegion) ? serverRegion : "us");
       setViewMode(s.viewMode || "column");
       setSidebarCollapsed(Boolean(s.sidebarCollapsed));
       setSidebarGearListsCollapsed(Boolean(s.sidebarGearListsCollapsed));

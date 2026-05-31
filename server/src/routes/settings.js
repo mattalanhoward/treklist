@@ -72,9 +72,12 @@ router.patch("/", async (req, res) => {
   try {
     const updates = req.body;
 
-    // normalize region to lowercase if present
-    if (updates.region && typeof updates.region === "string") {
-      updates.region = updates.region.toLowerCase();
+    // Validate and normalise region if provided
+    if (updates.region !== undefined) {
+      if (typeof updates.region !== "string" || !/^[a-zA-Z]{2}$/.test(updates.region.trim())) {
+        return res.status(400).json({ message: "Invalid region code." });
+      }
+      updates.region = updates.region.trim().toLowerCase();
     }
 
     // disallow email updates via this endpoint

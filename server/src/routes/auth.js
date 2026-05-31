@@ -402,7 +402,7 @@ router.post("/register", registerLimiter, async (req, res) => {
     // Prefer explicit locale if valid, else derive from language+region
     const localeIn = String(req.body.locale || "").trim();
     const derivedLocale = `${user.language || "en"}-${String(
-      user.region || "nl",
+      user.region || "us",
     ).toUpperCase()}`;
 
     // Only accept client locale if it matches the final chosen language/region
