@@ -5,6 +5,7 @@ const AffiliateProduct = require("../models/affiliateProduct");
 const GlobalItem = require("../models/globalItem");
 const MerchantOffer = require("../models/merchantOffer");
 const { searchLimiter, resolveLimiter } = require("../middleware/rateLimiters");
+const { buildRegionPreferenceChain } = require("../utils/regionPrefs");
 
 // Note: auth is enforced at mount-level in app.js (/api/affiliates)
 
@@ -47,16 +48,6 @@ function normalizeBrandKey(brand) {
     .trim();
 }
 
-const { mapToSupportedRegion } = require("../utils/regionDetection");
-
-// Normalize incoming region codes (US/GB/NL/DE...) to MerchantOffer.region (us/uk/nl...)
-function normalizeOfferRegion(r) {
-  const x = String(r || "")
-    .trim()
-    .toLowerCase();
-  if (x === "gb") return "uk";
-  return mapToSupportedRegion(x);
-}
 
 /**
  * GET /api/affiliates/awin/facets
@@ -248,7 +239,7 @@ async function resolveBestOfferLink(req, res) {
   try {
     let { region, globalItemId, itemGroupId } = req.query;
 
-    const offerRegion = normalizeOfferRegion(region); // "us" / "uk" / ...
+    const offerChain = buildRegionPreferenceChain(region);
     let group = itemGroupId ? String(itemGroupId) : null;
     let productId = null;
     let originalLink = null; // custom items only
@@ -286,7 +277,7 @@ async function resolveBestOfferLink(req, res) {
 
     // Cache key must never be null; for custom-only items use the globalItemId
     const key = productId || group || `gi:${globalItemId}`;
-    const cacheKey = `${key}|${offerRegion}`;
+    const cacheKey = `${key}|${offerChain[0]}`;
 
     // DEV: do NOT cache, or priority updates will look "broken"
     if (isProd) {
@@ -300,39 +291,20 @@ async function resolveBestOfferLink(req, res) {
     if (productId) {
       best = await MerchantOffer.findOne({
         productId,
-        region: offerRegion,
+        region: { $in: offerChain },
       })
         .sort({ priority: -1, updatedAt: -1 })
         .lean();
-
-      // region fallback
-      if (!best) {
-        best = await MerchantOffer.findOne({
-          productId,
-          region: "global",
-        })
-          .sort({ priority: -1, updatedAt: -1 })
-          .lean();
-      }
     }
 
     // 2) Legacy fallback: resolve by itemGroupId/externalProductId
     if (!best && group) {
       best = await MerchantOffer.findOne({
-        region: offerRegion,
+        region: { $in: offerChain },
         $or: [{ itemGroupId: group }, { externalProductId: group }],
       })
         .sort({ priority: -1, updatedAt: -1 })
         .lean();
-
-      if (!best) {
-        best = await MerchantOffer.findOne({
-          region: "global",
-          $or: [{ itemGroupId: group }, { externalProductId: group }],
-        })
-          .sort({ priority: -1, updatedAt: -1 })
-          .lean();
-      }
     }
 
     // Winner offer
@@ -354,7 +326,7 @@ async function resolveBestOfferLink(req, res) {
     if (originalLink) {
       const payload = {
         link: originalLink,
-        region: offerRegion,
+        region: offerChain[0],
         network: "custom",
         source: "fallback-original",
       };
@@ -420,7 +392,7 @@ router.get(
 
     try {
       const { itemId, region } = req.query;
-      const offerRegion = normalizeOfferRegion(region);
+      const offerChain = buildRegionPreferenceChain(region);
 
       const gi = await GlobalItem.findOne({ _id: itemId, owner: req.userId })
         .select("productId affiliate link")
@@ -435,20 +407,14 @@ router.get(
       let best = null;
 
       if (productId) {
-        best = await MerchantOffer.findOne({ productId, region: offerRegion })
+        best = await MerchantOffer.findOne({ productId, region: { $in: offerChain } })
           .sort({ priority: -1, updatedAt: -1 })
           .lean();
-
-        if (!best) {
-          best = await MerchantOffer.findOne({ productId, region: "global" })
-            .sort({ priority: -1, updatedAt: -1 })
-            .lean();
-        }
       }
 
       if (!best && group) {
         best = await MerchantOffer.findOne({
-          region: offerRegion,
+          region: { $in: offerChain },
           $or: [
             { itemGroupId: String(group) },
             { externalProductId: String(group) },
@@ -456,18 +422,6 @@ router.get(
         })
           .sort({ priority: -1, updatedAt: -1 })
           .lean();
-
-        if (!best) {
-          best = await MerchantOffer.findOne({
-            region: "global",
-            $or: [
-              { itemGroupId: String(group) },
-              { externalProductId: String(group) },
-            ],
-          })
-            .sort({ priority: -1, updatedAt: -1 })
-            .lean();
-        }
       }
 
       if (best?.deepLink) {

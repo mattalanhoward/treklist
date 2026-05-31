@@ -12,13 +12,13 @@ const Community = require("../models/community");
 // Adjust the path if your mailer lives elsewhere.
 const { sendSupportEmail } = require("../utils/mailer");
 const { subscribeToKit, unsubscribeFromKit } = require("../utils/kitSubscribe");
+const { detectRegionFromIp, getClientIp, normalizeIp } = require("../utils/regionDetection");
 
 const router = express.Router();
 router.use(cookieParser());
 
 // ---- Config & constants ----
 const JWT_EXP = process.env.JWT_EXP || "7d";
-const SUPPORTED_REGIONS = ["nl", "us", "ca", "gb", "de", "fr", "it"];
 const SUPPORTED_LANGS = ["en", "nl", "de", "fr", "it", "es"];
 
 function normalizeRegionInput(r) {
@@ -389,13 +389,20 @@ router.post("/register", registerLimiter, async (req, res) => {
     // Optional client-provided prefs (first-visit detection)
     const regionIn = normalizeRegionInput(req.body.region);
     const langIn = normalizeLangInput(req.body.language);
-    if (SUPPORTED_REGIONS.includes(regionIn)) user.region = regionIn;
+    // Accept any valid 2-letter country code from the client
+    if (/^[a-z]{2}$/.test(regionIn)) {
+      user.region = regionIn;
+    } else {
+      // Fall back to IP-based country detection
+      const ipCountry = detectRegionFromIp(getClientIp(req));
+      if (ipCountry && ipCountry !== "global") user.region = ipCountry;
+    }
     if (SUPPORTED_LANGS.includes(langIn)) user.language = langIn;
 
     // Prefer explicit locale if valid, else derive from language+region
     const localeIn = String(req.body.locale || "").trim();
     const derivedLocale = `${user.language || "en"}-${String(
-      user.region || "nl",
+      user.region || "us",
     ).toUpperCase()}`;
 
     // Only accept client locale if it matches the final chosen language/region

@@ -59,50 +59,19 @@ export function isBannerRegion() {
   }
 }
 
-// Map messy labels to ISO alpha-2 we use everywhere
+// Normalise messy labels to a lowercase ISO alpha-2 country code.
+// The server's buildRegionPreferenceChain handles affiliate routing from there.
 export function normalizeRegion(code) {
   const k = String(code || "")
     .trim()
     .toUpperCase();
-  const map = {
+  const aliases = {
     USA: "US",
     UNITED_STATES: "US",
-    US: "US",
     CDN: "CA",
     CANADA: "CA",
-    CA: "CA",
     UK: "GB",
-    GB: "GB",
   };
-  // For normalization we do NOT want to silently pick "GB" for unknown.
-  // If it's not in the map and not already a 2-letter code, return empty string.
-  const normalized = map[k] || (/^[A-Z]{2}$/.test(k) ? k : "");
-
-  // Map to a supported region so affiliate resolution uses a known value
-  return mapToSupportedRegion(normalized);
-}
-
-/**
- * Map any country code to the closest supported region.
- * Mirrors server-side mapToSupportedRegion in regionDetection.js
- */
-const EU_COUNTRIES = new Set([
-  "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR",
-  "GR", "HU", "IE", "IT", "LV", "LT", "LU", "MT", "PL", "PT",
-  "RO", "SK", "SI", "ES", "SE", "NO", "CH", "IS",
-]);
-const UK_FALLBACK = new Set(["AU", "NZ", "SG", "HK", "ZA", "IN"]);
-const US_FALLBACK = new Set(["MX", "BR", "AR", "CL", "CO", "PE", "VE", "EC", "PR"]);
-
-function mapToSupportedRegion(code) {
-  if (!code) return "";
-  const cc = code.toUpperCase();
-
-  if (["US", "CA", "DE", "NL"].includes(cc)) return cc;
-  if (cc === "GB" || cc === "UK") return "GB";
-  if (EU_COUNTRIES.has(cc)) return cc; // pass through — server maps to "eu"
-  if (UK_FALLBACK.has(cc)) return "GB";
-  if (US_FALLBACK.has(cc)) return "US";
-
-  return cc; // let the server handle final mapping
+  const resolved = aliases[k] || (/^[A-Z]{2}$/.test(k) ? k : "");
+  return resolved.toLowerCase();
 }

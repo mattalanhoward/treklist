@@ -238,30 +238,6 @@ export default function TopBar({ title, openSettings, onOpenTour, onToggleSideba
                 ),
               },
               {
-                key: "region",
-                render: () => (
-                  <div
-                    className="flex items-center justify-between text-sm text-secondary"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <span>{t("topbar.region")}</span>
-                    <select
-                      value={region}
-                      onChange={(e) => setRegion(e.target.value.toLowerCase())}
-                      className="ml-2 bg-transparent focus:outline-none"
-                    >
-                      <option value="ca">{t("topbar.regions.ca")}</option>
-                      <option value="fr">{t("topbar.regions.fr")}</option>
-                      <option value="de">{t("topbar.regions.de")}</option>
-                      <option value="it">{t("topbar.regions.it")}</option>
-                      <option value="nl">{t("topbar.regions.nl")}</option>
-                      <option value="gb">{t("topbar.regions.gb")}</option>
-                      <option value="us">{t("topbar.regions.us")}</option>
-                    </select>
-                  </div>
-                ),
-              },
-              {
                 key: "sep-legal",
                 render: () => <div className="border-t border-gray-200" />,
               },

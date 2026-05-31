@@ -49,7 +49,7 @@ router.get("/", async (req, res) => {
       weightUnit,
       measurementSystem,
       language,
-      region: (region && String(region).toLowerCase()) || "nl",
+      region: (region && String(region).toLowerCase()) || "us",
       sidebarCollapsed: !!sidebarCollapsed,
       sidebarGearListsCollapsed: !!sidebarGearListsCollapsed,
       sidebarMyGearCollapsed: !!sidebarMyGearCollapsed,
@@ -72,9 +72,12 @@ router.patch("/", async (req, res) => {
   try {
     const updates = req.body;
 
-    // normalize region to lowercase if present
-    if (updates.region && typeof updates.region === "string") {
-      updates.region = updates.region.toLowerCase();
+    // Validate and normalise region if provided
+    if (updates.region !== undefined) {
+      if (typeof updates.region !== "string" || !/^[a-zA-Z]{2}$/.test(updates.region.trim())) {
+        return res.status(400).json({ message: "Invalid region code." });
+      }
+      updates.region = updates.region.trim().toLowerCase();
     }
 
     // disallow email updates via this endpoint
@@ -89,15 +92,9 @@ router.patch("/", async (req, res) => {
     const user = await User.findById(req.userId);
     if (!user) return res.status(404).json({ message: "User not found." });
 
-    // --- IMPORTANT: normalize the existing user's region too ---
-    if (
-      typeof user.region === "string" &&
-      user.region !== user.region.toLowerCase()
-    ) {
+    // Normalize existing user's region to lowercase
+    if (typeof user.region === "string") {
       user.region = user.region.toLowerCase();
-    }
-    if (!user.region) {
-      user.region = "nl";
     }
 
     // --- Handle marketing opt-in separately ---
