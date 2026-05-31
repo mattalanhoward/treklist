@@ -1453,6 +1453,23 @@
     "postNotFound": "Post introuvable.",
     "logIn": "Se connecter",
     "recentlyVisited": "Récemment visité",
+    "guidelines": {
+      "title": "Règles de la communauté",
+      "subtitle": "Gardons cela amusant, respectueux et utile pour tous sur le sentier.",
+      "rulesButton": "Règles",
+      "rule1Title": "Sois gentil",
+      "rule1Desc": "Traite les autres randonneurs comme tu voudrais être traité. Pas d'attaques personnelles, de harcèlement ni de comportement irrespectueux.",
+      "rule2Title": "Reste dans le sujet",
+      "rule2Desc": "Garde les publications pertinentes pour la randonnée, les sentiers, l'équipement et la vie en plein air. Ce n'est pas l'endroit pour du contenu non lié.",
+      "rule3Title": "Pas de spam",
+      "rule3Desc": "Évite les publications répétitives, le contenu de faible qualité ou l'inondation du fil. Une bonne publication vaut mieux que dix médiocres.",
+      "rule4Title": "Peu d'autopromotion",
+      "rule4Desc": "Partager ton blog ou tes photos est bienvenu dans le contexte — ne fais simplement pas de chaque publication une publicité.",
+      "rule5Title": "Informations précises uniquement",
+      "rule5Desc": "Les conditions des sentiers et les conseils de sécurité peuvent affecter le bien-être des gens. Ne partage que ce que tu sais avec certitude.",
+      "rule6Title": "Amuse-toi",
+      "rule6Desc": "Nous sommes tous ici parce que nous aimons le plein air. Garde l'énergie positive et accueillante pour tout le monde."
+    },
     "shareSomethingWith": "Partagez quelque chose avec {{name}}…",
     "toolbar": { "bold": "Gras", "italic": "Italique", "bulletList": "Liste à puces" },
     "post": {

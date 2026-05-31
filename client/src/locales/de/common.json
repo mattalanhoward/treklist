@@ -1453,6 +1453,23 @@
     "postNotFound": "Beitrag nicht gefunden.",
     "logIn": "Anmelden",
     "recentlyVisited": "Zuletzt besucht",
+    "guidelines": {
+      "title": "Community-Richtlinien",
+      "subtitle": "Bleib freundlich, respektvoll und nützlich für alle auf dem Weg.",
+      "rulesButton": "Regeln",
+      "rule1Title": "Sei nett",
+      "rule1Desc": "Behandle andere Wanderer so, wie du selbst behandelt werden möchtest. Keine persönlichen Angriffe, Belästigungen oder unhöfliches Verhalten.",
+      "rule2Title": "Bleib beim Thema",
+      "rule2Desc": "Halte Beiträge relevant für Wandern, Trails, Ausrüstung und das Leben im Freien. Das ist nicht der Ort für unzusammenhängende Inhalte.",
+      "rule3Title": "Kein Spam",
+      "rule3Desc": "Vermeide wiederholende Beiträge, minderwertigen Inhalt oder das Überfluten des Feeds. Ein guter Beitrag ist besser als zehn mittelmäßige.",
+      "rule4Title": "Wenig Eigenwerbung",
+      "rule4Desc": "Deinen Blog oder Fotos zu teilen ist im Kontext willkommen — mach einfach nicht jeden Beitrag zu einer Werbung.",
+      "rule5Title": "Nur genaue Informationen",
+      "rule5Desc": "Streckenbedingungen und Sicherheitstipps können das Wohlbefinden anderer beeinflussen. Teile nur, was du mit Sicherheit weißt.",
+      "rule6Title": "Viel Spaß",
+      "rule6Desc": "Wir sind alle hier, weil wir die Natur lieben. Behalte die positive und einladende Energie für alle bei."
+    },
     "shareSomethingWith": "Teile etwas mit {{name}}…",
     "toolbar": { "bold": "Fett", "italic": "Kursiv", "bulletList": "Aufzählungsliste" },
     "post": {

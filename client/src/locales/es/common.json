@@ -1453,6 +1453,23 @@
     "postNotFound": "Publicación no encontrada.",
     "logIn": "Iniciar sesión",
     "recentlyVisited": "Visitado recientemente",
+    "guidelines": {
+      "title": "Normas de la comunidad",
+      "subtitle": "Mantén todo divertido, respetuoso y útil para todos en el camino.",
+      "rulesButton": "Normas",
+      "rule1Title": "Sé amable",
+      "rule1Desc": "Trata a los demás senderistas como te gustaría que te trataran. Sin ataques personales, acoso ni comportamiento descortés.",
+      "rule2Title": "Mantente en el tema",
+      "rule2Desc": "Mantén las publicaciones relevantes para el senderismo, rutas, equipo y vida al aire libre. Este no es el lugar para contenido no relacionado.",
+      "rule3Title": "Sin spam",
+      "rule3Desc": "Evita publicaciones repetitivas, contenido de baja calidad o saturar el feed. Una buena publicación vale más que diez mediocres.",
+      "rule4Title": "Poca autopromoción",
+      "rule4Desc": "Compartir tu blog o fotos es bienvenido en contexto — solo no hagas de cada publicación un anuncio.",
+      "rule5Title": "Solo información precisa",
+      "rule5Desc": "Las condiciones del sendero y los consejos de seguridad pueden afectar el bienestar de las personas. Comparte solo lo que sabes con certeza.",
+      "rule6Title": "Diviértete",
+      "rule6Desc": "Todos estamos aquí porque amamos el aire libre. Mantén la energía positiva y acogedora para todos."
+    },
     "shareSomethingWith": "Comparte algo con {{name}}…",
     "toolbar": { "bold": "Negrita", "italic": "Cursiva", "bulletList": "Lista con viñetas" },
     "post": {
