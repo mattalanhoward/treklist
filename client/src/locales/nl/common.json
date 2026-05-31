@@ -575,7 +575,8 @@
     "buttons": {
       "viewDetails": "Bekijk details",
       "import": "Toevoegen aan My Gear",
-      "importing": "Toevoegen…"
+      "importing": "Toevoegen…",
+      "addToList": "Toevoegen aan lijst"
     },
     "messages": {
       "alreadyAdded": "Dit item staat al in My Gear."

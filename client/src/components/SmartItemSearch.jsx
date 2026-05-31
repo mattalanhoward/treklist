@@ -90,7 +90,7 @@ function ItemRow({ item, selected, onToggle, onViewDetails, multiSelect, disable
 }
 
 // ── Section (My Gear or Catalog) ──────────────────────────────────────────────
-function ResultSection({ title, items, type, myGearSelected, catalogSelected, onToggleMyGear, onToggleCatalog, onViewCatalogDetails, multiSelect, existingGlobalIds, loading }) {
+function ResultSection({ title, items, type, myGearSelected, catalogSelected, onToggleMyGear, onToggleCatalog, onViewCatalogDetails, onViewMyGearDetails, multiSelect, existingGlobalIds, loading }) {
   const { t } = useTranslation("common");
   if (loading) {
     return (
@@ -116,6 +116,7 @@ function ResultSection({ title, items, type, myGearSelected, catalogSelected, on
                 item={item}
                 selected={myGearSelected.has(id)}
                 onToggle={onToggleMyGear}
+                onViewDetails={onViewMyGearDetails}
                 multiSelect={multiSelect}
                 disabled={disabled}
                 badge={disabled ? t("smartItemSearch.added", "Added") : null}
@@ -431,6 +432,10 @@ export default function SmartItemSearch({
   const [previewError, setPreviewError] = useState(null);
   const [previewImporting, setPreviewImporting] = useState(false);
 
+  // My Gear item preview
+  const [myGearPreview, setMyGearPreview] = useState(null);
+  const [myGearPreviewAdding, setMyGearPreviewAdding] = useState(false);
+
   // Tab state (tabLayout mode only)
   const [activeTab, setActiveTab] = useState("import"); // "import" | "custom"
 
@@ -468,6 +473,17 @@ export default function SmartItemSearch({
       setPreviewItem(null);
     } finally {
       setPreviewImporting(false);
+    }
+  };
+
+  const handleMyGearPreviewAdd = async () => {
+    if (!myGearPreview || myGearPreviewAdding) return;
+    setMyGearPreviewAdding(true);
+    try {
+      await onConfirm({ source: "myGear", globalItems: [myGearPreview] });
+      setMyGearPreview(null);
+    } finally {
+      setMyGearPreviewAdding(false);
     }
   };
 
@@ -949,6 +965,7 @@ export default function SmartItemSearch({
                       catalogSelected={catalogSelected}
                       onToggleMyGear={toggleMyGear}
                       onToggleCatalog={toggleCatalog}
+                      onViewMyGearDetails={(item) => setMyGearPreview(item)}
                       multiSelect={multiSelect}
                       existingGlobalIds={existingGlobalIds}
                     />
@@ -1111,6 +1128,17 @@ export default function SmartItemSearch({
         error={previewError}
         onImport={handlePreviewImport}
         importing={previewImporting}
+      />
+
+      {/* My Gear item preview */}
+      <CatalogItemPreviewModal
+        isOpen={!!myGearPreview}
+        onClose={() => setMyGearPreview(null)}
+        item={myGearPreview ? { ...myGearPreview, weightGrams: myGearPreview.weight ?? myGearPreview.weightGrams } : null}
+        onImport={handleMyGearPreviewAdd}
+        importing={myGearPreviewAdding}
+        alreadyImported={!!myGearPreview && existingGlobalIds.has(String(myGearPreview._id))}
+        importLabel={t("catalogPreview.buttons.addToList", "Add to list")}
       />
 
       {/* Photo scan modal */}

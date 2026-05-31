@@ -591,7 +591,8 @@
     "buttons": {
       "viewDetails": "View details",
       "import": "Add to My Gear",
-      "importing": "Adding…"
+      "importing": "Adding…",
+      "addToList": "Add to list"
     },
     "messages": {
       "alreadyAdded": "This item is already in My Gear."
