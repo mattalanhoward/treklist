@@ -575,7 +575,8 @@
     "buttons": {
       "viewDetails": "Ver detalles",
       "import": "Añadir a Mi equipo",
-      "importing": "Añadiendo…"
+      "importing": "Añadiendo…",
+      "addToList": "Añadir a la lista"
     },
     "messages": {
       "alreadyAdded": "Este artículo ya está en Mi equipo."

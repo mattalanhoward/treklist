@@ -575,7 +575,8 @@
     "buttons": {
       "viewDetails": "Vedi dettagli",
       "import": "Aggiungi a La mia attrezzatura",
-      "importing": "Aggiunta…"
+      "importing": "Aggiunta…",
+      "addToList": "Aggiungi alla lista"
     },
     "messages": {
       "alreadyAdded": "Questo articolo è già in La mia attrezzatura."

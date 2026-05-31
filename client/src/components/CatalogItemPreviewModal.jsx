@@ -19,6 +19,7 @@ export default function CatalogItemPreviewModal({
   alreadyImported = false,
   onImport,
   importing = false,
+  importLabel,
 }) {
   const { t } = useTranslation("common");
 
@@ -279,50 +280,54 @@ export default function CatalogItemPreviewModal({
         {/* Actions - fixed at bottom */}
         <div className="mt-3 flex justify-between flex-shrink-0">
           <div className="flex space-x-2">
-            {primaryOffer?.deepLink ? (
-              <ButtonLink href={primaryOffer.deepLink}>
-                {primaryOffer.merchantName
-                  ? primaryOffer.merchantName
-                  : t("globalItemEditModal.buttons.productPage")}
-              </ButtonLink>
-            ) : loading ? (
-              <button
-                type="button"
-                disabled
-                className="px-2 py-1 bg-primary/10 text-primary/60 rounded-md shadow"
-                style={{ minWidth: 110 }}
-              >
-                Loading…
-              </button>
-            ) : null}
+            {(() => {
+              const buyLink = primaryOffer?.deepLink || item?.affiliate?.deepLink || item?.link;
+              const buyLabel = primaryOffer?.merchantName || item?.affiliate?.merchantName || null;
+              return buyLink ? (
+                <ButtonLink href={buyLink}>
+                  {buyLabel ?? t("globalItemEditModal.buttons.productPage")}
+                </ButtonLink>
+              ) : loading ? (
+                <button
+                  type="button"
+                  disabled
+                  className="px-2 py-1 bg-primary/10 text-primary/60 rounded-md shadow"
+                  style={{ minWidth: 110 }}
+                >
+                  Loading…
+                </button>
+              ) : null;
+            })()}
           </div>
 
           <div className="flex space-x-2">
-            <button
-              type="button"
-              onClick={onImport}
-              disabled={!item || loading || importing || alreadyImported}
-              className={`px-2 py-1 rounded bg-secondary text-white hover:bg-secondary/80 ${
-                !item || loading || importing || alreadyImported
-                  ? "opacity-50 cursor-not-allowed"
-                  : ""
-              }`}
-              title={
-                alreadyImported
-                  ? t("catalogPreview.messages.alreadyAdded")
-                  : undefined
-              }
-            >
-              {importing
-                ? t("catalogPreview.buttons.importing")
-                : t("catalogPreview.buttons.import")}
-            </button>
+            {onImport && (
+              <button
+                type="button"
+                onClick={onImport}
+                disabled={!item || loading || importing || alreadyImported}
+                className={`px-2 py-1 rounded bg-secondary text-white hover:bg-secondary/80 ${
+                  !item || loading || importing || alreadyImported
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
+                }`}
+                title={
+                  alreadyImported
+                    ? t("catalogPreview.messages.alreadyAdded")
+                    : undefined
+                }
+              >
+                {importing
+                  ? t("catalogPreview.buttons.importing")
+                  : (importLabel ?? t("catalogPreview.buttons.import"))}
+              </button>
+            )}
             <button
               type="button"
               onClick={onClose}
               className="px-2 py-1 bg-neutralAlt rounded hover:bg-neutralAlt/90 text-primary sm:text-base"
             >
-              {t("actions.cancel")}
+              {onImport ? t("actions.cancel") : t("actions.close")}
             </button>
           </div>
         </div>

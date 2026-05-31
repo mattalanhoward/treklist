@@ -582,7 +582,8 @@
     "buttons": {
       "viewDetails": "Voir les détails",
       "import": "Ajouter à Mon équipement",
-      "importing": "Ajout…"
+      "importing": "Ajout…",
+      "addToList": "Ajouter à la liste"
     },
     "messages": {
       "alreadyAdded": "Cet article est déjà dans Mon équipement."

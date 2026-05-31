@@ -575,7 +575,8 @@
     "buttons": {
       "viewDetails": "Details ansehen",
       "import": "Zu Meine Ausrüstung",
-      "importing": "Hinzufügen…"
+      "importing": "Hinzufügen…",
+      "addToList": "Zur Liste hinzufügen"
     },
     "messages": {
       "alreadyAdded": "Dieses Item ist bereits in Meine Ausrüstung."
