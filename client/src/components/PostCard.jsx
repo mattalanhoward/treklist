@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiArrowUp, FiMessageSquare, FiFlag, FiEdit2, FiTrash2, FiExternalLink } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
 import { upvotePost, flagPost, deletePost } from "../services/community";
 import useAuth from "../hooks/useAuth";
 import { toast } from "react-hot-toast";
 import { formatDistanceToNow } from "date-fns";
 
 export default function PostCard({ post, communitySlug, onDeleted, compact = false }) {
+  const { t } = useTranslation();
   const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const [upvoteCount, setUpvoteCount] = useState(post.upvoteCount);
@@ -27,7 +29,7 @@ export default function PostCard({ post, communitySlug, onDeleted, compact = fal
       setUpvoted(res.upvoted);
       setUpvoteCount(res.upvoteCount);
     } catch {
-      toast.error("Could not upvote");
+      toast.error(t("community.toasts.couldNotUpvote"));
     } finally {
       setLoading(false);
     }
@@ -40,20 +42,20 @@ export default function PostCard({ post, communitySlug, onDeleted, compact = fal
     try {
       await flagPost(post._id);
       setFlagged(true);
-      toast.success("Post flagged for review");
+      toast.success(t("community.toasts.postFlaggedForReview"));
     } catch {
-      toast.error("Could not flag post");
+      toast.error(t("community.toasts.couldNotFlagPost"));
     }
   }
 
   async function handleDelete(e) {
     e.preventDefault();
-    if (!window.confirm("Delete this post?")) return;
+    if (!window.confirm(t("community.confirm.deletePost"))) return;
     try {
       await deletePost(post._id);
       onDeleted?.(post._id);
     } catch {
-      toast.error("Could not delete post");
+      toast.error(t("community.toasts.couldNotDeletePost"));
     }
   }
 
@@ -67,7 +69,7 @@ export default function PostCard({ post, communitySlug, onDeleted, compact = fal
           <button
             onClick={handleUpvote}
             className={`btn btn-ghost btn-xs btn-square ${upvoted ? "text-primary" : "opacity-60 hover:opacity-100"}`}
-            title="Upvote"
+            title={t("community.actions.upvote")}
           >
             <FiArrowUp size={16} />
           </button>
@@ -120,10 +122,10 @@ export default function PostCard({ post, communitySlug, onDeleted, compact = fal
               <button
                 onClick={handleFlag}
                 className={`flex items-center gap-1 hover:opacity-100 ${flagged ? "text-error" : ""}`}
-                title="Flag post"
+                title={t("community.actions.flagPost")}
               >
                 <FiFlag size={12} />
-                {flagged ? "Flagged" : "Flag"}
+                {flagged ? t("community.actions.flagged") : t("community.actions.flag")}
               </button>
             )}
             {isOwner && (
@@ -132,13 +134,13 @@ export default function PostCard({ post, communitySlug, onDeleted, compact = fal
                   to={`/community/${slug}/${post._id}?edit=1`}
                   className="flex items-center gap-1 hover:opacity-100"
                 >
-                  <FiEdit2 size={12} /> Edit
+                  <FiEdit2 size={12} /> {t("community.actions.edit")}
                 </Link>
                 <button
                   onClick={handleDelete}
                   className="flex items-center gap-1 hover:text-error hover:opacity-100"
                 >
-                  <FiTrash2 size={12} /> Delete
+                  <FiTrash2 size={12} /> {t("actions.delete")}
                 </button>
               </>
             )}

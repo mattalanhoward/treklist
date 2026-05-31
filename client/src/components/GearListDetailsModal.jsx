@@ -304,7 +304,7 @@ export default function GearListDetailsModal({
                 <div className="flex items-center gap-0.5 px-1 py-1 bg-primary/5 border-b border-primary/20">
                   <button
                     type="button"
-                    title="Bold"
+                    title={t("gearListDetailsModal.toolbar.bold")}
                     onMouseDown={(e) => {
                       e.preventDefault();
                       editor?.chain().focus().toggleBold().run();
@@ -315,7 +315,7 @@ export default function GearListDetailsModal({
                   </button>
                   <button
                     type="button"
-                    title="Italic"
+                    title={t("gearListDetailsModal.toolbar.italic")}
                     onMouseDown={(e) => {
                       e.preventDefault();
                       editor?.chain().focus().toggleItalic().run();
@@ -327,7 +327,7 @@ export default function GearListDetailsModal({
                   <div className="w-px h-4 bg-primary/20 mx-1" />
                   <button
                     type="button"
-                    title="Bullet list"
+                    title={t("gearListDetailsModal.toolbar.bulletList")}
                     onMouseDown={(e) => {
                       e.preventDefault();
                       editor?.chain().focus().toggleBulletList().run();
@@ -338,7 +338,7 @@ export default function GearListDetailsModal({
                   </button>
                   <button
                     type="button"
-                    title="Numbered list"
+                    title={t("gearListDetailsModal.toolbar.numberedList")}
                     onMouseDown={(e) => {
                       e.preventDefault();
                       editor?.chain().focus().toggleOrderedList().run();

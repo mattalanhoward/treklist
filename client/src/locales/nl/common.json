@@ -152,7 +152,15 @@
     "addToListFailed": "Item kon niet aan je lijst worden toegevoegd.",
     "itemAlreadyInList": "Dit item staat al in je lijst. Gebruik het aantal-veld om meer toe te voegen.",
     "editGlobalTemplate": "Globaal sjabloon bewerken",
-    "templatesTitle": "Sjablonen"
+    "templatesTitle": "Sjablonen",
+    "a11y": {
+      "admin": "Beheer",
+      "community": "Community",
+      "toggleCommunities": "Community's in-/uitklappen",
+      "toggleGearLists": "Uitrustingslijsten in-/uitklappen",
+      "createNewList": "Nieuwe lijst aanmaken",
+      "toggleMyGear": "Mijn uitrusting in-/uitklappen"
+    }
   },
   "auth": {
     "title": {
@@ -679,6 +687,24 @@
       "nameRequired": "Naam is verplicht",
       "invalidWeight": "Ongeldig gewicht",
       "previewLoadFailed": "Artikeldetails konden niet worden geladen."
+    },
+    "gearRequest": {
+      "title": "Uitrusting aanvragen",
+      "description": "Niet gevonden wat je zoekt? Laat het ons weten en we kijken of we het kunnen toevoegen.",
+      "labels": {
+        "itemName": "Artikelnaam",
+        "brand": "Merk",
+        "link": "Link (optioneel)"
+      },
+      "buttons": {
+        "openForm": "Uitrusting aanvragen",
+        "send": "Verzoek verzenden",
+        "sending": "Verzenden…"
+      },
+      "toasts": {
+        "success": "Verzoek verzonden! We kijken of we het kunnen toevoegen.",
+        "failed": "Verzoek verzenden mislukt. Probeer het opnieuw."
+      }
     }
   },
   "photoScanModal": {
@@ -770,7 +796,19 @@
     "toast": {
       "saveSuccess": "Lijstgegevens opgeslagen.",
       "saveFailed": "Lijstgegevens konden niet worden opgeslagen. Probeer het opnieuw."
+    },
+    "toolbar": {
+      "bold": "Vet",
+      "italic": "Cursief",
+      "bulletList": "Ongeordende lijst",
+      "numberedList": "Genummerde lijst"
     }
+  },
+  "imageCarousel": {
+    "previous": "Vorige",
+    "next": "Volgende",
+    "previousImage": "Vorige afbeelding",
+    "nextImage": "Volgende afbeelding"
   },
   "catalog": {
     "categories": {
@@ -1143,6 +1181,9 @@
     "common": {
       "amazonAssociate": "Als Amazon-partner verdien ik aan gekwalificeerde aankopen.",
       "learnMore": "Meer informatie"
+    },
+    "toasts": {
+      "noLink": "Geen link beschikbaar."
     }
   },
   "landing": {
@@ -1402,6 +1443,70 @@
     "previewCta": "Lijst bekijken",
     "openAriaLabel": "Sjabloon {{title}} openen",
     "backBreadcrumb": "Terug naar Sjablonen"
+  },
+  "community": {
+    "searchPlaceholder": "Overal zoeken…",
+    "titlePlaceholder": "Titel",
+    "sort": { "new": "Nieuw", "top": "Top" },
+    "noPosts": "Nog geen berichten. Wees de eerste!",
+    "loadMore": "Meer laden",
+    "postNotFound": "Bericht niet gevonden.",
+    "logIn": "Inloggen",
+    "recentlyVisited": "Onlangs bezocht",
+    "shareSomethingWith": "Deel iets met {{name}}…",
+    "toolbar": { "bold": "Vet", "italic": "Cursief", "bulletList": "Ongeordende lijst" },
+    "post": {
+      "createTitle": "Bericht plaatsen",
+      "editTitle": "Bericht bewerken",
+      "titlePlaceholder": "Titel *",
+      "bodyPlaceholder": "Inhoud (optioneel)",
+      "urlPlaceholder": "Link (optioneel)",
+      "submit": "Plaatsen",
+      "saveChanges": "Wijzigingen opslaan"
+    },
+    "actions": {
+      "reply": "Reageren",
+      "copyLink": "Link kopiëren",
+      "edit": "Bewerken",
+      "flag": "Markeren",
+      "flagged": "Gemarkeerd",
+      "upvote": "Upvoten",
+      "flagPost": "Bericht markeren",
+      "addPhotos": "Foto's toevoegen",
+      "comment": "Reageren",
+      "posting": "Plaatsen…",
+      "uploading": "Uploaden…"
+    },
+    "comments": {
+      "replyPlaceholder": "Schrijf een antwoord…",
+      "commentPlaceholder": "Voeg een reactie toe…"
+    },
+    "toasts": {
+      "couldNotUpvote": "Kon niet upvoten",
+      "flaggedForReview": "Gemarkeerd voor beoordeling",
+      "postFlaggedForReview": "Bericht gemarkeerd voor beoordeling",
+      "commentFlaggedForReview": "Reactie gemarkeerd voor beoordeling",
+      "couldNotFlagPost": "Kon bericht niet markeren",
+      "couldNotFlagComment": "Kon reactie niet markeren",
+      "couldNotDeletePost": "Kon bericht niet verwijderen",
+      "couldNotDeleteComment": "Kon reactie niet verwijderen",
+      "couldNotTranslate": "Kon niet vertalen",
+      "couldNotUpdate": "Kon niet bijwerken",
+      "couldNotReply": "Kon niet reageren",
+      "couldNotCreatePost": "Kon bericht niet plaatsen",
+      "couldNotSavePost": "Kon bericht niet opslaan",
+      "couldNotUpdateComment": "Kon reactie niet bijwerken",
+      "couldNotPostReply": "Kon antwoord niet plaatsen",
+      "couldNotPostComment": "Kon reactie niet plaatsen",
+      "maxImages": "Maximaal 5 afbeeldingen per bericht",
+      "titleRequired": "Titel vereist",
+      "titleIsRequired": "Titel is vereist",
+      "linkCopied": "Link gekopieerd"
+    },
+    "confirm": {
+      "deletePost": "Dit bericht verwijderen?",
+      "deleteComment": "Deze reactie verwijderen?"
+    }
   },
   "communities": {
     "treklist-help": {

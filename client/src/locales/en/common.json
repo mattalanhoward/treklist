@@ -152,7 +152,15 @@
     "addToListFailed": "Failed to add item into your list.",
     "itemAlreadyInList": "This item is already in your list. Use the quantity field to add more.",
     "editGlobalTemplate": "Edit global template",
-    "templatesTitle": "Templates"
+    "templatesTitle": "Templates",
+    "a11y": {
+      "admin": "Admin",
+      "community": "Community",
+      "toggleCommunities": "Toggle communities",
+      "toggleGearLists": "Toggle gear lists section",
+      "createNewList": "Create new list",
+      "toggleMyGear": "Toggle my gear section"
+    }
   },
   "templates": {
     "title": "Templates",
@@ -695,6 +703,24 @@
       "nameRequired": "Name is required",
       "invalidWeight": "Invalid weight",
       "previewLoadFailed": "Failed to load item details."
+    },
+    "gearRequest": {
+      "title": "Request a Gear Item",
+      "description": "Can't find what you're looking for? Let us know and we'll look into adding it.",
+      "labels": {
+        "itemName": "Item Name",
+        "brand": "Brand",
+        "link": "Link (optional)"
+      },
+      "buttons": {
+        "openForm": "Request a Gear Item",
+        "send": "Send Request",
+        "sending": "Sending…"
+      },
+      "toasts": {
+        "success": "Request sent! We'll look into adding it.",
+        "failed": "Failed to send request. Please try again."
+      }
     }
   },
   "photoScanModal": {
@@ -786,7 +812,19 @@
     "toast": {
       "saveSuccess": "List details saved.",
       "saveFailed": "Failed to save list details. Please try again."
+    },
+    "toolbar": {
+      "bold": "Bold",
+      "italic": "Italic",
+      "bulletList": "Bullet list",
+      "numberedList": "Numbered list"
     }
+  },
+  "imageCarousel": {
+    "previous": "Previous",
+    "next": "Next",
+    "previousImage": "Previous image",
+    "nextImage": "Next image"
   },
   "catalog": {
     "categories": {
@@ -1164,6 +1202,9 @@
     "common": {
       "amazonAssociate": "As an Amazon Associate, I earn from qualifying purchases.",
       "learnMore": "Learn more"
+    },
+    "toasts": {
+      "noLink": "No link available."
     }
   },
   "landing": {
@@ -1415,6 +1456,70 @@
     "toast": {
       "nameRequired": "List name cannot be empty.",
       "failed": "Could not create list. Please try again."
+    }
+  },
+  "community": {
+    "searchPlaceholder": "Search everything…",
+    "titlePlaceholder": "Title",
+    "sort": { "new": "New", "top": "Top" },
+    "noPosts": "No posts yet. Be the first!",
+    "loadMore": "Load more",
+    "postNotFound": "Post not found.",
+    "logIn": "Log in",
+    "recentlyVisited": "Recently visited",
+    "shareSomethingWith": "Share something with {{name}}…",
+    "toolbar": { "bold": "Bold", "italic": "Italic", "bulletList": "Bullet list" },
+    "post": {
+      "createTitle": "Create post",
+      "editTitle": "Edit post",
+      "titlePlaceholder": "Title *",
+      "bodyPlaceholder": "Body (optional)",
+      "urlPlaceholder": "Link (optional)",
+      "submit": "Post",
+      "saveChanges": "Save changes"
+    },
+    "actions": {
+      "reply": "Reply",
+      "copyLink": "Copy link",
+      "edit": "Edit",
+      "flag": "Flag",
+      "flagged": "Flagged",
+      "upvote": "Upvote",
+      "flagPost": "Flag post",
+      "addPhotos": "Add photos",
+      "comment": "Comment",
+      "posting": "Posting…",
+      "uploading": "Uploading…"
+    },
+    "comments": {
+      "replyPlaceholder": "Write a reply…",
+      "commentPlaceholder": "Add a comment…"
+    },
+    "toasts": {
+      "couldNotUpvote": "Could not upvote",
+      "flaggedForReview": "Flagged for review",
+      "postFlaggedForReview": "Post flagged for review",
+      "commentFlaggedForReview": "Comment flagged for review",
+      "couldNotFlagPost": "Could not flag post",
+      "couldNotFlagComment": "Could not flag comment",
+      "couldNotDeletePost": "Could not delete post",
+      "couldNotDeleteComment": "Could not delete comment",
+      "couldNotTranslate": "Could not translate",
+      "couldNotUpdate": "Could not update",
+      "couldNotReply": "Could not reply",
+      "couldNotCreatePost": "Could not create post",
+      "couldNotSavePost": "Could not save post",
+      "couldNotUpdateComment": "Could not update comment",
+      "couldNotPostReply": "Could not post reply",
+      "couldNotPostComment": "Could not post comment",
+      "maxImages": "Maximum 5 images per post",
+      "titleRequired": "Title required",
+      "titleIsRequired": "Title is required",
+      "linkCopied": "Link copied"
+    },
+    "confirm": {
+      "deletePost": "Delete this post?",
+      "deleteComment": "Delete this comment?"
     }
   },
   "communities": {

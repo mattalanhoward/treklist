@@ -152,7 +152,15 @@
     "addToListFailed": "Échec de l'ajout de l'article à votre liste.",
     "itemAlreadyInList": "Cet article est déjà dans votre liste. Utilisez le champ quantité pour en ajouter.",
     "editGlobalTemplate": "Modifier le modèle global",
-    "templatesTitle": "Modèles"
+    "templatesTitle": "Modèles",
+    "a11y": {
+      "admin": "Administration",
+      "community": "Communauté",
+      "toggleCommunities": "Afficher/masquer les communautés",
+      "toggleGearLists": "Afficher/masquer les listes d'équipement",
+      "createNewList": "Créer une nouvelle liste",
+      "toggleMyGear": "Afficher/masquer mon équipement"
+    }
   },
   "templates": {
     "title": "Modèles",
@@ -686,6 +694,24 @@
       "nameRequired": "Le nom est requis",
       "invalidWeight": "Poids invalide",
       "previewLoadFailed": "Impossible de charger les détails de l'article."
+    },
+    "gearRequest": {
+      "title": "Demander un article d'équipement",
+      "description": "Vous ne trouvez pas ce que vous cherchez ? Dites-le nous et nous verrons si nous pouvons l'ajouter.",
+      "labels": {
+        "itemName": "Nom de l'article",
+        "brand": "Marque",
+        "link": "Lien (facultatif)"
+      },
+      "buttons": {
+        "openForm": "Demander un article d'équipement",
+        "send": "Envoyer la demande",
+        "sending": "Envoi…"
+      },
+      "toasts": {
+        "success": "Demande envoyée ! Nous allons voir si nous pouvons l'ajouter.",
+        "failed": "Impossible d'envoyer la demande. Veuillez réessayer."
+      }
     }
   },
   "photoScanModal": {
@@ -777,7 +803,19 @@
     "toast": {
       "saveSuccess": "Détails de la liste enregistrés.",
       "saveFailed": "Échec de l’enregistrement des détails. Veuillez réessayer."
+    },
+    "toolbar": {
+      "bold": "Gras",
+      "italic": "Italique",
+      "bulletList": "Liste à puces",
+      "numberedList": "Liste numérotée"
     }
+  },
+  "imageCarousel": {
+    "previous": "Précédent",
+    "next": "Suivant",
+    "previousImage": "Image précédente",
+    "nextImage": "Image suivante"
   },
   "catalog": {
     "categories": {
@@ -1150,6 +1188,9 @@
     "common": {
       "amazonAssociate": "En tant qu’Associé Amazon, je gagne une commission sur les achats éligibles.",
       "learnMore": "En savoir plus"
+    },
+    "toasts": {
+      "noLink": "Aucun lien disponible."
     }
   },
   "landing": {
@@ -1401,6 +1442,70 @@
     "toast": {
       "nameRequired": "Le nom de la liste ne peut pas être vide.",
       "failed": "Impossible de créer la liste. Veuillez réessayer."
+    }
+  },
+  "community": {
+    "searchPlaceholder": "Rechercher partout…",
+    "titlePlaceholder": "Titre",
+    "sort": { "new": "Nouveau", "top": "Top" },
+    "noPosts": "Aucun post pour l'instant. Soyez le premier !",
+    "loadMore": "Charger plus",
+    "postNotFound": "Post introuvable.",
+    "logIn": "Se connecter",
+    "recentlyVisited": "Récemment visité",
+    "shareSomethingWith": "Partagez quelque chose avec {{name}}…",
+    "toolbar": { "bold": "Gras", "italic": "Italique", "bulletList": "Liste à puces" },
+    "post": {
+      "createTitle": "Créer un post",
+      "editTitle": "Modifier le post",
+      "titlePlaceholder": "Titre *",
+      "bodyPlaceholder": "Contenu (facultatif)",
+      "urlPlaceholder": "Lien (facultatif)",
+      "submit": "Publier",
+      "saveChanges": "Enregistrer les modifications"
+    },
+    "actions": {
+      "reply": "Répondre",
+      "copyLink": "Copier le lien",
+      "edit": "Modifier",
+      "flag": "Signaler",
+      "flagged": "Signalé",
+      "upvote": "Voter",
+      "flagPost": "Signaler le post",
+      "addPhotos": "Ajouter des photos",
+      "comment": "Commenter",
+      "posting": "Publication…",
+      "uploading": "Téléchargement…"
+    },
+    "comments": {
+      "replyPlaceholder": "Écrire une réponse…",
+      "commentPlaceholder": "Ajouter un commentaire…"
+    },
+    "toasts": {
+      "couldNotUpvote": "Impossible de voter",
+      "flaggedForReview": "Signalé pour examen",
+      "postFlaggedForReview": "Post signalé pour examen",
+      "commentFlaggedForReview": "Commentaire signalé pour examen",
+      "couldNotFlagPost": "Impossible de signaler le post",
+      "couldNotFlagComment": "Impossible de signaler le commentaire",
+      "couldNotDeletePost": "Impossible de supprimer le post",
+      "couldNotDeleteComment": "Impossible de supprimer le commentaire",
+      "couldNotTranslate": "Traduction impossible",
+      "couldNotUpdate": "Mise à jour impossible",
+      "couldNotReply": "Réponse impossible",
+      "couldNotCreatePost": "Impossible de créer le post",
+      "couldNotSavePost": "Impossible d'enregistrer le post",
+      "couldNotUpdateComment": "Impossible de mettre à jour le commentaire",
+      "couldNotPostReply": "Impossible de poster la réponse",
+      "couldNotPostComment": "Impossible de poster le commentaire",
+      "maxImages": "Maximum 5 images par post",
+      "titleRequired": "Titre requis",
+      "titleIsRequired": "Le titre est requis",
+      "linkCopied": "Lien copié"
+    },
+    "confirm": {
+      "deletePost": "Supprimer ce post ?",
+      "deleteComment": "Supprimer ce commentaire ?"
     }
   },
   "communities": {

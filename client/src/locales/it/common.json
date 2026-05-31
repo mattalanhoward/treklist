@@ -152,7 +152,15 @@
     "addToListFailed": "Impossibile aggiungere l'articolo alla lista.",
     "itemAlreadyInList": "Questo articolo è già nella tua lista. Usa il campo quantità per aggiungerne di più.",
     "editGlobalTemplate": "Modifica modello globale",
-    "templatesTitle": "Modelli"
+    "templatesTitle": "Modelli",
+    "a11y": {
+      "admin": "Amministrazione",
+      "community": "Community",
+      "toggleCommunities": "Espandi/comprimi le community",
+      "toggleGearLists": "Espandi/comprimi le liste attrezzatura",
+      "createNewList": "Crea nuova lista",
+      "toggleMyGear": "Espandi/comprimi la mia attrezzatura"
+    }
   },
   "auth": {
     "title": {
@@ -679,6 +687,24 @@
       "nameRequired": "Il nome è obbligatorio",
       "invalidWeight": "Peso non valido",
       "previewLoadFailed": "Impossibile caricare i dettagli dell'articolo."
+    },
+    "gearRequest": {
+      "title": "Richiedi un articolo",
+      "description": "Non trovi quello che cerchi? Faccelo sapere e verificheremo se possiamo aggiungerlo.",
+      "labels": {
+        "itemName": "Nome articolo",
+        "brand": "Marca",
+        "link": "Link (opzionale)"
+      },
+      "buttons": {
+        "openForm": "Richiedi un articolo",
+        "send": "Invia richiesta",
+        "sending": "Invio in corso…"
+      },
+      "toasts": {
+        "success": "Richiesta inviata! Verificheremo se possiamo aggiungerlo.",
+        "failed": "Impossibile inviare la richiesta. Riprova."
+      }
     }
   },
   "photoScanModal": {
@@ -770,7 +796,19 @@
     "toast": {
       "saveSuccess": "Dettagli lista salvati.",
       "saveFailed": "Impossibile salvare i dettagli. Riprova."
+    },
+    "toolbar": {
+      "bold": "Grassetto",
+      "italic": "Corsivo",
+      "bulletList": "Elenco puntato",
+      "numberedList": "Elenco numerato"
     }
+  },
+  "imageCarousel": {
+    "previous": "Precedente",
+    "next": "Successivo",
+    "previousImage": "Immagine precedente",
+    "nextImage": "Immagine successiva"
   },
   "catalog": {
     "categories": {
@@ -1143,6 +1181,9 @@
     "common": {
       "amazonAssociate": "In qualità di Associato Amazon, guadagno dagli acquisti idonei.",
       "learnMore": "Scopri di più"
+    },
+    "toasts": {
+      "noLink": "Nessun link disponibile."
     }
   },
   "landing": {
@@ -1402,6 +1443,70 @@
     "previewCta": "Vedi lista",
     "openAriaLabel": "Apri modello {{title}}",
     "backBreadcrumb": "Torna ai Modelli"
+  },
+  "community": {
+    "searchPlaceholder": "Cerca ovunque…",
+    "titlePlaceholder": "Titolo",
+    "sort": { "new": "Nuovo", "top": "Top" },
+    "noPosts": "Nessun post ancora. Sii il primo!",
+    "loadMore": "Carica altro",
+    "postNotFound": "Post non trovato.",
+    "logIn": "Accedi",
+    "recentlyVisited": "Visitato di recente",
+    "shareSomethingWith": "Condividi qualcosa con {{name}}…",
+    "toolbar": { "bold": "Grassetto", "italic": "Corsivo", "bulletList": "Elenco puntato" },
+    "post": {
+      "createTitle": "Crea post",
+      "editTitle": "Modifica post",
+      "titlePlaceholder": "Titolo *",
+      "bodyPlaceholder": "Contenuto (opzionale)",
+      "urlPlaceholder": "Link (opzionale)",
+      "submit": "Pubblica",
+      "saveChanges": "Salva modifiche"
+    },
+    "actions": {
+      "reply": "Rispondi",
+      "copyLink": "Copia link",
+      "edit": "Modifica",
+      "flag": "Segnala",
+      "flagged": "Segnalato",
+      "upvote": "Vota",
+      "flagPost": "Segnala post",
+      "addPhotos": "Aggiungi foto",
+      "comment": "Commenta",
+      "posting": "Pubblicazione…",
+      "uploading": "Caricamento…"
+    },
+    "comments": {
+      "replyPlaceholder": "Scrivi una risposta…",
+      "commentPlaceholder": "Aggiungi un commento…"
+    },
+    "toasts": {
+      "couldNotUpvote": "Impossibile votare",
+      "flaggedForReview": "Segnalato per revisione",
+      "postFlaggedForReview": "Post segnalato per revisione",
+      "commentFlaggedForReview": "Commento segnalato per revisione",
+      "couldNotFlagPost": "Impossibile segnalare il post",
+      "couldNotFlagComment": "Impossibile segnalare il commento",
+      "couldNotDeletePost": "Impossibile eliminare il post",
+      "couldNotDeleteComment": "Impossibile eliminare il commento",
+      "couldNotTranslate": "Traduzione non riuscita",
+      "couldNotUpdate": "Aggiornamento non riuscito",
+      "couldNotReply": "Impossibile rispondere",
+      "couldNotCreatePost": "Impossibile creare il post",
+      "couldNotSavePost": "Impossibile salvare il post",
+      "couldNotUpdateComment": "Impossibile aggiornare il commento",
+      "couldNotPostReply": "Impossibile pubblicare la risposta",
+      "couldNotPostComment": "Impossibile pubblicare il commento",
+      "maxImages": "Massimo 5 immagini per post",
+      "titleRequired": "Titolo obbligatorio",
+      "titleIsRequired": "Il titolo è obbligatorio",
+      "linkCopied": "Link copiato"
+    },
+    "confirm": {
+      "deletePost": "Eliminare questo post?",
+      "deleteComment": "Eliminare questo commento?"
+    }
   },
   "communities": {
     "treklist-help": {

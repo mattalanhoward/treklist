@@ -152,7 +152,15 @@
     "addToListFailed": "No se pudo añadir el artículo a tu lista.",
     "itemAlreadyInList": "Este artículo ya está en tu lista. Usa el campo de cantidad para añadir más.",
     "editGlobalTemplate": "Editar plantilla global",
-    "templatesTitle": "Plantillas"
+    "templatesTitle": "Plantillas",
+    "a11y": {
+      "admin": "Administración",
+      "community": "Comunidad",
+      "toggleCommunities": "Mostrar/ocultar comunidades",
+      "toggleGearLists": "Mostrar/ocultar listas de equipo",
+      "createNewList": "Crear nueva lista",
+      "toggleMyGear": "Mostrar/ocultar mi equipo"
+    }
   },
   "auth": {
     "title": {
@@ -679,6 +687,24 @@
       "nameRequired": "El nombre es obligatorio",
       "invalidWeight": "Peso no válido",
       "previewLoadFailed": "No se pudieron cargar los detalles del artículo."
+    },
+    "gearRequest": {
+      "title": "Solicitar un artículo de equipo",
+      "description": "¿No encuentras lo que buscas? Dínoslo y veremos si podemos añadirlo.",
+      "labels": {
+        "itemName": "Nombre del artículo",
+        "brand": "Marca",
+        "link": "Enlace (opcional)"
+      },
+      "buttons": {
+        "openForm": "Solicitar un artículo de equipo",
+        "send": "Enviar solicitud",
+        "sending": "Enviando…"
+      },
+      "toasts": {
+        "success": "¡Solicitud enviada! Veremos si podemos añadirlo.",
+        "failed": "No se pudo enviar la solicitud. Por favor, inténtalo de nuevo."
+      }
     }
   },
   "photoScanModal": {
@@ -770,7 +796,19 @@
     "toast": {
       "saveSuccess": "Detalles de la lista guardados.",
       "saveFailed": "No se pudieron guardar los detalles. Inténtalo de nuevo."
+    },
+    "toolbar": {
+      "bold": "Negrita",
+      "italic": "Cursiva",
+      "bulletList": "Lista con viñetas",
+      "numberedList": "Lista numerada"
     }
+  },
+  "imageCarousel": {
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "previousImage": "Imagen anterior",
+    "nextImage": "Imagen siguiente"
   },
   "catalog": {
     "categories": {
@@ -1143,6 +1181,9 @@
     "common": {
       "amazonAssociate": "Como Afiliado de Amazon, gano comisiones por compras que cumplan los requisitos.",
       "learnMore": "Más información"
+    },
+    "toasts": {
+      "noLink": "No hay enlace disponible."
     }
   },
   "landing": {
@@ -1402,6 +1443,70 @@
     "previewCta": "Ver lista",
     "openAriaLabel": "Abrir plantilla {{title}}",
     "backBreadcrumb": "Volver a Plantillas"
+  },
+  "community": {
+    "searchPlaceholder": "Buscar en todo…",
+    "titlePlaceholder": "Título",
+    "sort": { "new": "Nuevo", "top": "Top" },
+    "noPosts": "Aún no hay publicaciones. ¡Sé el primero!",
+    "loadMore": "Cargar más",
+    "postNotFound": "Publicación no encontrada.",
+    "logIn": "Iniciar sesión",
+    "recentlyVisited": "Visitado recientemente",
+    "shareSomethingWith": "Comparte algo con {{name}}…",
+    "toolbar": { "bold": "Negrita", "italic": "Cursiva", "bulletList": "Lista con viñetas" },
+    "post": {
+      "createTitle": "Crear publicación",
+      "editTitle": "Editar publicación",
+      "titlePlaceholder": "Título *",
+      "bodyPlaceholder": "Contenido (opcional)",
+      "urlPlaceholder": "Enlace (opcional)",
+      "submit": "Publicar",
+      "saveChanges": "Guardar cambios"
+    },
+    "actions": {
+      "reply": "Responder",
+      "copyLink": "Copiar enlace",
+      "edit": "Editar",
+      "flag": "Reportar",
+      "flagged": "Reportado",
+      "upvote": "Votar",
+      "flagPost": "Reportar publicación",
+      "addPhotos": "Añadir fotos",
+      "comment": "Comentar",
+      "posting": "Publicando…",
+      "uploading": "Subiendo…"
+    },
+    "comments": {
+      "replyPlaceholder": "Escribe una respuesta…",
+      "commentPlaceholder": "Añadir un comentario…"
+    },
+    "toasts": {
+      "couldNotUpvote": "No se pudo votar",
+      "flaggedForReview": "Reportado para revisión",
+      "postFlaggedForReview": "Publicación reportada para revisión",
+      "commentFlaggedForReview": "Comentario reportado para revisión",
+      "couldNotFlagPost": "No se pudo reportar la publicación",
+      "couldNotFlagComment": "No se pudo reportar el comentario",
+      "couldNotDeletePost": "No se pudo eliminar la publicación",
+      "couldNotDeleteComment": "No se pudo eliminar el comentario",
+      "couldNotTranslate": "No se pudo traducir",
+      "couldNotUpdate": "No se pudo actualizar",
+      "couldNotReply": "No se pudo responder",
+      "couldNotCreatePost": "No se pudo crear la publicación",
+      "couldNotSavePost": "No se pudo guardar la publicación",
+      "couldNotUpdateComment": "No se pudo actualizar el comentario",
+      "couldNotPostReply": "No se pudo publicar la respuesta",
+      "couldNotPostComment": "No se pudo publicar el comentario",
+      "maxImages": "Máximo 5 imágenes por publicación",
+      "titleRequired": "Título requerido",
+      "titleIsRequired": "El título es requerido",
+      "linkCopied": "Enlace copiado"
+    },
+    "confirm": {
+      "deletePost": "¿Eliminar esta publicación?",
+      "deleteComment": "¿Eliminar este comentario?"
+    }
   },
   "communities": {
     "treklist-help": {

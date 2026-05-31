@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { FiX } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
 import { createPost, updatePost } from "../services/community";
 import { toast } from "react-hot-toast";
 
 export default function CreatePostForm({ communitySlug, existingPost, onSaved, onCancel }) {
+  const { t } = useTranslation();
   const [title, setTitle] = useState(existingPost?.title || "");
   const [body, setBody] = useState(existingPost?.body || "");
   const [url, setUrl] = useState(existingPost?.url || "");
@@ -19,7 +21,7 @@ export default function CreatePostForm({ communitySlug, existingPost, onSaved, o
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!title.trim()) { toast.error("Title is required"); return; }
+    if (!title.trim()) { toast.error(t("community.toasts.titleIsRequired")); return; }
     setSaving(true);
     try {
       let saved;
@@ -30,7 +32,7 @@ export default function CreatePostForm({ communitySlug, existingPost, onSaved, o
       }
       onSaved(saved);
     } catch {
-      toast.error("Could not save post");
+      toast.error(t("community.toasts.couldNotSavePost"));
     } finally {
       setSaving(false);
     }
@@ -40,7 +42,7 @@ export default function CreatePostForm({ communitySlug, existingPost, onSaved, o
     <form onSubmit={handleSubmit} className="bg-base-100 border border-base-200 rounded-xl p-4 space-y-3">
       <div className="flex items-center justify-between mb-1">
         <h3 className="font-semibold text-sm">
-          {existingPost ? "Edit post" : "Create post"}
+          {existingPost ? t("community.post.editTitle") : t("community.post.createTitle")}
         </h3>
         {onCancel && (
           <button type="button" onClick={onCancel} className="btn btn-ghost btn-xs btn-square">
@@ -52,7 +54,7 @@ export default function CreatePostForm({ communitySlug, existingPost, onSaved, o
       <div>
         <input
           type="text"
-          placeholder="Title *"
+          placeholder={t("community.post.titlePlaceholder")}
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           maxLength={300}
@@ -63,7 +65,7 @@ export default function CreatePostForm({ communitySlug, existingPost, onSaved, o
       </div>
 
       <textarea
-        placeholder="Body (optional)"
+        placeholder={t("community.post.bodyPlaceholder")}
         value={body}
         onChange={(e) => setBody(e.target.value)}
         maxLength={10000}
@@ -73,7 +75,7 @@ export default function CreatePostForm({ communitySlug, existingPost, onSaved, o
 
       <input
         type="url"
-        placeholder="Link (optional)"
+        placeholder={t("community.post.urlPlaceholder")}
         value={url}
         onChange={(e) => setUrl(e.target.value)}
         className="input input-bordered input-sm w-full"
@@ -82,11 +84,11 @@ export default function CreatePostForm({ communitySlug, existingPost, onSaved, o
       <div className="flex justify-end gap-2">
         {onCancel && (
           <button type="button" onClick={onCancel} className="btn btn-ghost btn-sm">
-            Cancel
+            {t("actions.cancel")}
           </button>
         )}
         <button type="submit" disabled={saving} className="btn btn-primary btn-sm">
-          {saving ? "Saving…" : existingPost ? "Save changes" : "Post"}
+          {saving ? t("actions.saving") : existingPost ? t("community.post.saveChanges") : t("community.post.submit")}
         </button>
       </div>
     </form>

@@ -281,7 +281,7 @@ export default function Sidebar({
             {isAdmin && (
               <button
                 type="button"
-                title="Admin"
+                title={t("sidebar.a11y.admin")}
                 onClick={() => {
                   onOpenAdmin();
                 }}
@@ -293,7 +293,7 @@ export default function Sidebar({
             {isAdmin && (
               <button
                 type="button"
-                title="Community"
+                title={t("sidebar.a11y.community")}
                 onClick={() => onOpenCommunity(null)}
                 className="w-9 h-9 flex items-center justify-center rounded-lg text-primaryAlt hover:text-primary hover:bg-primary/5 transition-colors"
               >
@@ -346,7 +346,7 @@ export default function Sidebar({
                   }}
                   className="flex items-center text-primaryAlt font-bold truncate"
                 >
-                  Admin
+                  {t("sidebar.a11y.admin")}
                 </button>
               </section>
             )}
@@ -362,11 +362,11 @@ export default function Sidebar({
                   className="flex items-center gap-2 font-bold truncate mr-1 text-left hover:underline transition-colors"
                 >
                   <FiUsers className="w-3.5 h-3.5 flex-shrink-0" />
-                  Community
+                  {t("sidebar.a11y.community")}
                 </button>
                 <button
                   type="button"
-                  aria-label="Toggle communities"
+                  aria-label={t("sidebar.a11y.toggleCommunities")}
                   onClick={() => setCommunitiesCollapsed((p) => !p)}
                   className="p-1 hover:text-primaryAlt/80"
                 >
@@ -424,7 +424,7 @@ export default function Sidebar({
                 </button>
                 <button
                   type="button"
-                  aria-label="Toggle gear lists section"
+                  aria-label={t("sidebar.a11y.toggleGearLists")}
                   onClick={() => setSidebarGearListsCollapsed((prev) => !prev)}
                   className="p-1 hover:text-primaryAlt/80"
                 >
@@ -438,7 +438,7 @@ export default function Sidebar({
                 <button
                   data-tour="sidebar-create-list"
                   type="button"
-                  aria-label="Create new list"
+                  aria-label={t("sidebar.a11y.createNewList")}
                   onClick={() => setShowCreateListModal(true)}
                   className="p-1 text-primaryAlt hover:text-primaryAlt/80"
                 >
@@ -513,7 +513,7 @@ export default function Sidebar({
                 </button>
                 <button
                   type="button"
-                  aria-label="Toggle my gear section"
+                  aria-label={t("sidebar.a11y.toggleMyGear")}
                   onClick={() => setSidebarMyGearCollapsed((prev) => !prev)}
                   className="p-1 hover:text-primaryAlt/80"
                 >
