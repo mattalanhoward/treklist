@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { FiArrowLeft, FiArrowUp, FiMessageSquare, FiPlus, FiLoader, FiFlag, FiEdit2, FiTrash2, FiExternalLink, FiLink, FiCornerDownRight, FiShare2, FiStar, FiSearch, FiX, FiSend, FiGlobe, FiImage, FiBold, FiItalic, FiList } from "react-icons/fi";
+import { FiArrowLeft, FiArrowUp, FiMessageSquare, FiMessageCircle, FiPlus, FiLoader, FiFlag, FiEdit2, FiTrash2, FiExternalLink, FiSend, FiCornerDownRight, FiShare2, FiStar, FiSearch, FiX, FiCheck, FiInfo, FiGlobe, FiImage, FiBold, FiItalic, FiList } from "react-icons/fi";
 import { FaStar } from "react-icons/fa";
 import {
   getCommunities, getPosts, getPost, getComments, searchPosts,
@@ -33,13 +33,13 @@ function SearchForm({ searchProps }) {
   const { t } = useTranslation();
   return (
     <form onSubmit={onSubmit} className="relative w-full">
-      <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 opacity-40 pointer-events-none" />
+      <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-green-600 opacity-70 pointer-events-none" />
       <input
-        type="search"
+        type="text"
         placeholder={t("community.searchPlaceholder")}
         value={value}
         onChange={onChange}
-        className="input input-bordered input-sm w-full pl-8 pr-8"
+        className="input input-bordered input-sm w-full pl-8 pr-8 focus:outline-none focus:border-green-600 focus:[box-shadow:none]"
       />
       {value && (
         <button type="button" onClick={onClear} className="absolute right-2.5 top-1/2 -translate-y-1/2 opacity-40 hover:opacity-70">
@@ -93,7 +93,7 @@ function PostBodyEditor({ initialContent = "", onChange, placeholder = "Share yo
 
 // ─── Confirm dialog ───────────────────────────────────────────────────────────
 
-function ConfirmDialog({ message, confirmLabel = "Confirm", destructive = false, onConfirm, onCancel }) {
+function ConfirmDialog({ message, subtext, confirmLabel = "Confirm", destructive = false, onConfirm, onCancel }) {
   return (
     <div
       className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-end sm:items-center justify-center z-50 sm:p-4"
@@ -103,8 +103,11 @@ function ConfirmDialog({ message, confirmLabel = "Confirm", destructive = false,
         className="bg-neutralAlt sm:rounded-lg shadow-2xl border border-neutral/60 max-w-sm w-full flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center px-4 py-3 sm:px-6 flex-shrink-0 border-b border-neutral/40">
-          <h2 className="text-base font-semibold text-primary">{message}</h2>
+        <div className="flex justify-between items-start px-4 py-3 sm:px-6 flex-shrink-0 border-b border-neutral/40">
+          <div>
+            <h2 className="text-base font-semibold text-primary">{message}</h2>
+            {subtext && <p className="text-xs opacity-60 mt-1">{subtext}</p>}
+          </div>
           <button type="button" onClick={onCancel} className="text-error hover:text-error/80" aria-label="Close">
             <FiX size={20} />
           </button>
@@ -131,10 +134,10 @@ function useConfirm() {
   const [opts, setOpts] = useState({});
   const resolveRef = useRef(null);
 
-  const confirm = (message, { confirmLabel = "Confirm", destructive = false } = {}) => {
+  const confirm = (message, { confirmLabel = "Confirm", destructive = false, subtext = "" } = {}) => {
     return new Promise((resolve) => {
       resolveRef.current = resolve;
-      setOpts({ message, confirmLabel, destructive });
+      setOpts({ message, subtext, confirmLabel, destructive });
       setOpen(true);
     });
   };
@@ -185,22 +188,77 @@ function RecentActivity({ onSelectPost }) {
 
   return (
     <aside className="hidden lg:block w-52 xl:w-60 shrink-0 self-start sticky top-4">
+      <CommunityRulesButton className="px-1 mb-4" />
       <p className="text-xs font-semibold uppercase tracking-wider opacity-40 px-1 mb-2">{t("community.recentlyVisited")}</p>
       <div className="space-y-0.5">
         {recent.map((item) => (
           <button
             key={item.postId}
             onClick={() => onSelectPost(item.postId, item.communitySlug)}
-            className="w-full text-left px-2 py-2 rounded-lg hover:bg-base-200 transition-colors group"
+            className="w-full text-left px-2 py-2 rounded-lg border-l-2 border-l-transparent hover:border-l-green-600/60 hover:bg-base-200 transition-colors group"
           >
-            <p className="text-xs font-medium line-clamp-2 leading-snug group-hover:text-primary transition-colors">{item.title}</p>
+            <p className="text-xs font-medium line-clamp-2 leading-snug group-hover:text-green-700 transition-colors">{item.title}</p>
             {item.communityName && (
-              <p className="text-xs opacity-40 mt-0.5 truncate">{item.communityName}</p>
+              <p className="text-xs opacity-40 mt-0.5 truncate group-hover:opacity-60 transition-opacity">{item.communityName}</p>
             )}
           </button>
         ))}
       </div>
     </aside>
+  );
+}
+
+// ─── Community Rules ──────────────────────────────────────────────────────────
+
+function CommunityRulesButton({ className = "" }) {
+  const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
+  const rules = [
+    ["🥾", t("community.guidelines.rule1Title"), t("community.guidelines.rule1Desc")],
+    ["🗺️", t("community.guidelines.rule2Title"), t("community.guidelines.rule2Desc")],
+    ["🚫", t("community.guidelines.rule3Title"), t("community.guidelines.rule3Desc")],
+    ["📢", t("community.guidelines.rule4Title"), t("community.guidelines.rule4Desc")],
+    ["✅", t("community.guidelines.rule5Title"), t("community.guidelines.rule5Desc")],
+    ["🎉", t("community.guidelines.rule6Title"), t("community.guidelines.rule6Desc")],
+  ];
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className={`flex items-center gap-1.5 text-xs text-base-content/40 hover:text-green-600 transition-colors ${className}`}
+        title={t("community.guidelines.title")}
+      >
+        <FiInfo size={13} />
+        <span>{t("community.guidelines.rulesButton")}</span>
+      </button>
+      {open && (
+        <div className="fixed top-14 sm:top-0 inset-x-0 bottom-0 bg-black/40 backdrop-blur-[1px] flex sm:items-center sm:justify-center z-50 sm:p-4" onClick={() => setOpen(false)}>
+          <div className="bg-base-100 sm:rounded-xl shadow-2xl sm:border border-base-200 sm:max-w-md w-full h-full sm:h-auto flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-center px-5 py-4 border-b border-base-200 flex-shrink-0">
+              <div className="flex items-center gap-2">
+                <FiInfo size={16} className="text-green-600" />
+                <h2 className="font-semibold text-sm">{t("community.guidelines.title")}</h2>
+              </div>
+              <button onClick={() => setOpen(false)} className="text-base-content/40 hover:text-error transition-colors"><FiX size={18} /></button>
+            </div>
+            <div className="px-5 py-4 space-y-3 text-sm overflow-y-auto flex-1">
+              <p className="text-xs opacity-60 italic">{t("community.guidelines.subtitle")}</p>
+              <ul className="space-y-2.5">
+                {rules.map(([emoji, title, desc]) => (
+                  <li key={title} className="flex gap-2.5">
+                    <span className="shrink-0 mt-0.5">{emoji}</span>
+                    <div>
+                      <span className="font-medium">{title}</span>
+                      <span className="opacity-60"> — {desc}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -295,7 +353,7 @@ function CommunityLanding({ communities, onSelect, onToggleFavorite, onSelectPos
           {communities.map((c) => (
             <div
               key={c._id}
-              className="relative group text-left p-4 rounded-xl border border-base-200 border-t-[3px] border-t-primary/30 hover:border-t-primary/60 hover:border-primary/30 hover:bg-base-200/30 transition-colors cursor-pointer"
+              className="relative group text-left p-4 rounded-xl border border-base-200 border-l-4 border-l-green-600/50 hover:border-l-green-600 hover:border-base-300 hover:bg-base-200/30 transition-colors cursor-pointer"
               onClick={() => onSelect(c.slug)}
             >
               <h3 className="font-semibold text-sm text-primary pr-6">{t(`communities.${c.slug}.name`, { defaultValue: c.name })}</h3>
@@ -306,7 +364,7 @@ function CommunityLanding({ communities, onSelect, onToggleFavorite, onSelectPos
                 <button
                   type="button"
                   onClick={(e) => { e.stopPropagation(); onToggleFavorite(c.slug); }}
-                  className="absolute top-3 right-3 p-0.5 opacity-40 hover:opacity-100 transition-opacity"
+                  className={`absolute top-3 right-3 p-0.5 transition-opacity ${c.favorited ? "opacity-100" : "opacity-40 hover:opacity-100"}`}
                   title={c.favorited ? "Remove from sidebar" : "Add to sidebar"}
                 >
                   {c.favorited
@@ -344,7 +402,7 @@ function PostCard({ post, onSelect, onDeleted, currentUserId }) {
 
   async function handleUpvote(e) {
     e.stopPropagation();
-    if (!isAuthenticated || isOwner) return;
+    if (!isAuthenticated) return;
     try {
       const res = await upvotePost(post._id);
       setUpvoted(res.upvoted);
@@ -355,7 +413,7 @@ function PostCard({ post, onSelect, onDeleted, currentUserId }) {
   async function handleFlag(e) {
     e.stopPropagation();
     if (flagged) return;
-    const ok = await confirm("Flag this post for review?", { confirmLabel: t("community.actions.flag") });
+    const ok = await confirm("Flag this post for review?", { confirmLabel: t("community.actions.flag"), subtext: "This will send the post to our admins for review. Flag for inappropriate content, spam, or guideline violations." });
     if (!ok) return;
     try {
       await flagPost(post._id);
@@ -396,18 +454,17 @@ function PostCard({ post, onSelect, onDeleted, currentUserId }) {
     <>
     <article
       onClick={() => onSelect(post._id)}
-      className="bg-base-100 border border-base-200 border-l-[3px] border-l-primary/20 hover:border-l-primary/50 rounded-xl p-4 hover:border-primary/30 cursor-pointer transition-colors"
+      className="bg-base-100 border border-base-200 border-l-4 border-l-green-600/50 hover:border-l-green-600 hover:border-base-300 rounded-xl p-4 cursor-pointer transition-colors"
     >
       <div className="flex gap-3">
         <div className="flex flex-col items-center gap-1 shrink-0 min-w-[2rem]" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={handleUpvote}
-            disabled={isOwner}
-            className={`btn btn-ghost btn-xs btn-square ${upvoted ? "text-amber-400" : isOwner ? "opacity-20 cursor-default" : "opacity-40 hover:opacity-100"}`}
+            className={`btn btn-ghost btn-xs btn-square ${upvoted ? "text-amber-400" : "text-amber-400/50 hover:text-amber-400"}`}
           >
             <FiArrowUp size={15} />
           </button>
-          <span className={`text-xs font-bold tabular-nums ${upvoted ? "text-amber-400" : "opacity-50"}`}>{upvoteCount}</span>
+          <span className={`text-xs font-bold tabular-nums ${upvoted ? "text-amber-400" : "text-amber-400/50"}`}>{upvoteCount}</span>
         </div>
         <div className="flex-1 min-w-0">
           <h2 className="font-semibold text-sm text-primary leading-snug">
@@ -433,14 +490,16 @@ function PostCard({ post, onSelect, onDeleted, currentUserId }) {
           )}
           <div className="flex items-center gap-3 mt-2 text-xs opacity-50 flex-wrap" onClick={(e) => e.stopPropagation()}>
             <span>{post.userId?.trailname} &middot; {timeAgo(post.createdAt)}</span>
-            <span className="flex items-center gap-1"><FiMessageSquare size={14} />{post.commentCount}</span>
+            <span onClick={(e) => { e.stopPropagation(); onSelect(post._id); }} className="flex items-center gap-1 cursor-pointer hover:text-green-600 transition-colors">
+              <FiMessageSquare size={14} className="text-green-600/60" />{post.commentCount}
+            </span>
             {showTranslateButton && (
               <button onClick={handleTranslatePost} disabled={translatingPost} className="p-0 leading-none text-sky-400 hover:text-sky-500 transition-colors">
                 {translatingPost ? <FiLoader size={14} className="animate-spin" /> : showTranslated ? <FiX size={14} /> : <FiGlobe size={14} />}
               </button>
             )}
             {isAuthenticated && !isOwner && (
-              <button onClick={handleFlag} className={flagged ? "text-error" : "hover:opacity-100"} title={t("community.actions.flag")}>
+              <button onClick={handleFlag} className={flagged ? "text-error" : "hover:text-error transition-colors"} title={t("community.actions.flag")}>
                 <FiFlag size={14} />
               </button>
             )}
@@ -550,7 +609,7 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
           <button
             type="button"
             onClick={() => onToggleFavorite(community.slug)}
-            className="ml-1 p-0.5 opacity-40 hover:opacity-100 transition-opacity flex-shrink-0"
+            className={`ml-1 p-0.5 transition-opacity flex-shrink-0 ${community.favorited ? "opacity-100" : "opacity-40 hover:opacity-100"}`}
             title={community.favorited ? "Remove from sidebar" : "Add to sidebar"}
           >
             {community.favorited
@@ -570,17 +629,17 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
             <button
               type="button"
               onClick={() => setShowCreate(true)}
-              className="w-full text-left px-4 py-3 rounded-xl border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-colors flex items-center gap-3 group"
+              className="w-full text-left px-4 py-3 rounded-xl border border-base-200 border-l-4 border-l-green-600/50 bg-base-100 hover:border-l-green-600 hover:border-base-300 hover:bg-base-200/30 transition-colors flex items-center gap-3 group"
             >
-              <div className="bg-primary/15 group-hover:bg-primary/25 rounded-full p-1 transition-colors shrink-0">
-                <FiPlus size={13} className="text-primary" />
+              <div className="bg-green-600/15 group-hover:bg-green-600/25 rounded-full p-1.5 transition-colors shrink-0">
+                <FiPlus size={13} className="text-green-600" />
               </div>
-              <span className="text-sm text-primary/60 group-hover:text-primary/80 transition-colors">{t("community.shareSomethingWith", { name: t(`communities.${community.slug}.name`, { defaultValue: community.name }) })}</span>
+              <span className="text-sm text-primary/70 group-hover:text-primary transition-colors">{t("community.shareSomethingWith", { name: t(`communities.${community.slug}.name`, { defaultValue: community.name }) })}</span>
             </button>
           )}
           {showCreate && (
-            <form onSubmit={handleCreatePost} className="bg-base-100 border border-base-200 rounded-xl p-4 space-y-2">
-              <input type="text" placeholder={t("community.titlePlaceholder")} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={300} required
+            <form onSubmit={handleCreatePost} noValidate className="bg-base-100 border border-base-200 rounded-xl p-4 space-y-2">
+              <input type="text" placeholder={t("community.titlePlaceholder")} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={300}
                 className="w-full rounded-lg border border-base-300 bg-base-100 px-3 py-2.5 text-sm font-medium placeholder:text-base-content/40 focus:outline-none focus:border-primary/50" />
               <PostBodyEditor initialContent="" onChange={setBody} />
               <input type="url" placeholder="https://" value={url} onChange={(e) => setUrl(e.target.value)}
@@ -601,21 +660,27 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
               <div className="flex items-center justify-between pt-2 border-t border-base-200">
                 <div>
                   {postImageUrls.length < 5 && (
-                    <button type="button" onClick={() => imageInputRef.current?.click()} disabled={imageUploading} title={imageUploading ? t("community.actions.uploading") : t("community.actions.addPhotos")} className="btn btn-ghost btn-xs btn-square opacity-60 hover:opacity-100">
-                      {imageUploading ? <FiLoader size={14} className="animate-spin" /> : <FiImage size={14} />}
+                    <button type="button" onClick={() => imageInputRef.current?.click()} disabled={imageUploading} className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-green-600/30 text-green-600/70 hover:border-green-600/60 hover:text-green-600 text-xs transition-colors">
+                      {imageUploading ? <FiLoader size={13} className="animate-spin" /> : <FiImage size={13} />}
+                      {imageUploading ? t("community.actions.uploading") : t("community.actions.addPhotos")}
                     </button>
                   )}
                 </div>
-                <div className="flex items-center gap-2">
-                  <button type="button" onClick={() => { setShowCreate(false); setTitle(""); setBody(""); setUrl(""); setPostImageUrls([]); }} className="btn btn-ghost btn-sm">{t("actions.cancel")}</button>
-                  <button type="submit" disabled={saving || imageUploading} className="btn btn-primary btn-sm">{saving ? t("community.actions.posting") : t("community.post.submit")}</button>
+                <div className="flex items-center gap-3">
+                  <button type="button" onClick={() => { setShowCreate(false); setTitle(""); setBody(""); setUrl(""); setPostImageUrls([]); }} className="text-base-content/40 hover:text-error transition-colors" title={t("actions.cancel")}>
+                    <FiX size={18} />
+                  </button>
+                  <button type="submit" disabled={saving || imageUploading} className="text-base-content/40 hover:text-green-600 disabled:opacity-30 transition-colors" title={t("community.post.submit")}>
+                    {saving ? <FiLoader size={18} className="animate-spin" /> : <FiMessageCircle size={18} />}
+                  </button>
                 </div>
               </div>
             </form>
           )}
 
           {/* Sort */}
-          <div className="flex justify-end">
+          <div className="flex items-center justify-between">
+            <CommunityRulesButton className="lg:hidden" />
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value)}
@@ -684,7 +749,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
   const { confirm, dialog } = useConfirm();
 
   async function handleUpvote() {
-    if (!isAuthenticated || isOwner) return;
+    if (!isAuthenticated) return;
     try {
       const res = await upvoteComment(comment._id);
       setUpvoted(res.upvoted); setUpvoteCount(res.upvoteCount);
@@ -693,7 +758,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
 
   async function handleFlag() {
     if (!isAuthenticated || flagged) return;
-    const ok = await confirm("Flag this comment for review?", { confirmLabel: t("community.actions.flag") });
+    const ok = await confirm("Flag this comment for review?", { confirmLabel: t("community.actions.flag"), subtext: "This will send the comment to our admins for review. Flag for inappropriate content, spam, or guideline violations." });
     if (!ok) return;
     try { await flagComment(comment._id); setFlagged(true); toast.success(t("community.toasts.flaggedForReview")); }
     catch { toast.error(t("community.toasts.couldNotFlagComment")); }
@@ -758,38 +823,45 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
           <form onSubmit={handleEdit} className="space-y-2">
             <textarea value={editBody} onChange={(e) => setEditBody(e.target.value)} rows={3} className="textarea textarea-bordered textarea-sm w-full resize-none p-3" autoFocus />
             <div className="flex gap-2">
-              <button type="submit" disabled={saving} className="btn btn-primary btn-xs">{saving ? t("actions.saving") : t("actions.save")}</button>
-              <button type="button" onClick={() => setEditing(false)} className="btn btn-ghost btn-xs">{t("actions.cancel")}</button>
+              <button type="submit" disabled={saving} className="text-base-content/40 hover:text-green-600 transition-colors" title={t("actions.save")}>
+                {saving ? <FiLoader size={14} className="animate-spin" /> : <FiCheck size={14} />}
+              </button>
+              <button type="button" onClick={() => setEditing(false)} className="text-base-content/40 hover:text-error transition-colors" title={t("actions.cancel")}>
+                <FiX size={14} />
+              </button>
             </div>
           </form>
         ) : (
           <p className="text-sm whitespace-pre-wrap break-words">{showTranslated && translatedBody ? translatedBody : comment.body}</p>
         )}
         {!editing && (
-          <div className="flex items-center gap-3 mt-1 text-xs opacity-50 flex-wrap">
-            <button onClick={handleUpvote} className={`flex items-center gap-1 ${upvoted ? "text-amber-400 opacity-100" : ""} ${isOwner ? "invisible" : "hover:opacity-100"}`}>
-              <FiArrowUp size={14} /> {upvoteCount}
+          <div className="flex items-center gap-3 mt-1 text-xs flex-wrap">
+            <button onClick={handleUpvote} className={`flex flex-col items-center gap-0.5 transition-colors ${upvoted ? "text-amber-400" : "text-amber-400/50 hover:text-amber-400"}`}>
+              <FiArrowUp size={17} />
+              <span className="text-xs font-bold tabular-nums leading-none">{upvoteCount}</span>
             </button>
-            {isAuthenticated && !isOwner && !isReply && (
-              <button onClick={() => setReplying((r) => !r)} className="hover:opacity-100" title={t("community.actions.reply")}><FiCornerDownRight size={15} /></button>
+            <div className="flex items-center gap-3 text-xs text-base-content/40">
+            {isAuthenticated && !isReply && (
+              <button onClick={() => setReplying((r) => !r)} className="hover:text-green-600 transition-colors" title={t("community.actions.reply")}><FiCornerDownRight size={14} /></button>
             )}
-            <button onClick={copyLink} className="hover:opacity-100" title={t("community.actions.copyLink")}><FiLink size={14} /></button>
+            <button onClick={copyLink} className="hover:text-green-600 transition-colors" title={t("community.actions.copyLink")}><FiSend size={14} /></button>
             {showTranslateButton && (
               <button onClick={handleTranslate} className="p-0 leading-none text-sky-400 hover:text-sky-500 transition-colors" disabled={translating}>
                 {translating ? <FiLoader size={14} className="animate-spin" /> : showTranslated ? <FiX size={14} /> : <FiGlobe size={14} />}
               </button>
             )}
             {isAuthenticated && !isOwner && (
-              <button onClick={handleFlag} className={flagged ? "text-error opacity-70" : "hover:opacity-100"} title={t("community.actions.flag")}>
+              <button onClick={handleFlag} className={`transition-colors ${flagged ? "text-error opacity-70" : "hover:text-error hover:opacity-100"}`} title={t("community.actions.flag")}>
                 <FiFlag size={14} />
               </button>
             )}
             {isOwner && (
               <>
-                <button onClick={() => setEditing(true)} className="hover:opacity-100" title={t("community.actions.edit")}><FiEdit2 size={14} /></button>
-                <button onClick={handleDelete} className="hover:text-error hover:opacity-100" title={t("actions.delete")}><FiTrash2 size={14} /></button>
+                <button onClick={() => setEditing(true)} className="hover:text-green-600 transition-colors" title={t("community.actions.edit")}><FiEdit2 size={14} /></button>
+                <button onClick={handleDelete} className="hover:text-error hover:opacity-100 transition-colors" title={t("actions.delete")}><FiTrash2 size={14} /></button>
               </>
             )}
+            </div>
           </div>
         )}
         {replying && (
@@ -797,7 +869,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
             <textarea value={replyBody} onChange={(e) => setReplyBody(e.target.value)} placeholder={t("community.comments.replyPlaceholder")} rows={2} className="textarea textarea-bordered textarea-sm w-full resize-none p-3" autoFocus />
             <div className="flex gap-4">
               <button type="submit" disabled={saving} className="btn btn-primary btn-sm btn-square" title={t("community.actions.reply")}>
-                {saving ? <FiLoader size={18} className="animate-spin" /> : <FiSend size={18} />}
+                {saving ? <FiLoader size={18} className="animate-spin" /> : <FiMessageCircle size={18} />}
               </button>
               <button type="button" onClick={() => setReplying(false)} className="btn btn-ghost btn-sm btn-square" title={t("actions.cancel")}>
                 <FiX size={18} />
@@ -855,14 +927,14 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
   }, [post?._id, community?.slug]);
 
   async function handleUpvote() {
-    if (!isAuthenticated || isOwner) return;
+    if (!isAuthenticated) return;
     try { const r = await upvotePost(postId); setUpvoted(r.upvoted); setUpvoteCount(r.upvoteCount); }
     catch { toast.error(t("community.toasts.couldNotUpvote")); }
   }
 
   async function handleFlag() {
     if (flagged) return;
-    const ok = await confirm("Flag this post for review?", { confirmLabel: t("community.actions.flag") });
+    const ok = await confirm("Flag this post for review?", { confirmLabel: t("community.actions.flag"), subtext: "This will send the post to our admins for review. Flag for inappropriate content, spam, or guideline violations." });
     if (!ok) return;
     try { await flagPost(postId); setFlagged(true); toast.success(t("community.toasts.flaggedForReview")); }
     catch { toast.error(t("community.toasts.couldNotFlagPost")); }
@@ -957,7 +1029,7 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
         )}
         <div className="flex-1" />
         {isAuthenticated && !isOwner && post && (
-          <button onClick={handleFlag} title={flagged ? t("community.actions.flagged") : t("community.actions.flag")} className={`btn btn-ghost btn-xs btn-square opacity-40 hover:opacity-100 ${flagged ? "text-error opacity-70" : ""}`}>
+          <button onClick={handleFlag} title={flagged ? t("community.actions.flagged") : t("community.actions.flag")} className={`btn btn-ghost btn-xs btn-square transition-colors ${flagged ? "text-error opacity-70" : "opacity-40 hover:text-error hover:opacity-100"}`}>
             <FiFlag size={15} />
           </button>
         )}
@@ -1017,7 +1089,7 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
               <article className="bg-base-100 border border-base-200 border-l-[3px] border-l-primary/30 rounded-xl p-5 space-y-3">
                 <div className="flex gap-3">
                   <div className="flex flex-col items-center gap-1 shrink-0 pt-0.5 min-w-[2rem]">
-                    <button onClick={handleUpvote} disabled={isOwner} className={`btn btn-ghost btn-xs btn-square ${upvoted ? "text-amber-400" : isOwner ? "opacity-20 cursor-default" : "opacity-40 hover:opacity-100"}`}>
+                    <button onClick={handleUpvote} className={`btn btn-ghost btn-xs btn-square ${upvoted ? "text-amber-400" : "opacity-40 hover:opacity-100"}`}>
                       <FiArrowUp size={18} />
                     </button>
                     <span className={`text-sm font-bold tabular-nums ${upvoted ? "text-amber-400" : "opacity-50"}`}>{upvoteCount}</span>
@@ -1048,15 +1120,20 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
                         <ImageCarousel images={post.imageUrls} heightClass="h-72" objectFit="cover" />
                       </div>
                     )}
-                    <div className="flex items-center gap-3 mt-4 text-xs opacity-50">
+                    <div className="flex items-center gap-3 mt-4 text-xs text-base-content/40">
                       {(!post.lang || post.lang !== userLang) && (
                         <button onClick={handleTranslatePost} disabled={translatingPost} className="p-0 leading-none text-sky-400 hover:text-sky-500 transition-colors">
                           {translatingPost ? <FiLoader size={14} className="animate-spin" /> : showTranslated ? <FiX size={14} /> : <FiGlobe size={14} />}
                         </button>
                       )}
+                      {isAuthenticated && !isOwner && (
+                        <button onClick={handleFlag} title={t("community.actions.flag")} className={`transition-colors ${flagged ? "text-error" : "hover:text-error"}`}>
+                          <FiFlag size={14} />
+                        </button>
+                      )}
                       {isOwner && (
                         <>
-                          <button onClick={() => { setEditTitle(post.title); setEditBody(post.body || ""); setEditUrl(post.url || ""); setEditImageUrls(post.imageUrls || []); setEditing(true); }} title={t("community.actions.edit")} className="hover:opacity-100">
+                          <button onClick={() => { setEditTitle(post.title); setEditBody(post.body || ""); setEditUrl(post.url || ""); setEditImageUrls(post.imageUrls || []); setEditing(true); }} title={t("community.actions.edit")} className="hover:text-green-600 transition-colors">
                             <FiEdit2 size={16} />
                           </button>
                           <button onClick={handleDelete} title={t("actions.delete")} className="hover:text-error hover:opacity-100">
@@ -1077,8 +1154,8 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
                 <form onSubmit={handlePostComment} className="space-y-2">
                   <textarea value={newComment} onChange={(e) => setNewComment(e.target.value)} placeholder={t("community.comments.commentPlaceholder")} rows={3} className="textarea textarea-bordered textarea-sm w-full resize-none p-3" />
                   <div className="flex justify-end">
-                    <button type="submit" disabled={posting || !newComment.trim()} className="btn btn-primary btn-sm px-4 gap-2" title={t("community.actions.comment")}>
-                      {posting ? <FiLoader size={18} className="animate-spin" /> : <FiSend size={18} />}
+                    <button type="submit" disabled={posting || !newComment.trim()} className="text-base-content/40 hover:text-green-600 disabled:opacity-30 transition-colors" title={t("community.actions.comment")}>
+                      {posting ? <FiLoader size={18} className="animate-spin" /> : <FiMessageCircle size={18} />}
                     </button>
                   </div>
                 </form>

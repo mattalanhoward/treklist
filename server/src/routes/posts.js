@@ -7,6 +7,7 @@ const Community = require("../models/community");
 const Upvote = require("../models/upvote");
 const Flag = require("../models/flag");
 const Notification = require("../models/notification");
+const User = require("../models/user");
 const authMiddleware = require("../middleware/auth");
 const optionalAuth = require("../middleware/optionalAuth");
 const {
@@ -14,6 +15,7 @@ const {
   communityUpvoteLimiter,
 } = require("../middleware/rateLimiters");
 const { detectLanguage } = require("../utils/googleTranslate");
+const { sendSupportEmail } = require("../utils/mailer");
 
 const PAGE_SIZE = 20;
 
@@ -250,9 +252,7 @@ router.post("/:postId/upvote", authMiddleware, communityUpvoteLimiter, async (re
   try {
     const post = await Post.findOne({ _id: req.params.postId, deletedAt: null }).lean();
     if (!post) return res.status(404).json({ message: "Post not found" });
-    if (post.userId.toString() === req.userId) {
-      return res.status(400).json({ message: "Cannot upvote your own post" });
-    }
+
 
     // Atomic find-and-delete: if upvote existed, remove it and decrement
     const existing = await Upvote.findOneAndDelete({ userId: req.userId, targetId: post._id, targetType: "post" });
@@ -268,13 +268,15 @@ router.post("/:postId/upvote", authMiddleware, communityUpvoteLimiter, async (re
     await Upvote.create({ userId: req.userId, targetId: post._id, targetType: "post" });
     const updated = await Post.findByIdAndUpdate(post._id, { $inc: { upvoteCount: 1 } }, { new: true });
 
-    // Fire-and-forget notification — don't block the response
-    Notification.create({
-      recipientId: post.userId,
-      type: "upvote_post",
-      fromUserId: req.userId,
-      postId: post._id,
-    }).catch((e) => console.error("Upvote notification error:", e));
+    // Fire-and-forget notification — skip if upvoter is the author
+    if (post.userId.toString() !== req.userId) {
+      Notification.create({
+        recipientId: post.userId,
+        type: "upvote_post",
+        fromUserId: req.userId,
+        postId: post._id,
+      }).catch((e) => console.error("Upvote notification error:", e));
+    }
 
     res.json({ upvoted: true, upvoteCount: updated.upvoteCount });
   } catch (err) {
@@ -294,6 +296,18 @@ router.post("/:postId/flag", authMiddleware, async (req, res) => {
 
     await Flag.create({ userId: req.userId, targetId: post._id, targetType: "post" });
     await Post.findByIdAndUpdate(post._id, { $inc: { flagCount: 1 } });
+
+    const [postAuthor, flagger] = await Promise.all([
+      User.findById(post.userId).lean(),
+      User.findById(req.userId).lean(),
+    ]);
+    const postUrl = `https://treklist.co/community/post/${post._id}`;
+    sendSupportEmail({
+      to: "support@treklist.co",
+      subject: "🚩 Post flagged for review",
+      text: `A post has been flagged for review.\n\nTitle: ${post.title}\nPost author: ${postAuthor?.trailname || post.userId}\nFlagged by: ${flagger?.trailname || req.userId}\n\nView post: ${postUrl}`,
+      html: `<p>A post has been flagged for review.</p><p><strong>Title:</strong> ${post.title}<br><strong>Post author:</strong> ${postAuthor?.trailname || post.userId}<br><strong>Flagged by:</strong> ${flagger?.trailname || req.userId}</p><p><a href="${postUrl}">View post</a></p>`,
+    }).catch((e) => console.error("Flag post email error:", e));
 
     res.json({ message: "Flagged" });
   } catch (err) {

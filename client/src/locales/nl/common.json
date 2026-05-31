@@ -1453,6 +1453,23 @@
     "postNotFound": "Bericht niet gevonden.",
     "logIn": "Inloggen",
     "recentlyVisited": "Onlangs bezocht",
+    "guidelines": {
+      "title": "Community-richtlijnen",
+      "subtitle": "Houd het leuk, respectvol en nuttig voor iedereen op het pad.",
+      "rulesButton": "Regels",
+      "rule1Title": "Wees aardig",
+      "rule1Desc": "Behandel mede-wandelaars zoals je zelf behandeld wil worden. Geen persoonlijke aanvallen, intimidatie of onvriendelijk gedrag.",
+      "rule2Title": "Blijf bij het onderwerp",
+      "rule2Desc": "Houd berichten relevant voor wandelen, paden, uitrusting en het buitenleven. Dit is niet de plek voor niet-gerelateerde inhoud.",
+      "rule3Title": "Geen spam",
+      "rule3Desc": "Vermijd herhaalde berichten, lage-kwaliteitsinhoud of het overspoelen van de feed. Één goed bericht is beter dan tien middelmatige.",
+      "rule4Title": "Weinig eigenpromotie",
+      "rule4Desc": "Je blog of foto's delen is welkom in context — maak er alleen niet van elk bericht een advertentie.",
+      "rule5Title": "Alleen nauwkeurige informatie",
+      "rule5Desc": "Trailomstandigheden en veiligheidstips kunnen het welzijn van mensen beïnvloeden. Deel alleen wat je zeker weet.",
+      "rule6Title": "Veel plezier",
+      "rule6Desc": "We zijn hier allemaal omdat we van de buitenlucht houden. Houd de energie positief en verwelkomend voor iedereen."
+    },
     "shareSomethingWith": "Deel iets met {{name}}…",
     "toolbar": { "bold": "Vet", "italic": "Cursief", "bulletList": "Ongeordende lijst" },
     "post": {

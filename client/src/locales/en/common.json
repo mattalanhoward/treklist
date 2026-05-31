@@ -1467,6 +1467,23 @@
     "postNotFound": "Post not found.",
     "logIn": "Log in",
     "recentlyVisited": "Recently visited",
+    "guidelines": {
+      "title": "Community Guidelines",
+      "subtitle": "Keep it fun, respectful, and useful for everyone on the trail.",
+      "rulesButton": "Rules",
+      "rule1Title": "Be kind",
+      "rule1Desc": "Treat fellow hikers the way you'd want to be treated. No personal attacks, harassment, or unkind behaviour.",
+      "rule2Title": "Stay on topic",
+      "rule2Desc": "Keep posts relevant to hiking, trails, gear, and outdoor life. This isn't the place for unrelated content.",
+      "rule3Title": "No spam",
+      "rule3Desc": "Avoid repetitive posts, low-effort content, or flooding the feed. One good post beats ten mediocre ones.",
+      "rule4Title": "Light on self-promotion",
+      "rule4Desc": "Sharing your blog or photos is welcome in context — just don't make every post an advertisement.",
+      "rule5Title": "Accurate info only",
+      "rule5Desc": "Trail conditions and safety tips can affect people's wellbeing. Only share what you know to be true.",
+      "rule6Title": "Have fun",
+      "rule6Desc": "We're all here because we love the outdoors. Keep the energy positive and welcoming for everyone."
+    },
     "shareSomethingWith": "Share something with {{name}}…",
     "toolbar": { "bold": "Bold", "italic": "Italic", "bulletList": "Bullet list" },
     "post": {

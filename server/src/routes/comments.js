@@ -8,6 +8,7 @@ const Flag = require("../models/flag");
 const Notification = require("../models/notification");
 const authMiddleware = require("../middleware/auth");
 const optionalAuth = require("../middleware/optionalAuth");
+const { sendSupportEmail } = require("../utils/mailer");
 const {
   communityCommentLimiter,
   communityUpvoteLimiter,
@@ -177,9 +178,7 @@ router.post("/:commentId/upvote", authMiddleware, communityUpvoteLimiter, async 
   try {
     const comment = await Comment.findOne({ _id: req.params.commentId, deletedAt: null }).lean();
     if (!comment) return res.status(404).json({ message: "Comment not found" });
-    if (comment.userId.toString() === req.userId) {
-      return res.status(400).json({ message: "Cannot upvote your own comment" });
-    }
+
 
     // Atomic find-and-delete: if upvote existed, remove it and decrement
     const existing = await Upvote.findOneAndDelete({ userId: req.userId, targetId: comment._id, targetType: "comment" });
@@ -195,14 +194,16 @@ router.post("/:commentId/upvote", authMiddleware, communityUpvoteLimiter, async 
     await Upvote.create({ userId: req.userId, targetId: comment._id, targetType: "comment" });
     const updated = await Comment.findByIdAndUpdate(comment._id, { $inc: { upvoteCount: 1 } }, { new: true });
 
-    // Fire-and-forget notification
-    Notification.create({
-      recipientId: comment.userId,
-      type: "upvote_comment",
-      fromUserId: req.userId,
-      postId: comment.postId,
-      commentId: comment._id,
-    }).catch((e) => console.error("Upvote comment notification error:", e));
+    // Fire-and-forget notification — skip if upvoter is the author
+    if (comment.userId.toString() !== req.userId) {
+      Notification.create({
+        recipientId: comment.userId,
+        type: "upvote_comment",
+        fromUserId: req.userId,
+        postId: comment.postId,
+        commentId: comment._id,
+      }).catch((e) => console.error("Upvote comment notification error:", e));
+    }
 
     res.json({ upvoted: true, upvoteCount: updated.upvoteCount });
   } catch (err) {
@@ -222,6 +223,18 @@ router.post("/:commentId/flag", authMiddleware, async (req, res) => {
 
     await Flag.create({ userId: req.userId, targetId: comment._id, targetType: "comment" });
     await Comment.findByIdAndUpdate(comment._id, { $inc: { flagCount: 1 } });
+
+    const [commentAuthor, flagger] = await Promise.all([
+      User.findById(comment.userId).lean(),
+      User.findById(req.userId).lean(),
+    ]);
+    const postUrl = `https://treklist.co/community/post/${comment.postId}`;
+    sendSupportEmail({
+      to: "support@treklist.co",
+      subject: "🚩 Comment flagged for review",
+      text: `A comment has been flagged for review.\n\nComment: ${comment.body?.slice(0, 200)}\nComment author: ${commentAuthor?.trailname || comment.userId}\nFlagged by: ${flagger?.trailname || req.userId}\n\nView post: ${postUrl}`,
+      html: `<p>A comment has been flagged for review.</p><p><strong>Comment:</strong> ${comment.body?.slice(0, 200)}<br><strong>Comment author:</strong> ${commentAuthor?.trailname || comment.userId}<br><strong>Flagged by:</strong> ${flagger?.trailname || req.userId}</p><p><a href="${postUrl}">View post</a></p>`,
+    }).catch((e) => console.error("Flag comment email error:", e));
 
     res.json({ message: "Flagged" });
   } catch (err) {

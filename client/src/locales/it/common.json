@@ -1453,6 +1453,23 @@
     "postNotFound": "Post non trovato.",
     "logIn": "Accedi",
     "recentlyVisited": "Visitato di recente",
+    "guidelines": {
+      "title": "Linee guida della community",
+      "subtitle": "Manteniamo tutto divertente, rispettoso e utile per tutti sul sentiero.",
+      "rulesButton": "Regole",
+      "rule1Title": "Sii gentile",
+      "rule1Desc": "Tratta gli altri escursionisti nel modo in cui vorresti essere trattato. Niente attacchi personali, molestie o comportamenti scortesi.",
+      "rule2Title": "Rimani in tema",
+      "rule2Desc": "Mantieni i post pertinenti a escursionismo, sentieri, attrezzatura e vita all'aria aperta. Questo non è il posto per contenuti non correlati.",
+      "rule3Title": "Niente spam",
+      "rule3Desc": "Evita post ripetitivi, contenuti di scarsa qualità o l'inondazione del feed. Un buon post vale più di dieci mediocri.",
+      "rule4Title": "Poca auto-promozione",
+      "rule4Desc": "Condividere il tuo blog o le tue foto è benvenuto nel contesto — non fare semplicemente di ogni post una pubblicità.",
+      "rule5Title": "Solo informazioni accurate",
+      "rule5Desc": "Le condizioni del sentiero e i consigli di sicurezza possono influenzare il benessere delle persone. Condividi solo ciò che sai con certezza.",
+      "rule6Title": "Divertiti",
+      "rule6Desc": "Siamo tutti qui perché amiamo il grande aperto. Mantieni l'energia positiva e accogliente per tutti."
+    },
     "shareSomethingWith": "Condividi qualcosa con {{name}}…",
     "toolbar": { "bold": "Grassetto", "italic": "Corsivo", "bulletList": "Elenco puntato" },
     "post": {
