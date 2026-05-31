@@ -140,7 +140,7 @@ export default function AffiliateGateLink({
     setResolving(false);
 
     if (!finalHref) {
-      toast.error("No link available.");
+      toast.error(t("affiliateGate.toasts.noLink"));
       return;
     }
 

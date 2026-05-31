@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams, Link } from "react-router-dom";
 import { FiArrowLeft, FiArrowUp, FiExternalLink, FiLoader } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
 import { getPost, getComments, upvotePost, flagPost, deletePost } from "../services/community";
 import CommentThread from "../components/CommentThread";
 import CreatePostForm from "../components/CreatePostForm";
@@ -10,6 +11,7 @@ import { toast } from "react-hot-toast";
 import { formatDistanceToNow } from "date-fns";
 
 export default function PostDetailView() {
+  const { t } = useTranslation();
   const { slug, postId } = useParams();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -54,7 +56,7 @@ export default function PostDetailView() {
       setUpvoted(res.upvoted);
       setUpvoteCount(res.upvoteCount);
     } catch {
-      toast.error("Could not upvote");
+      toast.error(t("community.toasts.couldNotUpvote"));
     }
   }
 
@@ -63,19 +65,19 @@ export default function PostDetailView() {
     try {
       await flagPost(postId);
       setFlagged(true);
-      toast.success("Post flagged for review");
+      toast.success(t("community.toasts.postFlaggedForReview"));
     } catch {
-      toast.error("Could not flag post");
+      toast.error(t("community.toasts.couldNotFlagPost"));
     }
   }
 
   async function handleDelete() {
-    if (!window.confirm("Delete this post?")) return;
+    if (!window.confirm(t("community.confirm.deletePost"))) return;
     try {
       await deletePost(postId);
       navigate(`/community/${slug}`);
     } catch {
-      toast.error("Could not delete post");
+      toast.error(t("community.toasts.couldNotDeletePost"));
     }
   }
 
@@ -96,7 +98,7 @@ export default function PostDetailView() {
   if (!post) {
     return (
       <div className="text-center py-24 opacity-50 text-sm">
-        Post not found.{" "}
+        {t("community.postNotFound")}{" "}
         <Link to={`/community/${slug}`} className="text-primary hover:underline">
           Back to community
         </Link>
@@ -176,16 +178,16 @@ export default function PostDetailView() {
                     onClick={handleFlag}
                     className={`hover:opacity-100 ${flagged ? "text-error opacity-70" : ""}`}
                   >
-                    {flagged ? "Flagged" : "Flag"}
+                    {flagged ? t("community.actions.flagged") : t("community.actions.flag")}
                   </button>
                 )}
                 {isOwner && (
                   <>
                     <button onClick={() => setEditing(true)} className="hover:opacity-100">
-                      Edit
+                      {t("community.actions.edit")}
                     </button>
                     <button onClick={handleDelete} className="hover:text-error hover:opacity-100">
-                      Delete
+                      {t("actions.delete")}
                     </button>
                   </>
                 )}

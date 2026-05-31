@@ -380,11 +380,11 @@ export default function SmartItemSearch({
     setRequestSending(true);
     try {
       await api.post("/support/catalog-item-requests", requestForm);
-      toast.success("Request sent! We'll look into adding it.");
+      toast.success(t("smartItemSearch.gearRequest.toasts.success"));
       setShowRequestForm(false);
       setRequestForm({ name: "", brand: "", link: "" });
     } catch {
-      toast.error("Failed to send request. Please try again.");
+      toast.error(t("smartItemSearch.gearRequest.toasts.failed"));
     } finally {
       setRequestSending(false);
     }
@@ -1024,13 +1024,13 @@ export default function SmartItemSearch({
             onSubmit={handleSubmitRequest}
             className="bg-white sm:rounded-lg shadow-2xl w-full sm:mx-4 sm:max-w-md px-6 py-6 flex flex-col gap-4"
           >
-            <h3 className="text-base font-semibold text-primary">Request a Gear Item</h3>
+            <h3 className="text-base font-semibold text-primary">{t("smartItemSearch.gearRequest.title")}</h3>
             <p className="text-sm text-primary/60 -mt-2">
-              Can't find what you're looking for? Let us know and we'll look into adding it.
+              {t("smartItemSearch.gearRequest.description")}
             </p>
             <div className="flex gap-3">
               <div className="flex-1">
-                <label className="block text-xs font-medium text-primary/70 mb-1">Item Name *</label>
+                <label className="block text-xs font-medium text-primary/70 mb-1">{t("smartItemSearch.gearRequest.labels.itemName")} *</label>
                 <input
                   type="text"
                   placeholder="e.g. Nemo Tensor"
@@ -1042,7 +1042,7 @@ export default function SmartItemSearch({
                 />
               </div>
               <div className="flex-1">
-                <label className="block text-xs font-medium text-primary/70 mb-1">Brand *</label>
+                <label className="block text-xs font-medium text-primary/70 mb-1">{t("smartItemSearch.gearRequest.labels.brand")} *</label>
                 <input
                   type="text"
                   placeholder="e.g. Nemo"
@@ -1054,7 +1054,7 @@ export default function SmartItemSearch({
               </div>
             </div>
             <div>
-              <label className="block text-xs font-medium text-primary/70 mb-1">Link (optional)</label>
+              <label className="block text-xs font-medium text-primary/70 mb-1">{t("smartItemSearch.gearRequest.labels.link")}</label>
               <input
                 type="url"
                 placeholder="https://..."
@@ -1069,7 +1069,7 @@ export default function SmartItemSearch({
                 onClick={() => { setShowRequestForm(false); setRequestForm({ name: "", brand: "", link: "" }); }}
                 className="px-3 py-1.5 rounded bg-neutralAlt hover:bg-neutralAlt/90 text-primary text-sm"
               >
-                Cancel
+                {t("actions.cancel")}
               </button>
               <button
                 type="submit"
@@ -1077,7 +1077,7 @@ export default function SmartItemSearch({
                 className="px-3 py-1.5 rounded bg-secondary text-white text-sm disabled:opacity-50 flex items-center gap-1.5"
               >
                 {requestSending && <FiLoader size={12} className="animate-spin" />}
-                Send Request
+                {t("smartItemSearch.gearRequest.buttons.send")}
               </button>
             </div>
           </form>
@@ -1092,7 +1092,7 @@ export default function SmartItemSearch({
           onClick={() => setShowRequestForm(v => !v)}
           className="text-xs text-primary/50 hover:text-primary/80 underline underline-offset-2"
         >
-          Request a Gear Item
+          {t("smartItemSearch.gearRequest.buttons.openForm")}
         </button>
         <div className="flex gap-2">
           <button

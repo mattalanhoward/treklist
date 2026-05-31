@@ -1,8 +1,10 @@
 // client/src/components/ImageCarousel.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { FiChevronLeft, FiChevronRight, FiX, FiMaximize2 } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
 
 function Lightbox({ images, startIndex, onClose }) {
+  const { t } = useTranslation("common");
   const [index, setIndex] = useState(startIndex);
   const showNav = images.length > 1;
 
@@ -29,7 +31,7 @@ function Lightbox({ images, startIndex, onClose }) {
         type="button"
         onClick={onClose}
         className="absolute top-4 right-4 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 transition-colors"
-        aria-label="Close"
+        aria-label={t("actions.close")}
       >
         <FiX size={20} />
       </button>
@@ -56,7 +58,7 @@ function Lightbox({ images, startIndex, onClose }) {
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); goPrev(); }}
-            aria-label="Previous"
+            aria-label={t("imageCarousel.previous")}
             className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full p-3 transition-colors"
           >
             <FiChevronLeft size={22} strokeWidth={2} />
@@ -64,7 +66,7 @@ function Lightbox({ images, startIndex, onClose }) {
           <button
             type="button"
             onClick={(e) => { e.stopPropagation(); goNext(); }}
-            aria-label="Next"
+            aria-label={t("imageCarousel.next")}
             className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white rounded-full p-3 transition-colors"
           >
             <FiChevronRight size={22} strokeWidth={2} />
@@ -97,6 +99,7 @@ export default function ImageCarousel({
   heightClass = "h-60",
   objectFit = "contain",
 }) {
+  const { t } = useTranslation("common");
   const safeImages = useMemo(() => {
     return (Array.isArray(images) ? images : []).filter(Boolean);
   }, [images]);
@@ -176,7 +179,7 @@ export default function ImageCarousel({
               <button
                 type="button"
                 onClick={goPrev}
-                aria-label="Previous image"
+                aria-label={t("imageCarousel.previousImage")}
                 className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/35 hover:bg-black/55 text-white rounded-full p-1.5 transition-colors focus:outline-none"
               >
                 <FiChevronLeft size={16} strokeWidth={2.5} />
@@ -184,7 +187,7 @@ export default function ImageCarousel({
               <button
                 type="button"
                 onClick={goNext}
-                aria-label="Next image"
+                aria-label={t("imageCarousel.nextImage")}
                 className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/35 hover:bg-black/55 text-white rounded-full p-1.5 transition-colors focus:outline-none"
               >
                 <FiChevronRight size={16} strokeWidth={2.5} />

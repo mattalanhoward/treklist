@@ -30,12 +30,13 @@ function timeAgo(date) {
 
 function SearchForm({ searchProps }) {
   const { value, onChange, onSubmit, onClear } = searchProps;
+  const { t } = useTranslation();
   return (
     <form onSubmit={onSubmit} className="relative w-full">
       <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 opacity-40 pointer-events-none" />
       <input
         type="search"
-        placeholder="Search everything…"
+        placeholder={t("community.searchPlaceholder")}
         value={value}
         onChange={onChange}
         className="input input-bordered input-sm w-full pl-8 pr-8"
@@ -52,6 +53,7 @@ function SearchForm({ searchProps }) {
 // ─── Rich text body editor ────────────────────────────────────────────────────
 
 function PostBodyEditor({ initialContent = "", onChange, placeholder = "Share your experience…" }) {
+  const { t } = useTranslation();
   const editor = useEditor({
     extensions: [StarterKit],
     content: initialContent || "",
@@ -68,14 +70,14 @@ function PostBodyEditor({ initialContent = "", onChange, placeholder = "Share yo
   return (
     <div className="rounded-lg border border-base-300 overflow-hidden focus-within:border-primary/40 bg-base-100">
       <div className="flex items-center gap-0.5 px-2 py-1 border-b border-base-200 bg-base-50">
-        <button type="button" title="Bold" onMouseDown={(e) => cmd(e, () => editor?.chain().focus().toggleBold().run())} className={tb(editor?.isActive("bold"))}>
+        <button type="button" title={t("community.toolbar.bold")} onMouseDown={(e) => cmd(e, () => editor?.chain().focus().toggleBold().run())} className={tb(editor?.isActive("bold"))}>
           <FiBold size={12} />
         </button>
-        <button type="button" title="Italic" onMouseDown={(e) => cmd(e, () => editor?.chain().focus().toggleItalic().run())} className={tb(editor?.isActive("italic"))}>
+        <button type="button" title={t("community.toolbar.italic")} onMouseDown={(e) => cmd(e, () => editor?.chain().focus().toggleItalic().run())} className={tb(editor?.isActive("italic"))}>
           <FiItalic size={12} />
         </button>
         <div className="w-px h-3 bg-base-300 mx-0.5" />
-        <button type="button" title="Bullet list" onMouseDown={(e) => cmd(e, () => editor?.chain().focus().toggleBulletList().run())} className={tb(editor?.isActive("bulletList"))}>
+        <button type="button" title={t("community.toolbar.bulletList")} onMouseDown={(e) => cmd(e, () => editor?.chain().focus().toggleBulletList().run())} className={tb(editor?.isActive("bulletList"))}>
           <FiList size={12} />
         </button>
       </div>
@@ -280,7 +282,7 @@ function CommunityLanding({ communities, onSelect, onToggleFavorite, onSelectPos
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       <div className="flex-shrink-0 px-4 py-2 border-b border-primary/10 bg-base-100 flex items-center">
-        <h2 className="text-lg font-semibold text-primary">Community</h2>
+        <h2 className="text-lg font-semibold text-primary">{t("sidebar.a11y.community")}</h2>
       </div>
       <div className="flex-1 overflow-y-auto p-4">
         <div className="flex gap-6 max-w-5xl mx-auto">
@@ -326,6 +328,7 @@ function CommunityLanding({ communities, onSelect, onToggleFavorite, onSelectPos
 
 function PostCard({ post, onSelect, onDeleted, currentUserId }) {
   const { isAuthenticated } = useAuth();
+  const { t } = useTranslation();
   const userLang = getUserLang();
   const showTranslateButton = !post.lang || post.lang !== userLang;
   const [upvoteCount, setUpvoteCount] = useState(post.upvoteCount);
@@ -345,29 +348,29 @@ function PostCard({ post, onSelect, onDeleted, currentUserId }) {
       const res = await upvotePost(post._id);
       setUpvoted(res.upvoted);
       setUpvoteCount(res.upvoteCount);
-    } catch { toast.error("Could not upvote"); }
+    } catch { toast.error(t("community.toasts.couldNotUpvote")); }
   }
 
   async function handleFlag(e) {
     e.stopPropagation();
     if (flagged) return;
-    const ok = await confirm("Flag this post for review?", { confirmLabel: "Flag" });
+    const ok = await confirm("Flag this post for review?", { confirmLabel: t("community.actions.flag") });
     if (!ok) return;
     try {
       await flagPost(post._id);
       setFlagged(true);
-      toast.success("Flagged for review");
-    } catch { toast.error("Could not flag post"); }
+      toast.success(t("community.toasts.flaggedForReview"));
+    } catch { toast.error(t("community.toasts.couldNotFlagPost")); }
   }
 
   async function handleDelete(e) {
     e.stopPropagation();
-    const ok = await confirm("Delete this post?", { confirmLabel: "Delete", destructive: true });
+    const ok = await confirm(t("community.confirm.deletePost"), { confirmLabel: t("actions.delete"), destructive: true });
     if (!ok) return;
     try {
       await deletePost(post._id);
       onDeleted?.(post._id);
-    } catch { toast.error("Could not delete post"); }
+    } catch { toast.error(t("community.toasts.couldNotDeletePost")); }
   }
 
   async function handleTranslatePost(e) {
@@ -384,7 +387,7 @@ function PostCard({ post, onSelect, onDeleted, currentUserId }) {
       setTranslatedTitle(titleResult.translated || post.title);
       setTranslatedBody(bodyResult?.translated || "");
       setShowTranslated(true);
-    } catch { toast.error("Could not translate"); }
+    } catch { toast.error(t("community.toasts.couldNotTranslate")); }
     finally { setTranslatingPost(false); }
   }
 
@@ -436,12 +439,12 @@ function PostCard({ post, onSelect, onDeleted, currentUserId }) {
               </button>
             )}
             {isAuthenticated && !isOwner && (
-              <button onClick={handleFlag} className={flagged ? "text-error" : "hover:opacity-100"} title="Flag">
+              <button onClick={handleFlag} className={flagged ? "text-error" : "hover:opacity-100"} title={t("community.actions.flag")}>
                 <FiFlag size={14} />
               </button>
             )}
             {isOwner && (
-              <button onClick={handleDelete} className="hover:text-error hover:opacity-100" title="Delete">
+              <button onClick={handleDelete} className="hover:text-error hover:opacity-100" title={t("actions.delete")}>
                 <FiTrash2 size={14} />
               </button>
             )}
@@ -506,7 +509,7 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
     if (!files.length) return;
     const slots = 5 - postImageUrls.length;
     const toUpload = files.slice(0, slots);
-    if (!toUpload.length) { toast.error("Maximum 5 images per post"); return; }
+    if (!toUpload.length) { toast.error(t("community.toasts.maxImages")); return; }
     setImageUploading(true);
     try {
       const results = await Promise.all(toUpload.map((file) => uploadCommunityImage({ file })));
@@ -517,13 +520,13 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
 
   async function handleCreatePost(e) {
     e.preventDefault();
-    if (!title.trim()) { toast.error("Title required"); return; }
+    if (!title.trim()) { toast.error(t("community.toasts.titleRequired")); return; }
     setSaving(true);
     try {
       const newPost = await createPost(community.slug, { title, body, url, imageUrls: postImageUrls });
       setPosts((p) => [{ ...newPost, upvoted: false }, ...p]);
       setTitle(""); setBody(""); setUrl(""); setPostImageUrls([]); setShowCreate(false);
-    } catch { toast.error("Could not create post"); }
+    } catch { toast.error(t("community.toasts.couldNotCreatePost")); }
     finally { setSaving(false); }
   }
 
@@ -576,7 +579,7 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
           )}
           {showCreate && (
             <form onSubmit={handleCreatePost} className="bg-base-100 border border-base-200 rounded-xl p-4 space-y-2">
-              <input type="text" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} maxLength={300} required
+              <input type="text" placeholder={t("community.titlePlaceholder")} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={300} required
                 className="w-full rounded-lg border border-base-300 bg-base-100 px-3 py-2.5 text-sm font-medium placeholder:text-base-content/40 focus:outline-none focus:border-primary/50" />
               <PostBodyEditor initialContent="" onChange={setBody} />
               <input type="url" placeholder="https://" value={url} onChange={(e) => setUrl(e.target.value)}
@@ -597,14 +600,14 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
               <div className="flex items-center justify-between pt-2 border-t border-base-200">
                 <div>
                   {postImageUrls.length < 5 && (
-                    <button type="button" onClick={() => imageInputRef.current?.click()} disabled={imageUploading} title={imageUploading ? "Uploading…" : "Add photos"} className="btn btn-ghost btn-xs btn-square opacity-60 hover:opacity-100">
+                    <button type="button" onClick={() => imageInputRef.current?.click()} disabled={imageUploading} title={imageUploading ? t("community.actions.uploading") : t("community.actions.addPhotos")} className="btn btn-ghost btn-xs btn-square opacity-60 hover:opacity-100">
                       {imageUploading ? <FiLoader size={14} className="animate-spin" /> : <FiImage size={14} />}
                     </button>
                   )}
                 </div>
                 <div className="flex items-center gap-2">
-                  <button type="button" onClick={() => { setShowCreate(false); setTitle(""); setBody(""); setUrl(""); setPostImageUrls([]); }} className="btn btn-ghost btn-sm">Cancel</button>
-                  <button type="submit" disabled={saving || imageUploading} className="btn btn-primary btn-sm">{saving ? "Posting…" : "Post"}</button>
+                  <button type="button" onClick={() => { setShowCreate(false); setTitle(""); setBody(""); setUrl(""); setPostImageUrls([]); }} className="btn btn-ghost btn-sm">{t("actions.cancel")}</button>
+                  <button type="submit" disabled={saving || imageUploading} className="btn btn-primary btn-sm">{saving ? t("community.actions.posting") : t("community.post.submit")}</button>
                 </div>
               </div>
             </form>
@@ -617,8 +620,8 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
               onChange={(e) => setSort(e.target.value)}
               className="select select-bordered select-sm text-sm w-28"
             >
-              <option value="new">New</option>
-              <option value="top">Top</option>
+              <option value="new">{t("community.sort.new")}</option>
+              <option value="top">{t("community.sort.top")}</option>
             </select>
           </div>
 
@@ -626,7 +629,7 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
           {loading ? (
             <div className="flex justify-center py-12 opacity-40"><FiLoader size={22} className="animate-spin" /></div>
           ) : posts.length === 0 ? (
-            <div className="text-center py-12 opacity-40 text-sm">No posts yet. Be the first!</div>
+            <div className="text-center py-12 opacity-40 text-sm">{t("community.noPosts")}</div>
           ) : (
             <>
               <div className="space-y-3">
@@ -645,7 +648,7 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
                   <button className="btn btn-ghost btn-sm" onClick={() => {
                     const next = page + 1; setPage(next);
                     getPosts(community.slug, { sort, page: next }).then((d) => setPosts((p) => [...p, ...d.posts]));
-                  }}>Load more</button>
+                  }}>{t("community.loadMore")}</button>
                 </div>
               )}
             </>
@@ -662,6 +665,7 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
 
 function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, onReplyAdded, currentUserId, shareBaseUrl }) {
   const { isAuthenticated } = useAuth();
+  const { t } = useTranslation();
   const userLang = getUserLang();
   const showTranslateButton = !comment.lang || comment.lang !== userLang;
   const [upvoteCount, setUpvoteCount] = useState(comment.upvoteCount);
@@ -683,22 +687,22 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
     try {
       const res = await upvoteComment(comment._id);
       setUpvoted(res.upvoted); setUpvoteCount(res.upvoteCount);
-    } catch { toast.error("Could not upvote"); }
+    } catch { toast.error(t("community.toasts.couldNotUpvote")); }
   }
 
   async function handleFlag() {
     if (!isAuthenticated || flagged) return;
-    const ok = await confirm("Flag this comment for review?", { confirmLabel: "Flag" });
+    const ok = await confirm("Flag this comment for review?", { confirmLabel: t("community.actions.flag") });
     if (!ok) return;
-    try { await flagComment(comment._id); setFlagged(true); toast.success("Flagged for review"); }
-    catch { toast.error("Could not flag"); }
+    try { await flagComment(comment._id); setFlagged(true); toast.success(t("community.toasts.flaggedForReview")); }
+    catch { toast.error(t("community.toasts.couldNotFlagComment")); }
   }
 
   async function handleDelete() {
-    const ok = await confirm("Delete this comment?", { confirmLabel: "Delete", destructive: true });
+    const ok = await confirm(t("community.confirm.deleteComment"), { confirmLabel: t("actions.delete"), destructive: true });
     if (!ok) return;
     try { await deleteComment(comment._id); onDeleted?.(comment._id); }
-    catch { toast.error("Could not delete"); }
+    catch { toast.error(t("community.toasts.couldNotDeleteComment")); }
   }
 
   async function handleEdit(e) {
@@ -706,7 +710,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
     if (!editBody.trim()) return;
     setSaving(true);
     try { const u = await updateComment(comment._id, { body: editBody }); onUpdated?.(u); setEditing(false); }
-    catch { toast.error("Could not update"); }
+    catch { toast.error(t("community.toasts.couldNotUpdate")); }
     finally { setSaving(false); }
   }
 
@@ -717,7 +721,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
     try {
       const c = await createComment(postId, { body: replyBody, parentCommentId: comment._id });
       onReplyAdded?.(c); setReplyBody(""); setReplying(false);
-    } catch { toast.error("Could not reply"); }
+    } catch { toast.error(t("community.toasts.couldNotReply")); }
     finally { setSaving(false); }
   }
 
@@ -730,7 +734,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
       const { translated } = await translateText(comment.body, targetLang);
       setTranslatedBody(translated);
       setShowTranslated(true);
-    } catch { toast.error("Could not translate"); }
+    } catch { toast.error(t("community.toasts.couldNotTranslate")); }
     finally { setTranslating(false); }
   }
 
@@ -753,8 +757,8 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
           <form onSubmit={handleEdit} className="space-y-2">
             <textarea value={editBody} onChange={(e) => setEditBody(e.target.value)} rows={3} className="textarea textarea-bordered textarea-sm w-full resize-none p-3" autoFocus />
             <div className="flex gap-2">
-              <button type="submit" disabled={saving} className="btn btn-primary btn-xs">{saving ? "Saving…" : "Save"}</button>
-              <button type="button" onClick={() => setEditing(false)} className="btn btn-ghost btn-xs">Cancel</button>
+              <button type="submit" disabled={saving} className="btn btn-primary btn-xs">{saving ? t("actions.saving") : t("actions.save")}</button>
+              <button type="button" onClick={() => setEditing(false)} className="btn btn-ghost btn-xs">{t("actions.cancel")}</button>
             </div>
           </form>
         ) : (
@@ -766,35 +770,35 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
               <FiArrowUp size={14} /> {upvoteCount}
             </button>
             {isAuthenticated && !isOwner && !isReply && (
-              <button onClick={() => setReplying((r) => !r)} className="hover:opacity-100" title="Reply"><FiCornerDownRight size={15} /></button>
+              <button onClick={() => setReplying((r) => !r)} className="hover:opacity-100" title={t("community.actions.reply")}><FiCornerDownRight size={15} /></button>
             )}
-            <button onClick={copyLink} className="hover:opacity-100" title="Copy link"><FiLink size={14} /></button>
+            <button onClick={copyLink} className="hover:opacity-100" title={t("community.actions.copyLink")}><FiLink size={14} /></button>
             {showTranslateButton && (
               <button onClick={handleTranslate} className="p-0 leading-none text-sky-400 hover:text-sky-500 transition-colors" disabled={translating}>
                 {translating ? <FiLoader size={14} className="animate-spin" /> : showTranslated ? <FiX size={14} /> : <FiGlobe size={14} />}
               </button>
             )}
             {isAuthenticated && !isOwner && (
-              <button onClick={handleFlag} className={flagged ? "text-error opacity-70" : "hover:opacity-100"} title="Flag">
+              <button onClick={handleFlag} className={flagged ? "text-error opacity-70" : "hover:opacity-100"} title={t("community.actions.flag")}>
                 <FiFlag size={14} />
               </button>
             )}
             {isOwner && (
               <>
-                <button onClick={() => setEditing(true)} className="hover:opacity-100" title="Edit"><FiEdit2 size={14} /></button>
-                <button onClick={handleDelete} className="hover:text-error hover:opacity-100" title="Delete"><FiTrash2 size={14} /></button>
+                <button onClick={() => setEditing(true)} className="hover:opacity-100" title={t("community.actions.edit")}><FiEdit2 size={14} /></button>
+                <button onClick={handleDelete} className="hover:text-error hover:opacity-100" title={t("actions.delete")}><FiTrash2 size={14} /></button>
               </>
             )}
           </div>
         )}
         {replying && (
           <form onSubmit={handleReply} className="mt-2 space-y-2">
-            <textarea value={replyBody} onChange={(e) => setReplyBody(e.target.value)} placeholder="Write a reply…" rows={2} className="textarea textarea-bordered textarea-sm w-full resize-none p-3" autoFocus />
+            <textarea value={replyBody} onChange={(e) => setReplyBody(e.target.value)} placeholder={t("community.comments.replyPlaceholder")} rows={2} className="textarea textarea-bordered textarea-sm w-full resize-none p-3" autoFocus />
             <div className="flex gap-4">
-              <button type="submit" disabled={saving} className="btn btn-primary btn-sm btn-square" title="Reply">
+              <button type="submit" disabled={saving} className="btn btn-primary btn-sm btn-square" title={t("community.actions.reply")}>
                 {saving ? <FiLoader size={18} className="animate-spin" /> : <FiSend size={18} />}
               </button>
-              <button type="button" onClick={() => setReplying(false)} className="btn btn-ghost btn-sm btn-square" title="Cancel">
+              <button type="button" onClick={() => setReplying(false)} className="btn btn-ghost btn-sm btn-square" title={t("actions.cancel")}>
                 <FiX size={18} />
               </button>
             </div>
@@ -852,22 +856,22 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
   async function handleUpvote() {
     if (!isAuthenticated || isOwner) return;
     try { const r = await upvotePost(postId); setUpvoted(r.upvoted); setUpvoteCount(r.upvoteCount); }
-    catch { toast.error("Could not upvote"); }
+    catch { toast.error(t("community.toasts.couldNotUpvote")); }
   }
 
   async function handleFlag() {
     if (flagged) return;
-    const ok = await confirm("Flag this post for review?", { confirmLabel: "Flag" });
+    const ok = await confirm("Flag this post for review?", { confirmLabel: t("community.actions.flag") });
     if (!ok) return;
-    try { await flagPost(postId); setFlagged(true); toast.success("Flagged for review"); }
-    catch { toast.error("Could not flag"); }
+    try { await flagPost(postId); setFlagged(true); toast.success(t("community.toasts.flaggedForReview")); }
+    catch { toast.error(t("community.toasts.couldNotFlagPost")); }
   }
 
   async function handleDelete() {
-    const ok = await confirm("Delete this post?", { confirmLabel: "Delete", destructive: true });
+    const ok = await confirm(t("community.confirm.deletePost"), { confirmLabel: t("actions.delete"), destructive: true });
     if (!ok) return;
     try { await deletePost(postId); onBack(); }
-    catch { toast.error("Could not delete"); }
+    catch { toast.error(t("community.toasts.couldNotDeletePost")); }
   }
 
   async function handleTranslatePost() {
@@ -883,7 +887,7 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
       setTranslatedTitle(titleResult.translated || post.title);
       setTranslatedBody(bodyResult?.translated || "");
       setShowTranslated(true);
-    } catch { toast.error("Could not translate"); }
+    } catch { toast.error(t("community.toasts.couldNotTranslate")); }
     finally { setTranslatingPost(false); }
   }
 
@@ -892,7 +896,7 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
     if (!files.length) return;
     const slots = 5 - editImageUrls.length;
     const toUpload = files.slice(0, slots);
-    if (!toUpload.length) { toast.error("Maximum 5 images per post"); return; }
+    if (!toUpload.length) { toast.error(t("community.toasts.maxImages")); return; }
     setEditImageUploading(true);
     try {
       const results = await Promise.all(toUpload.map((file) => uploadCommunityImage({ file })));
@@ -906,7 +910,7 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
     try {
       const updated = await updatePost(postId, { title: editTitle, body: editBody, url: editUrl, imageUrls: editImageUrls });
       setPost(updated); setEditing(false);
-    } catch { toast.error("Could not update"); }
+    } catch { toast.error(t("community.toasts.couldNotUpdate")); }
   }
 
   async function handlePostComment(e) {
@@ -917,7 +921,7 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
       const c = await createComment(postId, { body: newComment });
       setComments((prev) => [...prev, { ...c, replies: [] }]);
       setNewComment("");
-    } catch { toast.error("Could not post comment"); }
+    } catch { toast.error(t("community.toasts.couldNotPostComment")); }
     finally { setPosting(false); }
   }
 
@@ -952,7 +956,7 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
         )}
         <div className="flex-1" />
         {isAuthenticated && !isOwner && post && (
-          <button onClick={handleFlag} title={flagged ? "Flagged" : "Flag"} className={`btn btn-ghost btn-xs btn-square opacity-40 hover:opacity-100 ${flagged ? "text-error opacity-70" : ""}`}>
+          <button onClick={handleFlag} title={flagged ? t("community.actions.flagged") : t("community.actions.flag")} className={`btn btn-ghost btn-xs btn-square opacity-40 hover:opacity-100 ${flagged ? "text-error opacity-70" : ""}`}>
             <FiFlag size={15} />
           </button>
         )}
@@ -966,7 +970,7 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
       {loading ? (
         <div className="flex justify-center py-24 opacity-40"><FiLoader size={24} className="animate-spin" /></div>
       ) : !post ? (
-        <div className="text-center py-24 opacity-50 text-sm">Post not found.</div>
+        <div className="text-center py-24 opacity-50 text-sm">{t("community.postNotFound")}</div>
       ) : (
         <div className="flex-1 overflow-y-auto">
           <div className="flex gap-6 max-w-4xl mx-auto px-4 py-6">
@@ -974,7 +978,7 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
             {/* Post */}
             {editing ? (
               <form onSubmit={handleEditSave} className="bg-base-100 border border-base-200 rounded-xl p-4 space-y-2">
-                <input type="text" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} placeholder="Title"
+                <input type="text" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} placeholder={t("community.titlePlaceholder")}
                   className="w-full rounded-lg border border-base-300 bg-base-100 px-3 py-2.5 text-sm font-medium placeholder:text-base-content/40 focus:outline-none focus:border-primary/50" />
                 <PostBodyEditor initialContent={editBody} onChange={setEditBody} placeholder="Body" />
                 <input type="url" value={editUrl} onChange={(e) => setEditUrl(e.target.value)} placeholder="https://"
@@ -997,14 +1001,14 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
                 <div className="flex items-center justify-between pt-1 border-t border-base-200">
                   <div>
                     {editImageUrls.length < 5 && (
-                      <button type="button" onClick={() => editImageInputRef.current?.click()} disabled={editImageUploading} title={editImageUploading ? "Uploading…" : "Add photos"} className="btn btn-ghost btn-xs btn-square opacity-40 hover:opacity-100">
+                      <button type="button" onClick={() => editImageInputRef.current?.click()} disabled={editImageUploading} title={editImageUploading ? t("community.actions.uploading") : t("community.actions.addPhotos")} className="btn btn-ghost btn-xs btn-square opacity-40 hover:opacity-100">
                         {editImageUploading ? <FiLoader size={14} className="animate-spin" /> : <FiImage size={14} />}
                       </button>
                     )}
                   </div>
                   <div className="flex items-center gap-2">
-                    <button type="button" onClick={() => setEditing(false)} className="btn btn-ghost btn-sm text-xs">Cancel</button>
-                    <button type="submit" disabled={editImageUploading} className="btn btn-primary btn-sm text-xs">Save</button>
+                    <button type="button" onClick={() => setEditing(false)} className="btn btn-ghost btn-sm text-xs">{t("actions.cancel")}</button>
+                    <button type="submit" disabled={editImageUploading} className="btn btn-primary btn-sm text-xs">{t("actions.save")}</button>
                   </div>
                 </div>
               </form>
@@ -1051,10 +1055,10 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
                       )}
                       {isOwner && (
                         <>
-                          <button onClick={() => { setEditTitle(post.title); setEditBody(post.body || ""); setEditUrl(post.url || ""); setEditImageUrls(post.imageUrls || []); setEditing(true); }} title="Edit" className="hover:opacity-100">
+                          <button onClick={() => { setEditTitle(post.title); setEditBody(post.body || ""); setEditUrl(post.url || ""); setEditImageUrls(post.imageUrls || []); setEditing(true); }} title={t("community.actions.edit")} className="hover:opacity-100">
                             <FiEdit2 size={16} />
                           </button>
-                          <button onClick={handleDelete} title="Delete" className="hover:text-error hover:opacity-100">
+                          <button onClick={handleDelete} title={t("actions.delete")} className="hover:text-error hover:opacity-100">
                             <FiTrash2 size={16} />
                           </button>
                         </>
@@ -1070,15 +1074,15 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
               <h3 className="font-semibold text-sm">{comments.length} comment{comments.length !== 1 ? "s" : ""}</h3>
               {isAuthenticated ? (
                 <form onSubmit={handlePostComment} className="space-y-2">
-                  <textarea value={newComment} onChange={(e) => setNewComment(e.target.value)} placeholder="Add a comment…" rows={3} className="textarea textarea-bordered textarea-sm w-full resize-none p-3" />
+                  <textarea value={newComment} onChange={(e) => setNewComment(e.target.value)} placeholder={t("community.comments.commentPlaceholder")} rows={3} className="textarea textarea-bordered textarea-sm w-full resize-none p-3" />
                   <div className="flex justify-end">
-                    <button type="submit" disabled={posting || !newComment.trim()} className="btn btn-primary btn-sm px-4 gap-2" title="Comment">
+                    <button type="submit" disabled={posting || !newComment.trim()} className="btn btn-primary btn-sm px-4 gap-2" title={t("community.actions.comment")}>
                       {posting ? <FiLoader size={18} className="animate-spin" /> : <FiSend size={18} />}
                     </button>
                   </div>
                 </form>
               ) : (
-                <p className="text-sm opacity-50">Log in to comment.</p>
+                <p className="text-sm opacity-50">{t("community.logIn")} to comment.</p>
               )}
               <div className="space-y-4 divide-y divide-base-200">
                 {comments.map((c) => (

@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { FiArrowUp, FiFlag, FiEdit2, FiTrash2, FiCornerDownRight, FiLink, FiGlobe, FiX, FiLoader } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
 import { upvoteComment, flagComment, deleteComment, updateComment, createComment, translateText } from "../services/community";
 import useAuth from "../hooks/useAuth";
 import { toast } from "react-hot-toast";
 import { formatDistanceToNow } from "date-fns";
 
 function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, onReplyAdded }) {
+  const { t } = useTranslation();
   const { isAuthenticated, user } = useAuth();
   const [upvoteCount, setUpvoteCount] = useState(comment.upvoteCount);
   const [upvoted, setUpvoted] = useState(comment.upvoted);
@@ -31,7 +33,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
       setUpvoted(res.upvoted);
       setUpvoteCount(res.upvoteCount);
     } catch {
-      toast.error("Could not upvote");
+      toast.error(t("community.toasts.couldNotUpvote"));
     }
   }
 
@@ -40,19 +42,19 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
     try {
       await flagComment(comment._id);
       setFlagged(true);
-      toast.success("Comment flagged for review");
+      toast.success(t("community.toasts.commentFlaggedForReview"));
     } catch {
-      toast.error("Could not flag comment");
+      toast.error(t("community.toasts.couldNotFlagComment"));
     }
   }
 
   async function handleDelete() {
-    if (!window.confirm("Delete this comment?")) return;
+    if (!window.confirm(t("community.confirm.deleteComment"))) return;
     try {
       await deleteComment(comment._id);
       onDeleted?.(comment._id);
     } catch {
-      toast.error("Could not delete comment");
+      toast.error(t("community.toasts.couldNotDeleteComment"));
     }
   }
 
@@ -65,7 +67,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
       onUpdated?.(updated);
       setEditing(false);
     } catch {
-      toast.error("Could not update comment");
+      toast.error(t("community.toasts.couldNotUpdateComment"));
     } finally {
       setSaving(false);
     }
@@ -81,7 +83,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
       setReplyBody("");
       setReplying(false);
     } catch {
-      toast.error("Could not post reply");
+      toast.error(t("community.toasts.couldNotPostReply"));
     } finally {
       setSaving(false);
     }
@@ -97,7 +99,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
       setTranslatedBody(translated);
       setShowTranslated(true);
     } catch {
-      toast.error("Could not translate");
+      toast.error(t("community.toasts.couldNotTranslate"));
     } finally {
       setTranslating(false);
     }
@@ -105,7 +107,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
 
   function handleCopyLink() {
     const url = `${window.location.origin}${window.location.pathname}#comment-${comment._id}`;
-    navigator.clipboard.writeText(url).then(() => toast.success("Link copied"));
+    navigator.clipboard.writeText(url).then(() => toast.success(t("community.toasts.linkCopied")));
   }
 
   return (
@@ -135,10 +137,10 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
             />
             <div className="flex gap-2">
               <button type="submit" disabled={saving} className="btn btn-primary btn-xs">
-                {saving ? "Saving…" : "Save"}
+                {saving ? t("actions.saving") : t("actions.save")}
               </button>
               <button type="button" onClick={() => setEditing(false)} className="btn btn-ghost btn-xs">
-                Cancel
+                {t("actions.cancel")}
               </button>
             </div>
           </form>
@@ -165,14 +167,14 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
                 onClick={() => setReplying((r) => !r)}
                 className="text-xs opacity-40 hover:opacity-70"
               >
-                Reply
+                {t("community.actions.reply")}
               </button>
             )}
 
             <button
               onClick={handleCopyLink}
               className="text-xs opacity-40 hover:opacity-70"
-              title="Copy link"
+              title={t("community.actions.copyLink")}
             >
               <FiLink size={11} />
             </button>
@@ -193,16 +195,16 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
                 className={`text-xs flex items-center gap-1 ${flagged ? "text-error opacity-70" : "opacity-40 hover:opacity-70"}`}
               >
                 <FiFlag size={11} />
-                {flagged ? "Flagged" : "Flag"}
+                {flagged ? t("community.actions.flagged") : t("community.actions.flag")}
               </button>
             )}
             {isOwner && (
               <>
                 <button onClick={() => setEditing(true)} className="text-xs opacity-40 hover:opacity-70 flex items-center gap-1">
-                  <FiEdit2 size={11} /> Edit
+                  <FiEdit2 size={11} /> {t("community.actions.edit")}
                 </button>
                 <button onClick={handleDelete} className="text-xs opacity-40 hover:text-error hover:opacity-70 flex items-center gap-1">
-                  <FiTrash2 size={11} /> Delete
+                  <FiTrash2 size={11} /> {t("actions.delete")}
                 </button>
               </>
             )}
@@ -215,17 +217,17 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
             <textarea
               value={replyBody}
               onChange={(e) => setReplyBody(e.target.value)}
-              placeholder="Write a reply…"
+              placeholder={t("community.comments.replyPlaceholder")}
               rows={2}
               className="textarea textarea-bordered textarea-sm w-full resize-none"
               autoFocus
             />
             <div className="flex gap-2">
               <button type="submit" disabled={saving} className="btn btn-primary btn-xs">
-                {saving ? "Posting…" : "Reply"}
+                {saving ? t("community.actions.posting") : t("community.actions.reply")}
               </button>
               <button type="button" onClick={() => setReplying(false)} className="btn btn-ghost btn-xs">
-                Cancel
+                {t("actions.cancel")}
               </button>
             </div>
           </form>
@@ -236,6 +238,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
 }
 
 export default function CommentThread({ comments: initial, postId, onCommentsChange }) {
+  const { t } = useTranslation();
   const { isAuthenticated } = useAuth();
   const [comments, setComments] = useState(initial || []);
   const [newBody, setNewBody] = useState("");
@@ -256,7 +259,7 @@ export default function CommentThread({ comments: initial, postId, onCommentsCha
       setNewBody("");
       onCommentsChange?.();
     } catch {
-      toast.error("Could not post comment");
+      toast.error(t("community.toasts.couldNotPostComment"));
     } finally {
       setPosting(false);
     }
@@ -314,19 +317,19 @@ export default function CommentThread({ comments: initial, postId, onCommentsCha
           <textarea
             value={newBody}
             onChange={(e) => setNewBody(e.target.value)}
-            placeholder="Add a comment…"
+            placeholder={t("community.comments.commentPlaceholder")}
             rows={3}
             className="textarea textarea-bordered textarea-sm w-full resize-none"
           />
           <div className="flex justify-end">
             <button type="submit" disabled={posting || !newBody.trim()} className="btn btn-primary btn-sm">
-              {posting ? "Posting…" : "Comment"}
+              {posting ? t("community.actions.posting") : t("community.actions.comment")}
             </button>
           </div>
         </form>
       ) : (
         <p className="text-sm opacity-50">
-          <a href="/auth/login" className="text-primary hover:underline">Log in</a> to comment.
+          <a href="/auth/login" className="text-primary hover:underline">{t("community.logIn")}</a> to comment.
         </p>
       )}
 

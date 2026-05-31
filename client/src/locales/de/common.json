@@ -152,7 +152,15 @@
     "addToListFailed": "Element konnte nicht zu deiner Liste hinzugefügt werden.",
     "itemAlreadyInList": "Dieses Element ist bereits in deiner Liste. Verwende das Mengenfeld, um mehr hinzuzufügen.",
     "editGlobalTemplate": "Globale Vorlage bearbeiten",
-    "templatesTitle": "Vorlagen"
+    "templatesTitle": "Vorlagen",
+    "a11y": {
+      "admin": "Verwaltung",
+      "community": "Community",
+      "toggleCommunities": "Communitys ein-/ausklappen",
+      "toggleGearLists": "Ausrüstungslisten ein-/ausklappen",
+      "createNewList": "Neue Liste erstellen",
+      "toggleMyGear": "Meine Ausrüstung ein-/ausklappen"
+    }
   },
   "auth": {
     "title": {
@@ -679,6 +687,24 @@
       "nameRequired": "Name ist erforderlich",
       "invalidWeight": "Ungültiges Gewicht",
       "previewLoadFailed": "Artikeldetails konnten nicht geladen werden."
+    },
+    "gearRequest": {
+      "title": "Ausrüstungsartikel anfragen",
+      "description": "Nicht gefunden, was Sie suchen? Lassen Sie es uns wissen, und wir schauen, ob wir es hinzufügen können.",
+      "labels": {
+        "itemName": "Artikelname",
+        "brand": "Marke",
+        "link": "Link (optional)"
+      },
+      "buttons": {
+        "openForm": "Ausrüstungsartikel anfragen",
+        "send": "Anfrage senden",
+        "sending": "Wird gesendet…"
+      },
+      "toasts": {
+        "success": "Anfrage gesendet! Wir schauen, ob wir es hinzufügen können.",
+        "failed": "Anfrage konnte nicht gesendet werden. Bitte erneut versuchen."
+      }
     }
   },
   "photoScanModal": {
@@ -770,7 +796,19 @@
     "toast": {
       "saveSuccess": "Listen-Details gespeichert.",
       "saveFailed": "Listen-Details konnten nicht gespeichert werden. Bitte versuche es erneut."
+    },
+    "toolbar": {
+      "bold": "Fett",
+      "italic": "Kursiv",
+      "bulletList": "Aufzählungsliste",
+      "numberedList": "Nummerierte Liste"
     }
+  },
+  "imageCarousel": {
+    "previous": "Zurück",
+    "next": "Weiter",
+    "previousImage": "Vorheriges Bild",
+    "nextImage": "Nächstes Bild"
   },
   "catalog": {
     "categories": {
@@ -1143,6 +1181,9 @@
     "common": {
       "amazonAssociate": "Als Amazon-Partner verdiene ich an qualifizierten Verkäufen.",
       "learnMore": "Mehr erfahren"
+    },
+    "toasts": {
+      "noLink": "Kein Link verfügbar."
     }
   },
   "landing": {
@@ -1402,6 +1443,68 @@
     "previewCta": "Liste ansehen",
     "openAriaLabel": "Vorlage {{title}} öffnen",
     "backBreadcrumb": "Zurück zu Vorlagen"
+  },
+  "community": {
+    "searchPlaceholder": "Alles durchsuchen…",
+    "titlePlaceholder": "Titel",
+    "sort": { "new": "Neu", "top": "Top" },
+    "noPosts": "Noch keine Beiträge. Sei der Erste!",
+    "loadMore": "Mehr laden",
+    "postNotFound": "Beitrag nicht gefunden.",
+    "logIn": "Anmelden",
+    "toolbar": { "bold": "Fett", "italic": "Kursiv", "bulletList": "Aufzählungsliste" },
+    "post": {
+      "createTitle": "Beitrag erstellen",
+      "editTitle": "Beitrag bearbeiten",
+      "titlePlaceholder": "Titel *",
+      "bodyPlaceholder": "Inhalt (optional)",
+      "urlPlaceholder": "Link (optional)",
+      "submit": "Posten",
+      "saveChanges": "Änderungen speichern"
+    },
+    "actions": {
+      "reply": "Antworten",
+      "copyLink": "Link kopieren",
+      "edit": "Bearbeiten",
+      "flag": "Melden",
+      "flagged": "Gemeldet",
+      "upvote": "Hochstimmen",
+      "flagPost": "Beitrag melden",
+      "addPhotos": "Fotos hinzufügen",
+      "comment": "Kommentieren",
+      "posting": "Wird gepostet…",
+      "uploading": "Wird hochgeladen…"
+    },
+    "comments": {
+      "replyPlaceholder": "Antwort schreiben…",
+      "commentPlaceholder": "Kommentar hinzufügen…"
+    },
+    "toasts": {
+      "couldNotUpvote": "Hochstimmen nicht möglich",
+      "flaggedForReview": "Zur Überprüfung gemeldet",
+      "postFlaggedForReview": "Beitrag zur Überprüfung gemeldet",
+      "commentFlaggedForReview": "Kommentar zur Überprüfung gemeldet",
+      "couldNotFlagPost": "Beitrag konnte nicht gemeldet werden",
+      "couldNotFlagComment": "Kommentar konnte nicht gemeldet werden",
+      "couldNotDeletePost": "Beitrag konnte nicht gelöscht werden",
+      "couldNotDeleteComment": "Kommentar konnte nicht gelöscht werden",
+      "couldNotTranslate": "Übersetzung nicht möglich",
+      "couldNotUpdate": "Aktualisierung nicht möglich",
+      "couldNotReply": "Antworten nicht möglich",
+      "couldNotCreatePost": "Beitrag konnte nicht erstellt werden",
+      "couldNotSavePost": "Beitrag konnte nicht gespeichert werden",
+      "couldNotUpdateComment": "Kommentar konnte nicht aktualisiert werden",
+      "couldNotPostReply": "Antwort konnte nicht gepostet werden",
+      "couldNotPostComment": "Kommentar konnte nicht gepostet werden",
+      "maxImages": "Maximal 5 Bilder pro Beitrag",
+      "titleRequired": "Titel erforderlich",
+      "titleIsRequired": "Titel ist erforderlich",
+      "linkCopied": "Link kopiert"
+    },
+    "confirm": {
+      "deletePost": "Diesen Beitrag löschen?",
+      "deleteComment": "Diesen Kommentar löschen?"
+    }
   },
   "communities": {
     "treklist-help": {
