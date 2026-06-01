@@ -6,12 +6,24 @@ import useAuth from "../hooks/useAuth";
 import { toast } from "react-hot-toast";
 import { formatDistanceToNow } from "date-fns";
 
+function isFlaggedInStorage(type, id) {
+  try { return JSON.parse(localStorage.getItem(`community:flagged:${type}`) || "[]").includes(id); }
+  catch { return false; }
+}
+function storeFlagged(type, id) {
+  try {
+    const key = `community:flagged:${type}`;
+    const arr = JSON.parse(localStorage.getItem(key) || "[]");
+    if (!arr.includes(id)) localStorage.setItem(key, JSON.stringify([...arr, id]));
+  } catch { /* ignore */ }
+}
+
 function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, onReplyAdded }) {
   const { t } = useTranslation();
   const { isAuthenticated, user } = useAuth();
   const [upvoteCount, setUpvoteCount] = useState(comment.upvoteCount);
   const [upvoted, setUpvoted] = useState(comment.upvoted);
-  const [flagged, setFlagged] = useState(false);
+  const [flagged, setFlagged] = useState(() => isFlaggedInStorage("comment", comment._id));
   const [editing, setEditing] = useState(false);
   const [editBody, setEditBody] = useState(comment.body);
   const [replying, setReplying] = useState(false);
@@ -42,6 +54,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
     try {
       await flagComment(comment._id);
       setFlagged(true);
+      storeFlagged("comment", comment._id);
       toast.success(t("community.toasts.commentFlaggedForReview"));
     } catch {
       toast.error(t("community.toasts.couldNotFlagComment"));
@@ -132,6 +145,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
               value={editBody}
               onChange={(e) => setEditBody(e.target.value)}
               rows={3}
+              maxLength={5000}
               className="textarea textarea-bordered textarea-sm w-full resize-none"
               autoFocus
             />
@@ -152,7 +166,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
 
         {/* Actions */}
         {!editing && (
-          <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+          <div className="flex items-center gap-4 mt-1.5 flex-wrap">
             <button
               onClick={handleUpvote}
               className={`flex items-center gap-1 text-xs ${upvoted ? "text-primary" : "opacity-40 hover:opacity-70"} ${isOwner ? "invisible" : ""}`}
@@ -192,7 +206,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
             {isAuthenticated && !isOwner && (
               <button
                 onClick={handleFlag}
-                className={`text-xs flex items-center gap-1 ${flagged ? "text-error opacity-70" : "opacity-40 hover:opacity-70"}`}
+                className={`ml-auto text-xs flex items-center gap-1 ${flagged ? "text-error opacity-70" : "opacity-40 hover:opacity-70"}`}
               >
                 <FiFlag size={11} />
                 {flagged ? t("community.actions.flagged") : t("community.actions.flag")}
@@ -214,14 +228,22 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
         {/* Reply form */}
         {replying && (
           <form onSubmit={handleReply} className="mt-2 space-y-2">
-            <textarea
-              value={replyBody}
-              onChange={(e) => setReplyBody(e.target.value)}
-              placeholder={t("community.comments.replyPlaceholder")}
-              rows={2}
-              className="textarea textarea-bordered textarea-sm w-full resize-none"
-              autoFocus
-            />
+            <div className="relative">
+              <textarea
+                value={replyBody}
+                onChange={(e) => setReplyBody(e.target.value)}
+                placeholder={t("community.comments.replyPlaceholder")}
+                rows={2}
+                maxLength={5000}
+                className="textarea textarea-bordered textarea-sm w-full resize-none"
+                autoFocus
+              />
+              {replyBody.length > 4000 && (
+                <span className={`pointer-events-none absolute bottom-1.5 right-2 text-xs tabular-nums ${replyBody.length > 4500 ? "text-error" : "text-base-content/30"}`}>
+                  {5000 - replyBody.length}
+                </span>
+              )}
+            </div>
             <div className="flex gap-2">
               <button type="submit" disabled={saving} className="btn btn-primary btn-xs">
                 {saving ? t("community.actions.posting") : t("community.actions.reply")}
@@ -314,13 +336,21 @@ export default function CommentThread({ comments: initial, postId, onCommentsCha
       {/* New comment form */}
       {isAuthenticated ? (
         <form onSubmit={handlePost} className="space-y-2">
-          <textarea
-            value={newBody}
-            onChange={(e) => setNewBody(e.target.value)}
-            placeholder={t("community.comments.commentPlaceholder")}
-            rows={3}
-            className="textarea textarea-bordered textarea-sm w-full resize-none"
-          />
+          <div className="relative">
+            <textarea
+              value={newBody}
+              onChange={(e) => setNewBody(e.target.value)}
+              placeholder={t("community.comments.commentPlaceholder")}
+              rows={3}
+              maxLength={5000}
+              className="textarea textarea-bordered textarea-sm w-full resize-none"
+            />
+            {newBody.length > 4000 && (
+              <span className={`pointer-events-none absolute bottom-1.5 right-2 text-xs tabular-nums ${newBody.length > 4500 ? "text-error" : "text-base-content/30"}`}>
+                {5000 - newBody.length}
+              </span>
+            )}
+          </div>
           <div className="flex justify-end">
             <button type="submit" disabled={posting || !newBody.trim()} className="btn btn-primary btn-sm">
               {posting ? t("community.actions.posting") : t("community.actions.comment")}
