@@ -207,13 +207,13 @@ export default function AffiliateGateLink({
       return;
     }
 
-    // Otherwise open modal; we'll resolve only after they proceed
+    // Otherwise open modal; mark ack immediately (disclosure is informational)
+    markAck();
     pendingOpenRef.current = true;
     setOpen(true);
   };
 
   const proceed = async () => {
-    markAck();
     setOpen(false);
 
     // small delay to let modal unmount smoothly
