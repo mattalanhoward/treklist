@@ -7,13 +7,25 @@ import useAuth from "../hooks/useAuth";
 import { toast } from "react-hot-toast";
 import { formatDistanceToNow } from "date-fns";
 
+function isFlaggedInStorage(type, id) {
+  try { return JSON.parse(localStorage.getItem(`community:flagged:${type}`) || "[]").includes(id); }
+  catch { return false; }
+}
+function storeFlagged(type, id) {
+  try {
+    const key = `community:flagged:${type}`;
+    const arr = JSON.parse(localStorage.getItem(key) || "[]");
+    if (!arr.includes(id)) localStorage.setItem(key, JSON.stringify([...arr, id]));
+  } catch { /* ignore */ }
+}
+
 export default function PostCard({ post, communitySlug, onDeleted, compact = false }) {
   const { t } = useTranslation();
   const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
   const [upvoteCount, setUpvoteCount] = useState(post.upvoteCount);
   const [upvoted, setUpvoted] = useState(post.upvoted);
-  const [flagged, setFlagged] = useState(false);
+  const [flagged, setFlagged] = useState(() => isFlaggedInStorage("post", post._id));
   const [loading, setLoading] = useState(false);
 
   const isOwner = isAuthenticated && user?._id === post.userId?._id;
@@ -42,6 +54,7 @@ export default function PostCard({ post, communitySlug, onDeleted, compact = fal
     try {
       await flagPost(post._id);
       setFlagged(true);
+      storeFlagged("post", post._id);
       toast.success(t("community.toasts.postFlaggedForReview"));
     } catch {
       toast.error(t("community.toasts.couldNotFlagPost"));
@@ -107,7 +120,7 @@ export default function PostCard({ post, communitySlug, onDeleted, compact = fal
             <p className="text-sm opacity-70 mt-1 line-clamp-3">{post.body}</p>
           )}
 
-          <div className="flex items-center gap-3 mt-2 text-xs opacity-50 flex-wrap">
+          <div className="flex items-center gap-4 mt-2 text-xs opacity-50 flex-wrap">
             <span>
               {post.userId?.trailname || "Unknown"} &middot; {timeAgo}
             </span>
@@ -121,7 +134,7 @@ export default function PostCard({ post, communitySlug, onDeleted, compact = fal
             {isAuthenticated && !isOwner && (
               <button
                 onClick={handleFlag}
-                className={`flex items-center gap-1 hover:opacity-100 ${flagged ? "text-error" : ""}`}
+                className={`ml-auto flex items-center gap-1 hover:opacity-100 ${flagged ? "text-error" : ""}`}
                 title={t("community.actions.flagPost")}
               >
                 <FiFlag size={12} />
@@ -138,7 +151,7 @@ export default function PostCard({ post, communitySlug, onDeleted, compact = fal
                 </Link>
                 <button
                   onClick={handleDelete}
-                  className="flex items-center gap-1 hover:text-error hover:opacity-100"
+                  className="ml-auto flex items-center gap-1 hover:text-error hover:opacity-100"
                 >
                   <FiTrash2 size={12} /> {t("actions.delete")}
                 </button>

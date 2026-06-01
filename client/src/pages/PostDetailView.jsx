@@ -10,6 +10,18 @@ import usePoll from "../hooks/usePoll";
 import { toast } from "react-hot-toast";
 import { formatDistanceToNow } from "date-fns";
 
+function isFlaggedInStorage(type, id) {
+  try { return JSON.parse(localStorage.getItem(`community:flagged:${type}`) || "[]").includes(id); }
+  catch { return false; }
+}
+function storeFlagged(type, id) {
+  try {
+    const key = `community:flagged:${type}`;
+    const arr = JSON.parse(localStorage.getItem(key) || "[]");
+    if (!arr.includes(id)) localStorage.setItem(key, JSON.stringify([...arr, id]));
+  } catch { /* ignore */ }
+}
+
 export default function PostDetailView() {
   const { t } = useTranslation();
   const { slug, postId } = useParams();
@@ -22,7 +34,7 @@ export default function PostDetailView() {
   const [loading, setLoading] = useState(true);
   const [upvoteCount, setUpvoteCount] = useState(0);
   const [upvoted, setUpvoted] = useState(false);
-  const [flagged, setFlagged] = useState(false);
+  const [flagged, setFlagged] = useState(() => isFlaggedInStorage("post", postId));
   const [editing, setEditing] = useState(searchParams.get("edit") === "1");
 
   const fetchAll = useCallback(async () => {
@@ -65,6 +77,7 @@ export default function PostDetailView() {
     try {
       await flagPost(postId);
       setFlagged(true);
+      storeFlagged("post", postId);
       toast.success(t("community.toasts.postFlaggedForReview"));
     } catch {
       toast.error(t("community.toasts.couldNotFlagPost"));
@@ -176,7 +189,7 @@ export default function PostDetailView() {
                 {isAuthenticated && !isOwner && (
                   <button
                     onClick={handleFlag}
-                    className={`hover:opacity-100 ${flagged ? "text-error opacity-70" : ""}`}
+                    className={`ml-auto hover:opacity-100 ${flagged ? "text-error opacity-70" : ""}`}
                   >
                     {flagged ? t("community.actions.flagged") : t("community.actions.flag")}
                   </button>

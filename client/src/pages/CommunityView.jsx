@@ -28,6 +28,18 @@ function timeAgo(date) {
   return formatDistanceToNow(new Date(date), { addSuffix: true });
 }
 
+function isFlaggedInStorage(type, id) {
+  try { return JSON.parse(localStorage.getItem(`community:flagged:${type}`) || "[]").includes(id); }
+  catch { return false; }
+}
+function storeFlagged(type, id) {
+  try {
+    const key = `community:flagged:${type}`;
+    const arr = JSON.parse(localStorage.getItem(key) || "[]");
+    if (!arr.includes(id)) localStorage.setItem(key, JSON.stringify([...arr, id]));
+  } catch { /* ignore */ }
+}
+
 function SearchForm({ searchProps }) {
   const { value, onChange, onSubmit, onClear } = searchProps;
   const { t } = useTranslation();
@@ -54,10 +66,16 @@ function SearchForm({ searchProps }) {
 
 function PostBodyEditor({ initialContent = "", onChange, placeholder = "Share your experience…" }) {
   const { t } = useTranslation();
+  const [charCount, setCharCount] = useState(0);
   const editor = useEditor({
     extensions: [StarterKit],
     content: initialContent || "",
-    onUpdate: ({ editor }) => onChange?.(editor.getHTML()),
+    onUpdate: ({ editor }) => {
+      const len = editor.getText().length;
+      if (len > 10000) { editor.commands.undo(); return; }
+      onChange?.(editor.getHTML());
+      setCharCount(len);
+    },
     editorProps: {
       attributes: { class: "tiptap-community" },
     },
@@ -87,6 +105,11 @@ function PostBodyEditor({ initialContent = "", onChange, placeholder = "Share yo
         )}
         <EditorContent editor={editor} />
       </div>
+      {charCount > 8000 && (
+        <div className={`text-xs text-right px-3 py-1 border-t border-base-200 tabular-nums ${charCount > 9000 ? "text-error" : "text-base-content/40"}`}>
+          {10000 - charCount}
+        </div>
+      )}
     </div>
   );
 }
@@ -96,11 +119,11 @@ function PostBodyEditor({ initialContent = "", onChange, placeholder = "Share yo
 function ConfirmDialog({ message, subtext, confirmLabel = "Confirm", destructive = false, onConfirm, onCancel }) {
   return (
     <div
-      className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-end sm:items-center justify-center z-50 sm:p-4"
+      className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center z-50 p-4"
       onClick={onCancel}
     >
       <div
-        className="bg-neutralAlt sm:rounded-lg shadow-2xl border border-neutral/60 max-w-sm w-full flex flex-col"
+        className="bg-neutralAlt rounded-lg shadow-2xl border border-neutral/60 max-w-sm w-full flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-start px-4 py-3 sm:px-6 flex-shrink-0 border-b border-neutral/40">
@@ -392,7 +415,7 @@ function PostCard({ post, onSelect, onDeleted, currentUserId }) {
   const showTranslateButton = !post.lang || post.lang !== userLang;
   const [upvoteCount, setUpvoteCount] = useState(post.upvoteCount);
   const [upvoted, setUpvoted] = useState(post.upvoted);
-  const [flagged, setFlagged] = useState(false);
+  const [flagged, setFlagged] = useState(() => isFlaggedInStorage("post", post._id));
   const [translatedTitle, setTranslatedTitle] = useState(null);
   const [translatedBody, setTranslatedBody] = useState(null);
   const [showTranslated, setShowTranslated] = useState(false);
@@ -418,6 +441,7 @@ function PostCard({ post, onSelect, onDeleted, currentUserId }) {
     try {
       await flagPost(post._id);
       setFlagged(true);
+      storeFlagged("post", post._id);
       toast.success(t("community.toasts.flaggedForReview"));
     } catch { toast.error(t("community.toasts.couldNotFlagPost")); }
   }
@@ -488,7 +512,7 @@ function PostCard({ post, onSelect, onDeleted, currentUserId }) {
               {showTranslated && translatedBody ? translatedBody : post.body.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim()}
             </p>
           )}
-          <div className="flex items-center gap-3 mt-2 text-xs opacity-50 flex-wrap" onClick={(e) => e.stopPropagation()}>
+          <div className="flex items-center gap-4 mt-2 text-xs opacity-50 flex-wrap" onClick={(e) => e.stopPropagation()}>
             <span>{post.userId?.trailname} &middot; {timeAgo(post.createdAt)}</span>
             <span onClick={(e) => { e.stopPropagation(); onSelect(post._id); }} className="flex items-center gap-1 cursor-pointer hover:text-green-600 transition-colors">
               <FiMessageSquare size={14} className="text-green-600/60" />{post.commentCount}
@@ -499,12 +523,12 @@ function PostCard({ post, onSelect, onDeleted, currentUserId }) {
               </button>
             )}
             {isAuthenticated && !isOwner && (
-              <button onClick={handleFlag} className={flagged ? "text-error" : "hover:text-error transition-colors"} title={t("community.actions.flag")}>
+              <button onClick={handleFlag} className={`ml-auto ${flagged ? "text-error" : "hover:text-error transition-colors"}`} title={t("community.actions.flag")}>
                 <FiFlag size={14} />
               </button>
             )}
             {isOwner && (
-              <button onClick={handleDelete} className="hover:text-error hover:opacity-100" title={t("actions.delete")}>
+              <button onClick={handleDelete} className="ml-auto hover:text-error hover:opacity-100" title={t("actions.delete")}>
                 <FiTrash2 size={14} />
               </button>
             )}
@@ -639,8 +663,15 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
           )}
           {showCreate && (
             <form onSubmit={handleCreatePost} noValidate className="bg-base-100 border border-base-200 rounded-xl p-4 space-y-2">
-              <input type="text" placeholder={t("community.titlePlaceholder")} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={300}
-                className="w-full rounded-lg border border-base-300 bg-base-100 px-3 py-2.5 text-sm font-medium placeholder:text-base-content/40 focus:outline-none focus:border-primary/50" />
+              <div className="relative">
+                <input type="text" placeholder={t("community.titlePlaceholder")} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={300}
+                  className="w-full rounded-lg border border-base-300 bg-base-100 px-3 py-2.5 text-sm font-medium placeholder:text-base-content/40 focus:outline-none focus:border-primary/50" />
+                {title.length > 240 && (
+                  <span className={`pointer-events-none absolute bottom-1.5 right-2 text-xs tabular-nums ${title.length > 270 ? "text-error" : "text-base-content/30"}`}>
+                    {300 - title.length}
+                  </span>
+                )}
+              </div>
               <PostBodyEditor initialContent="" onChange={setBody} />
               <input type="url" placeholder="https://" value={url} onChange={(e) => setUrl(e.target.value)}
                 className="w-full rounded-lg border border-base-300 bg-base-100 px-3 py-2.5 text-sm placeholder:text-base-content/40 focus:outline-none focus:border-primary/50" />
@@ -684,7 +715,7 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value)}
-              className="select select-bordered select-sm text-sm w-28"
+              className="select select-bordered select-sm text-sm"
             >
               <option value="new">{t("community.sort.new")}</option>
               <option value="top">{t("community.sort.top")}</option>
@@ -736,7 +767,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
   const showTranslateButton = !comment.lang || comment.lang !== userLang;
   const [upvoteCount, setUpvoteCount] = useState(comment.upvoteCount);
   const [upvoted, setUpvoted] = useState(comment.upvoted);
-  const [flagged, setFlagged] = useState(false);
+  const [flagged, setFlagged] = useState(() => isFlaggedInStorage("comment", comment._id));
   const [editing, setEditing] = useState(false);
   const [editBody, setEditBody] = useState(comment.body);
   const [replying, setReplying] = useState(false);
@@ -760,7 +791,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
     if (!isAuthenticated || flagged) return;
     const ok = await confirm("Flag this comment for review?", { confirmLabel: t("community.actions.flag"), subtext: "This will send the comment to our admins for review. Flag for inappropriate content, spam, or guideline violations." });
     if (!ok) return;
-    try { await flagComment(comment._id); setFlagged(true); toast.success(t("community.toasts.flaggedForReview")); }
+    try { await flagComment(comment._id); setFlagged(true); storeFlagged("comment", comment._id); toast.success(t("community.toasts.flaggedForReview")); }
     catch { toast.error(t("community.toasts.couldNotFlagComment")); }
   }
 
@@ -821,7 +852,14 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
         </div>
         {editing ? (
           <form onSubmit={handleEdit} className="space-y-2">
-            <textarea value={editBody} onChange={(e) => setEditBody(e.target.value)} rows={3} className="textarea textarea-bordered textarea-sm w-full resize-none p-3" autoFocus />
+            <div className="relative">
+              <textarea value={editBody} onChange={(e) => setEditBody(e.target.value)} rows={3} maxLength={5000} className="textarea textarea-bordered textarea-sm w-full resize-none p-3" autoFocus />
+              {editBody.length > 4000 && (
+                <span className={`pointer-events-none absolute bottom-1.5 right-2 text-xs tabular-nums ${editBody.length > 4500 ? "text-error" : "text-base-content/30"}`}>
+                  {5000 - editBody.length}
+                </span>
+              )}
+            </div>
             <div className="flex gap-2">
               <button type="submit" disabled={saving} className="text-base-content/40 hover:text-green-600 transition-colors" title={t("actions.save")}>
                 {saving ? <FiLoader size={14} className="animate-spin" /> : <FiCheck size={14} />}
@@ -835,12 +873,12 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
           <p className="text-sm whitespace-pre-wrap break-words">{showTranslated && translatedBody ? translatedBody : comment.body}</p>
         )}
         {!editing && (
-          <div className="flex items-center gap-3 mt-1 text-xs flex-wrap">
+          <div className="flex items-center gap-4 mt-1 text-xs flex-wrap">
             <button onClick={handleUpvote} className={`flex flex-col items-center gap-0.5 transition-colors ${upvoted ? "text-amber-400" : "text-amber-400/50 hover:text-amber-400"}`}>
               <FiArrowUp size={17} />
               <span className="text-xs font-bold tabular-nums leading-none">{upvoteCount}</span>
             </button>
-            <div className="flex items-center gap-3 text-xs text-base-content/40">
+            <div className="flex items-center gap-4 text-xs text-base-content/40">
             {isAuthenticated && !isReply && (
               <button onClick={() => setReplying((r) => !r)} className="hover:text-green-600 transition-colors" title={t("community.actions.reply")}><FiCornerDownRight size={14} /></button>
             )}
@@ -850,11 +888,6 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
                 {translating ? <FiLoader size={14} className="animate-spin" /> : showTranslated ? <FiX size={14} /> : <FiGlobe size={14} />}
               </button>
             )}
-            {isAuthenticated && !isOwner && (
-              <button onClick={handleFlag} className={`transition-colors ${flagged ? "text-error opacity-70" : "hover:text-error hover:opacity-100"}`} title={t("community.actions.flag")}>
-                <FiFlag size={14} />
-              </button>
-            )}
             {isOwner && (
               <>
                 <button onClick={() => setEditing(true)} className="hover:text-green-600 transition-colors" title={t("community.actions.edit")}><FiEdit2 size={14} /></button>
@@ -862,11 +895,23 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
               </>
             )}
             </div>
+            {isAuthenticated && !isOwner && (
+              <button onClick={handleFlag} className={`ml-auto transition-colors ${flagged ? "text-error opacity-70" : "text-base-content/40 hover:text-error hover:opacity-100"}`} title={t("community.actions.flag")}>
+                <FiFlag size={14} />
+              </button>
+            )}
           </div>
         )}
         {replying && (
           <form onSubmit={handleReply} className="mt-2 space-y-2">
-            <textarea value={replyBody} onChange={(e) => setReplyBody(e.target.value)} placeholder={t("community.comments.replyPlaceholder")} rows={2} className="textarea textarea-bordered textarea-sm w-full resize-none p-3" autoFocus />
+            <div className="relative">
+              <textarea value={replyBody} onChange={(e) => setReplyBody(e.target.value)} placeholder={t("community.comments.replyPlaceholder")} rows={2} maxLength={5000} className="textarea textarea-bordered textarea-sm w-full resize-none p-3" autoFocus />
+              {replyBody.length > 4000 && (
+                <span className={`pointer-events-none absolute bottom-1.5 right-2 text-xs tabular-nums ${replyBody.length > 4500 ? "text-error" : "text-base-content/30"}`}>
+                  {5000 - replyBody.length}
+                </span>
+              )}
+            </div>
             <div className="flex gap-4">
               <button type="submit" disabled={saving} className="btn btn-primary btn-sm btn-square" title={t("community.actions.reply")}>
                 {saving ? <FiLoader size={18} className="animate-spin" /> : <FiMessageCircle size={18} />}
@@ -894,7 +939,7 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
   const [loading, setLoading] = useState(true);
   const [upvoteCount, setUpvoteCount] = useState(0);
   const [upvoted, setUpvoted] = useState(false);
-  const [flagged, setFlagged] = useState(false);
+  const [flagged, setFlagged] = useState(() => isFlaggedInStorage("post", postId));
   const [editing, setEditing] = useState(false);
   const [editTitle, setEditTitle] = useState("");
   const [editBody, setEditBody] = useState("");
@@ -936,7 +981,7 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
     if (flagged) return;
     const ok = await confirm("Flag this post for review?", { confirmLabel: t("community.actions.flag"), subtext: "This will send the post to our admins for review. Flag for inappropriate content, spam, or guideline violations." });
     if (!ok) return;
-    try { await flagPost(postId); setFlagged(true); toast.success(t("community.toasts.flaggedForReview")); }
+    try { await flagPost(postId); setFlagged(true); storeFlagged("post", postId); toast.success(t("community.toasts.flaggedForReview")); }
     catch { toast.error(t("community.toasts.couldNotFlagPost")); }
   }
 
@@ -1028,16 +1073,6 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
           </>
         )}
         <div className="flex-1" />
-        {isAuthenticated && !isOwner && post && (
-          <button onClick={handleFlag} title={flagged ? t("community.actions.flagged") : t("community.actions.flag")} className={`btn btn-ghost btn-xs btn-square transition-colors ${flagged ? "text-error opacity-70" : "opacity-40 hover:text-error hover:opacity-100"}`}>
-            <FiFlag size={15} />
-          </button>
-        )}
-        {publicPostUrl && (
-          <button onClick={copyPostLink} title="Copy shareable link" className="btn btn-ghost btn-xs btn-square opacity-50 hover:opacity-100">
-            <FiShare2 size={15} />
-          </button>
-        )}
       </div>
 
       {loading ? (
@@ -1051,8 +1086,15 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
             {/* Post */}
             {editing ? (
               <form onSubmit={handleEditSave} className="bg-base-100 border border-base-200 rounded-xl p-4 space-y-2">
-                <input type="text" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} placeholder={t("community.titlePlaceholder")}
-                  className="w-full rounded-lg border border-base-300 bg-base-100 px-3 py-2.5 text-sm font-medium placeholder:text-base-content/40 focus:outline-none focus:border-primary/50" />
+                <div className="relative">
+                  <input type="text" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} placeholder={t("community.titlePlaceholder")} maxLength={300}
+                    className="w-full rounded-lg border border-base-300 bg-base-100 px-3 py-2.5 text-sm font-medium placeholder:text-base-content/40 focus:outline-none focus:border-primary/50" />
+                  {editTitle.length > 240 && (
+                    <span className={`pointer-events-none absolute bottom-1.5 right-2 text-xs tabular-nums ${editTitle.length > 270 ? "text-error" : "text-base-content/30"}`}>
+                      {300 - editTitle.length}
+                    </span>
+                  )}
+                </div>
                 <PostBodyEditor initialContent={editBody} onChange={setEditBody} placeholder="Body" />
                 <input type="url" value={editUrl} onChange={(e) => setEditUrl(e.target.value)} placeholder="https://"
                   className="w-full rounded-lg border border-base-300 bg-base-100 px-3 py-2.5 text-sm placeholder:text-base-content/40 focus:outline-none focus:border-primary/50" />
@@ -1120,10 +1162,15 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
                         <ImageCarousel images={post.imageUrls} heightClass="h-72" objectFit="cover" />
                       </div>
                     )}
-                    <div className="flex items-center gap-3 mt-4 text-xs text-base-content/40">
+                    <div className="flex items-center gap-4 mt-4 text-xs text-base-content/40">
                       {(!post.lang || post.lang !== userLang) && (
                         <button onClick={handleTranslatePost} disabled={translatingPost} className="p-0 leading-none text-sky-400 hover:text-sky-500 transition-colors">
                           {translatingPost ? <FiLoader size={14} className="animate-spin" /> : showTranslated ? <FiX size={14} /> : <FiGlobe size={14} />}
+                        </button>
+                      )}
+                      {publicPostUrl && (
+                        <button onClick={copyPostLink} title="Copy shareable link" className="ml-auto hover:text-green-600 transition-colors">
+                          <FiShare2 size={14} />
                         </button>
                       )}
                       {isAuthenticated && !isOwner && (
@@ -1152,7 +1199,14 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
               <h3 className="font-semibold text-sm">{comments.length} comment{comments.length !== 1 ? "s" : ""}</h3>
               {isAuthenticated ? (
                 <form onSubmit={handlePostComment} className="space-y-2">
-                  <textarea value={newComment} onChange={(e) => setNewComment(e.target.value)} placeholder={t("community.comments.commentPlaceholder")} rows={3} className="textarea textarea-bordered textarea-sm w-full resize-none p-3" />
+                  <div className="relative">
+                    <textarea value={newComment} onChange={(e) => setNewComment(e.target.value)} placeholder={t("community.comments.commentPlaceholder")} rows={3} maxLength={5000} className="textarea textarea-bordered textarea-sm w-full resize-none p-3" />
+                    {newComment.length > 4000 && (
+                      <span className={`pointer-events-none absolute bottom-1.5 right-2 text-xs tabular-nums ${newComment.length > 4500 ? "text-error" : "text-base-content/30"}`}>
+                        {5000 - newComment.length}
+                      </span>
+                    )}
+                  </div>
                   <div className="flex justify-end">
                     <button type="submit" disabled={posting || !newComment.trim()} className="text-base-content/40 hover:text-green-600 disabled:opacity-30 transition-colors" title={t("community.actions.comment")}>
                       {posting ? <FiLoader size={18} className="animate-spin" /> : <FiMessageCircle size={18} />}
