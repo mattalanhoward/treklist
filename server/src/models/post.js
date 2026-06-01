@@ -7,6 +7,7 @@ const PostSchema = new mongoose.Schema(
     title: { type: String, required: true, trim: true, maxlength: 300 },
     body: { type: String, trim: true, maxlength: 10000, default: "" },
     url: { type: String, trim: true, maxlength: 2048, default: "" },
+    urlTitle: { type: String, trim: true, maxlength: 300, default: "" },
     imageUrls: { type: [String], default: [] },
     upvoteCount: { type: Number, default: 0 },
     commentCount: { type: Number, default: 0 },

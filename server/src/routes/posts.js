@@ -91,7 +91,7 @@ router.post("/:slug/posts", authMiddleware, communityPostLimiter, async (req, re
     const community = await Community.findOne({ slug: req.params.slug, isArchived: false }).lean();
     if (!community) return res.status(404).json({ message: "Community not found" });
 
-    const { title, body, url, imageUrls } = req.body;
+    const { title, body, url, urlTitle, imageUrls } = req.body;
     if (!title || !title.trim()) return res.status(400).json({ message: "Title required" });
 
     // Validate URL if provided
@@ -109,6 +109,7 @@ router.post("/:slug/posts", authMiddleware, communityPostLimiter, async (req, re
       title: title.trim(),
       body: sanitizeBody(body),
       url: cleanUrl,
+      urlTitle: urlTitle ? urlTitle.trim().slice(0, 300) : "",
       imageUrls: parseImageUrls(imageUrls),
       lang,
     });
@@ -194,7 +195,7 @@ router.put("/:postId", authMiddleware, async (req, res) => {
     if (!post) return res.status(404).json({ message: "Post not found" });
     if (post.userId.toString() !== req.userId) return res.status(403).json({ message: "Forbidden" });
 
-    const { title, body, url, imageUrls } = req.body;
+    const { title, body, url, urlTitle, imageUrls } = req.body;
     const contentChanged = (title !== undefined) || (body !== undefined);
     if (title !== undefined) post.title = title.trim();
     if (body !== undefined) post.body = sanitizeBody(body);
@@ -205,6 +206,7 @@ router.put("/:postId", authMiddleware, async (req, res) => {
       }
       post.url = cleanUrl;
     }
+    if (urlTitle !== undefined) post.urlTitle = urlTitle.trim().slice(0, 300);
     if (imageUrls !== undefined) post.imageUrls = parseImageUrls(imageUrls);
     if (contentChanged) {
       const plainText = `${post.title} ${post.body.replace(/<[^>]+>/g, " ")}`.trim();

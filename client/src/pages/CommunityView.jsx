@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { FiArrowLeft, FiArrowUp, FiMessageSquare, FiMessageCircle, FiPlus, FiLoader, FiFlag, FiEdit2, FiTrash2, FiExternalLink, FiSend, FiCornerDownRight, FiShare2, FiStar, FiSearch, FiX, FiCheck, FiInfo, FiGlobe, FiImage, FiBold, FiItalic, FiList } from "react-icons/fi";
+import { FiArrowLeft, FiArrowUp, FiMessageSquare, FiMessageCircle, FiPlus, FiLoader, FiFlag, FiEdit2, FiTrash2, FiExternalLink, FiCornerDownRight, FiShare2, FiStar, FiSearch, FiX, FiCheck, FiInfo, FiGlobe, FiImage, FiBold, FiItalic, FiList, FiLink } from "react-icons/fi";
+import api from "../services/api";
 import { FaStar } from "react-icons/fa";
 import {
   getCommunities, getPosts, getPost, getComments, searchPosts,
@@ -504,7 +505,7 @@ function PostCard({ post, onSelect, onDeleted, currentUserId }) {
               className="inline-flex items-center gap-1 text-xs text-primary mt-0.5 hover:underline"
             >
               <FiExternalLink size={11} />
-              {(() => { try { return new URL(post.url).hostname; } catch { return post.url; } })()}
+              {post.urlTitle || (() => { try { return new URL(post.url).hostname; } catch { return post.url; } })()}
             </a>
           )}
           {post.body && (
@@ -569,6 +570,11 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [url, setUrl] = useState("");
+  const [linkedList, setLinkedList] = useState(null); // { id, title, shareUrl }
+  const [userLists, setUserLists] = useState([]);
+  const [listsLoading, setListsLoading] = useState(false);
+  const [showListPicker, setShowListPicker] = useState(false);
+  const listPickerRef = useRef(null);
   const [postImageUrls, setPostImageUrls] = useState([]);
   const [imageUploading, setImageUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -587,6 +593,32 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
 
   useEffect(() => { setLoading(true); setPosts([]); fetchPosts(true); }, [community.slug, sort]);
   usePoll(() => fetchPosts(), 30000);
+
+  useEffect(() => {
+    if (showCreate && isAuthenticated && userLists.length === 0 && !listsLoading) {
+      setListsLoading(true);
+      api.get("/dashboard").then(({ data }) => setUserLists(data)).catch(() => {}).finally(() => setListsLoading(false));
+    }
+  }, [showCreate]);
+
+  useEffect(() => {
+    if (!showListPicker) return;
+    function handleClick(e) { if (listPickerRef.current && !listPickerRef.current.contains(e.target)) setShowListPicker(false); }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [showListPicker]);
+
+  async function handleLinkList(list) {
+    try {
+      const { data } = await api.post(`/dashboard/${list._id}/share`);
+      const shareUrl = `${window.location.origin}/share/${data.token}`;
+      setLinkedList({ id: list._id, title: list.title, shareUrl });
+      setUrl(shareUrl);
+    } catch { toast.error(t("community.toasts.couldNotCreatePost")); }
+    setShowListPicker(false);
+  }
+
+  function clearLinkedList() { setLinkedList(null); setUrl(""); }
 
   async function handleImageSelect(e) {
     const files = Array.from(e.target.files || []);
@@ -607,9 +639,9 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
     if (!title.trim()) { toast.error(t("community.toasts.titleRequired")); return; }
     setSaving(true);
     try {
-      const newPost = await createPost(community.slug, { title, body, url, imageUrls: postImageUrls });
+      const newPost = await createPost(community.slug, { title, body, url, urlTitle: linkedList?.title ?? "", imageUrls: postImageUrls });
       setPosts((p) => [{ ...newPost, upvoted: false }, ...p]);
-      setTitle(""); setBody(""); setUrl(""); setPostImageUrls([]); setShowCreate(false);
+      setTitle(""); setBody(""); setUrl(""); setLinkedList(null); setPostImageUrls([]); setShowCreate(false);
     } catch { toast.error(t("community.toasts.couldNotCreatePost")); }
     finally { setSaving(false); }
   }
@@ -673,8 +705,6 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
                 )}
               </div>
               <PostBodyEditor initialContent="" onChange={setBody} />
-              <input type="url" placeholder="https://" value={url} onChange={(e) => setUrl(e.target.value)}
-                className="w-full rounded-lg border border-base-300 bg-base-100 px-3 py-2.5 text-sm placeholder:text-base-content/40 focus:outline-none focus:border-primary/50" />
               <input type="file" accept="image/*" multiple ref={imageInputRef} className="hidden" onChange={handleImageSelect} />
               {postImageUrls.length > 0 && (
                 <div className="flex flex-wrap gap-2">
@@ -689,16 +719,45 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
                 </div>
               )}
               <div className="flex items-center justify-between pt-2 border-t border-base-200">
-                <div>
+                <div className="flex items-center gap-2">
                   {postImageUrls.length < 5 && (
                     <button type="button" onClick={() => imageInputRef.current?.click()} disabled={imageUploading} className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-green-600/30 text-green-600/70 hover:border-green-600/60 hover:text-green-600 text-xs transition-colors">
                       {imageUploading ? <FiLoader size={13} className="animate-spin" /> : <FiImage size={13} />}
                       {imageUploading ? t("community.actions.uploading") : t("community.actions.addPhotos")}
                     </button>
                   )}
+                  {linkedList ? (
+                    <span className="flex items-center gap-1 px-2.5 py-1 rounded-full border border-primary/30 bg-primary/5 text-xs text-primary/70 max-w-[160px]">
+                      <FiLink size={11} className="shrink-0" />
+                      <span className="truncate">{linkedList.title}</span>
+                      <button type="button" onClick={clearLinkedList} className="shrink-0 hover:text-error transition-colors ml-0.5">
+                        <FiX size={11} />
+                      </button>
+                    </span>
+                  ) : (
+                    <div className="relative" ref={listPickerRef}>
+                      <button type="button" onClick={() => setShowListPicker((v) => !v)} className="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-green-600/30 text-green-600/70 hover:border-green-600/60 hover:text-green-600 text-xs transition-colors">
+                        <FiLink size={13} />
+                        {t("community.actions.attachList")}
+                      </button>
+                      {showListPicker && (
+                        <div className="absolute bottom-full left-0 mb-1 w-52 bg-base-100 border border-base-300 rounded-lg shadow-lg z-20 py-1 max-h-48 overflow-y-auto">
+                          {listsLoading ? (
+                            <div className="px-3 py-2 text-xs text-base-content/40 flex items-center gap-2"><FiLoader size={12} className="animate-spin" /> Loading…</div>
+                          ) : userLists.length === 0 ? (
+                            <div className="px-3 py-2 text-xs text-base-content/40">No lists yet</div>
+                          ) : userLists.map((list) => (
+                            <button key={list._id} type="button" onClick={() => handleLinkList(list)} className="w-full text-left px-3 py-1.5 text-xs hover:bg-base-200 transition-colors truncate">
+                              {list.title}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
                 <div className="flex items-center gap-3">
-                  <button type="button" onClick={() => { setShowCreate(false); setTitle(""); setBody(""); setUrl(""); setPostImageUrls([]); }} className="text-base-content/40 hover:text-error transition-colors" title={t("actions.cancel")}>
+                  <button type="button" onClick={() => { setShowCreate(false); setTitle(""); setBody(""); setUrl(""); setLinkedList(null); setPostImageUrls([]); }} className="text-base-content/40 hover:text-error transition-colors" title={t("actions.cancel")}>
                     <FiX size={18} />
                   </button>
                   <button type="submit" disabled={saving || imageUploading} className="text-base-content/40 hover:text-green-600 disabled:opacity-30 transition-colors" title={t("community.post.submit")}>
@@ -882,7 +941,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
             {isAuthenticated && !isReply && (
               <button onClick={() => setReplying((r) => !r)} className="hover:text-green-600 transition-colors" title={t("community.actions.reply")}><FiCornerDownRight size={14} /></button>
             )}
-            <button onClick={copyLink} className="hover:text-green-600 transition-colors" title={t("community.actions.copyLink")}><FiSend size={14} /></button>
+            <button onClick={copyLink} className="hover:text-green-600 transition-colors" title={t("community.actions.copyLink")}><FiShare2 size={14} /></button>
             {showTranslateButton && (
               <button onClick={handleTranslate} className="p-0 leading-none text-sky-400 hover:text-sky-500 transition-colors" disabled={translating}>
                 {translating ? <FiLoader size={14} className="animate-spin" /> : showTranslated ? <FiX size={14} /> : <FiGlobe size={14} />}
@@ -1149,7 +1208,7 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
                     {post.url && (
                       <a href={post.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-primary mt-2 hover:underline">
                         <FiExternalLink size={13} />
-                        {(() => { try { return new URL(post.url).hostname; } catch { return post.url; } })()}
+                        {post.urlTitle || (() => { try { return new URL(post.url).hostname; } catch { return post.url; } })()}
                       </a>
                     )}
                     {post.body && (

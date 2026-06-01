@@ -44,7 +44,10 @@ function CommunityAuthRedirect({ children }) {
   const { isAuthenticated } = useAuth();
   const { slug, postId } = useParams();
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace state={{ pane: "community", communitySlug: slug || null, communityPostId: postId || null }} />;
+    const params = new URLSearchParams({ pane: "community" });
+    if (slug) params.set("communitySlug", slug);
+    if (postId) params.set("communityPost", postId);
+    return <Navigate to={`/dashboard?${params}`} replace />;
   }
   return children;
 }
