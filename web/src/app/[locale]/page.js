@@ -1,5 +1,4 @@
 import { getTranslations } from 'next-intl/server';
-import Link from 'next/link';
 import PublicHeader from '@/components/PublicHeader';
 import FooterLegal from '@/components/FooterLegal';
 
@@ -102,7 +101,7 @@ const BrowserMock = ({ src, alt = '', className = '' }) => (
       <span className="w-3 h-3 rounded-full bg-green-500" />
     </div>
     <div className="aspect-[16/10] w-full bg-black">
-      <img src={src} alt={alt} className="h-full w-full object-cover" loading="lazy" />
+      <img src={src} alt={alt} className="h-full w-full object-cover" loading="lazy" decoding="async" />
     </div>
   </div>
 );
@@ -230,14 +229,14 @@ export default async function LandingPage() {
             <div className="flex justify-center md:block">
               <div className="hidden md:block md:absolute md:left-0 md:top-0 z-10">
                 <IPhoneFrame
-                  src="/images/screenshots/treklist-mobile-sidebar.png"
+                  src="https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_600/v1780329796/branding/treklist-mobile-sidebar_xdoas3.png"
                   alt={t('images.mobileSidebarAlt')}
                   className="mx-0 w-[200px] sm:w-[220px] md:w-[240px] lg:w-[280px]"
                 />
               </div>
               <div className="relative md:absolute md:top-8 md:left-16 lg:left-[14rem] z-20">
                 <IPhoneFrame
-                  src="/images/screenshots/treklist-column-mobile.png"
+                  src="https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_600/v1780329796/branding/treklist-column-mobile_bm4spx.png"
                   alt={t('images.mobileColumnAlt')}
                   className="mx-0 w-[200px] sm:w-[220px] md:w-[240px] lg:w-[280px]"
                 />
@@ -283,7 +282,7 @@ export default async function LandingPage() {
           </div>
           <div className="order-1 md:order-2">
             <BrowserMock
-              src="/images/screenshots/treklist-column-desktop-1.png"
+              src="https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_1200/v1780329796/branding/treklist-column-desktop-1_yt97lw.png"
               alt={t('images.desktopAlt')}
             />
           </div>
