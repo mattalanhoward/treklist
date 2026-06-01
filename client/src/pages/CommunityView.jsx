@@ -774,7 +774,7 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value)}
-              className="select select-bordered select-sm text-sm"
+              className="select select-bordered select-sm text-sm px-4"
             >
               <option value="new">{t("community.sort.new")}</option>
               <option value="top">{t("community.sort.top")}</option>
