@@ -303,7 +303,7 @@ router.post("/:postId/flag", authMiddleware, async (req, res) => {
       User.findById(post.userId).lean(),
       User.findById(req.userId).lean(),
     ]);
-    const postUrl = `https://treklist.co/community/post/${post._id}`;
+    const postUrl = `https://app.treklist.co/community/post/${post._id}`;
     sendSupportEmail({
       to: "support@treklist.co",
       subject: "🚩 Post flagged for review",

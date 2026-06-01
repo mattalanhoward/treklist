@@ -228,7 +228,7 @@ router.post("/:commentId/flag", authMiddleware, async (req, res) => {
       User.findById(comment.userId).lean(),
       User.findById(req.userId).lean(),
     ]);
-    const postUrl = `https://treklist.co/community/post/${comment.postId}`;
+    const postUrl = `https://app.treklist.co/community/post/${comment.postId}`;
     sendSupportEmail({
       to: "support@treklist.co",
       subject: "🚩 Comment flagged for review",

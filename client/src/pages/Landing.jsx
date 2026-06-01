@@ -3,9 +3,9 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import mobileSidebarScreenshot from "../assets/images/screen-shots/treklist-mobile-sidebar.png";
-import mobileColumnScreenshot from "../assets/images/screen-shots/treklist-column-mobile.png";
-import desktopColumnScreenshot from "../assets/images/screen-shots/treklist-column-desktop-1.png";
+const mobileSidebarScreenshot = "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_600/v1780329796/branding/treklist-mobile-sidebar_xdoas3.png";
+const mobileColumnScreenshot = "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_600/v1780329796/branding/treklist-column-mobile_bm4spx.png";
+const desktopColumnScreenshot = "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_1200/v1780329796/branding/treklist-column-desktop-1_yt97lw.png";
 import AuthModal from "../components/AuthModal";
 import FooterLegal from "../components/FooterLegal";
 import PublicHeader from "../components/PublicHeader";
@@ -88,6 +88,7 @@ const BrowserMock = ({ src, alt = "", className = "" }) => (
         alt={alt}
         className="h-full w-full object-cover"
         loading="lazy"
+        decoding="async"
       />
     </div>
   </div>
@@ -106,12 +107,6 @@ const Bullet = ({ title, text, color = "text-blue-600" }) => (
 
 export default function Landing() {
   const { t } = useTranslation("common");
-
-  // Preload hero for faster first paint
-  useEffect(() => {
-    const img = new Image();
-    img.src = heroSources[1920];
-  }, []);
 
   const [authOpen, setAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState("login"); // 'login' | 'register'
@@ -248,7 +243,6 @@ export default function Landing() {
               ${heroSources[1920]} 1920w
             `}
             sizes="100vw"
-            type="image/jpeg"
           />
           <img
             src={heroSources[1920]}
