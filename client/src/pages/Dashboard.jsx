@@ -1,7 +1,7 @@
 // src/pages/Dashboard.jsx
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import api from "../services/api";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import TopBar from "../components/TopBar";
 import Sidebar from "../components/Sidebar";
@@ -266,12 +266,37 @@ export default function Dashboard() {
     useUserSettings();
 
   // ─── Which main panel is active: "gear" "admin" "forum" "wishlist" ───
-  const [activePane, setActivePane] = useState(location.state?.pane ?? "gear");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activePane = searchParams.get("pane") ?? "gear";
+  const activeCommunitySlug = searchParams.get("communitySlug") ?? null;
+  const activeCommunityPostId = searchParams.get("communityPost") ?? null;
+  const setActivePane = useCallback((pane) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set("pane", pane);
+      return next;
+    }, { replace: true });
+  }, [setSearchParams]);
+  const setActiveCommunitySlug = useCallback((slug) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (slug) next.set("communitySlug", slug); else next.delete("communitySlug");
+      return next;
+    }, { replace: true });
+  }, [setSearchParams]);
+  const setActiveCommunityPostId = useCallback((postId) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      if (postId) next.set("communityPost", postId); else next.delete("communityPost");
+      return next;
+    }, { replace: true });
+  }, [setSearchParams]);
   const [templatesKey, setTemplatesKey] = useState(0);
-  const [activeCommunitySlug, setActiveCommunitySlug] = useState(location.state?.communitySlug ?? null);
-  const [activeCommunityPostId, setActiveCommunityPostId] = useState(location.state?.communityPostId ?? null);
 
+  const prevListIdRef = useRef(listId);
   useEffect(() => {
+    if (prevListIdRef.current === listId) return;
+    prevListIdRef.current = listId;
     if (!listId) return;
     setActivePane("gear");
   }, [listId]);
@@ -408,8 +433,8 @@ export default function Dashboard() {
     if (listId) return;
     if (lists.length === 0) return;
     // User explicitly navigated to the overview — don't redirect to a list
-    if (location.state?.pane === "lists") return;
-    if (location.state?.pane === "community") return;
+    if (activePane === "lists") return;
+    if (activePane === "community") return;
 
     const ids = lists.map((l) => l._id);
     const stored = localStorage.getItem("lastListId");
@@ -420,7 +445,7 @@ export default function Dashboard() {
     }
 
     navigate(`/dashboard/${ids[0]}`, { replace: true });
-  }, [lists, listId, navigate, listsLoading, isAuthenticated, location.state]);
+  }, [lists, listId, navigate, listsLoading, isAuthenticated, activePane]);
 
 
   // ─── viewMode persistence ───
