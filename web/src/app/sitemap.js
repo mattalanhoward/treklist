@@ -25,7 +25,7 @@ export default async function sitemap() {
 
   let sharePages = [];
   try {
-    const res = await fetch('https://api.treklist.co/api/public/share-tokens', {
+    const res = await fetch('https://api.treklist.co/api/public/share/share-tokens', {
       next: { revalidate: 3600 },
     });
     if (res.ok) {
