@@ -5,6 +5,6 @@ export async function GET(request, { params }) {
   const url = new URL(request.url);
   return NextResponse.redirect(
     `https://app.treklist.co/share/${id}${url.search}`,
-    { status: 302 }
+    { status: 301 }
   );
 }
