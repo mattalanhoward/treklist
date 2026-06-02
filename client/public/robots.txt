@@ -6,4 +6,4 @@ Disallow: /verify-email
 Disallow: /forgot-password
 Disallow: /reset-password
 
-Sitemap: https://treklist.co/sitemap.xml
+Sitemap: https://app.treklist.co/sitemap.xml
