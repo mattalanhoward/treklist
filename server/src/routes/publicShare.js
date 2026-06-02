@@ -657,4 +657,16 @@ router.post("/:token/copy", auth, async (req, res) => {
   }
 });
 
+// GET /api/public/share-tokens — returns all active share tokens for sitemap generation
+router.get("/share-tokens", async (req, res) => {
+  try {
+    const ShareToken = require("../models/ShareToken");
+    const tokens = await ShareToken.find({ revokedAt: null }).select("token").lean();
+    res.json(tokens.map((t) => t.token));
+  } catch (err) {
+    console.error("GET /api/public/share-tokens failed:", err);
+    res.status(500).json({ error: "Internal error" });
+  }
+});
+
 module.exports = router;
