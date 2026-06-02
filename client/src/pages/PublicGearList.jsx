@@ -441,7 +441,6 @@ export default function PublicGearList() {
         isEmbed ? "text-[16px] leading-[1.25]" : "",
       )}
     >
-      {/* SEO meta tags - only index featured lists */}
       <SEO
         title={data.list.title}
         description={t("publicList.seo.description", {
@@ -450,23 +449,20 @@ export default function PublicGearList() {
         url={`https://app.treklist.co/share/${token}/`}
         type="article"
         image="https://res.cloudinary.com/treklist/image/upload/v1771075130/branding/treklist_1200x630_pclazv.png"
-        noindex={!data.list.isFeatured}
       >
-        {data.list.isFeatured && (
-          <script type="application/ld+json">{JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Article",
-            "headline": data.list.title,
-            "url": `https://app.treklist.co/share/${token}/`,
-            "description": t("publicList.seo.description", { title: data.list.title }),
-            "image": "https://res.cloudinary.com/treklist/image/upload/v1771075130/branding/treklist_1200x630_pclazv.png",
-            "publisher": {
-              "@type": "Organization",
-              "name": "TrekList",
-              "url": "https://treklist.co"
-            }
-          })}</script>
-        )}
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Article",
+          "headline": data.list.title,
+          "url": `https://app.treklist.co/share/${token}/`,
+          "description": t("publicList.seo.description", { title: data.list.title }),
+          "image": "https://res.cloudinary.com/treklist/image/upload/v1771075130/branding/treklist_1200x630_pclazv.png",
+          "publisher": {
+            "@type": "Organization",
+            "name": "TrekList",
+            "url": "https://treklist.co"
+          }
+        })}</script>
       </SEO>
 
       {/* Scoped palette for the public page only */}
