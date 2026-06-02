@@ -32,7 +32,7 @@ const cloudinaryHeroUrl = (publicIdWithVersion, width) =>
   `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/c_fill,g_auto,f_auto,q_auto:eco,dpr_auto,w_${width}/${publicIdWithVersion}`;
 
 const LANDING_HERO_PUBLIC_ID_WITH_VERSION =
-  "/gear-list-hero-images/hero-hiker-cinque-torri_hpe3lz";
+  "gear-list-hero-images/hero-hiker-cinque-torri_hpe3lz";
 
 const heroSources = {
   768: cloudinaryHeroUrl(LANDING_HERO_PUBLIC_ID_WITH_VERSION, 768),

@@ -105,7 +105,7 @@ function buildDescription(data) {
 
 function buildStructuredData(data, token) {
   const { list, items } = data;
-  const shareUrl = `https://treklist.co/share/${token}/`;
+  const shareUrl = `https://app.treklist.co/share/${token}/`;
   const totalWeightG = items.reduce((sum, i) => sum + (i.weight_g || 0) * (i.qty || 1), 0);
 
   return {
@@ -142,7 +142,7 @@ export default async function handler(request, context) {
 
     const data = await apiResponse.json();
     const listTitle = data.list?.title || 'TrekList';
-    const shareUrl = `https://treklist.co/share/${token}/`;
+    const shareUrl = `https://app.treklist.co/share/${token}/`;
     const description = buildDescription(data);
     const imageUrl = 'https://res.cloudinary.com/treklist/image/upload/v1771075130/branding/treklist_1200x630_pclazv.png';
 
