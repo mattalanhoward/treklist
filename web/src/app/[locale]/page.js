@@ -214,7 +214,11 @@ export default async function LandingPage() {
           <p className="text-gray-700 text-lg leading-relaxed mt-4">{t('howItWorks.paragraph2')}</p>
           <p className="text-gray-700 text-lg leading-relaxed mt-4">{t('howItWorks.paragraph3')}</p>
           <p className="text-gray-700 text-lg leading-relaxed mt-4 font-medium">{t('howItWorks.paragraph4')}</p>
-          <p className="mt-6 text-gray-500 text-sm font-medium">{t('howItWorks.signature')}</p>
+          <p className="mt-6 text-gray-500 text-sm font-medium">
+            <a href="https://talljoehikes.com" target="_blank" rel="noopener noreferrer" className="hover:underline">
+              {t('howItWorks.signature')}
+            </a>
+          </p>
         </div>
       </section>
 
