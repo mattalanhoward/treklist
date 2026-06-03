@@ -14,6 +14,9 @@ export const metadata = {
     icon: '/favicon.png',
     apple: '/apple-touch-icon.png',
   },
+  verification: {
+    other: { 'msvalidate.01': 'B1FADC50FBF6B037A5328C0958FB3D77' },
+  },
 };
 
 export default async function LocaleLayout({ children, params }) {
