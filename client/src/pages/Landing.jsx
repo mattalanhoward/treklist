@@ -294,7 +294,9 @@ export default function Landing() {
             {t("landing.howItWorks.paragraph4")}
           </p>
           <p className="mt-6 text-gray-500 text-sm font-medium">
-            {t("landing.howItWorks.signature")}
+            <a href="https://talljoehikes.com" target="_blank" rel="noopener noreferrer" className="hover:underline">
+              {t("landing.howItWorks.signature")}
+            </a>
           </p>
         </div>
       </section>
