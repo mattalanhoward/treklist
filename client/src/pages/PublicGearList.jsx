@@ -935,7 +935,20 @@ export default function PublicGearList() {
                   isEmbed ? "text-[12px]" : "text-sm",
                 )}
                 dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(data.list.notes),
+                  __html: DOMPurify.sanitize(data.list.notes, {
+                    ADD_ATTR: ["target", "rel"],
+                    FORCE_BODY: false,
+                    transformTags: {
+                      a: (tagName, attribs) => ({
+                        tagName,
+                        attribs: {
+                          ...attribs,
+                          target: "_blank",
+                          rel: "noopener noreferrer",
+                        },
+                      }),
+                    },
+                  }),
                 }}
               />
             </div>
