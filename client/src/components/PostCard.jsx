@@ -29,6 +29,8 @@ export default function PostCard({ post, communitySlug, onDeleted, compact = fal
   const [loading, setLoading] = useState(false);
 
   const isOwner = isAuthenticated && user?._id === post.userId?._id;
+  const isAdmin = isAuthenticated && user?.isAdmin;
+  const canEdit  = isOwner || isAdmin;
   const slug = communitySlug || post.community?.slug;
 
   async function handleUpvote(e) {
@@ -131,7 +133,7 @@ export default function PostCard({ post, communitySlug, onDeleted, compact = fal
               <FiMessageSquare size={12} />
               {post.commentCount} comment{post.commentCount !== 1 ? "s" : ""}
             </Link>
-            {isAuthenticated && !isOwner && (
+            {isAuthenticated && !canEdit && (
               <button
                 onClick={handleFlag}
                 className={`ml-auto flex items-center gap-1 hover:opacity-100 ${flagged ? "text-error" : ""}`}
@@ -141,7 +143,7 @@ export default function PostCard({ post, communitySlug, onDeleted, compact = fal
                 {flagged ? t("community.actions.flagged") : t("community.actions.flag")}
               </button>
             )}
-            {isOwner && (
+            {canEdit && (
               <>
                 <Link
                   to={`/community/${slug}/${post._id}?edit=1`}

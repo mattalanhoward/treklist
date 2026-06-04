@@ -80,47 +80,27 @@ const POSTS_BY_SLUG = {
       body:  "Want to send my kit list to a friend before our trip. She doesn't have an account and I don't want to make her sign up just to see it. Is there a public link option somewhere? Thanks",
     },
     {
-      key: "H2", author: "mdescamps", daysAgo: 9,
-      title: "Can I duplicate a list to use as a starting point for a new trip?",
-      body:  "I have a summer Alps list I want to use as a starting point for a TMB trip. Rather than rebuild from scratch is there a copy or duplicate function? Cheers",
-    },
-    {
-      key: "H3", author: "jessinthealps", daysAgo: 6,
-      title: "Weight unit keeps switching back to grams after I set it to oz",
-      body:  "Set my preference to oz in account settings. Works fine while I'm on the site but next time I log in it's back to grams. Tried it on two different browsers. Anyone else getting this?",
-    },
-    {
       key: "H4", author: "helen", daysAgo: 3,
       title: "Is there a print or PDF export anywhere?",
-      body:  "Is there a way to print a list or export to PDF? Going through my kit with my hiking partner and screen sharing a browser tab is a pain",
+      body:  "<p>Is there a way to print a list or export to PDF? I like to have a physical copy when packing.</p>",
     },
     {
       key: "H5", author: "TentDad79", daysAgo: 1,
       title: "Any plans for a mobile app?",
-      body:  "The mobile browser version works fine but offline access would be really useful for when you're in the mountains without signal. Any plans for an app?",
+      body:  "<p>The mobile browser version works fine but I was thinking an app would be good idea. Any plans for a mobile app?</p>",
     },
   ],
 
   "gear-talk": [
     {
-      key: "G1", author: "david_r", daysAgo: 13,
-      title: "Zpacks Arc Haul vs Gossamer Gear Mariposa for a 10-day carry",
-      body:  "Coming from a 65L traditional pack. Looking at the Arc Haul Ultra 60 vs the Mariposa 60 for a 10-day Alpine route. Base weight around 6.5kg, 3 days food, 1.5L water at max. Is the Arc Haul frame worth the extra weight for that kind of carry?",
-    },
-    {
-      key: "G2", author: "claire", daysAgo: 10,
-      title: "Quilt or sleeping bag for the Alps in late September?",
-      body:  "Sold on quilts for summer but not sure about late September in the Alps where it can drop to 2-4°C at night. I have a 30°F Katabatic Palisade. Is that enough or would I be better on a bag for shoulder season?",
-    },
-    {
       key: "G3", author: "KateMendip", daysAgo: 8,
-      title: "Trekking pole recommendations under £100 — mine snapped",
-      body:  "My Black Diamond Trail poles snapped at a joint on the last descent. Looking for a replacement. Don't need carbon just something reliable that won't fail on a mountain. Budget around £80-100",
+      title: "Trekking pole recommendations under £100",
+      body:  "<p>I'm looking for something not too expensive for the TMB. Don't need carbon just something reliable that won't fail on a mountain. Budget around £80-100</p>",
     },
     {
       key: "G4", author: "robvdb", daysAgo: 5,
-      title: "Sawyer Squeeze vs BeFree — has anyone switched and regretted it?",
-      body:  "Used the Sawyer Squeeze for three years no issues. My hiking partner switched to the BeFree for the flow rate and won't stop talking about it. Has anyone made the switch and wished they hadn't?",
+      title: "Sawyer Squeeze vs BeFree?",
+      body:  "<p>Used the Sawyer Squeeze for three years no issues. I was thinking about switching to BeFree because I heard the flow rate and bag are better. Has anyone used both? Which one do you prefer?</p>",
     },
     {
       key: "G5", author: "helen", daysAgo: 3,
@@ -129,7 +109,7 @@ const POSTS_BY_SLUG = {
     },
     {
       key: "G6", author: "mtnmama", daysAgo: 1,
-      title: "Backpack sizing for shorter frames — any recommendations?",
+      title: "Backpack sizing for shorter frames. Any recommendations?",
       body:  "What size and brand backpack would people recommend for a 5'3 female? Been on a 50L Osprey Aura for years but thinking about going lighter. The women's specific fit matters to me",
     },
   ],
@@ -152,8 +132,8 @@ const POSTS_BY_SLUG = {
     },
     {
       key: "T4", author: "PeaksNValleys", daysAgo: 8,
-      title: "Grand Col Ferret in late September — snow a real concern?",
-      body:  "Aiming for the last week of September. The Grand Col Ferret is the bit I'm uncertain about — is snow on the col a serious problem by then or manageable in trail runners? Anyone done it late September recently?",
+      title: "Grand Col Ferret in late September. Is snow a real concern?",
+      body:  "<p>Aiming for the last week of September. The Grand Col Ferret is the bit I'm uncertain about. Is snow on the col a serious problem by then or manageable in trail runners? Anyone done it late September recently?</p>",
     },
     {
       key: "T5", author: "leo", daysAgo: 6,
@@ -162,46 +142,46 @@ const POSTS_BY_SLUG = {
     },
     {
       key: "T6", author: "johnpdx", daysAgo: 4,
-      title: "First TMB next summer — 7 days, where to focus?",
+      title: "First TMB next summer in 7 days, where to focus?",
       body:  "Hi all! Planning my first TMB next summer and will only have 7 days. What sections would you prioritize? I'm most interested in the scenery, I don't need to do the full loop. Which apps or resources did you use for planning? Thanks so much",
     },
     {
       key: "T7", author: "FrankReynolds", daysAgo: 2,
-      title: "Group of 8, TMB September 2027 — when to start booking?",
+      title: "Group of 8, TMB September 2027. When to start booking?",
       body:  "Planning a TMB for a group of 8 for early September 2027. We want to stay in refuges. How early can I start booking and what's the minimum lead time you'd recommend? Thanks",
     },
     {
       key: "T8", author: "LonghornK", daysAgo: 1,
       title: "Is sunburn actually an issue in mid July?",
-      body:  "Is sunburn actually a concern at altitude in mid July? I never think about it but it keeps showing up on packing lists. Asking from Texas where we just wear a hat and move on",
+      body:  "<p>Is sunburn actually a concern at altitude in mid July? I never think about it but it keeps showing up on packing lists.</p>",
     },
   ],
 
   "av1": [
     {
       key: "A1", author: "jessinthealps", daysAgo: 14,
-      title: "AV1 solo in early September — realistic or naive?",
-      body:  "I've done solo multi-day trips before but the Dolomites look more remote than anything I've done. Is AV1 solo in early September realistic for a confident but not elite hiker? Or is there a reason people usually go in pairs?",
+      title: "AV1 solo in early September?",
+      body:  "<p>I've done solo multi-day trips before but the Dolomites look more challenging than anything I've done. Is AV1 solo in early September realistic for a confident but not elite hiker?</p>",
     },
     {
       key: "A2", author: "mdescamps", daysAgo: 12,
       title: "Hut-to-hut vs wild camping on the AV1",
-      body:  "The rifugi look incredible but 8 nights adds up fast. Is wild camping a realistic alternative for most of the route or do the regulations make it impractical? Would I just end up paying anyway?",
+      body:  "<p>The rifugios look incredible but 8 nights adds up fast. Is wild camping a realistic alternative for most of the route or do the regulations make it impractical? Would I just end up paying anyway?</p>",
     },
     {
       key: "A3", author: "MJK", daysAgo: 10,
       title: "Which section of the AV1 was the highlight for you?",
-      body:  "Done the full AV1 twice. The Civetta section is the obvious answer but curious what others say. Which day or section stuck with you most?",
+      body:  "<p>Done the full AV1 twice. The Civetta section from Coldai to Vazzoler was my favorite but curious what others say. Which day or section stuck with you most?</p>",
     },
     {
       key: "A4", author: "KateMendip", daysAgo: 8,
       title: "Trail runner advice for Dolomite terrain",
-      body:  "Most of my hiking is on softer ground — Scottish hills and Irish mountains. The Dolomites look much more technical and rocky. Do I need trail runners with more aggressive tread or will standard ones do?",
+      body:  "<p>Do I need trail runners with more aggressive tread or should I wear boots?</p>",
     },
     {
-      key: "A5", author: "TentDad79", daysAgo: 6,
-      title: "Resupply options along the AV1",
-      body:  "Planning an 8-day itinerary. How much food should I carry from the start versus relying on the rifugi? Can you realistically top up snacks and fuel along the route or is it better to carry everything?",
+      key: "A10", author: "LonghornK", daysAgo: 4,
+      title: "Which is better? Southbound or Northbound?",
+      body:  "For anyone who as done the trail. Which direction do you think is better and why?",
     },
     {
       key: "A6", author: "LonghornK", daysAgo: 5,
@@ -210,18 +190,18 @@ const POSTS_BY_SLUG = {
     },
     {
       key: "A7", author: "johnpdx", daysAgo: 3,
-      title: "Route difficulty after Pramperet — exposure question",
+      title: "Route difficulty after Pramperet. exposure question",
       body:  "Has anyone had trouble with the section after Pramperet? Our guidebook says something like near vertical crest with exposure and I'm not great with heights. Is it as bad as it sounds?",
     },
     {
       key: "A8", author: "mtnmama", daysAgo: 2,
       title: "Backpack size and guidebook recommendations for AV1",
-      body:  "Hi all. Planning the AV1 for next summer. Two questions — what size pack are people taking (I'm 5'3 and usually go 40L but not sure if that's enough for 8 days hut-to-hut), and which guidebook would you recommend? Thanks",
+      body:  "<p>Hi all. Planning the AV1 for next summer. Two questions. What size pack are people taking (I'm 5'3 and usually go 40L, is that too big for hut-to-hut), and which guidebook would you recommend? Thanks</p>",
     },
     {
       key: "A9", author: "FrankReynolds", daysAgo: 1,
       title: "Are the WWI tunnels worth doing?",
-      body:  "Are the war tunnels on the route worth doing? Worth the detour or more of a tourist thing",
+      body:  "<p>Are the war tunnels on the route worth doing? I see theres a few options past rifugio Lagazoui. Which way is considered to best?</p>",
     },
   ],
 
@@ -232,18 +212,13 @@ const POSTS_BY_SLUG = {
       body:  "Most people seem to do the WHW in summer but I'm planning a November attempt. I know what I'm getting into with the daylight and weather. What I don't know is whether sections become genuinely impassable — river crossings, ground conditions. Anyone done it late in the year?",
     },
     {
-      key: "W2", author: "pete82", daysAgo: 11,
-      title: "Rannoch Moor in spring — how bad is the bog?",
-      body:  "Doing the WHW in May, first long distance route. I keep hearing Rannoch Moor is brutal in spring. Do I need waterproof boots or should I just accept the wet feet and go with trail runners? Genuinely unsure",
-    },
-    {
       key: "W3", author: "claire", daysAgo: 9,
-      title: "Mixing wild camping, bothies and B&Bs — what balance worked?",
-      body:  "I want a mix of wild camping, bothies, and the occasional B&B for a hot shower. Anyone done a blend that worked well? Particularly wondering whether the bothies are crowded in May",
+      title: "Mixing wild camping, bothies and B&Bs?",
+      body:  "I want a mix of wild camping, bothies, and the occasional B&amp;B for a hot shower. Anyone done a blend that worked well? Particularly wondering whether the bothies are crowded in May",
     },
     {
       key: "W4", author: "mdescamps", daysAgo: 7,
-      title: "Conic Hill at sunrise — worth restructuring your itinerary for?",
+      title: "Conic Hill at sunrise?",
       body:  "I've seen photos of the sunrise from Conic Hill over Loch Lomond and they look incredible. Has anyone restructured their itinerary specifically to be there at dawn? Was it worth it?",
     },
     {
@@ -258,8 +233,8 @@ const POSTS_BY_SLUG = {
     },
     {
       key: "W7", author: "mtnmama", daysAgo: 3,
-      title: "Rain pants in May — necessary or overkill?",
-      body:  "Rain pants — do you actually need them or is a good rain jacket enough for the WHW in May? Trying to figure out what's essential vs overkill",
+      title: "Do I need rain pants in May?",
+      body:  "<p>Do you actually need them or is a good rain jacket enough for the WHW in May? Trying to figure out what's essential vs overkill</p>",
     },
     {
       key: "W8", author: "FrankReynolds", daysAgo: 1,
@@ -273,7 +248,7 @@ const POSTS_BY_SLUG = {
 
 const THREADS = [
 
-  // ── Treklist Help ──────────────────────────────────────────────────────────
+  // ── Treklist Help ─────────────────────────────────────────────────────────
   {
     postKey: "H1",
     comments: [
@@ -284,38 +259,11 @@ const THREADS = [
           { author: "pete82", body: "Found it! Thanks so much" },
         ],
       },
-      {
-        author: "david_r",
-        body: "Works on mobile too. Sent mine to a few people before my last trip, none of them needed to sign up.",
-        replies: [],
-      },
-    ],
-  },
-  {
-    postKey: "H3",
-    comments: [
-      {
-        author: "jessinthealps",
-        body: "Same issue on Firefox. Saves while I'm on the site but gone next session.",
-        replies: [],
-      },
-      {
-        author: "robvdb",
-        body: "Try logging out fully and clearing site data. Fixed it for me",
-        replies: [
-          { author: "jessinthealps", body: "tried that, still happening. will try another browser" },
-        ],
-      },
     ],
   },
   {
     postKey: "H4",
     comments: [
-      {
-        author: "helen",
-        body: "Would love this. I've been screenshotting it and sending which is barely readable on a phone",
-        replies: [],
-      },
       {
         author: "PeaksNValleys",
         body: "Even a basic print stylesheet would cover most of it honestly",
@@ -325,28 +273,6 @@ const THREADS = [
   },
 
   // ── Gear Talk ──────────────────────────────────────────────────────────────
-  {
-    postKey: "G1",
-    comments: [
-      {
-        author: "david_r",
-        body: "Done extended trips with both. Arc Haul for that carry weight — the frame makes a real difference over long days. Mariposa is excellent but I'd keep it under 8kg.",
-        replies: [],
-      },
-      {
-        author: "AnnaBanana",
-        body: "The Mariposa hipbelt is the weak link once you load it up. Everything else about it is excellent.",
-        replies: [
-          { author: "david_r", body: "Exactly right. Shoulder harness is very good but the hipbelt suffers on heavy days." },
-        ],
-      },
-      {
-        author: "jessinthealps",
-        body: "If you can try both on with actual weight in them do it. Fit is really individual with frameless packs.",
-        replies: [],
-      },
-    ],
-  },
   {
     postKey: "G3",
     comments: [
@@ -359,7 +285,7 @@ const THREADS = [
         author: "helen",
         body: "BD Trail Ergo Cork, about £85. Really good grips especially on long descents",
         replies: [
-          { author: "KateMendip", body: "Is the locking mechanism reliable? That's what failed on mine" },
+          { author: "KateMendip", body: "Is the locking mechanism reliable?" },
           { author: "helen",      body: "Twist-lock has been solid for me, no issues" },
         ],
       },
@@ -406,12 +332,12 @@ const THREADS = [
     comments: [
       {
         author: "AnnaBanana",
-        body: "CCW is standard for good reasons — easier on day one climbing out of Les Houches, and the Bonatti section works better from that direction. Clockwise is noticeably quieter though.",
+        body: "CCW is standard for good reasons. Its easier on day one climbing out of Les Houches, and the Bonatti section works better from that direction.",
         replies: [],
       },
       {
         author: "david_r",
-        body: "Done clockwise twice. Preferred getting the Italian side early. Quieter too. No strong argument against CCW.",
+        body: "Done clockwise twice. Preferred getting the Italian side early. No strong argument against CCW.",
         replies: [
           { author: "claire", body: "The finishing into Chamonix feeling is apparently quite something... might tip it for me" },
         ],
@@ -428,10 +354,10 @@ const THREADS = [
     comments: [
       {
         author: "AnnaBanana",
-        body: "Bonatti books out fast when August dates open, usually Jan or Feb. Set a reminder. Elisabetta and La Peule also book early. Everything else you can normally sort 6-8 weeks out.",
+        body: "Bonatti books out fast when August dates open, usually right away. Set a reminder. Elisabetta and La Peule also book early.",
         replies: [
-          { author: "mtnmama",   body: "Do you know roughly when Bonatti opens? Is there a set date?" },
-          { author: "AnnaBanana", body: "Usually Jan or Feb. Check their website directly, they don't always announce it." },
+          { author: "mtnmama",    body: "Do you know roughly when Bonatti opens? Is there a set date?" },
+          { author: "AnnaBanana", body: "There is a new centralized system that opens in mid October." },
         ],
       },
       {
@@ -467,16 +393,16 @@ const THREADS = [
     postKey: "T4",
     comments: [
       {
-        author: "elisatn",
-        body: "Crossed it September 26th last year. Small amount of snow on the Italian descent, nothing that required anything beyond care going down. Mid-October is a different story.",
-        replies: [],
-      },
-      {
         author: "AnnaBanana",
         body: "CampToCamp route log is good for recent conditions — people post updates within days of crossing.",
         replies: [
           { author: "PeaksNValleys", body: "didn't know about that, useful" },
         ],
+      },
+      {
+        author: "elisatn",
+        body: "Crossed it September 26th last year. Small amount of snow on the Italian descent, nothing that required anything beyond care going down. Mid-October is a different story.",
+        replies: [],
       },
     ],
   },
@@ -486,13 +412,11 @@ const THREADS = [
       {
         author: "AnnaBanana",
         body: "The rules are technically strict throughout but enforcement varies. General expectation is arrive late, leave early, leave no trace, don't camp near refuges or villages. Italy and Switzerland are stricter than France.",
-        replies: [
-          { author: "leo", body: "More complicated than the Pyrenees then. Was afraid of that" },
-        ],
+        replies: [],
       },
       {
         author: "david_r",
-        body: "Did a few nights wild camping on the TMB. Nothing happened but I was discreet. Main issue is finding flat ground.",
+        body: "Did a few nights wild camping on the TMB. Nothing happened but I was discreet.",
         replies: [],
       },
     ],
@@ -509,7 +433,7 @@ const THREADS = [
       },
       {
         author: "PeaksNValleys",
-        body: "TMB Association website has good route info. Karten Trek app is what most people use on trail.",
+        body: "Check out https://traileasy.com for route planning. There are a few sample itineraries and I think you can even customize it to 7 days. Maybe you could do the whole loop then!",
         replies: [],
       },
     ],
@@ -519,7 +443,7 @@ const THREADS = [
     comments: [
       {
         author: "AnnaBanana",
-        body: "For a group of 8 in September 2027 you want to book as soon as huts open reservations, typically around January. Check each hut's policy on group sizes — some have a cap.",
+        body: "For a group of 8 in September 2027 you want to book as soon as huts open reservations, typically around mid-October. Check each hut's policy on group sizes as some have a cap.",
         replies: [],
       },
       {
@@ -543,7 +467,7 @@ const THREADS = [
       },
       {
         author: "PeaksNValleys",
-        body: "Yes. And lips — people always forget the lips.",
+        body: "Yes. And lips, people always forget the lips.",
         replies: [],
       },
     ],
@@ -551,18 +475,33 @@ const THREADS = [
 
   // ── AV1 ────────────────────────────────────────────────────────────────────
   {
+    postKey: "A10",
+    comments: [
+      {
+        author: "TallJoe",
+        body: "I've only done it N to S but I still think thats the better way. Couple reasons.\n\n- As Brendon Mackenzie mentioned - more down than up (1,000 meters). Although theres still a lot of both.\n- These types of trails, I prefer to move with the crowd instead of against it. You'll cross paths with fewer people as there are less times you'll need to step off trail to let the other one go.\n- That climb from La Pissa to Cima di Zita Sud is about 2,000 meters (6,000ft) of up in 14km (9 miles). You could split that by staying at Bianchet or even Pian de Fontana but its still pretty difficult.\n- Save the best for last - This is debatable but I felt the southern half was slightly better especially the climb up to Cima di Zita. It was a great way to end the trail. The southern section is also less crowded south of Passo Giau.",
+        replies: [],
+      },
+      {
+        author: "MJK",
+        body: "The elevation profile makes it an easy call for me — N to S nets around 1,000m of descent overall. There's still plenty of climbing either way but going southbound you're working with gravity more often than against it. Makes the harder days noticeably more manageable.",
+        replies: [],
+      },
+    ],
+  },
+  {
     postKey: "A1",
     comments: [
       {
         author: "elisatn",
-        body: "Completely doable solo in September. The route is well marked, the rifugi staff are welcoming and used to solo hikers. A few exposed bits above 2500m need attention but nothing technical.",
+        body: "Completely doable solo in September. The route is well marked, the rifugi staff are welcoming and used to solo hikers. A few exposed bits above 2500m need attention but nothing technical. No via ferrata equipment is needed.",
         replies: [
-          { author: "jessinthealps", body: "That's really reassuring. I think I was imagining it more remote than it is." },
+          { author: "jessinthealps", body: "Thanks! That's really reassuring. I think I was imagining it more remote than it is." },
         ],
       },
       {
         author: "david_r",
-        body: "Solo in September is fine. Let the rifugio staff know your next destination each morning. Standard practice and they appreciate it.",
+        body: "Solo in September is fine. If there is inclement weather let the rifugio staff know your next destination each morning and give the next rifugio a heads up if you are running late.",
         replies: [],
       },
     ],
@@ -572,14 +511,14 @@ const THREADS = [
     comments: [
       {
         author: "elisatn",
-        body: "Technically you can wild camp but the regulations make it genuinely tricky for most of the route. Most people who try it end up paying for at least half the nights anyway. The rifugi are also very social — half the experience.",
+        body: "Technically you aren't allowed to wild camp but I did see tents every now and then along the route. Most people who try it end up paying for at least half the nights anyway. The rifugios are also very social and a big part of the experience.",
         replies: [
           { author: "mdescamps", body: "That's kind of what I suspected. Probably just go full hut-to-hut and stop agonising over it." },
         ],
       },
       {
         author: "MJK",
-        body: "Did it hut-to-hut. Cost was high but the rifugi food and company in the evenings were genuinely part of the trip. Don't skip them.",
+        body: "I did it hut-to-hut. Cost was high but the rifugio's food and company in the evenings were genuinely part of the trip. Don't skip them.",
         replies: [],
       },
     ],
@@ -606,32 +545,15 @@ const THREADS = [
     comments: [
       {
         author: "elisatn",
-        body: "The Dolomite rock is harder and sharper than most people expect. I'd go with something more aggressive than a standard trail runner — Scarpa Spin or Salomon Speedcross grip level rather than road-biased.",
+        body: "I'd go with something more aggressive than a standard trail runner.",
         replies: [],
       },
       {
         author: "jessinthealps",
-        body: "I wore Hokas on my first Dolomites trip and regretted it. The softer compound doesn't grip wet rock well at all.",
+        body: "I usually wear Hoka Speedgoats. I prefer a much lighter, trail runner than a boot as I tend to do long days and they are softer on my feet.",
         replies: [
-          { author: "KateMendip",    body: "What are you running now?" },
-          { author: "jessinthealps", body: "Scarpa Spin Ultra. Much better on that terrain." },
-        ],
-      },
-    ],
-  },
-  {
-    postKey: "A5",
-    comments: [
-      {
-        author: "elisatn",
-        body: "The rifugi sell basic supplies — chocolate, nuts, bars, sometimes pasta. Fuel at most of the bigger huts. I'd carry 1.5-2 days backup from the start.",
-        replies: [],
-      },
-      {
-        author: "robvdb",
-        body: "I made a spreadsheet of what each hut stocks before my trip. Happy to share if it's still accurate (2023 info)",
-        replies: [
-          { author: "TentDad79", body: "Please share! That's exactly the kind of thing I can't find anywhere" },
+          { author: "KateMendip",    body: "I've heard really good things about the speedgoats." },
+          { author: "jessinthealps", body: "I love them! I also see a lot of people wearing Topos and Altras but I don't have much experience with them." },
         ],
       },
     ],
@@ -658,9 +580,9 @@ const THREADS = [
     comments: [
       {
         author: "elisatn",
-        body: "I know that section well. It's steep and exposed but not technical climbing. Take your time, don't look down unnecessarily, and you'll be fine. Most people find it less scary than the description suggests.",
+        body: "I know that section well. It's steep and exposed but not technical climbing. Take your time, don't look down unnecessarily, and you'll be fine. Most people find it less scary than the description suggests. It reality its probably 6 feet wide. So not really that scary.",
         replies: [
-          { author: "johnpdx", body: "That's really reassuring. I can handle steep — it was the near vertical wording that worried me." },
+          { author: "johnpdx", body: "That's really reassuring. I can handle steep it was the near vertical wording that worried me." },
         ],
       },
       {
@@ -675,14 +597,14 @@ const THREADS = [
     comments: [
       {
         author: "TentDad79",
-        body: "Gillian Price's guide is the standard one, very good. For 8 days hut-to-hut a 38-45L pack is plenty. You're not carrying much if the rifugi are booked.",
+        body: "Gillian Price's guide is the standard one, very good. For 8 days hut-to-hut a 38-45L pack is plenty. You're not carrying much if the rifugios are booked.",
         replies: [
           { author: "mtnmama", body: "Helpful, thank you. Will pick up the Gillian Price guide." },
         ],
       },
       {
         author: "elisatn",
-        body: "For women's fit the Osprey Tempest works well for shorter torsos. If you're going hut-to-hut 40L is more than enough.",
+        body: "For women's fit the Osprey Tempest works well for shorter torsos. There is a small/medium and a large/xl version. If you're going hut-to-hut 40L is more than enough. I'd probably go with something closer to 30.",
         replies: [],
       },
     ],
@@ -692,14 +614,14 @@ const THREADS = [
     comments: [
       {
         author: "elisatn",
-        body: "Worth doing. The Lagazuoi tunnels are genuinely impressive and the WWI history at that altitude gives them real context. Takes about an hour, bring a headlamp. The exit view from the top of Lagazuoi is one of the best moments on the whole route.",
+        body: "Worth doing. The Lagazuoi tunnels are genuinely impressive and the WWI history at that altitude gives them real context. Takes about an hour, bring a headlamp as its pitch black with the exception of a few overlooks.",
         replies: [],
       },
       {
         author: "MJK",
-        body: "Not a tourist trap. Interesting history and the view from Lagazuoi is excellent. Don't skip it.",
+        body: "Interesting history and the view from Lagazuoi is excellent. Adds a little variety to the trek and is a unique experience for sure. Don't skip it.",
         replies: [
-          { author: "FrankReynolds", body: "Ok sold. Adding it to the itinerary." },
+          { author: "FrankReynolds", body: "Ok thanks!. Adding it to the itinerary." },
         ],
       },
     ],
@@ -712,32 +634,12 @@ const THREADS = [
       {
         author: "helen",
         body: "Scottish hiker here — doable but take it seriously. 7-8 hours of daylight at most, start early every day. The Inveroran area can flood after heavy rain, worth checking water levels before that section.",
-        replies: [
-          { author: "sarahbc", body: "This. The route itself is fine in November, it's the logistics and day length that need planning around." },
-        ],
+        replies: [],
       },
       {
         author: "mdescamps",
         body: "No midges in November though which is honestly a major bonus",
         replies: [],
-      },
-    ],
-  },
-  {
-    postKey: "W2",
-    comments: [
-      {
-        author: "helen",
-        body: "It's bad in May. My honest advice: trail runners and just accept your feet will be wet by 9am. Waterproof boots stay wet longer once they flood.",
-        replies: [],
-      },
-      {
-        author: "sarahbc",
-        body: "Gaiters help more than boot choice. Keep the debris out at least.",
-        replies: [
-          { author: "pete82",  body: "Do I need proper mountaineering gaiters or will lightweight trail ones do?" },
-          { author: "sarahbc", body: "Lightweight, Dirty Girl style or similar. More than enough for that terrain." },
-        ],
       },
     ],
   },
@@ -762,16 +664,9 @@ const THREADS = [
     postKey: "W4",
     comments: [
       {
-        author: "mdescamps",
-        body: "I restructured mine for this. Left Drymen at 5am. Completely worth it. Everything the photos promise.",
-        replies: [],
-      },
-      {
         author: "helen",
-        body: "It's a beautiful view. But the WHW has other quiet moments just as good — don't stress if the weather doesn't cooperate.",
-        replies: [
-          { author: "mdescamps", body: "Fair point. I got lucky with the weather. Not guaranteed." },
-        ],
+        body: "It's a beautiful view. But the WHW has other quiet moments just as good. Don't stress if the weather doesn't cooperate.",
+        replies: [],
       },
     ],
   },
@@ -796,17 +691,17 @@ const THREADS = [
     postKey: "W6",
     comments: [
       {
+        author: "sarahbc",
+        body: "Avon Skin So Soft is the local recommendation. Sounds ridiculous but it works well. You can also pick up some Smidge in Milngavie or Glasgow. Its supposed to be really good. Oh and you'll definitely want a head net!",
+        replies: [
+          { author: "LonghornK", body: "Smidge! 😂 ok I'll track some down. Thanks!" },
+        ],
+      },
+      {
         author: "helen",
         body: "September is getting late enough that they're dying down. Mainly a June to August problem. A head net as backup is sensible. Worst spots are around Loch Lomond and anywhere with standing water.",
         replies: [
           { author: "LonghornK", body: "Ok that's reassuring. Head net going in the bag regardless." },
-        ],
-      },
-      {
-        author: "sarahbc",
-        body: "Avon Skin So Soft is the local recommendation. Sounds ridiculous but it works better than most dedicated midge repellents.",
-        replies: [
-          { author: "LonghornK", body: "Avon Skin So Soft 😂 ok I'll track some down" },
         ],
       },
     ],
@@ -833,16 +728,16 @@ const THREADS = [
     postKey: "W8",
     comments: [
       {
-        author: "helen",
-        body: "The eastern shore of Loch Lomond is genuinely rough going. Rocky, rooty, narrow. Not technically difficult but slow and tiring in a way the rest of the route isn't. Factor in more time than the distance suggests.",
-        replies: [],
-      },
-      {
         author: "pete82",
-        body: "I was surprised by it. You're moving well all day and then suddenly you're picking your way over roots for 3 hours. Not hard, just grinds you down a bit.",
+        body: "I was surprised by it. You're moving well all day and then suddenly you're picking your way over roots and boulders for a large chunk of the day. Not hard, just grinds you down a bit.",
         replies: [
           { author: "FrankReynolds", body: "Good to know. Will adjust expectations for that day. Thanks." },
         ],
+      },
+      {
+        author: "helen",
+        body: "The eastern shore of Loch Lomond is genuinely rough going. Rocky, rooty, narrow. Not technically difficult but slow and tiring in a way the rest of the route isn't. Factor in more time than the distance suggests.",
+        replies: [],
       },
     ],
   },
@@ -853,14 +748,14 @@ const THREADS = [
 const POST_UPVOTES = [
   { postKey: "A3", voters: ["elisatn", "jessinthealps", "KateMendip", "mdescamps"] },
   { postKey: "T2", voters: ["pete82", "claire", "leo", "PeaksNValleys", "elisatn"] },
-  { postKey: "G1", voters: ["jessinthealps", "KateMendip", "david_r", "mdescamps"] },
+  { postKey: "G5", voters: ["helen", "KateMendip", "PeaksNValleys"] },
   { postKey: "W6", voters: ["mtnmama", "pete82", "FrankReynolds"] },
   { postKey: "A1", voters: ["jessinthealps", "david_r", "KateMendip"] },
   { postKey: "T6", voters: ["johnpdx", "mtnmama", "LonghornK", "FrankReynolds"] },
-  { postKey: "G5", voters: ["helen", "KateMendip", "PeaksNValleys"] },
   { postKey: "W1", voters: ["sarahbc", "mdescamps", "pete82"] },
   { postKey: "A6", voters: ["elisatn", "LonghornK", "mdescamps", "mtnmama"] },
   { postKey: "T8", voters: ["LonghornK", "mtnmama", "johnpdx"] },
+  { postKey: "A4", voters: ["KateMendip", "jessinthealps", "mdescamps"] },
 ];
 
 // ─── Main ─────────────────────────────────────────────────────────────────────

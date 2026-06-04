@@ -36,6 +36,8 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
   const showTranslateButton = !comment.lang || comment.lang !== userLang;
 
   const isOwner = isAuthenticated && user?._id === comment.userId?._id;
+  const isAdmin = isAuthenticated && user?.isAdmin;
+  const canEdit  = isOwner || isAdmin;
   const timeAgo = formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true });
 
   async function handleUpvote() {
@@ -169,14 +171,14 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
           <div className="flex items-center gap-4 mt-1.5 flex-wrap">
             <button
               onClick={handleUpvote}
-              className={`flex items-center gap-1 text-xs ${upvoted ? "text-primary" : "opacity-40 hover:opacity-70"} ${isOwner ? "invisible" : ""}`}
-              disabled={!isAuthenticated || isOwner}
+              className={`flex items-center gap-1 text-xs ${upvoted ? "text-primary" : "opacity-40 hover:opacity-70"} ${canEdit ? "invisible" : ""}`}
+              disabled={!isAuthenticated || canEdit}
             >
               <FiArrowUp size={12} />
               <span>{upvoteCount}</span>
             </button>
 
-            {isAuthenticated && !isOwner && !isReply && (
+            {isAuthenticated && !canEdit && !isReply && (
               <button
                 onClick={() => setReplying((r) => !r)}
                 className="text-xs opacity-40 hover:opacity-70"
@@ -203,7 +205,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
               </button>
             )}
 
-            {isAuthenticated && !isOwner && (
+            {isAuthenticated && !canEdit && (
               <button
                 onClick={handleFlag}
                 className={`ml-auto text-xs flex items-center gap-1 ${flagged ? "text-error opacity-70" : "opacity-40 hover:opacity-70"}`}
@@ -212,7 +214,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
                 {flagged ? t("community.actions.flagged") : t("community.actions.flag")}
               </button>
             )}
-            {isOwner && (
+            {canEdit && (
               <>
                 <button onClick={() => setEditing(true)} className="text-xs opacity-40 hover:opacity-70 flex items-center gap-1">
                   <FiEdit2 size={11} /> {t("community.actions.edit")}

@@ -120,6 +120,8 @@ export default function PostDetailView() {
   }
 
   const isOwner = isAuthenticated && user?._id === post.userId?._id;
+  const isAdmin = isAuthenticated && user?.isAdmin;
+  const canEdit  = isOwner || isAdmin;
   const timeAgo = formatDistanceToNow(new Date(post.createdAt), { addSuffix: true });
 
   return (
@@ -186,7 +188,7 @@ export default function PostDetailView() {
 
               {/* Post actions */}
               <div className="flex items-center gap-4 mt-4 text-xs opacity-50 flex-wrap">
-                {isAuthenticated && !isOwner && (
+                {isAuthenticated && !canEdit && (
                   <button
                     onClick={handleFlag}
                     className={`ml-auto hover:opacity-100 ${flagged ? "text-error opacity-70" : ""}`}
@@ -194,7 +196,7 @@ export default function PostDetailView() {
                     {flagged ? t("community.actions.flagged") : t("community.actions.flag")}
                   </button>
                 )}
-                {isOwner && (
+                {canEdit && (
                   <>
                     <button onClick={() => setEditing(true)} className="hover:opacity-100">
                       {t("community.actions.edit")}
