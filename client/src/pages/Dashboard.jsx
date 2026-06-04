@@ -746,7 +746,15 @@ export default function Dashboard() {
             onOpenMyGear={() => setActivePane("myGear")}
             onShowGearPane={() => setActivePane("lists")}
             onOpenTemplates={() => { setActivePane("templates"); setTemplatesKey((k) => k + 1); }}
-            onOpenCommunity={(slug) => { setActiveCommunitySlug(slug || null); setActiveCommunityPostId(null); setActivePane("community"); }}
+            onOpenCommunity={(slug) => {
+              setSearchParams((prev) => {
+                const next = new URLSearchParams(prev);
+                next.set("pane", "community");
+                if (slug) next.set("communitySlug", slug); else next.delete("communitySlug");
+                next.delete("communityPost");
+                return next;
+              }, { replace: true });
+            }}
             onSelectList={handleSelectList}
             onRefresh={fetchFullData}
             isLocked={fullData.list?.isLocked || false}
