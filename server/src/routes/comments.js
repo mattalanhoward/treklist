@@ -127,20 +127,21 @@ router.post("/", authMiddleware, communityCommentLimiter, async (req, res) => {
   }
 });
 
-// PUT /api/comments/:commentId — edit comment (author only)
+// PUT /api/comments/:commentId — edit comment (author or admin)
 router.put("/:commentId", authMiddleware, async (req, res) => {
   try {
     const comment = await Comment.findOne({ _id: req.params.commentId, deletedAt: null });
     if (!comment) return res.status(404).json({ message: "Comment not found" });
-    if (comment.userId.toString() !== req.userId) return res.status(403).json({ message: "Forbidden" });
+    const actor = await User.findById(req.userId).lean();
+    if (comment.userId.toString() !== req.userId && !actor?.isAdmin) return res.status(403).json({ message: "Forbidden" });
 
     const { body } = req.body;
     if (!body || !body.trim()) return res.status(400).json({ message: "Body required" });
 
     comment.body = body.trim();
     comment.lang = await detectLanguage(body.trim()).catch(() => comment.lang);
-    comment.isEdited = true;
-    comment.editedAt = new Date();
+    const isAuthor = comment.userId.toString() === req.userId;
+    if (isAuthor) { comment.isEdited = true; comment.editedAt = new Date(); }
     await comment.save();
     await comment.populate("userId", "trailname");
     res.json(comment);

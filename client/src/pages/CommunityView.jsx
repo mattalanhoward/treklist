@@ -410,7 +410,7 @@ function CommunityLanding({ communities, onSelect, onToggleFavorite, onSelectPos
 // ─── Post Card ────────────────────────────────────────────────────────────────
 
 function PostCard({ post, onSelect, onDeleted, currentUserId }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const { t } = useTranslation();
   const userLang = getUserLang();
   const showTranslateButton = !post.lang || post.lang !== userLang;
@@ -422,6 +422,7 @@ function PostCard({ post, onSelect, onDeleted, currentUserId }) {
   const [showTranslated, setShowTranslated] = useState(false);
   const [translatingPost, setTranslatingPost] = useState(false);
   const isOwner = currentUserId && post.userId?._id === currentUserId;
+  const canEdit  = isOwner || (isAuthenticated && user?.isAdmin);
   const { confirm, dialog } = useConfirm();
 
   async function handleUpvote(e) {
@@ -523,12 +524,12 @@ function PostCard({ post, onSelect, onDeleted, currentUserId }) {
                 {translatingPost ? <FiLoader size={14} className="animate-spin" /> : showTranslated ? <FiX size={14} /> : <FiGlobe size={14} />}
               </button>
             )}
-            {isAuthenticated && !isOwner && (
+            {isAuthenticated && !canEdit && (
               <button onClick={handleFlag} className={`ml-auto ${flagged ? "text-error" : "hover:text-error transition-colors"}`} title={t("community.actions.flag")}>
                 <FiFlag size={14} />
               </button>
             )}
-            {isOwner && (
+            {canEdit && (
               <button onClick={handleDelete} className="ml-auto hover:text-error hover:opacity-100" title={t("actions.delete")}>
                 <FiTrash2 size={14} />
               </button>
@@ -820,7 +821,7 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
 // ─── Comment Item ─────────────────────────────────────────────────────────────
 
 function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, onReplyAdded, currentUserId, shareBaseUrl }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const { t } = useTranslation();
   const userLang = getUserLang();
   const showTranslateButton = !comment.lang || comment.lang !== userLang;
@@ -836,6 +837,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
   const [showTranslated, setShowTranslated] = useState(false);
   const [translating, setTranslating] = useState(false);
   const isOwner = currentUserId && comment.userId?._id === currentUserId;
+  const canEdit  = isOwner || (isAuthenticated && user?.isAdmin);
   const { confirm, dialog } = useConfirm();
 
   async function handleUpvote() {
@@ -947,14 +949,14 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
                 {translating ? <FiLoader size={14} className="animate-spin" /> : showTranslated ? <FiX size={14} /> : <FiGlobe size={14} />}
               </button>
             )}
-            {isOwner && (
+            {canEdit && (
               <>
                 <button onClick={() => setEditing(true)} className="hover:text-green-600 transition-colors" title={t("community.actions.edit")}><FiEdit2 size={14} /></button>
                 <button onClick={handleDelete} className="hover:text-error hover:opacity-100 transition-colors" title={t("actions.delete")}><FiTrash2 size={14} /></button>
               </>
             )}
             </div>
-            {isAuthenticated && !isOwner && (
+            {isAuthenticated && !canEdit && (
               <button onClick={handleFlag} className={`ml-auto transition-colors ${flagged ? "text-error opacity-70" : "text-base-content/40 hover:text-error hover:opacity-100"}`} title={t("community.actions.flag")}>
                 <FiFlag size={14} />
               </button>
@@ -991,7 +993,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
 // ─── Post Detail ──────────────────────────────────────────────────────────────
 
 function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const { t } = useTranslation();
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
@@ -1109,6 +1111,7 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
   function handleReplyUpdated(pid, u) { setComments((p) => p.map((c) => c._id === pid ? { ...c, replies: (c.replies || []).map((r) => r._id === u._id ? u : r) } : c)); }
 
   const isOwner = currentUserId && post?.userId?._id === currentUserId;
+  const canEdit  = isOwner || (isAuthenticated && user?.isAdmin);
   const publicPostUrl = community ? `${window.location.origin}/community/${community.slug}/${postId}` : null;
 
   function copyPostLink() {
@@ -1232,12 +1235,12 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
                           <FiShare2 size={14} />
                         </button>
                       )}
-                      {isAuthenticated && !isOwner && (
+                      {isAuthenticated && !canEdit && (
                         <button onClick={handleFlag} title={t("community.actions.flag")} className={`transition-colors ${flagged ? "text-error" : "hover:text-error"}`}>
                           <FiFlag size={14} />
                         </button>
                       )}
-                      {isOwner && (
+                      {canEdit && (
                         <>
                           <button onClick={() => { setEditTitle(post.title); setEditBody(post.body || ""); setEditUrl(post.url || ""); setEditImageUrls(post.imageUrls || []); setEditing(true); }} title={t("community.actions.edit")} className="hover:text-green-600 transition-colors">
                             <FiEdit2 size={16} />
