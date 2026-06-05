@@ -126,7 +126,7 @@ const POSTS_BY_SLUG = {
     },
   ],
 
-  "tmb": [
+  "tour-du-mont-blanc": [
     {
       key: "T1", author: "claire", daysAgo: 14,
       title: "Clockwise or counter-clockwise — strong opinions?",
@@ -169,7 +169,7 @@ const POSTS_BY_SLUG = {
     },
   ],
 
-  "av1": [
+  "alta-via-1": [
     {
       key: "A1", author: "jessinthealps", daysAgo: 14,
       title: "AV1 solo in early September?",
@@ -217,7 +217,7 @@ const POSTS_BY_SLUG = {
     },
   ],
 
-  "whw": [
+  "west-highland-way": [
     {
       key: "W1", author: "sarahbc", daysAgo: 13,
       title: "WHW in November — has anyone done it?",
