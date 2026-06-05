@@ -823,6 +823,7 @@ async function run() {
         isVerified:    true,
         isAdmin:       false,
         authProviders: [{ provider: "email" }],
+        onboarding:    { transactionalOptOut: true },
       });
       console.log(`  ✅ Created user: ${u.trailname}`);
     } else {
