@@ -41,6 +41,22 @@ function storeFlagged(type, id) {
   } catch { /* ignore */ }
 }
 
+function getXlatCache(type, id, lang) {
+  try { return JSON.parse(localStorage.getItem(`tl:xlat:${type}:${id}:${lang}`) || "null"); } catch { return null; }
+}
+function setXlatCache(type, id, lang, data) {
+  try { localStorage.setItem(`tl:xlat:${type}:${id}:${lang}`, JSON.stringify(data)); } catch { /* ignore */ }
+}
+function getXlatShow(type, id) {
+  try { return localStorage.getItem(`tl:xlat:show:${type}:${id}`) === "1"; } catch { return false; }
+}
+function setXlatShow(type, id, val) {
+  try {
+    if (val) localStorage.setItem(`tl:xlat:show:${type}:${id}`, "1");
+    else localStorage.removeItem(`tl:xlat:show:${type}:${id}`);
+  } catch { /* ignore */ }
+}
+
 function SearchForm({ searchProps }) {
   const { value, onChange, onSubmit, onClear } = searchProps;
   const { t } = useTranslation();
@@ -417,9 +433,9 @@ function PostCard({ post, onSelect, onDeleted, currentUserId }) {
   const [upvoteCount, setUpvoteCount] = useState(post.upvoteCount);
   const [upvoted, setUpvoted] = useState(post.upvoted);
   const [flagged, setFlagged] = useState(() => isFlaggedInStorage("post", post._id));
-  const [translatedTitle, setTranslatedTitle] = useState(null);
-  const [translatedBody, setTranslatedBody] = useState(null);
-  const [showTranslated, setShowTranslated] = useState(false);
+  const [translatedTitle, setTranslatedTitle] = useState(() => getXlatCache("post-title", post._id, userLang));
+  const [translatedBody, setTranslatedBody]   = useState(() => getXlatCache("post-body",  post._id, userLang));
+  const [showTranslated, setShowTranslated]   = useState(() => getXlatShow("post", post._id));
   const [translatingPost, setTranslatingPost] = useState(false);
   const isOwner = currentUserId && post.userId?._id === currentUserId;
   const canEdit  = isOwner || (isAuthenticated && user?.isAdmin);
@@ -460,8 +476,8 @@ function PostCard({ post, onSelect, onDeleted, currentUserId }) {
 
   async function handleTranslatePost(e) {
     e.stopPropagation();
-    if (showTranslated) { setShowTranslated(false); return; }
-    if (translatedTitle) { setShowTranslated(true); return; }
+    if (showTranslated) { setShowTranslated(false); setXlatShow("post", post._id, false); return; }
+    if (translatedTitle) { setShowTranslated(true); setXlatShow("post", post._id, true); return; }
     setTranslatingPost(true);
     try {
       const targetLang = getUserLang();
@@ -469,9 +485,11 @@ function PostCard({ post, onSelect, onDeleted, currentUserId }) {
       const calls = [translateText(post.title, targetLang)];
       if (plainBody) calls.push(translateText(plainBody, targetLang));
       const [titleResult, bodyResult] = await Promise.all(calls);
-      setTranslatedTitle(titleResult.translated || post.title);
-      setTranslatedBody(bodyResult?.translated || "");
-      setShowTranslated(true);
+      const title = titleResult.translated || post.title;
+      const body  = bodyResult?.translated || "";
+      setTranslatedTitle(title); setXlatCache("post-title", post._id, targetLang, title);
+      setTranslatedBody(body);   setXlatCache("post-body",  post._id, targetLang, body);
+      setShowTranslated(true);   setXlatShow("post", post._id, true);
     } catch { toast.error(t("community.toasts.couldNotTranslate")); }
     finally { setTranslatingPost(false); }
   }
@@ -833,8 +851,8 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
   const [replying, setReplying] = useState(false);
   const [replyBody, setReplyBody] = useState("");
   const [saving, setSaving] = useState(false);
-  const [translatedBody, setTranslatedBody] = useState(null);
-  const [showTranslated, setShowTranslated] = useState(false);
+  const [translatedBody, setTranslatedBody] = useState(() => getXlatCache("comment", comment._id, userLang));
+  const [showTranslated, setShowTranslated] = useState(() => getXlatShow("comment", comment._id));
   const [translating, setTranslating] = useState(false);
   const isOwner = currentUserId && comment.userId?._id === currentUserId;
   const canEdit  = isOwner || (isAuthenticated && user?.isAdmin);
@@ -884,14 +902,14 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
   }
 
   async function handleTranslate() {
-    if (showTranslated) { setShowTranslated(false); return; }
-    if (translatedBody) { setShowTranslated(true); return; }
+    if (showTranslated) { setShowTranslated(false); setXlatShow("comment", comment._id, false); return; }
+    if (translatedBody) { setShowTranslated(true); setXlatShow("comment", comment._id, true); return; }
     setTranslating(true);
     try {
       const targetLang = getUserLang();
       const { translated } = await translateText(comment.body, targetLang);
-      setTranslatedBody(translated);
-      setShowTranslated(true);
+      setTranslatedBody(translated);        setXlatCache("comment", comment._id, targetLang, translated);
+      setShowTranslated(true);              setXlatShow("comment", comment._id, true);
     } catch { toast.error(t("community.toasts.couldNotTranslate")); }
     finally { setTranslating(false); }
   }
@@ -1010,12 +1028,12 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
   const editImageInputRef = useRef(null);
   const [newComment, setNewComment] = useState("");
   const [posting, setPosting] = useState(false);
-  const [translatedTitle, setTranslatedTitle] = useState(null);
-  const [translatedBody, setTranslatedBody] = useState(null);
-  const [showTranslated, setShowTranslated] = useState(false);
+  const userLang = getUserLang();
+  const [translatedTitle, setTranslatedTitle] = useState(() => getXlatCache("post-title", postId, userLang));
+  const [translatedBody, setTranslatedBody]   = useState(() => getXlatCache("post-body",  postId, userLang));
+  const [showTranslated, setShowTranslated]   = useState(() => getXlatShow("post", postId));
   const [translatingPost, setTranslatingPost] = useState(false);
   const { confirm, dialog } = useConfirm();
-  const userLang = getUserLang();
 
   const fetchAll = useCallback(async () => {
     try {
@@ -1054,8 +1072,8 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
   }
 
   async function handleTranslatePost() {
-    if (showTranslated) { setShowTranslated(false); return; }
-    if (translatedTitle) { setShowTranslated(true); return; }
+    if (showTranslated) { setShowTranslated(false); setXlatShow("post", postId, false); return; }
+    if (translatedTitle) { setShowTranslated(true); setXlatShow("post", postId, true); return; }
     setTranslatingPost(true);
     try {
       const targetLang = getUserLang();
@@ -1063,9 +1081,11 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
       const calls = [translateText(post.title, targetLang)];
       if (plainBody) calls.push(translateText(plainBody, targetLang));
       const [titleResult, bodyResult] = await Promise.all(calls);
-      setTranslatedTitle(titleResult.translated || post.title);
-      setTranslatedBody(bodyResult?.translated || "");
-      setShowTranslated(true);
+      const title = titleResult.translated || post.title;
+      const body  = bodyResult?.translated || "";
+      setTranslatedTitle(title); setXlatCache("post-title", postId, targetLang, title);
+      setTranslatedBody(body);   setXlatCache("post-body",  postId, targetLang, body);
+      setShowTranslated(true);   setXlatShow("post", postId, true);
     } catch { toast.error(t("community.toasts.couldNotTranslate")); }
     finally { setTranslatingPost(false); }
   }
