@@ -823,6 +823,7 @@ async function run() {
         userId:      userMap[p.author]._id,
         title:       p.title,
         body:        p.body,
+        lang:        "en",
         createdAt:   ts,
         updatedAt:   ts,
       });
@@ -845,6 +846,7 @@ async function run() {
         postId:    post._id,
         userId:    userMap[c.author]._id,
         body:      c.body,
+        lang:      "en",
         createdAt: commentTs,
         updatedAt: commentTs,
       });
@@ -857,6 +859,7 @@ async function run() {
           parentCommentId: comment._id,
           userId:          userMap[r.author]._id,
           body:            r.body,
+          lang:            "en",
           createdAt:       replyTs,
           updatedAt:       replyTs,
         });
