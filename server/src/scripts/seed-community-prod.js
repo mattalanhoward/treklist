@@ -1,26 +1,39 @@
 // =============================================================================
-// SEED: Community users, posts, comments, and upvotes
+// SEED: Community content for production
 // =============================================================================
 //
-// RUN:
-//   cd server
-//   node src/scripts/seed-community.js
+// RUN (from server/):
+//   MONGO_DB_NAME=treklist node src/scripts/seed-community-prod.js
 //
-// ⚠️  DESTRUCTIVE: clears ALL users, posts, comments, and upvotes.
-// Safety check aborts if MONGO_DB_NAME does not contain "local".
+// What this does:
+//   - Clears all Posts, Comments, and post/comment Upvotes
+//   - Does NOT touch Users — real accounts (HikerMatt, etc.) are preserved
+//   - Looks up TallJoe by email (talljoe@treklist.co) — must already exist
+//   - Creates / reuses the 20 seed users (seed.*.treklist.dev)
+//   - Inserts all posts, comments, and upvotes
+//   - Does NOT rename communities (live site already has correct names)
+//
 // Password for all seed users: treklist123
 // =============================================================================
 
 require("dotenv").config();
-const mongoose = require("mongoose");
-const bcrypt   = require("bcrypt");
+const mongoose  = require("mongoose");
+const bcrypt    = require("bcrypt");
+const readline  = require("readline");
 
-// ─── Safety check ─────────────────────────────────────────────────────────────
+// ─── Confirmation prompt ──────────────────────────────────────────────────────
 
 const dbName = process.env.MONGO_DB_NAME || "";
-if (!dbName.toLowerCase().includes("local")) {
-  console.error(`❌  MONGO_DB_NAME is "${dbName}" — does not contain "local". Aborting to protect production data.`);
-  process.exit(1);
+
+async function confirm() {
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  return new Promise((resolve) => {
+    console.log(`\n⚠️  This will wipe ALL posts, comments, and post/comment upvotes on "${dbName}".\n`);
+    rl.question('Type "seed production" to continue: ', (answer) => {
+      rl.close();
+      resolve(answer.trim() === "seed production");
+    });
+  });
 }
 
 // ─── Time helpers ─────────────────────────────────────────────────────────────
@@ -43,7 +56,7 @@ async function insert(Model, data) {
   return doc.save({ timestamps: false });
 }
 
-// ─── Users ────────────────────────────────────────────────────────────────────
+// ─── Seed users (TallJoe looked up by email, not created) ─────────────────────
 
 const SEED_USERS = [
   { trailname: "PeaksNValleys", email: "seed.peaksnvalleys@treklist.dev" },
@@ -66,7 +79,6 @@ const SEED_USERS = [
   { trailname: "LonghornK",     email: "seed.longhornk@treklist.dev"     },
   { trailname: "MJK",           email: "seed.mjk@treklist.dev"           },
   { trailname: "FrankReynolds", email: "seed.frankreynolds@treklist.dev" },
-  { trailname: "TallJoe",       email: "talljoe@treklist.co", isAdmin: true },
 ];
 
 // ─── Posts ────────────────────────────────────────────────────────────────────
@@ -761,6 +773,17 @@ const POST_UPVOTES = [
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 async function run() {
+  if (!dbName) {
+    console.error("❌  MONGO_DB_NAME is not set. Aborting.");
+    process.exit(1);
+  }
+
+  const ok = await confirm();
+  if (!ok) {
+    console.log("Aborted.");
+    process.exit(0);
+  }
+
   await mongoose.connect(process.env.MONGO_URI, { dbName });
 
   const User      = require("../models/user");
@@ -769,48 +792,47 @@ async function run() {
   const Comment   = require("../models/comment");
   const Upvote    = require("../models/upvote");
 
-  // 1. Clear everything
-  const [uDel, pDel, cDel, vDel] = await Promise.all([
-    User.deleteMany({}),
+  // 1. Clear posts, comments, and post/comment upvotes only — never users
+  const [pDel, cDel, vDel] = await Promise.all([
     Post.deleteMany({}),
     Comment.deleteMany({}),
-    Upvote.deleteMany({}),
+    Upvote.deleteMany({ targetType: { $in: ["post", "comment"] } }),
   ]);
-  console.log(`  🗑  Cleared ${uDel.deletedCount} users, ${pDel.deletedCount} posts, ${cDel.deletedCount} comments, ${vDel.deletedCount} upvotes\n`);
+  console.log(`\n  🗑  Cleared ${pDel.deletedCount} posts, ${cDel.deletedCount} comments, ${vDel.deletedCount} upvotes\n`);
 
-  // 2. Update community names and remove ultralight
-  const communityUpdates = [
-    { slug: "av1",           name: "Alta Via 1",        description: "The classic Dolomites high route — refugio tips, conditions, kit lists, and route planning." },
-    { slug: "shakedown",     name: "Shakedown Request", description: "Post your shared list url, tell us the trip — the community will help you cut weight, spot gaps, and get dialled in." },
-    { slug: "tmb",           name: "Tour du Mont Blanc", description: "170km around the Alps' highest peak — hut bookings, stages, gear, and trip reports." },
-    { slug: "whw",           name: "West Highland Way",  description: "96 miles through the Scottish Highlands — planning, kit, conditions, and stories from the trail." },
-    { slug: "treklist-help", name: "Treklist Help",      description: "Questions, feedback, and ideas for the Treklist app." },
-    { slug: "gear-talk",     name: "Gear Talk",          description: "Anything kit-related — gear questions, comparisons, and what's in your pack." },
-  ];
-  for (const u of communityUpdates) {
-    await Community.findOneAndUpdate({ slug: u.slug }, { name: u.name, description: u.description });
-  }
-  const ultraDel = await Community.deleteOne({ slug: "ultralight" });
-  console.log(`  ✅ Communities updated${ultraDel.deletedCount ? ", ultralight removed" : ""}\n`);
-
-  // 3. Create users
+  // 2. Build user map — look up TallJoe, create or reuse the 20 seed users
   const passwordHash = await bcrypt.hash("treklist123", 10);
   const userMap = {};
+
+  const tallJoe = await User.findOne({ email: "talljoe@treklist.co" }).lean();
+  if (!tallJoe) {
+    console.error("❌  TallJoe (talljoe@treklist.co) not found in database. Aborting.");
+    await mongoose.disconnect();
+    process.exit(1);
+  }
+  userMap["TallJoe"] = tallJoe;
+  console.log("  ✅ Found TallJoe");
+
   for (const u of SEED_USERS) {
-    const user = await User.create({
-      email:         u.email,
-      trailname:     u.trailname,
-      passwordHash,
-      isVerified:    true,
-      isAdmin:       u.isAdmin || false,
-      authProviders: [{ provider: "email" }],
-    });
+    let user = await User.findOne({ email: u.email }).lean();
+    if (!user) {
+      user = await User.create({
+        email:         u.email,
+        trailname:     u.trailname,
+        passwordHash,
+        isVerified:    true,
+        isAdmin:       false,
+        authProviders: [{ provider: "email" }],
+      });
+      console.log(`  ✅ Created user: ${u.trailname}`);
+    } else {
+      console.log(`  ↩️  Reused user: ${u.trailname}`);
+    }
     userMap[u.trailname] = user;
-    console.log(`  ✅ Created user: ${u.trailname}`);
   }
   console.log();
 
-  // 4. Create posts
+  // 3. Create posts
   const postMap = {};
   for (const [slug, posts] of Object.entries(POSTS_BY_SLUG)) {
     const community = await Community.findOne({ slug });
@@ -831,7 +853,7 @@ async function run() {
   }
   console.log();
 
-  // 5. Comments and replies
+  // 4. Comments and replies
   let commentTotal = 0;
   for (const thread of THREADS) {
     const post = postMap[thread.postKey];
@@ -868,7 +890,7 @@ async function run() {
   }
   console.log(`  ✅ ${commentTotal} comments and replies\n`);
 
-  // 6. Upvotes
+  // 5. Upvotes
   let upvoteTotal = 0;
   for (const u of POST_UPVOTES) {
     const post = postMap[u.postKey];
