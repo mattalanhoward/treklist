@@ -188,12 +188,13 @@ router.get("/:postId", optionalAuth, async (req, res) => {
   }
 });
 
-// PUT /api/posts/:postId — edit post (author only)
+// PUT /api/posts/:postId — edit post (author or admin)
 router.put("/:postId", authMiddleware, async (req, res) => {
   try {
     const post = await Post.findOne({ _id: req.params.postId, deletedAt: null });
     if (!post) return res.status(404).json({ message: "Post not found" });
-    if (post.userId.toString() !== req.userId) return res.status(403).json({ message: "Forbidden" });
+    const actor = await require("../models/user").findById(req.userId).lean();
+    if (post.userId.toString() !== req.userId && !actor?.isAdmin) return res.status(403).json({ message: "Forbidden" });
 
     const { title, body, url, urlTitle, imageUrls } = req.body;
     const contentChanged = (title !== undefined) || (body !== undefined);
@@ -212,8 +213,8 @@ router.put("/:postId", authMiddleware, async (req, res) => {
       const plainText = `${post.title} ${post.body.replace(/<[^>]+>/g, " ")}`.trim();
       post.lang = await detectLanguage(plainText).catch(() => post.lang);
     }
-    post.isEdited = true;
-    post.editedAt = new Date();
+    const isAuthor = post.userId.toString() === req.userId;
+    if (isAuthor) { post.isEdited = true; post.editedAt = new Date(); }
 
     await post.save();
     await post.populate("userId", "trailname");
