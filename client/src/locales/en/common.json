@@ -1497,6 +1497,8 @@
     },
     "actions": {
       "reply": "Reply",
+      "translate": "Translate",
+      "original": "Original",
       "copyLink": "Copy link",
       "edit": "Edit",
       "flag": "Flag",

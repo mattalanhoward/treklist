@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { FiArrowLeft, FiArrowUp, FiMessageSquare, FiMessageCircle, FiPlus, FiLoader, FiFlag, FiEdit2, FiTrash2, FiExternalLink, FiCornerDownRight, FiShare2, FiStar, FiSearch, FiX, FiCheck, FiInfo, FiGlobe, FiImage, FiBold, FiItalic, FiList, FiLink } from "react-icons/fi";
+import { FiArrowLeft, FiArrowUp, FiMessageSquare, FiMessageCircle, FiPlus, FiLoader, FiFlag, FiEdit2, FiTrash2, FiExternalLink, FiCornerDownRight, FiShare2, FiStar, FiSearch, FiX, FiCheck, FiInfo, FiImage, FiBold, FiItalic, FiList, FiLink } from "react-icons/fi";
 import api from "../services/api";
 import { FaStar } from "react-icons/fa";
 import {
@@ -538,8 +538,8 @@ function PostCard({ post, onSelect, onDeleted, currentUserId }) {
               <FiMessageSquare size={14} className="text-green-600/60" />{post.commentCount}
             </span>
             {showTranslateButton && (
-              <button onClick={handleTranslatePost} disabled={translatingPost} className="p-0 leading-none text-sky-400 hover:text-sky-500 transition-colors">
-                {translatingPost ? <FiLoader size={14} className="animate-spin" /> : showTranslated ? <FiX size={14} /> : <FiGlobe size={14} />}
+              <button onClick={handleTranslatePost} disabled={translatingPost} className="p-0 leading-none text-sky-400 hover:text-sky-500 transition-colors text-xs">
+                {translatingPost ? <FiLoader size={11} className="animate-spin" /> : showTranslated ? t("community.actions.original") : t("community.actions.translate")}
               </button>
             )}
             {isAuthenticated && !canEdit && (
@@ -562,7 +562,7 @@ function PostCard({ post, onSelect, onDeleted, currentUserId }) {
               className="w-[90px] h-[60px] rounded-lg object-cover border border-base-200"
             />
             {post.imageUrls.length > 1 && (
-              <span className="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] rounded px-1 leading-none py-0.5">
+              <span className="absolute bottom-1 right-1 bg-black/60 text-white text-xs rounded px-1 leading-none py-0.5">
                 +{post.imageUrls.length - 1}
               </span>
             )}
@@ -963,8 +963,8 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
             )}
             <button onClick={copyLink} className="hover:text-green-600 transition-colors" title={t("community.actions.copyLink")}><FiShare2 size={14} /></button>
             {showTranslateButton && (
-              <button onClick={handleTranslate} className="p-0 leading-none text-sky-400 hover:text-sky-500 transition-colors" disabled={translating}>
-                {translating ? <FiLoader size={14} className="animate-spin" /> : showTranslated ? <FiX size={14} /> : <FiGlobe size={14} />}
+              <button onClick={handleTranslate} className="p-0 leading-none text-sky-400 hover:text-sky-500 transition-colors text-xs" disabled={translating}>
+                {translating ? <FiLoader size={11} className="animate-spin" /> : showTranslated ? t("community.actions.original") : t("community.actions.translate")}
               </button>
             )}
             {canEdit && (
@@ -1246,8 +1246,8 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
                     )}
                     <div className="flex items-center gap-4 mt-4 text-xs text-base-content/40">
                       {(!post.lang || post.lang !== userLang) && (
-                        <button onClick={handleTranslatePost} disabled={translatingPost} className="p-0 leading-none text-sky-400 hover:text-sky-500 transition-colors">
-                          {translatingPost ? <FiLoader size={14} className="animate-spin" /> : showTranslated ? <FiX size={14} /> : <FiGlobe size={14} />}
+                        <button onClick={handleTranslatePost} disabled={translatingPost} className="p-0 leading-none text-sky-400 hover:text-sky-500 transition-colors text-xs">
+                          {translatingPost ? <FiLoader size={11} className="animate-spin" /> : showTranslated ? t("community.actions.original") : t("community.actions.translate")}
                         </button>
                       )}
                       {publicPostUrl && (

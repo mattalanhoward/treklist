@@ -1483,6 +1483,8 @@
     },
     "actions": {
       "reply": "Répondre",
+      "translate": "Traduire",
+      "original": "Original",
       "copyLink": "Copier le lien",
       "edit": "Modifier",
       "flag": "Signaler",
