@@ -772,16 +772,22 @@ const POST_UPVOTES = [
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
+const DRY_RUN = process.argv.includes("--dry-run");
+
 async function run() {
   if (!dbName) {
     console.error("❌  MONGO_DB_NAME is not set. Aborting.");
     process.exit(1);
   }
 
-  const ok = await confirm();
-  if (!ok) {
-    console.log("Aborted.");
-    process.exit(0);
+  if (DRY_RUN) {
+    console.log(`\n🔍  DRY RUN — connecting to "${dbName}", no changes will be made.\n`);
+  } else {
+    const ok = await confirm();
+    if (!ok) {
+      console.log("Aborted.");
+      process.exit(0);
+    }
   }
 
   await mongoose.connect(process.env.MONGO_URI, { dbName });
@@ -791,6 +797,58 @@ async function run() {
   const Post      = require("../models/post");
   const Comment   = require("../models/comment");
   const Upvote    = require("../models/upvote");
+
+  if (DRY_RUN) {
+    // ── Dry run: report what would happen, touch nothing ──────────────────────
+    const [postCount, commentCount, upvoteCount, totalUsers] = await Promise.all([
+      Post.countDocuments({}),
+      Comment.countDocuments({}),
+      Upvote.countDocuments({ targetType: { $in: ["post", "comment"] } }),
+      User.countDocuments({}),
+    ]);
+    console.log(`  📊  Current DB state on "${dbName}"`);
+    console.log(`      Users total:    ${totalUsers}`);
+    console.log(`      Posts:          ${postCount}  → would be deleted`);
+    console.log(`      Comments:       ${commentCount}  → would be deleted`);
+    console.log(`      Upvotes (post/comment): ${upvoteCount}  → would be deleted`);
+    console.log();
+
+    const tallJoe = await User.findOne({ email: "talljoe@treklist.co" }).lean();
+    console.log(tallJoe
+      ? `  ✅  TallJoe found (${tallJoe._id})`
+      : `  ❌  TallJoe NOT found — script would abort`);
+    console.log();
+
+    const slugs = Object.keys(POSTS_BY_SLUG);
+    console.log(`  🗺️   Communities:`);
+    for (const slug of slugs) {
+      const community = await Community.findOne({ slug }).lean();
+      const postCount = POSTS_BY_SLUG[slug].length;
+      console.log(community
+        ? `      ✅  ${slug} → "${community.name}" (${postCount} posts to insert)`
+        : `      ❌  ${slug} NOT found — posts would be skipped`);
+    }
+    console.log();
+
+    console.log(`  👤  Seed users (${SEED_USERS.length}):`);
+    let createCount = 0;
+    let reuseCount  = 0;
+    for (const u of SEED_USERS) {
+      const existing = await User.findOne({ email: u.email }).lean();
+      if (existing) { reuseCount++;  console.log(`      ↩️   ${u.trailname} — already exists`); }
+      else          { createCount++; console.log(`      ➕  ${u.trailname} — would be created`); }
+    }
+    console.log(`\n      ${createCount} to create, ${reuseCount} to reuse`);
+    console.log();
+
+    const totalPosts    = Object.values(POSTS_BY_SLUG).reduce((n, p) => n + p.length, 0);
+    const totalComments = THREADS.reduce((n, t) => n + t.comments.reduce((m, c) => m + 1 + (c.replies?.length || 0), 0), 0);
+    const totalUpvotes  = POST_UPVOTES.reduce((n, u) => n + u.voters.length, 0);
+    console.log(`  📝  Would insert: ${totalPosts} posts, ${totalComments} comments, ${totalUpvotes} upvotes`);
+    console.log(`\n✅  Dry run complete. Run without --dry-run to apply.\n`);
+    await mongoose.disconnect();
+    return;
+  }
 
   // 1. Clear posts, comments, and post/comment upvotes only — never users
   const [pDel, cDel, vDel] = await Promise.all([
