@@ -643,6 +643,11 @@
     "add": "Añadir",
     "import": "Importar",
     "noResultsFor": "Sin resultados para",
+    "lookupUrl": "Buscar producto",
+    "placeholders": {
+      "tent": "Tienda de campaña",
+      "trekkingPoles": "Bastones de trekking"
+    },
     "chips": {
       "sleep": "Sueño",
       "shelter": "Refugio",

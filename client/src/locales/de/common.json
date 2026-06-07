@@ -643,6 +643,11 @@
     "add": "Hinzufügen",
     "import": "Importieren",
     "noResultsFor": "Keine Ergebnisse für",
+    "lookupUrl": "Produkt nachschlagen",
+    "placeholders": {
+      "tent": "Zelt",
+      "trekkingPoles": "Trekkingstöcke"
+    },
     "chips": {
       "sleep": "Schlafen",
       "shelter": "Unterkunft",

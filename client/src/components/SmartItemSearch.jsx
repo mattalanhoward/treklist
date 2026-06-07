@@ -33,6 +33,11 @@ const CHIPS = [
   { key: "travel",         value: "Travel" },
 ];
 
+function isUrl(s) {
+  return /^https?:\/\//i.test((s || "").trim());
+}
+
+
 function normalize(str = "") {
   return String(str)
     .toLowerCase()
@@ -147,58 +152,31 @@ function ResultSection({ title, items, type, myGearSelected, catalogSelected, on
 }
 
 // ── No results view ───────────────────────────────────────────────────────────
-function NoResults({ query, onAiSearch, onManual, aiLoading, onCreateCustom }) {
+function NoResults({ query, onCreate, aiLoading }) {
   const { t } = useTranslation("common");
+  const queryIsUrl = isUrl(query);
+  const truncated = query.length > 50 ? query.slice(0, 50) + "…" : query;
+  if (queryIsUrl) return null;
   return (
     <div className="flex flex-col items-center justify-center h-full gap-3 py-10">
       <p className="text-sm text-primary/50 text-center">
         {t("smartItemSearch.noResultsFor", "No results for")}{" "}
-        <span className="font-medium text-primary">"{query}"</span>
+        <span className="font-medium text-primary">"{truncated}"</span>
       </p>
       <button
-        onClick={onAiSearch}
+        onClick={onCreate}
         disabled={aiLoading}
         className="flex items-center gap-2 px-4 py-2 bg-secondary/10 text-secondary text-sm rounded-lg border border-secondary/30 hover:bg-secondary/20 disabled:opacity-50 transition-colors"
       >
-        {aiLoading ? (
-          <FiLoader size={14} className="animate-spin" />
-        ) : (
-          <span>✨</span>
-        )}
-        {aiLoading
-          ? t("smartItemSearch.aiSearching", "Searching with AI...")
-          : t("smartItemSearch.aiFill", "Fill with AI")}
+        {aiLoading ? <FiLoader size={14} className="animate-spin" /> : <FiPlus size={14} />}
+        {t("smartItemSearch.createCustomItem", 'Create "{query}" as a custom item').replace("{query}", truncated)}
       </button>
-      {!aiLoading && (
-        <p className="text-xs text-primary/35 text-center">
-          {t("smartItemSearch.aiTip", "Tip: include brand, model & size for better results")}
-        </p>
-      )}
-      {!aiLoading && (
-        onCreateCustom ? (
-          <button
-            onClick={onCreateCustom}
-            className="flex items-center gap-1.5 text-sm text-secondary/80 hover:text-secondary border border-secondary/20 hover:border-secondary/40 rounded-lg px-3 py-1.5 transition-colors"
-          >
-            <FiPlus size={14} />
-            {t("smartItemSearch.createCustomItem", 'Create "{query}" as a custom item').replace("{query}", query)}
-          </button>
-        ) : (
-          <button
-            onClick={onManual}
-            className="flex items-center gap-1.5 text-sm text-primary/50 hover:text-primary transition-colors"
-          >
-            <FiPlus size={14} />
-            {t("smartItemSearch.addManually", "Add manually")}
-          </button>
-        )
-      )}
     </div>
   );
 }
 
 // ── Create row (always visible above results, non-tabLayout mode only) ────────
-function CreateRow({ query, onManual, onAiSearch, aiLoading }) {
+function CreateRow({ query, onCreate, onManual, aiLoading }) {
   const { t } = useTranslation("common");
   return (
     <div className="flex items-center gap-2 px-5 py-2 border-b border-primary/10 flex-shrink-0">
@@ -213,7 +191,7 @@ function CreateRow({ query, onManual, onAiSearch, aiLoading }) {
       <span className="text-primary/20 text-xs">·</span>
       <button
         type="button"
-        onClick={onAiSearch}
+        onClick={onCreate}
         disabled={aiLoading || !query}
         className="flex items-center gap-1 text-sm text-secondary/70 hover:text-secondary disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         title={!query ? t("smartItemSearch.aiTypeFirst", "Type a name first to use AI fill") : undefined}
@@ -369,6 +347,17 @@ export default function SmartItemSearch({
   const { t } = useTranslation("common");
   const unit = useUnit();
   const { parseInput, formatInput, unitLabel } = useWeightInput(unit);
+
+  const searchPlaceholders = useMemo(() => [
+    "Osprey Exos 48",
+    "https://atompacks.co.uk/collections/the-atom/products/the-atom-re30-black",
+    t("smartItemSearch.placeholders.tent", "Tent"),
+    "Nemo Tensor Sleeping Pad",
+    "https://durstongear.com/products/wapta-30-ultralight-backpack",
+    t("smartItemSearch.placeholders.trekkingPoles", "Trekking Poles"),
+    "Black Diamond Distance Carbon Z",
+    "https://gossamergear.com/products/mariposa-60",
+  ], [t]);
   // Item request form
   const [showRequestForm, setShowRequestForm] = useState(false);
   const [requestForm, setRequestForm] = useState({ name: "", brand: "", link: "" });
@@ -398,6 +387,22 @@ export default function SmartItemSearch({
   const [brandFilter, setBrandFilter] = useState(null);
   const [brandOptions, setBrandOptions] = useState([]);
   const searchRef = useRef(null);
+
+  // Animated placeholder
+  const [phIndex, setPhIndex] = useState(0);
+  const [phVisible, setPhVisible] = useState(true);
+
+  useEffect(() => {
+    if (query) return;
+    const id = setInterval(() => {
+      setPhVisible(false);
+      setTimeout(() => {
+        setPhIndex((i) => (i + 1) % searchPlaceholders.length);
+        setPhVisible(true);
+      }, 350);
+    }, 3500);
+    return () => clearInterval(id);
+  }, [query]);
 
   // My Gear
   const [myGearItems, setMyGearItems] = useState([]);
@@ -436,16 +441,10 @@ export default function SmartItemSearch({
   const [myGearPreview, setMyGearPreview] = useState(null);
   const [myGearPreviewAdding, setMyGearPreviewAdding] = useState(false);
 
-  // Tab state (tabLayout mode only) — persisted across sessions
-  const [activeTab, setActiveTab] = useState(() => {
-    if (!tabLayout) return "import";
-    const saved = localStorage.getItem("smartItemSearch.activeTab");
-    return saved === "custom" ? "custom" : "import";
-  });
+  const [activeTab, setActiveTab] = useState("import");
 
   const setAndPersistTab = (tab) => {
     setActiveTab(tab);
-    localStorage.setItem("smartItemSearch.activeTab", tab);
   };
 
   // Whether the custom form is currently shown
@@ -535,9 +534,14 @@ export default function SmartItemSearch({
       .catch(() => setBrandOptions([]));
   }, [categoryFilter, subcategoryFilter, tabLayout]);
 
-  // Catalog search
+  // Catalog search — skipped for URL queries (they never match catalog text fields)
   useEffect(() => {
     if (!debouncedQuery && !categoryFilter && !subcategoryFilter && !brandFilter) {
+      setCatalogResults([]);
+      setCatalogLoading(false);
+      return;
+    }
+    if (isUrl(debouncedQuery)) {
       setCatalogResults([]);
       setCatalogLoading(false);
       return;
@@ -620,27 +624,53 @@ export default function SmartItemSearch({
     }
   };
 
-  // AI fill — skips the preview card and goes straight to the prefilled form
-  const handleAiSearch = async () => {
-    if (!query.trim() || aiLoading) return;
+  // Create action — runs AI fill, then either shows a catalog match or pre-fills the custom form
+  const handleCreateAction = async (queryOverride) => {
+    const inputQuery = (queryOverride !== undefined ? queryOverride : query).trim();
+    if (!inputQuery || aiLoading) return;
+    const inputIsUrl = isUrl(inputQuery);
     setAiLoading(true);
     try {
-      const { data } = await api.post("/ai/fill-item", { query: query.trim() });
-      setCustomMode("ai");
-      setCustomForm({
-        name: data.name || "",
-        brand: data.brand || "",
-        catalogCategory: data.category || "",
-        itemType: data.itemType || "",
-        weight: data.weightGrams != null ? formatInput(data.weightGrams) : "",
-        description: data.description || "",
-        link: data.link || "",
-        imageUrl: data.imageUrl || "",
-      });
-      // In tabLayout, switch to Custom tab to show the AI-filled form
-      if (tabLayout) setAndPersistTab("custom");
-    } catch {
-      toast.error(t("smartItemSearch.toasts.aiFailed", "AI search failed. Try adding manually."));
+      const { data } = await api.post("/ai/fill-item", { query: inputQuery });
+
+      // Search catalog with AI-extracted name + brand
+      let catalogMatch = null;
+      if (data.name) {
+        try {
+          const q = [data.name, data.brand].filter(Boolean).join(" ");
+          const { data: items } = await api.get("/catalog/items", { params: { q } });
+          if (items?.length > 0) catalogMatch = items[0];
+        } catch { /* ignore — catalog search is best-effort */ }
+      }
+
+      if (catalogMatch) {
+        // Found in catalog — switch to Import tab and auto-select.
+        // Do NOT update query here: changing it would re-trigger the debounced catalog
+        // search, causing a loading spinner that wipes the result before the new fetch completes.
+        setCatalogResults((prev) => {
+          const ids = new Set(prev.map((i) => String(i._id)));
+          return ids.has(String(catalogMatch._id)) ? prev : [catalogMatch, ...prev];
+        });
+        setCatalogSelected(new Set([String(catalogMatch._id)]));
+        if (tabLayout) setAndPersistTab("import");
+      } else {
+        // No catalog match — switch to Custom tab, only fill empty fields
+        setCustomMode("ai");
+        setCustomForm((prev) => ({
+          name:            prev.name            || data.name        || "",
+          brand:           prev.brand           || data.brand       || "",
+          catalogCategory: prev.catalogCategory || data.category    || "",
+          itemType:        prev.itemType        || data.itemType    || "",
+          weight:          prev.weight          || (data.weightGrams != null ? formatInput(data.weightGrams) : ""),
+          description:     prev.description     || data.description || "",
+          link:            prev.link            || data.link        || "",
+          imageUrl:        prev.imageUrl        || data.imageUrl    || "",
+        }));
+        if (tabLayout) setAndPersistTab("custom");
+      }
+    } catch (err) {
+      const specific = err?.response?.data?.message;
+      toast.error(specific || t("smartItemSearch.toasts.aiFailed", "AI search failed. Try adding manually."));
     } finally {
       setAiLoading(false);
     }
@@ -779,9 +809,27 @@ export default function SmartItemSearch({
                   setQuery(e.target.value);
                   if (!tabLayout) setCustomMode(null);
                 }}
-                placeholder={t("smartItemSearch.searchPlaceholder", "e.g. Osprey Talon 33 Men's Backpack")}
-                className="w-full pl-9 pr-8 py-2 border border-primary/30 rounded-lg text-primary bg-base-100 placeholder:text-primary/40 text-sm"
+                onPaste={(e) => {
+                  const pasted = (e.clipboardData?.getData("text") || "").trim();
+                  if (isUrl(pasted)) {
+                    handleCreateAction(pasted);
+                  }
+                }}
+                placeholder=""
+                className="w-full pl-9 pr-8 py-2 border border-primary/30 rounded-lg text-primary bg-base-100 text-sm"
               />
+              {!query && (
+                <span
+                  className="absolute left-9 right-9 top-1/2 text-primary/40 text-sm pointer-events-none select-none truncate"
+                  style={{
+                    transform: `translateY(${phVisible ? "-50%" : "calc(-50% - 5px)"})`,
+                    opacity: phVisible ? 1 : 0,
+                    transition: "opacity 300ms ease, transform 300ms ease",
+                  }}
+                >
+                  {searchPlaceholders[phIndex]}
+                </span>
+              )}
               {query && (
                 <button
                   onClick={() => {
@@ -878,6 +926,7 @@ export default function SmartItemSearch({
       {!tabLayout && !customMode && !aiLoading && (
         <CreateRow
           query={debouncedQuery.trim()}
+          onCreate={handleCreateAction}
           onManual={() => {
             setCustomMode("manual");
             setCustomForm({
@@ -885,7 +934,6 @@ export default function SmartItemSearch({
               brand: "", catalogCategory: "", itemType: "", weight: "", description: "", link: "", imageUrl: "",
             });
           }}
-          onAiSearch={handleAiSearch}
           aiLoading={aiLoading}
         />
       )}
@@ -943,15 +991,7 @@ export default function SmartItemSearch({
           ) : hasNoResults ? (
             <NoResults
               query={debouncedQuery}
-              onAiSearch={handleAiSearch}
-              onManual={() => {
-                setCustomMode("manual");
-                setCustomForm({
-                  name: debouncedQuery.trim(),
-                  brand: "", catalogCategory: "", itemType: "", weight: "", description: "", link: "", imageUrl: "",
-                });
-              }}
-              onCreateCustom={tabLayout ? () => switchToCustom(debouncedQuery.trim()) : null}
+              onCreate={handleCreateAction}
               aiLoading={aiLoading}
             />
           ) : (
@@ -1006,17 +1046,26 @@ export default function SmartItemSearch({
                 </p>
               )}
 
-              {/* Persistent custom item escape hatch — always visible in Import tab */}
-              {tabLayout && (
+              {/* Persistent custom item escape hatch — hidden when empty or when a URL is in the field */}
+              {tabLayout && debouncedQuery.trim() && !isUrl(debouncedQuery) && (
                 <div className="border-t border-primary/8 mt-2 pt-2 pb-1">
                   <button
                     type="button"
-                    onClick={() => switchToCustom(debouncedQuery.trim())}
-                    className="flex items-center gap-1.5 text-sm text-primary/40 hover:text-primary/70 transition-colors py-1"
+                    onClick={debouncedQuery.trim() ? handleCreateAction : () => switchToCustom("")}
+                    disabled={aiLoading}
+                    className="flex items-center gap-1.5 text-sm text-primary/40 hover:text-primary/70 transition-colors py-1 disabled:opacity-40"
                   >
-                    <FiPlus size={13} className="flex-shrink-0" />
+                    {aiLoading
+                      ? <FiLoader size={13} className="animate-spin flex-shrink-0" />
+                      : <FiPlus size={13} className="flex-shrink-0" />
+                    }
                     {debouncedQuery.trim()
-                      ? `${t("smartItemSearch.createCustomItem", 'Create "{query}" as a custom item').replace("{query}", debouncedQuery.trim())}`
+                      ? t("smartItemSearch.createCustomItem", 'Create "{query}" as a custom item').replace(
+                          "{query}",
+                          debouncedQuery.trim().length > 50
+                            ? debouncedQuery.trim().slice(0, 50) + "…"
+                            : debouncedQuery.trim()
+                        )
                       : t("smartItemSearch.createCustomItemBlank", "Create a custom item")}
                   </button>
                 </div>
