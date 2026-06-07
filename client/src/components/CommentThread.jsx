@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FiArrowUp, FiFlag, FiEdit2, FiTrash2, FiCornerDownRight, FiLink, FiGlobe, FiX, FiLoader } from "react-icons/fi";
+import { FiArrowUp, FiFlag, FiEdit2, FiTrash2, FiCornerDownRight, FiLink, FiX, FiLoader } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import { upvoteComment, flagComment, deleteComment, updateComment, createComment, translateText } from "../services/community";
 import useAuth from "../hooks/useAuth";
@@ -201,7 +201,7 @@ function CommentItem({ comment, postId, isReply = false, onDeleted, onUpdated, o
                 className="text-xs text-sky-400 hover:text-sky-500 transition-colors"
                 disabled={translating}
               >
-                {translating ? <FiLoader size={14} className="animate-spin" /> : showTranslated ? <FiX size={14} /> : <FiGlobe size={14} />}
+                {translating ? <FiLoader size={11} className="animate-spin" /> : showTranslated ? t("community.actions.original") : t("community.actions.translate")}
               </button>
             )}
 
