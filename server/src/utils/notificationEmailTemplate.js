@@ -1,5 +1,15 @@
-function buildWelcomeEmail({ trailname, listUrl, unsubscribeUrl }) {
-  const name = trailname || "there";
+function buildNotificationEmail({ recipientTrailname, senderTrailname, type, replyBody, postTitle, postUrl, unsubscribeUrl }) {
+  const recipient = recipientTrailname || "there";
+  const sender = senderTrailname || "Someone";
+
+  const isReplyToPost = type === "reply_post";
+  const contextLabel = isReplyToPost ? "your post" : "your comment";
+  const subject = `${sender} replied to ${contextLabel}`;
+
+  const truncatedBody = replyBody && replyBody.length > 400
+    ? replyBody.slice(0, 400).trimEnd() + "…"
+    : (replyBody || "");
+
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +17,7 @@ function buildWelcomeEmail({ trailname, listUrl, unsubscribeUrl }) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light">
   <meta name="supported-color-schemes" content="light">
-  <title>Your TrekList gear list is ready</title>
+  <title>${subject}</title>
   <style>
     :root { color-scheme: light; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -52,6 +62,23 @@ function buildWelcomeEmail({ trailname, listUrl, unsubscribeUrl }) {
     }
     .content-area p { margin-bottom: 18px; }
     .content-area a { color: #1d4ed8; text-decoration: underline; }
+    .reply-box {
+      background-color: #f1f5f9;
+      border-left: 4px solid #1d4ed8;
+      border-radius: 4px;
+      padding: 16px 20px;
+      margin: 24px 0;
+      font-size: 15px;
+      line-height: 1.6;
+      color: #1e293b;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .post-context {
+      font-size: 13px;
+      color: #64748b;
+      margin-bottom: 24px;
+    }
     .cta-wrap { text-align: center; margin: 32px 0; }
     .cta-button {
       display: inline-block;
@@ -112,16 +139,13 @@ function buildWelcomeEmail({ trailname, listUrl, unsubscribeUrl }) {
   </div>
 
   <div class="content-area">
-    <p>Hey ${name},</p>
-    <p>Your list is ready whenever you are.</p>
-    <img src="https://res.cloudinary.com/treklist/image/upload/w_1080,f_png/v1779787880/Screenshot-treklist-desktop-view_x256gu.png" alt="TrekList gear list" width="540" style="max-width:100%;height:auto;display:block;margin:0 auto 24px;border-radius:6px;border:1px solid #e2e8f0;">
-    <p>If you haven't already, try adding a piece of gear you own — search the catalog or add a custom item with your own name and weight. TrekList tracks your total pack weight automatically as you go.</p>
-    <p>Once your list is complete, you can check items off as you pack and head out the door knowing you haven't forgotten a thing.</p>
+    <p>Hey ${recipient},</p>
+    <p><strong>${sender}</strong> replied to ${contextLabel}${postTitle ? ` "<em>${postTitle}</em>"` : ""}:</p>
+    <div class="reply-box">${truncatedBody}</div>
     <div class="cta-wrap">
-      <a href="${listUrl}" class="cta-button">Open my list</a>
+      <a href="${postUrl}" class="cta-button">View reply</a>
     </div>
-    <p>If you have any questions, just reply to this email. I'm more than happy to help!</p>
-    <p>Happy trails,<br>Tall Joe · TrekList</p>
+    <p>Happy trails,<br>The TrekList Team</p>
   </div>
 
   <div class="footer">
@@ -133,8 +157,8 @@ function buildWelcomeEmail({ trailname, listUrl, unsubscribeUrl }) {
       <a href="https://talljoehikes.com/hikes/">Hike guides</a>
     </div>
     <p class="footer-text">
-      You're getting this because you signed up at treklist.co<br>
-      <a href="${unsubscribeUrl}">Unsubscribe</a><br><br>
+      You're getting this because someone replied to your post or comment on treklist.co<br>
+      <a href="${unsubscribeUrl}">Unsubscribe from reply notifications</a><br><br>
       © 2026 TrekList · Tall Joe Hikes · Netherlands
     </p>
   </div>
@@ -143,24 +167,22 @@ function buildWelcomeEmail({ trailname, listUrl, unsubscribeUrl }) {
 </body>
 </html>`;
 
-  const text = `Hey ${name},
+  const text = `Hey ${recipient},
 
-Your list is ready whenever you are.
+${sender} replied to ${contextLabel}${postTitle ? ` "${postTitle}"` : ""}:
 
-${listUrl}
+${truncatedBody}
 
-If you haven't already, try adding a piece of gear you own — search the catalog or add a custom item with your own name and weight. TrekList tracks your total pack weight automatically as you go.
-
-Once your list is complete, you can check items off as you pack and head out the door knowing you haven't forgotten a thing.
+View the reply: ${postUrl}
 
 Happy trails,
-Tall Joe · TrekList
+The TrekList Team
 
 ---
-You're getting this because you signed up at treklist.co
+You're getting this because someone replied to your post or comment on treklist.co
 Unsubscribe: ${unsubscribeUrl}`;
 
-  return { html, text };
+  return { html, text, subject };
 }
 
-module.exports = { buildWelcomeEmail };
+module.exports = { buildNotificationEmail };

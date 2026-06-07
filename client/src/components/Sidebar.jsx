@@ -290,16 +290,14 @@ export default function Sidebar({
                 <FiSettings className="w-4 h-4" />
               </button>
             )}
-            {isAdmin && (
-              <button
-                type="button"
-                title={t("sidebar.a11y.community")}
-                onClick={() => onOpenCommunity(null)}
-                className="w-9 h-9 flex items-center justify-center rounded-lg text-primaryAlt hover:text-primary hover:bg-primary/5 transition-colors"
-              >
-                <FiUsers className="w-4 h-4" />
-              </button>
-            )}
+            <button
+              type="button"
+              title={t("sidebar.a11y.community")}
+              onClick={() => onOpenCommunity(null)}
+              className="w-9 h-9 flex items-center justify-center rounded-lg text-primaryAlt hover:text-primary hover:bg-primary/5 transition-colors"
+            >
+              <FiUsers className="w-4 h-4" />
+            </button>
             <button
               type="button"
               title={t("sidebar.gearListsTitle")}
@@ -350,8 +348,8 @@ export default function Sidebar({
                 </button>
               </section>
             )}
-            {/* Community section — admin only until public launch */}
-            {isAdmin && <section className="flex flex-col flex-none px-4 py-2 border-b border-base-100 overflow-hidden">
+            {/* Community section */}
+            <section className="flex flex-col flex-none px-4 py-2 border-b border-base-100 overflow-hidden">
               <div className="flex items-center text-primaryAlt rounded-lg p-1 -m-1">
                 <button
                   type="button"
@@ -402,7 +400,7 @@ export default function Sidebar({
                   </ul>
                 );
               })()}
-            </section>}
+            </section>
             {/* Gear Lists section */}
             <section
               className="flex flex-col flex-none px-4 py-2 border-b border-base-100 overflow-hidden"

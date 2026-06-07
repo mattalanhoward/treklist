@@ -882,6 +882,7 @@ async function run() {
         isAdmin:       false,
         authProviders: [{ provider: "email" }],
         onboarding:    { transactionalOptOut: true },
+        notifications: { emailEnabled: false },
       });
       console.log(`  ✅ Created user: ${u.trailname}`);
     } else {

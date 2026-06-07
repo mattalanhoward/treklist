@@ -769,7 +769,7 @@ export default function Dashboard() {
               <WishlistView />
             ) : activePane === "myGear" ? (
               <MyGearView collapsed={collapsed} />
-            ) : activePane === "community" && isAdmin ? (
+            ) : activePane === "community" ? (
               <CommunityView initialSlug={activeCommunitySlug} initialPostId={activeCommunityPostId} />
             ) : activePane === "templates" ? (
               <TemplatesView key={templatesKey} fetchLists={fetchLists} />

@@ -112,7 +112,7 @@ export default function TopBar({ title, openSettings, onOpenTour, onToggleSideba
         </div>
 
         <div className="flex items-center gap-3 print:hidden">
-          {isAdmin && <NotificationBell />}
+          <NotificationBell />
           <DropdownMenu
             trigger={
               <button

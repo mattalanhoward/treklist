@@ -805,6 +805,7 @@ async function run() {
       isAdmin:       u.isAdmin || false,
       authProviders: [{ provider: "email" }],
       onboarding:    { transactionalOptOut: true },
+      notifications: { emailEnabled: false },
     });
     userMap[u.trailname] = user;
     console.log(`  ✅ Created user: ${u.trailname}`);

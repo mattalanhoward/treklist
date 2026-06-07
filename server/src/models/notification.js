@@ -12,6 +12,7 @@ const NotificationSchema = new mongoose.Schema(
     postId: { type: mongoose.Schema.Types.ObjectId, ref: "Post", default: null },
     commentId: { type: mongoose.Schema.Types.ObjectId, ref: "Comment", default: null },
     isRead: { type: Boolean, default: false },
+    emailSentAt: { type: Date, default: null },
   },
   { timestamps: true }
 );

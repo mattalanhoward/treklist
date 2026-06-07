@@ -35,6 +35,7 @@ router.get("/", async (req, res) => {
       sidebarGearListsCollapsed,
       sidebarMyGearCollapsed,
       marketing,
+      notifications,
     } = user;
 
     res.json({
@@ -54,8 +55,10 @@ router.get("/", async (req, res) => {
       sidebarGearListsCollapsed: !!sidebarGearListsCollapsed,
       sidebarMyGearCollapsed: !!sidebarMyGearCollapsed,
       marketing: {
-        // always return a boolean; treat missing doc as false
         optedIn: Boolean(marketing?.optedIn),
+      },
+      notifications: {
+        emailEnabled: notifications?.emailEnabled !== false,
       },
     });
   } catch (err) {
@@ -126,6 +129,16 @@ router.patch("/", async (req, res) => {
         // user is opting out
         user.marketing.optedIn = false;
         unsubscribeFromKit(user.email);
+      }
+    }
+
+    // --- Handle notifications opt-in/out ---
+    if (updates.notifications && typeof updates.notifications === "object") {
+      const notifUpdate = updates.notifications;
+      delete updates.notifications;
+      if (typeof notifUpdate.emailEnabled === "boolean") {
+        if (!user.notifications) user.notifications = {};
+        user.notifications.emailEnabled = notifUpdate.emailEnabled;
       }
     }
 
