@@ -8,12 +8,76 @@ const Flag = require("../models/flag");
 const Notification = require("../models/notification");
 const authMiddleware = require("../middleware/auth");
 const optionalAuth = require("../middleware/optionalAuth");
-const { sendSupportEmail } = require("../utils/mailer");
+const { sendSupportEmail, sendNotificationEmail } = require("../utils/mailer");
+const crypto = require("crypto");
 const {
   communityCommentLimiter,
   communityUpvoteLimiter,
 } = require("../middleware/rateLimiters");
 const { detectLanguage } = require("../utils/googleTranslate");
+
+const NOTIFICATION_EMAIL_COOLDOWN_MS = 30 * 60 * 1000; // 30 minutes
+
+function buildNotificationUnsubscribeUrl(userId) {
+  const uid = userId.toString();
+  const sig = crypto
+    .createHmac("sha256", process.env.JWT_SECRET)
+    .update(`notif:${uid}`)
+    .digest("hex")
+    .slice(0, 32);
+  const base = (process.env.APP_URL || process.env.CLIENT_URL || process.env.CLIENT_URLS || "").split(",")[0].trim();
+  return `${base}/auth/unsubscribe-notifications?uid=${uid}&sig=${sig}`;
+}
+
+async function maybeSendReplyEmail({ recipientId, senderId, type, postId, commentId }) {
+  try {
+    const recipient = await User.findById(recipientId).select("email trailname notifications").lean();
+    if (!recipient || recipient.notifications?.emailEnabled === false) return;
+
+    // Cooldown: skip if we already emailed this recipient about this post in the last 30 min
+    const cutoff = new Date(Date.now() - NOTIFICATION_EMAIL_COOLDOWN_MS);
+    const recent = await Notification.findOne({
+      recipientId,
+      postId,
+      emailSentAt: { $gte: cutoff },
+    }).lean();
+    if (recent) return;
+
+    const [sender, post] = await Promise.all([
+      User.findById(senderId).select("trailname").lean(),
+      Post.findById(postId).select("title").lean(),
+    ]);
+
+    let replyBody = "";
+    if (commentId) {
+      const comment = await require("../models/comment").findById(commentId).select("body").lean();
+      replyBody = comment?.body || "";
+    }
+
+    const base = (process.env.APP_URL || process.env.CLIENT_URL || process.env.CLIENT_URLS || "").split(",")[0].trim();
+    const postUrl = `${base}/community/post/${postId}`;
+    const unsubscribeUrl = buildNotificationUnsubscribeUrl(recipientId);
+
+    await sendNotificationEmail({
+      to: recipient.email,
+      recipientTrailname: recipient.trailname,
+      senderTrailname: sender?.trailname,
+      type,
+      replyBody,
+      postTitle: post?.title,
+      postUrl,
+      unsubscribeUrl,
+    });
+
+    await Notification.findOneAndUpdate(
+      { recipientId, postId, commentId: commentId || null, type, emailSentAt: null },
+      { $set: { emailSentAt: new Date() } },
+      { sort: { createdAt: -1 } }
+    );
+  } catch (err) {
+    console.error("[maybySendReplyEmail] error:", err.message);
+  }
+}
 
 // GET /api/posts/:postId/comments — fetch all comments for a post
 router.get("/", optionalAuth, async (req, res) => {
@@ -105,6 +169,13 @@ router.post("/", authMiddleware, communityCommentLimiter, async (req, res) => {
           postId: post._id,
           commentId: comment._id,
         }).catch((e) => console.error("Comment notification error:", e));
+        maybeSendReplyEmail({
+          recipientId: post.userId,
+          senderId: req.userId,
+          type: "reply_post",
+          postId: post._id,
+          commentId: comment._id,
+        });
       }
     } else {
       Comment.findById(parentCommentId).lean().then((parent) => {
@@ -116,6 +187,13 @@ router.post("/", authMiddleware, communityCommentLimiter, async (req, res) => {
             postId: post._id,
             commentId: comment._id,
           }).catch((e) => console.error("Reply notification error:", e));
+          maybeSendReplyEmail({
+            recipientId: parent.userId,
+            senderId: req.userId,
+            type: "reply_comment",
+            postId: post._id,
+            commentId: comment._id,
+          });
         }
       }).catch(() => {});
     }

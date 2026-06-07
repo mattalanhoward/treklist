@@ -58,7 +58,7 @@ async function run() {
       .sort({ createdAt: -1 })
       .select("_id");
 
-    const base = (process.env.CLIENT_URL || process.env.CLIENT_URLS || "").split(",")[0].trim();
+    const base = (process.env.APP_URL || process.env.CLIENT_URL || process.env.CLIENT_URLS || "").split(",")[0].trim();
     const listUrl = list ? `${base}/dashboard/${list._id}` : `${base}/dashboard`;
     const unsubscribeUrl = buildUnsubscribeUrl(user._id);
 
