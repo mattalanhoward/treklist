@@ -15,6 +15,7 @@ export default function AccountModal({ isOpen, onClose }) {
     email: "",
     trailname: "",
     marketingOptIn: false,
+    notificationEmailEnabled: true,
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
@@ -37,6 +38,8 @@ export default function AccountModal({ isOpen, onClose }) {
             data.marketing && typeof data.marketing.optedIn === "boolean"
               ? data.marketing.optedIn
               : false,
+          notificationEmailEnabled:
+            data.notifications?.emailEnabled !== false,
           currentPassword: "",
           newPassword: "",
           confirmPassword: "",
@@ -72,6 +75,10 @@ export default function AccountModal({ isOpen, onClose }) {
           : false;
       if (form.marketingOptIn !== previousOptIn) {
         payload.marketing = { optedIn: form.marketingOptIn };
+      }
+      const previousNotifEmail = settings.notifications?.emailEnabled !== false;
+      if (form.notificationEmailEnabled !== previousNotifEmail) {
+        payload.notifications = { emailEnabled: form.notificationEmailEnabled };
       }
     }
     if (tab === "security") {
@@ -304,6 +311,22 @@ export default function AccountModal({ isOpen, onClose }) {
                         className="mt-1"
                       />
                       <span>{t("auth.text.marketingOptIn")}</span>
+                    </label>
+                  </div>
+                  <div className="mt-3">
+                    <label className="flex items-start space-x-2 text-sm text-gray-700">
+                      <input
+                        type="checkbox"
+                        checked={form.notificationEmailEnabled}
+                        onChange={(e) =>
+                          setForm((prev) => ({
+                            ...prev,
+                            notificationEmailEnabled: e.target.checked,
+                          }))
+                        }
+                        className="mt-1"
+                      />
+                      <span>Email me when someone replies to my post or comment</span>
                     </label>
                   </div>
                 </>

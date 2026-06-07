@@ -79,6 +79,9 @@ const UserSchema = new mongoose.Schema(
     verifyEmailExpires: Date,
     resetPasswordToken: String,
     resetPasswordExpires: Date,
+    notifications: {
+      emailEnabled: { type: Boolean, default: true },
+    },
     favoriteCommunities: [{ type: mongoose.Schema.Types.ObjectId, ref: "Community" }],
     sidebarCollapsed: { type: Boolean, default: false },
     sidebarGearListsCollapsed: { type: Boolean, default: false },

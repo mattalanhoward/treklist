@@ -1,5 +1,6 @@
 const nodemailer = require("nodemailer");
 const { buildWelcomeEmail } = require("./welcomeEmailTemplate");
+const { buildNotificationEmail } = require("./notificationEmailTemplate");
 
 function getTransporter() {
   const host = process.env.SMTP_HOST;
@@ -63,4 +64,26 @@ async function sendWelcomeEmail({ to, trailname, listUrl, unsubscribeUrl }) {
   return { skipped: false, messageId: info.messageId };
 }
 
-module.exports = { sendSupportEmail, sendWelcomeEmail };
+async function sendNotificationEmail({ to, recipientTrailname, senderTrailname, type, replyBody, postTitle, postUrl, unsubscribeUrl }) {
+  const transporter = getTransporter();
+  if (!transporter) {
+    console.warn("[mailer] SMTP not configured — skipping notification email.");
+    return { skipped: true };
+  }
+
+  const from = process.env.SMTP_FROM || process.env.SMTP_USER;
+  const { html, text, subject } = buildNotificationEmail({
+    recipientTrailname,
+    senderTrailname,
+    type,
+    replyBody,
+    postTitle,
+    postUrl,
+    unsubscribeUrl,
+  });
+
+  const info = await transporter.sendMail({ from, to, subject, text, html });
+  return { skipped: false, messageId: info.messageId };
+}
+
+module.exports = { sendSupportEmail, sendWelcomeEmail, sendNotificationEmail };
