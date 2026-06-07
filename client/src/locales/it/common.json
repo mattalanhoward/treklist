@@ -643,6 +643,11 @@
     "add": "Aggiungi",
     "import": "Importa",
     "noResultsFor": "Nessun risultato per",
+    "lookupUrl": "Cerca prodotto",
+    "placeholders": {
+      "tent": "Tenda",
+      "trekkingPoles": "Bastoncini da trekking"
+    },
     "chips": {
       "sleep": "Sonno",
       "shelter": "Riparo",

@@ -659,6 +659,11 @@
     "add": "Add",
     "import": "Import",
     "noResultsFor": "No results for",
+    "lookupUrl": "Look up product",
+    "placeholders": {
+      "tent": "Tent",
+      "trekkingPoles": "Trekking Poles"
+    },
     "chips": {
       "sleep": "Sleep",
       "shelter": "Shelter",

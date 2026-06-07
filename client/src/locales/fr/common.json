@@ -650,6 +650,11 @@
     "add": "Ajouter",
     "import": "Importer",
     "noResultsFor": "Aucun résultat pour",
+    "lookupUrl": "Rechercher le produit",
+    "placeholders": {
+      "tent": "Tente",
+      "trekkingPoles": "Bâtons de randonnée"
+    },
     "chips": {
       "sleep": "Sommeil",
       "shelter": "Abri",

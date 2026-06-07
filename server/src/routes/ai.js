@@ -46,7 +46,7 @@ async function fetchGoogleImage(brand, name) {
       console.warn("[Google] Image search failed:", data?.error?.message);
       return null;
     }
-    return data.items?.[0]?.link ?? null;
+    return cleanImageUrl(data.items?.[0]?.link ?? null);
   } catch (err) {
     console.warn("[Google] Image search error:", err.message);
     return null;
@@ -59,6 +59,18 @@ const FETCH_TIMEOUT_MS = 6000;
 
 function stripHtml(html = "") {
   return html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+// Remove query params from image URLs — CDN params (crop, width, height) conflict with our display logic
+function cleanImageUrl(url) {
+  if (!url) return null;
+  try {
+    const u = new URL(url);
+    u.search = "";
+    return u.toString();
+  } catch {
+    return url;
+  }
 }
 
 // Convert weight value + unit to grams
@@ -205,12 +217,12 @@ async function fetchProductPage(url) {
 
     if (shopifyData) {
       if (specWeight.weightGrams) shopifyData.weightGrams = specWeight.weightGrams;
-      if (ogImage) shopifyData.imageUrl = ogImage;
+      if (ogImage) shopifyData.imageUrl = cleanImageUrl(ogImage);
       return shopifyData;
     }
     if (htmlData) {
       if (specWeight.weightGrams) htmlData.weightGrams = specWeight.weightGrams;
-      if (ogImage) htmlData.imageUrl = ogImage;
+      if (ogImage) htmlData.imageUrl = cleanImageUrl(ogImage);
       return htmlData;
     }
     // No structured data but we have a weight from the page
@@ -321,6 +333,14 @@ Return only valid JSON. No explanation, no markdown.`;
     let scrapedImageUrl = null;
 
     if (isUrl) {
+      // Amazon mobile/sharing redirect URLs contain no product info — fail early with a clear message
+      if (/amazon\.[a-z.]+\/hz\/mobile\/mission/i.test(query.trim())) {
+        return res.status(400).json({
+          error: "amazon_redirect",
+          message: "This is an Amazon sharing link, not a product page. Please open the product on Amazon and copy the URL from your browser's address bar.",
+        });
+      }
+
       const pageData = await fetchProductPage(query.trim());
       const formatted = formatPageDataForPrompt(pageData);
       if (formatted) {
@@ -365,7 +385,7 @@ Return only valid JSON. No explanation, no markdown.`;
       category: CATALOG_CATEGORIES.includes(raw.category) ? raw.category : null,
       description:
         typeof raw.description === "string" ? raw.description.trim() || null : null,
-      link: null,
+      link: isUrl ? query.trim() : null,
       imageUrl,
     };
 

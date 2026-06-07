@@ -643,6 +643,11 @@
     "add": "Toevoegen",
     "import": "Importeren",
     "noResultsFor": "Geen resultaten voor",
+    "lookupUrl": "Product opzoeken",
+    "placeholders": {
+      "tent": "Tent",
+      "trekkingPoles": "Trekkingstokken"
+    },
     "chips": {
       "sleep": "Slaap",
       "shelter": "Onderdak",
