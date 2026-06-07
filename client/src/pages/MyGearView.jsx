@@ -111,7 +111,7 @@ export default function MyGearView({ collapsed }) {
   const categories = useMemo(() => {
     const cats = new Set();
     let hasUncategorized = false;
-    items.forEach((item) => {
+    [...items, ...wishlistItems].forEach((item) => {
       if (item.catalogCategory) {
         cats.add(item.catalogCategory);
       } else {
@@ -123,7 +123,7 @@ export default function MyGearView({ collapsed }) {
       sorted.push("Uncategorized");
     }
     return sorted;
-  }, [items]);
+  }, [items, wishlistItems]);
 
   // Search/filter logic
   const normalize = (s) =>
@@ -192,6 +192,15 @@ export default function MyGearView({ collapsed }) {
 
   const filteredWishlistItems = useMemo(() => {
     let result = [...wishlistItems];
+
+    if (categoryFilter !== "all") {
+      if (categoryFilter === "Uncategorized") {
+        result = result.filter((item) => !item.catalogCategory);
+      } else {
+        result = result.filter((item) => item.catalogCategory === categoryFilter);
+      }
+    }
+
     if (searchQuery.trim()) {
       const tokens = normalize(searchQuery).split(/\s+/).filter(Boolean);
       result = result.filter((item) => {
@@ -200,7 +209,7 @@ export default function MyGearView({ collapsed }) {
       });
     }
     return result;
-  }, [wishlistItems, searchQuery]);
+  }, [wishlistItems, searchQuery, categoryFilter]);
 
   const filteredAllItems = useMemo(() => {
     return [...filteredItems, ...filteredWishlistItems];
