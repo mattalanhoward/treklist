@@ -436,15 +436,24 @@ export default function SmartItemSearch({
   const [myGearPreview, setMyGearPreview] = useState(null);
   const [myGearPreviewAdding, setMyGearPreviewAdding] = useState(false);
 
-  // Tab state (tabLayout mode only)
-  const [activeTab, setActiveTab] = useState("import"); // "import" | "custom"
+  // Tab state (tabLayout mode only) — persisted across sessions
+  const [activeTab, setActiveTab] = useState(() => {
+    if (!tabLayout) return "import";
+    const saved = localStorage.getItem("smartItemSearch.activeTab");
+    return saved === "custom" ? "custom" : "import";
+  });
+
+  const setAndPersistTab = (tab) => {
+    setActiveTab(tab);
+    localStorage.setItem("smartItemSearch.activeTab", tab);
+  };
 
   // Whether the custom form is currently shown
   const showingCustomForm = tabLayout ? activeTab === "custom" : !!customMode;
 
   // Switch to Custom tab, optionally pre-filling the name from the search query
   const switchToCustom = (prefillName = "") => {
-    setActiveTab("custom");
+    setAndPersistTab("custom");
     if (!customMode) {
       setCustomMode("manual");
       setCustomForm((f) => ({ ...f, name: prefillName || f.name }));
@@ -629,7 +638,7 @@ export default function SmartItemSearch({
         imageUrl: data.imageUrl || "",
       });
       // In tabLayout, switch to Custom tab to show the AI-filled form
-      if (tabLayout) setActiveTab("custom");
+      if (tabLayout) setAndPersistTab("custom");
     } catch {
       toast.error(t("smartItemSearch.toasts.aiFailed", "AI search failed. Try adding manually."));
     } finally {
@@ -733,7 +742,7 @@ export default function SmartItemSearch({
         <div className="flex items-center border-b border-primary/10 flex-shrink-0 px-5">
           <button
             type="button"
-            onClick={() => setActiveTab("import")}
+            onClick={() => setAndPersistTab("import")}
             className={`py-3 px-1 mr-5 text-sm font-medium border-b-2 -mb-px transition-colors ${
               activeTab === "import"
                 ? "border-secondary text-secondary"
@@ -1148,7 +1157,7 @@ export default function SmartItemSearch({
           onResult={(scanData) => {
             setShowScanModal(false);
             setCustomMode("ai");
-            if (tabLayout) setActiveTab("custom");
+            if (tabLayout) setAndPersistTab("custom");
             setCustomForm({
               name: scanData.name || "",
               brand: scanData.brand || "",
