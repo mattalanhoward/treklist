@@ -357,6 +357,7 @@ export default function SmartItemSearch({
     t("smartItemSearch.placeholders.trekkingPoles", "Trekking Poles"),
     "Black Diamond Distance Carbon Z",
     "https://gossamergear.com/products/mariposa-60",
+    "Decathlon 8858286",
   ], [t]);
   // Item request form
   const [showRequestForm, setShowRequestForm] = useState(false);
@@ -548,7 +549,11 @@ export default function SmartItemSearch({
     }
     setCatalogLoading(true);
     const params = {};
-    if (debouncedQuery.trim()) params.q = debouncedQuery.trim();
+    if (debouncedQuery.trim()) {
+      // "Brand 1234567" → search just the number so e.g. "Decathlon 8858286" works
+      const brandNumberMatch = debouncedQuery.trim().match(/^\S+\s+(\d{5,})$/);
+      params.q = brandNumberMatch ? brandNumberMatch[1] : debouncedQuery.trim();
+    }
     if (categoryFilter) params.category = categoryFilter;
     if (subcategoryFilter) params.subcategory = subcategoryFilter;
     if (brandFilter) params.brand = brandFilter;
