@@ -1,5 +1,5 @@
 // src/pages/Dashboard.jsx
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import api from "../services/api";
 import { useParams, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
@@ -98,12 +98,12 @@ export default function Dashboard() {
   const [isTourOpen, setIsTourOpen] = useState(false);
   const [tourStep, setTourStep] = useState(0);
 
-  const tourSteps = [
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const tourSteps = useMemo(() => [
     {
       title: t("tour.steps.welcome.title"),
       body: t("tour.steps.welcome.body"),
       onEnter: ({ isMobile }) => {
-        setActivePane("gear");
         if (isMobile) setSidebarCollapsed(false); // open sidebar
       },
     },
@@ -112,7 +112,6 @@ export default function Dashboard() {
       body: t("tour.steps.lists.body"),
       target: '[data-tour="sidebar-lists-header"]',
       onEnter: ({ isMobile }) => {
-        setActivePane("gear");
         if (isMobile) setSidebarCollapsed(false); // keep open
       },
     },
@@ -121,7 +120,6 @@ export default function Dashboard() {
       body: t("tour.steps.categories.body"),
       target: '[data-tour="gearlist-category"]',
       onEnter: ({ isMobile }) => {
-        setActivePane("gear");
         if (isMobile) setSidebarCollapsed(true); // close sidebar
       },
     },
@@ -130,7 +128,6 @@ export default function Dashboard() {
       body: t("tour.steps.addCategory.body"),
       target: '[data-tour="gearlist-add-category"]',
       onEnter: ({ isMobile }) => {
-        setActivePane("gear");
         if (isMobile) setSidebarCollapsed(true); // keep closed
       },
     },
@@ -139,7 +136,6 @@ export default function Dashboard() {
       body: t("tour.steps.addItems.body"),
       target: '[data-tour="category-add-item"]',
       onEnter: ({ isMobile }) => {
-        setActivePane("gear");
         if (isMobile) setSidebarCollapsed(true); // keep closed
       },
     },
@@ -150,7 +146,6 @@ export default function Dashboard() {
       spotlightRadius: "8px",
       spotlightPadding: 10,
       onEnter: ({ isMobile }) => {
-        setActivePane("gear");
         if (isMobile) setSidebarCollapsed(true); // keep closed
       },
     },
@@ -161,7 +156,6 @@ export default function Dashboard() {
       spotlightRadius: "8px",
       spotlightPadding: 10,
       onEnter: ({ isMobile }) => {
-        setActivePane("gear");
         if (isMobile) setSidebarCollapsed(true); // keep closed
       },
     },
@@ -172,7 +166,6 @@ export default function Dashboard() {
       spotlightRadius: "8px",
       spotlightPadding: 10,
       onEnter: ({ isMobile }) => {
-        setActivePane("gear");
         if (isMobile) setSidebarCollapsed(true); // keep closed
       },
     },
@@ -181,7 +174,6 @@ export default function Dashboard() {
       body: t("tour.steps.templates.body"),
       target: '[data-tour="sidebar-templates"]',
       onEnter: ({ isMobile }) => {
-        setActivePane("gear");
         if (isMobile) setSidebarCollapsed(false); // open sidebar
       },
     },
@@ -190,7 +182,6 @@ export default function Dashboard() {
       body: t("tour.steps.myGear.body"),
       target: '[data-tour="sidebar-my-gear"]',
       onEnter: ({ isMobile }) => {
-        setActivePane("gear");
         if (isMobile) setSidebarCollapsed(false); // open sidebar so the link is visible
       },
     },
@@ -212,7 +203,6 @@ export default function Dashboard() {
       spotlightRadius: "8px",
       spotlightPadding: 10,
       onEnter: ({ isMobile }) => {
-        setActivePane("myGear");
         if (isMobile) setSidebarCollapsed(true);
       },
     },
@@ -225,7 +215,9 @@ export default function Dashboard() {
         if (isMobile) setSidebarCollapsed(true); // keep closed
       },
     },
-  ];
+  // Re-create only when language changes (t), not on every render.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  ], [t]);
 
   const markTourSeen = useCallback(async () => {
     try {
