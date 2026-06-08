@@ -1056,22 +1056,16 @@ export default function SmartItemSearch({
                 <div className="border-t border-primary/8 mt-2 pt-2 pb-1">
                   <button
                     type="button"
-                    onClick={debouncedQuery.trim() ? handleCreateAction : () => switchToCustom("")}
-                    disabled={aiLoading}
-                    className="flex items-center gap-1.5 text-sm text-primary/40 hover:text-primary/70 transition-colors py-1 disabled:opacity-40"
+                    onClick={() => switchToCustom(debouncedQuery.trim())}
+                    className="flex items-center gap-1.5 text-sm text-primary/40 hover:text-primary/70 transition-colors py-1"
                   >
-                    {aiLoading
-                      ? <FiLoader size={13} className="animate-spin flex-shrink-0" />
-                      : <FiPlus size={13} className="flex-shrink-0" />
-                    }
-                    {debouncedQuery.trim()
-                      ? t("smartItemSearch.createCustomItem", 'Create "{query}" as a custom item').replace(
-                          "{query}",
-                          debouncedQuery.trim().length > 50
-                            ? debouncedQuery.trim().slice(0, 50) + "…"
-                            : debouncedQuery.trim()
-                        )
-                      : t("smartItemSearch.createCustomItemBlank", "Create a custom item")}
+                    <FiPlus size={13} className="flex-shrink-0" />
+                    {t("smartItemSearch.createCustomItem", 'Create "{query}" as a custom item').replace(
+                      "{query}",
+                      debouncedQuery.trim().length > 50
+                        ? debouncedQuery.trim().slice(0, 50) + "…"
+                        : debouncedQuery.trim()
+                    )}
                   </button>
                 </div>
               )}
