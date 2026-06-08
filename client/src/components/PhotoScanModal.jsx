@@ -5,6 +5,7 @@ import React, { useState, useRef } from "react";
 import { FiCamera, FiUpload, FiX, FiRefreshCw, FiCheck } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import api from "../services/api";
+import { uploadGearItemPhoto } from "../services/cloudinaryUpload";
 
 export default function PhotoScanModal({ onResult, onClose }) {
   const { t } = useTranslation("common");
@@ -44,18 +45,23 @@ export default function PhotoScanModal({ onResult, onClose }) {
     try {
       const detectedBarcode = await tryBarcodeDetect(img);
 
+      // Upload photo to Cloudinary in parallel with AI scan; ignore failures silently
+      const uploadPromise = uploadGearItemPhoto(dataUrl).catch(() => null);
+
+      let scanPromise;
       if (detectedBarcode) {
         setBarcodeValue(detectedBarcode);
         setScanMethod("barcode");
-        const { data } = await api.post("/ai/scan-item", { barcode: detectedBarcode });
-        setResult(data);
-        setPhase("result");
+        scanPromise = api.post("/ai/scan-item", { barcode: detectedBarcode });
       } else {
         setScanMethod("vision");
-        const { data } = await api.post("/ai/scan-item", { image: dataUrl });
-        setResult(data);
-        setPhase("result");
+        scanPromise = api.post("/ai/scan-item", { image: dataUrl });
       }
+
+      const [{ data }, uploadResult] = await Promise.all([scanPromise, uploadPromise]);
+      if (uploadResult?.secureUrl) data.photoUrl = uploadResult.secureUrl;
+      setResult(data);
+      setPhase("result");
     } catch (err) {
       const msg = err.response?.data?.error || t("photoScanModal.errorFallback", "Scan failed. Try again or add manually.");
       setErrorMsg(msg);

@@ -1214,7 +1214,7 @@ export default function SmartItemSearch({
               weight: scanData.weightGrams != null ? formatInput(scanData.weightGrams) : "",
               description: scanData.description || "",
               link: "",
-              imageUrl: scanData.imageUrl || "",
+              imageUrl: scanData.photoUrl || scanData.imageUrl || "",
             });
           }}
         />

@@ -58,6 +58,44 @@ export async function uploadBackgroundToCloudinary({
   };
 }
 
+function dataUrlToBlob(dataUrl) {
+  const [header, base64] = dataUrl.split(",");
+  const mime = header.match(/:(.*?);/)?.[1] || "image/jpeg";
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return new Blob([bytes], { type: mime });
+}
+
+export async function uploadGearItemPhoto(dataUrl) {
+  const blob = dataUrlToBlob(dataUrl);
+  const { data: sig } = await api.post("/uploads/cloudinary-signature", { type: "gear-item" });
+  const { cloudName, apiKey, timestamp, signature, folder } = sig;
+
+  const form = new FormData();
+  form.append("file", blob, "gear-photo.jpg");
+  form.append("api_key", apiKey);
+  form.append("timestamp", timestamp);
+  form.append("signature", signature);
+  form.append("folder", folder);
+
+  const json = await new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`);
+    xhr.onload = () => {
+      try {
+        const data = JSON.parse(xhr.responseText);
+        if (xhr.status >= 200 && xhr.status < 300) resolve(data);
+        else reject(new Error(data?.error?.message || "Cloudinary upload failed"));
+      } catch { reject(new Error("Cloudinary upload failed")); }
+    };
+    xhr.onerror = () => reject(new Error("Network error uploading to Cloudinary"));
+    xhr.send(form);
+  });
+
+  return { secureUrl: json.secure_url };
+}
+
 const MAX_COMMUNITY_IMAGE_BYTES = 10 * 1024 * 1024; // 10 MB
 
 export async function uploadCommunityImage({ file, onProgress }) {
