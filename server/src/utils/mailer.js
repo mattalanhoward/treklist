@@ -43,7 +43,7 @@ async function sendSupportEmail({ to, subject, text, html, from }) {
   return { skipped: false, messageId: info.messageId };
 }
 
-async function sendWelcomeEmail({ to, trailname, listUrl, unsubscribeUrl }) {
+async function sendWelcomeEmail({ to, trailname, listUrl, unsubscribeUrl, language }) {
   const transporter = getTransporter();
   if (!transporter) {
     console.warn("[mailer] SMTP not configured — skipping welcome email.");
@@ -51,12 +51,12 @@ async function sendWelcomeEmail({ to, trailname, listUrl, unsubscribeUrl }) {
   }
 
   const from = process.env.SMTP_FROM || process.env.SMTP_USER;
-  const { html, text } = buildWelcomeEmail({ trailname, listUrl, unsubscribeUrl });
+  const { html, text, subject } = buildWelcomeEmail({ trailname, listUrl, unsubscribeUrl, language });
 
   const info = await transporter.sendMail({
     from,
     to,
-    subject: "Your TrekList is ready — add your first item",
+    subject,
     text,
     html,
   });
