@@ -30,7 +30,7 @@ async function runWelcomeEmailJob() {
       isVerified: true,
       "onboarding.welcomeEmailSentAt": null,
       "onboarding.transactionalOptOut": { $ne: true },
-    }).select("_id email trailname createdAt");
+    }).select("_id email trailname createdAt preferences.language");
   } catch (err) {
     console.error("[welcomeEmailJob] DB query failed:", err.message);
     return;
@@ -59,6 +59,7 @@ async function runWelcomeEmailJob() {
         trailname: user.trailname,
         listUrl,
         unsubscribeUrl,
+        language: user.preferences?.language,
       });
 
       await User.updateOne(
