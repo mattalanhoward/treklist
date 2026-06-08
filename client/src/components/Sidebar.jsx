@@ -235,7 +235,7 @@ export default function Sidebar({
   const widthClass = collapsed ? "w-0 sm:w-12" : "w-full sm:w-80";
   const overlay = !collapsed
     ? // on mobile: take it out of the flow and cover
-      "fixed top-12 left-0 right-0 bottom-0 z-[90] \
+      "fixed top-12 left-0 right-0 bottom-0 z-[40] \
       sm:static sm:inset-auto sm:z-auto"
     : // when collapsed (or on desktop) nothing special
       "";

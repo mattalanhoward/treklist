@@ -113,7 +113,7 @@ export default function CatalogItemPreviewModal({
   const isPending = loading || (!item && !error);
   if (isPending) {
     return createPortal(
-      <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-end sm:items-center justify-center z-[80]">
+      <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-end sm:items-center justify-center z-[60]">
         <div className="h-10 w-10 rounded-full border-2 border-white/40 border-t-white animate-spin" />
       </div>,
       document.body
@@ -123,7 +123,7 @@ export default function CatalogItemPreviewModal({
   // NOTE: z-index slightly higher than GlobalItemModal so it sits above it.
   // Style/layout matches GlobalItemEditModal imported layout.
   return createPortal(
-    <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-end sm:items-center justify-center z-[80]">
+    <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-end sm:items-center justify-center z-[60]">
       <div
         className={`bg-white sm:rounded-lg shadow-2xl w-full sm:mx-4 px-4 py-4 sm:px-6 sm:py-6 flex flex-col modal-mobile-h sm:h-auto sm:max-h-[90vh] ${modalWidthClass}`}
       >
