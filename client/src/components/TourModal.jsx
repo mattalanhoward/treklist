@@ -1,5 +1,5 @@
 // client/src/components/TourModal.jsx
-import React, { useEffect, useLayoutEffect, useMemo, useState } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { FiX } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 
@@ -148,6 +148,13 @@ export default function TourModal({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [isOpen, onSkip, onNext, onBack]);
 
+  // Keep a ref to steps so the onEnter/onExit effect only fires on actual step
+  // changes, not on every Dashboard re-render that recreates the tourSteps array.
+  const stepsRef = useRef(steps);
+  useLayoutEffect(() => {
+    stepsRef.current = steps;
+  }, [steps]);
+
   // Run step enter/exit hooks (for things like opening/closing sidebar on mobile)
   useEffect(() => {
     if (!isOpen) return;
@@ -155,8 +162,8 @@ export default function TourModal({
     const isMobile = () =>
       typeof window !== "undefined" && window.innerWidth < 640;
 
-    const prev = steps?.[stepIndex - 1];
-    const next = steps?.[stepIndex];
+    const prev = stepsRef.current?.[stepIndex - 1];
+    const next = stepsRef.current?.[stepIndex];
 
     try {
       prev?.onExit?.({ isMobile: isMobile() });
@@ -165,7 +172,8 @@ export default function TourModal({
     try {
       next?.onEnter?.({ isMobile: isMobile() });
     } catch {}
-  }, [isOpen, stepIndex, steps]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, stepIndex]);
 
   // Force a re-measure shortly after step changes
   useEffect(() => {
