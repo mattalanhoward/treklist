@@ -92,6 +92,10 @@
         "title": "Modèles",
         "body": "Nouveau dans la planification de voyage ? Parcourez des listes d'équipement sélectionnées sous Modèles et utilisez-en une comme point de départ."
       },
+      "community": {
+        "title": "Communauté",
+        "body": "Découvrez des comptes rendus de voyages, des avis sur l'équipement et des listes de bagages partagés par la communauté TrekList. Mettez une communauté en favori pour l'épingler dans votre barre latérale."
+      },
       "categories": {
         "title": "Catégories",
         "body": "Les catégories t’aident à organiser ton sac. Clique sur le titre pour le renommer. Utilise la poignée pour déplacer catégories ou articles. (Bureau uniquement)"

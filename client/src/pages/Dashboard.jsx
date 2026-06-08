@@ -178,6 +178,14 @@ export default function Dashboard() {
       },
     },
     {
+      title: t("tour.steps.community.title"),
+      body: t("tour.steps.community.body"),
+      target: '[data-tour="sidebar-community"]',
+      onEnter: ({ isMobile }) => {
+        if (isMobile) setSidebarCollapsed(false); // keep sidebar open
+      },
+    },
+    {
       title: t("tour.steps.myGear.title"),
       body: t("tour.steps.myGear.body"),
       target: '[data-tour="sidebar-my-gear"]',

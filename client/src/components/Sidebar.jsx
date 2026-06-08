@@ -350,7 +350,7 @@ export default function Sidebar({
             )}
             {/* Community section */}
             <section className="flex flex-col flex-none px-4 py-2 border-b border-base-100 overflow-hidden">
-              <div className="flex items-center text-primaryAlt rounded-lg p-1 -m-1">
+              <div data-tour="sidebar-community" className="flex items-center text-primaryAlt rounded-lg p-1 -m-1">
                 <button
                   type="button"
                   onClick={() => {

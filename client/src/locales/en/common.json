@@ -92,6 +92,10 @@
         "title": "Templates",
         "body": "New to trip planning? Browse curated gear lists under Templates and use one as a starting point for your own trip."
       },
+      "community": {
+        "title": "Community",
+        "body": "Discover trip reports, gear reviews, and packing lists shared by the TrekList community. Star a community to pin it to your sidebar."
+      },
       "categories": {
         "title": "Categories",
         "body": "Categories help organize your pack. Click the title to rename it. Use the grabber to move categories or gear items. (Desktop only)"
