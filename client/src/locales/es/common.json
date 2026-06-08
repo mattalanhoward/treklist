@@ -92,6 +92,10 @@
         "title": "Plantillas",
         "body": "¿Nuevo en la planificación de viajes? Explora listas de equipaje curadas en Plantillas y usa una como punto de partida para tu aventura."
       },
+      "community": {
+        "title": "Comunidad",
+        "body": "Descubre informes de viajes, reseñas de equipaje y listas de empaque compartidas por la comunidad TrekList. Dale una estrella a una comunidad para fijarla en tu barra lateral."
+      },
       "categories": {
         "title": "Categorías",
         "body": "Las categorías te ayudan a organizar tu mochila. Haz clic en el título para renombrarlas. Usa el control para mover categorías o artículos. (Solo escritorio)"

@@ -92,6 +92,10 @@
         "title": "Vorlagen",
         "body": "Neu bei der Reiseplanung? Durchsuche kuratierte Packlisten unter Vorlagen und nutze eine als Ausgangspunkt für deine Tour."
       },
+      "community": {
+        "title": "Community",
+        "body": "Entdecke Reiseberichte, Ausrüstungsbewertungen und Packlisten, die von der TrekList-Community geteilt werden. Markiere eine Community mit einem Stern, um sie in deiner Seitenleiste anzupinnen."
+      },
       "categories": {
         "title": "Kategorien",
         "body": "Kategorien helfen dir, deine Packliste zu strukturieren. Klicke auf den Titel, um ihn umzubenennen. Mit dem Greifer kannst du Kategorien oder Ausrüstung verschieben. (Nur Desktop)"

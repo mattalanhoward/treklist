@@ -91,7 +91,7 @@ export default function Dashboard() {
   const { listId } = useParams(); // from /dashboard/:listId
   const navigate = useNavigate();
   const location = useLocation();
-  const TOUR_VERSION = 2;
+  const TOUR_VERSION = 3;
   const hasSeenTour =
     Number(user?.onboarding?.tourVersionSeen || 0) >= TOUR_VERSION;
 
@@ -104,7 +104,8 @@ export default function Dashboard() {
       title: t("tour.steps.welcome.title"),
       body: t("tour.steps.welcome.body"),
       onEnter: ({ isMobile }) => {
-        if (isMobile) setSidebarCollapsed(false); // open sidebar
+        setActivePane("gear");
+        if (isMobile) setSidebarCollapsed(false);
       },
     },
     {
@@ -112,7 +113,8 @@ export default function Dashboard() {
       body: t("tour.steps.lists.body"),
       target: '[data-tour="sidebar-lists-header"]',
       onEnter: ({ isMobile }) => {
-        if (isMobile) setSidebarCollapsed(false); // keep open
+        setActivePane("gear");
+        if (isMobile) setSidebarCollapsed(false);
       },
     },
     {
@@ -120,7 +122,8 @@ export default function Dashboard() {
       body: t("tour.steps.categories.body"),
       target: '[data-tour="gearlist-category"]',
       onEnter: ({ isMobile }) => {
-        if (isMobile) setSidebarCollapsed(true); // close sidebar
+        setActivePane("gear");
+        if (isMobile) setSidebarCollapsed(true);
       },
     },
     {
@@ -128,7 +131,8 @@ export default function Dashboard() {
       body: t("tour.steps.addCategory.body"),
       target: '[data-tour="gearlist-add-category"]',
       onEnter: ({ isMobile }) => {
-        if (isMobile) setSidebarCollapsed(true); // keep closed
+        setActivePane("gear");
+        if (isMobile) setSidebarCollapsed(true);
       },
     },
     {
@@ -136,7 +140,8 @@ export default function Dashboard() {
       body: t("tour.steps.addItems.body"),
       target: '[data-tour="category-add-item"]',
       onEnter: ({ isMobile }) => {
-        if (isMobile) setSidebarCollapsed(true); // keep closed
+        setActivePane("gear");
+        if (isMobile) setSidebarCollapsed(true);
       },
     },
     {
@@ -146,7 +151,8 @@ export default function Dashboard() {
       spotlightRadius: "8px",
       spotlightPadding: 10,
       onEnter: ({ isMobile }) => {
-        if (isMobile) setSidebarCollapsed(true); // keep closed
+        setActivePane("gear");
+        if (isMobile) setSidebarCollapsed(true);
       },
     },
     {
@@ -156,7 +162,8 @@ export default function Dashboard() {
       spotlightRadius: "8px",
       spotlightPadding: 10,
       onEnter: ({ isMobile }) => {
-        if (isMobile) setSidebarCollapsed(true); // keep closed
+        setActivePane("gear");
+        if (isMobile) setSidebarCollapsed(true);
       },
     },
     {
@@ -166,7 +173,8 @@ export default function Dashboard() {
       spotlightRadius: "8px",
       spotlightPadding: 10,
       onEnter: ({ isMobile }) => {
-        if (isMobile) setSidebarCollapsed(true); // keep closed
+        setActivePane("gear");
+        if (isMobile) setSidebarCollapsed(true);
       },
     },
     {
@@ -174,7 +182,17 @@ export default function Dashboard() {
       body: t("tour.steps.templates.body"),
       target: '[data-tour="sidebar-templates"]',
       onEnter: ({ isMobile }) => {
-        if (isMobile) setSidebarCollapsed(false); // open sidebar
+        setActivePane("gear");
+        if (isMobile) setSidebarCollapsed(false);
+      },
+    },
+    {
+      title: t("tour.steps.community.title"),
+      body: t("tour.steps.community.body"),
+      target: '[data-tour="sidebar-community"]',
+      onEnter: ({ isMobile }) => {
+        setActivePane("gear");
+        if (isMobile) setSidebarCollapsed(false);
       },
     },
     {
@@ -182,7 +200,8 @@ export default function Dashboard() {
       body: t("tour.steps.myGear.body"),
       target: '[data-tour="sidebar-my-gear"]',
       onEnter: ({ isMobile }) => {
-        if (isMobile) setSidebarCollapsed(false); // open sidebar so the link is visible
+        setActivePane("gear");
+        if (isMobile) setSidebarCollapsed(false);
       },
     },
     {
@@ -203,6 +222,7 @@ export default function Dashboard() {
       spotlightRadius: "8px",
       spotlightPadding: 10,
       onEnter: ({ isMobile }) => {
+        setActivePane("myGear");
         if (isMobile) setSidebarCollapsed(true);
       },
     },
@@ -212,7 +232,7 @@ export default function Dashboard() {
       target: '[data-tour="settings-menu"]',
       onEnter: ({ isMobile }) => {
         setActivePane("gear");
-        if (isMobile) setSidebarCollapsed(true); // keep closed
+        if (isMobile) setSidebarCollapsed(true);
       },
     },
   // Re-create only when language changes (t), not on every render.
