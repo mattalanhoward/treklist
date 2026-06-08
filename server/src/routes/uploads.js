@@ -20,7 +20,7 @@ router.post("/cloudinary-signature", async (req, res) => {
   try {
     const timestamp = Math.floor(Date.now() / 1000);
 
-    const folderMap = { community: "community-posts" };
+    const folderMap = { community: "community-posts", "gear-item": "gear-item-photos" };
     const folder = folderMap[req.body?.type] || "gear-list-backgrounds";
 
     // You can add additional signed params here later if needed (e.g., eager)
