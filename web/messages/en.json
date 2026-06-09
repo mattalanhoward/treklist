@@ -25,20 +25,20 @@
         "subtitle": "Build and edit on the go. Track your weight. Show up ready.",
         "bullets": {
           "mobileFirst": {
-            "title": "Works on your phone",
-            "text": "Build and edit from the couch, the train, wherever. No desktop required."
+            "title": "Built for mobile and desktop",
+            "text": "Plan from your phone on the couch or build out your full kit at a desk. TrekList is optimized for both."
           },
           "catalogCustom": {
-            "title": "Pull from the catalog or add your own",
-            "text": "Common gear is already in there. Add anything custom with weight, notes, and a link."
-          },
-          "quickAdd": {
-            "title": "Don't see your item? Just type it.",
-            "text": "AI fills in the name, brand, category, and description. You review and add in seconds. No form slog."
+            "title": "Build your gear inventory quickly",
+            "text": "Type a few words, drop a product link, or snap a photo of the product packaging. The smart search bar searches the catalog first. If it's not there, TrekList fills in the name, brand, category, description, and image for you. You review and add in seconds."
           },
           "weightTotals": {
             "title": "Know your pack weight before you go",
             "text": "Base weight, worn weight, consumables tracked in real time. No spreadsheet formulas, no guesswork."
+          },
+          "community": {
+            "title": "Your trail community, built in",
+            "text": "Ask about gear, gear lists, or your itinerary. Get answers from like-minded hikers who've done the route or used the gear."
           },
           "checklist": {
             "title": "Check items off as you pack",
@@ -65,10 +65,6 @@
           "template": {
             "title": "Any list is a starting point",
             "text": "View a public list, save it to your account, and swap out gear with your own. Your trail, your kit."
-          },
-          "drag": {
-            "title": "Drag between categories",
-            "text": "Move items across your kit as your plan evolves."
           }
         }
       }

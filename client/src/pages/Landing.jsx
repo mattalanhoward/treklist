@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 const mobileSidebarScreenshot = "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_600/v1780329796/branding/treklist-mobile-sidebar_xdoas3.png";
 const mobileColumnScreenshot = "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_600/v1780329796/branding/treklist-column-mobile_bm4spx.png";
 const desktopColumnScreenshot = "https://res.cloudinary.com/treklist/image/upload/f_auto,q_auto,w_1200/v1780329796/branding/treklist-column-desktop-1_yt97lw.png";
@@ -275,32 +275,6 @@ export default function Landing() {
         </div>
       </header>
 
-      {/* Founder / How it Works */}
-      <section id="howItWorks" className="py-16 px-6 bg-slate-50 text-center">
-        <div className="mx-auto max-w-2xl">
-          <h2 className="text-3xl font-bold mb-6">
-            {t("landing.howItWorks.title")}
-          </h2>
-          <p className="text-gray-700 text-lg leading-relaxed">
-            {t("landing.howItWorks.paragraph1")}
-          </p>
-          <p className="text-gray-700 text-lg leading-relaxed mt-4">
-            {t("landing.howItWorks.paragraph2")}
-          </p>
-          <p className="text-gray-700 text-lg leading-relaxed mt-4">
-            {t("landing.howItWorks.paragraph3")}
-          </p>
-          <p className="text-gray-700 text-lg leading-relaxed mt-4 font-medium">
-            {t("landing.howItWorks.paragraph4")}
-          </p>
-          <p className="mt-6 text-gray-500 text-sm font-medium">
-            <a href="https://talljoehikes.com" target="_blank" rel="noopener noreferrer" className="hover:underline">
-              {t("landing.howItWorks.signature")}
-            </a>
-          </p>
-        </div>
-      </section>
-
       {/* ===== Section A: Image (phones) -> Text ===== */}
       <section
         id="features"
@@ -357,11 +331,13 @@ export default function Landing() {
             <ul className="mt-8 space-y-6">
               <Bullet
                 title={t("landing.features.mobile.bullets.catalogCustom.title")}
-                text={t("landing.features.mobile.bullets.catalogCustom.text")}
-              />
-              <Bullet
-                title={t("landing.features.mobile.bullets.quickAdd.title")}
-                text={t("landing.features.mobile.bullets.quickAdd.text")}
+                text={
+                  <Trans
+                    t={t}
+                    i18nKey="landing.features.mobile.bullets.catalogCustom.text"
+                    components={{ bold: <strong className="font-semibold text-slate-700" /> }}
+                  />
+                }
               />
               <Bullet
                 title={t("landing.features.mobile.bullets.checklist.title")}
@@ -370,6 +346,10 @@ export default function Landing() {
               <Bullet
                 title={t("landing.features.mobile.bullets.weightTotals.title")}
                 text={t("landing.features.mobile.bullets.weightTotals.text")}
+              />
+              <Bullet
+                title={t("landing.features.mobile.bullets.community.title")}
+                text={t("landing.features.mobile.bullets.community.text")}
               />
               <Bullet
                 title={t("landing.features.mobile.bullets.mobileFirst.title")}
@@ -417,11 +397,6 @@ export default function Landing() {
               <Bullet
                 title={t("landing.features.desktop.bullets.template.title")}
                 text={t("landing.features.desktop.bullets.template.text")}
-                color="text-emerald-600"
-              />
-              <Bullet
-                title={t("landing.features.desktop.bullets.drag.title")}
-                text={t("landing.features.desktop.bullets.drag.text")}
                 color="text-emerald-600"
               />
             </ul>
@@ -495,6 +470,31 @@ export default function Landing() {
               </a>
             );
           })}
+        </div>
+      </section>
+
+      {/* Founder / How it Works */}
+      {/* Founder story — intentionally hardcoded in English for all locales */}
+      <section id="howItWorks" className="py-16 px-6 bg-slate-100 text-center">
+        <div className="mx-auto max-w-2xl">
+          <h2 className="text-3xl font-bold mb-6">Why I built TrekList.</h2>
+          <p className="text-gray-700 text-lg leading-relaxed">
+            Planning is half the adventure, especially for a bucket list hike.
+          </p>
+          <p className="text-gray-700 text-lg leading-relaxed mt-4">
+            Before my Appalachian Trail thru-hike I built my first gear spreadsheet. It worked, but was tedious and boring. Before the PCT I switched to Lighterpack, the long-standing standard for hikers who care about gear organization and pack weight. It got the job done, but nothing has changed there in years. It&apos;s still a glorified spreadsheet.
+          </p>
+          <p className="text-gray-700 text-lg leading-relaxed mt-4">
+            I wanted to build on that idea. Keep it simple and easy, but actually move it forward. What started as a hobby project kept growing and I kept asking questions. What if there was a community section where hikers could talk gear and trail conditions? What if you could take a photo of product packaging to add gear? Or just drop a product link? What if you could customize backgrounds and implement a kanban-style view alongside the traditional list view? What about users who speak different languages?
+          </p>
+          <p className="text-gray-700 text-lg leading-relaxed mt-4 font-medium">
+            It kept growing and that&apos;s TrekList today. A better tool for the same thing we&apos;ve always loved doing.
+          </p>
+          <p className="mt-6 text-gray-500 text-sm font-medium">
+            <a href="https://talljoehikes.com" target="_blank" rel="noopener noreferrer" className="hover:underline">
+              Tall Joe, 8,000+ miles across North America and Europe
+            </a>
+          </p>
         </div>
       </section>
 

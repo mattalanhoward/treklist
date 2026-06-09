@@ -206,22 +206,6 @@ export default async function LandingPage() {
         </div>
       </header>
 
-      {/* How it works / Founder */}
-      <section id="howItWorks" className="py-16 px-6 bg-slate-50 text-center">
-        <div className="mx-auto max-w-2xl">
-          <h2 className="text-3xl font-bold mb-6">{t('howItWorks.title')}</h2>
-          <p className="text-gray-700 text-lg leading-relaxed">{t('howItWorks.paragraph1')}</p>
-          <p className="text-gray-700 text-lg leading-relaxed mt-4">{t('howItWorks.paragraph2')}</p>
-          <p className="text-gray-700 text-lg leading-relaxed mt-4">{t('howItWorks.paragraph3')}</p>
-          <p className="text-gray-700 text-lg leading-relaxed mt-4 font-medium">{t('howItWorks.paragraph4')}</p>
-          <p className="mt-6 text-gray-500 text-sm font-medium">
-            <a href="https://talljoehikes.com" target="_blank" rel="noopener noreferrer" className="hover:underline">
-              {t('howItWorks.signature')}
-            </a>
-          </p>
-        </div>
-      </section>
-
       {/* Section A: Mobile phones → Text */}
       <section
         id="features"
@@ -256,10 +240,19 @@ export default async function LandingPage() {
               {t('features.mobile.subtitle')}
             </p>
             <ul className="mt-8 space-y-6">
-              <Bullet title={t('features.mobile.bullets.catalogCustom.title')} text={t('features.mobile.bullets.catalogCustom.text')} />
-              <Bullet title={t('features.mobile.bullets.quickAdd.title')} text={t('features.mobile.bullets.quickAdd.text')} />
+              <Bullet
+                title={t('features.mobile.bullets.catalogCustom.title')}
+                text={
+                  <>
+                    Type a few words, drop a product link, or snap a photo of the product packaging. The{' '}
+                    <strong className="font-semibold text-slate-700">smart search bar</strong>{' '}
+                    searches the catalog first. If it&apos;s not there, TrekList fills in the name, brand, category, description, and image for you. You review and add in seconds.
+                  </>
+                }
+              />
               <Bullet title={t('features.mobile.bullets.checklist.title')} text={t('features.mobile.bullets.checklist.text')} />
               <Bullet title={t('features.mobile.bullets.weightTotals.title')} text={t('features.mobile.bullets.weightTotals.text')} />
+              <Bullet title={t('features.mobile.bullets.community.title')} text={t('features.mobile.bullets.community.text')} />
               <Bullet title={t('features.mobile.bullets.mobileFirst.title')} text={t('features.mobile.bullets.mobileFirst.text')} />
             </ul>
           </div>
@@ -281,7 +274,6 @@ export default async function LandingPage() {
               <Bullet title={t('features.desktop.bullets.backgrounds.title')} text={t('features.desktop.bullets.backgrounds.text')} color="text-emerald-600" />
               <Bullet title={t('features.desktop.bullets.share.title')} text={t('features.desktop.bullets.share.text')} color="text-emerald-600" />
               <Bullet title={t('features.desktop.bullets.template.title')} text={t('features.desktop.bullets.template.text')} color="text-emerald-600" />
-              <Bullet title={t('features.desktop.bullets.drag.title')} text={t('features.desktop.bullets.drag.text')} color="text-emerald-600" />
             </ul>
           </div>
           <div className="order-1 md:order-2">
@@ -321,6 +313,30 @@ export default async function LandingPage() {
               </div>
             </a>
           ))}
+        </div>
+      </section>
+
+      {/* Founder story — intentionally hardcoded in English for all locales */}
+      <section id="howItWorks" className="py-16 px-6 bg-slate-100 text-center">
+        <div className="mx-auto max-w-2xl">
+          <h2 className="text-3xl font-bold mb-6">Why I built TrekList.</h2>
+          <p className="text-gray-700 text-lg leading-relaxed">
+            Planning is half the adventure, especially for a bucket list hike.
+          </p>
+          <p className="text-gray-700 text-lg leading-relaxed mt-4">
+            Before my Appalachian Trail thru-hike I built my first gear spreadsheet. It worked, but was tedious and boring. Before the PCT I switched to Lighterpack, the long-standing standard for hikers who care about gear organization and pack weight. It got the job done, but nothing has changed there in years. It&apos;s still a glorified spreadsheet.
+          </p>
+          <p className="text-gray-700 text-lg leading-relaxed mt-4">
+            I wanted to build on that idea. Keep it simple and easy, but actually move it forward. What started as a hobby project kept growing and I kept asking questions. What if there was a community section where hikers could talk gear and trail conditions? What if you could take a photo of product packaging to add gear? Or just drop a product link? What if you could customize backgrounds and implement a kanban-style view alongside the traditional list view? What about users who speak different languages?
+          </p>
+          <p className="text-gray-700 text-lg leading-relaxed mt-4 font-medium">
+            It kept growing and that&apos;s TrekList today. A better tool for the same thing we&apos;ve always loved doing.
+          </p>
+          <p className="mt-6 text-gray-500 text-sm font-medium">
+            <a href="https://talljoehikes.com" target="_blank" rel="noopener noreferrer" className="hover:underline">
+              Tall Joe, 8,000+ miles across North America and Europe
+            </a>
+          </p>
         </div>
       </section>
 
