@@ -6,6 +6,7 @@ import PostCard from "../components/PostCard";
 import CreatePostForm from "../components/CreatePostForm";
 import useAuth from "../hooks/useAuth";
 import usePoll from "../hooks/usePoll";
+import SEO from "../components/SEO";
 
 export default function CommunityFeedView() {
   const { slug } = useParams();
@@ -77,6 +78,7 @@ export default function CommunityFeedView() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
+      <SEO title={community?.name ? `${community.name} · Community` : "Community"} noindex />
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div>

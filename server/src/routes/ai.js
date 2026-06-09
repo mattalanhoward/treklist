@@ -257,33 +257,6 @@ function formatPageDataForPrompt(data) {
   return lines.join("\n");
 }
 
-// ── UPC barcode lookup ─────────────────────────────────────────────────────────
-
-async function lookupUPC(barcode) {
-  try {
-    const res = await fetch(
-      `https://api.upcitemdb.com/prod/trial/lookup?upc=${encodeURIComponent(barcode)}`,
-      {
-        signal: AbortSignal.timeout(6000),
-        headers: { Accept: "application/json", "User-Agent": "Treklist/1.0" },
-      }
-    );
-    if (!res.ok) return null;
-    const data = await res.json();
-    const item = data.items?.[0];
-    if (!item) return null;
-    return {
-      title: item.title || null,
-      brand: item.brand || null,
-      description: item.description || null,
-      imageUrl: item.images?.[0] || null,
-    };
-  } catch (err) {
-    console.warn("[scan-item] UPC lookup failed:", err.message);
-    return null;
-  }
-}
-
 // ── Routes ─────────────────────────────────────────────────────────────────────
 
 router.post("/fill-item", async (req, res) => {
@@ -397,13 +370,13 @@ Return only valid JSON. No explanation, no markdown.`;
 });
 
 // ── POST /scan-item ────────────────────────────────────────────────────────────
-// Body: { barcode?: string, image?: string (data URL) }
-// Returns the same shape as /fill-item, plus scanMethod and barcodeValue
+// Body: { image: string (data URL) }
+// Returns the same shape as /fill-item
 
 router.post("/scan-item", async (req, res) => {
-  const { barcode, image } = req.body;
-  if (!barcode && !image) {
-    return res.status(400).json({ error: "barcode or image required" });
+  const { image } = req.body;
+  if (!image) {
+    return res.status(400).json({ error: "image required" });
   }
 
   const anthropic = getClient();
@@ -441,42 +414,22 @@ CRITICAL: Your response must be ONLY a valid JSON object — no text before or a
 If this is NOT outdoor gear or you cannot identify it, return exactly: {"name":null}`;
 
   try {
-    let messages;
-    let barcodeProductData = null;
-
-    if (barcode) {
-      barcodeProductData = await lookupUPC(barcode);
-      if (barcodeProductData) {
-        const lines = [
-          barcodeProductData.title && `Product title: ${barcodeProductData.title}`,
-          barcodeProductData.brand && `Brand: ${barcodeProductData.brand}`,
-          barcodeProductData.description && `Description: ${barcodeProductData.description}`,
-        ].filter(Boolean);
-        messages = [{ role: "user", content: lines.join("\n") }];
-      } else {
-        messages = [{
-          role: "user",
-          content: `Product barcode: ${barcode}\nThis barcode was not found in product databases. Return {"name":null} if you cannot identify it.`,
-        }];
-      }
-    } else {
-      const base64Match = image.match(/^data:([^;]+);base64,(.+)$/s);
-      if (!base64Match) {
-        return res.status(400).json({ error: "Invalid image format" });
-      }
-      const mediaType = base64Match[1];
-      const base64Data = base64Match[2];
-      if (!["image/jpeg", "image/png", "image/webp", "image/gif"].includes(mediaType)) {
-        return res.status(400).json({ error: "Unsupported image type. Use JPEG, PNG, or WebP." });
-      }
-      messages = [{
-        role: "user",
-        content: [
-          { type: "image", source: { type: "base64", media_type: mediaType, data: base64Data } },
-          { type: "text", text: "Identify this outdoor gear item. Look for visible brand logos, model numbers, tags, labels, or distinguishing physical features. Return the JSON as specified." },
-        ],
-      }];
+    const base64Match = image.match(/^data:([^;]+);base64,(.+)$/s);
+    if (!base64Match) {
+      return res.status(400).json({ error: "Invalid image format" });
     }
+    const mediaType = base64Match[1];
+    const base64Data = base64Match[2];
+    if (!["image/jpeg", "image/png", "image/webp", "image/gif"].includes(mediaType)) {
+      return res.status(400).json({ error: "Unsupported image type. Use JPEG, PNG, or WebP." });
+    }
+    const messages = [{
+      role: "user",
+      content: [
+        { type: "image", source: { type: "base64", media_type: mediaType, data: base64Data } },
+        { type: "text", text: "Identify this outdoor gear item. Look for visible brand logos, model numbers, tags, labels, or distinguishing physical features. Return the JSON as specified." },
+      ],
+    }];
 
     const message = await anthropic.messages.create({
       model: "claude-haiku-4-5-20251001",
@@ -503,10 +456,7 @@ If this is NOT outdoor gear or you cannot identify it, return exactly: {"name":n
 
     const resultBrand = typeof raw.brand === "string" ? raw.brand.trim() || null : null;
 
-    let imageUrl = barcodeProductData?.imageUrl || null;
-    if (!imageUrl) {
-      imageUrl = await fetchGoogleImage(resultBrand, resultName);
-    }
+    const imageUrl = await fetchGoogleImage(resultBrand, resultName);
 
     res.json({
       name: resultName,
@@ -517,8 +467,6 @@ If this is NOT outdoor gear or you cannot identify it, return exactly: {"name":n
       description: typeof raw.description === "string" ? raw.description.trim() || null : null,
       link: null,
       imageUrl,
-      scanMethod: barcode ? "barcode" : "vision",
-      barcodeValue: barcode || null,
     });
   } catch (err) {
     console.error("[Anthropic] scan-item failed:", err.message);
