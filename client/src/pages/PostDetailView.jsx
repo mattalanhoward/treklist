@@ -9,6 +9,7 @@ import useAuth from "../hooks/useAuth";
 import usePoll from "../hooks/usePoll";
 import { toast } from "react-hot-toast";
 import { formatDistanceToNow } from "date-fns";
+import SEO from "../components/SEO";
 
 function isFlaggedInStorage(type, id) {
   try { return JSON.parse(localStorage.getItem(`community:flagged:${type}`) || "[]").includes(id); }
@@ -126,6 +127,7 @@ export default function PostDetailView() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
+      <SEO title={`${post.title} · Community`} noindex />
       {/* Back link */}
       <Link
         to={`/community/${slug}`}
