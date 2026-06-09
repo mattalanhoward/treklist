@@ -1,6 +1,5 @@
 // client/src/components/PhotoScanModal.jsx
-// Barcode + AI vision gear scanner.
-// Scan flow: capture/upload → BarcodeDetector (if available) → /api/ai/scan-item
+// AI vision gear scanner. Scan flow: capture/upload → /api/ai/scan-item
 import React, { useState, useRef } from "react";
 import { FiCamera, FiUpload, FiX, FiRefreshCw, FiCheck } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
@@ -12,52 +11,19 @@ export default function PhotoScanModal({ onResult, onClose }) {
   const { t } = useTranslation("common");
   const [phase, setPhase] = useState("idle"); // idle | scanning | result | error
   const [imagePreview, setImagePreview] = useState(null);
-  const [scanMethod, setScanMethod] = useState(null); // 'barcode' | 'vision'
-  const [barcodeValue, setBarcodeValue] = useState(null);
   const [result, setResult] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const cameraInputRef = useRef(null);
   const uploadInputRef = useRef(null);
 
-  async function tryBarcodeDetect(img) {
-    if (!("BarcodeDetector" in window)) return null;
-    try {
-      const detector = new window.BarcodeDetector({
-        formats: ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "code_39", "qr_code"],
-      });
-      const barcodes = await detector.detect(img);
-      return barcodes?.[0]?.rawValue || null;
-    } catch {
-      return null;
-    }
-  }
-
   async function processImage(dataUrl) {
     setImagePreview(dataUrl);
     setPhase("scanning");
     setErrorMsg(null);
-    setBarcodeValue(null);
-    setScanMethod(null);
-
-    const img = new Image();
-    img.src = dataUrl;
-    await new Promise((resolve) => { img.onload = resolve; img.onerror = resolve; });
 
     try {
-      const detectedBarcode = await tryBarcodeDetect(img);
-
-      // Upload photo to Cloudinary in parallel with AI scan; ignore failures silently
       const uploadPromise = uploadGearItemPhoto(dataUrl).catch(() => null);
-
-      let scanPromise;
-      if (detectedBarcode) {
-        setBarcodeValue(detectedBarcode);
-        setScanMethod("barcode");
-        scanPromise = api.post("/ai/scan-item", { barcode: detectedBarcode });
-      } else {
-        setScanMethod("vision");
-        scanPromise = api.post("/ai/scan-item", { image: dataUrl });
-      }
+      const scanPromise = api.post("/ai/scan-item", { image: dataUrl });
 
       const [{ data }, uploadResult] = await Promise.all([scanPromise, uploadPromise]);
       if (uploadResult?.secureUrl) data.photoUrl = uploadResult.secureUrl;
@@ -83,8 +49,6 @@ export default function PhotoScanModal({ onResult, onClose }) {
   function reset() {
     setPhase("idle");
     setImagePreview(null);
-    setBarcodeValue(null);
-    setScanMethod(null);
     setResult(null);
     setErrorMsg(null);
   }
@@ -145,9 +109,7 @@ export default function PhotoScanModal({ onResult, onClose }) {
               <div className="flex items-center justify-center gap-2 py-2">
                 <div className="w-4 h-4 border-2 border-secondary border-t-transparent rounded-full animate-spin" />
                 <span className="text-sm text-primary/60">
-                  {scanMethod === "barcode"
-                    ? t("photoScanModal.scanningBarcode", "Barcode detected — looking up…")
-                    : t("photoScanModal.scanningVision", "Identifying with AI…")}
+                  {t("photoScanModal.scanningVision", "Identifying with AI…")}
                 </span>
               </div>
             </div>
@@ -159,14 +121,8 @@ export default function PhotoScanModal({ onResult, onClose }) {
               {imagePreview && (
                 <img src={imagePreview} alt="" className="w-full h-32 object-cover rounded-lg" />
               )}
-              <span className={`inline-block text-xs px-2 py-0.5 rounded-full font-medium ${
-                scanMethod === "barcode"
-                  ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                  : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-              }`}>
-                {scanMethod === "barcode"
-                  ? `${t("photoScanModal.badgeBarcodePrefix", "Barcode")} · ${barcodeValue}`
-                  : t("photoScanModal.badgeVision", "AI Vision")}
+              <span className="inline-block text-xs px-2 py-0.5 rounded-full font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+                {t("photoScanModal.badgeVision", "AI Vision")}
               </span>
               <dl className="space-y-1.5 text-sm">
                 <div className="flex gap-2">
