@@ -15,6 +15,7 @@ import useAuth from "../hooks/useAuth";
 import usePoll from "../hooks/usePoll";
 import { toast } from "react-hot-toast";
 import { uploadCommunityImage } from "../services/cloudinaryUpload";
+import { downscaleToTargetBytes } from "../utils/imageProcessing";
 import { cldTransformUrl } from "../utils/cloudinary";
 import ImageCarousel from "../components/ImageCarousel";
 import { formatDistanceToNow } from "date-fns";
@@ -647,7 +648,12 @@ function CommunityFeed({ community, onBack, onSelectPost, currentUserId, onToggl
     if (!toUpload.length) { toast.error(t("community.toasts.maxImages")); return; }
     setImageUploading(true);
     try {
-      const results = await Promise.all(toUpload.map((file) => uploadCommunityImage({ file })));
+      const results = await Promise.all(
+        toUpload.map(async (file) => {
+          const { blob } = await downscaleToTargetBytes(file, { maxSize: 2000, maxBytes: 1_000_000 });
+          return uploadCommunityImage({ file: blob });
+        })
+      );
       setPostImageUrls((prev) => [...prev, ...results.map((r) => r.secureUrl)]);
     } catch (err) { toast.error(err.message || "Could not upload image(s)"); }
     finally { setImageUploading(false); e.target.value = ""; }
@@ -1098,7 +1104,12 @@ function PostDetail({ postId, community, onBack, currentUserId, onSelectPost }) 
     if (!toUpload.length) { toast.error(t("community.toasts.maxImages")); return; }
     setEditImageUploading(true);
     try {
-      const results = await Promise.all(toUpload.map((file) => uploadCommunityImage({ file })));
+      const results = await Promise.all(
+        toUpload.map(async (file) => {
+          const { blob } = await downscaleToTargetBytes(file, { maxSize: 2000, maxBytes: 1_000_000 });
+          return uploadCommunityImage({ file: blob });
+        })
+      );
       setEditImageUrls((prev) => [...prev, ...results.map((r) => r.secureUrl)]);
     } catch (err) { toast.error(err.message || "Could not upload image(s)"); }
     finally { setEditImageUploading(false); e.target.value = ""; }

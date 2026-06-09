@@ -6,6 +6,7 @@ import { FiCamera, FiUpload, FiX, FiRefreshCw, FiCheck } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import api from "../services/api";
 import { uploadGearItemPhoto } from "../services/cloudinaryUpload";
+import { downscaleImageFile } from "../utils/imageProcessing";
 
 export default function PhotoScanModal({ onResult, onClose }) {
   const { t } = useTranslation("common");
@@ -69,13 +70,14 @@ export default function PhotoScanModal({ onResult, onClose }) {
     }
   }
 
-  function handleFileChange(e) {
+  async function handleFileChange(e) {
     const file = e.target.files?.[0];
     if (!file) return;
+    e.target.value = "";
+    const { blob } = await downscaleImageFile(file, { maxSize: 1600, quality: 0.85 });
     const reader = new FileReader();
     reader.onload = (ev) => processImage(ev.target.result);
-    reader.readAsDataURL(file);
-    e.target.value = "";
+    reader.readAsDataURL(blob);
   }
 
   function reset() {
