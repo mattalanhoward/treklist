@@ -40,10 +40,15 @@ export default function PhotoScanModal({ onResult, onClose }) {
     const file = e.target.files?.[0];
     if (!file) return;
     e.target.value = "";
-    const { blob } = await downscaleImageFile(file, { maxSize: 1600, quality: 0.85 });
-    const reader = new FileReader();
-    reader.onload = (ev) => processImage(ev.target.result);
-    reader.readAsDataURL(blob);
+    try {
+      const { blob } = await downscaleImageFile(file, { maxSize: 1600, quality: 0.85 });
+      const reader = new FileReader();
+      reader.onload = (ev) => processImage(ev.target.result);
+      reader.readAsDataURL(blob);
+    } catch {
+      setErrorMsg(t("photoScanModal.errorFallback", "Scan failed. Try again or add manually."));
+      setPhase("error");
+    }
   }
 
   function reset() {
