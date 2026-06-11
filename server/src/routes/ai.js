@@ -392,7 +392,7 @@ router.post("/scan-item", async (req, res) => {
       ? ""
       : `\nWrite the \`description\` field in ${languageName}. All other fields stay in standard format.`;
 
-  const systemPrompt = `You are an expert outdoor gear product database with detailed knowledge of hiking, backpacking, camping, and outdoor gear.
+  const systemPrompt = `You are an expert product database with deep knowledge of outdoor gear (hiking, backpacking, camping) as well as general consumer products. Items do not need to be outdoor gear — identify whatever product is shown.
 
 Given product information (text or image), return a JSON object with these exact fields:
 - name: model name without brand prefix (string, required)
@@ -411,7 +411,7 @@ DESCRIPTION rules:
 • Never write generic phrases like "designed for outdoor adventures"${descLangInstruction}
 
 CRITICAL: Your response must be ONLY a valid JSON object — no text before or after, no apology, no explanation.
-If this is NOT outdoor gear or you cannot identify it, return exactly: {"name":null}`;
+If you cannot identify the item at all, return exactly: {"name":null}`;
 
   try {
     const base64Match = image.match(/^data:([^;]+);base64,(.+)$/s);
@@ -427,7 +427,7 @@ If this is NOT outdoor gear or you cannot identify it, return exactly: {"name":n
       role: "user",
       content: [
         { type: "image", source: { type: "base64", media_type: mediaType, data: base64Data } },
-        { type: "text", text: "Identify this outdoor gear item. Look for visible brand logos, model numbers, tags, labels, or distinguishing physical features. Return the JSON as specified." },
+        { type: "text", text: "Identify this product. Look for visible brand logos, model numbers, tags, labels, or distinguishing physical features. Return the JSON as specified." },
       ],
     }];
 
@@ -446,12 +446,12 @@ If this is NOT outdoor gear or you cannot identify it, return exactly: {"name":n
     try {
       raw = JSON.parse(cleaned);
     } catch {
-      return res.status(422).json({ error: "Item not recognized as outdoor gear" });
+      return res.status(422).json({ error: "Could not identify an item in this photo" });
     }
 
     const resultName = typeof raw.name === "string" ? raw.name.trim() : null;
     if (!resultName) {
-      return res.status(422).json({ error: "Item not recognized as outdoor gear" });
+      return res.status(422).json({ error: "Could not identify an item in this photo" });
     }
 
     const resultBrand = typeof raw.brand === "string" ? raw.brand.trim() || null : null;

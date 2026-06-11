@@ -629,6 +629,20 @@ export default function SmartItemSearch({
     }
   };
 
+  // Inject a catalog item into the results and select it, restoring the
+  // invariants the normal search flow maintains: exclusive selection, no
+  // custom form, and the Import tab active.
+  const selectCatalogItem = (item) => {
+    setCatalogResults((prev) => {
+      const ids = new Set(prev.map((i) => String(i._id)));
+      return ids.has(String(item._id)) ? prev : [item, ...prev];
+    });
+    setCatalogSelected(new Set([String(item._id)]));
+    setMyGearSelected(new Set());
+    setCustomMode(null);
+    if (tabLayout) setAndPersistTab("import");
+  };
+
   // Create action — runs AI fill, then either shows a catalog match or pre-fills the custom form
   const handleCreateAction = async (queryOverride) => {
     const inputQuery = (queryOverride !== undefined ? queryOverride : query).trim();
@@ -652,12 +666,7 @@ export default function SmartItemSearch({
         // Found in catalog — switch to Import tab and auto-select.
         // Do NOT update query here: changing it would re-trigger the debounced catalog
         // search, causing a loading spinner that wipes the result before the new fetch completes.
-        setCatalogResults((prev) => {
-          const ids = new Set(prev.map((i) => String(i._id)));
-          return ids.has(String(catalogMatch._id)) ? prev : [catalogMatch, ...prev];
-        });
-        setCatalogSelected(new Set([String(catalogMatch._id)]));
-        if (tabLayout) setAndPersistTab("import");
+        selectCatalogItem(catalogMatch);
       } else {
         // No catalog match — switch to Custom tab, only fill empty fields
         setCustomMode("ai");
@@ -1027,8 +1036,8 @@ export default function SmartItemSearch({
                 </>
               )}
 
-              {/* Catalog — shown when searching or category filter active */}
-              {hasSearchIntent && (
+              {/* Catalog — shown when searching, filtering, or holding an injected scan match */}
+              {(hasSearchIntent || catalogResults.length > 0) && (
                 <ResultSection
                   title={t("smartItemSearch.fromCatalog", "From Catalog")}
                   items={catalogResults}
@@ -1216,6 +1225,10 @@ export default function SmartItemSearch({
               link: "",
               imageUrl: scanData.photoUrl || scanData.imageUrl || "",
             });
+          }}
+          onCatalogSelect={(item) => {
+            setShowScanModal(false);
+            selectCatalogItem(item);
           }}
         />
       )}
