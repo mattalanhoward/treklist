@@ -171,7 +171,7 @@ async function tryShopifyJson(url, signal) {
     if (!p) return null;
 
     // Collect unique variant titles + weights
-    const variants = (p.variants || [])
+    const allVariants = (p.variants || [])
       .slice(0, 8)
       .map((v) => {
         const wg =
@@ -179,14 +179,17 @@ async function tryShopifyJson(url, signal) {
             ? toGrams(v.weight, v.weight_unit)
             : null;
         return { title: v.title, weightGrams: wg };
-      })
-      .filter((v) => v.title !== "Default Title");
+      });
+    const variants = allVariants.filter((v) => v.title !== "Default Title");
 
     return {
       source: "shopify",
       title: p.title,
       vendor: p.vendor,
       description: stripHtml(p.body_html || "").slice(0, 600),
+      // Single-variant products: the variant weight IS the product weight
+      // (often shipping weight — a page spec-table weight overrides it later)
+      weightGrams: allVariants.length === 1 ? allVariants[0].weightGrams : undefined,
       variants,
     };
   } catch {
@@ -206,6 +209,18 @@ function extractSpecsFromText(text) {
   // Any "weight" label near a gram value
   const anyW = text.match(/\bweight[^\d]{0,60}(\d+)\s*g\b/i);
   if (anyW) return { weightGrams: parseInt(anyW[1], 10) };
+
+  // Metric: "Weight: 1.13 kg"
+  const kg = text.match(/\bweight[^\d]{0,60}(\d+(?:\.\d+)?)\s*kg\b/i);
+  if (kg) return { weightGrams: Math.round(parseFloat(kg[1]) * 1000) };
+
+  // Imperial: "Weight: 2 lb 7.5 oz" (oz part optional)
+  const lboz = text.match(/\bweight[^\d]{0,60}(\d+)\s*lbs?\b(?:[^\d]{0,10}(\d+(?:\.\d+)?)\s*oz)?/i);
+  if (lboz) {
+    const grams =
+      parseFloat(lboz[1]) * 453.592 + (lboz[2] ? parseFloat(lboz[2]) * 28.3495 : 0);
+    return { weightGrams: Math.round(grams) };
+  }
 
   return {};
 }
@@ -354,7 +369,7 @@ Given a product name query, return a JSON object with these exact fields:
 - name: model name without brand and without generic product-type words like "Backpack", "Tent", "Stove" — those belong in itemType (string, required). Include size/variant only if explicitly specified in the query
 - brand: manufacturer name with correct capitalization (string or null)
 - itemType: specific product type in plain English, e.g. "Canister Stove", "Frameless Backpack", "Inflatable Sleeping Pad" (string or null)
-- weightGrams: always null — do not guess weights, they change between model years
+- weightGrams: integer grams ONLY if a weight appears in the product data provided above (choose the standard/Regular variant when several are listed); otherwise null — never use weights from memory, they change between model years
 - category: exactly one of these values or null: ${CATALOG_CATEGORIES.join(", ")}
 - description: a specific, technical 1–2 sentence description mentioning key specs for the product type (string or null)
 
@@ -434,7 +449,10 @@ Never write sentences like "designed for outdoor adventures" or "perfect for hik
         name: resultName,
         brand: resultBrand,
         itemType: typeof raw.itemType === "string" ? raw.itemType.trim() || null : null,
-        weightGrams: scrapedWeight ?? null, // scraped spec only — the model never guesses weights
+        // Scraped weight wins; else the weight the model copied from page data
+        weightGrams:
+          scrapedWeight ??
+          (typeof raw.weightGrams === "number" ? Math.round(raw.weightGrams) : null),
         category: CATALOG_CATEGORIES.includes(raw.category) ? raw.category : null,
         description:
           typeof raw.description === "string" ? raw.description.trim() || null : null,
