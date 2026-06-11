@@ -847,15 +847,32 @@ export default function SmartItemSearch({
     <div
       className="flex flex-col h-full"
       onDragOver={(e) => {
-        if (e.dataTransfer?.types?.includes("Files")) e.preventDefault();
+        const types = e.dataTransfer?.types || [];
+        if (["Files", "text/uri-list", "text/plain"].some((t) => types.includes(t))) {
+          e.preventDefault();
+        }
       }}
       onDrop={(e) => {
+        // Dropped image → photo scan
         const file = [...(e.dataTransfer?.files || [])].find((f) =>
           f.type.startsWith("image/"),
         );
         if (file) {
           e.preventDefault();
           openScanWithFile(file);
+          return;
+        }
+        // Dropped link → same flow as pasting a URL
+        const raw =
+          e.dataTransfer?.getData("text/uri-list") || e.dataTransfer?.getData("text") || "";
+        const url = raw
+          .split("\n")
+          .map((l) => l.trim())
+          .find((l) => l && !l.startsWith("#"));
+        if (isUrl(url)) {
+          e.preventDefault();
+          setQuery(url);
+          handleCreateAction(url);
         }
       }}
     >
