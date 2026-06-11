@@ -4,6 +4,7 @@ const rateLimit = require("express-rate-limit");
 const router = express.Router();
 const { getClient } = require("../services/anthropicService");
 const { findCatalogMatches } = require("../services/catalogMatch");
+const AffiliateProduct = require("../models/affiliateProduct");
 const User = require("../models/user");
 
 // Per-user limit — every request here costs Anthropic tokens
@@ -364,6 +365,7 @@ DESCRIPTION — be specific, never generic:
 • Tents/shelters: capacity, pole material, freestanding or not
 • Footwear: waterproofing, boot height
 • Cooking: fuel type, boil time
+Only state specs you are confident about — omit a spec entirely rather than guess (e.g. never claim a tent is freestanding or name pole materials unless certain).
 Never write sentences like "designed for outdoor adventures" or "perfect for hiking".${descLangInstruction}`;
 
   const trimmedQuery = query.trim();
@@ -377,6 +379,21 @@ Never write sentences like "designed for outdoor adventures" or "perfect for hik
       const isUrl = /^https?:\/\//i.test(trimmedQuery);
       let userMessage = trimmedQuery;
       let scrapedImageUrl = null;
+      let scrapedWeight = null;
+      let affiliateImage = null;
+
+      // Bare merchant item number (e.g. Decathlon "8975262") — resolve it
+      // through the affiliate feed so the AI gets a real product name
+      if (!isUrl && /^\d{5,}$/.test(trimmedQuery)) {
+        const affiliate = await AffiliateProduct.findOne({ merchantProductId: trimmedQuery }).lean();
+        if (affiliate) {
+          userMessage = `Product: ${[affiliate.brand, affiliate.name].filter(Boolean).join(" ")}`;
+          if (affiliate.description) {
+            userMessage += `\n\n${String(affiliate.description).slice(0, 400)}`;
+          }
+          affiliateImage = affiliate.imageUrl || affiliate.imageUrls?.[0] || null;
+        }
+      }
 
       if (isUrl) {
         // Amazon mobile/sharing redirect URLs contain no product info — fail early with a clear message
@@ -393,11 +410,12 @@ Never write sentences like "designed for outdoor adventures" or "perfect for hik
           userMessage = `URL: ${trimmedQuery}\n\n${formatted}`;
         }
         if (pageData?.imageUrl) scrapedImageUrl = pageData.imageUrl;
+        if (pageData?.weightGrams) scrapedWeight = pageData.weightGrams;
         // If fetch failed, fall through with just the URL — Claude will still parse the slug
       }
 
       const message = await anthropic.messages.create({
-        model: "claude-haiku-4-5",
+        model: "claude-sonnet-4-6",
         max_tokens: 1000,
         system: systemPrompt,
         output_config: ITEM_OUTPUT_CONFIG,
@@ -416,12 +434,12 @@ Never write sentences like "designed for outdoor adventures" or "perfect for hik
         name: resultName,
         brand: resultBrand,
         itemType: typeof raw.itemType === "string" ? raw.itemType.trim() || null : null,
-        weightGrams: null,
+        weightGrams: scrapedWeight ?? null, // scraped spec only — the model never guesses weights
         category: CATALOG_CATEGORIES.includes(raw.category) ? raw.category : null,
         description:
           typeof raw.description === "string" ? raw.description.trim() || null : null,
         link: isUrl ? trimmedQuery : null,
-        imageUrl: await validateImageUrl(scrapedImageUrl),
+        imageUrl: await validateImageUrl(scrapedImageUrl || affiliateImage),
       };
       fillCacheSet(cacheKey, result);
     }

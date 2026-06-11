@@ -365,7 +365,7 @@ export default function SmartItemSearch({
   showMyGear = true,
   excludeGlobalItemId = null,
   existingGlobalIds = new Set(),
-  existingProductIds = new Set(),
+  existingProductIds,
   onConfirm,
   onClose,
   tabLayout = false,
@@ -689,6 +689,15 @@ export default function SmartItemSearch({
     }
   };
 
+  // "Already added" detection for catalog rows: list contexts pass the list's
+  // productIds explicitly; everywhere else fall back to My Gear ownership
+  const effectiveProductIds = useMemo(
+    () =>
+      existingProductIds ??
+      new Set(myGearItems.map((i) => i.productId).filter(Boolean).map(String)),
+    [existingProductIds, myGearItems],
+  );
+
   // Inject catalog items into the results (optionally selecting one),
   // restoring the invariants the normal search flow maintains: exclusive
   // selection, no custom form, and the Import tab active.
@@ -699,7 +708,7 @@ export default function SmartItemSearch({
       return added.length ? [...added, ...prev] : prev;
     });
     // Never auto-select an item that's already in the list (row renders disabled)
-    const selectable = select && !existingProductIds.has(String(select._id));
+    const selectable = select && !effectiveProductIds.has(String(select._id));
     setCatalogSelected(selectable ? new Set([String(select._id)]) : new Set());
     setMyGearSelected(new Set());
     setCustomMode(null);
@@ -1174,7 +1183,7 @@ export default function SmartItemSearch({
                   onViewCatalogDetails={handleViewCatalogDetails}
                   multiSelect={multiSelect}
                   existingGlobalIds={existingGlobalIds}
-                  existingProductIds={existingProductIds}
+                  existingProductIds={effectiveProductIds}
                   loading={catalogLoading}
                 />
               )}
@@ -1356,6 +1365,9 @@ export default function SmartItemSearch({
           onCatalogSelect={(item) => {
             closeScanModal();
             selectCatalogItem(item);
+            // Show full details with an Import button — tapping a match should
+            // confirm, not just silently select in the background list
+            handleViewCatalogDetails(item);
           }}
         />
       )}
