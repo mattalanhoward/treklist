@@ -651,7 +651,6 @@
     "added": "Added",
     "noGearYet": "No gear yet. Search the catalog or describe an item above.",
     "browseHint": "Search the catalog above, or tap a category to browse.",
-    "aiSearching": "Searching with AI...",
     "aiSearchingShort": "Searching…",
     "aiFill": "Fill with AI",
     "aiTip": "Tip: include brand, model & size for better results",
@@ -711,7 +710,9 @@
       "aiFailed": "AI search failed. Try adding manually.",
       "nameRequired": "Name is required",
       "invalidWeight": "Invalid weight",
-      "previewLoadFailed": "Failed to load item details."
+      "previewLoadFailed": "Failed to load item details.",
+      "catalogMatch": "Found in catalog",
+      "catalogMatches": "Found possible matches — pick yours below"
     },
     "gearRequest": {
       "title": "Request a Gear Item",
@@ -730,27 +731,28 @@
         "success": "Request sent! We'll look into adding it.",
         "failed": "Failed to send request. Please try again."
       }
+    },
+    "tabSearchHint": "Type & press Enter · Paste a link · Snap a photo",
+    "browseToggle": "Browse categories",
+    "aiProgress": {
+      "reading": "Reading product page…",
+      "identifying": "Identifying the item…",
+      "matching": "Matching against the catalog…"
     }
   },
   "photoScanModal": {
     "title": "Scan Gear",
-    "subtitle": "Product packaging or product info screenshot",
     "takePhoto": "Take Photo",
     "uploadScreenshot": "Upload Screenshot",
     "hint": "Works best with product packaging and product info screenshots",
-    "scanningBarcode": "Barcode detected — looking up…",
     "scanningVision": "Identifying with AI…",
     "tryAgain": "Try again",
-    "useThisItem": "Use this item",
     "errorFallback": "Scan failed. Try again or add manually.",
-    "badgeBarcodePrefix": "Barcode",
-    "badgeVision": "AI Vision",
-    "fieldName": "Name",
-    "fieldBrand": "Brand",
-    "fieldCategory": "Category",
-    "fieldType": "Type",
-    "fieldWeight": "Weight",
-    "fieldDesc": "Desc"
+    "catalogMatchHeading": "Found in catalog — is this your item?",
+    "noneOfThese": "None of these",
+    "errorNotIdentified": "Couldn't identify an item in this photo. Try a clearer shot of the packaging or label.",
+    "errorRateLimited": "Too many scans — wait a minute and try again.",
+    "scanningMatching": "Matching against the catalog…"
   },
   "addGearItemModal": {
     "title": "Add gear item(s)",
@@ -1466,7 +1468,10 @@
   "community": {
     "searchPlaceholder": "Search everything…",
     "titlePlaceholder": "Title",
-    "sort": { "new": "New", "top": "Top" },
+    "sort": {
+      "new": "New",
+      "top": "Top"
+    },
     "noPosts": "No posts yet. Be the first!",
     "loadMore": "Load more",
     "postNotFound": "Post not found.",
@@ -1490,7 +1495,11 @@
       "rule6Desc": "We're all here because we love the outdoors. Keep the energy positive and welcoming for everyone."
     },
     "shareSomethingWith": "Share something with {{name}}…",
-    "toolbar": { "bold": "Bold", "italic": "Italic", "bulletList": "Bullet list" },
+    "toolbar": {
+      "bold": "Bold",
+      "italic": "Italic",
+      "bulletList": "Bullet list"
+    },
     "post": {
       "createTitle": "Create post",
       "editTitle": "Edit post",

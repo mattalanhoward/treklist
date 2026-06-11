@@ -635,7 +635,6 @@
     "added": "Toegevoegd",
     "noGearYet": "Nog geen uitrusting. Zoek in de catalogus of beschrijf een artikel hierboven.",
     "browseHint": "Zoek in de catalogus of tik op een categorie om te bladeren.",
-    "aiSearching": "Zoeken met AI...",
     "aiSearchingShort": "Zoeken…",
     "aiFill": "Invullen met AI",
     "aiTip": "Tip: voeg merk, model en maat toe voor betere resultaten",
@@ -695,7 +694,9 @@
       "aiFailed": "AI-zoekopdracht mislukt. Probeer handmatig toe te voegen.",
       "nameRequired": "Naam is verplicht",
       "invalidWeight": "Ongeldig gewicht",
-      "previewLoadFailed": "Artikeldetails konden niet worden geladen."
+      "previewLoadFailed": "Artikeldetails konden niet worden geladen.",
+      "catalogMatch": "Gevonden in de catalogus",
+      "catalogMatches": "Mogelijke matches gevonden — kies die van jou hieronder"
     },
     "gearRequest": {
       "title": "Uitrusting aanvragen",
@@ -714,27 +715,28 @@
         "success": "Verzoek verzonden! We kijken of we het kunnen toevoegen.",
         "failed": "Verzoek verzenden mislukt. Probeer het opnieuw."
       }
+    },
+    "tabSearchHint": "Typ & druk op Enter · Plak een link · Maak een foto",
+    "browseToggle": "Categorieën bekijken",
+    "aiProgress": {
+      "reading": "Productpagina lezen…",
+      "identifying": "Item identificeren…",
+      "matching": "Vergelijken met de catalogus…"
     }
   },
   "photoScanModal": {
     "title": "Uitrusting scannen",
-    "subtitle": "Productverpakking of productinfo-screenshot",
     "takePhoto": "Foto nemen",
     "uploadScreenshot": "Screenshot uploaden",
     "hint": "Werkt het beste met productverpakkingen en screenshots",
-    "scanningBarcode": "Barcode gedetecteerd — opzoeken…",
     "scanningVision": "Identificeren met AI…",
     "tryAgain": "Opnieuw proberen",
-    "useThisItem": "Dit artikel gebruiken",
     "errorFallback": "Scannen mislukt. Probeer opnieuw of voeg handmatig toe.",
-    "badgeBarcodePrefix": "Barcode",
-    "badgeVision": "AI-visie",
-    "fieldName": "Naam",
-    "fieldBrand": "Merk",
-    "fieldCategory": "Categorie",
-    "fieldType": "Type",
-    "fieldWeight": "Gewicht",
-    "fieldDesc": "Beschr."
+    "catalogMatchHeading": "Gevonden in de catalogus — is dit jouw item?",
+    "noneOfThese": "Geen van deze",
+    "errorNotIdentified": "Geen item herkend op deze foto. Probeer een scherpere foto van de verpakking of het etiket.",
+    "errorRateLimited": "Te veel scans — wacht een minuut en probeer het opnieuw.",
+    "scanningMatching": "Vergelijken met de catalogus…"
   },
   "addGearItemModal": {
     "title": "Uitrustingsitems toevoegen",
@@ -1456,7 +1458,10 @@
   "community": {
     "searchPlaceholder": "Overal zoeken…",
     "titlePlaceholder": "Titel",
-    "sort": { "new": "Nieuw", "top": "Top" },
+    "sort": {
+      "new": "Nieuw",
+      "top": "Top"
+    },
     "noPosts": "Nog geen berichten. Wees de eerste!",
     "loadMore": "Meer laden",
     "postNotFound": "Bericht niet gevonden.",
@@ -1480,7 +1485,11 @@
       "rule6Desc": "We zijn hier allemaal omdat we van de buitenlucht houden. Houd de energie positief en verwelkomend voor iedereen."
     },
     "shareSomethingWith": "Deel iets met {{name}}…",
-    "toolbar": { "bold": "Vet", "italic": "Cursief", "bulletList": "Ongeordende lijst" },
+    "toolbar": {
+      "bold": "Vet",
+      "italic": "Cursief",
+      "bulletList": "Ongeordende lijst"
+    },
     "post": {
       "createTitle": "Bericht plaatsen",
       "editTitle": "Bericht bewerken",

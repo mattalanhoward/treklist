@@ -635,7 +635,6 @@
     "added": "Hinzugefügt",
     "noGearYet": "Noch keine Ausrüstung. Durchsuche den Katalog oder beschreibe einen Artikel oben.",
     "browseHint": "Durchsuche den Katalog oben oder tippe auf eine Kategorie.",
-    "aiSearching": "Suche mit KI...",
     "aiSearchingShort": "Suche…",
     "aiFill": "Mit KI ausfüllen",
     "aiTip": "Tipp: Marke, Modell & Größe angeben für bessere Ergebnisse",
@@ -695,7 +694,9 @@
       "aiFailed": "KI-Suche fehlgeschlagen. Manuell hinzufügen versuchen.",
       "nameRequired": "Name ist erforderlich",
       "invalidWeight": "Ungültiges Gewicht",
-      "previewLoadFailed": "Artikeldetails konnten nicht geladen werden."
+      "previewLoadFailed": "Artikeldetails konnten nicht geladen werden.",
+      "catalogMatch": "Im Katalog gefunden",
+      "catalogMatches": "Mögliche Treffer gefunden – wähle deinen aus"
     },
     "gearRequest": {
       "title": "Ausrüstungsartikel anfragen",
@@ -714,27 +715,28 @@
         "success": "Anfrage gesendet! Wir schauen, ob wir es hinzufügen können.",
         "failed": "Anfrage konnte nicht gesendet werden. Bitte erneut versuchen."
       }
+    },
+    "tabSearchHint": "Name eingeben & Enter · Link einfügen · Foto aufnehmen",
+    "browseToggle": "Kategorien durchstöbern",
+    "aiProgress": {
+      "reading": "Produktseite wird gelesen…",
+      "identifying": "Artikel wird identifiziert…",
+      "matching": "Abgleich mit dem Katalog…"
     }
   },
   "photoScanModal": {
     "title": "Ausrüstung scannen",
-    "subtitle": "Produktverpackung oder Produkt-Info-Screenshot",
     "takePhoto": "Foto aufnehmen",
     "uploadScreenshot": "Screenshot hochladen",
     "hint": "Funktioniert am besten mit Produktverpackungen und Screenshots",
-    "scanningBarcode": "Barcode erkannt – wird gesucht…",
     "scanningVision": "Wird per KI identifiziert…",
     "tryAgain": "Erneut versuchen",
-    "useThisItem": "Diesen Artikel verwenden",
     "errorFallback": "Scan fehlgeschlagen. Erneut versuchen oder manuell hinzufügen.",
-    "badgeBarcodePrefix": "Barcode",
-    "badgeVision": "KI-Bilderkennung",
-    "fieldName": "Name",
-    "fieldBrand": "Marke",
-    "fieldCategory": "Kategorie",
-    "fieldType": "Typ",
-    "fieldWeight": "Gewicht",
-    "fieldDesc": "Beschr."
+    "catalogMatchHeading": "Im Katalog gefunden – ist das dein Artikel?",
+    "noneOfThese": "Keiner davon",
+    "errorNotIdentified": "Kein Artikel auf dem Foto erkannt. Versuche eine schärfere Aufnahme der Verpackung oder des Etiketts.",
+    "errorRateLimited": "Zu viele Scans – warte eine Minute und versuche es erneut.",
+    "scanningMatching": "Abgleich mit dem Katalog…"
   },
   "addGearItemModal": {
     "title": "Ausrüstungs-Item(s) hinzufügen",
@@ -1456,7 +1458,10 @@
   "community": {
     "searchPlaceholder": "Alles durchsuchen…",
     "titlePlaceholder": "Titel",
-    "sort": { "new": "Neu", "top": "Top" },
+    "sort": {
+      "new": "Neu",
+      "top": "Top"
+    },
     "noPosts": "Noch keine Beiträge. Sei der Erste!",
     "loadMore": "Mehr laden",
     "postNotFound": "Beitrag nicht gefunden.",
@@ -1480,7 +1485,11 @@
       "rule6Desc": "Wir sind alle hier, weil wir die Natur lieben. Behalte die positive und einladende Energie für alle bei."
     },
     "shareSomethingWith": "Teile etwas mit {{name}}…",
-    "toolbar": { "bold": "Fett", "italic": "Kursiv", "bulletList": "Aufzählungsliste" },
+    "toolbar": {
+      "bold": "Fett",
+      "italic": "Kursiv",
+      "bulletList": "Aufzählungsliste"
+    },
     "post": {
       "createTitle": "Beitrag erstellen",
       "editTitle": "Beitrag bearbeiten",

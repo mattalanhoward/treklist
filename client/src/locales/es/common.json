@@ -635,7 +635,6 @@
     "added": "Añadido",
     "noGearYet": "Sin equipo aún. Busca en el catálogo o describe un artículo arriba.",
     "browseHint": "Busca en el catálogo o toca una categoría para explorar.",
-    "aiSearching": "Buscando con IA...",
     "aiSearchingShort": "Buscando…",
     "aiFill": "Rellenar con IA",
     "aiTip": "Consejo: incluye marca, modelo y talla para mejores resultados",
@@ -695,7 +694,9 @@
       "aiFailed": "Búsqueda IA fallida. Intenta añadir manualmente.",
       "nameRequired": "El nombre es obligatorio",
       "invalidWeight": "Peso no válido",
-      "previewLoadFailed": "No se pudieron cargar los detalles del artículo."
+      "previewLoadFailed": "No se pudieron cargar los detalles del artículo.",
+      "catalogMatch": "Encontrado en el catálogo",
+      "catalogMatches": "Posibles coincidencias encontradas: elige la tuya abajo"
     },
     "gearRequest": {
       "title": "Solicitar un artículo de equipo",
@@ -714,27 +715,28 @@
         "success": "¡Solicitud enviada! Veremos si podemos añadirlo.",
         "failed": "No se pudo enviar la solicitud. Por favor, inténtalo de nuevo."
       }
+    },
+    "tabSearchHint": "Escribe y pulsa Enter · Pega un enlace · Haz una foto",
+    "browseToggle": "Explorar categorías",
+    "aiProgress": {
+      "reading": "Leyendo la página del producto…",
+      "identifying": "Identificando el artículo…",
+      "matching": "Comparando con el catálogo…"
     }
   },
   "photoScanModal": {
     "title": "Escanear equipo",
-    "subtitle": "Embalaje del producto o captura de información del producto",
     "takePhoto": "Tomar foto",
     "uploadScreenshot": "Subir captura",
     "hint": "Funciona mejor con embalajes de productos y capturas de pantalla",
-    "scanningBarcode": "Código detectado — buscando…",
     "scanningVision": "Identificando con IA…",
     "tryAgain": "Intentar de nuevo",
-    "useThisItem": "Usar este artículo",
     "errorFallback": "Error al escanear. Inténtalo de nuevo o añade manualmente.",
-    "badgeBarcodePrefix": "Código de barras",
-    "badgeVision": "Visión IA",
-    "fieldName": "Nombre",
-    "fieldBrand": "Marca",
-    "fieldCategory": "Categoría",
-    "fieldType": "Tipo",
-    "fieldWeight": "Peso",
-    "fieldDesc": "Desc."
+    "catalogMatchHeading": "Encontrado en el catálogo: ¿es este tu artículo?",
+    "noneOfThese": "Ninguno de estos",
+    "errorNotIdentified": "No se pudo identificar ningún artículo en la foto. Prueba con una toma más clara del embalaje o la etiqueta.",
+    "errorRateLimited": "Demasiados escaneos: espera un minuto y vuelve a intentarlo.",
+    "scanningMatching": "Comparando con el catálogo…"
   },
   "addGearItemModal": {
     "title": "Añadir artículo(s) de equipo",
@@ -1456,7 +1458,10 @@
   "community": {
     "searchPlaceholder": "Buscar en todo…",
     "titlePlaceholder": "Título",
-    "sort": { "new": "Nuevo", "top": "Top" },
+    "sort": {
+      "new": "Nuevo",
+      "top": "Top"
+    },
     "noPosts": "Aún no hay publicaciones. ¡Sé el primero!",
     "loadMore": "Cargar más",
     "postNotFound": "Publicación no encontrada.",
@@ -1480,7 +1485,11 @@
       "rule6Desc": "Todos estamos aquí porque amamos el aire libre. Mantén la energía positiva y acogedora para todos."
     },
     "shareSomethingWith": "Comparte algo con {{name}}…",
-    "toolbar": { "bold": "Negrita", "italic": "Cursiva", "bulletList": "Lista con viñetas" },
+    "toolbar": {
+      "bold": "Negrita",
+      "italic": "Cursiva",
+      "bulletList": "Lista con viñetas"
+    },
     "post": {
       "createTitle": "Crear publicación",
       "editTitle": "Editar publicación",
