@@ -16,6 +16,8 @@ const {
 } = require("../middleware/rateLimiters");
 const { detectLanguage } = require("../utils/googleTranslate");
 
+const ADMIN_ACTIVITY_EMAIL = process.env.ADMIN_ACTIVITY_EMAIL || "talljoe@treklist.co";
+
 const NOTIFICATION_EMAIL_COOLDOWN_MS = 30 * 60 * 1000; // 30 minutes
 
 function buildNotificationUnsubscribeUrl(userId) {
@@ -159,6 +161,15 @@ router.post("/", authMiddleware, communityCommentLimiter, async (req, res) => {
 
     await comment.populate("userId", "trailname");
 
+    // Fire-and-forget admin activity email
+    const commentPostUrl = `https://app.treklist.co/community/post/${post._id}`;
+    sendSupportEmail({
+      to: ADMIN_ACTIVITY_EMAIL,
+      subject: `New comment on: ${post.title}`,
+      text: `${comment.userId.trailname} commented on "${post.title}".\n\nComment: ${comment.body.slice(0, 300)}\n\nView post: ${commentPostUrl}`,
+      html: `<p><strong>${comment.userId.trailname}</strong> commented on <strong>${post.title}</strong>.</p><p>${comment.body.slice(0, 300)}</p><p><a href="${commentPostUrl}">View post</a></p>`,
+    }).catch((e) => console.error("Admin new comment email error:", e));
+
     // Fire-and-forget notifications
     if (!parentCommentId) {
       if (post.userId.toString() !== req.userId) {
@@ -283,6 +294,20 @@ router.post("/:commentId/upvote", authMiddleware, communityUpvoteLimiter, async 
         commentId: comment._id,
       }).catch((e) => console.error("Upvote comment notification error:", e));
     }
+
+    // Fire-and-forget admin activity email
+    const commentUpvoteUrl = `https://app.treklist.co/community/post/${comment.postId}`;
+    Promise.all([
+      User.findById(req.userId).select("trailname").lean(),
+      Post.findById(comment.postId).select("title").lean(),
+    ]).then(([actor, commentPost]) => {
+      sendSupportEmail({
+        to: ADMIN_ACTIVITY_EMAIL,
+        subject: `Comment upvoted on: ${commentPost?.title || "a post"}`,
+        text: `${actor?.trailname || req.userId} upvoted a comment.\n\nComment: ${comment.body?.slice(0, 200)}\n\nView post: ${commentUpvoteUrl}`,
+        html: `<p><strong>${actor?.trailname || req.userId}</strong> upvoted a comment.</p><p>${comment.body?.slice(0, 200)}</p><p><a href="${commentUpvoteUrl}">View post</a></p>`,
+      }).catch((e) => console.error("Admin upvote comment email error:", e));
+    }).catch(() => {});
 
     res.json({ upvoted: true, upvoteCount: updated.upvoteCount });
   } catch (err) {
