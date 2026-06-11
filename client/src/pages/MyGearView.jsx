@@ -7,14 +7,13 @@ import { FiSearch, FiGrid, FiList, FiPlus, FiChevronDown, FiCheckSquare, FiTrash
 import ConfirmDialog from "../components/ConfirmDialog";
 import GlobalItemEditModal from "../components/GlobalItemEditModal";
 import AddGearDrawer from "../components/AddGearDrawer";
+import GlobalItemModal from "../components/GlobalItemModal";
 import MyGearTileCard from "../components/MyGearTileCard";
 import MyGearListItem from "../components/MyGearListItem";
 import { useUnit } from "../hooks/useUnit";
 import { useWeightInput } from "../hooks/useWeightInput";
-import { useUserSettings } from "../contexts/UserSettings";
 
 export default function MyGearView({ collapsed }) {
-  const { setSidebarCollapsed } = useUserSettings();
   const { t } = useTranslation("common");
   const unit = useUnit();
   const { formatInput, unitLabel } = useWeightInput(unit);
@@ -30,12 +29,9 @@ export default function MyGearView({ collapsed }) {
   const [wishlistItems, setWishlistItems] = useState([]);
   const [wishlistLoading, setWishlistLoading] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+  // Drawer kept but disabled for now — the add-gear modal is the single add flow
   const [showDrawer, setShowDrawer] = useState(false);
-
-  const openDrawer = useCallback(() => {
-    if (window.innerWidth < 1024) setSidebarCollapsed(true);
-    setShowDrawer(true);
-  }, [setSidebarCollapsed]);
+  const [showAddModal, setShowAddModal] = useState(false);
 
   // Close drawer when sidebar expands on mobile
   useEffect(() => {
@@ -412,18 +408,16 @@ export default function MyGearView({ collapsed }) {
               <FiCheckSquare className="text-sm" />
             </button>
 
-            {/* Add / toggle drawer */}
-            {!showDrawer && (
-              <button
-                data-tour="mygear-add-item"
-                type="button"
-                onClick={openDrawer}
-                className="p-1 text-secondary hover:text-secondary/80 rounded"
-                title={t("myGear.actions.addItem", "Add item")}
-              >
-                <FiPlus className="text-sm" />
-              </button>
-            )}
+            {/* Add gear item */}
+            <button
+              data-tour="mygear-add-item"
+              type="button"
+              onClick={() => setShowAddModal(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-secondary text-white text-sm font-medium rounded-lg hover:bg-secondary/90 transition-colors"
+            >
+              <FiPlus className="text-sm" />
+              {t("myGear.actions.addItem", "Add item")}
+            </button>
           </div>
         </div>
 
@@ -540,18 +534,16 @@ export default function MyGearView({ collapsed }) {
               >
                 <FiCheckSquare className="text-sm" />
               </button>
-              {/* Add / toggle drawer */}
-              {!showDrawer && (
-                <button
-                  data-tour="mygear-add-item"
-                  type="button"
-                  onClick={openDrawer}
-                  className="p-1 text-secondary hover:text-secondary/80 rounded"
-                  title={t("myGear.actions.addItem", "Add item")}
-                >
-                  <FiPlus className="text-sm" />
-                </button>
-              )}
+              {/* Add gear item */}
+              <button
+                data-tour="mygear-add-item"
+                type="button"
+                onClick={() => setShowAddModal(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-secondary text-white text-sm font-medium rounded-lg hover:bg-secondary/90 transition-colors"
+              >
+                <FiPlus className="text-sm" />
+                {t("myGear.actions.addItem", "Add item")}
+              </button>
             </div>
           </div>
 
@@ -620,10 +612,9 @@ export default function MyGearView({ collapsed }) {
             />
           </div>
 
-          {/* Mobile: Filter and Sort row */}
+          {/* Mobile: category + gear-tab filters share one compact row */}
           <div className="flex items-center gap-2">
-            {/* Category filter dropdown */}
-            <div className="relative flex-1">
+            <div className="relative flex-1 min-w-0">
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
@@ -638,37 +629,32 @@ export default function MyGearView({ collapsed }) {
               </select>
               <FiChevronDown className="absolute right-1.5 top-1/2 -translate-y-1/2 text-primary/50 pointer-events-none text-xs" />
             </div>
-
-          </div>
-
-          {/* Mobile: tab dropdown */}
-          <div className="pt-1 border-t border-primary/10">
-            <div className="relative">
+            <div className="relative flex-1 min-w-0">
               <select
                 value={gearTab}
                 onChange={(e) => setGearTab(e.target.value)}
-                className="w-full appearance-none pl-3 pr-8 border border-primary/30 rounded text-primary bg-base-100 text-sm cursor-pointer"
+                className="w-full appearance-none pl-2 pr-6 border border-primary/30 rounded text-primary bg-base-100 text-sm cursor-pointer"
               >
                 <option value="all">{t("myGear.tabs.all", "All Gear")} ({items.length + wishlistItems.length})</option>
                 <option value="owned">{t("myGear.tabs.owned", "My Gear")} ({items.filter(i => !i.importedFromShare).length})</option>
                 <option value="wishlist">{t("myGear.tabs.wishlist", "Wishlist")} ({wishlistItems.length})</option>
                 <option value="shared">{t("myGear.tabs.shared", "From Packs")} ({items.filter(i => i.importedFromShare).length})</option>
               </select>
-              <FiChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-primary/50 pointer-events-none text-xs" />
+              <FiChevronDown className="absolute right-1.5 top-1/2 -translate-y-1/2 text-primary/50 pointer-events-none text-xs" />
             </div>
-            <p className="text-xs text-primary/50 mt-0.5">
-              {t(`myGear.tabs.desc.${gearTab}`)}
-            </p>
           </div>
         </div>
       </div>
 
-      {/* Add Gear Drawer */}
+      {/* Add Gear Drawer — disabled for now, modal below is the add flow */}
       <AddGearDrawer
         isOpen={showDrawer}
         onClose={() => setShowDrawer(false)}
         onItemsChanged={fetchItems}
       />
+
+      {/* Add gear modal (refreshes via the global-items:updated event) */}
+      {showAddModal && <GlobalItemModal onClose={() => setShowAddModal(false)} />}
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-4 py-3">

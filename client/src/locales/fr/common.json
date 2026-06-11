@@ -130,7 +130,7 @@
       },
       "addGear": {
         "title": "Ajouter à votre inventaire",
-        "body": "Appuyez sur + pour ouvrir le tiroir d'ajout rapide et constituer rapidement votre bibliothèque personnelle de matériel sans avoir à ajouter des articles à une liste spécifique d'abord."
+        "body": "Appuyez sur « + Ajouter un article » pour rechercher dans le catalogue, coller un lien ou prendre une photo — et constituez votre bibliothèque personnelle de matériel sans devoir d'abord ajouter les articles à une liste précise."
       }
     }
   },
