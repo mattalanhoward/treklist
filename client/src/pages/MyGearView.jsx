@@ -612,10 +612,9 @@ export default function MyGearView({ collapsed }) {
             />
           </div>
 
-          {/* Mobile: Filter and Sort row */}
+          {/* Mobile: category + gear-tab filters share one compact row */}
           <div className="flex items-center gap-2">
-            {/* Category filter dropdown */}
-            <div className="relative flex-1">
+            <div className="relative flex-1 min-w-0">
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
@@ -630,27 +629,19 @@ export default function MyGearView({ collapsed }) {
               </select>
               <FiChevronDown className="absolute right-1.5 top-1/2 -translate-y-1/2 text-primary/50 pointer-events-none text-xs" />
             </div>
-
-          </div>
-
-          {/* Mobile: tab dropdown */}
-          <div className="pt-1 border-t border-primary/10">
-            <div className="relative">
+            <div className="relative flex-1 min-w-0">
               <select
                 value={gearTab}
                 onChange={(e) => setGearTab(e.target.value)}
-                className="w-full appearance-none pl-3 pr-8 border border-primary/30 rounded text-primary bg-base-100 text-sm cursor-pointer"
+                className="w-full appearance-none pl-2 pr-6 border border-primary/30 rounded text-primary bg-base-100 text-sm cursor-pointer"
               >
                 <option value="all">{t("myGear.tabs.all", "All Gear")} ({items.length + wishlistItems.length})</option>
                 <option value="owned">{t("myGear.tabs.owned", "My Gear")} ({items.filter(i => !i.importedFromShare).length})</option>
                 <option value="wishlist">{t("myGear.tabs.wishlist", "Wishlist")} ({wishlistItems.length})</option>
                 <option value="shared">{t("myGear.tabs.shared", "From Packs")} ({items.filter(i => i.importedFromShare).length})</option>
               </select>
-              <FiChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-primary/50 pointer-events-none text-xs" />
+              <FiChevronDown className="absolute right-1.5 top-1/2 -translate-y-1/2 text-primary/50 pointer-events-none text-xs" />
             </div>
-            <p className="text-xs text-primary/50 mt-0.5">
-              {t(`myGear.tabs.desc.${gearTab}`)}
-            </p>
           </div>
         </div>
       </div>
