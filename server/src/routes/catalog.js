@@ -9,19 +9,9 @@ const auth = require("../middleware/auth");
 const User = require("../models/user");
 const AffiliateProduct = require("../models/affiliateProduct");
 
+const { tokenRegex } = require("../utils/tokenRegex");
+
 const router = express.Router();
-
-function escapeRegex(s) {
-  return String(s || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-// Build a regex for a search token that tolerates missing hyphens.
-// "xmid" and "x-mid" both produce /x[-]?m[-]?i[-]?d/i so they match "X-Mid".
-function tokenRegex(token) {
-  const normalized = token.replace(/[-\s]+/g, "");
-  const pattern = normalized.split("").map((c) => escapeRegex(c)).join("[-]?");
-  return new RegExp(pattern, "i");
-}
 
 // Small normalization helper (server-side)
 function normalizeRegion(region) {
