@@ -415,6 +415,7 @@ export default function SmartItemSearch({
   const [brandFilter, setBrandFilter] = useState(null);
   const [brandOptions, setBrandOptions] = useState([]);
   const searchRef = useRef(null);
+  const lastAiFillRef = useRef(null); // { query, data } from the last AI fill
 
   // Animated placeholder
   const [phIndex, setPhIndex] = useState(0);
@@ -496,7 +497,26 @@ export default function SmartItemSearch({
     setAndPersistTab("custom");
     if (!customMode) {
       setCustomMode("manual");
-      setCustomForm((f) => ({ ...f, name: prefillName || f.name }));
+      const ai = lastAiFillRef.current;
+      if (ai && ai.query === prefillName) {
+        // Re-use the last AI extraction for this query instead of dumping
+        // the raw query (often a URL) into the name field
+        setCustomForm((f) => ({
+          name: f.name || ai.data.name || "",
+          brand: f.brand || ai.data.brand || "",
+          catalogCategory: f.catalogCategory || ai.data.category || "",
+          itemType: f.itemType || ai.data.itemType || "",
+          weight: f.weight || (ai.data.weightGrams != null ? formatInput(ai.data.weightGrams) : ""),
+          description: f.description || ai.data.description || "",
+          link: f.link || ai.data.link || "",
+          imageUrl: f.imageUrl || ai.data.imageUrl || "",
+        }));
+      } else if (isUrl(prefillName)) {
+        // A URL is never a name — put it in the link field
+        setCustomForm((f) => ({ ...f, link: f.link || prefillName }));
+      } else {
+        setCustomForm((f) => ({ ...f, name: prefillName || f.name }));
+      }
     }
   };
 
@@ -690,12 +710,14 @@ export default function SmartItemSearch({
 
   // Create action — runs AI fill, then either shows a catalog match or pre-fills the custom form
   const handleCreateAction = async (queryOverride) => {
-    const inputQuery = (queryOverride !== undefined ? queryOverride : query).trim();
+    // Button handlers pass the click event — only honor string overrides
+    const inputQuery = (typeof queryOverride === "string" ? queryOverride : query).trim();
     if (!inputQuery || aiLoading) return;
     const inputIsUrl = isUrl(inputQuery);
     setAiLoading(true);
     try {
       const { data } = await api.post("/ai/fill-item", { query: inputQuery });
+      lastAiFillRef.current = { query: inputQuery, data };
 
       // The server matches the AI extraction against the catalog (with
       // progressive fallback) and returns candidates on the response.
@@ -821,18 +843,6 @@ export default function SmartItemSearch({
     catalogResults.length === 0 &&
     !showingCustomForm;
 
-  // No dead ends: when a multi-word search finds nothing in My Gear or the
-  // catalog, look it up with AI automatically — once per query
-  const autoLookupRef = useRef("");
-  useEffect(() => {
-    const q = debouncedQuery.trim();
-    if (!hasNoResults || myGearLoading) return;
-    if (isUrl(q) || q.split(/\s+/).length < 2) return;
-    if (autoLookupRef.current === q.toLowerCase()) return;
-    autoLookupRef.current = q.toLowerCase();
-    handleCreateAction(q);
-  }, [hasNoResults, debouncedQuery, myGearLoading]); // eslint-disable-line react-hooks/exhaustive-deps
-
   return (
     <div
       className="flex flex-col h-full"
@@ -887,6 +897,7 @@ export default function SmartItemSearch({
               <input
                 ref={searchRef}
                 type="text"
+                enterKeyHint="search"
                 value={query}
                 onChange={(e) => {
                   setQuery(e.target.value);
@@ -960,7 +971,7 @@ export default function SmartItemSearch({
             <div className="mt-1.5 flex items-center justify-between gap-2">
               <p className="text-xs text-primary/35 truncate">
                 {!query
-                  ? t("smartItemSearch.tabSearchHint", "Type a name · Paste a link · Snap a photo")
+                  ? t("smartItemSearch.tabSearchHint", "Type & press Enter · Paste a link · Snap a photo")
                   : " "}
               </p>
               <button
