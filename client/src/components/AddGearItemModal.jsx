@@ -34,6 +34,13 @@ export default function AddGearItemModal({ listId, categoryId, onClose, onAdded 
     [existingItems],
   );
 
+  // Catalog rows match on productId (catalog item id), not globalItem id.
+  // productId may be null on older items, so detection is best-effort.
+  const existingProductIds = useMemo(
+    () => new Set(existingItems.map((it) => it.productId).filter(Boolean).map(String)),
+    [existingItems],
+  );
+
   const computeStartPos = () => {
     const inCat = existingItems.filter(
       (it) => String(it.category) === String(categoryId),
@@ -130,6 +137,7 @@ export default function AddGearItemModal({ listId, categoryId, onClose, onAdded 
             showMyGear
             tabLayout
             existingGlobalIds={existingGlobalIds}
+            existingProductIds={existingProductIds}
             onConfirm={handleConfirm}
             onClose={onClose}
           />

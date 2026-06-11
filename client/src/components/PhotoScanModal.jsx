@@ -1,13 +1,14 @@
 // client/src/components/PhotoScanModal.jsx
 // AI vision gear scanner. Scan flow: capture/upload → /api/ai/scan-item → catalog lookup
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { FiCamera, FiUpload, FiX, FiRefreshCw } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import api from "../services/api";
 import { uploadGearItemPhoto } from "../services/cloudinaryUpload";
 import { downscaleImageFile } from "../utils/imageProcessing";
+import useStagedMessage from "../hooks/useStagedMessage";
 
-export default function PhotoScanModal({ onResult, onCatalogSelect, onClose }) {
+export default function PhotoScanModal({ onResult, onCatalogSelect, onClose, initialFile }) {
   const { t } = useTranslation("common");
   const [phase, setPhase] = useState("idle"); // idle | scanning | catalog-matches | error
   const [imagePreview, setImagePreview] = useState(null);
@@ -25,22 +26,11 @@ export default function PhotoScanModal({ onResult, onCatalogSelect, onClose }) {
     try {
       const uploadPromise = uploadGearItemPhoto(dataUrl).catch(() => null);
       const scanPromise = api.post("/ai/scan-item", { image: dataUrl });
-      // Catalog lookup needs only the scan result, so chain it off the scan
-      // to overlap with the photo upload
-      const catalogPromise = scanPromise.then(async ({ data: scan }) => {
-        if (!scan.name) return [];
-        try {
-          const q = [scan.name, scan.brand].filter(Boolean).join(" ");
-          const { data: items } = await api.get("/catalog/items", { params: { q, limit: 4 } });
-          return items || [];
-        } catch {
-          return []; // catalog check is best-effort
-        }
-      });
 
-      const [{ data }, uploadResult, matches] = await Promise.all([scanPromise, uploadPromise, catalogPromise]);
+      const [{ data }, uploadResult] = await Promise.all([scanPromise, uploadPromise]);
       if (uploadResult?.secureUrl) data.photoUrl = uploadResult.secureUrl;
 
+      const matches = data.catalogMatches || [];
       if (matches.length > 0) {
         setScanData(data);
         setCatalogMatches(matches);
@@ -50,16 +40,19 @@ export default function PhotoScanModal({ onResult, onCatalogSelect, onClose }) {
         onResult(data);
       }
     } catch (err) {
-      const msg = err.response?.data?.error || t("photoScanModal.errorFallback", "Scan failed. Try again or add manually.");
+      const code = err.response?.data?.error;
+      const msg =
+        code === "not_identified"
+          ? t("photoScanModal.errorNotIdentified", "Couldn't identify an item in this photo. Try a clearer shot of the packaging or label.")
+          : code === "rate_limited"
+            ? t("photoScanModal.errorRateLimited", "Too many scans — wait a minute and try again.")
+            : t("photoScanModal.errorFallback", "Scan failed. Try again or add manually.");
       setErrorMsg(msg);
       setPhase("error");
     }
   }
 
-  async function handleFileChange(e) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    e.target.value = "";
+  async function processFile(file) {
     try {
       const { blob } = await downscaleImageFile(file, { maxSize: 1600, quality: 0.85 });
       const reader = new FileReader();
@@ -70,6 +63,28 @@ export default function PhotoScanModal({ onResult, onCatalogSelect, onClose }) {
       setPhase("error");
     }
   }
+
+  function handleFileChange(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = "";
+    processFile(file);
+  }
+
+  // Scan immediately when opened with a pasted/dropped image
+  useEffect(() => {
+    if (initialFile) processFile(initialFile);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const scanningMsg = useStagedMessage(
+    phase === "scanning"
+      ? [
+          t("photoScanModal.scanningVision", "Identifying with AI…"),
+          t("photoScanModal.scanningMatching", "Matching against the catalog…"),
+        ]
+      : [],
+    3000,
+  );
 
   function reset() {
     setPhase("idle");
@@ -134,9 +149,7 @@ export default function PhotoScanModal({ onResult, onCatalogSelect, onClose }) {
               )}
               <div className="flex items-center justify-center gap-2 py-2">
                 <div className="w-4 h-4 border-2 border-secondary border-t-transparent rounded-full animate-spin" />
-                <span className="text-sm text-primary/60">
-                  {t("photoScanModal.scanningVision", "Identifying with AI…")}
-                </span>
+                <span className="text-sm text-primary/60">{scanningMsg}</span>
               </div>
             </div>
           )}

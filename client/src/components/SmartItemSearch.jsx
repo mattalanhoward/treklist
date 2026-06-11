@@ -14,6 +14,7 @@ import Spinner from "./ui/Spinner";
 import LinkInput from "./LinkInput";
 import CatalogItemPreviewModal from "./CatalogItemPreviewModal";
 import PhotoScanModal from "./PhotoScanModal";
+import useStagedMessage from "../hooks/useStagedMessage";
 
 // key = translation lookup key; value = API filter value (must stay English)
 const CHIPS = [
@@ -94,8 +95,30 @@ function ItemRow({ item, selected, onToggle, onViewDetails, multiSelect, disable
   );
 }
 
+// ── AI lookup progress ────────────────────────────────────────────────────────
+function AiSearchProgress({ urlQuery }) {
+  const { t } = useTranslation("common");
+  const steps = urlQuery
+    ? [
+        t("smartItemSearch.aiProgress.reading", "Reading product page…"),
+        t("smartItemSearch.aiProgress.identifying", "Identifying the item…"),
+        t("smartItemSearch.aiProgress.matching", "Matching against the catalog…"),
+      ]
+    : [
+        t("smartItemSearch.aiProgress.identifying", "Identifying the item…"),
+        t("smartItemSearch.aiProgress.matching", "Matching against the catalog…"),
+      ];
+  const msg = useStagedMessage(steps, 2500);
+  return (
+    <div className="flex flex-col items-center justify-center h-full gap-2">
+      <FiLoader size={20} className="animate-spin text-secondary" />
+      <p className="text-sm text-primary/50">{msg}</p>
+    </div>
+  );
+}
+
 // ── Section (My Gear or Catalog) ──────────────────────────────────────────────
-function ResultSection({ title, items, type, myGearSelected, catalogSelected, onToggleMyGear, onToggleCatalog, onViewCatalogDetails, onViewMyGearDetails, multiSelect, existingGlobalIds, loading }) {
+function ResultSection({ title, items, type, myGearSelected, catalogSelected, onToggleMyGear, onToggleCatalog, onViewCatalogDetails, onViewMyGearDetails, multiSelect, existingGlobalIds, existingProductIds, loading }) {
   const { t } = useTranslation("common");
   if (loading) {
     return (
@@ -132,6 +155,7 @@ function ResultSection({ title, items, type, myGearSelected, catalogSelected, on
             const offer = item.offers?.[0];
             const priceLabel =
               offer?.price ? `$${offer.price} · ${offer.merchantName || ""}`.replace(/ · $/, "") : null;
+            const disabled = existingProductIds?.has(id);
             return (
               <ItemRow
                 key={id}
@@ -140,6 +164,8 @@ function ResultSection({ title, items, type, myGearSelected, catalogSelected, on
                 onToggle={onToggleCatalog}
                 onViewDetails={onViewCatalogDetails}
                 multiSelect={multiSelect}
+                disabled={disabled}
+                badge={disabled ? t("smartItemSearch.added", "Added") : null}
                 subLabel={item.itemType || item.subcategory || null}
                 priceLabel={priceLabel}
               />
@@ -339,6 +365,7 @@ export default function SmartItemSearch({
   showMyGear = true,
   excludeGlobalItemId = null,
   existingGlobalIds = new Set(),
+  existingProductIds = new Set(),
   onConfirm,
   onClose,
   tabLayout = false,
@@ -431,6 +458,19 @@ export default function SmartItemSearch({
 
   // Photo scan modal
   const [showScanModal, setShowScanModal] = useState(false);
+  const [scanFile, setScanFile] = useState(null); // pasted/dropped image to scan
+  const [showFilters, setShowFilters] = useState(false);
+
+  const closeScanModal = () => {
+    setShowScanModal(false);
+    setScanFile(null);
+  };
+
+  const openScanWithFile = (file) => {
+    if (!file) return;
+    setScanFile(file);
+    setShowScanModal(true);
+  };
 
   // Catalog item preview
   const [previewItem, setPreviewItem] = useState(null);
@@ -629,19 +669,24 @@ export default function SmartItemSearch({
     }
   };
 
-  // Inject a catalog item into the results and select it, restoring the
-  // invariants the normal search flow maintains: exclusive selection, no
-  // custom form, and the Import tab active.
-  const selectCatalogItem = (item) => {
+  // Inject catalog items into the results (optionally selecting one),
+  // restoring the invariants the normal search flow maintains: exclusive
+  // selection, no custom form, and the Import tab active.
+  const showCatalogMatches = (items, { select } = {}) => {
     setCatalogResults((prev) => {
       const ids = new Set(prev.map((i) => String(i._id)));
-      return ids.has(String(item._id)) ? prev : [item, ...prev];
+      const added = items.filter((m) => !ids.has(String(m._id)));
+      return added.length ? [...added, ...prev] : prev;
     });
-    setCatalogSelected(new Set([String(item._id)]));
+    // Never auto-select an item that's already in the list (row renders disabled)
+    const selectable = select && !existingProductIds.has(String(select._id));
+    setCatalogSelected(selectable ? new Set([String(select._id)]) : new Set());
     setMyGearSelected(new Set());
     setCustomMode(null);
     if (tabLayout) setAndPersistTab("import");
   };
+
+  const selectCatalogItem = (item) => showCatalogMatches([item], { select: item });
 
   // Create action — runs AI fill, then either shows a catalog match or pre-fills the custom form
   const handleCreateAction = async (queryOverride) => {
@@ -652,21 +697,19 @@ export default function SmartItemSearch({
     try {
       const { data } = await api.post("/ai/fill-item", { query: inputQuery });
 
-      // Search catalog with AI-extracted name + brand
-      let catalogMatch = null;
-      if (data.name) {
-        try {
-          const q = [data.name, data.brand].filter(Boolean).join(" ");
-          const { data: items } = await api.get("/catalog/items", { params: { q } });
-          if (items?.length > 0) catalogMatch = items[0];
-        } catch { /* ignore — catalog search is best-effort */ }
-      }
+      // The server matches the AI extraction against the catalog (with
+      // progressive fallback) and returns candidates on the response.
+      // Do NOT update query here: changing it would re-trigger the debounced catalog
+      // search, causing a loading spinner that wipes the result before the new fetch completes.
+      const matches = data.catalogMatches || [];
 
-      if (catalogMatch) {
-        // Found in catalog — switch to Import tab and auto-select.
-        // Do NOT update query here: changing it would re-trigger the debounced catalog
-        // search, causing a loading spinner that wipes the result before the new fetch completes.
-        selectCatalogItem(catalogMatch);
+      if (matches.length === 1) {
+        selectCatalogItem(matches[0]);
+        toast.success(t("smartItemSearch.toasts.catalogMatch", "Found in catalog"));
+      } else if (matches.length > 1) {
+        // Several plausible matches — let the user pick instead of guessing
+        showCatalogMatches(matches);
+        toast(t("smartItemSearch.toasts.catalogMatches", "Found possible matches — pick yours below"));
       } else {
         // No catalog match — switch to Custom tab, only fill empty fields
         setCustomMode("ai");
@@ -778,8 +821,34 @@ export default function SmartItemSearch({
     catalogResults.length === 0 &&
     !showingCustomForm;
 
+  // No dead ends: when a multi-word search finds nothing in My Gear or the
+  // catalog, look it up with AI automatically — once per query
+  const autoLookupRef = useRef("");
+  useEffect(() => {
+    const q = debouncedQuery.trim();
+    if (!hasNoResults || myGearLoading) return;
+    if (isUrl(q) || q.split(/\s+/).length < 2) return;
+    if (autoLookupRef.current === q.toLowerCase()) return;
+    autoLookupRef.current = q.toLowerCase();
+    handleCreateAction(q);
+  }, [hasNoResults, debouncedQuery, myGearLoading]); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
-    <div className="flex flex-col h-full">
+    <div
+      className="flex flex-col h-full"
+      onDragOver={(e) => {
+        if (e.dataTransfer?.types?.includes("Files")) e.preventDefault();
+      }}
+      onDrop={(e) => {
+        const file = [...(e.dataTransfer?.files || [])].find((f) =>
+          f.type.startsWith("image/"),
+        );
+        if (file) {
+          e.preventDefault();
+          openScanWithFile(file);
+        }
+      }}
+    >
 
       {/* ── Tab row (tabLayout only) ───────────────────────────────────────── */}
       {tabLayout && (
@@ -823,7 +892,22 @@ export default function SmartItemSearch({
                   setQuery(e.target.value);
                   if (!tabLayout) setCustomMode(null);
                 }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && query.trim() && !aiLoading) {
+                    e.preventDefault();
+                    handleCreateAction(query.trim());
+                  }
+                }}
                 onPaste={(e) => {
+                  // Screenshot paste (Cmd+V) → photo scan flow
+                  const imageItem = [...(e.clipboardData?.items || [])].find((i) =>
+                    i.type.startsWith("image/"),
+                  );
+                  if (imageItem) {
+                    e.preventDefault();
+                    openScanWithFile(imageItem.getAsFile());
+                    return;
+                  }
                   const pasted = (e.clipboardData?.getData("text") || "").trim();
                   if (isUrl(pasted)) {
                     handleCreateAction(pasted);
@@ -871,8 +955,26 @@ export default function SmartItemSearch({
             </p>
           )}
 
-          {/* Category / Subcategory / Brand dropdowns — tabLayout Import tab only */}
+          {/* Hint + browse toggle — tabLayout Import tab only */}
           {tabLayout && (
+            <div className="mt-1.5 flex items-center justify-between gap-2">
+              <p className="text-xs text-primary/35 truncate">
+                {!query
+                  ? t("smartItemSearch.tabSearchHint", "Type a name · Paste a link · Snap a photo")
+                  : " "}
+              </p>
+              <button
+                type="button"
+                onClick={() => setShowFilters((v) => !v)}
+                className="text-xs text-primary/50 hover:text-primary/80 underline underline-offset-2 flex-shrink-0"
+              >
+                {t("smartItemSearch.browseToggle", "Browse categories")}
+              </button>
+            </div>
+          )}
+
+          {/* Category / Subcategory / Brand dropdowns — collapsed until Browse (or an active filter) */}
+          {tabLayout && (showFilters || categoryFilter || subcategoryFilter || brandFilter) && (
             <div className="mt-2 flex gap-1.5">
               <select
                 value={categoryFilter || ""}
@@ -996,12 +1098,7 @@ export default function SmartItemSearch({
               unitLabel={unitLabel}
             />
           ) : aiLoading ? (
-            <div className="flex flex-col items-center justify-center h-full gap-2">
-              <FiLoader size={20} className="animate-spin text-secondary" />
-              <p className="text-sm text-primary/50">
-                {t("smartItemSearch.aiSearching", "Searching with AI...")}
-              </p>
-            </div>
+            <AiSearchProgress urlQuery={isUrl(query)} />
           ) : hasNoResults ? (
             <NoResults
               query={debouncedQuery}
@@ -1049,6 +1146,7 @@ export default function SmartItemSearch({
                   onViewCatalogDetails={handleViewCatalogDetails}
                   multiSelect={multiSelect}
                   existingGlobalIds={existingGlobalIds}
+                  existingProductIds={existingProductIds}
                   loading={catalogLoading}
                 />
               )}
@@ -1210,9 +1308,10 @@ export default function SmartItemSearch({
       {/* Photo scan modal */}
       {showScanModal && (
         <PhotoScanModal
-          onClose={() => setShowScanModal(false)}
+          initialFile={scanFile}
+          onClose={closeScanModal}
           onResult={(scanData) => {
-            setShowScanModal(false);
+            closeScanModal();
             setCustomMode("ai");
             if (tabLayout) setAndPersistTab("custom");
             setCustomForm({
@@ -1227,7 +1326,7 @@ export default function SmartItemSearch({
             });
           }}
           onCatalogSelect={(item) => {
-            setShowScanModal(false);
+            closeScanModal();
             selectCatalogItem(item);
           }}
         />
