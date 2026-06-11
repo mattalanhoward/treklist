@@ -17,6 +17,8 @@ const {
 const { detectLanguage } = require("../utils/googleTranslate");
 const { sendSupportEmail } = require("../utils/mailer");
 
+const ADMIN_ACTIVITY_EMAIL = process.env.ADMIN_ACTIVITY_EMAIL || "talljoe@treklist.co";
+
 const PAGE_SIZE = 20;
 
 // Only allow the tags Tiptap's StarterKit can produce — no attributes
@@ -115,6 +117,15 @@ router.post("/:slug/posts", authMiddleware, communityPostLimiter, async (req, re
     });
     await post.save();
     await post.populate("userId", "trailname");
+
+    const postUrl = `https://app.treklist.co/community/post/${post._id}`;
+    sendSupportEmail({
+      to: ADMIN_ACTIVITY_EMAIL,
+      subject: `New community post: ${post.title}`,
+      text: `${post.userId.trailname} posted in ${community.name}.\n\nTitle: ${post.title}\n\nView post: ${postUrl}`,
+      html: `<p><strong>${post.userId.trailname}</strong> posted in <strong>${community.name}</strong>.</p><p><strong>${post.title}</strong></p><p><a href="${postUrl}">View post</a></p>`,
+    }).catch((e) => console.error("Admin new post email error:", e));
+
     res.status(201).json(post);
   } catch (err) {
     console.error("Create post error:", err);
@@ -280,6 +291,17 @@ router.post("/:postId/upvote", authMiddleware, communityUpvoteLimiter, async (re
         postId: post._id,
       }).catch((e) => console.error("Upvote notification error:", e));
     }
+
+    // Fire-and-forget admin activity email
+    const postUrlUpvote = `https://app.treklist.co/community/post/${post._id}`;
+    User.findById(req.userId).select("trailname").lean().then((actor) => {
+      sendSupportEmail({
+        to: ADMIN_ACTIVITY_EMAIL,
+        subject: `Post upvoted: ${post.title}`,
+        text: `${actor?.trailname || req.userId} upvoted a post.\n\nTitle: ${post.title}\n\nView post: ${postUrlUpvote}`,
+        html: `<p><strong>${actor?.trailname || req.userId}</strong> upvoted a post.</p><p><strong>${post.title}</strong></p><p><a href="${postUrlUpvote}">View post</a></p>`,
+      }).catch((e) => console.error("Admin upvote post email error:", e));
+    }).catch(() => {});
 
     res.json({ upvoted: true, upvoteCount: updated.upvoteCount });
   } catch (err) {
