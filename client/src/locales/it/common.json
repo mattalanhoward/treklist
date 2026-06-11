@@ -130,7 +130,7 @@
       },
       "addGear": {
         "title": "Aggiungi al tuo inventario",
-        "body": "Tocca + per aprire il cassetto di aggiunta rapida e costruire rapidamente la tua libreria personale di attrezzatura senza dover aggiungere articoli a una lista specifica prima."
+        "body": "Tocca «+ Aggiungi articolo» per cercare nel catalogo, incollare un link o scattare una foto — e costruisci la tua libreria personale di attrezzatura senza dover prima aggiungere gli articoli a una lista specifica."
       }
     }
   },
