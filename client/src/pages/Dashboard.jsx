@@ -458,6 +458,22 @@ export default function Dashboard() {
     navigate(`/dashboard/${ids[0]}`, { replace: true });
   }, [lists, listId, navigate, listsLoading, isAuthenticated, activePane]);
 
+  // ─── Legacy redirect ───
+  // The standalone wishlist pane was removed; the wishlist now lives as a tab
+  // inside My Gear. Send old ?pane=wishlist links to the real location.
+  useEffect(() => {
+    if (activePane !== "wishlist") return;
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.set("pane", "myGear");
+        next.set("tab", "wishlist");
+        return next;
+      },
+      { replace: true },
+    );
+  }, [activePane, setSearchParams]);
+
 
   // ─── viewMode persistence ───
   const { viewMode, setViewMode } = useUserSettings();

@@ -76,9 +76,15 @@ async function fetchWishlist(ownerId) {
   const items = await GlobalItem.find({ owner: ownerId, status: "wishlisted" })
     .sort({ createdAt: -1 })
     .limit(WISHLIST_LIMIT)
-    .select("name brand")
+    .select("name brand link affiliate.deepLink")
     .lean();
-  return items.map((i) => ({ name: i.name, brand: i.brand }));
+  // Mirror the app's link precedence (MyGearTileCard): a user-set link wins,
+  // otherwise the affiliate deep link for catalog/merchant-backed items.
+  return items.map((i) => ({
+    name: i.name,
+    brand: i.brand,
+    url: i.link || i.affiliate?.deepLink || null,
+  }));
 }
 
 async function runTripReminderEmailJob() {
