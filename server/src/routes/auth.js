@@ -781,6 +781,36 @@ router.get("/unsubscribe-notifications", async (req, res) => {
   return res.redirect(`${base}/?unsubscribed=notifications`);
 });
 
+// GET /auth/unsubscribe-trip-reminders?uid=...&sig=...
+// One-click unsubscribe for pre-trip reminder emails (no login required)
+router.get("/unsubscribe-trip-reminders", async (req, res) => {
+  const { uid, sig } = req.query;
+  if (!uid || !sig) {
+    return res.status(400).send("Invalid unsubscribe link.");
+  }
+
+  const expected = crypto
+    .createHmac("sha256", process.env.JWT_SECRET)
+    .update(`trip:${uid}`)
+    .digest("hex")
+    .slice(0, 32);
+
+  if (sig !== expected) {
+    return res.status(400).send("Invalid unsubscribe link.");
+  }
+
+  try {
+    await User.findByIdAndUpdate(uid, {
+      $set: { "onboarding.tripReminderOptOut": true },
+    });
+  } catch {
+    return res.status(500).send("Something went wrong. Please try again.");
+  }
+
+  const base = (process.env.APP_URL || process.env.CLIENT_URL || process.env.CLIENT_URLS || "").split(",")[0].trim();
+  return res.redirect(`${base}/?unsubscribed=trip-reminders`);
+});
+
 router.authenticate = authenticate;
 router.sendVerificationEmail = sendVerificationEmail;
 module.exports = router;

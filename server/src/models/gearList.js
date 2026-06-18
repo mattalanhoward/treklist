@@ -12,6 +12,10 @@ const GearListSchema = new mongoose.Schema(
     tripEnd: { type: Date },
     location: { type: String, default: "" },
 
+    // When the pre-trip reminder email was sent for the current tripStart.
+    // Reset to null when tripStart changes so a rescheduled trip re-arms.
+    tripReminderSentAt: { type: Date, default: null },
+
     // ACTIVE background (what the user sees right now)
     backgroundImageUrl: { type: String, default: null },
     backgroundColor: {

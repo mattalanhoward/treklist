@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer");
 const { buildWelcomeEmail } = require("./welcomeEmailTemplate");
 const { buildNotificationEmail } = require("./notificationEmailTemplate");
+const { buildTripReminderEmail } = require("./tripReminderEmailTemplate");
 
 function getTransporter() {
   const host = process.env.SMTP_HOST;
@@ -86,4 +87,18 @@ async function sendNotificationEmail({ to, recipientTrailname, senderTrailname, 
   return { skipped: false, messageId: info.messageId };
 }
 
-module.exports = { sendSupportEmail, sendWelcomeEmail, sendNotificationEmail };
+async function sendTripReminderEmail(opts) {
+  const transporter = getTransporter();
+  if (!transporter) {
+    console.warn("[mailer] SMTP not configured — skipping trip reminder email.");
+    return { skipped: true };
+  }
+
+  const from = process.env.SMTP_FROM || process.env.SMTP_USER;
+  const { html, text, subject } = buildTripReminderEmail(opts);
+
+  const info = await transporter.sendMail({ from, to: opts.to, subject, text, html });
+  return { skipped: false, messageId: info.messageId };
+}
+
+module.exports = { sendSupportEmail, sendWelcomeEmail, sendNotificationEmail, sendTripReminderEmail };
