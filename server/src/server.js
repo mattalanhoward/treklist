@@ -9,10 +9,12 @@ console.log(
 const app = require("./app");
 const mongoose = require("mongoose");
 const { startWelcomeEmailJob } = require("./jobs/welcomeEmailJob");
+const { startTripReminderEmailJob } = require("./jobs/tripReminderEmailJob");
 
 const PORT = process.env.PORT || 5001;
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on ${PORT}`);
   startWelcomeEmailJob();
+  startTripReminderEmailJob();
 });

@@ -46,7 +46,7 @@ async function run() {
     "onboarding.welcomeEmailSentAt": null,
     "onboarding.transactionalOptOut": { $ne: true },
     email: { $not: /@treklist\.(co|dev)$/i },
-  }).select("_id email trailname createdAt");
+  }).select("_id email trailname createdAt language");
 
   console.log(`Found ${candidates.length} candidate(s)\n`);
 
@@ -70,7 +70,7 @@ async function run() {
     if (DRY_RUN) continue;
 
     try {
-      await sendWelcomeEmail({ to: user.email, trailname: user.trailname, listUrl, unsubscribeUrl });
+      await sendWelcomeEmail({ to: user.email, trailname: user.trailname, listUrl, unsubscribeUrl, language: user.language });
       await User.updateOne(
         { _id: user._id },
         { $set: { "onboarding.welcomeEmailSentAt": new Date() } }

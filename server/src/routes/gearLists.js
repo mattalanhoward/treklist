@@ -321,7 +321,13 @@ router.patch("/:listId", async (req, res) => {
     // build an update object only with provided fields
     const update = { title };
     if (notes !== undefined) update.notes = notes;
-    if (tripStart !== undefined) update.tripStart = tripStart;
+    if (tripStart !== undefined) {
+      update.tripStart = tripStart;
+      // Re-arm the pre-trip reminder if the start date actually changed.
+      const prev = list.tripStart ? new Date(list.tripStart).getTime() : null;
+      const next = tripStart ? new Date(tripStart).getTime() : null;
+      if (prev !== next) update.tripReminderSentAt = null;
+    }
     if (tripEnd !== undefined) update.tripEnd = tripEnd;
     if (location !== undefined) update.location = location;
     if (links !== undefined) update.links = links;
