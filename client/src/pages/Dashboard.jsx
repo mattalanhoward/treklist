@@ -8,7 +8,6 @@ import Sidebar from "../components/Sidebar";
 import GearListView from "./GearListView";
 import AdminView from "../pages/AdminView";
 import ForumView from "../pages/ForumView";
-import WishlistView from "../pages/WishlistView";
 import MyGearView from "../pages/MyGearView";
 import GearListsOverview from "../pages/GearListsOverview";
 import TemplatesView from "../pages/TemplatesView";
@@ -277,7 +276,7 @@ export default function Dashboard() {
   const { sidebarCollapsed: collapsed, setSidebarCollapsed } =
     useUserSettings();
 
-  // ─── Which main panel is active: "gear" "admin" "forum" "wishlist" ───
+  // ─── Which main panel is active: "gear" "admin" "forum" "myGear" etc. ───
   const [searchParams, setSearchParams] = useSearchParams();
   const activePane = searchParams.get("pane") ?? "gear";
   const activeCommunitySlug = searchParams.get("communitySlug") ?? null;
@@ -325,7 +324,6 @@ export default function Dashboard() {
     if (activePane === "templates") return "Templates";
     if (activePane === "lists") return "My Lists";
     if (activePane === "admin") return "Admin";
-    if (activePane === "wishlist") return "Wishlist";
     if (activePane === "community") return "Community";
     return fullData.list?.title ?? "My Lists";
   })();
@@ -444,9 +442,10 @@ export default function Dashboard() {
     if (listsLoading) return;
     if (listId) return;
     if (lists.length === 0) return;
-    // User explicitly navigated to the overview — don't redirect to a list
-    if (activePane === "lists") return;
-    if (activePane === "community") return;
+    // Only the list-bound "gear" pane should auto-redirect into a list.
+    // Global panes (myGear, templates, admin, lists, community)
+    // are reachable via ?pane=… without a selected list, so leave them be.
+    if (activePane !== "gear") return;
 
     const ids = lists.map((l) => l._id);
     const stored = localStorage.getItem("lastListId");
@@ -754,7 +753,6 @@ export default function Dashboard() {
             }}
             isAdmin={isAdmin}
             onOpenForum={() => setActivePane("forum")}
-            onOpenWishlist={() => setActivePane("wishlist")}
             onOpenMyGear={() => setActivePane("myGear")}
             onShowGearPane={() => setActivePane("lists")}
             onOpenTemplates={() => { setActivePane("templates"); setTemplatesKey((k) => k + 1); }}
@@ -777,8 +775,6 @@ export default function Dashboard() {
               <AdminView />
             ) : activePane === "forum" ? (
               <ForumView />
-            ) : activePane === "wishlist" ? (
-              <WishlistView />
             ) : activePane === "myGear" ? (
               <MyGearView collapsed={collapsed} />
             ) : activePane === "community" ? (

@@ -1,5 +1,6 @@
 // client/src/pages/MyGearView.jsx
 import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import api from "../services/api";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -25,7 +26,13 @@ export default function MyGearView({ collapsed }) {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [viewMode, setViewMode] = useState("tiles");
 
-  const [gearTab, setGearTab] = useState("all"); // "all" | "owned" | "wishlist" | "shared"
+  // Allow deep-linking to a specific tab via ?tab= (e.g. ?pane=myGear&tab=wishlist).
+  const [searchParams] = useSearchParams();
+  const GEAR_TABS = ["all", "owned", "wishlist", "shared"];
+  const [gearTab, setGearTab] = useState(() => {
+    const requested = searchParams.get("tab");
+    return GEAR_TABS.includes(requested) ? requested : "all";
+  }); // "all" | "owned" | "wishlist" | "shared"
   const [wishlistItems, setWishlistItems] = useState([]);
   const [wishlistLoading, setWishlistLoading] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
