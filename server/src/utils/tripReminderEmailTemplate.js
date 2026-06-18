@@ -314,10 +314,13 @@ function buildTripReminderEmail({
               <p>${t.wishlistIntro}</p>
               <ul style="margin:0 0 16px;padding-left:20px;font-size:16px;line-height:1.6;color:#334155;">
                 ${wishlistItems
-                  .map(
-                    (i) =>
-                      `<li>${escapeHtml(i.name)}${i.brand ? ` <span style="color:#94a3b8;">· ${escapeHtml(i.brand)}</span>` : ""}</li>`
-                  )
+                  .map((i) => {
+                    const nameHtml = i.url
+                      ? `<a href="${escapeHtml(i.url)}" style="color:#1d4ed8;text-decoration:underline;">${escapeHtml(i.name)}</a>`
+                      : escapeHtml(i.name);
+                    const brandHtml = i.brand ? ` <span style="color:#94a3b8;">· ${escapeHtml(i.brand)}</span>` : "";
+                    return `<li>${nameHtml}${brandHtml}</li>`;
+                  })
                   .join("\n                ")}
               </ul>
               <p style="margin:0 0 8px;"><a href="${wishlistUrl}" style="color:#1d4ed8;text-decoration:underline;">${t.wishlistCta}</a></p>`
@@ -482,7 +485,9 @@ function buildTripReminderEmail({
   if (wishlistItems && wishlistItems.length) {
     textLines.push("");
     textLines.push(`${t.wishlistHeading}:`);
-    wishlistItems.forEach((i) => textLines.push(`- ${i.name}${i.brand ? ` · ${i.brand}` : ""}`));
+    wishlistItems.forEach((i) =>
+      textLines.push(`- ${i.name}${i.brand ? ` · ${i.brand}` : ""}${i.url ? `: ${i.url}` : ""}`)
+    );
     textLines.push(`${t.wishlistCta}: ${wishlistUrl}`);
   }
   textLines.push("", t.signoff, "Tall Joe · TrekList", "", "---", t.footerSignup, `${t.unsubscribe}: ${unsubscribeUrl}`);

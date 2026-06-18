@@ -44,8 +44,8 @@ const summary = isEmpty
 const wishlistItems = hasFlag("no-wishlist")
   ? []
   : [
-      { name: "Ultralight Camp Chair", brand: "Helinox" },
-      { name: "Down Quilt 0C", brand: "Cumulus" },
+      { name: "Ultralight Camp Chair", brand: "Helinox", url: "https://www.helinox.com/products/chair-zero" },
+      { name: "Down Quilt 0C", brand: "Cumulus" }, // no link → renders as plain text
     ];
 
 (async () => {
