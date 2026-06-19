@@ -19,7 +19,10 @@ const router = express.Router();
 router.use(cookieParser());
 
 // ---- Config & constants ----
-const JWT_EXP = process.env.JWT_EXP || "7d";
+// Short-lived access token (F2). A leaked token is usable only briefly; the
+// client silently refreshes on 401 and /auth/refresh rotates the 7-day refresh
+// cookie, so users aren't logged out. Override via JWT_EXP env if needed.
+const JWT_EXP = process.env.JWT_EXP || "30m";
 const SUPPORTED_LANGS = ["en", "nl", "de", "fr", "it", "es"];
 
 function normalizeRegionInput(r) {
