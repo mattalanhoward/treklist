@@ -110,6 +110,16 @@
 - [ ] **Logs** scrubbed of PII/IPs (F6).
 
 ## 6. Open questions for the operator
+
+### Operator answers (recorded 2026-06-19)
+1. **MongoDB:** MongoDB Atlas, **EU region**, **encryption-at-rest enabled**. → Keeps primary datastore in the EU (good; no transfer issue for the DB itself).
+2. **API:** **Render, Frankfurt (EU)** region. → API processing stays in the EU.
+3. **SMTP:** **Unconfirmed.** Provider is fully env-driven (`SMTP_HOST/USER/PASS/FROM` in `mailer.js`); `.env.example` defaults to `smtp.gmail.com`. **Action:** operator to confirm the live `SMTP_HOST` value set on Render, and whether it's an EU or US provider (affects §2/F5). If Gmail/Google Workspace, it's the same Google sub-processor already listed.
+4. **DPAs signed:** **Kit/ConvertKit, Cloudinary, Google, OpenAI/Anthropic** — operator confirms DPAs in place. **Still to confirm:** Amazon Creators / Awin (affiliate), and **SCCs** (transfer mechanism) for each US processor — DPA ≠ SCCs (see F5).
+5. **Server logging of IPs / request bodies:** **Unknown — needs verification.** Keeps **F6 open** until the app's logging (and Render's platform log retention) is inspected. Mongo + API both EU reduces but does not eliminate the IP-in-logs concern.
+6. **Backups:** **Atlas automated backups** (default retention, encrypted, same EU region). **Action:** document the exact retention window and confirm backup encryption + that snapshots stay in-EU.
+
+### Original questions (for reference)
 1. Where is **MongoDB** hosted (Atlas region?) and is encryption-at-rest on?
 2. Where is the **API** hosted (Render/Fly/VPS?) — region matters for transfers.
 3. Which **SMTP** provider (the `from`/host)?

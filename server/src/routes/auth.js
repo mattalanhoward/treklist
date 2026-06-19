@@ -13,6 +13,7 @@ const Community = require("../models/community");
 const { sendSupportEmail } = require("../utils/mailer");
 const { subscribeToKit, unsubscribeFromKit } = require("../utils/kitSubscribe");
 const { detectRegionFromIp, getClientIp, normalizeIp } = require("../utils/regionDetection");
+const { hashToken } = require("../utils/tokenHash");
 
 const router = express.Router();
 router.use(cookieParser());
@@ -178,7 +179,8 @@ function issueTokens(user) {
     { expiresIn: JWT_EXP },
   );
   const refreshToken = crypto.randomBytes(40).toString("hex");
-  user.refreshTokens.push(refreshToken);
+  // Persist only the hash; the raw token goes to the httpOnly cookie (F1).
+  user.refreshTokens.push(hashToken(refreshToken));
   return { accessToken, refreshToken };
 }
 
@@ -282,7 +284,7 @@ router.post(
 
     const token = crypto.randomBytes(20).toString("hex");
     const resetExpSec = Number(process.env.RESET_TOKEN_EXP) || 3600; // default 1h
-    user.resetPasswordToken = token;
+    user.resetPasswordToken = hashToken(token); // store hash, email raw (F1)
     user.resetPasswordExpires = Date.now() + resetExpSec * 1000;
     await user.save();
 
@@ -305,7 +307,7 @@ router.post("/reset-password", async (req, res) => {
   }
 
   const user = await User.findOne({
-    resetPasswordToken: token,
+    resetPasswordToken: hashToken(token),
     resetPasswordExpires: { $gt: Date.now() },
   });
   if (!user)
@@ -424,7 +426,7 @@ router.post("/register", registerLimiter, async (req, res) => {
     await user.setPassword(password);
 
     const verifyToken = crypto.randomBytes(20).toString("hex");
-    user.verifyEmailToken = verifyToken;
+    user.verifyEmailToken = hashToken(verifyToken); // store hash, email raw (F1)
     user.verifyEmailExpires = Date.now() + 24 * 60 * 60 * 1000;
 
     const defaultCommunity = await Community.findOne({ slug: "treklist-help" }).select("_id").lean();
@@ -448,7 +450,7 @@ router.post("/register", registerLimiter, async (req, res) => {
 router.post("/verify-email", async (req, res) => {
   const { token } = req.body;
   const user = await User.findOne({
-    verifyEmailToken: token,
+    verifyEmailToken: hashToken(token),
     verifyEmailExpires: { $gt: Date.now() },
   });
   if (!user)
@@ -506,7 +508,7 @@ router.post(
 
       // Generate a fresh verification token and expiration
       const verifyToken = crypto.randomBytes(20).toString("hex");
-      user.verifyEmailToken = verifyToken;
+      user.verifyEmailToken = hashToken(verifyToken); // store hash, email raw (F1)
       user.verifyEmailExpires = Date.now() + 24 * 60 * 60 * 1000; // 24h
 
       await user.save();
@@ -590,7 +592,12 @@ router.post("/refresh", async (req, res) => {
     const { refreshToken } = req.cookies;
     if (!refreshToken) return res.status(401).end();
 
-    const user = await User.findOne({ refreshTokens: refreshToken });
+    // Tokens are stored hashed (F1). Match the hash first; fall back to legacy
+    // plaintext for sessions created before this change so existing users are
+    // not logged out — rotation below replaces it with a hashed token.
+    const hashed = hashToken(refreshToken);
+    let user = await User.findOne({ refreshTokens: hashed });
+    if (!user) user = await User.findOne({ refreshTokens: refreshToken });
     if (!user) return res.status(403).end();
 
     if (user.isDisabled) {
@@ -599,8 +606,10 @@ router.post("/refresh", async (req, res) => {
       return res.status(403).end();
     }
 
-    // rotate
-    user.refreshTokens = user.refreshTokens.filter((t) => t !== refreshToken);
+    // rotate — drop both the hashed and any legacy plaintext form of this token
+    user.refreshTokens = user.refreshTokens.filter(
+      (t) => t !== hashed && t !== refreshToken,
+    );
     const tokens = issueTokens(user);
     await sendTokenResponse(res, user, tokens);
   } catch (err) {
@@ -614,9 +623,11 @@ router.post("/logout", async (req, res) => {
   try {
     const { refreshToken } = req.cookies;
     if (refreshToken) {
+      // Pull both the hashed token and any legacy plaintext form (F1).
+      const hashed = hashToken(refreshToken);
       await User.updateOne(
-        { refreshTokens: refreshToken },
-        { $pull: { refreshTokens: refreshToken } },
+        { refreshTokens: { $in: [hashed, refreshToken] } },
+        { $pull: { refreshTokens: { $in: [hashed, refreshToken] } } },
       );
     }
 

@@ -2,6 +2,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const crypto = require("crypto");
+const { hashToken } = require("../utils/tokenHash");
 const auth = require("../middleware/auth");
 const requireAdmin = require("../middleware/requireAdmin");
 const authRouter = require("./auth");
@@ -365,9 +366,9 @@ router.post("/:id/resend-verification", async (req, res) => {
       return res.status(400).json({ message: "User is already verified." });
     }
 
-    // Generate fresh verification token
+    // Generate fresh verification token (store hash, email raw — F1)
     const verifyToken = crypto.randomBytes(20).toString("hex");
-    user.verifyEmailToken = verifyToken;
+    user.verifyEmailToken = hashToken(verifyToken);
     user.verifyEmailExpires = Date.now() + 24 * 60 * 60 * 1000; // 24h
     await user.save();
 
