@@ -1173,6 +1173,14 @@
       "body": "Deze pagina kan affiliate-links bevatten. Aankopen via deze links kunnen een commissie opleveren, zonder extra kosten voor jou."
     }
   },
+  "safetyDisclaimer": {
+    "prompt": "Lees eerst de disclaimer",
+    "promptEmbed": "Lees de disclaimer hieronder.",
+    "heading": "Disclaimer — lees dit.",
+    "body": "We willen graag nuttige, weloverwogen uitrustingslijsten delen, maar elke trip en elke persoon is anders. Deze lijst weerspiegelt de keuzes van één persoon voor één trip en kan onvolledig zijn, fouten bevatten of simpelweg niet passen bij jouw route, conditie of de omstandigheden die je tegenkomt. Hoewel te goeder trouw gedeeld, kan de juistheid niet worden gegarandeerd. TrekList en de eigenaar van de lijst kunnen niet aansprakelijk worden gesteld voor persoonlijk letsel, verlies of schade die voortvloeit uit het volgen van of vertrouwen op deze lijst — de natuur in trekken is altijd op eigen risico. Plan je eigen uitrusting en neem je eigen veiligheidsbeslissingen.",
+    "bodyFeatured": "Dit is een algemene uitrustingslijst die alleen ter informatie en als startpunt wordt gedeeld. Elke trip en elke persoon is anders, dus de lijst kan onvolledig zijn of niet geschikt voor jouw route, conditie of de omstandigheden die je tegenkomt. TrekList biedt de lijst te goeder trouw aan, maar kan de juistheid niet garanderen en kan niet aansprakelijk worden gesteld voor persoonlijk letsel, verlies of schade die voortvloeit uit het volgen van of vertrouwen op de lijst — de natuur in trekken is altijd op eigen risico. Plan je eigen uitrusting en neem je eigen veiligheidsbeslissingen.",
+    "termsLink": "Lees onze volledige Gebruiksvoorwaarden."
+  },
   "affiliateGate": {
     "modal": {
       "title": "Bedankt dat je TrekList steunt!",

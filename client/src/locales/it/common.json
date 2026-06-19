@@ -1173,6 +1173,14 @@
       "body": "Questa pagina può contenere link di affiliazione. Gli acquisti effettuati tramite questi link possono generare una commissione senza costi aggiuntivi per te."
     }
   },
+  "safetyDisclaimer": {
+    "prompt": "Leggi prima il disclaimer",
+    "promptEmbed": "Leggi il disclaimer qui sotto.",
+    "heading": "Disclaimer — da leggere.",
+    "body": "Cerchiamo di condividere liste dell'attrezzatura utili e ben ponderate, ma ogni viaggio e ogni persona sono diversi. Questa lista riflette le scelte di una persona per un singolo viaggio e potrebbe essere incompleta, contenere errori o semplicemente non adattarsi al tuo itinerario, alla tua forma fisica o alle condizioni che affronterai. Pur condivisa in buona fede, la sua accuratezza non può essere garantita. TrekList e il proprietario della lista non possono essere ritenuti responsabili per lesioni personali, perdite o danni derivanti dal seguire o dall'affidarsi a questa lista — avventurarsi all'aperto è sempre a tuo rischio. Pianifica la tua attrezzatura e prendi le tue decisioni sulla sicurezza.",
+    "bodyFeatured": "Questa è una lista dell'attrezzatura generica, condivisa solo a scopo informativo e come punto di partenza. Ogni viaggio e ogni persona sono diversi, quindi potrebbe essere incompleta o inadatta al tuo itinerario, alla tua forma fisica o alle condizioni che affronterai. TrekList la fornisce in buona fede ma non può garantirne l'accuratezza né essere ritenuta responsabile per lesioni personali, perdite o danni derivanti dal seguirla o dall'affidarsi ad essa — avventurarsi all'aperto è sempre a tuo rischio. Pianifica la tua attrezzatura e prendi le tue decisioni sulla sicurezza.",
+    "termsLink": "Leggi i nostri Termini di utilizzo completi."
+  },
   "affiliateGate": {
     "modal": {
       "title": "Grazie per supportare TrekList!",
