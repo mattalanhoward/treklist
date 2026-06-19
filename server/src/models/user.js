@@ -11,6 +11,7 @@ const UserSchema = new mongoose.Schema(
       optedInAt: { type: Date },
       optedInSource: { type: String },
     },
+    // Stored as SHA-256 hashes, not raw tokens (Finding F1). See utils/tokenHash.js.
     refreshTokens: {
       type: [String],
       default: [],
@@ -76,6 +77,8 @@ const UserSchema = new mongoose.Schema(
     },
     isVerified: { type: Boolean, default: false },
     isAdmin: { type: Boolean, default: false },
+    // verifyEmailToken / resetPasswordToken hold SHA-256 hashes of the raw
+    // token emailed to the user, not the raw token itself (Finding F1).
     verifyEmailToken: String,
     verifyEmailExpires: Date,
     resetPasswordToken: String,
