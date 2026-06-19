@@ -418,8 +418,7 @@
     },
     "actions": {
       "swap": "Échanger l'article"
-    },
-    "newListCallout": "Ajoutez les dates du voyage, le lieu et des notes via le menu ···."
+    }
   },
   "swapModal": {
     "title": "Remplacer l'article",
