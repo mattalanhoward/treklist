@@ -1194,6 +1194,14 @@
       "bodyShort": "This page may contain affiliate links."
     }
   },
+  "safetyDisclaimer": {
+    "prompt": "Always read the disclaimer first",
+    "promptEmbed": "Always read the disclaimer below.",
+    "heading": "Disclaimer — please read.",
+    "body": "We aim to share helpful, well-considered gear lists, but every trip and every person is different. This list reflects one person's choices for a single trip and may be incomplete, contain errors, or simply not suit your route, fitness, or the conditions you'll face. Although shared in good faith, its accuracy can't be guaranteed. TrekList and the list owner can't be held liable for personal injury, loss, or damage arising from following or relying on this list — heading into the outdoors is always at your own risk. Please plan your own gear and make your own safety decisions.",
+    "bodyFeatured": "This is a general gear list shared for information and as a starting point only. Every trip and every person is different, so it may be incomplete or unsuitable for your route, fitness, or the conditions you'll face. TrekList provides it in good faith but can't guarantee its accuracy and can't be held liable for personal injury, loss, or damage arising from following or relying on it — heading into the outdoors is always at your own risk. Please plan your own gear and make your own safety decisions.",
+    "termsLink": "See our full Terms of Use."
+  },
   "affiliateGate": {
     "modal": {
       "title": "Thanks for supporting TrekList!",

@@ -7,6 +7,10 @@ import PackStats from "../components/PackStats";
 import { useUserSettings } from "../contexts/UserSettings";
 import AffiliateGateLink from "../components/AffiliateGateLink";
 import AffiliateDisclosureNotice from "../components/AffiliateDisclosureNotice";
+import {
+  SafetyDisclaimerPrompt,
+  SafetyDisclaimerFull,
+} from "../components/SafetyDisclaimerNotice";
 import PublicHeader from "../components/PublicHeader";
 import FooterLegal from "../components/FooterLegal";
 import SEO from "../components/SEO";
@@ -480,6 +484,10 @@ export default function PublicGearList() {
               context="public"
               className={cx(isEmbed ? "text-[12px]" : "")}
             />
+            <SafetyDisclaimerPrompt
+              scroll={!isEmbed}
+              className={cx(isEmbed ? "text-[12px]" : "")}
+            />
 
             <div className="grid grid-cols-[1fr_auto] items-center gap-3">
               <div className="flex items-center gap-4 min-w-0">
@@ -674,6 +682,10 @@ export default function PublicGearList() {
               context="public"
               short
               className={cx(isEmbed ? "text-[12px]" : "", "px-3 pt-4 text-center")}
+            />
+            <SafetyDisclaimerPrompt
+              scroll={!isEmbed}
+              className={cx(isEmbed ? "text-[12px]" : "", "px-3 text-center")}
             />
           </div>
 
@@ -955,6 +967,19 @@ export default function PublicGearList() {
           )}
         </div>
       </main>
+
+      <div
+        className={cx(
+          isEmbed ? "px-2 py-3" : "max-w-5xl mx-auto px-4 pt-8 pb-10",
+          "w-full",
+        )}
+      >
+        <SafetyDisclaimerFull
+          external={isEmbed}
+          featured={!!data.list.isFeatured}
+          className={cx(isEmbed ? "text-[12px]" : "")}
+        />
+      </div>
 
       {isEmbed ? (
         <div className="text-center py-2">

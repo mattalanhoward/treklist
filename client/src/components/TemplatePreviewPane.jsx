@@ -8,6 +8,10 @@ import api, { refreshAccessToken } from "../services/api";
 import PackStats from "./PackStats";
 import Spinner from "./ui/Spinner";
 import PublicItemModal from "./PublicItemModal";
+import {
+  SafetyDisclaimerPrompt,
+  SafetyDisclaimerFull,
+} from "./SafetyDisclaimerNotice";
 import { useUserSettings } from "../contexts/UserSettings";
 
 function gToOz(g) {
@@ -216,6 +220,8 @@ export default function TemplatePreviewPane({ token, onBack, fetchLists }) {
       {/* Categories + items */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
 
+        <SafetyDisclaimerPrompt className="text-center" />
+
         {/* Mobile sub-header — scrolls with content */}
         <div className="md:hidden space-y-2 pb-2 border-b border-primary/10">
           <div className="flex justify-center">
@@ -354,6 +360,8 @@ export default function TemplatePreviewPane({ token, onBack, fetchLists }) {
             </section>
           );
         })}
+
+        <SafetyDisclaimerFull featured className="pt-4" />
       </div>
 
       {selectedItem && (

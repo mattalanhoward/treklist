@@ -7,7 +7,7 @@ export default function TermsContent() {
       <h1 className="text-2xl font-semibold mb-2">Terms of Use</h1>
 
       <p>
-        <strong>Last updated:</strong> Decembe 1, 2025
+        <strong>Last updated:</strong> June 19, 2026
       </p>
 
       <p>
@@ -276,57 +276,145 @@ export default function TermsContent() {
       </p>
 
       <h2 className="text-lg font-semibold mt-6">
-        11. Disclaimers and limitation of liability
+        11. Disclaimers, assumption of risk, and limitation of liability
       </h2>
 
       <p>
-        <strong>Important:</strong> Nothing in these Terms excludes or limits
-        any liability that cannot be excluded or limited under applicable law
-        (for example, liability for intent or gross negligence, or for death or
+        <strong>Important:</strong> Nothing in these Terms excludes or limits any
+        liability that cannot be excluded or limited under applicable law — for
+        example, liability for intent or gross negligence, or for death or
         personal injury caused by our negligence where such exclusions are not
-        permitted).
+        permitted. The provisions in this Section 11 apply only to the fullest
+        extent permitted by applicable law.
       </p>
 
-      <h3 className="font-semibold mt-3">11.1 Disclaimers</h3>
+      <h3 className="font-semibold mt-3">11.1 Planning tool only</h3>
 
       <p>
-        The Service is provided on an &quot;as is&quot; and &quot;as
-        available&quot; basis. To the fullest extent permitted by law, we do not
-        make any warranties or representations, express or implied, about the
-        Service, including but not limited to warranties of merchantability,
-        fitness for a particular purpose, or non-infringement.
+        TrekList is a planning and organizational tool only. It is not a safety
+        device, a navigation tool, a guiding service, or a source of professional
+        advice. It does not assess, monitor, or guarantee your safety, the
+        suitability of any gear, or the conditions of any route, trail, or
+        activity.
+      </p>
+
+      <h3 className="font-semibold mt-3">
+        11.2 Outdoor activities and assumption of risk
+      </h3>
+
+      <p>
+        Hiking, backpacking, mountaineering, trail running, wild camping, and
+        other outdoor and travel activities are{" "}
+        <strong>inherently dangerous</strong> and can result in property damage,
+        serious personal injury, illness, or death. Weather, terrain, altitude,
+        wildlife, water crossings, navigation, equipment failure, and your own
+        fitness, experience, and decisions all affect your safety and are{" "}
+        <strong>entirely outside our control</strong>.
       </p>
 
       <p>
-        TrekList is intended as a planning and organizational tool only. You are
-        responsible for:
+        You acknowledge and agree that, to the fullest extent permitted by law,
+        you take part in such activities{" "}
+        <strong>voluntarily and at your own risk</strong>, and that you knowingly
+        and freely assume all risks associated with them, whether known or
+        unknown. You are solely responsible for:
       </p>
 
       <ul className="list-disc pl-6 space-y-1">
-        <li>Checking the accuracy of item weights.</li>
-        <li>Making sure your gear is safe and suitable for your trip.</li>
-        <li>Making your own safety decisions in the outdoors.</li>
+        <li>Assessing your own fitness, training, and experience.</li>
+        <li>
+          Checking weather, conditions, regulations, and local advice before and
+          during any trip.
+        </li>
+        <li>
+          Choosing, testing, and carrying gear that is safe, suitable, and legal
+          for your activity.
+        </li>
+        <li>
+          Navigation, route-finding, and carrying appropriate emergency and
+          communication equipment.
+        </li>
+        <li>Making all of your own safety and risk decisions in the field.</li>
       </ul>
 
-      <p>We do not provide professional safety, medical, or guiding advice.</p>
+      <h3 className="font-semibold mt-3">11.3 No professional advice</h3>
 
-      <h3 className="font-semibold mt-3">11.2 Limitation of liability</h3>
+      <p>
+        Content available through the Service — including gear lists, item
+        information, weights, notes, templates, and lists shared by us or by
+        other users — is provided for general informational purposes only. It
+        does not constitute professional safety, medical, fitness, navigational,
+        legal, or guiding advice, and must not be relied upon as such. Always
+        seek qualified professional advice and consult official, up-to-date
+        sources for the activity and area concerned.
+      </p>
 
-      <p>To the fullest extent permitted by law, we are not liable for any:</p>
+      <h3 className="font-semibold mt-3">
+        11.4 Accuracy and third-party information
+      </h3>
+
+      <p>
+        We do not warrant that any information in the Service — including item
+        weights, descriptions, prices, availability, product details, or
+        affiliate information — is accurate, complete, current, or error-free.
+        Such information may be entered by users, supplied by third parties, or
+        change over time. You are responsible for verifying any information (for
+        example, with the manufacturer or retailer) before relying on it.
+      </p>
+
+      <h3 className="font-semibold mt-3">11.5 User content and shared lists</h3>
+
+      <p>
+        Gear lists and other content created or shared by users (including public
+        share links, embedded views, and template or featured lists) reflect
+        personal choices and opinions for a specific trip, not advice or
+        recommendations from us. What suits one person may be unsafe or
+        unsuitable for you. We do not review, endorse, or guarantee user content,
+        and we are not responsible or liable for it. You rely on any such content
+        entirely at your own risk and must independently confirm that it is
+        appropriate for your own route, conditions, and abilities.
+      </p>
+
+      <h3 className="font-semibold mt-3">11.6 Disclaimer of warranties</h3>
+
+      <p>
+        The Service is provided on an <strong>&quot;as is&quot;</strong> and{" "}
+        <strong>&quot;as available&quot;</strong> basis, without warranties of
+        any kind. To the fullest extent permitted by law, we disclaim all
+        warranties and representations, whether express, implied, or statutory,
+        including but not limited to implied warranties of merchantability,
+        satisfactory quality, fitness for a particular purpose, accuracy, and
+        non-infringement, and any warranty that the Service will be
+        uninterrupted, timely, secure, or error-free.
+      </p>
+
+      <h3 className="font-semibold mt-3">11.7 Limitation of liability</h3>
+
+      <p>
+        To the fullest extent permitted by law, we (together with our owner,
+        contributors, and suppliers) will not be liable for any:
+      </p>
 
       <ul className="list-disc pl-6 space-y-1">
-        <li>Indirect, incidental, special, or consequential losses.</li>
-        <li>Loss of profits, revenue, or data.</li>
         <li>
-          Losses arising from your use of third-party services or websites.
+          Personal injury, illness, death, or property damage arising from your
+          participation in any outdoor or travel activity.
+        </li>
+        <li>
+          Indirect, incidental, special, punitive, or consequential losses.
+        </li>
+        <li>Loss of profits, revenue, goodwill, or data.</li>
+        <li>
+          Losses arising from your reliance on the Service or any content within
+          it, or from your use of third-party services, websites, or products.
         </li>
       </ul>
 
       <p>
-        Subject to the preceding paragraph and mandatory law, our total
-        aggregate liability arising out of or in connection with the Service and
-        these Terms, whether in contract, tort (including negligence), or
-        otherwise, will be limited to:
+        Subject to the first paragraph of this Section 11 and to mandatory law,
+        our total aggregate liability arising out of or in connection with the
+        Service and these Terms, whether in contract, tort (including
+        negligence), breach of statutory duty, or otherwise, will be limited to:
       </p>
 
       <ul className="list-disc pl-6 space-y-1">
@@ -341,9 +429,29 @@ export default function TermsContent() {
       </ul>
 
       <p>
+        You acknowledge that the Service is offered free of charge or at low
+        cost, that these disclaimers and limitations are a reasonable allocation
+        of risk, and that we would not be able to provide the Service without
+        them.
+      </p>
+
+      <h3 className="font-semibold mt-3">11.8 Release</h3>
+
+      <p>
+        To the fullest extent permitted by law, you release and waive any claims
+        against us, our owner, and our contributors arising out of or relating to
+        your participation in outdoor or travel activities or your use of or
+        reliance on the Service or any content within it.
+      </p>
+
+      <h3 className="font-semibold mt-3">11.9 Application</h3>
+
+      <p>
         Some jurisdictions do not allow certain disclaimers or limitations of
-        liability. In such cases, the relevant provisions shall apply only to
-        the extent permitted by the laws of your jurisdiction.
+        liability, so some of the above may not apply to you. In that case, the
+        relevant provisions shall apply only to the maximum extent permitted by
+        the laws of your jurisdiction, and the remaining provisions shall remain
+        in full force.
       </p>
 
       <h2 className="text-lg font-semibold mt-6">12. Indemnity</h2>
@@ -397,7 +505,48 @@ export default function TermsContent() {
         your account.
       </p>
 
-      <h2 className="text-lg font-semibold mt-6">15. Contact</h2>
+      <h2 className="text-lg font-semibold mt-6">15. General provisions</h2>
+
+      <p>
+        <strong>Entire agreement.</strong> These Terms, together with our Privacy
+        Policy, Cookie Policy, and Affiliate Disclosure, constitute the entire
+        agreement between you and us regarding the Service and supersede any prior
+        agreements on this subject.
+      </p>
+
+      <p>
+        <strong>Severability.</strong> If any provision of these Terms is found to
+        be invalid or unenforceable, that provision will be modified to the
+        minimum extent necessary, or severed, and the remaining provisions will
+        continue in full force and effect.
+      </p>
+
+      <p>
+        <strong>No waiver.</strong> Our failure to enforce any right or provision
+        of these Terms is not a waiver of that right or provision.
+      </p>
+
+      <p>
+        <strong>Assignment.</strong> You may not assign or transfer these Terms
+        without our prior written consent. We may assign these Terms in
+        connection with a merger, acquisition, sale of assets, or by operation of
+        law.
+      </p>
+
+      <p>
+        <strong>No third-party rights.</strong> These Terms do not create rights
+        for any third parties, except that our owner, contributors, and suppliers
+        may rely on the disclaimers, limitations of liability, and release set
+        out in Section 11.
+      </p>
+
+      <p>
+        <strong>Events beyond our control.</strong> We are not liable for any
+        failure or delay in providing the Service caused by events beyond our
+        reasonable control.
+      </p>
+
+      <h2 className="text-lg font-semibold mt-6">16. Contact</h2>
 
       <p>If you have any questions about these Terms, you can contact us at:</p>
 

@@ -1173,6 +1173,14 @@
       "body": "Diese Seite kann Affiliate-Links enthalten. Bei Käufen über diese Links kann eine Provision verdient werden, ohne zusätzliche Kosten für dich."
     }
   },
+  "safetyDisclaimer": {
+    "prompt": "Lies zuerst den Haftungsausschluss",
+    "promptEmbed": "Lies den Haftungsausschluss unten.",
+    "heading": "Haftungsausschluss — bitte lesen.",
+    "body": "Wir möchten hilfreiche, gut durchdachte Ausrüstungslisten teilen, aber jede Tour und jede Person ist anders. Diese Liste gibt die Entscheidungen einer Person für eine einzelne Tour wieder und kann unvollständig sein, Fehler enthalten oder einfach nicht zu deiner Route, deiner Fitness oder den Bedingungen passen, die dich erwarten. Sie wird in gutem Glauben geteilt, ihre Richtigkeit kann jedoch nicht garantiert werden. TrekList und der Eigentümer der Liste können nicht für Personenschäden, Verluste oder Schäden haftbar gemacht werden, die sich aus dem Befolgen oder Vertrauen auf diese Liste ergeben — der Aufenthalt in der Natur erfolgt immer auf eigene Gefahr. Plane deine eigene Ausrüstung und triff deine eigenen Sicherheitsentscheidungen.",
+    "bodyFeatured": "Dies ist eine allgemeine Ausrüstungsliste, die nur zur Information und als Ausgangspunkt geteilt wird. Jede Tour und jede Person ist anders, daher kann sie unvollständig oder für deine Route, deine Fitness oder die Bedingungen, die dich erwarten, ungeeignet sein. TrekList stellt sie in gutem Glauben bereit, kann ihre Richtigkeit jedoch nicht garantieren und nicht für Personenschäden, Verluste oder Schäden haftbar gemacht werden, die sich aus dem Befolgen oder Vertrauen auf sie ergeben — der Aufenthalt in der Natur erfolgt immer auf eigene Gefahr. Plane deine eigene Ausrüstung und triff deine eigenen Sicherheitsentscheidungen.",
+    "termsLink": "Lies unsere vollständigen Nutzungsbedingungen."
+  },
   "affiliateGate": {
     "modal": {
       "title": "Danke, dass du TrekList unterstützt!",
