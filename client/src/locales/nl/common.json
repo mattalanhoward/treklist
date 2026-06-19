@@ -411,8 +411,7 @@
     },
     "actions": {
       "swap": "Artikel wisselen"
-    },
-    "newListCallout": "Voeg reisdata, locatie en notities toe via het ··· menu."
+    }
   },
   "swapModal": {
     "title": "Item vervangen",

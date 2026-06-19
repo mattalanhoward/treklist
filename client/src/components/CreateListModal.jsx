@@ -51,7 +51,6 @@ export default function CreateListModal({ isOpen, onClose, onCreated }) {
         tripEnd: tripEnd ? tripEnd.toISOString() : null,
         location: location.trim() || null,
       });
-      localStorage.setItem("newListCallout", data.list._id);
       onCreated(data.list._id);
     } catch (err) {
       console.error("Error creating list:", err);

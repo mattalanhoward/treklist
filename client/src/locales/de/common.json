@@ -411,8 +411,7 @@
     },
     "actions": {
       "swap": "Artikel tauschen"
-    },
-    "newListCallout": "Füge Reisedaten, Ort und Notizen über das ··· Menü hinzu."
+    }
   },
   "swapModal": {
     "title": "Item ersetzen",

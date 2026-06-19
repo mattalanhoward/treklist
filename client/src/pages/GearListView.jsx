@@ -1,6 +1,6 @@
 // src/pages/GearListView.jsx
 import React, { useState, useEffect, useCallback } from "react";
-import { FiShare2, FiInfo, FiLock, FiUnlock, FiMoreHorizontal, FiPlus, FiCheck, FiX, FiCheckSquare } from "react-icons/fi";
+import { FiShare2, FiInfo, FiLock, FiUnlock, FiMoreHorizontal, FiPlus, FiCheck, FiCheckSquare } from "react-icons/fi";
 import { BsBackpack4 } from "react-icons/bs";
 import StatWithDetails from "../components/StatWithDetails";
 import { toast } from "react-hot-toast";
@@ -101,19 +101,6 @@ export default function GearListView({
 
   // Lock state to prevent accidental edits
   const [isLocked, setIsLocked] = useState(list.isLocked || false);
-
-  // New-list callout: show once after creation, dismissed via localStorage
-  const [showCallout, setShowCallout] = useState(
-    () => localStorage.getItem("newListCallout") === listId,
-  );
-  useEffect(() => {
-    setShowCallout(localStorage.getItem("newListCallout") === listId);
-  }, [listId]);
-  const dismissCallout = () => {
-    localStorage.removeItem("newListCallout");
-    setShowCallout(false);
-  };
-
 
   // Prevent "stale list prop" from overwriting optimistic background changes.
   // We keep showing the optimistic value until the server (list prop) catches up.
@@ -1458,19 +1445,6 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
       >
         {viewMode === "list" ? (
           <div ref={listContainerRef} className="flex-1 overflow-y-auto px-2 py-2 sm:w-4/5 sm:mx-auto">
-            {showCallout && (
-              <div className="flex items-center justify-between px-3 py-2 mb-3 rounded-lg bg-primary/10 border border-primary/20 text-sm text-primary">
-                <span>{t("gearList.newListCallout")}</span>
-                <button
-                  type="button"
-                  onClick={dismissCallout}
-                  aria-label="Dismiss"
-                  className="ml-2 text-primary/60 hover:text-primary flex-shrink-0"
-                >
-                  <FiX size={14} />
-                </button>
-              </div>
-            )}
             {categories.map((cat) => (
               <SortableSection
                 key={cat._id}

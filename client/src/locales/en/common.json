@@ -427,8 +427,7 @@
     },
     "actions": {
       "swap": "Swap item"
-    },
-    "newListCallout": "Add trip dates, location, and notes using the ··· menu."
+    }
   },
   "swapModal": {
     "title": "Swap Item",
