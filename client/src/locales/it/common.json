@@ -805,7 +805,8 @@
     },
     "toast": {
       "saveSuccess": "Dettagli lista salvati.",
-      "saveFailed": "Impossibile salvare i dettagli. Riprova."
+      "saveFailed": "Impossibile salvare i dettagli. Riprova.",
+      "dateRangeInvalid": "La data di fine del viaggio non può essere precedente alla data di inizio."
     },
     "toolbar": {
       "bold": "Grassetto",

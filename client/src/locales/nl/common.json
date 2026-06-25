@@ -805,7 +805,8 @@
     },
     "toast": {
       "saveSuccess": "Lijstgegevens opgeslagen.",
-      "saveFailed": "Lijstgegevens konden niet worden opgeslagen. Probeer het opnieuw."
+      "saveFailed": "Lijstgegevens konden niet worden opgeslagen. Probeer het opnieuw.",
+      "dateRangeInvalid": "De einddatum van de tocht kan niet vóór de startdatum liggen."
     },
     "toolbar": {
       "bold": "Vet",
