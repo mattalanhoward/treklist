@@ -3751,6 +3751,33 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
                     {user.measurementSystem || "–"}
                   </span>
                 </StatField>
+
+                <StatField label="Onboarding tour">
+                  {user.onboarding?.tourVersionSeen ? (
+                    <span className="flex flex-wrap items-center gap-1">
+                      {user.onboarding.tourStatus === "completed" ? (
+                        <span className="badge badge-xs badge-success">Completed</span>
+                      ) : user.onboarding.tourStatus === "skipped" ? (
+                        <span className="badge badge-xs badge-warning">Skipped</span>
+                      ) : (
+                        <span className="badge badge-xs badge-info">Seen</span>
+                      )}
+                      <span className="text-primary/60 text-xs">
+                        v{user.onboarding.tourVersionSeen}
+                      </span>
+                      {user.onboarding.tourDismissedAt && (
+                        <span className="text-primary/60 text-xs">
+                          ·{" "}
+                          {new Date(
+                            user.onboarding.tourDismissedAt
+                          ).toLocaleDateString()}
+                        </span>
+                      )}
+                    </span>
+                  ) : (
+                    <span className="badge badge-xs badge-ghost">Not seen</span>
+                  )}
+                </StatField>
               </div>
             </section>
 
