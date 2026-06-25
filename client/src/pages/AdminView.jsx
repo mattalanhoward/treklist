@@ -3327,6 +3327,29 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
   );
 }
 
+function StatField({ label, children, className = "" }) {
+  return (
+    <div className={"rounded-lg bg-base-200/60 px-3 py-2 min-w-0 " + className}>
+      <div className="text-[11px] uppercase tracking-wide font-semibold text-primary/50 mb-0.5">
+        {label}
+      </div>
+      <div className="text-sm text-primary break-words">{children}</div>
+    </div>
+  );
+}
+
+function SectionHeading({ icon, children, right }) {
+  return (
+    <div className="flex items-center justify-between gap-2 mb-2 mt-1">
+      <h3 className="text-xs font-semibold uppercase tracking-wide text-primary/60 flex items-center gap-1.5">
+        {icon}
+        <span>{children}</span>
+      </h3>
+      {right}
+    </div>
+  );
+}
+
 function UserDetailModal({ userId, onClose, onUserChanged }) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -3492,19 +3515,43 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
     <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-50">
       <form
         onSubmit={handleSave}
-        className="bg-neutralAlt rounded-lg shadow-2xl max-w-2xl w-full px-4 py-4 sm:px-6 sm:py-6 my-4 max-h-[85vh] sm:max-h-[calc(100vh-5rem)] flex flex-col"
+        className="bg-neutralAlt rounded-xl shadow-2xl max-w-4xl w-full px-4 py-4 sm:px-6 sm:py-5 my-4 max-h-[90vh] sm:max-h-[calc(100vh-4rem)] flex flex-col"
       >
         {/* Header - fixed at top */}
-        <div className="flex justify-between items-center mb-2 sm:mb-3 flex-shrink-0">
-          <h2 className="text-xl font-semibold text-primary flex items-center gap-2">
-            <FiUser />
-            <span>User details</span>
-          </h2>
+        <div className="flex justify-between items-start gap-3 pb-3 mb-3 border-b border-base-200 flex-shrink-0">
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="flex-shrink-0 h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center text-lg">
+              <FiUser />
+            </span>
+            <div className="min-w-0">
+              <h2 className="text-lg font-semibold text-primary truncate">
+                {user?.trailname?.trim() || user?.email || "User details"}
+              </h2>
+              {user && (
+                <div className="flex items-center flex-wrap gap-1.5 mt-0.5">
+                  <span className="text-xs text-primary/60 truncate">
+                    {user.email}
+                  </span>
+                  {user.isAdmin && (
+                    <span className="badge badge-xs badge-primary">Admin</span>
+                  )}
+                  {user.isDisabled && (
+                    <span className="badge badge-xs badge-error">Disabled</span>
+                  )}
+                  {user.isVerified ? (
+                    <span className="badge badge-xs badge-success">Verified</span>
+                  ) : (
+                    <span className="badge badge-xs badge-warning">Unverified</span>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
           <button
             type="button"
             onClick={onClose}
             disabled={saving}
-            className="text-error hover:text-error/80"
+            className="flex-shrink-0 text-error hover:text-error/80 text-lg"
           >
             <FiX />
           </button>
@@ -3524,239 +3571,286 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
 
         {!loading && user && (
           <>
-            {/* Profile fields */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-3">
-              <div>
-                <label className="block font-medium text-primary mb-0.5">
-                  Email
-                </label>
-                <div className="mt-0.5 text-sm text-primary bg-base-200 rounded px-2 py-1 break-all">
-                  {user.email}
+            {/* Section: Profile (editable) */}
+            <section className="mb-5">
+              <SectionHeading icon={<FiUser className="text-primary/60" />}>
+                Profile
+              </SectionHeading>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] uppercase tracking-wide font-semibold text-primary/50 mb-1">
+                    Email
+                  </label>
+                  <div className="text-sm text-primary bg-base-200/60 rounded-lg px-3 py-2 break-all">
+                    {user.email}
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <label className="block font-medium text-primary mb-0.5">
-                  Trailname
-                </label>
-                <input
-                  type="text"
-                  className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
-                  value={trailname}
-                  onChange={(e) => setTrailname(e.target.value)}
-                  placeholder="Optional public name"
-                />
-              </div>
-
-              <div>
-                <label className="block font-medium text-primary mb-0.5">
-                  Created at
-                </label>
-                <div className="mt-0.5 text-sm text-primary bg-base-200 rounded px-2 py-1">
-                  {formatDateTime(user.createdAt)}
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-medium text-primary mb-0.5">
-                  Updated at
-                </label>
-                <div className="mt-0.5 text-sm text-primary bg-base-200 rounded px-2 py-1">
-                  {formatDateTime(user.updatedAt)}
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-medium text-primary mb-0.5">
-                  Last login
-                </label>
-                <div className="mt-0.5 text-sm text-primary bg-base-200 rounded px-2 py-1">
-                  {user.lastLoginAt
-                    ? `${formatDateTime(user.lastLoginAt)} (${timeAgo(user.lastLoginAt)})`
-                    : "Never"}
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-medium text-primary mb-0.5">
-                  Auth providers
-                </label>
-                <div className="mt-0.5 flex flex-wrap gap-1">
-                  {user.authProviders && user.authProviders.length > 0 ? (
-                    user.authProviders.map((ap, i) => (
-                      <span
-                        key={i}
-                        className={
-                          "badge badge-sm " +
-                          (ap.provider === "google"
-                            ? "badge-secondary"
-                            : "badge-ghost")
-                        }
-                        title={
-                          ap.connectedAt
-                            ? `Connected ${new Date(ap.connectedAt).toLocaleDateString()}`
-                            : ""
-                        }
-                      >
-                        {ap.provider === "google" ? "Google" : "Email"}
-                      </span>
-                    ))
-                  ) : (
-                    <span className="text-sm text-primary/60">None</span>
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-medium text-primary mb-0.5">
-                  Role
-                </label>
-                <select
-                  className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary bg-neutralAlt"
-                  value={isAdmin ? "admin" : "user"}
-                  onChange={(e) => setIsAdmin(e.target.value === "admin")}
-                >
-                  <option value="user">User</option>
-                  <option value="admin">Admin</option>
-                </select>
-              </div>
-
-              <div className="flex flex-col justify-end gap-1">
-                <label className="inline-flex items-center gap-2 text-primary">
+                <div>
+                  <label className="block text-[11px] uppercase tracking-wide font-semibold text-primary/50 mb-1">
+                    Trailname
+                  </label>
                   <input
-                    type="checkbox"
-                    className="checkbox checkbox-sm"
-                    checked={isVerified}
-                    onChange={(e) => setIsVerified(e.target.checked)}
-                    />
-                  <span>Verified email</span>
-                </label>
-                <label className="inline-flex items-center gap-2 text-primary">
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-sm"
-                    checked={isDisabled}
-                    onChange={(e) => setIsDisabled(e.target.checked)}
-                    />
-                  <span>Disable login for this user</span>
-                </label>
-              </div>
-                    
-              {!user.isVerified && (
-                <div className="flex flex-col justify-end">
-                  <button
-                    type="button"
-                    className="btn btn-sm btn-outline"
-                    onClick={() => setConfirmResendOpen(true)}
-                    disabled={resending}
+                    type="text"
+                    className="block w-full border border-base-300 rounded-lg px-3 py-2 text-sm text-primary bg-neutralAlt focus:outline-none focus:ring-2 focus:ring-secondary/40"
+                    value={trailname}
+                    onChange={(e) => setTrailname(e.target.value)}
+                    placeholder="Optional public name"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] uppercase tracking-wide font-semibold text-primary/50 mb-1">
+                    Role
+                  </label>
+                  <select
+                    className="block w-full border border-base-300 rounded-lg px-3 py-2 text-sm text-primary bg-neutralAlt focus:outline-none focus:ring-2 focus:ring-secondary/40"
+                    value={isAdmin ? "admin" : "user"}
+                    onChange={(e) => setIsAdmin(e.target.value === "admin")}
                   >
-                    {resending ? "Sending…" : "Resend Verification Email"}
-                  </button>
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                  </select>
                 </div>
-              )}
 
-              <div>
-                <label className="block font-medium text-primary mb-0.5">
-                  Active sessions
-                </label>
-                <div className="mt-0.5 flex items-center gap-2">
-                  <span className="text-sm text-primary bg-base-200 rounded px-2 py-1">
-                    {sessionCount}
-                  </span>
-                  {sessionCount > 0 && (
+                <div className="flex flex-col justify-center gap-1.5">
+                  <label className="inline-flex items-center gap-2 text-sm text-primary cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="checkbox checkbox-sm"
+                      checked={isVerified}
+                      onChange={(e) => setIsVerified(e.target.checked)}
+                    />
+                    <span>Verified email</span>
+                  </label>
+                  <label className="inline-flex items-center gap-2 text-sm text-primary cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="checkbox checkbox-sm checkbox-error"
+                      checked={isDisabled}
+                      onChange={(e) => setIsDisabled(e.target.checked)}
+                    />
+                    <span>Disable login for this user</span>
+                  </label>
+                  {!user.isVerified && (
                     <button
                       type="button"
-                      className="btn btn-xs btn-outline"
-                      onClick={() => setConfirmRevokeOpen(true)}
-                      disabled={revoking}
+                      className="btn btn-xs btn-outline self-start mt-1"
+                      onClick={() => setConfirmResendOpen(true)}
+                      disabled={resending}
                     >
-                      {revoking ? "Revoking…" : "Revoke all"}
+                      {resending ? "Sending…" : "Resend verification email"}
                     </button>
                   )}
                 </div>
               </div>
+            </section>
 
-              <div>
-                <label className="block font-medium text-primary mb-0.5">
-                  Marketing
-                </label>
-                <div className="mt-0.5 text-sm text-primary bg-base-200 rounded px-2 py-1">
+            {/* Section: Account & activity (read-only) */}
+            <section className="mb-5">
+              <SectionHeading>Account &amp; activity</SectionHeading>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
+                <StatField label="Created">
+                  {formatDateTime(user.createdAt)}
+                </StatField>
+                <StatField label="Last login">
+                  {user.lastLoginAt ? (
+                    <>
+                      {formatDateTime(user.lastLoginAt)}
+                      <span className="text-primary/50">
+                        {" "}({timeAgo(user.lastLoginAt)})
+                      </span>
+                    </>
+                  ) : (
+                    "Never"
+                  )}
+                </StatField>
+                <StatField label="Last seen">
+                  {user.lastActiveAt ? (
+                    <>
+                      {formatDateTime(user.lastActiveAt)}
+                      <span className="text-primary/50">
+                        {" "}({timeAgo(user.lastActiveAt)})
+                      </span>
+                    </>
+                  ) : (
+                    "Never"
+                  )}
+                </StatField>
+                <StatField label="Updated">
+                  {formatDateTime(user.updatedAt)}
+                </StatField>
+
+                <StatField label="Auth providers">
+                  {user.authProviders && user.authProviders.length > 0 ? (
+                    <span className="flex flex-wrap gap-1">
+                      {user.authProviders.map((ap, i) => (
+                        <span
+                          key={i}
+                          className={
+                            "badge badge-sm " +
+                            (ap.provider === "google"
+                              ? "badge-secondary"
+                              : "badge-ghost")
+                          }
+                          title={
+                            ap.connectedAt
+                              ? `Connected ${new Date(ap.connectedAt).toLocaleDateString()}`
+                              : ""
+                          }
+                        >
+                          {ap.provider === "google" ? "Google" : "Email"}
+                        </span>
+                      ))}
+                    </span>
+                  ) : (
+                    <span className="text-primary/60">None</span>
+                  )}
+                </StatField>
+
+                <StatField label="Active sessions">
+                  <span className="flex items-center gap-2">
+                    <span className="font-medium">{sessionCount}</span>
+                    {sessionCount > 0 && (
+                      <button
+                        type="button"
+                        className="btn btn-xs btn-outline"
+                        onClick={() => setConfirmRevokeOpen(true)}
+                        disabled={revoking}
+                      >
+                        {revoking ? "Revoking…" : "Revoke all"}
+                      </button>
+                    )}
+                  </span>
+                </StatField>
+
+                <StatField label="Marketing">
                   {user.marketing?.optedIn ? (
-                    <span>
-                      <span className="badge badge-xs badge-success mr-1">Opted in</span>
+                    <span className="flex flex-wrap items-center gap-1">
+                      <span className="badge badge-xs badge-success">Opted in</span>
                       {user.marketing.optedInAt && (
-                        <span className="text-primary/70 text-xs">
-                          on {new Date(user.marketing.optedInAt).toLocaleDateString()}
+                        <span className="text-primary/60 text-xs">
+                          {new Date(user.marketing.optedInAt).toLocaleDateString()}
                         </span>
                       )}
                       {user.marketing.optedInSource && (
-                        <span className="text-primary/70 text-xs">
-                          {" "}via {user.marketing.optedInSource}
+                        <span className="text-primary/60 text-xs">
+                          via {user.marketing.optedInSource}
                         </span>
                       )}
                     </span>
                   ) : (
                     <span className="badge badge-xs badge-ghost">Not opted in</span>
                   )}
-                </div>
-              </div>
-            </div>
+                </StatField>
 
-            {/* Lists summary */}
-            <div className="border-t border-base-200 pt-3 mt-2">
-              <h3 className="text-sm font-semibold text-primary flex items-center gap-1 mb-2">
-                <FiUsers className="text-primary/80" />
-                <span>
-                  Gear lists ({lists.length})
-                  <span className="font-normal text-primary/70 ml-1">
-                    · {catalogItemsCount + customItemsCount} items
-                    ({catalogItemsCount} catalog, {customItemsCount} custom)
+                <StatField label="Preferences">
+                  <span className="text-xs text-primary/80">
+                    {(user.region || "–").toUpperCase()} · {user.locale || "–"} ·{" "}
+                    {user.language || "–"} · {user.weightUnit || "–"} ·{" "}
+                    {user.measurementSystem || "–"}
                   </span>
-                </span>
-              </h3>
+                </StatField>
+              </div>
+            </section>
+
+            {/* Section: Gear lists */}
+            <section>
+              <SectionHeading
+                icon={<FiUsers className="text-primary/60" />}
+                right={
+                  <span className="text-xs text-primary/60">
+                    {catalogItemsCount + customItemsCount} items ·{" "}
+                    {catalogItemsCount} catalog · {customItemsCount} custom
+                  </span>
+                }
+              >
+                Gear lists ({lists.length})
+              </SectionHeading>
 
               {lists.length === 0 && (
-                <div className="text-sm text-primary/70">
+                <div className="text-sm text-primary/60 bg-base-200/60 rounded-lg px-3 py-3">
                   This user has no gear lists yet.
                 </div>
               )}
 
               {lists.length > 0 && (
-                <div className="max-h-48 overflow-auto text-xs sm:text-sm">
-                  <table className="min-w-full">
-                    <thead>
-                      <tr className="bg-base-200/70">
-                        <th className="text-left px-2 py-1">Title</th>
-                        <th className="text-left px-2 py-1">Region</th>
-                        <th className="text-left px-2 py-1">Created</th>
-                        <th className="text-left px-2 py-1">Updated</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {lists.map((l) => (
-                        <tr
-                          key={l._id}
-                          className="border-t border-base-200 hover:bg-base-200/40"
-                        >
-                          <td className="px-2 py-1 truncate max-w-[180px]">
-                            {l.title || "(untitled list)"}
-                          </td>
-                          <td className="px-2 py-1 text-xs">
-                            {l.region || "–"}
-                          </td>
-                          <td className="px-2 py-1 text-xs">
-                            {formatDateTime(l.createdAt)}
-                          </td>
-                          <td className="px-2 py-1 text-xs">
-                            {formatDateTime(l.updatedAt)}
-                          </td>
+                <div className="rounded-lg border border-base-200 overflow-hidden">
+                  <div className="max-h-56 overflow-auto">
+                    <table className="min-w-full text-sm">
+                      <thead className="sticky top-0 z-10">
+                        <tr className="bg-base-200 text-[11px] uppercase tracking-wide text-primary/60">
+                          <th className="text-left font-semibold px-3 py-2">Title</th>
+                          <th className="text-left font-semibold px-3 py-2">Trip</th>
+                          <th className="text-left font-semibold px-3 py-2">Location</th>
+                          <th className="text-right font-semibold px-3 py-2">Items</th>
+                          <th className="text-left font-semibold px-3 py-2">Flags</th>
+                          <th className="text-left font-semibold px-3 py-2">Updated</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {lists.map((l) => {
+                          const tripStart = l.tripStart
+                            ? new Date(l.tripStart).toLocaleDateString()
+                            : null;
+                          const tripEnd = l.tripEnd
+                            ? new Date(l.tripEnd).toLocaleDateString()
+                            : null;
+                          const tripLabel =
+                            tripStart && tripEnd
+                              ? `${tripStart} → ${tripEnd}`
+                              : tripStart || tripEnd || "–";
+                          return (
+                            <tr
+                              key={l._id}
+                              className="border-t border-base-200 hover:bg-base-200/40 align-top"
+                            >
+                              <td className="px-3 py-2 font-medium text-primary truncate max-w-[180px]">
+                                {l.title || "(untitled list)"}
+                              </td>
+                              <td className="px-3 py-2 text-xs text-primary/80 whitespace-nowrap">
+                                {tripLabel}
+                              </td>
+                              <td className="px-3 py-2 text-xs text-primary/80 truncate max-w-[120px]">
+                                {l.location || "–"}
+                              </td>
+                              <td className="px-3 py-2 text-xs text-right text-primary/80">
+                                {l.itemCount ?? 0}
+                              </td>
+                              <td className="px-3 py-2">
+                                <div className="flex flex-wrap gap-1">
+                                  {l.isFeatured && (
+                                    <span className="badge badge-xs badge-primary">Featured</span>
+                                  )}
+                                  {l.isSample && (
+                                    <span className="badge badge-xs badge-secondary">Sample</span>
+                                  )}
+                                  {l.isLocked && (
+                                    <span className="badge badge-xs badge-warning">Locked</span>
+                                  )}
+                                  {l.hasActiveShare && (
+                                    <span className="badge badge-xs badge-success">Shared</span>
+                                  )}
+                                  {!l.isFeatured &&
+                                    !l.isSample &&
+                                    !l.isLocked &&
+                                    !l.hasActiveShare && (
+                                      <span className="text-xs text-primary/40">–</span>
+                                    )}
+                                </div>
+                              </td>
+                              <td className="px-3 py-2 text-xs text-primary/80 whitespace-nowrap">
+                                {formatDateTime(l.updatedAt)}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               )}
-            </div>
+            </section>
           </>
         )}
         </div>
@@ -3764,12 +3858,12 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
         {/* Actions - fixed at bottom */}
         {!loading && user && (
           <>
-            <div className="mt-3 flex items-center justify-between flex-shrink-0">
+            <div className="mt-4 pt-3 border-t border-base-200 flex items-center justify-between flex-shrink-0">
               <button
                 type="button"
                 onClick={() => setConfirmDeleteOpen(true)}
                 disabled={saving}
-                className="px-2 py-1 bg-error text-neutral font-semibold rounded-md shadow hover:bg-error/80 focus:outline-none focus:ring-2 focus:ring-error transition text-xs sm:text-sm"
+                className="px-3 py-1.5 bg-error/10 text-error font-semibold rounded-lg hover:bg-error/20 focus:outline-none focus:ring-2 focus:ring-error/40 transition text-sm"
               >
                 Delete user
               </button>
@@ -3778,14 +3872,14 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
                   type="button"
                   onClick={onClose}
                   disabled={saving}
-                  className="px-2 py-1 bg-neutralAlt rounded hover:bg-neutralAlt/90 text-primary text-xs sm:text-sm"
+                  className="px-3 py-1.5 rounded-lg hover:bg-base-200 text-primary text-sm"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
-                  className="px-2 py-1 rounded bg-secondary text-white hover:bg-secondary/80 text-xs sm:text-sm"
+                  className="px-4 py-1.5 rounded-lg bg-secondary text-white font-medium hover:bg-secondary/80 disabled:opacity-60 text-sm"
                 >
                   {saving ? "Saving…" : "Save changes"}
                 </button>
@@ -4190,7 +4284,7 @@ function UsersSection() {
                     <option value="lists">Sort: Lists</option>
                     <option value="items">Sort: Items</option>
                     <option value="lastLoginAt">Sort: Last login</option>
-                    <option value="lastActiveAt">Sort: Last active</option>
+                    <option value="lastActiveAt">Sort: Last seen</option>
                     <option value="marketing">Sort: Marketing</option>
                   </select>
                   <button
@@ -4304,7 +4398,7 @@ function UsersSection() {
                         className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
                         onClick={() => handleSort("lastActiveAt")}
                       >
-                        Last active
+                        Last seen
                         {sort.field === "lastActiveAt" && (
                           <span className="ml-1 text-[10px]">
                             {sort.dir === "asc" ? "↑" : "↓"}
@@ -4528,7 +4622,7 @@ function UsersSection() {
                           {timeAgo(u.lastLoginAt)}
                         </span>
                         <span title={u.lastActiveAt ? new Date(u.lastActiveAt).toLocaleString() : ""}>
-                          <span className="font-medium text-primary/70">Active:</span>{" "}
+                          <span className="font-medium text-primary/70">Seen:</span>{" "}
                           {timeAgo(u.lastActiveAt)}
                         </span>
                       </div>
