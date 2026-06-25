@@ -20,6 +20,18 @@ const User = require("../models/user");
 const MerchantOffer = require("../models/merchantOffer");
 
 /**
+ * Returns true when both trip dates are present and the end precedes the start.
+ * Used to reject invalid trip ranges on create/update.
+ */
+function isInvalidTripRange(start, end) {
+  if (!start || !end) return false;
+  const s = new Date(start).getTime();
+  const e = new Date(end).getTime();
+  if (Number.isNaN(s) || Number.isNaN(e)) return false;
+  return e < s;
+}
+
+/**
  * Add hasOffer flag to items based on user's region.
  * Falls back to the linked GlobalItem when the GearItem has no link or productId,
  * covering items created before productId denormalization and list copies.
@@ -265,6 +277,11 @@ router.post("/", async (req, res) => {
   try {
     const { title, region, tripStart, tripEnd, location } = req.body;
     if (!title) return res.status(400).json({ message: "Title is required." });
+    if (isInvalidTripRange(tripStart, tripEnd)) {
+      return res
+        .status(400)
+        .json({ message: "Trip end date can't be before the start date." });
+    }
 
     // 1) create the gear list
     const newList = await GearList.create({
@@ -316,6 +333,15 @@ router.patch("/:listId", async (req, res) => {
 
     if (list.isLocked) {
       return res.status(403).json({ message: "List is locked" });
+    }
+
+    // Validate the effective trip range (new value if provided, else existing).
+    const effectiveStart = tripStart !== undefined ? tripStart : list.tripStart;
+    const effectiveEnd = tripEnd !== undefined ? tripEnd : list.tripEnd;
+    if (isInvalidTripRange(effectiveStart, effectiveEnd)) {
+      return res
+        .status(400)
+        .json({ message: "Trip end date can't be before the start date." });
     }
 
     // build an update object only with provided fields

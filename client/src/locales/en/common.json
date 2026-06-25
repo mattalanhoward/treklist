@@ -821,7 +821,8 @@
     },
     "toast": {
       "saveSuccess": "List details saved.",
-      "saveFailed": "Failed to save list details. Please try again."
+      "saveFailed": "Failed to save list details. Please try again.",
+      "dateRangeInvalid": "Trip end date can't be before the start date."
     },
     "toolbar": {
       "bold": "Bold",
