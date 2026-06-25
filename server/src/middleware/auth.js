@@ -25,10 +25,13 @@ module.exports = function (req, res, next) {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
     req.userId = payload.userId;   // attach userId for use in handlers
 
-    // Throttled lastActiveAt update (fire-and-forget, never blocks the request)
+    // Throttled lastActiveAt update (fire-and-forget, never blocks the request).
+    // Skip passive background polls (the notification bell polls every 15s on
+    // every authenticated page) so "last seen" reflects genuine requests.
+    const isPassivePoll = (req.originalUrl || "").startsWith("/api/notifications");
     const now = Date.now();
     const lastWritten = lastActiveCache.get(payload.userId) || 0;
-    if (now - lastWritten > ACTIVE_THROTTLE_MS) {
+    if (!isPassivePoll && now - lastWritten > ACTIVE_THROTTLE_MS) {
       lastActiveCache.set(payload.userId, now);
       User.updateOne(
         { _id: payload.userId },

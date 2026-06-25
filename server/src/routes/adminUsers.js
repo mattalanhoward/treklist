@@ -183,8 +183,37 @@ router.get("/:id", async (req, res) => {
 
     const lists = await GearList.find({ owner: id })
       .sort({ updatedAt: -1 })
-      .select("title createdAt updatedAt region")
+      .select(
+        "title createdAt updatedAt region tripStart tripEnd location isFeatured isSample isLocked"
+      )
       .lean();
+
+    // Per-list item counts and active-share status
+    const listIds = lists.map((l) => l._id);
+    let itemCountByList = {};
+    let sharedListIds = new Set();
+    if (listIds.length > 0) {
+      const [itemCounts, shareTokens] = await Promise.all([
+        GearItem.aggregate([
+          { $match: { gearList: { $in: listIds } } },
+          { $group: { _id: "$gearList", count: { $sum: 1 } } },
+        ]),
+        ShareToken.find({ list: { $in: listIds }, revokedAt: null })
+          .select("list")
+          .lean(),
+      ]);
+      itemCountByList = itemCounts.reduce((acc, row) => {
+        acc[String(row._id)] = row.count;
+        return acc;
+      }, {});
+      sharedListIds = new Set(shareTokens.map((t) => String(t.list)));
+    }
+
+    const enrichedLists = lists.map((l) => ({
+      ...l,
+      itemCount: itemCountByList[String(l._id)] || 0,
+      hasActiveShare: sharedListIds.has(String(l._id)),
+    }));
 
     const [catalogItemsCount, customItemsCount] = await Promise.all([
       GlobalItem.countDocuments({
@@ -201,7 +230,7 @@ router.get("/:id", async (req, res) => {
 
     res.json({
       user,
-      lists,
+      lists: enrichedLists,
       listsCount: lists.length,
       catalogItemsCount,
       customItemsCount,
