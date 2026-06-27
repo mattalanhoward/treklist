@@ -81,6 +81,7 @@ export default function AddGearItemModal({ listId, categoryId, onClose, onAdded 
       } else if (selection.source === "catalog") {
         const { data } = await api.post("/global/items/from-catalog/bulk", {
           ids: selection.catalogIds,
+          variantSelections: selection.variantSelections,
         });
         await addGlobalItemsToList(data.items || []);
         window.dispatchEvent(new CustomEvent("global-items:updated"));

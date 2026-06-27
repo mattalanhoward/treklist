@@ -18,7 +18,7 @@ const { isValidItemType } = require("./attributeSchemas");
 const RULES = [
   // --- storage / sacks ---
   [/pack liner|backpack liner|rucksack liner|pack\s*liner/i, "Pack Liner"],
-  [/dry\s*bag|waterproof bag|stuff\s*sack|dry\s*sack|compression sack/i, "Dry Bag / Stuff Sack"],
+  [/dry\s*bag|waterproof bag|stuff\s*sack|dry\s*sack|compression sack|packing cube/i, "Dry Bag / Stuff Sack"],
 
   // --- packs (specific before generic) ---
   [/hip pack|waist pack|lumbar pack|bum bag|fanny pack/i, "Hip Pack"],
@@ -91,9 +91,9 @@ const RULES = [
   // --- bottoms / shirts ---
   [/convertible (pant|trouser)|zip-?off/i, "Convertible Pants"],
   [/\bshort(s)?\b/i, "Hiking Shorts"],
-  [/\btrouser(s)?\b|\bpant(s)?\b|\blegging(s)?\b/i, "Hiking Pants"],
-  [/t-?shirt|\btee\b|hiking shirt|trekking shirt|polo shirt/i, "Hiking Shirt"],
-  [/glove|mitten/i, "Gloves (Insulated)"],
+  [/\btrouser(s)?\b|\bpant(s)?\b|\blegging(s)?\b|\bjogger(s)?\b/i, "Hiking Pants"],
+  [/t-?shirt|\btee\b|hiking shirt|trekking shirt|polo shirt|sun hoody|sun hoodie/i, "Hiking Shirt"],
+  [/glove|mitten|\bmitt(s)?\b/i, "Gloves (Insulated)"],
 
   // --- footwear ---
   [/trail running shoe|trail shoe|running shoe/i, "Trail Running Shoes"],
@@ -155,4 +155,158 @@ function normalizeItemType(value, name = "") {
   return inferItemType(`${v} ${name}`.trim());
 }
 
-module.exports = { inferItemType, normalizeItemType, RULES };
+// =============================================================================
+// itemType -> controlled TAXONOMY (category + subcategory)
+// =============================================================================
+// The app's category/subcategory FILTERS are driven by the locked taxonomy in
+// client/src/config/catalogTaxonomy.js, and the catalog API filters `category`
+// EXACTLY. Feed product_type strings ("Backpacks / Frameless", "Sleeping Bags")
+// are NOT that taxonomy, so items imported with raw feed categories are
+// invisible to the filters. We therefore derive category/subcategory from the
+// already-classified itemType instead.
+//
+// Values below are the ground-truth pairs the curated catalog already uses, so
+// imported items land in the same buckets as hand-curated ones. Clothing and
+// footwear are gender-resolved from the product name at call time.
+// `gendered: true`  -> category becomes Men's/Women's/Unisex Clothing; the
+//                      mapped subcategory only applies for Men's/Women's (their
+//                      lists carry Base Layers/Shirts/etc.; Unisex does not).
+// `footwear: true`  -> subcategory becomes "<Gender> Footwear".
+// -----------------------------------------------------------------------------
+const CATEGORY_BY_ITEM_TYPE = {
+  // ---- Sleep System ----
+  "Sleeping Bag": ["Sleep System", "Sleeping Bags"],
+  Quilt: ["Sleep System", "Quilts"],
+  "Sleeping Bag Liner": ["Sleep System", "Sleeping Bag Liners"],
+  "Inflatable Sleeping Pad": ["Sleep System", "Sleeping Pads"],
+  "Foam Sleeping Pad": ["Sleep System", "Sleeping Pads"],
+  Pillow: ["Sleep System", "Pillows"],
+  // ---- Backpacks & Bags ----
+  Backpack: ["Backpacks & Bags", "Backpacking Packs"],
+  Daypack: ["Backpacks & Bags", "Day Packs & Accessories"],
+  "Hip Pack": ["Backpacks & Bags", "Day Packs & Accessories"],
+  // ---- Shelter ----
+  "Backpacking Tent": ["Shelter", "Tents"],
+  "Tarp Shelter": ["Shelter", "Backpacking Tarps"],
+  "Tent Stakes": ["Shelter", "Tent Stakes"],
+  "Ground Sheet": ["Shelter", "Ground Sheet"],
+  // ---- Kitchen & Cooking ----
+  "Backpacking Pot": ["Kitchen & Cooking", "Cookware"],
+  "Backpacking Stove (Canister)": ["Kitchen & Cooking", "Stoves"],
+  "Coffee Mug": ["Kitchen & Cooking", "Coffee"],
+  Utensil: ["Kitchen & Cooking", "Utensils"],
+  "Stove Fuel": ["Kitchen & Cooking", "Fuel - Isobutane"],
+  // ---- Hydration ----
+  "Water Filter": ["Hydration", "Water Treatment"],
+  "Water Bottle": ["Hydration", "Hydration Containers"],
+  "Hydration Reservoir": ["Hydration", "Hydration Containers"],
+  // ---- Electronics & Power ----
+  Headlamp: ["Electronics & Power", "Headlamps"],
+  "Torch Light": ["Electronics & Power", "Torch Lights"],
+  "Camp Lantern": ["Electronics & Power", "Lighting"],
+  "Power Bank": ["Electronics & Power", "Charging & Power Banks"],
+  "Travel Charger": ["Electronics & Power", "Charging & Power Banks"],
+  "Charging Cable": ["Electronics & Power", "Charging & Power Banks"],
+  Earbuds: ["Electronics & Power", "Headphones & Earbuds"],
+  Smartphone: ["Electronics & Power", "Phones & GPS"],
+  Smartwatch: ["Electronics & Power", "Wearables & GPS"],
+  // ---- Accessories & Tools ----
+  "Trekking Poles": ["Accessories & Tools", "Trekking Poles"],
+  "Dry Bag / Stuff Sack": ["Accessories & Tools", "Dry Bags"],
+  "Pack Liner": ["Accessories & Tools", "Dry Bags"],
+  "Bear Canister": ["Accessories & Tools", "Food Storage"],
+  "Pocket Knife": ["Accessories & Tools", "Knives"],
+  "Mosquito Head Net": ["Accessories & Tools", "Insect Protection"],
+  Umbrella: ["Accessories & Tools", "Rain Gear"],
+  // ---- Health & Hygiene ----
+  Toiletry: ["Health & Hygiene", "Personal Care"],
+  "First Aid Kit": ["Health & Hygiene", "First Aid"],
+  Medication: ["Health & Hygiene", "First Aid"],
+  "Blister Prevention": ["Health & Hygiene", "Foot Care"],
+  // ---- Navigation & Travel ----
+  Guidebook: ["Navigation & Planning", "Guidebooks & Maps"],
+  "Travel Towel": ["Travel", "Towels"],
+  Document: ["Travel", "Documents"],
+  Permit: ["Travel", "Documents"],
+  Wallet: ["Travel", "Wallet"],
+  // ---- Footwear (gender-resolved subcategory) ----
+  "Hiking Boots": ["Footwear", null, { footwear: true }],
+  "Trail Running Shoes": ["Footwear", null, { footwear: true }],
+  Sandals: ["Footwear", null, { footwear: true }],
+  // ---- Always-Unisex clothing ----
+  "Hat/Headwear": ["Unisex Clothing", "Headwear"],
+  "Rain Poncho": ["Unisex Clothing", "Rain Gear"],
+  Sunglasses: ["Unisex Clothing", "Accessories"],
+  "Gloves (Insulated)": ["Unisex Clothing", "Accessories"],
+  Bra: ["Women's Clothing", "Underwear"],
+  // ---- Gendered clothing (category from name; subcat for Men's/Women's) ----
+  "Base Layer Top": [null, "Base Layers", { gendered: true }],
+  "Base Layer Bottom": [null, "Base Layers", { gendered: true }],
+  "Hiking Shirt": [null, "Shirts", { gendered: true }],
+  "Hiking Pants": [null, "Pants", { gendered: true }],
+  "Convertible Pants": [null, "Pants", { gendered: true }],
+  "Hiking Shorts": [null, "Shorts", { gendered: true }],
+  "Hiking Socks": [null, "Socks", { gendered: true }],
+  Underwear: [null, "Underwear", { gendered: true }],
+  "Insulated Jacket": [null, "Jackets", { gendered: true }],
+  "Fleece Jacket": [null, "Jackets", { gendered: true }],
+  "Rain Jacket": [null, "Rain Gear", { gendered: true }],
+  "Rain Pants": [null, "Rain Gear", { gendered: true }],
+  // "Other" intentionally absent -> leaves category/subcategory unset.
+};
+
+const WOMENS_RE = /\b(women'?s|woman'?s|female|ladies|ladies')\b/i;
+const MENS_RE = /\b(men'?s|man'?s|male)\b/i; // word-boundary avoids matching "women"
+
+function genderClothingCategory(name) {
+  const w = WOMENS_RE.test(name);
+  const m = MENS_RE.test(name);
+  if (w && !m) return "Women's Clothing";
+  if (m && !w) return "Men's Clothing";
+  return "Unisex Clothing";
+}
+
+function genderFootwearSub(name) {
+  const w = WOMENS_RE.test(name);
+  const m = MENS_RE.test(name);
+  if (w && !m) return "Women's Footwear";
+  if (m && !w) return "Men's Footwear";
+  return "Unisex Footwear";
+}
+
+/**
+ * Map a (valid) itemType + product name onto the controlled catalog taxonomy.
+ * Returns { category, subcategory } using only locked taxonomy values, so the
+ * item is reachable by the catalog filters. Returns {} when the itemType has no
+ * mapping (e.g. "Other" or null) — leave the item uncategorized rather than
+ * inventing an off-taxonomy bucket.
+ * @param {string|null} itemType
+ * @param {string} [name] - product name, for gender resolution
+ * @returns {{category?: string, subcategory?: string}}
+ */
+function categoryForItemType(itemType, name = "") {
+  if (!itemType) return {};
+  const entry = CATEGORY_BY_ITEM_TYPE[itemType];
+  if (!entry) return {};
+  const [cat, sub, opts] = entry;
+  if (opts && opts.footwear) {
+    return { category: "Footwear", subcategory: genderFootwearSub(name) };
+  }
+  if (opts && opts.gendered) {
+    const category = genderClothingCategory(name);
+    // Unisex Clothing's subcategory list doesn't carry Base Layers/Shirts/etc.,
+    // so only attach the mapped subcategory for Men's/Women's.
+    return category === "Unisex Clothing"
+      ? { category }
+      : { category, subcategory: sub || undefined };
+  }
+  return { category: cat || undefined, subcategory: sub || undefined };
+}
+
+module.exports = {
+  inferItemType,
+  normalizeItemType,
+  categoryForItemType,
+  CATEGORY_BY_ITEM_TYPE,
+  RULES,
+};

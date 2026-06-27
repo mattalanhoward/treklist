@@ -1,28 +1,49 @@
 /**
- * ingest-shopify-catalog.js  (TRIAL / DRY-RUN by default)
+ * ingest-shopify-catalog.js
  *
  * Pulls any public Shopify store's products.json feed and maps each product
  * into the CatalogItem schema shape. Works for single-brand stores (Zpacks,
  * Hyberg) and multi-brand retailers (Garage Grown Gear), where each product's
  * brand comes from its Shopify `vendor`.
  *
- * By default it writes NOTHING — it prints a sample + stats so you can judge
- * mapping quality.
+ * DRY-RUN by default — it prints a sample + stats so you can judge mapping
+ * quality and writes NOTHING. Pass --commit to upsert into the catalog.
  *
- * Usage:
+ * Usage (dry-run / inspect):
  *   node src/scripts/ingest-shopify-catalog.js --domain garagegrowngear.com
  *   node src/scripts/ingest-shopify-catalog.js --domain zpacks.com --brand Zpacks
  *   node src/scripts/ingest-shopify-catalog.js --domain hyberg.de --json
  *   node src/scripts/ingest-shopify-catalog.js --domain garagegrowngear.com --sample 12
  *
- * Flags:
- *   --domain <host>   Shopify store host (required)
- *   --brand <name>    Force brand for ALL items (use for single-brand stores
- *                     whose vendor field is wrong/empty). Omit to use per-product vendor.
- *   --sample <n>      How many items to print (default 8)
- *   --json            Dump all mapped docs as JSON instead of the sample
+ * Usage (write):
+ *   node src/scripts/ingest-shopify-catalog.js --domain zpacks.com --brand Zpacks --commit
+ *   node src/scripts/ingest-shopify-catalog.js --domain zpacks.com --brand Zpacks --commit \
+ *        --db TrekList --confirm TrekList
  *
- * No DB write path is implemented yet on purpose — this is the trial.
+ * Flags:
+ *   --domain <host>     Shopify store host (required)
+ *   --brand <name>      Force brand for ALL items (use for single-brand stores
+ *                       whose vendor field is wrong/empty). Omit to use per-product vendor.
+ *   --sample <n>        How many items to print (default 8)
+ *   --json              Dump all mapped docs as JSON instead of the sample
+ *   --find <regex>      Print full variant tables for products whose name matches
+ *   --commit            WRITE: upsert each mapped product into the catalog
+ *   --db <name>         Target DB (overrides MONGO_DB_NAME; default = local)
+ *   --confirm <name>    Required to --commit to a non-local DB (must equal --db)
+ *   --created-by <id>   User _id to stamp on NEW items (default: first isAdmin user)
+ *   --merchant-name <s> Display name for the buy-link merchant (default: --brand
+ *                       value, else the domain slug). Use for multi-brand stores.
+ *
+ * WRITE/MERGE semantics (upsert keyed by itemGroupId = "<domainslug>-<productId>"):
+ *   NEW item   → inserted with a name-inferred itemType (inferItemType) and lenient
+ *                attribute validation, so feed imports land typed but not blocked on
+ *                missing required attributes.
+ *   EXISTING   → feed-sourced FACTS are refreshed (name, brand, category, images,
+ *                weight, variants, tags); the CURATED layer is PRESERVED
+ *                (itemType, attributes, isActive, modelNumber, dimensions, curated
+ *                description/externalIds). The feed never overwrites curation.
+ *   Price/offers are NOT written here — CatalogItem has no price field; offers live
+ *   in MerchantOffer (a separate, later pass).
  */
 
 require("dotenv").config();
@@ -30,6 +51,7 @@ const mongoose = require("mongoose");
 const { execFile } = require("child_process");
 const { promisify } = require("util");
 const execFileP = promisify(execFile);
+const { inferItemType, categoryForItemType } = require("../config/inferItemType");
 
 const args = process.argv.slice(2);
 const flag = (name, def) => {
@@ -40,6 +62,29 @@ const DOMAIN = (flag("--domain", "zpacks.com") || "").replace(/^https?:\/\//, ""
 const BRAND_OVERRIDE = flag("--brand", null);
 const DUMP_JSON = args.includes("--json");
 const SAMPLE = parseInt(flag("--sample", "8"), 10);
+const COMMIT = args.includes("--commit");
+
+// The store/merchant the deep links point at. merchantId = stable domain slug
+// (also the itemGroupId prefix); merchantName = display name (defaults to the
+// brand override, else the slug). For multi-brand stores pass --merchant-name.
+const MERCHANT_ID = DOMAIN.replace(/\..*$/, "");
+const MERCHANT_NAME = flag("--merchant-name", null) || BRAND_OVERRIDE || MERCHANT_ID;
+
+// -----------------------------------------------------------------------------
+// DB TARGET + PRODUCTION GUARD (mirrors normalize-itemtypes.js)
+// --db <name> overrides MONGO_DB_NAME; a --commit to any non-local DB requires
+// --confirm <dbName> to match, so a prod write can never happen by a stray env.
+// -----------------------------------------------------------------------------
+const DB = flag("--db", null) || process.env.MONGO_DB_NAME;
+const CREATED_BY = flag("--created-by", null);
+const LOCAL_DBS = new Set(["treklist_local"]);
+if (COMMIT && !LOCAL_DBS.has(DB) && flag("--confirm", null) !== DB) {
+  console.error(
+    `\nRefusing to --commit to non-local DB "${DB}".\n` +
+      `Re-run with:  --db ${DB} --commit --confirm ${DB}\n`,
+  );
+  process.exit(1);
+}
 
 // Tags / product_types / titles that mark internal, resale, or non-gear noise.
 const JUNK_TAG = /^(dummy|criteo-exclude|all-bargains|backpack-bargains|return|package_protection)$/i;
@@ -88,15 +133,6 @@ function htmlToText(html) {
     .replace(/&amp;/g, "&")
     .replace(/\s+/g, " ")
     .trim();
-}
-
-function mapCategory(productType) {
-  const parts = String(productType || "")
-    .split(/[:>/]/)
-    .map((s) => s.trim())
-    .filter(Boolean);
-  if (!parts.length) return { category: undefined, subcategory: undefined };
-  return { category: parts[0], subcategory: parts.slice(1).join(" / ") || undefined };
 }
 
 // A multi-brand vendor like "related_to_8282762117333" is junk, not a brand.
@@ -168,10 +204,15 @@ function buildVariants(p) {
 // Shopify product -> CatalogItem shape
 // ---------------------------------------------------------------------------
 function toCatalogItem(p) {
-  const { category, subcategory } = mapCategory(p.product_type);
   const v0 = (p.variants && p.variants[0]) || {};
   const images = (p.images || []).map((i) => i.src).filter(Boolean);
   const brand = cleanBrand(p.vendor);
+  // Classify onto the schema taxonomy (NAME-based; feed product_type is not our
+  // taxonomy) and derive category/subcategory from that itemType so the item is
+  // reachable by the catalog's category/subcategory/brand filters. Raw Shopify
+  // product_type is used only as a weak secondary hint to inferItemType.
+  const itemType = inferItemType(p.title, p.product_type) || null;
+  const { category, subcategory } = categoryForItemType(itemType, p.title);
   let { variantAxes, variants, defaultVariantKey } = buildVariants(p);
   let weightGrams;
 
@@ -198,7 +239,7 @@ function toCatalogItem(p) {
     brandLC: brand ? brand.toLowerCase() : undefined,
     category,
     subcategory,
-    itemType: null, // needs admin/AI categorization against attributeSchemas.js
+    itemType,
     description: htmlToText(p.body_html).slice(0, 600),
     imageUrls: images,
     weightGrams,
@@ -216,7 +257,132 @@ function toCatalogItem(p) {
 }
 
 // ---------------------------------------------------------------------------
-// Main (dry-run)
+// WRITE / MERGE PATH
+// ---------------------------------------------------------------------------
+
+// Internal-only fields the dry-run uses for reporting; never persisted.
+const INTERNAL_KEYS = ["_sourceUrl", "_rawVariantCount", "_priceUSD"];
+function stripInternal(m) {
+  const out = { ...m };
+  for (const k of INTERNAL_KEYS) delete out[k];
+  return out;
+}
+
+// Feed-sourced FACTS we refresh on an existing item. The curated layer
+// (itemType, category, subcategory, attributes, isActive, modelNumber,
+// dimensions, curated description/externalIds) is intentionally NOT in this
+// list — the feed never overwrites curation. category/subcategory are derived
+// from the curated itemType, so preserving itemType preserves them too.
+function applyFeedRefresh(existing, doc) {
+  existing.name = doc.name;
+  existing.brand = doc.brand;
+  existing.weightGrams = doc.weightGrams;
+  existing.variantAxes = doc.variantAxes;
+  existing.variants = doc.variants;
+  existing.defaultVariantKey = doc.defaultVariantKey;
+  existing.tags = doc.tags;
+  if (doc.imageUrls && doc.imageUrls.length) existing.imageUrls = doc.imageUrls;
+  // Fill-if-empty: don't clobber a curated description or sku.
+  if (doc.description && !existing.description) existing.description = doc.description;
+  if (doc.externalIds && doc.externalIds.sku && !(existing.externalIds && existing.externalIds.sku)) {
+    existing.externalIds = existing.externalIds || {};
+    existing.externalIds.sku = doc.externalIds.sku;
+  }
+}
+
+async function resolveCreatedBy() {
+  if (CREATED_BY) return CREATED_BY;
+  const User = require("../models/user");
+  const admin = await User.findOne({ isAdmin: true }).select("_id email").lean();
+  if (!admin) {
+    throw new Error(
+      "No isAdmin user found to stamp createdBy. Pass --created-by <userId>.",
+    );
+  }
+  return admin._id;
+}
+
+// Upsert the store's product page as a buy-link offer. region "global" so it
+// shows for users in any region (the catalog route fetches region ∈ {global,
+// userRegion}). Keyed by (network, region, merchantId, productId) so re-imports
+// just refresh the deep link. network "direct" = a brand/store link, not an
+// affiliate network.
+async function upsertOffer(MerchantOffer, productId, deepLink) {
+  if (!deepLink) return false;
+  await MerchantOffer.findOneAndUpdate(
+    { network: "direct", region: "global", merchantId: MERCHANT_ID, productId },
+    {
+      $set: { merchantName: MERCHANT_NAME, deepLink },
+      $setOnInsert: {
+        network: "direct",
+        region: "global",
+        merchantId: MERCHANT_ID,
+        productId,
+        priority: 0,
+      },
+    },
+    { upsert: true },
+  );
+  return true;
+}
+
+async function writeCatalogItems(mapped) {
+  const CatalogItem = require("../models/catalogItem");
+  const MerchantOffer = require("../models/merchantOffer");
+  const createdBy = await resolveCreatedBy();
+
+  let inserted = 0;
+  let updated = 0;
+  let offersUpserted = 0;
+  let failed = 0;
+  const failures = [];
+
+  for (const m of mapped) {
+    const doc = stripInternal(m);
+    const sourceUrl = m._sourceUrl; // stripped from doc; the buy-link target
+    if (!doc.itemGroupId) {
+      failed++;
+      failures.push([doc.name, "missing itemGroupId"]);
+      continue;
+    }
+    try {
+      let id;
+      const existing = await CatalogItem.findOne({ itemGroupId: doc.itemGroupId });
+      if (existing) {
+        applyFeedRefresh(existing, doc);
+        existing.$locals.lenientAttributes = true; // don't block on curated-but-incomplete attrs
+        await existing.save();
+        id = existing._id;
+        updated++;
+      } else {
+        // doc.itemType + taxonomy category/subcategory were set in toCatalogItem.
+        const ci = new CatalogItem({ ...doc, createdBy });
+        ci.$locals.lenientAttributes = true;
+        await ci.save();
+        id = ci._id;
+        inserted++;
+      }
+      if (await upsertOffer(MerchantOffer, id, sourceUrl)) offersUpserted++;
+    } catch (e) {
+      failed++;
+      failures.push([doc.name, e.message]);
+    }
+  }
+
+  console.log("\n---------------- WRITE RESULT ----------------");
+  console.log(`DB:             ${mongoose.connection.name}`);
+  console.log(`inserted:       ${inserted}`);
+  console.log(`updated:        ${updated}`);
+  console.log(`offers upserted: ${offersUpserted}  (network=direct region=global merchant="${MERCHANT_NAME}")`);
+  console.log(`failed:         ${failed}`);
+  if (failures.length) {
+    console.log("\nFAILURES:");
+    for (const [name, msg] of failures) console.log(`  ✗ ${name}: ${msg}`);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Main (dry-run by default; --commit writes)
 // ---------------------------------------------------------------------------
 (async () => {
   console.log(`Fetching ${DOMAIN} products.json ...`);
@@ -287,19 +453,30 @@ function toCatalogItem(p) {
 
   if (process.env.MONGO_URI) {
     try {
-      await mongoose.connect(process.env.MONGO_URI, { dbName: process.env.MONGO_DB_NAME });
+      await mongoose.connect(process.env.MONGO_URI, { dbName: DB });
       const CatalogItem = require("../models/catalogItem");
       const total = await CatalogItem.countDocuments({});
-      console.log("\n---------------- LOCAL DB ----------------");
+      console.log(`\n---------------- DB: ${mongoose.connection.name} ----------------`);
       console.log(`current total CatalogItems: ${total}`);
       console.log(`this feed would yield:      ${mapped.length}`);
+
+      if (COMMIT) {
+        await writeCatalogItems(mapped);
+      }
       await mongoose.disconnect();
     } catch (e) {
-      console.log("\n(could not check local DB:", e.message, ")");
+      console.log("\n(DB step failed:", e.message, ")");
+      try { await mongoose.disconnect(); } catch { /* ignore */ }
+      if (COMMIT) process.exit(1);
     }
+  } else if (COMMIT) {
+    console.error("\nMONGO_URI not set — cannot --commit.");
+    process.exit(1);
   }
 
-  console.log("\n(NOTHING WAS WRITTEN — this is a dry-run trial.)");
+  if (!COMMIT) {
+    console.log("\n(NOTHING WAS WRITTEN — dry-run. Pass --commit to write.)");
+  }
 })().catch((e) => {
   console.error("ERR", e);
   process.exit(1);
