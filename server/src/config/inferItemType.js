@@ -18,7 +18,7 @@ const { isValidItemType } = require("./attributeSchemas");
 const RULES = [
   // --- storage / sacks ---
   [/pack liner|backpack liner|rucksack liner|pack\s*liner/i, "Pack Liner"],
-  [/dry\s*bag|waterproof bag|stuff\s*sack|dry\s*sack|compression sack/i, "Dry Bag / Stuff Sack"],
+  [/dry\s*bag|waterproof bag|stuff\s*sack|dry\s*sack|compression sack|packing cube/i, "Dry Bag / Stuff Sack"],
 
   // --- packs (specific before generic) ---
   [/hip pack|waist pack|lumbar pack|bum bag|fanny pack/i, "Hip Pack"],
@@ -91,9 +91,9 @@ const RULES = [
   // --- bottoms / shirts ---
   [/convertible (pant|trouser)|zip-?off/i, "Convertible Pants"],
   [/\bshort(s)?\b/i, "Hiking Shorts"],
-  [/\btrouser(s)?\b|\bpant(s)?\b|\blegging(s)?\b/i, "Hiking Pants"],
-  [/t-?shirt|\btee\b|hiking shirt|trekking shirt|polo shirt/i, "Hiking Shirt"],
-  [/glove|mitten/i, "Gloves (Insulated)"],
+  [/\btrouser(s)?\b|\bpant(s)?\b|\blegging(s)?\b|\bjogger(s)?\b/i, "Hiking Pants"],
+  [/t-?shirt|\btee\b|hiking shirt|trekking shirt|polo shirt|sun hoody|sun hoodie/i, "Hiking Shirt"],
+  [/glove|mitten|\bmitt(s)?\b/i, "Gloves (Insulated)"],
 
   // --- footwear ---
   [/trail running shoe|trail shoe|running shoe/i, "Trail Running Shoes"],
