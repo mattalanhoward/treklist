@@ -534,11 +534,16 @@ export default function SmartItemSearch({
     }
   };
 
-  const handlePreviewImport = async () => {
+  const handlePreviewImport = async (variantKey) => {
     if (!previewItem || previewImporting) return;
     setPreviewImporting(true);
     try {
-      await onConfirm({ source: "catalog", catalogIds: [String(previewItem._id)] });
+      const id = String(previewItem._id);
+      await onConfirm({
+        source: "catalog",
+        catalogIds: [id],
+        ...(variantKey ? { variantSelections: { [id]: variantKey } } : {}),
+      });
       setPreviewItem(null);
     } finally {
       setPreviewImporting(false);

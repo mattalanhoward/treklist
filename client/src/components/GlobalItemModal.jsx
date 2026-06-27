@@ -13,6 +13,7 @@ export default function GlobalItemModal({ onClose, onCreated }) {
       if (selection.source === "catalog") {
         const { data } = await api.post("/global/items/from-catalog/bulk", {
           ids: selection.catalogIds,
+          variantSelections: selection.variantSelections,
         });
         window.dispatchEvent(new CustomEvent("global-items:updated"));
         onCreated?.(data.items);

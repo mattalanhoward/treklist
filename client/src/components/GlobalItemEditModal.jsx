@@ -11,6 +11,7 @@ import { useUserSettings } from "../contexts/UserSettings";
 import { FiX } from "react-icons/fi";
 import { tItemType, tCategory, CATALOG_CATEGORIES } from "../config/catalogTaxonomy";
 import ImageCarousel from "./ImageCarousel";
+import VariantSelector from "./VariantSelector";
 import ButtonLink from "./ui/ButtonLink";
 import Spinner from "../components/ui/Spinner";
 import {
@@ -60,6 +61,12 @@ export default function GlobalItemEditModal({
   const [catalogImages, setCatalogImages] = useState([]);
   const [loadingImages, setLoadingImages] = useState(false);
   const [primaryOffer, setPrimaryOffer] = useState(null);
+
+  // Variant selection (catalog items that ship in Temperature × Size etc.)
+  const [variantAxes, setVariantAxes] = useState([]);
+  const [variants, setVariants] = useState([]);
+  const [defaultVariantKey, setDefaultVariantKey] = useState(null);
+  const [selectedOptions, setSelectedOptions] = useState({});
 
   const [imageFailed, setImageFailed] = useState(false);
   // Start true - will be set to false when we confirm no images or image is loaded
@@ -177,6 +184,9 @@ export default function GlobalItemEditModal({
       if (viewMode !== "imported") {
         setCatalogImages([]);
         setPrimaryOffer(null);
+        setVariantAxes([]);
+        setVariants([]);
+        setDefaultVariantKey(null);
         setLoadingImages(false);
         return;
       }
@@ -184,6 +194,9 @@ export default function GlobalItemEditModal({
       if (!resolvedProductId) {
         setCatalogImages([]);
         setPrimaryOffer(null);
+        setVariantAxes([]);
+        setVariants([]);
+        setDefaultVariantKey(null);
         setLoadingImages(false);
         return;
       }
@@ -213,11 +226,19 @@ export default function GlobalItemEditModal({
             (a, b) => (Number(b.priority) || 0) - (Number(a.priority) || 0),
           )[0];
 
-        if (!cancelled) setPrimaryOffer(best || null);
+        if (!cancelled) {
+          setPrimaryOffer(best || null);
+          setVariantAxes(Array.isArray(data.variantAxes) ? data.variantAxes : []);
+          setVariants(Array.isArray(data.variants) ? data.variants : []);
+          setDefaultVariantKey(data.defaultVariantKey || null);
+        }
       } catch {
         if (!cancelled) {
           setCatalogImages([]);
           setPrimaryOffer(null);
+          setVariantAxes([]);
+          setVariants([]);
+          setDefaultVariantKey(null);
         }
       } finally {
         if (!cancelled) setLoadingImages(false);
@@ -288,6 +309,51 @@ export default function GlobalItemEditModal({
       cancelled = true;
     };
   }, [isImported, hasImages, safeCatalogImages]);
+
+  // --- Variant selection helpers ---
+  const hasVariants = variantAxes.length > 0 && variants.length > 0;
+
+  // The variant matching the currently selected axis values (if any).
+  const selectedVariant = useMemo(() => {
+    if (!hasVariants) return null;
+    return (
+      variants.find((v) =>
+        variantAxes.every(
+          (a) => (v.options?.[a.name] ?? "") === (selectedOptions?.[a.name] ?? ""),
+        ),
+      ) || null
+    );
+  }, [hasVariants, variants, variantAxes, selectedOptions]);
+
+  // Initialize the dropdowns from the stored variantKey, else the catalog
+  // default, else the first variant — WITHOUT touching the weight (already
+  // hydrated from the item), so a user's weight override is never clobbered.
+  useEffect(() => {
+    if (!hasVariants) {
+      setSelectedOptions({});
+      return;
+    }
+    const storedKey = template?.variantKey || null;
+    const pick =
+      variants.find((v) => v.key === storedKey) ||
+      variants.find((v) => v.key === defaultVariantKey) ||
+      variants[0];
+    setSelectedOptions(pick ? { ...pick.options } : {});
+  }, [hasVariants, variants, defaultVariantKey, template?.variantKey]);
+
+  // Changing an axis selects the matching variant and drives the weight.
+  const handleAxisChange = (axisName, value) => {
+    const nextOptions = { ...selectedOptions, [axisName]: value };
+    setSelectedOptions(nextOptions);
+    const match = variants.find((v) =>
+      variantAxes.every(
+        (a) => (v.options?.[a.name] ?? "") === (nextOptions?.[a.name] ?? ""),
+      ),
+    );
+    if (match && typeof match.weightGrams === "number") {
+      setDisplayWeight(formatInput(match.weightGrams));
+    }
+  };
 
   // Hydrate list-editable fields from the *item*
   useEffect(() => {
@@ -419,6 +485,12 @@ export default function GlobalItemEditModal({
       };
 
       const globalPayload = { ...basePayload };
+
+      // Persist which variant the user owns (drives weight). Only when the
+      // catalog item actually has selectable variants.
+      if (hasVariants) {
+        globalPayload.variantKey = selectedVariant?.key ?? null;
+      }
 
       if (viewMode === "custom") {
         globalPayload.catalogCategory = form.catalogCategory || null;
@@ -752,6 +824,16 @@ export default function GlobalItemEditModal({
                         />
                       </div>
                     </div>
+
+                    {/* Variant selector — picking a variant drives the weight */}
+                    {hasVariants && (
+                      <VariantSelector
+                        axes={variantAxes}
+                        selectedOptions={selectedOptions}
+                        onChange={handleAxisChange}
+                        disabled={disableEdits}
+                      />
+                    )}
 
                     {/* Imported-only specs — now with human-readable labels */}
                     {importedSpecs &&

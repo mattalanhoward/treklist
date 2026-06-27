@@ -344,6 +344,7 @@ router.patch("/:id", async (req, res) => {
       "imageUrls",
       "status",
       "wishlistNotes",
+      "variantKey", // which catalog variant the user owns (drives weight)
     ];
 
     // Ignore attributes in this endpoint (you said you don't want it editable here)
@@ -466,6 +467,14 @@ router.post("/from-catalog/bulk", async (req, res) => {
         .json({ message: "No valid catalog ids provided." });
     }
 
+    // Optional per-item variant choice: { "<catalogId>": "<variantKey>" }
+    const variantSelections =
+      req.body?.variantSelections &&
+      typeof req.body.variantSelections === "object" &&
+      !Array.isArray(req.body.variantSelections)
+        ? req.body.variantSelections
+        : {};
+
     // ---- Region (secure, from user profile) ----
     // NOTE: requires: const User = require("../models/user");
     const user = await User.findById(req.userId).select("region").lean();
@@ -566,6 +575,23 @@ router.post("/from-catalog/bulk", async (req, res) => {
             }
           : null;
 
+        // Resolve the chosen variant (explicit selection, else catalog default).
+        // The variant's weight overrides the base weight; variantKey is stored
+        // so the edit modal shows what the user owns.
+        let resolvedWeight = c.weightGrams;
+        let resolvedVariantKey = null;
+        if (Array.isArray(c.variants) && c.variants.length) {
+          const chosenKey =
+            variantSelections[String(c._id)] || c.defaultVariantKey || null;
+          const variant = c.variants.find((v) => v.key === chosenKey);
+          if (variant) {
+            resolvedVariantKey = variant.key;
+            if (typeof variant.weightGrams === "number") {
+              resolvedWeight = variant.weightGrams;
+            }
+          }
+        }
+
         const payload = {
           owner: req.userId,
           productId: c._id,
@@ -573,9 +599,10 @@ router.post("/from-catalog/bulk", async (req, res) => {
           brand: c.brand,
           itemType: c.itemType || c.subcategory || c.category || null,
           description: c.description,
-          weight: c.weightGrams,
+          weight: resolvedWeight,
+          variantKey: resolvedVariantKey,
           attributes: sanitizeAttributes(c.attributes),
-          ...(typeof c.weightGrams === "number" && { weightSource: "catalog" }),
+          ...(typeof resolvedWeight === "number" && { weightSource: "catalog" }),
           tags: c.tags,
           catalogCategory: c.category || null,
           catalogSubcategory: c.subcategory || null,

@@ -27,6 +27,7 @@ export default function SwapItemModal({ item, listId, catId, onClose, onSwapped 
       } else if (selection.source === "catalog") {
         const { data } = await api.post("/global/items/from-catalog/bulk", {
           ids: selection.catalogIds,
+          variantSelections: selection.variantSelections,
         });
         const gi = data.items?.[0];
         if (!gi) throw new Error("Import failed");

@@ -13,7 +13,10 @@ export default function AddGearDrawer({ isOpen, onClose, onItemsChanged }) {
   const handleConfirm = async (selection) => {
     try {
       if (selection.source === "catalog") {
-        await api.post("/global/items/from-catalog/bulk", { ids: selection.catalogIds });
+        await api.post("/global/items/from-catalog/bulk", {
+          ids: selection.catalogIds,
+          variantSelections: selection.variantSelections,
+        });
       } else if (selection.source === "newItem") {
         const f = selection.fields;
         const payload = { name: f.name };

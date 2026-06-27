@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { FiX } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import ImageCarousel from "./ImageCarousel";
+import VariantSelector from "./VariantSelector";
 import ButtonLink from "./ui/ButtonLink";
 import { useUnit } from "../hooks/useUnit";
 import { useWeightInput } from "../hooks/useWeightInput";
@@ -29,6 +30,44 @@ export default function CatalogItemPreviewModal({
 
   const [loadingImages, setLoadingImages] = useState(false);
   const [imageFailed, setImageFailed] = useState(false);
+
+  // Variant selection (catalog items that ship in Temperature × Size etc.)
+  const variantAxes = useMemo(
+    () => (Array.isArray(item?.variantAxes) ? item.variantAxes : []),
+    [item?.variantAxes],
+  );
+  const variants = useMemo(
+    () => (Array.isArray(item?.variants) ? item.variants : []),
+    [item?.variants],
+  );
+  const hasVariants = variantAxes.length > 0 && variants.length > 0;
+  const [selectedOptions, setSelectedOptions] = useState({});
+
+  // Initialize the dropdowns from the catalog default (else first variant).
+  useEffect(() => {
+    if (!hasVariants) {
+      setSelectedOptions({});
+      return;
+    }
+    const pick =
+      variants.find((v) => v.key === item?.defaultVariantKey) || variants[0];
+    setSelectedOptions(pick ? { ...pick.options } : {});
+  }, [hasVariants, variants, item?._id, item?.defaultVariantKey]);
+
+  const selectedVariant = useMemo(() => {
+    if (!hasVariants) return null;
+    return (
+      variants.find((v) =>
+        variantAxes.every(
+          (a) => (v.options?.[a.name] ?? "") === (selectedOptions?.[a.name] ?? ""),
+        ),
+      ) || null
+    );
+  }, [hasVariants, variants, variantAxes, selectedOptions]);
+
+  const handleAxisChange = (axisName, value) => {
+    setSelectedOptions((prev) => ({ ...prev, [axisName]: value }));
+  };
 
   const catalogImages = useMemo(() => {
     const urls = Array.isArray(item?.imageUrls) ? item.imageUrls : [];
@@ -101,10 +140,18 @@ export default function CatalogItemPreviewModal({
     return formatted.length ? formatted : null;
   }, [item?.attributes, item?.itemType, measurementSystem]);
 
+  // Weight follows the selected variant when present; otherwise the base weight.
+  const effectiveWeightGrams =
+    selectedVariant && typeof selectedVariant.weightGrams === "number"
+      ? selectedVariant.weightGrams
+      : item && typeof item.weightGrams === "number"
+        ? item.weightGrams
+        : null;
+
   const displayWeight = useMemo(() => {
-    if (!item || typeof item.weightGrams !== "number") return "";
-    return formatInput(item.weightGrams);
-  }, [item, formatInput]);
+    if (typeof effectiveWeightGrams !== "number") return "";
+    return formatInput(effectiveWeightGrams);
+  }, [effectiveWeightGrams, formatInput]);
 
   if (!isOpen) return null;
 
@@ -213,17 +260,27 @@ export default function CatalogItemPreviewModal({
                     </div>
                   </div>
 
-                  {/* Weight (read-only, display like the other rows) */}
+                  {/* Weight (follows the selected variant) */}
                   <div className="grid grid-cols-[140px_1fr] gap-3 items-center px-3 py-1">
                     <div className="text-primary font-semibold">
                       {t("globalItemModal.labels.weight", { unit: unitLabel })}:
                     </div>
                     <div className="text-primary break-words">
-                      {typeof item.weightGrams === "number"
+                      {typeof effectiveWeightGrams === "number"
                         ? displayWeight
                         : "—"}
                     </div>
                   </div>
+
+                  {/* Variant selector — choose what you own before importing */}
+                  {hasVariants && (
+                    <VariantSelector
+                      axes={variantAxes}
+                      selectedOptions={selectedOptions}
+                      onChange={handleAxisChange}
+                      disabled={importing || alreadyImported}
+                    />
+                  )}
 
                   {/* Imported-only specs (display-only) — now with human-readable labels */}
                   {importedSpecs &&
@@ -304,7 +361,7 @@ export default function CatalogItemPreviewModal({
             {onImport && (
               <button
                 type="button"
-                onClick={onImport}
+                onClick={() => onImport(selectedVariant?.key)}
                 disabled={!item || loading || importing || alreadyImported}
                 className={`px-2 py-1 rounded bg-secondary text-white hover:bg-secondary/80 ${
                   !item || loading || importing || alreadyImported
