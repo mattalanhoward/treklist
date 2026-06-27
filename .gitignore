@@ -42,3 +42,6 @@ coverage/
 
 client.zip
 server.zip
+# Local DB dumps / attribute backups
+server/backups/
+backups/

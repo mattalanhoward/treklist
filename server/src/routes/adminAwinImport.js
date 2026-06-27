@@ -12,6 +12,7 @@ const { query, body, validationResult } = require("express-validator");
 const AffiliateProduct = require("../models/affiliateProduct");
 const CatalogItem      = require("../models/catalogItem");
 const MerchantOffer    = require("../models/merchantOffer");
+const { inferItemType } = require("../config/inferItemType");
 
 const router = express.Router();
 
@@ -154,13 +155,21 @@ router.post(
         ? Math.round(product.deliveryWeightKg * 1000)
         : undefined;
 
-      // Create CatalogItem
-      const catalogItem = await new CatalogItem({
+      // Map the feed product onto the schema taxonomy (name-based; Decathlon's
+      // merchant_category is marketing buckets, not a taxonomy). Null when not
+      // confident — leaves the item uncategorized rather than mis-typed.
+      const itemType =
+        inferItemType(product.name, product.merchantCategory) || undefined;
+
+      // Create CatalogItem. lenientAttributes lets a correct itemType be set even
+      // though feed imports can't supply all required attributes yet.
+      const catalogItem = new CatalogItem({
         name:        product.name,
         brand:       product.brand || "Decathlon",
         description: product.description || undefined,
         imageUrls:   product.imageUrls?.length ? product.imageUrls : (product.imageUrl ? [product.imageUrl] : []),
         weightGrams,
+        itemType,
         modelNumber: product.modelNumber || undefined,
         itemGroupId: product.itemGroupId || undefined,
         externalIds: {
@@ -169,7 +178,9 @@ router.post(
         },
         createdBy: req.userId,
         isActive:  true,
-      }).save();
+      });
+      catalogItem.$locals.lenientAttributes = true;
+      await catalogItem.save();
 
       // Create MerchantOffer linked to the new CatalogItem
       await MerchantOffer.findOneAndUpdate(
