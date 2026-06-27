@@ -588,6 +588,43 @@ const SCHEMAS = {
     derive: (attrs) => attrs,
   },
 
+  "Dry Bag / Stuff Sack": {
+    fields: {
+      volumeLiters: {
+        type: "number",
+        required: true,
+        label: "Volume",
+        unit: "L",
+        min: 0.5,
+        max: 115,
+        step: 0.5,
+      },
+      closureType: {
+        type: "enum",
+        required: false,
+        label: "Closure",
+        options: ["Roll-Top", "Drawcord", "Zip", "Buckle"],
+      },
+      material: {
+        type: "string",
+        required: false,
+        label: "Material",
+        // e.g., "70D nylon", "DCF", "Silnylon"
+      },
+      waterproof: {
+        type: "boolean",
+        required: false,
+        label: "Fully Waterproof",
+      },
+      seamSealed: {
+        type: "boolean",
+        required: false,
+        label: "Sealed Seams",
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
   // ===========================================================================
   // COOKING / KITCHEN
   // ===========================================================================
@@ -3311,6 +3348,171 @@ const SCHEMAS = {
         type: "boolean",
         required: false,
         label: "International Plug Adapters",
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  // ===========================================================================
+  // ELECTRONICS - CHARGING CABLE
+  // ===========================================================================
+
+  "Charging Cable": {
+    fields: {
+      connectorA: {
+        type: "enum",
+        required: false,
+        label: "Connector A",
+        options: ["USB-C", "USB-A", "Lightning", "Micro-USB", "Magnetic"],
+      },
+      connectorB: {
+        type: "enum",
+        required: false,
+        label: "Connector B",
+        options: ["USB-C", "USB-A", "Lightning", "Micro-USB", "Magnetic"],
+      },
+      lengthCm: {
+        type: "number",
+        required: false,
+        label: "Length",
+        unit: "cm",
+        min: 5,
+        max: 300,
+      },
+      maxPowerW: {
+        type: "number",
+        required: false,
+        label: "Max Power",
+        unit: "W",
+        min: 5,
+        max: 240,
+      },
+      dataSync: {
+        type: "boolean",
+        required: false,
+        label: "Data Sync",
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  // ===========================================================================
+  // ELECTRONICS - EARBUDS
+  // ===========================================================================
+
+  Earbuds: {
+    fields: {
+      noiseCancelling: {
+        type: "boolean",
+        required: false,
+        label: "Active Noise Cancellation",
+      },
+      batteryLifeHrs: {
+        type: "number",
+        required: false,
+        label: "Battery Life (Buds)",
+        unit: "hrs",
+        min: 1,
+        max: 24,
+      },
+      caseBatteryLifeHrs: {
+        type: "number",
+        required: false,
+        label: "Battery Life (w/ Case)",
+        unit: "hrs",
+        min: 1,
+        max: 100,
+      },
+      ipRating: {
+        type: "enum",
+        required: false,
+        label: "Water/Dust Rating",
+        options: ["IPX4", "IPX5", "IPX7", "IP54", "IP55", "IP57", "IP67", "IP68"],
+      },
+      heartRateSensor: {
+        type: "boolean",
+        required: false,
+        label: "Heart Rate Sensor",
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  // ===========================================================================
+  // ELECTRONICS - SMARTPHONE
+  // ===========================================================================
+
+  Smartphone: {
+    fields: {
+      os: {
+        type: "enum",
+        required: false,
+        label: "Operating System",
+        options: ["iOS", "Android", "Other"],
+      },
+      storageGb: {
+        type: "number",
+        required: false,
+        label: "Storage",
+        unit: "GB",
+        min: 8,
+        max: 2048,
+      },
+      cellular: {
+        type: "enum",
+        required: false,
+        label: "Cellular",
+        options: ["None / Wi-Fi", "4G / LTE", "5G"],
+      },
+      batteryLifeHrs: {
+        type: "number",
+        required: false,
+        label: "Battery Life",
+        unit: "hrs",
+        min: 1,
+        max: 72,
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  // ===========================================================================
+  // ELECTRONICS - SMARTWATCH
+  // ===========================================================================
+
+  Smartwatch: {
+    fields: {
+      gps: {
+        type: "boolean",
+        required: false,
+        label: "Built-in GPS",
+      },
+      maps: {
+        type: "boolean",
+        required: false,
+        label: "Onboard Maps / Navigation",
+      },
+      batteryLifeHrs: {
+        type: "number",
+        required: false,
+        label: "Battery Life",
+        unit: "hrs",
+        min: 1,
+        max: 1000,
+      },
+      waterResistanceM: {
+        type: "number",
+        required: false,
+        label: "Water Resistance",
+        unit: "m",
+        min: 0,
+        max: 200,
+      },
+      displayType: {
+        type: "enum",
+        required: false,
+        label: "Display Type",
+        options: ["AMOLED", "MIP (Transflective)", "LCD", "E-ink"],
       },
     },
     derive: (attrs) => attrs,
