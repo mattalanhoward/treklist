@@ -18,7 +18,7 @@ const { isValidItemType } = require("./attributeSchemas");
 const RULES = [
   // --- storage / sacks ---
   [/pack liner|backpack liner|rucksack liner|pack\s*liner/i, "Pack Liner"],
-  [/dry\s*bag|waterproof bag|stuff\s*sack|dry\s*sack|compression sack|packing cube/i, "Dry Bag / Stuff Sack"],
+  [/dry\s*bag|waterproof bag|stuff\s*sack|dry\s*sack|compression sack|packing cube|\bditty\b/i, "Dry Bag / Stuff Sack"],
 
   // --- packs (specific before generic) ---
   [/hip pack|waist pack|lumbar pack|bum bag|fanny pack/i, "Hip Pack"],
@@ -101,7 +101,7 @@ const RULES = [
   [/\bboot(s)?\b|hiking shoe|walking shoe/i, "Hiking Boots"],
 
   // --- misc gear ---
-  [/bear canister|bear vault|food canister/i, "Bear Canister"],
+  [/bear canister|bear ?vault|food canister/i, "Bear Canister"],
   [/multi-?tool|pocket knife|\bknife\b/i, "Pocket Knife"],
   [/first aid/i, "First Aid Kit"],
   [/\btowel\b/i, "Travel Towel"],
