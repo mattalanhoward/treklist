@@ -805,7 +805,8 @@
     },
     "toast": {
       "saveSuccess": "Detalles de la lista guardados.",
-      "saveFailed": "No se pudieron guardar los detalles. Inténtalo de nuevo."
+      "saveFailed": "No se pudieron guardar los detalles. Inténtalo de nuevo.",
+      "dateRangeInvalid": "La fecha de fin del viaje no puede ser anterior a la fecha de inicio."
     },
     "toolbar": {
       "bold": "Negrita",

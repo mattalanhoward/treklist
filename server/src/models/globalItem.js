@@ -33,6 +33,11 @@ const GlobalItemSchema = new mongoose.Schema(
     catalogCategory: { type: String, trim: true, default: null },
     catalogSubcategory: { type: String, trim: true, default: null },
 
+    // Which CatalogItem variant the user owns (references CatalogItem.variants[].key,
+    // e.g. "20F (-7C) / Standard-Short"). Drives `weight` below. Null for products
+    // with no variants or custom items.
+    variantKey: { type: String, trim: true, default: null },
+
     // Brand label as stored on this global item.
     // May mirror CatalogItem.brand or be user-custom text.
     brand: {

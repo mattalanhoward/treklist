@@ -812,7 +812,8 @@
     },
     "toast": {
       "saveSuccess": "Détails de la liste enregistrés.",
-      "saveFailed": "Échec de l’enregistrement des détails. Veuillez réessayer."
+      "saveFailed": "Échec de l’enregistrement des détails. Veuillez réessayer.",
+      "dateRangeInvalid": "La date de fin du voyage ne peut pas être antérieure à la date de début."
     },
     "toolbar": {
       "bold": "Gras",

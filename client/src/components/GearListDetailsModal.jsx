@@ -81,6 +81,10 @@ export default function GearListDetailsModal({
   const handleSave = async (e) => {
     e.preventDefault();
     if (!list?._id) return;
+    if (tripStart && tripEnd && tripEnd < tripStart) {
+      toast.error(t("gearListDetailsModal.toast.dateRangeInvalid"));
+      return;
+    }
     try {
       await api.patch(`/dashboard/${list._id}`, {
         title,
@@ -207,8 +211,14 @@ export default function GearListDetailsModal({
                 selected={tripStart}
                 onChange={(date) => {
                   setTripStart(date);
+                  // Keep the range valid: clear an end that now precedes start.
+                  if (date && tripEnd && tripEnd < date) setTripEnd(null);
                   setDirty(true);
                 }}
+                selectsStart
+                startDate={tripStart}
+                endDate={tripEnd}
+                maxDate={tripEnd || undefined}
                 dateFormat="P"
                 locale={dfnsLocale}
                 className={inputClass}
@@ -225,6 +235,10 @@ export default function GearListDetailsModal({
                   setTripEnd(date);
                   setDirty(true);
                 }}
+                selectsEnd
+                startDate={tripStart}
+                endDate={tripEnd}
+                minDate={tripStart || undefined}
                 dateFormat="P"
                 locale={dfnsLocale}
                 className={inputClass}

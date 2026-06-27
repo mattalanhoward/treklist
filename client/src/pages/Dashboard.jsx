@@ -238,10 +238,11 @@ export default function Dashboard() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   ], [t]);
 
-  const markTourSeen = useCallback(async () => {
+  const markTourSeen = useCallback(async (status) => {
     try {
       await api.post("/auth/onboarding/tour-seen", {
         tourVersion: TOUR_VERSION,
+        status, // "completed" (reached Done) | "skipped" (Skip/ESC)
       });
     } catch (err) {
       // Non-blocking: failing to mark shouldn't break UX
@@ -254,15 +255,18 @@ export default function Dashboard() {
     setIsTourOpen(true);
   }, []);
 
-  const closeTour = useCallback(async () => {
-    setIsTourOpen(false);
-    await markTourSeen();
-  }, [markTourSeen]);
+  const closeTour = useCallback(
+    async (status = "skipped") => {
+      setIsTourOpen(false);
+      await markTourSeen(status);
+    },
+    [markTourSeen],
+  );
 
   const nextTour = useCallback(async () => {
     const last = tourSteps.length - 1;
     if (tourStep >= last) {
-      await closeTour();
+      await closeTour("completed");
       return;
     }
     setTourStep((s) => Math.min(last, s + 1));
@@ -736,7 +740,7 @@ export default function Dashboard() {
         steps={tourSteps}
         onNext={nextTour}
         onBack={backTour}
-        onSkip={closeTour}
+        onSkip={() => closeTour("skipped")}
       />
       <TopBar
         title={t("app.name")}

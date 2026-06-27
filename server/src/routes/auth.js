@@ -230,7 +230,7 @@ router.get("/me", authenticate, async (req, res) => {
 // Marks the tour as seen for this user (server-backed so it doesn't replay on other devices).
 router.post("/onboarding/tour-seen", authenticate, async (req, res) => {
   try {
-    const { tourVersion } = req.body || {};
+    const { tourVersion, status } = req.body || {};
     const v = Number(tourVersion || 1);
 
     // basic guard
@@ -248,6 +248,10 @@ router.post("/onboarding/tour-seen", authenticate, async (req, res) => {
       v,
     );
     user.onboarding.tourDismissedAt = new Date();
+    // "completed" (reached Done) vs "skipped" (Skip/ESC). Ignore anything else.
+    if (status === "completed" || status === "skipped") {
+      user.onboarding.tourStatus = status;
+    }
 
     await user.save();
 

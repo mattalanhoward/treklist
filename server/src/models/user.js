@@ -28,6 +28,13 @@ const UserSchema = new mongoose.Schema(
     onboarding: {
       tourVersionSeen: { type: Number, default: 0 },
       tourDismissedAt: { type: Date, default: null },
+      // How the user left the tour: "completed" (reached Done) or
+      // "skipped" (Skip/ESC). null = never finished a tour.
+      tourStatus: {
+        type: String,
+        enum: ["completed", "skipped", null],
+        default: null,
+      },
       welcomeEmailSentAt: { type: Date, default: null },
       transactionalOptOut: { type: Boolean, default: false },
       tripReminderOptOut: { type: Boolean, default: false },

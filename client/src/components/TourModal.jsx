@@ -1,6 +1,5 @@
 // client/src/components/TourModal.jsx
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { FiX } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 
 function clamp(n, min, max) {
@@ -271,18 +270,10 @@ export default function TourModal({
     "
         >
           <div className="bg-neutralAlt rounded-xl shadow-lg border border-primary/10 overflow-hidden">
-            <div className="px-4 py-3 border-b border-primary/10 flex items-center justify-between">
+            <div className="px-4 py-3 border-b border-primary/10">
               <div className="text-sm font-semibold text-primary">
                 {step.title}
               </div>
-              <button
-                type="button"
-                onClick={onSkip}
-                className="p-2 rounded hover:bg-base-100/70 text-primary"
-                aria-label={t("tour.actions.close", "Close tour")}
-              >
-                <FiX />
-              </button>
             </div>
 
             {/* Fixed content block so the modal never "jumps" */}
