@@ -6,6 +6,12 @@ const { getClient } = require("../services/anthropicService");
 const { findCatalogMatches } = require("../services/catalogMatch");
 const AffiliateProduct = require("../models/affiliateProduct");
 const User = require("../models/user");
+const { getAllItemTypes } = require("../config/attributeSchemas");
+const { normalizeItemType } = require("../config/inferItemType");
+
+// itemType taxonomy (from attributeSchemas) — the AI must pick one of these or
+// null, mirroring how `category` is constrained.
+const ITEM_TYPES = getAllItemTypes();
 
 // Per-user limit — every request here costs Anthropic tokens
 router.use(
@@ -56,7 +62,7 @@ const ITEM_SCHEMA = {
   properties: {
     name: nullable("string"),
     brand: nullable("string"),
-    itemType: nullable("string"),
+    itemType: { anyOf: [{ type: "string", enum: ITEM_TYPES }, { type: "null" }] },
     weightGrams: nullable("integer"),
     category: { anyOf: [{ type: "string", enum: CATALOG_CATEGORIES }, { type: "null" }] },
     description: nullable("string"),
@@ -368,7 +374,7 @@ router.post("/fill-item", async (req, res) => {
 Given a product name query, return a JSON object with these exact fields:
 - name: model name without brand and without generic product-type words like "Backpack", "Tent", "Stove" — those belong in itemType (string, required). Include size/variant only if explicitly specified in the query
 - brand: manufacturer name with correct capitalization (string or null)
-- itemType: specific product type in plain English, e.g. "Canister Stove", "Frameless Backpack", "Inflatable Sleeping Pad" (string or null)
+- itemType: EXACTLY one of these values, or null if none fit (use "Other" for an identifiable non-gear product): ${ITEM_TYPES.join(", ")}
 - weightGrams: integer grams ONLY if a weight appears in the product data provided above (choose the standard/Regular variant when several are listed); otherwise null — never use weights from memory, they change between model years
 - category: exactly one of these values or null: ${CATALOG_CATEGORIES.join(", ")}
 - description: a specific, technical 1–2 sentence description mentioning key specs for the product type (string or null)
@@ -448,7 +454,7 @@ Never write sentences like "designed for outdoor adventures" or "perfect for hik
       result = {
         name: resultName,
         brand: resultBrand,
-        itemType: typeof raw.itemType === "string" ? raw.itemType.trim() || null : null,
+        itemType: normalizeItemType(raw.itemType, raw.name),
         // Scraped weight wins; else the weight the model copied from page data
         weightGrams:
           scrapedWeight ??
@@ -504,7 +510,7 @@ router.post("/scan-item", async (req, res) => {
 Given product information (text or image), return a JSON object with these exact fields:
 - name: model name without brand prefix and without generic product-type words like "Backpack", "Tent", "Stove" — those belong in itemType (string, required)
 - brand: manufacturer name with correct capitalization (string or null)
-- itemType: specific product type in plain English, e.g. "Canister Stove", "Frameless Backpack", "Inflatable Sleeping Pad" (string or null)
+- itemType: EXACTLY one of these values, or null if none fit (use "Other" for an identifiable non-gear product): ${ITEM_TYPES.join(", ")}
 - weightGrams: weight in grams as an integer if clearly known, otherwise null — do not guess
 - category: exactly one of these values or null: ${CATALOG_CATEGORIES.join(", ")}
 - description: specific 1–2 sentence technical description mentioning key specs (string or null)

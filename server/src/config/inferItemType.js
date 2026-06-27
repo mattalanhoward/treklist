@@ -17,7 +17,13 @@ const { isValidItemType } = require("./attributeSchemas");
 // [regex, itemType] — ORDER MATTERS (specific before generic).
 const RULES = [
   // --- storage / sacks ---
+  [/pack liner|backpack liner|rucksack liner|pack\s*liner/i, "Pack Liner"],
   [/dry\s*bag|waterproof bag|stuff\s*sack|dry\s*sack|compression sack/i, "Dry Bag / Stuff Sack"],
+
+  // --- packs (specific before generic) ---
+  [/hip pack|waist pack|lumbar pack|bum bag|fanny pack/i, "Hip Pack"],
+  [/day\s?pack|day bag/i, "Daypack"],
+  [/back\s?pack|rucksack|hiking pack|trekking pack|mountaineering pack/i, "Backpack"],
 
   // --- sleep ---
   [/sleeping bag liner|bag liner/i, "Sleeping Bag Liner"],
@@ -25,7 +31,7 @@ const RULES = [
   [/\bquilt\b/i, "Quilt"],
   [/self.?inflat|inflatable (mat|mattress|pad|sleeping)|air mattress|sleeping mat\b/i, "Inflatable Sleeping Pad"],
   [/foam (mat|pad)|closed.?cell/i, "Foam Sleeping Pad"],
-  [/\bpillow\b/i, "Pillow"],
+  [/\bpillow\b(?!\s*case)/i, "Pillow"], // exclude "pillow case" (an accessory)
 
   // --- shelter ---
   [/footprint|ground ?sheet/i, "Ground Sheet"],
@@ -111,6 +117,11 @@ const NON_DOMAIN =
 const HIKING_CONTEXT =
   /\bhik|trek|backpack|camp|mountain|outdoor|bivou|alpin|climb|forclaz|quechua|simond|trail/i;
 
+// Accessories / spare parts whose names contain a main-product keyword but are
+// NOT that product (e.g. "Windscreen For Trekking Stove", "Spare pole").
+const ACCESSORY =
+  /windscreen|wind ?shield|spare part|spare pole|replacement (part|spare|pole)|repair (kit|patch)/i;
+
 /**
  * @param {string} name - product name (primary signal)
  * @param {string} [hint] - optional secondary text (merchantCategory/description)
@@ -118,6 +129,7 @@ const HIKING_CONTEXT =
  */
 function inferItemType(name, hint = "") {
   const text = `${name || ""}`;
+  if (ACCESSORY.test(text)) return null;
   if (NON_DOMAIN.test(text) && !HIKING_CONTEXT.test(text)) return null;
   for (const [re, type] of RULES) {
     if (re.test(text)) return isValidItemType(type) ? type : null;
@@ -129,4 +141,18 @@ function inferItemType(name, hint = "") {
   return null;
 }
 
-module.exports = { inferItemType, RULES };
+/**
+ * Coerce a possibly free-form itemType (e.g. from an LLM) onto the schema enum.
+ * Returns the value as-is if already valid; otherwise classifies from the
+ * type string + product name; otherwise null. Guaranteed valid-or-null.
+ * @param {string} value - candidate itemType (may be free-form)
+ * @param {string} [name] - product name, for fallback classification
+ * @returns {string|null}
+ */
+function normalizeItemType(value, name = "") {
+  const v = typeof value === "string" ? value.trim() : "";
+  if (v && isValidItemType(v)) return v;
+  return inferItemType(`${v} ${name}`.trim());
+}
+
+module.exports = { inferItemType, normalizeItemType, RULES };

@@ -625,6 +625,32 @@ const SCHEMAS = {
     derive: (attrs) => attrs,
   },
 
+  "Pack Liner": {
+    fields: {
+      volumeLiters: {
+        type: "number",
+        required: false,
+        label: "Volume",
+        unit: "L",
+        min: 10,
+        max: 150,
+      },
+      material: {
+        type: "string",
+        required: false,
+        label: "Material",
+        // e.g., "Nylofume (polyethylene)", "DCF", "Silnylon"
+      },
+      closureType: {
+        type: "enum",
+        required: false,
+        label: "Closure",
+        options: ["Roll-Top", "Drawcord", "Twist & Tuck", "None"],
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
   // ===========================================================================
   // COOKING / KITCHEN
   // ===========================================================================
