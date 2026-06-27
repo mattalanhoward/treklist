@@ -33,6 +33,9 @@
  *   --created-by <id>   User _id to stamp on NEW items (default: first isAdmin user)
  *   --merchant-name <s> Display name for the buy-link merchant (default: --brand
  *                       value, else the domain slug). Use for multi-brand stores.
+ *   --skip-food         Exclude food / consumables (meals, bars, drink mixes).
+ *   --skip-brands a,b   Exclude these brands (lowercased, comma-separated) when
+ *                       already covered by a direct/existing source (e.g. zpacks).
  *
  * WRITE/MERGE semantics (upsert keyed by itemGroupId = "<domainslug>-<productId>"):
  *   NEW item   → inserted with a name-inferred itemType (inferItemType) and lenient
@@ -63,6 +66,18 @@ const BRAND_OVERRIDE = flag("--brand", null);
 const DUMP_JSON = args.includes("--json");
 const SAMPLE = parseInt(flag("--sample", "8"), 10);
 const COMMIT = args.includes("--commit");
+
+// Exclusion filters for multi-brand feeds:
+//   --skip-food            drop dehydrated meals / bars / drink mixes etc.
+//   --skip-brands a,b,c    drop these brands (lowercased) — use when a brand is
+//                          already covered better by a direct/existing source.
+const SKIP_FOOD = args.includes("--skip-food");
+const SKIP_BRANDS = new Set(
+  (flag("--skip-brands", "") || "")
+    .split(",")
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean),
+);
 
 // The store/merchant the deep links point at. merchantId = stable domain slug
 // (also the itemGroupId prefix); merchantName = display name (defaults to the
@@ -149,6 +164,29 @@ function isJunk(p) {
   const tags = Array.isArray(p.tags) ? p.tags : String(p.tags || "").split(",");
   if (tags.length && tags.every((t) => JUNK_TAG.test(String(t).trim()))) return true;
   return false;
+}
+
+// Food / consumables — out of scope for a gear catalog (no weight-for-base-weight
+// value, no attribute schema). Detected by known meal brands + name/type signals.
+const FOOD_BRANDS = new Set([
+  "nomad nutrition", "farm to summit", "karen's naturals", "good to-go", "good to go",
+  "backpacker's pantry", "peak refuel", "mountain house", "trailtopia", "heather's choice",
+  "outdoor herbivore", "naked & free", "wild zora", "skout", "gnarly nutrition",
+  "bighorn mountain food", "kate's real food", "trail goods co.", "nomaste", "wildfire spice co.",
+]);
+const FOOD_RE =
+  /\b(meal|meals|dehydrated|freeze-?dried|backpacking food|trail food|granola|oatmeal|breakfast|dinner|entree|soup|stew|chili|risotto|pasta|curry|snack|bar\b|bars\b|jerky|drink mix|electrolyte|coffee blend|instant coffee|ration|hot sauce|spice)\b/i;
+function isFood(p) {
+  const blc = String(cleanBrand(p.vendor) || "").toLowerCase();
+  if (FOOD_BRANDS.has(blc)) return true;
+  if (/food|meal|nutrition/i.test(p.product_type || "")) return true;
+  return FOOD_RE.test(p.title || "");
+}
+
+// Brands to exclude (already covered better by a direct/existing source).
+function isSkippedBrand(p) {
+  const blc = String(cleanBrand(p.vendor) || "").toLowerCase();
+  return SKIP_BRANDS.has(blc);
 }
 
 function cleanTags(tags) {
@@ -387,7 +425,13 @@ async function writeCatalogItems(mapped) {
 (async () => {
   console.log(`Fetching ${DOMAIN} products.json ...`);
   const raw = await fetchAll();
-  const kept = raw.filter((p) => !isJunk(p));
+  let nJunk = 0, nFood = 0, nBrand = 0;
+  const kept = raw.filter((p) => {
+    if (isJunk(p)) { nJunk++; return false; }
+    if (SKIP_FOOD && isFood(p)) { nFood++; return false; }
+    if (isSkippedBrand(p)) { nBrand++; return false; }
+    return true;
+  });
   const mapped = kept.map(toCatalogItem);
 
   if (DUMP_JSON) {
@@ -405,7 +449,8 @@ async function writeCatalogItems(mapped) {
 
   console.log(`\n================ ${DOMAIN} IMPORT TRIAL (dry-run) ================`);
   console.log(`fetched:        ${raw.length}`);
-  console.log(`after junk skip: ${mapped.length}  (dropped ${raw.length - mapped.length})`);
+  console.log(`excluded:       ${nJunk} junk${SKIP_FOOD ? `, ${nFood} food` : ""}${SKIP_BRANDS.size ? `, ${nBrand} skipped-brand` : ""}`);
+  console.log(`kept:           ${mapped.length}`);
   console.log(`with brand:     ${withBrand}/${mapped.length}`);
   console.log(`with weight:    ${withWeight}/${mapped.length}`);
   console.log(`with image:     ${withImage}/${mapped.length}`);
