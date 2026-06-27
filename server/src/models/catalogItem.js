@@ -53,6 +53,43 @@ const DimensionsSchema = new mongoose.Schema(
   { _id: false },
 );
 
+// -----------------------------------------------------------------------------
+// VARIANT SUB-SCHEMAS
+// -----------------------------------------------------------------------------
+// A product can ship in selectable variants (e.g. a quilt in Temperature × Size).
+// Each variant carries its OWN weight/sku because weight varies a lot between
+// variants (a 10F Broad-Long quilt is ~2x a 30F Slim-Short). The user picks a
+// variant on their GlobalItem; that drives the weight in their lists.
+//
+// `variantAxes` are the selectable dimensions (Color is intentionally dropped at
+// import time — it doesn't change weight). `variants` is the flattened matrix.
+// `defaultVariantKey` selects which variant's weight represents the product in
+// previews before the user has chosen.
+// -----------------------------------------------------------------------------
+
+const VariantAxisSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true, trim: true }, // e.g. "Temperature"
+    values: { type: [String], default: [] }, // e.g. ["30F (-1C)", "20F (-7C)"]
+  },
+  { _id: false },
+);
+
+const VariantSchema = new mongoose.Schema(
+  {
+    // Stable identifier = meaningful option values joined by " / ".
+    // e.g. "20F (-7C) / Standard-Short". GlobalItem.variantKey references this.
+    key: { type: String, required: true, trim: true },
+
+    // Map of axis name -> chosen value, e.g. { Temperature: "20F (-7C)", Size: "Standard-Short" }
+    options: { type: Map, of: String, default: {} },
+
+    weightGrams: { type: Number, min: 0 },
+    sku: { type: String, trim: true },
+  },
+  { _id: false },
+);
+
 // =============================================================================
 // ITEM TYPE ENUM
 // =============================================================================
@@ -173,6 +210,26 @@ const CatalogItemSchema = new mongoose.Schema(
     dimensions: {
       type: DimensionsSchema,
       default: undefined, // prevents empty {} subdocs
+    },
+
+    // -------------------------------------------------------------------------
+    // VARIANTS (optional)
+    // -------------------------------------------------------------------------
+    // When a product has selectable variants (Temperature × Size, Torso × Belt,
+    // etc.), these describe the matrix. Empty for simple single-variant products,
+    // in which case weightGrams above is authoritative.
+    variantAxes: {
+      type: [VariantAxisSchema],
+      default: [],
+    },
+    variants: {
+      type: [VariantSchema],
+      default: [],
+    },
+    // Which variant.key represents the product before the user selects one.
+    defaultVariantKey: {
+      type: String,
+      trim: true,
     },
 
     // -------------------------------------------------------------------------
