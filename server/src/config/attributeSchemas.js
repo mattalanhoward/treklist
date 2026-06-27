@@ -3739,7 +3739,12 @@ function getFieldsForItemType(itemType) {
  * @param {object} attributes - The attributes to validate
  * @returns {{valid: boolean, errors: string[], cleaned: object, derived: object}}
  */
-function validateAttributes(itemType, attributes) {
+function validateAttributes(itemType, attributes, options = {}) {
+  // strict (default): required fields must be present.
+  // strict:false (feed imports): validate any PROVIDED values but don't block on
+  // missing required fields — lets an item carry a correct itemType before its
+  // attributes are fully curated.
+  const strict = options.strict !== false;
   const result = {
     valid: true,
     errors: [],
@@ -3766,8 +3771,8 @@ function validateAttributes(itemType, attributes) {
     const value = attrs[key];
     const hasValue = value !== undefined && value !== null && value !== "";
 
-    // Check required fields
-    if (fieldDef.required && !hasValue && !fieldDef.derived) {
+    // Check required fields (skipped in non-strict mode)
+    if (strict && fieldDef.required && !hasValue && !fieldDef.derived) {
       result.valid = false;
       result.errors.push(`${fieldDef.label || key} is required`);
       continue;

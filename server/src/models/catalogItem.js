@@ -373,7 +373,11 @@ CatalogItemSchema.pre("save", function normalize(next) {
   // -------------------------------------------------------------------------
   if (this.itemType && isValidItemType(this.itemType)) {
     const attrs = this.attributes || {};
-    const result = validateAttributes(this.itemType, attrs);
+    // Feed imports may set a correct itemType before all required attributes are
+    // known: `doc.$locals.lenientAttributes = true` validates provided values
+    // but doesn't block on missing required fields.
+    const lenient = this.$locals && this.$locals.lenientAttributes;
+    const result = validateAttributes(this.itemType, attrs, { strict: !lenient });
 
     if (!result.valid) {
       // Validation failed - throw an error with details
