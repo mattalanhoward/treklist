@@ -80,6 +80,13 @@ const SKIP_BRANDS = new Set(
     .map((s) => s.trim().toLowerCase())
     .filter(Boolean),
 );
+//   --exclude <regex>      drop products whose TITLE matches (custom builds, spare parts, junk)
+//   --collapse-color       merge items that differ only by a "(<color>)" name suffix
+//                          (some makers list each colorway as its own product)
+const EXCLUDE_RE = flag("--exclude", null) ? new RegExp(flag("--exclude", null), "i") : null;
+const COLLAPSE_COLOR = args.includes("--collapse-color");
+const COLOR_PAREN =
+  /\s*\([^)]*\b(?:black|olive|drab|green|grey|gray|brown|red|storm|mountain|navy|blue|charcoal|orange|tan|coyote|stone|sand|teal|purple|pink|white|natural|camo|berry|mustard|forest|burnt)\b[^)]*\)\s*/i;
 
 // The store/merchant the deep links point at. merchantId = stable domain slug
 // (also the itemGroupId prefix); merchantName = display name (defaults to the
@@ -483,14 +490,31 @@ async function writeCatalogItems(mapped) {
 (async () => {
   console.log(`Fetching ${DOMAIN} (${PLATFORM}) ...`);
   const raw = PLATFORM === "woo" ? await fetchAllWoo() : await fetchAll();
-  let nJunk = 0, nFood = 0, nBrand = 0;
+  let nJunk = 0, nFood = 0, nBrand = 0, nExcl = 0;
   const kept = raw.filter((p) => {
     if (isJunk(p)) { nJunk++; return false; }
+    if (EXCLUDE_RE && EXCLUDE_RE.test(p.title || "")) { nExcl++; return false; }
     if (SKIP_FOOD && isFood(p)) { nFood++; return false; }
     if (isSkippedBrand(p)) { nBrand++; return false; }
     return true;
   });
-  const mapped = kept.map(toCatalogItem);
+  let mapped = kept.map(toCatalogItem);
+
+  // Collapse colorway-as-separate-product duplicates to one clean base item.
+  let nColor = 0;
+  if (COLLAPSE_COLOR) {
+    const byBase = new Map();
+    for (const m of mapped) {
+      const base = m.name.replace(COLOR_PAREN, " ").replace(/\s+/g, " ").trim();
+      const prev = byBase.get(base);
+      // Keep the representative with a real weight; rename to the color-free base.
+      if (!prev || (!prev.weightGrams && m.weightGrams)) {
+        byBase.set(base, { ...m, name: base });
+      }
+    }
+    nColor = mapped.length - byBase.size;
+    mapped = [...byBase.values()];
+  }
 
   if (DUMP_JSON) {
     console.log(JSON.stringify(mapped, null, 2));
@@ -507,7 +531,7 @@ async function writeCatalogItems(mapped) {
 
   console.log(`\n================ ${DOMAIN} IMPORT TRIAL (dry-run) ================`);
   console.log(`fetched:        ${raw.length}`);
-  console.log(`excluded:       ${nJunk} junk${SKIP_FOOD ? `, ${nFood} food` : ""}${SKIP_BRANDS.size ? `, ${nBrand} skipped-brand` : ""}`);
+  console.log(`excluded:       ${nJunk} junk${EXCLUDE_RE ? `, ${nExcl} --exclude` : ""}${SKIP_FOOD ? `, ${nFood} food` : ""}${SKIP_BRANDS.size ? `, ${nBrand} skipped-brand` : ""}${COLLAPSE_COLOR ? `, ${nColor} color-collapsed` : ""}`);
   console.log(`kept:           ${mapped.length}`);
   console.log(`with brand:     ${withBrand}/${mapped.length}`);
   console.log(`with weight:    ${withWeight}/${mapped.length}`);
