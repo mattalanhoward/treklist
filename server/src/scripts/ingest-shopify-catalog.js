@@ -343,7 +343,9 @@ function toCatalogItem(p) {
     category,
     subcategory,
     itemType,
-    description: htmlToText(p.body_html).slice(0, 600),
+    // 2000 (was 600) so the trailing Specs/weight/dimensions tables survive —
+    // 600 was cutting off size→weight tables we later want to read back.
+    description: htmlToText(p.body_html).slice(0, 2000),
     imageUrls: images,
     weightGrams,
     variantAxes,
