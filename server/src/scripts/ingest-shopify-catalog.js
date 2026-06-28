@@ -21,7 +21,8 @@
  *        --db TrekList --confirm TrekList
  *
  * Flags:
- *   --domain <host>     Shopify store host (required)
+ *   --domain <host>     store host (required)
+ *   --platform <p>      shopify (default) | woo (WooCommerce Store API)
  *   --brand <name>      Force brand for ALL items (use for single-brand stores
  *                       whose vendor field is wrong/empty). Omit to use per-product vendor.
  *   --sample <n>        How many items to print (default 8)
@@ -63,6 +64,7 @@ const flag = (name, def) => {
 };
 const DOMAIN = (flag("--domain", "zpacks.com") || "").replace(/^https?:\/\//, "").replace(/\/$/, "");
 const BRAND_OVERRIDE = flag("--brand", null);
+const PLATFORM = (flag("--platform", "shopify") || "shopify").toLowerCase(); // shopify | woo
 const DUMP_JSON = args.includes("--json");
 const SAMPLE = parseInt(flag("--sample", "8"), 10);
 const COMMIT = args.includes("--commit");
@@ -134,6 +136,62 @@ async function fetchAll() {
     if (!products.length) break;
     out.push(...products);
     if (products.length < 250) break;
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------
+// WooCommerce Store API (open, no key): /wp-json/wc/store/v1/products
+// Normalized into the SAME shape Shopify products.json uses, so every mapper/
+// filter downstream works unchanged. Weight is the store unit (kg or g — read
+// from formatted_weight); prices are in minor units (cents).
+// ---------------------------------------------------------------------------
+async function fetchWooPage(page) {
+  const url = `https://${DOMAIN}/wp-json/wc/store/v1/products?per_page=100&page=${page}`;
+  const { stdout } = await execFileP(
+    "curl",
+    ["-s", "--max-time", "30", "-A", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)", url],
+    { maxBuffer: 50 * 1024 * 1024 },
+  );
+  const data = JSON.parse(stdout);
+  return Array.isArray(data) ? data : [];
+}
+
+function wooGrams(p) {
+  const w = parseFloat(p.weight);
+  if (!Number.isFinite(w) || w <= 0) return undefined;
+  // formatted_weight tells us the unit ("0.4 kg" / "400 g"); default kg.
+  const isG = /\bg\b/i.test(p.formatted_weight || "") && !/\bkg\b/i.test(p.formatted_weight || "");
+  return Math.round(isG ? w : w * 1000);
+}
+
+// One Woo product -> Shopify-shaped product. Variable products are collapsed to
+// a single base (parent weight); the Store API doesn't expose per-variation
+// weights without extra calls, and our variant model wants real per-variant weights.
+function wooToShopify(p) {
+  const grams = wooGrams(p);
+  return {
+    id: p.id,
+    title: p.name,
+    handle: p.slug,
+    vendor: (p.brands && p.brands[0] && p.brands[0].name) || undefined,
+    product_type: (p.categories && p.categories[0] && p.categories[0].name) || "",
+    body_html: p.short_description || p.description || "",
+    tags: (p.tags || []).map((t) => t.name),
+    images: (p.images || []).map((i) => ({ src: i.src })),
+    options: [{ name: "Title", values: ["Default Title"] }],
+    variants: [{ option1: "Default Title", grams, sku: p.sku || "", price: p.prices ? p.prices.price : undefined }],
+    _sourceUrl: p.permalink, // Woo product URLs aren't /products/<handle>
+  };
+}
+
+async function fetchAllWoo() {
+  const out = [];
+  for (let page = 1; page <= 60; page++) {
+    const products = await fetchWooPage(page);
+    if (!products.length) break;
+    out.push(...products.map(wooToShopify));
+    if (products.length < 100) break;
   }
   return out;
 }
@@ -288,7 +346,7 @@ function toCatalogItem(p) {
     tags: cleanTags(p.tags),
     externalIds: { sku: v0.sku ? String(v0.sku) : undefined },
     itemGroupId: `${DOMAIN.replace(/\..*$/, "")}-${p.id}`,
-    _sourceUrl: `https://${DOMAIN}/products/${p.handle}`,
+    _sourceUrl: p._sourceUrl || `https://${DOMAIN}/products/${p.handle}`,
     _rawVariantCount: (p.variants || []).length,
     _priceUSD: v0.price,
   };
@@ -423,8 +481,8 @@ async function writeCatalogItems(mapped) {
 // Main (dry-run by default; --commit writes)
 // ---------------------------------------------------------------------------
 (async () => {
-  console.log(`Fetching ${DOMAIN} products.json ...`);
-  const raw = await fetchAll();
+  console.log(`Fetching ${DOMAIN} (${PLATFORM}) ...`);
+  const raw = PLATFORM === "woo" ? await fetchAllWoo() : await fetchAll();
   let nJunk = 0, nFood = 0, nBrand = 0;
   const kept = raw.filter((p) => {
     if (isJunk(p)) { nJunk++; return false; }
