@@ -37,6 +37,7 @@ import {
 } from "@dnd-kit/modifiers";
 import PreviewCard from "../components/PreviewCard";
 import CreateListModal from "../components/CreateListModal";
+import { SHOW_COMMUNITY } from "../config/features";
 
 function DashboardEmptyState({ hasLists, listsLoading, creatingSample, onCreateNewList }) {
   const { t } = useTranslation("common");
@@ -185,15 +186,19 @@ export default function Dashboard() {
         if (isMobile) setSidebarCollapsed(false);
       },
     },
-    {
-      title: t("tour.steps.community.title"),
-      body: t("tour.steps.community.body"),
-      target: '[data-tour="sidebar-community"]',
-      onEnter: ({ isMobile }) => {
-        setActivePane("gear");
-        if (isMobile) setSidebarCollapsed(false);
-      },
-    },
+    ...(SHOW_COMMUNITY
+      ? [
+          {
+            title: t("tour.steps.community.title"),
+            body: t("tour.steps.community.body"),
+            target: '[data-tour="sidebar-community"]',
+            onEnter: ({ isMobile }) => {
+              setActivePane("gear");
+              if (isMobile) setSidebarCollapsed(false);
+            },
+          },
+        ]
+      : []),
     {
       title: t("tour.steps.myGear.title"),
       body: t("tour.steps.myGear.body"),

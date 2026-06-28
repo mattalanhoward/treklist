@@ -13,6 +13,7 @@ import { useUserSettings } from "../contexts/UserSettings";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router-dom";
 import { getCommunities } from "../services/community";
+import { SHOW_COMMUNITY } from "../config/features";
 
 function SidebarDraggableItem({ item, onClickDetails, isLocked }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
@@ -289,14 +290,16 @@ export default function Sidebar({
                 <FiSettings className="w-4 h-4" />
               </button>
             )}
-            <button
-              type="button"
-              title={t("sidebar.a11y.community")}
-              onClick={() => onOpenCommunity(null)}
-              className="w-9 h-9 flex items-center justify-center rounded-lg text-primaryAlt hover:text-primary hover:bg-primary/5 transition-colors"
-            >
-              <FiUsers className="w-4 h-4" />
-            </button>
+            {SHOW_COMMUNITY && (
+              <button
+                type="button"
+                title={t("sidebar.a11y.community")}
+                onClick={() => onOpenCommunity(null)}
+                className="w-9 h-9 flex items-center justify-center rounded-lg text-primaryAlt hover:text-primary hover:bg-primary/5 transition-colors"
+              >
+                <FiUsers className="w-4 h-4" />
+              </button>
+            )}
             <button
               type="button"
               title={t("sidebar.gearListsTitle")}
@@ -348,6 +351,7 @@ export default function Sidebar({
               </section>
             )}
             {/* Community section */}
+            {SHOW_COMMUNITY && (
             <section className="flex flex-col flex-none px-4 py-2 border-b border-base-100 overflow-hidden">
               <div data-tour="sidebar-community" className="flex items-center text-primaryAlt rounded-lg p-1 -m-1">
                 <button
@@ -400,6 +404,7 @@ export default function Sidebar({
                 );
               })()}
             </section>
+            )}
             {/* Gear Lists section */}
             <section
               className="flex flex-col flex-none px-4 py-2 border-b border-base-100 overflow-hidden"

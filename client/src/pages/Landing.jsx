@@ -348,10 +348,6 @@ export default function Landing() {
                 text={t("landing.features.mobile.bullets.weightTotals.text")}
               />
               <Bullet
-                title={t("landing.features.mobile.bullets.community.title")}
-                text={t("landing.features.mobile.bullets.community.text")}
-              />
-              <Bullet
                 title={t("landing.features.mobile.bullets.mobileFirst.title")}
                 text={t("landing.features.mobile.bullets.mobileFirst.text")}
               />
@@ -485,7 +481,7 @@ export default function Landing() {
             Before my Appalachian Trail thru-hike I built my first gear spreadsheet. It worked, but was tedious and boring. Before the PCT I switched to Lighterpack, the long-standing standard for hikers who care about gear organization and pack weight. It got the job done, but nothing has changed there in years. It&apos;s still a glorified spreadsheet.
           </p>
           <p className="text-gray-700 text-lg leading-relaxed mt-4">
-            I wanted to build on that idea. Keep it simple and easy, but actually move it forward. What started as a hobby project kept growing and I kept asking questions. What if there was a community section where hikers could talk gear and trail conditions? What if you could take a photo of product packaging to add gear? Or just drop a product link? What if you could customize backgrounds and implement a kanban-style view alongside the traditional list view? What about users who speak different languages?
+            I wanted to build on that idea. Keep it simple and easy, but actually move it forward. What started as a hobby project kept growing and I kept asking questions. What if you could take a photo of product packaging to add gear? Or just drop a product link? What if you could customize backgrounds and implement a kanban-style view alongside the traditional list view? What about users who speak different languages?
           </p>
           <p className="text-gray-700 text-lg leading-relaxed mt-4 font-medium">
             It kept growing and that&apos;s TrekList today. A better tool for the same thing we&apos;ve always loved doing.
