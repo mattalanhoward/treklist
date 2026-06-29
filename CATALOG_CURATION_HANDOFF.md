@@ -60,7 +60,8 @@ A clean, consistent catalog, then migrate to prod. **Clean bar** = every active 
 
 ## Hyberg ATTRIBUTES filled — ✅ 2026-06-29
 - Structured `attributes` filled on **40/43** active Hyberg items, hand-read from hyberg.de spec tables (no AI), modelled on Bandit Lite. Scripts: `curate-hyberg-attrs-{backpacks,quilts,sleepingbags,rest}.js`. Backpacks (volume/gender/frame/hipbelt/water/fabric/torso/load/hydration); Quilts (insulation/temp/fillPower/footbox — **consolidated quilts carry PER-FILL tempRatingC + fillWeightG/Climashield level via variant.attributes**); VALGUS bags; ExploMid tents + Zolo/SKINI tarps; dry/stuff bags; RADA hip packs; Ti mug/spoon. Per-variant material on EGOIST LITE/ATTILA LITE/PAKKID. Retypes: RINCO/ZEFYR → Daypack (18L < Backpack min 20L); "Stake Bag" Tent Stakes → Dry Bag/Stuff Sack (mis-typed). Unfillable: AER PACK (no brand desc), 2 Warm Booties (itemType "Other" has no schema).
-- ⚠️ **Descriptions still long** — user wants attributes to reduce reliance on description text. Trimming Hyberg descriptions to a short summary is an open follow-up (not done — descriptions left intact).
+- **Descriptions TRIMMED** (`trim-hyberg-descriptions.js`): all 34 active Hyberg descriptions cut from ~2000 chars to the first 1–2 sentences of the marketing intro (specs now live in attributes). Deterministic (real prose, no AI). ⚠️ Reversible but `backfill-descriptions.js` would RE-EXPAND them from the feed — don't re-run backfill on Hyberg unless you want the long text back.
+- **NIMBUS + VALGUS consolidated** (`consolidate-hyberg-nimbus-valgus.js`): NIMBUS I–IV → NIMBUS Down Quilt (Fill×Size, per-Fill temp/fill-weight); VALGUS I/II/III → VALGUS Down Sleeping Bag (Fill, per-Fill temp). **Archived dated dupes**: Warm Booties (2024), AGUILA LITE (2025), ATTILA ULTRA (2024 version). Active Hyberg 43 → **35**.
 - 🔴 Same brand-spec attribute-fill is a candidate for Atom/Durston/Atelier next.
 
 ## Per-variant attributes — ✅ BUILT 2026-06-29
