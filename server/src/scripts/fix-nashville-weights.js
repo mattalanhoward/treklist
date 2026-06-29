@@ -45,6 +45,26 @@ const DEF = "ALUULA Graflyte V98 / 30L";
     console.log(`The Cutaway -> ${variants.length} variants (Fabric×Volume), ${variants[0].weightGrams}–${Math.max(...variants.map(v => v.weightGrams))}g, default ${DEF}=${cut.weightGrams}g`);
   } else console.log("!! Cutaway not found");
 
+  // The Cutaway Liner — Size (20/30/40 L, matches the pack) × Fabric. Only the 30L
+  // weight is published (1.0 DCF 1.4oz/40g, D50T 2.8oz/79g) → weight is fabric-driven.
+  const liner = await C.findOne({ name: "The Cutaway Liner", isActive: true, itemGroupId: /^nashvillepack-/ });
+  if (liner) {
+    const sizes = ["20L", "30L", "40L"];
+    const fab = { "1.0 oz DCF": { w: 40, m: "1.0 oz Dyneema Composite Fabric" }, "D50T": { w: 79, m: "D50T waterproof laminate" } };
+    const variants = [];
+    for (const s of sizes) for (const [f, info] of Object.entries(fab))
+      variants.push({ key: `${s} / ${f}`, options: { Size: s, Fabric: f }, weightGrams: info.w, attributes: { material: info.m, volumeLiters: +s.replace("L", "") } });
+    liner.variantAxes = [{ name: "Size", values: sizes }, { name: "Fabric", values: Object.keys(fab) }];
+    liner.variants = variants;
+    liner.defaultVariantKey = "30L / 1.0 oz DCF";
+    liner.weightGrams = 40;
+    liner.attributes = { material: "1.0 oz Dyneema Composite Fabric", closureType: "Roll-Top" };
+    liner.description = "The Cutaway Liner — ultralight, fully-taped waterproof roll-top drybag shaped to the Cutaway. In 20/30/40 L and 1.0 DCF or D50T. (Published weight is for the 30 L: 1.0 DCF ≈40 g, D50T ≈79 g.)";
+    liner.$locals.lenientAttributes = true;
+    if (COMMIT) await liner.save();
+    console.log(`The Cutaway Liner -> Size×Fabric (${variants.length}v)`);
+  } else console.log("!! Cutaway Liner not found");
+
   const tiempo = await C.findOne({ name: "The Tiempo 15", isActive: true, itemGroupId: /^nashvillepack-/ });
   if (tiempo) {
     tiempo.weightGrams = 165;
