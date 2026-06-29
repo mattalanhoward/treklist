@@ -132,13 +132,17 @@ export default function CatalogItemPreviewModal({
   // Now using the utility to get human-readable labels
   const importedSpecs = useMemo(() => {
     if (!item?.attributes) return null;
+    // Per-variant attributes (e.g. Material) override the base when selected.
+    const merged = selectedVariant?.attributes
+      ? { ...item.attributes, ...selectedVariant.attributes }
+      : item.attributes;
     const formatted = formatAttributesForDisplay(
-      item.attributes,
+      merged,
       item.itemType,
       measurementSystem,
     );
     return formatted.length ? formatted : null;
-  }, [item?.attributes, item?.itemType, measurementSystem]);
+  }, [item?.attributes, item?.itemType, measurementSystem, selectedVariant]);
 
   // Weight follows the selected variant when present; otherwise the base weight.
   const effectiveWeightGrams =

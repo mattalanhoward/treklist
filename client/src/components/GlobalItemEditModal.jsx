@@ -562,9 +562,13 @@ export default function GlobalItemEditModal({
     if (viewMode !== "imported") return null;
     const attrs = template?.attributes;
     if (!attrs) return null;
-    const formatted = formatAttributesForDisplay(attrs, template?.itemType, measurementSystem);
+    // Per-variant attributes (e.g. Material) override the base when selected.
+    const merged = selectedVariant?.attributes
+      ? { ...attrs, ...selectedVariant.attributes }
+      : attrs;
+    const formatted = formatAttributesForDisplay(merged, template?.itemType, measurementSystem);
     return formatted.length ? formatted : null;
-  }, [viewMode, template?.attributes, template?.itemType, measurementSystem]);
+  }, [viewMode, template?.attributes, template?.itemType, measurementSystem, selectedVariant]);
 
   // PreviewModal-style full-screen spinner conditions
   const showFullscreenSpinner =

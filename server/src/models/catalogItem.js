@@ -86,6 +86,11 @@ const VariantSchema = new mongoose.Schema(
 
     weightGrams: { type: Number, min: 0 },
     sku: { type: String, trim: true },
+
+    // Optional per-variant attribute overrides, merged OVER the item's base
+    // `attributes` when this variant is selected (e.g. a Material axis where
+    // each fabric has a different `mainFabric`). Shape matches `attributes`.
+    attributes: { type: mongoose.Schema.Types.Mixed },
   },
   { _id: false },
 );

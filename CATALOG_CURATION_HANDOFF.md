@@ -58,8 +58,8 @@ A clean, consistent catalog, then migrate to prod. **Clean bar** = every active 
 - **Legacy/other (~78):** your CLEANEST set (95% typed) — most flags are genuine "Other" accessories. Low priority.
 - **NOTE:** earlier-flagged consolidation clusters Cumulus Aerial / Katabatic Flex / Vargo BOT / Adventure Medical Kit were all GGG-sourced → **gone with GGG**. Only Hyberg LONER/SLUMBER remains.
 
-## Open feature (deferred)
-- **Per-variant attributes**: variants currently drive WEIGHT only. To make attributes (e.g. Kakwa volume-by-torso, or a fabric's water-resistance) update on selection, need an optional `attributes` map on the variant sub-schema + merge it in the two modals. Not built.
+## Per-variant attributes — ✅ BUILT 2026-06-29
+- Variant sub-schema now has an optional `attributes` map (`catalogItem.js`). Both modals (`GlobalItemEditModal.jsx`, `CatalogItemPreviewModal.jsx`) merge `selectedVariant.attributes` OVER the base `attributes` in their specs memo, so selecting a variant swaps those fields. First use: **Bandit Lite** (Material: Aluula 410g / Dyneema 420g, `mainFabric` differs per material) + **PAKKID** (Material×Size: Dyneema 30/33, TX50Ultra 38/41). Script: `curate-bandit-pakkid.js`. Catalog route already selects `variants` wholesale so attributes reach the client. NOTE: this is DISPLAY-layer; from-catalog add still denormalizes base attributes (per-variant denorm onto owned GearItem not wired — revisit if owned items must show variant attrs).
 
 ## Migration plan (when the catalog is clean) — archive-and-readd
 1. `mongodump TrekList` (backup; rollback = `mongorestore --drop`).
