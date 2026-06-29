@@ -8,8 +8,8 @@ Goal: make the catalog very complete. **Curated so far (done): Hyberg, Durston, 
 ### Brand-direct Shopify `products.json` (same toolchain as the others)
 | Brand | Domain | Status |
 |---|---|---|
-| **Nashville Pack** | nashvillepack.com | ✅ **IMPORTED** 2026-06-29 (57 items, 33 typed). Not yet deep-curated (variants/weights/attrs). |
-| **Dandee Packs** | dandeepacks.com | ✅ **IMPORTED** 2026-06-29 (43 items, 29 typed). Not yet deep-curated. |
+| **Nashville Pack** | nashvillepack.com | ✅ **DONE** 2026-06-29. Feed polluted with Mageworx APO "service products" + MTO/Blem/One-Offs + accessories → archived 52, kept **5** (Cutaway [Fabric×Volume], Tiempo→Daypack, 2 liners [DCF/D50T], DCF Groundsheet). `curate-nashville.js`. |
+| **Dandee Packs** | dandeepacks.com | ✅ **DONE** 2026-06-29. Cottage sundry shop → archived 23 junk, kept **20** gear+small-bags (15 attributed). `curate-dandee.js`. |
 | **Hilltop Packs** | hilltoppacks.com | ⏸ DEFERRED (user). 250+ mixed: packs + fabric-by-yard/hardware → filter to packs+gear when done. |
 | **Darn Tough** | darntough.com | ❌ DECLINED (user doesn't want ~250 sock models). |
 Process per brand: probe → `analyze-feed.js` → `ingest-shopify-catalog.js --brand --merchant-name [--exclude/--skip-food]` → `dedupe-ggg --group` → `ai-type-untyped --group` → curate (variants/weights/attrs, trim descriptions).
