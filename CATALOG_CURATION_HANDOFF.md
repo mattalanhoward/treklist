@@ -5,13 +5,13 @@ _Last updated: 2026-06-29. Working DB: `treklist_local` (Mongo via `server/.env`
 ## BRAND PIPELINE — to add (researched 2026-06-29)
 Goal: make the catalog very complete. **Curated so far (done): Hyberg, Durston, Atom, Zpacks.**
 
-### ✅ Ready — brand-direct Shopify `products.json` (same toolchain as the others)
-| Brand | Domain | ~Products | w/ weight | Notes |
-|---|---|---|---|---|
-| **Darn Tough** | darntough.com | 250+ | 229 | socks; needs `--exclude`/dedupe for colorways |
-| **Hilltop Packs** | hilltoppacks.com | 250+ | 171 | DCF packs + lots of accessories/fabric-by-the-yard → filter heavily |
-| **Nashville Pack** | nashvillepack.com | 60 | 57 | UL packs, clean |
-| **Dandee Packs** | dandeepacks.com | 45 | 39 | UL packs, clean |
+### Brand-direct Shopify `products.json` (same toolchain as the others)
+| Brand | Domain | Status |
+|---|---|---|
+| **Nashville Pack** | nashvillepack.com | ✅ **IMPORTED** 2026-06-29 (57 items, 33 typed). Not yet deep-curated (variants/weights/attrs). |
+| **Dandee Packs** | dandeepacks.com | ✅ **IMPORTED** 2026-06-29 (43 items, 29 typed). Not yet deep-curated. |
+| **Hilltop Packs** | hilltoppacks.com | ⏸ DEFERRED (user). 250+ mixed: packs + fabric-by-yard/hardware → filter to packs+gear when done. |
+| **Darn Tough** | darntough.com | ❌ DECLINED (user doesn't want ~250 sock models). |
 Process per brand: probe → `analyze-feed.js` → `ingest-shopify-catalog.js --brand --merchant-name [--exclude/--skip-food]` → `dedupe-ggg --group` → `ai-type-untyped --group` → curate (variants/weights/attrs, trim descriptions).
 
 ### ⚠️ No open feed — need affiliate network or back-door (enterprise/Cloudflare/custom)
