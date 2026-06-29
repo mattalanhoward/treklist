@@ -81,6 +81,9 @@ A clean, consistent catalog, then migrate to prod. **Clean bar** = every active 
 - **Legacy/other (~78):** your CLEANEST set (95% typed) — most flags are genuine "Other" accessories. Low priority.
 - **NOTE:** earlier-flagged consolidation clusters Cumulus Aerial / Katabatic Flex / Vargo BOT / Adventure Medical Kit were all GGG-sourced → **gone with GGG**. Only Hyberg LONER/SLUMBER remains.
 
+## Atelier DONE — ✅ 2026-06-29
+- French artisan (WooCommerce). 12 → **8** clean items: Classique + Hybride consolidated into config items (Personnalisé 600g / All Around 1000g); deduped Sac Banane vs BANANA HIP PACK (EN twin); archived belt-pocket accessory; **cleared bogus Sakabouf/Sakasek weights** (feed value = fabric weight, real pack weight unpublished); basic attrs + brief honest descriptions (feed descriptions are empty "AVANT DE PERSONNALISER //" placeholders). Per-variant weights for size/fabric not published. `curate-atelier.js`.
+
 ## Atom Packs DONE — ✅ 2026-06-29
 - Consolidated the per-config items into **5 variant pack models** (`consolidate-atom-packs.js`): The Atom (RE30/RE40/UL35/Custom), Prospector (EP50/EP60/Custom), Pulse (EP40/EP50/Custom), Notch (EP40/EP50/Custom), Nanu (RE25/X25/Custom). Variant axis "Version"; each variant keeps its published **medium-torso weight** (user overrides for their torso) + **per-variant attributes** (volumeLiters + mainFabric swap on selection). Parent offers → `<model>-custom` builder pages (Nanu has no builder → its product page). Redundant config items **archived** (not deleted — they had local gear refs).
 - Earlier (`curate-atom.js`): Nanu weight 600→510, Thinny blank→Size variants (87/116/145g), Roo RE hip-pack attrs, Pack Liner attrs. The Atom stray custom-build weight 1336g fixed via the consolidation.
