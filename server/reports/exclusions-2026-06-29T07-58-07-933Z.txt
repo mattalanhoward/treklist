@@ -1,0 +1,138 @@
+CURATE-ACCESSORIES — treklist_local — 2026-06-29T07:58:05.356Z
+Mode: COMMIT
+Bucket (Other/Wallet/untyped) active items: 127
+
+== ARCHIVE (98) — excluded accessories ==
+  [atelierlonguedistance]    60g  Sangles amovibles
+  [atelierlonguedistance]    30g  Zipped tote bag
+  [atelierlonguedistance]    30g  Sacs fourre-tout
+  [atelierlonguedistance]      —  Small wallet / Card holder
+  [atelierlonguedistance]    12g  Porte Cartes
+  [atelierlonguedistance]      —  Wallet money-phone-passport
+  [atelierlonguedistance]    12g  Porte Monnaie Téléphone Passeport
+  [atompacks]    35g  The Hipbelt Pocket
+  [durstongear]      —  Spare X-Dome Parts
+  [durstongear]   100g  Iceline Pole Parts
+  [durstongear]      —  Spare Kakwa Parts
+  [durstongear]   100g  Spare Wapta Parts
+  [durstongear]   100g  Z-Flick Tent Pole
+  [durstongear]    15g  Durston Logo Sticker 3-Pack
+  [durstongear]    65g  Reflective Ironwire
+  [durstongear]    25g  X-Mid Stargazer Kit
+  [hyberg  ]      —  Elastic Straps
+  [hyberg  ]      —  RIDO
+  [hyberg  ]      —  PILGER  (2025)
+  [hyberg  ]     7g  DARIC Wallet
+  [legacy  ]   116g  Standard Pillow Case
+  [legacy  ]   500g  500ml
+  [legacy  ]    32g  Earplugs
+  [legacy  ]     5g  Food Storage Quart Freezer Slider Bags
+  [legacy  ]     9g  BIC Mini Lighter
+  [legacy  ]     5g  Food Storage Gallon Freezer Slider Bags
+  [legacy  ]    71g  GripTight ONE
+  [legacy  ]  1000g  1000ml
+  [legacy  ]     8g  AAA Batteries
+  [legacy  ]   750g  750ml
+  [legacy  ]   330g  Men's Solution Harness
+  [legacy  ]   223g  Vision Helmet
+  [legacy  ]   365g  Lanyard Scorpio Vertigo
+  [legacy  ]    28g  Bear Bag Line 40′
+  [legacy  ]    73g  Wag Bag
+  [legacy  ]    31g  Mic 3 Transmitter
+  [legacy  ]   170g  Windscreen For Trekking Stove - MT500
+  [legacy  ]   145g  Osmo Action 4
+  [legacy  ]   146g  Osmo Action 5
+  [legacy  ]   157g  HERO13 Black
+  [legacy  ]   177g  Ace Pro 2
+  [legacy  ]     0g  Cash
+  [legacy  ]     0g  Cash
+  [legacy  ]     0g  Debit card
+  [legacy  ]     0g  Cash
+  [legacy  ]     0g  Cash
+  [legacy  ]     0g  Credit Card
+  [legacy  ]     0g  Cash
+  [legacy  ]    43g  Neck Wallet
+  [zpacks  ]    55g  50 Feet 2 mm Z-Line Reflective Cord
+  [zpacks  ]   137g  Zpacks x Vaucluse Ventilation Frame + Sleeve
+  [zpacks  ]     2g  Zpacks Tiny Oval Carabiner (4 Pack)
+  [zpacks  ]    28g  Travel Zip Pouch DISC
+  [zpacks  ]    33g  Mini Hair Brush w/ Mirror
+  [zpacks  ]   106g  XL Airplane Case
+  [zpacks  ]    39g  Potty Pack with Trowel
+  [zpacks  ]    11g  Itty Bitty Ditty Bag
+  [zpacks  ]      —  Bikepacking Collection
+  [zpacks  ]    17g  Zpacks x Glacial Gear Wool Trail Rag
+  [zpacks  ]   339g  Granger's Repel Plus DWR Spray - 275 ml
+  [zpacks  ]     1g  3" Tenacious Tape Mesh Patches
+  [zpacks  ]    79g  Camera Pack
+  [zpacks  ]    26g  Nero V Top Strap
+  [zpacks  ]    45g  Spare set of Multi-Pack Straps
+  [zpacks  ]    26g  Travel Utility Zip
+  [zpacks  ]    27g  Pair of Shoulder Strap Pads
+  [zpacks  ]    17g  Stick-on Key Zip Pouch
+  [zpacks  ]    14g  Tablet Zip Pouch
+  [zpacks  ]    11g  Phablet Zip Pouch
+  [zpacks  ]     9g  Phone Zip Pouch
+  [zpacks  ]     6g  Wallet Zip Pouch
+  [zpacks  ]    86g  Multi-Pack
+  [zpacks  ]      —  Tri-Fold Minimalist Wallet
+  [zpacks  ]    28g  Lumbar Pad
+  [zpacks  ]    81g  Front Utility Pack Accessory
+  [zpacks  ]    87g  Airplane Case
+  [zpacks  ]     2g  Double-Hook Apparatus
+  [zpacks  ]    77g  Pots & Mugs
+  [zpacks  ]    16g  Cord & Cord Hardware
+  [zpacks  ]   539g  Shelters
+  [zpacks  ]     5g  Stakes
+  [zpacks  ]    35g  Pair of titanium Plexamid arches
+  [zpacks  ]    11g  Glasses Zip Pouch
+  [zpacks  ]     3g  Ice Axe Loops (Both Sides of Pack)
+  [zpacks  ]     9g  Passport Zip Pouch
+  [zpacks  ]    11g  Replacement Long Sternum Strap
+  [zpacks  ]    34g  Detachable 1" Webbing Belt
+  [zpacks  ]    14g  Roll Top Closure Straps
+  [zpacks  ]    27g  Document Zip Pouch
+  [zpacks  ]    10g  Replacement Sternum Strap
+  [zpacks  ]     3g  Stake Sack
+  [zpacks  ]     4g  Ultralight Dog Bowl
+  [zpacks  ]    25g  Shoulder Pouch w/ Zipper
+  [zpacks  ]    92g  Bear Bagging Kit
+  [zpacks  ]    14g  Top Side Pocket
+  [zpacks  ]    24g  Belt Pouch
+  [zpacks  ]    18g  Shoulder Pouch
+  [zpacks  ]    35g  Banana Boat Sunscreen (3 pack)
+
+== RETYPE (10) — kept, re-typed as real gear ==
+  Clearance - Goose Down Vest - Jet Black - Extra Large  →  Insulated Jacket
+  Clearance - Goose Down Vest - Burnt Orange - Large  →  Insulated Jacket
+  Evernew Titanium UL 570ml Cup  →  Backpacking Pot
+  Evernew Titanium UL 400ml Cup  →  Backpacking Pot
+  Toaks Light 650ml Cup w/ Lid  →  Backpacking Pot
+  Vertice Rain Kilt  →  Rain Pants
+  DCF Rain Kilt  →  Rain Pants
+  Women's Long-sleeved Merino Wool Trekking Thermal Jacket - MT900  →  Base Layer Top
+  Men's Running & Trail Running Windproof Jacket - KIPRUN Run 900 Wind  →  Rain Jacket
+  Zpacks Ventum Wind Shell Jacket  →  Rain Jacket
+
+== BORDERLINE — KEPT (19) — tell me to cut any ==
+     17g  Deuce of Spades #2
+     60g  Foam Seat Pad
+       —  Foam Sit Pad
+     40g  Zpacks Pack Cover
+     51g  Zpacks Rain Gaiters
+     38g  Zpacks Down Booties
+     44g  Warm Booties (2024)
+     44g  Warm Booties
+     65g  Zpacks Ultralight Camp Shoes
+     36g  Zpacks Down Hood
+      5g  Ultralight Titanium Whistle
+    232g  Carbon Fiber Staff
+    199g  Adotec Grizzly Bear Resistant Bag - 14L
+     38g  Large Food Bag
+     31g  Big Food Bag
+     51g  Zero Pump Air Pump
+    400g  MICROspikes
+     54g  Mountaineering Survival Bag
+    589g  DupleXL DISC
+
+APPLIED: archived 98, retyped 10.
