@@ -2,6 +2,29 @@
 
 _Last updated: 2026-06-29. Working DB: `treklist_local` (Mongo via `server/.env` `MONGO_URI`). All work is LOCAL data + code committed on `dev` (unpushed)._
 
+## BRAND PIPELINE — to add (researched 2026-06-29)
+Goal: make the catalog very complete. **Curated so far (done): Hyberg, Durston, Atom, Zpacks.**
+
+### ✅ Ready — brand-direct Shopify `products.json` (same toolchain as the others)
+| Brand | Domain | ~Products | w/ weight | Notes |
+|---|---|---|---|---|
+| **Darn Tough** | darntough.com | 250+ | 229 | socks; needs `--exclude`/dedupe for colorways |
+| **Hilltop Packs** | hilltoppacks.com | 250+ | 171 | DCF packs + lots of accessories/fabric-by-the-yard → filter heavily |
+| **Nashville Pack** | nashvillepack.com | 60 | 57 | UL packs, clean |
+| **Dandee Packs** | dandeepacks.com | 45 | 39 | UL packs, clean |
+Process per brand: probe → `analyze-feed.js` → `ingest-shopify-catalog.js --brand --merchant-name [--exclude/--skip-food]` → `dedupe-ggg --group` → `ai-type-untyped --group` → curate (variants/weights/attrs, trim descriptions).
+
+### ⚠️ No open feed — need affiliate network or back-door (enterprise/Cloudflare/custom)
+- **Osprey** (Cloudflare challenge, SFCC), **Smartwool** (VF Corp, Cloudflare), **Rab** (enterprise) → need **AvantLink/Impact/Awin** product feed (most US outdoor brands live on AvantLink/Impact, NOT Awin). **Manual copy-paste entry also works** (user pastes specs/images/URL → build item like Bandit Lite).
+- **Tarptent** (custom nginx cart, no products.json) → reseller back-door (outdoorline.eu) or scrape.
+- **Cumulus** (Cloudflare-blocked, known) → reseller back-door (GGG/outdoorline) or affiliate.
+
+### Sourcing reality
+- **Amazon = NOT a catalog source.** Creators API / PA-API are per-ASIN lookup, rate-limited, ToS forbids permanent storage (code caches `amazonSnapshot` 24h + TTL). It's a **buy-link/price layer** for items you already have (attach an ASIN). Weights are shipping weights (wrong).
+- **Awin** = bulk feeds but only per **approved merchant**; user has **Decathlon only** today. Apply for more, but big US brands are usually AvantLink/Impact.
+- _User affiliate networks: Awin (Decathlon). AvantLink/Impact = TBD (the unlock for Osprey/Smartwool/Rab)._
+
+
 ## Session 2026-06-29 (afternoon) — accessory exclusion + first weights
 - **Policy decisions SET** (see below): (1) hand-curate weights for real gear, blank ok for true no-weight accessories; (2) **exclude all accessories** (not needed for a gear-planning app) and keep a note of every exclusion.
 - **mongodump insurance taken**: `server/backups/dump-treklist_local-20260629T094659/`.
