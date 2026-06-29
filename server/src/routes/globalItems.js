@@ -580,6 +580,7 @@ router.post("/from-catalog/bulk", async (req, res) => {
         // so the edit modal shows what the user owns.
         let resolvedWeight = c.weightGrams;
         let resolvedVariantKey = null;
+        let resolvedAttributes = c.attributes;
         if (Array.isArray(c.variants) && c.variants.length) {
           const chosenKey =
             variantSelections[String(c._id)] || c.defaultVariantKey || null;
@@ -588,6 +589,11 @@ router.post("/from-catalog/bulk", async (req, res) => {
             resolvedVariantKey = variant.key;
             if (typeof variant.weightGrams === "number") {
               resolvedWeight = variant.weightGrams;
+            }
+            // Per-variant attribute overrides (e.g. Material -> mainFabric) are
+            // merged onto the base so the owned item reflects what was chosen.
+            if (variant.attributes && typeof variant.attributes === "object") {
+              resolvedAttributes = { ...(c.attributes || {}), ...variant.attributes };
             }
           }
         }
@@ -601,7 +607,7 @@ router.post("/from-catalog/bulk", async (req, res) => {
           description: c.description,
           weight: resolvedWeight,
           variantKey: resolvedVariantKey,
-          attributes: sanitizeAttributes(c.attributes),
+          attributes: sanitizeAttributes(resolvedAttributes),
           ...(typeof resolvedWeight === "number" && { weightSource: "catalog" }),
           tags: c.tags,
           catalogCategory: c.category || null,
