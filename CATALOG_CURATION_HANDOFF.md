@@ -17,6 +17,9 @@ Goal: make the catalog very complete. **Curated so far (done): Hyberg, Durston, 
 | **Darn Tough** | darntough.com | ❌ DECLINED (user doesn't want ~250 sock models). |
 Process per brand: probe → `analyze-feed.js` → `ingest-shopify-catalog.js --brand --merchant-name [--exclude/--skip-food]` → `dedupe-ggg --group` → `ai-type-untyped --group` → curate (variants/weights/attrs, trim descriptions).
 
+### 🔖 Researched, NOT YET imported (user deferred)
+- **Nemo Equipment** (nemoequipment.com) — Shopify, 95 products. ⚠️ weights NOT in `products.json`, BUT the **full spec table is embedded in each product page's HTML** as a JSON array `[{"specification":"Minimum Weight","value":"2 lb 5 oz / 1.05 kg"},…]` (Min Weight, Packed Size, Floor Area, Rainfly Fabric, Doors, Season) — **per capacity**. So it's a per-page scrape (curl page → parse spec JSON), richer data than HMG/Zpacks. Variants by **Capacity** (1/2/3-Person). Mixed catalog: keep backpacking (Hornet/Dragonfly/Dagger/Kunai tents, bags, pads, pillows ~50), drop car-camping/lifestyle (Aurora Highrise, Victory, Heliopolis, Camp Furniture/Life ~30). **Nemo affiliate = AvantLink** (merchantId 1018689) → monetized buy-links if user joins AvantLink (same network unlocks Osprey/Smartwool/Rab).
+
 ### ⚠️ No open feed — need affiliate network or back-door (enterprise/Cloudflare/custom)
 - **Osprey** (Cloudflare challenge, SFCC), **Smartwool** (VF Corp, Cloudflare), **Rab** (enterprise) → need **AvantLink/Impact/Awin** product feed (most US outdoor brands live on AvantLink/Impact, NOT Awin). **Manual copy-paste entry also works** (user pastes specs/images/URL → build item like Bandit Lite).
 - **Tarptent** (custom nginx cart, no products.json) → reseller back-door (outdoorline.eu) or scrape.
