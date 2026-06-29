@@ -5,6 +5,9 @@ _Last updated: 2026-06-29. Working DB: `treklist_local` (Mongo via `server/.env`
 ## BRAND PIPELINE — to add (researched 2026-06-29)
 Goal: make the catalog very complete. **Curated so far (done): Hyberg, Durston, Atom, Zpacks.**
 
+### HMG (Hyperlite Mountain Gear) DONE — ✅ 2026-06-29
+- Shopify feed (118 products), structured like Zpacks. Imported 110 (apparel/junk excluded) → **73 active**. 14 pre-existing manual single-size items (Windrider 40/55/70 etc.) **archived** (superseded by feed's variant versions). 23 packs with Volume×Torso variants + per-variant weights + attrs (DCF vs UltraWeave best-effort); 7 tents (UltaMid/Mid/CrossPeak/Unbound) + Flat Tarp + Ground Cloth; quilts/stuff-sacks/hip-packs/stakes attributed. Archived 37 accessories/bundles/poles. Scripts: `curate-hmg-{cleanup,attrs-packs,attrs-shelters,attrs-rest}.js`. ⚠️ HMG **resells ~33 third-party items** (MSR/Therm-a-Rest/Sawyer/Nalgene/Vargo…) — kept with auto-type + buy-link but NOT deep-attributed (resold, may duplicate other catalog items); plus UltaMid inserts/bivies left as components.
+
 ### Brand-direct Shopify `products.json` (same toolchain as the others)
 | Brand | Domain | Status |
 |---|---|---|
