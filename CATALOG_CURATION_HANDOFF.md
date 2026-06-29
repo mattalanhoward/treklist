@@ -58,6 +58,11 @@ A clean, consistent catalog, then migrate to prod. **Clean bar** = every active 
 - **Legacy/other (~78):** your CLEANEST set (95% typed) — most flags are genuine "Other" accessories. Low priority.
 - **NOTE:** earlier-flagged consolidation clusters Cumulus Aerial / Katabatic Flex / Vargo BOT / Adventure Medical Kit were all GGG-sourced → **gone with GGG**. Only Hyberg LONER/SLUMBER remains.
 
+## Atom Packs DONE — ✅ 2026-06-29
+- Consolidated the per-config items into **5 variant pack models** (`consolidate-atom-packs.js`): The Atom (RE30/RE40/UL35/Custom), Prospector (EP50/EP60/Custom), Pulse (EP40/EP50/Custom), Notch (EP40/EP50/Custom), Nanu (RE25/X25/Custom). Variant axis "Version"; each variant keeps its published **medium-torso weight** (user overrides for their torso) + **per-variant attributes** (volumeLiters + mainFabric swap on selection). Parent offers → `<model>-custom` builder pages (Nanu has no builder → its product page). Redundant config items **archived** (not deleted — they had local gear refs).
+- Earlier (`curate-atom.js`): Nanu weight 600→510, Thinny blank→Size variants (87/116/145g), Roo RE hip-pack attrs, Pack Liner attrs. The Atom stray custom-build weight 1336g fixed via the consolidation.
+- **Accessories kept (4):** un-archived **The Hipbelt Pocket**; kept Roo RE (1.5/2.5L), Pack Liner, The Thinny. All other Atom accessories/frames/old-Roo-dupes/test-copy/Mo-factory-2nd stay archived. **Active Atom = 9** (5 models + 4 accessories).
+
 ## Durston DONE — ✅ 2026-06-29
 - Durston was already well-modeled (variants + per-variant weights survived from a prior session — Kakwa Fabric×Torso 770–860g, Wapta Torso×WaistBelt 385–540g, X-Mid Pro Floor×Stakes, X-Dome Interior×PoleSet, all correct vs the handoff). **Gap was attributes — now filled** for all 13 active items from durstongear.com specs (WebFetch + cross-check). Scripts: `curate-durston-attrs-tents.js`, `curate-durston-attrs-rest.js`.
 - 8 tents: capacity/season/tentType/wall/materials/dims; **per-variant** floor material on X-Mid Pro (Woven=silnylon / Dyneema=DCF) and floor+pole material on X-Dome (Interior + Pole Set axes). X-Dome Pro 1+ left minimal (pre-release, no published specs).
