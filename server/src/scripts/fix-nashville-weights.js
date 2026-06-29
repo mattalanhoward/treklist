@@ -39,6 +39,7 @@ const DEF = "ALUULA Graflyte V98 / 30L";
     cut.defaultVariantKey = DEF;
     cut.weightGrams = W["ALUULA Graflyte V98"]["30L"]; // 247
     cut.attributes = { ...cut.attributes, mainFabric: "ALUULA Graflyte V98", volumeLiters: 30 };
+    cut.description = "Our flagship pack — a commitment to building the best frameless ultralight pack on the market, with unrivaled comfort and accessibility. Available in 20/30/40 L and six fabrics (ALUULA Graflyte, Ultra 100X, Ultra 200X, UltraGrid, Venom Gridstop ECO, EPX200). Note: listed weights are for an 18\" torso (pack body only) and are approximate — packs are handmade.";
     cut.$locals.lenientAttributes = true;
     if (COMMIT) await cut.save();
     console.log(`The Cutaway -> ${variants.length} variants (Fabric×Volume), ${variants[0].weightGrams}–${Math.max(...variants.map(v => v.weightGrams))}g, default ${DEF}=${cut.weightGrams}g`);
