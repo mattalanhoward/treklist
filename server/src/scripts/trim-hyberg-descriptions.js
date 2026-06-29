@@ -40,14 +40,15 @@ function trim(desc) {
 (async () => {
   await mongoose.connect(process.env.MONGO_URI, { dbName: process.env.MONGO_DB_NAME });
   const C = require("../models/catalogItem");
-  const items = await C.find({ itemGroupId: /^hyberg-/, isActive: true }).select("name description");
+  const items = await C.find({ itemGroupId: /^hyberg-/, isActive: true }).select("name description").lean();
   let n = 0;
   for (const it of items) {
     const next = trim(it.description);
     if (!next || next === it.description) continue;
     console.log(`\n### ${it.name}  (${(it.description || "").length} -> ${next.length})`);
     console.log(`   ${next}`);
-    if (COMMIT) { it.description = next; it.$locals.lenientAttributes = true; await it.save(); }
+    // direct $set — NOT doc.save() — to avoid the pre-save hook wiping other fields
+    if (COMMIT) await C.collection.updateOne({ _id: it._id }, { $set: { description: next } });
     n++;
   }
   console.log(`\n${COMMIT ? "APPLIED" : "DRY-RUN"}: ${n} descriptions trimmed`);
