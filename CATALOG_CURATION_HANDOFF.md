@@ -2,6 +2,14 @@
 
 _Last updated: 2026-06-29. Working DB: `treklist_local` (Mongo via `server/.env` `MONGO_URI`). All work is LOCAL data + code committed on `dev` (unpushed)._
 
+## ▶▶ OSPREY — IN PROGRESS (resume here, 2026-06-30)
+**Manually-entered Osprey packs (brand "Osprey", NO itemGroupId — match by `brand:/osprey/i`). 31 → 16 active.**
+- **DONE:** stripped "Men's/Women's" + "Osprey " prefix from names → set `gender` attribute (Mens/Womens/Unisex). Earlier consolidated 9 models into a **"Size" axis = VOLUME** (e.g. Atmos AG = Size[50L/65L]). `curate-osprey-sizes.js`.
+- **NEXT (the active task):** add **Torso-Size variants** (S/M, L/XL, XS/S, M/L, or One Size) to each pack. Final structure = **Volume × Torso Size** (multi-volume packs) or **Torso Size only** (singles). ⚠️ Must **rename the existing "Size" axis → "Volume"** and add a **"Torso Size"** axis. Per-variant `volumeLiters` + `weightGrams` + `torsoFitRange` — **volume varies by torso size** (user-confirmed: Exos 48 = 48L in S/M, 51L in L/XL; selecting a size swaps the volume/weight/fit via variant.attributes merge, like Bandit Lite fabric).
+- **⚠️ CANNOT fetch osprey.com** — Cloudflare 403-challenges curl AND WebFetch. **User copy-pastes the spec block per pack.** Capture: torso sizes, **weight per size**, **volume per size**, torso fit range per size, max/rec load (loadCapacityKg), main fabric, frame type (Anti-Gravity/Internal), rain cover included?, hydration compatible?.
+- **GOTCHA:** the manual Osprey items had INVALID `frameType` attribute values → validation fails on Backpack save. Set CLEAN attributes (don't spread the old ones).
+- **16 active Osprey items:** multi-volume (have Size/Volume variants) = Atmos AG, Atmos AG LT, Talon, Tempest, Sirrus, Hikelite, Stratos, Talon Velocity, Kyte LT. singles (no variants yet) = Eja 48, Exos 48, Eja Pro 48, Exos Pro 55, Sportlite 25L, Hikelite LT 30, Kestrel 38L. First test case agreed: **Exos 48** (S/M 48L, L/XL 51L) — awaiting user's weight-per-size paste.
+
 ## BRAND PIPELINE — to add (researched 2026-06-29)
 Goal: make the catalog very complete. **Curated so far (done): Hyberg, Durston, Atom, Zpacks.**
 
