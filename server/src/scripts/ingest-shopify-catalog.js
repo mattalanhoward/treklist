@@ -112,7 +112,7 @@ if (COMMIT && !LOCAL_DBS.has(DB) && flag("--confirm", null) !== DB) {
 
 // Tags / product_types / titles that mark internal, resale, or non-gear noise.
 const JUNK_TAG = /^(dummy|criteo-exclude|all-bargains|backpack-bargains|return|package_protection)$/i;
-const JUNK_TYPE = /(dummy|resale|materials|return|package_protection|bargain|gift\s*card)/i;
+const JUNK_TYPE = /(dummy|resale|materials|return|package_protection|bargain|gift\s*card|like\s*new|spare\s*part)/i;
 const JUNK_TITLE = /(bargain|gift card|\bdummy\b|sample sale|e-?gift)/i;
 
 // ---------------------------------------------------------------------------
