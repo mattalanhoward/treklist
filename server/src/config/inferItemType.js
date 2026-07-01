@@ -255,8 +255,10 @@ const CATEGORY_BY_ITEM_TYPE = {
   // "Other" intentionally absent -> leaves category/subcategory unset.
 };
 
-const WOMENS_RE = /\b(women'?s|woman'?s|female|ladies|ladies')\b/i;
-const MENS_RE = /\b(men'?s|man'?s|male)\b/i; // word-boundary avoids matching "women"
+// apostrophe class [’'] covers both straight ' and curly ’ (curly broke gendered
+// category detection for brands like Katabatic — see backfill-gender.js).
+const WOMENS_RE = /\b(women[’']?s|woman[’']?s|female|ladies|ladies[’'])\b/i;
+const MENS_RE = /\b(men[’']?s|man[’']?s|male)\b/i; // word-boundary avoids matching "women"
 
 function genderClothingCategory(name) {
   const w = WOMENS_RE.test(name);
