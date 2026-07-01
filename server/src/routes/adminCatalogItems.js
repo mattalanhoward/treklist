@@ -340,6 +340,23 @@ router.get("/item-types", async (req, res) => {
 });
 
 // =============================================================================
+// GET /api/admin/catalog-items/brands
+// Distinct brands across the WHOLE catalog (active + archived) — powers the admin
+// brand filter dropdown (which must not be limited to the current page of results).
+// =============================================================================
+router.get("/brands", async (req, res) => {
+  try {
+    const brands = (await CatalogItem.distinct("brand"))
+      .filter(Boolean)
+      .sort((a, b) => a.localeCompare(b));
+    res.json({ brands });
+  } catch (err) {
+    console.error("GET /api/admin/catalog-items/brands error", err);
+    res.status(500).json({ message: "Failed to get brands." });
+  }
+});
+
+// =============================================================================
 // POST /api/admin/catalog-items
 // =============================================================================
 router.post("/", async (req, res) => {

@@ -275,6 +275,7 @@ function GearCatalogSection({
   onSeedConsumed,
 }) {
   const [items, setItems] = useState([]);
+  const [allBrands, setAllBrands] = useState([]); // whole-catalog brands for the filter dropdown
   const [serverTotal, setServerTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -377,6 +378,21 @@ function GearCatalogSection({
     return () => clearTimeout(searchTimerRef.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, search, filterCategory, filterBrand, showArchived, sort.field, sort.dir]);
+
+  // Load the full catalog's distinct brands once, so the brand filter isn't limited
+  // to the current page of results.
+  useEffect(() => {
+    let cancelled = false;
+    api
+      .get("/admin/catalog-items/brands")
+      .then(({ data }) => {
+        if (!cancelled) setAllBrands(data?.brands || []);
+      })
+      .catch((err) => console.error("Failed to load brands", err));
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (!duplicateSeed) return;
@@ -827,10 +843,12 @@ function GearCatalogSection({
     return buildCategoryOptions({ existing });
   }, [items]);
 
-  const brandOptions = useMemo(
-    () => Array.from(new Set(items.map((i) => i.brand).filter(Boolean))).sort(),
-    [items],
-  );
+  const brandOptions = useMemo(() => {
+    // Prefer the whole-catalog brand list; fall back to the current page's brands
+    // until it loads (or if the request failed) so the dropdown is never empty.
+    if (allBrands.length) return allBrands;
+    return Array.from(new Set(items.map((i) => i.brand).filter(Boolean))).sort();
+  }, [allBrands, items]);
 
   const networkOptions = useMemo(() => {
     const nets = items
