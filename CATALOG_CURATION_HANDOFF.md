@@ -53,6 +53,8 @@ Goal: make the catalog very complete. **Curated so far (done): Hyberg, Durston, 
 | **Sea to Summit** | seatosummit.com | Shopify, 250+ | HUGE range (bags/pads/pillows/cookware/dry bags/utensils). High value, **high filter effort**; pg1 showed outlet/past-season — verify full catalog. | High |
 | **Outdoor Research** | outdoorresearch.com | Shopify, 250+ | **Apparel-heavy** (jackets/bibs/gloves/hats) + gaiters. Keep rain/insulated jackets, gloves, gaiters, sun hoodies. High filter effort. | High |
 
+**🌟 Cascade Designs family (cascadedesigns.com) — researched 2026-07-01 — HIGH-VALUE, open Shopify feed:** ONE store (Cloudflare CDN but `products.json` open, 368 products) for 5 OWNED brands (not a reseller): **MSR (253), Therm-a-Rest (71), Platypus (30), SealLine (9), PackTowl (5)**. `thermarest.com` redirects here; `thermarestcamp.com` = dead 404. Ingest with vendor→brand (no `--brand`, like GGG). ⚠️ MSR's 253 has heavy noise (parts/apparel/snowshoes) → big curation. ⚠️ **REPLACE existing Amazon-linked items** (user OK'd 2026-07-01): 7 Therm-a-Rest NeoAir pads (XLite NXT R/RS/RW/L, XTherm NXT R/RW/L), 3 MSR (Groundhog + Mini-Groundhog stakes, PocketRocket 2), 1 Platypus (Quickdraw) → supersede with brand-direct, **log each replaced** (+ archive the 2 HMG-resold TAR/Platypus dups). Core keep: TAR pads/quilts/pillows/cots, Platypus hydration/filters, MSR stoves/tents/filters/cookware/stakes, SealLine dry bags, PackTowl towels.
+
 **⚠️ No open feed → affiliate network (AvantLink/Impact — user lacks) or per-page scrape:**
 | Brand | Domain | Platform | Path |
 |---|---|---|---|
