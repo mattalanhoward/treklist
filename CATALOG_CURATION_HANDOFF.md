@@ -39,7 +39,7 @@ _(Aside 2026-07-01: added one-off **Kula Cloth** (Toiletry, direct buy-link) via
 - **Active Osprey now 19** (16 + Aura AG + Aura AG LT + Tempest Velocity; renames don't change count).
 
 ## BRAND PIPELINE — to add (researched 2026-06-29)
-Goal: make the catalog very complete. **Curated so far (done): Hyberg, Durston, Atom, Zpacks, Atelier, HMG, Nashville Pack, Dandee Packs, Hilltop Packs, Vargo (72; weights TODO), Katabatic (21). Osprey ⏸ paused (15/19). One-off: Kula Cloth.**
+Goal: make the catalog very complete. **Curated so far (done): Hyberg, Durston, Atom, Zpacks, Atelier, HMG, Nashville Pack, Dandee Packs, Hilltop Packs, Vargo (72; weights TODO), Katabatic (21), Cascade Designs family = MSR/Therm-a-Rest/Platypus/SealLine/PackTowl (252; typing-review TODO). Osprey ⏸ paused (15/19). One-off: Kula Cloth.**
 
 ### 🆕 13 brands researched 2026-07-01 (feasibility probed — none imported yet)
 **✅ Open Shopify feed (`/products.json` works even behind Cloudflare CDN) — same toolchain as HMG/Nashville/Hilltop; direct unmonetized buy-links; no affiliate needed:**
@@ -53,7 +53,10 @@ Goal: make the catalog very complete. **Curated so far (done): Hyberg, Durston, 
 | **Sea to Summit** | seatosummit.com | Shopify, 250+ | HUGE range (bags/pads/pillows/cookware/dry bags/utensils). High value, **high filter effort**; pg1 showed outlet/past-season — verify full catalog. | High |
 | **Outdoor Research** | outdoorresearch.com | Shopify, 250+ | **Apparel-heavy** (jackets/bibs/gloves/hats) + gaiters. Keep rain/insulated jackets, gloves, gaiters, sun hoodies. High filter effort. | High |
 
-**🌟 Cascade Designs family (cascadedesigns.com) — researched 2026-07-01 — HIGH-VALUE, open Shopify feed:** ONE store (Cloudflare CDN but `products.json` open, 368 products) for 5 OWNED brands (not a reseller): **MSR (253), Therm-a-Rest (71), Platypus (30), SealLine (9), PackTowl (5)**. `thermarest.com` redirects here; `thermarestcamp.com` = dead 404. Ingest with vendor→brand (no `--brand`, like GGG). ⚠️ MSR's 253 has heavy noise (parts/apparel/snowshoes) → big curation. ⚠️ **REPLACE existing Amazon-linked items** (user OK'd 2026-07-01): 7 Therm-a-Rest NeoAir pads (XLite NXT R/RS/RW/L, XTherm NXT R/RW/L), 3 MSR (Groundhog + Mini-Groundhog stakes, PocketRocket 2), 1 Platypus (Quickdraw) → supersede with brand-direct, **log each replaced** (+ archive the 2 HMG-resold TAR/Platypus dups). Core keep: TAR pads/quilts/pillows/cots, Platypus hydration/filters, MSR stoves/tents/filters/cookware/stakes, SealLine dry bags, PackTowl towels.
+**🌟 Cascade Designs family — ✅ DONE 2026-07-01** (cascadedesigns.com — ONE open Shopify store, 368, 5 owned brands). Ingest (vendor→brand, merchant "Cascade Designs", direct offers) → AI-type per brand → `curate-cascade.js`. **252 active, all offers:** MSR 156, Therm-a-Rest 58, Platypus 24, SealLine 9, PackTowl 5.
+- **REPLACED 11 Amazon-linked items (archived; brand-direct supersedes):** TAR NeoAir Xlite NXT -RS/-R/-RW/-L + XTherm NXT R/RW/L (7 → now consolidated Size-variant pads `NeoAir XLite/XTherm NXT`), MSR Groundhog + Mini-Groundhog Stakes + PocketRocket 2 (3), Platypus Quickdraw (1). Also archived 2 HMG-resold dups (TAR NeoAir, Platypus Hoser).
+- **Archived 116 "Other":** MSR ~97 = **entire snowshoe line (~40) + bindings + snow tools + replacement parts** (out of backpacking scope, no snowshoe itemType — ⚠️ REVIEW: reversible if user wants snowshoes); TAR 13 + Platypus 6 = parts/accessories.
+- ⚠️ **TYPING REVIEW pass needed** (AI mistypes): TAR "Rain Poncho"×7 (likely tarps/blankets), Platypus "Hat/Headwear"×3 (bottle caps?), MSR "Backpack"×24 (MSR makes few packs — likely tent bodies/stuff sacks), PackTowl "Rain Poncho"×1, SealLine "Hiking Shirt"/"Document". Core gear typed correctly (pads/quilts/stoves/tents/filters/dry bags/towels). Feed weights good (208/368 had weight; most weightless were the archived parts/snowshoes).
 
 **⚠️ No open feed → affiliate network (AvantLink/Impact — user lacks) or per-page scrape:**
 | Brand | Domain | Platform | Path |
