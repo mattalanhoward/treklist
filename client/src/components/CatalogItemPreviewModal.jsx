@@ -70,18 +70,24 @@ export default function CatalogItemPreviewModal({
   };
 
   const catalogImages = useMemo(() => {
-    const urls = Array.isArray(item?.imageUrls) ? item.imageUrls : [];
+    // Prefer the selected variant's own images (variants can look physically
+    // different, e.g. a 1P vs 3P tent); fall back to the item-level images.
+    const variantUrls = Array.isArray(selectedVariant?.imageUrls)
+      ? selectedVariant.imageUrls
+      : [];
+    const baseUrls = Array.isArray(item?.imageUrls) ? item.imageUrls : [];
+    const urls = variantUrls.length ? variantUrls : baseUrls;
     return urls
       .filter((u) => typeof u === "string" && u.trim())
       .filter((u) => /^https?:\/\//i.test(u.trim()));
-  }, [item?._id, item?.imageUrls]);
+  }, [item?._id, item?.imageUrls, selectedVariant]);
 
   const hasImages = catalogImages.length > 0;
 
   useEffect(() => {
     if (!isOpen) return;
     setImageFailed(false);
-  }, [isOpen, item?._id]);
+  }, [isOpen, item?._id, selectedVariant?.key]);
 
   // When item changes, assume images need to load again (if any exist)
   useEffect(() => {

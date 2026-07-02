@@ -325,6 +325,17 @@ export default function GlobalItemEditModal({
     );
   }, [hasVariants, variants, variantAxes, selectedOptions]);
 
+  // Catalog images shown for the item, preferring the selected variant's own
+  // images (variants can look different) and falling back to the item images.
+  const displayCatalogImages = useMemo(() => {
+    const v = Array.isArray(selectedVariant?.imageUrls)
+      ? selectedVariant.imageUrls.filter(
+          (u) => typeof u === "string" && /^https?:\/\//i.test(u.trim()),
+        )
+      : [];
+    return v.length ? v : safeCatalogImages;
+  }, [selectedVariant, safeCatalogImages]);
+
   // Initialize the dropdowns from the stored variantKey, else the catalog
   // default, else the first variant — WITHOUT touching the weight (already
   // hydrated from the item), so a user's weight override is never clobbered.
@@ -769,7 +780,7 @@ export default function GlobalItemEditModal({
                       <Spinner />
                     ) : (
                       <ImageCarousel
-                        images={safeCatalogImages.slice(0, 1)}
+                        images={displayCatalogImages.slice(0, 1)}
                         alt={`${form.brand ? form.brand + " " : ""}${form.name || ""}`}
                         loading={false}
                       />
@@ -865,7 +876,7 @@ export default function GlobalItemEditModal({
                           <Spinner />
                         ) : (
                           <ImageCarousel
-                            images={safeCatalogImages.slice(0, 1)}
+                            images={displayCatalogImages.slice(0, 1)}
                             alt={`${form.brand ? form.brand + " " : ""}${form.name || ""}`}
                             loading={false}
                           />

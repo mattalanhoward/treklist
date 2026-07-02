@@ -373,7 +373,20 @@ function normalizeVariantSet({
     const sku =
       v?.sku != null && String(v.sku).trim() ? String(v.sku).trim() : undefined;
 
-    outVariants.push({ key, options: cleanOptions, weightGrams, sku, attributes });
+    const imageUrls = Array.isArray(v?.imageUrls)
+      ? v.imageUrls
+          .filter((u) => typeof u === "string" && u.trim())
+          .map((u) => u.trim())
+      : undefined;
+
+    outVariants.push({
+      key,
+      options: cleanOptions,
+      weightGrams,
+      sku,
+      attributes,
+      ...(imageUrls && imageUrls.length ? { imageUrls } : {}),
+    });
   }
 
   let defaultKey = String(defaultVariantKey || "").trim() || undefined;

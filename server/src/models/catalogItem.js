@@ -87,6 +87,11 @@ const VariantSchema = new mongoose.Schema(
     weightGrams: { type: Number, min: 0 },
     sku: { type: String, trim: true },
 
+    // Optional per-variant images. When a variant is selected the UI shows these
+    // (falling back to the item-level imageUrls) — variants of the same product can
+    // look physically different (e.g. a 1P vs 3P tent, a 1R vs 10R pad).
+    imageUrls: { type: [String], default: undefined },
+
     // Optional per-variant attribute overrides, merged OVER the item's base
     // `attributes` when this variant is selected (e.g. a Material axis where
     // each fabric has a different `mainFabric`). Shape matches `attributes`.
