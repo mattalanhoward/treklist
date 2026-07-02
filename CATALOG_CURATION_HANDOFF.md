@@ -1,6 +1,8 @@
 # Catalog Curation Handoff
 
-_Last updated: 2026-06-30. Working DB: `treklist_local` (Mongo via `server/.env` `MONGO_URI`). All work is LOCAL data + code committed on `dev` (unpushed)._
+_Last updated: 2026-07-02. Working DB: `treklist_local` (Mongo via `server/.env` `MONGO_URI`). All work is LOCAL data + code committed/pushed on `dev`._
+
+> 🔧 **Admin editor redesign brief:** `ADMIN_CATALOG_REDESIGN_HANDOFF.md` (repo root) — tabbed catalog editor + a **Variants tab** (no way to edit per-variant weights today; blocks e.g. Nemo weight entry). Feed it to a planning model, then build.
 
 ## ▶▶ OSPREY — ⏸ PAUSED 2026-07-01 (user taking a break from manual entry; resume here)
 **RESUME = the 4 packs in "NEXT" below: Kyte LT (multi-vol, need spec + per-vol ASINs) + singles Sportlite 25L / Hikelite LT 30 / Kestrel 38L (need spec pastes). Everything else done. Scripts + ledger all ready.**
