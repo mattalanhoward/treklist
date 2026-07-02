@@ -78,6 +78,8 @@ Goal: make the catalog very complete. **Curated so far (done): Hyberg, Durston, 
 
 **🆕 Hoka — researched 2026-07-02, ❌ NO open feed:** hoka.com is **Salesforce Commerce Cloud** (Deckers), heavily bot-protected — `products.json` 410 Gone, homepage 406 to scripted requests. Same blocker as Osprey/Smartwool/Mountain Hardwear → needs **AvantLink/Impact affiliate feed** or SFCC OCAPI (or manual copy-paste). Added to no-feed table below.
 
+**🟢 Garage Grown Gear (GGG) — BACK IN (user, 2026-07-02), IMPORTABLE (Shopify), SELECTIVE:** open feed `garagegrowngear.com/products.json` (~185 products / 78 vendors). Re-add **by vendor only** — the no-feed brands we're blocked on + unique cottage brands — SKIP vendors we import direct (Gossamer/HMG/Zpacks/Sea to Summit/LiteAF/Cowboy Camping). Unlocks **Cumulus, Tarptent, Pa'lante, Katabatic, FarPointe** + TOAKS/Darn Tough/Klymit/Exped/Outdoor Vitals/etc. Full plan under "Where things stand → GGG BACK IN THE GREEN". (Reverses the earlier full-mud removal — this is the surgical re-add.)
+
 **⚠️ No open feed → affiliate network (AvantLink/Impact — user lacks) or per-page scrape:**
 - **Sawyer** (sawyer.com) — researched 2026-07-01. **Cloudflare + not Shopify** (products.json 404) → no open feed. Currently **3 resold Sawyer filters active** (Squeeze/Mini/Micro Squeeze via HMG/GGG) + 1 HMG-resold dup. Stays resold unless affiliate/manual. Water filters (Water Filter type).
 | Brand | Domain | Platform | Path |
@@ -140,6 +142,7 @@ Process per brand: probe → `analyze-feed.js` → `ingest-shopify-catalog.js --
 ## Where things stand
 - **913 active catalog items**, 967 offers. This is the clean, focused catalog after removing GGG.
 - **GGG was removed** (it was the mud: 1029 items / 376 review flags). Backed up at `server/backups/ggg-*.json` — re-addable in one command, or selectively by brand.
+  - **▶ 2026-07-02 — GGG BACK IN THE GREEN (user): re-add SELECTIVELY** (NOT the full mud). Garage Grown Gear still has an open Shopify feed (`garagegrowngear.com/products.json`, now ~185 products / 78 vendors) and is our **back-door for no-feed cottage brands**. Import **by vendor**, only the brands we can't get direct + unique cottage brands; SKIP vendors we already import direct (Gossamer/HMG/Zpacks/Sea to Summit/LiteAF/Cowboy Camping) to avoid dup mud. **Unlocks (blocked/wanted):** Cumulus (4), Tarptent (1), Pa'lante Packs (1), Katabatic Gear (1), FarPointe Outdoor Gear (2) + unique cottage brands worth a look: TOAKS, Darn Tough, Klymit, Exped, Outdoor Vitals, SkyGOAT, Crystal Creek, MooseTrack, High Tail Designs, humangear, HydraPak. **Method:** `ingest-shopify-catalog.js --domain garagegrowngear.com --brand "<Vendor>" --merchant-name "Garage Grown Gear"` per vendor (GGG deep-links, unmonetized) → AI-type → curate. ⚠ weights: GGG feed grams unreliable (reseller) → verify per brand.
 - **Prod `TrekList` is STALE** — 610 old items, none of this session's work (no variants, no new brands, no curation). Do **not** copy prod→local; it would erase everything.
 - ⚠️ **local and prod `_id`s DIFFER** (verified). Users' `productId` refs point at prod `_id`s. → migration must be archive-and-readd (below), not an in-place `_id` update.
 - ⚠️ **Manual curation is NOT replayable from scripts** — the Durston variant/weight work, consolidations, etc. exist only as data in local. local is the source of truth.
