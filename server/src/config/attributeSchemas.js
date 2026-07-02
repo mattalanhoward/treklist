@@ -2106,6 +2106,7 @@ const SCHEMAS = {
           "High-Loft Fleece",
           "Sherpa Fleece",
           "Sweater Fleece",
+          "Alpha Direct", // Polartec Alpha Direct / active-insulation knits (incl. Teijin Octa)
         ],
       },
       fleeceWeight: {
