@@ -1,8 +1,8 @@
 {
   "_note": "Backup of every active catalog item's Amazon links, for replay when the schema gains variant-level offers. For multi-volume items, asinsByVolume maps each volume to its ASIN; pendingVolumes = volumes still needing an ASIN. Only the canonical ASIN is currently stored in the DB; extras live in build-asin-ledger.js EXTRA_ASINS. See project-per-variant-offer-routing + CATALOG_CURATION_HANDOFF.md.",
-  "generatedAt": "2026-07-01T08:10:55.457Z",
+  "generatedAt": "2026-07-02T10:11:36.671Z",
   "counts": {
-    "itemsWithAsin": 215,
+    "itemsWithAsin": 194,
     "multiVolume": 13,
     "multiVolumeWithPendingAsins": 0
   },
@@ -509,7 +509,7 @@
       "brand": "Black Diamond",
       "itemType": "Gloves (Insulated)",
       "catalogItemId": "699dc732cefe45afeb9127e4",
-      "gender": null,
+      "gender": "Mens",
       "canonicalAsin": "B081BBD3R6",
       "amazonOffers": [
         {
@@ -793,38 +793,6 @@
       ]
     },
     {
-      "name": "2L Vecto Water Container",
-      "brand": "CNOC",
-      "itemType": "Hydration Reservoir",
-      "catalogItemId": "6990e1b8eef4327937c05454",
-      "gender": null,
-      "canonicalAsin": "B07QBQ894L",
-      "amazonOffers": [
-        {
-          "externalProductId": "B07QBQ894L",
-          "deepLink": "https://www.amazon.com/dp/B07QBQ894L?tag=treklistapp-20",
-          "region": "global",
-          "priority": 0
-        }
-      ]
-    },
-    {
-      "name": "3L Vecto Water Container",
-      "brand": "CNOC",
-      "itemType": "Hydration Reservoir",
-      "catalogItemId": "6990e214eef4327937c05475",
-      "gender": null,
-      "canonicalAsin": "B07R81RDGN",
-      "amazonOffers": [
-        {
-          "externalProductId": "B07R81RDGN",
-          "deepLink": "https://www.amazon.com/dp/B07R81RDGN?tag=treklistapp-20",
-          "region": "global",
-          "priority": 0
-        }
-      ]
-    },
-    {
       "name": "Blister Care Pads",
       "brand": "Compeed",
       "itemType": "Blister Prevention",
@@ -1037,7 +1005,7 @@
       "brand": "Dove",
       "itemType": "Toiletry",
       "catalogItemId": "6956837de9f5d8692a3e0707",
-      "gender": null,
+      "gender": "Mens",
       "canonicalAsin": "B00VU2XPBS",
       "amazonOffers": [
         {
@@ -1737,150 +1705,6 @@
       ]
     },
     {
-      "name": "Groundhog Tent Stakes",
-      "brand": "MSR",
-      "itemType": "Tent Stakes",
-      "catalogItemId": "6990dd83eef4327937c053b2",
-      "gender": null,
-      "canonicalAsin": "B006ZC5KLG",
-      "amazonOffers": [
-        {
-          "externalProductId": "B006ZC5KLG",
-          "deepLink": "https://www.amazon.com/dp/B006ZC5KLG?tag=treklistapp-20",
-          "region": "global",
-          "priority": 0
-        }
-      ]
-    },
-    {
-      "name": "Mini-Groundhog Tent Stakes",
-      "brand": "MSR",
-      "itemType": "Tent Stakes",
-      "catalogItemId": "6990dd04eef4327937c0539c",
-      "gender": null,
-      "canonicalAsin": "B007ZQV312",
-      "amazonOffers": [
-        {
-          "externalProductId": "B007ZQV312",
-          "deepLink": "https://www.amazon.com/dp/B007ZQV312?tag=treklistapp-20",
-          "region": "global",
-          "priority": 0
-        }
-      ]
-    },
-    {
-      "name": "PocketRocket 2",
-      "brand": "MSR",
-      "itemType": "Backpacking Stove (Canister)",
-      "catalogItemId": "6990e345eef4327937c0549d",
-      "gender": null,
-      "canonicalAsin": "B01N5O7551",
-      "amazonOffers": [
-        {
-          "externalProductId": "B01N5O7551",
-          "deepLink": "https://www.amazon.com/dp/B01N5O7551?tag=treklistapp-20",
-          "region": "global",
-          "priority": 0
-        }
-      ]
-    },
-    {
-      "name": "Switchback Foam Sleeping Pad - Regular",
-      "brand": "Nemo",
-      "itemType": "Foam Sleeping Pad",
-      "catalogItemId": "69976e04cefe45afeb90e9da",
-      "gender": null,
-      "canonicalAsin": "B07JZZ5PFB",
-      "amazonOffers": [
-        {
-          "externalProductId": "B07JZZ5PFB",
-          "deepLink": "https://www.amazon.com/dp/B07JZZ5PFB?tag=treklistapp-20",
-          "region": "global",
-          "priority": 0
-        }
-      ]
-    },
-    {
-      "name": "Switchback Foam Sleeping Pad - Short",
-      "brand": "Nemo",
-      "itemType": "Foam Sleeping Pad",
-      "catalogItemId": "69976ee0cefe45afeb90e9ee",
-      "gender": null,
-      "canonicalAsin": "B07JZHC4N5",
-      "amazonOffers": [
-        {
-          "externalProductId": "B07JZHC4N5",
-          "deepLink": "https://www.amazon.com/dp/B07JZHC4N5?tag=treklistapp-20",
-          "region": "global",
-          "priority": 0
-        }
-      ]
-    },
-    {
-      "name": "Tensor All-Season - Long Wide",
-      "brand": "Nemo",
-      "itemType": "Inflatable Sleeping Pad",
-      "catalogItemId": "69dc99a15c5e4e7684fd48ae",
-      "gender": null,
-      "canonicalAsin": "B0CS675DVZ",
-      "amazonOffers": [
-        {
-          "externalProductId": "B0CS675DVZ",
-          "deepLink": "https://amazon.com/dp/B0CS675DVZ?tag=treklistapp-20",
-          "region": "global",
-          "priority": 0
-        }
-      ]
-    },
-    {
-      "name": "Tensor All-Season - Regular",
-      "brand": "Nemo",
-      "itemType": "Inflatable Sleeping Pad",
-      "catalogItemId": "69976965cefe45afeb90e977",
-      "gender": null,
-      "canonicalAsin": "B0CS68N5B2",
-      "amazonOffers": [
-        {
-          "externalProductId": "B0CS68N5B2",
-          "deepLink": "https://www.amazon.com/dp/B0CS68N5B2?tag=treklistapp-20",
-          "region": "global",
-          "priority": 0
-        }
-      ]
-    },
-    {
-      "name": "Tensor All-Season - Regular Wide",
-      "brand": "Nemo",
-      "itemType": "Inflatable Sleeping Pad",
-      "catalogItemId": "69976bd3cefe45afeb90e9b0",
-      "gender": null,
-      "canonicalAsin": "B0CS6587Z1",
-      "amazonOffers": [
-        {
-          "externalProductId": "B0CS6587Z1",
-          "deepLink": "https://www.amazon.com/dp/B0CS6587Z1?tag=treklistapp-20",
-          "region": "global",
-          "priority": 0
-        }
-      ]
-    },
-    {
-      "name": "Tensor All-Season Regular Mummy",
-      "brand": "Nemo",
-      "itemType": "Inflatable Sleeping Pad",
-      "catalogItemId": "699768e3cefe45afeb90e96b",
-      "gender": null,
-      "canonicalAsin": "B0CTD3Z772",
-      "amazonOffers": [
-        {
-          "externalProductId": "B0CTD3Z772",
-          "deepLink": "https://www.amazon.com/dp/B0CTD3Z772?tag=treklistapp-20",
-          "region": "global",
-          "priority": 0
-        }
-      ]
-    },
-    {
       "name": "Ultra Sheer Dry-Touch Sunscreen",
       "brand": "Neutrogena",
       "itemType": "Toiletry",
@@ -1941,22 +1765,6 @@
           "deepLink": "https://www.amazon.com/dp/B0DDVXN9YT?tag=treklistapp-20",
           "region": "global",
           "priority": 10
-        }
-      ]
-    },
-    {
-      "name": "N°06 Stainless Steel",
-      "brand": "Opinel",
-      "itemType": "Pocket Knife",
-      "catalogItemId": "6990e61deef4327937c0550b",
-      "gender": null,
-      "canonicalAsin": "B000UIIS38",
-      "amazonOffers": [
-        {
-          "externalProductId": "B000UIIS38",
-          "deepLink": "https://www.amazon.com/dp/B000UIIS38?tag=treklistapp-20",
-          "region": "global",
-          "priority": 0
         }
       ]
     },
@@ -2363,22 +2171,6 @@
       "pendingVolumes": []
     },
     {
-      "name": "Quickdraw",
-      "brand": "Platypus",
-      "itemType": "Water Filter",
-      "catalogItemId": "699ded8ccefe45afeb9129ec",
-      "gender": null,
-      "canonicalAsin": "B0CL827W5C",
-      "amazonOffers": [
-        {
-          "externalProductId": "B0CL827W5C",
-          "deepLink": "https://www.amazon.com/dp/B0CL827W5C?tag=treklistapp-20",
-          "region": "global",
-          "priority": 0
-        }
-      ]
-    },
-    {
       "name": "Microlight Alpine Hooded Down Jacket - Men's",
       "brand": "Rab",
       "itemType": "Insulated Jacket",
@@ -2431,7 +2223,7 @@
       "brand": "Rab",
       "itemType": "Insulated Jacket",
       "catalogItemId": "698dc46486e94fdf398ea3d9",
-      "gender": "Mens",
+      "gender": "Womens",
       "canonicalAsin": "B08CK7J5Y3",
       "amazonOffers": [
         {
@@ -2526,22 +2318,6 @@
       "name": "Speedcross 6",
       "brand": "Salomon",
       "itemType": "Trail Running Shoes",
-      "catalogItemId": "6989a211aa55c19d3bdf0ffe",
-      "gender": "Mens",
-      "canonicalAsin": "B0C46Q9D3P",
-      "amazonOffers": [
-        {
-          "externalProductId": "B0C46Q9D3P",
-          "deepLink": "https://www.amazon.com/dp/B0C46Q9D3P?tag=treklistapp-20",
-          "region": "global",
-          "priority": 0
-        }
-      ]
-    },
-    {
-      "name": "Speedcross 6",
-      "brand": "Salomon",
-      "itemType": "Trail Running Shoes",
       "catalogItemId": "69898f7afb2ab55690c6074b",
       "gender": "Mens",
       "canonicalAsin": "B0B31CD8CG",
@@ -2555,16 +2331,16 @@
       ]
     },
     {
-      "name": "Speedcross 6 GORE-TEX",
+      "name": "Speedcross 6",
       "brand": "Salomon",
       "itemType": "Trail Running Shoes",
-      "catalogItemId": "6989a014aa55c19d3bdf0fb5",
+      "catalogItemId": "6989a211aa55c19d3bdf0ffe",
       "gender": "Mens",
-      "canonicalAsin": "B0C46LP6RL",
+      "canonicalAsin": "B0C46Q9D3P",
       "amazonOffers": [
         {
-          "externalProductId": "B0C46LP6RL",
-          "deepLink": "https://www.amazon.com/dp/B0C46LP6RL?tag=treklistapp-20",
+          "externalProductId": "B0C46Q9D3P",
+          "deepLink": "https://www.amazon.com/dp/B0C46Q9D3P?tag=treklistapp-20",
           "region": "global",
           "priority": 0
         }
@@ -2581,6 +2357,22 @@
         {
           "externalProductId": "B0CN36DR93",
           "deepLink": "https://www.amazon.com/dp/B0CN36DR93?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Speedcross 6 GORE-TEX",
+      "brand": "Salomon",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "6989a014aa55c19d3bdf0fb5",
+      "gender": "Mens",
+      "canonicalAsin": "B0C46LP6RL",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0C46LP6RL",
+          "deepLink": "https://www.amazon.com/dp/B0C46LP6RL?tag=treklistapp-20",
           "region": "global",
           "priority": 0
         }
@@ -2766,22 +2558,6 @@
       "name": "Lightweight Dry Bag",
       "brand": "Sea to Summit",
       "itemType": "Dry Bag / Stuff Sack",
-      "catalogItemId": "6956837de9f5d8692a3e070e",
-      "gender": null,
-      "canonicalAsin": "B0BVWGCKZF",
-      "amazonOffers": [
-        {
-          "externalProductId": "B0BVWGCKZF",
-          "deepLink": "https://www.amazon.com/dp/B0BVWGCKZF?tag=treklistapp-20",
-          "region": "global",
-          "priority": 10
-        }
-      ]
-    },
-    {
-      "name": "Lightweight Dry Bag",
-      "brand": "Sea to Summit",
-      "itemType": "Dry Bag / Stuff Sack",
       "catalogItemId": "695820790ae7ad8d1ba15a05",
       "gender": null,
       "canonicalAsin": "B0BVWLL9PJ",
@@ -2798,13 +2574,13 @@
       "name": "Lightweight Dry Bag",
       "brand": "Sea to Summit",
       "itemType": "Dry Bag / Stuff Sack",
-      "catalogItemId": "695820670ae7ad8d1ba15a04",
+      "catalogItemId": "6958204d0ae7ad8d1ba15a03",
       "gender": null,
-      "canonicalAsin": "B0BVWHS656",
+      "canonicalAsin": "B0BVWLZ673",
       "amazonOffers": [
         {
-          "externalProductId": "B0BVWHS656",
-          "deepLink": "https://www.amazon.com/dp/B0BVWHS656?tag=treklistapp-20",
+          "externalProductId": "B0BVWLZ673",
+          "deepLink": "https://www.amazon.com/dp/B0BVWLZ673?tag=treklistapp-20",
           "region": "global",
           "priority": 10
         }
@@ -2814,13 +2590,29 @@
       "name": "Lightweight Dry Bag",
       "brand": "Sea to Summit",
       "itemType": "Dry Bag / Stuff Sack",
-      "catalogItemId": "6958204d0ae7ad8d1ba15a03",
+      "catalogItemId": "6956837de9f5d8692a3e070e",
       "gender": null,
-      "canonicalAsin": "B0BVWLZ673",
+      "canonicalAsin": "B0BVWGCKZF",
       "amazonOffers": [
         {
-          "externalProductId": "B0BVWLZ673",
-          "deepLink": "https://www.amazon.com/dp/B0BVWLZ673?tag=treklistapp-20",
+          "externalProductId": "B0BVWGCKZF",
+          "deepLink": "https://www.amazon.com/dp/B0BVWGCKZF?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Lightweight Dry Bag",
+      "brand": "Sea to Summit",
+      "itemType": "Dry Bag / Stuff Sack",
+      "catalogItemId": "695820670ae7ad8d1ba15a04",
+      "gender": null,
+      "canonicalAsin": "B0BVWHS656",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0BVWHS656",
+          "deepLink": "https://www.amazon.com/dp/B0BVWHS656?tag=treklistapp-20",
           "region": "global",
           "priority": 10
         }
@@ -2926,22 +2718,6 @@
       "name": "Merino 120 SS Top",
       "brand": "Smartwool",
       "itemType": "Base Layer Top",
-      "catalogItemId": "6957e2260ae7ad8d1ba159f8",
-      "gender": "Womens",
-      "canonicalAsin": "B0D756GVPW",
-      "amazonOffers": [
-        {
-          "externalProductId": "B0D756GVPW",
-          "deepLink": "https://www.amazon.com/dp/B0D756GVPW?tag=treklistapp-20",
-          "region": "global",
-          "priority": 10
-        }
-      ]
-    },
-    {
-      "name": "Merino 120 SS Top",
-      "brand": "Smartwool",
-      "itemType": "Base Layer Top",
       "catalogItemId": "6956837de9f5d8692a3e06ea",
       "gender": "Mens",
       "canonicalAsin": "B09LFW62S7",
@@ -2955,16 +2731,16 @@
       ]
     },
     {
-      "name": "Merino 150 LS Top",
+      "name": "Merino 120 SS Top",
       "brand": "Smartwool",
       "itemType": "Base Layer Top",
-      "catalogItemId": "6957e51b0ae7ad8d1ba159fa",
+      "catalogItemId": "6957e2260ae7ad8d1ba159f8",
       "gender": "Womens",
-      "canonicalAsin": "B0BKWWP7DY",
+      "canonicalAsin": "B0D756GVPW",
       "amazonOffers": [
         {
-          "externalProductId": "B0BKWWP7DY",
-          "deepLink": "https://www.amazon.com/dp/B0BKWWP7DY?tag=treklistapp-20",
+          "externalProductId": "B0D756GVPW",
+          "deepLink": "https://www.amazon.com/dp/B0D756GVPW?tag=treklistapp-20",
           "region": "global",
           "priority": 10
         }
@@ -2981,6 +2757,22 @@
         {
           "externalProductId": "B0BKWW95KR",
           "deepLink": "https://www.amazon.com/dp/B0BKWW95KR?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Merino 150 LS Top",
+      "brand": "Smartwool",
+      "itemType": "Base Layer Top",
+      "catalogItemId": "6957e51b0ae7ad8d1ba159fa",
+      "gender": "Womens",
+      "canonicalAsin": "B0BKWWP7DY",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0BKWWP7DY",
+          "deepLink": "https://www.amazon.com/dp/B0BKWWP7DY?tag=treklistapp-20",
           "region": "global",
           "priority": 10
         }
@@ -3125,118 +2917,6 @@
         {
           "externalProductId": "B0CNBJCX8M",
           "deepLink": "https://www.amazon.com/dp/B0CNBJCX8M?tag=treklistapp-20",
-          "region": "global",
-          "priority": 0
-        }
-      ]
-    },
-    {
-      "name": "NeoAir Xlite NXT - L",
-      "brand": "Therm-a-Rest",
-      "itemType": "Inflatable Sleeping Pad",
-      "catalogItemId": "695f221d0ae7ad8d1ba15a15",
-      "gender": null,
-      "canonicalAsin": "B0CS51TWMT",
-      "amazonOffers": [
-        {
-          "externalProductId": "B0CS51TWMT",
-          "deepLink": "https://www.amazon.com/dp/B0CS51TWMT?tag=treklistapp-20",
-          "region": "global",
-          "priority": 10
-        }
-      ]
-    },
-    {
-      "name": "NeoAir Xlite NXT - R",
-      "brand": "Therm-a-Rest",
-      "itemType": "Inflatable Sleeping Pad",
-      "catalogItemId": "6956837de9f5d8692a3e06c9",
-      "gender": null,
-      "canonicalAsin": "B0CS4NHPVP",
-      "amazonOffers": [
-        {
-          "externalProductId": "B0CS4NHPVP",
-          "deepLink": "https://www.amazon.com/dp/B0CS4NHPVP?tag=treklistapp-20",
-          "region": "global",
-          "priority": 10
-        }
-      ]
-    },
-    {
-      "name": "NeoAir Xlite NXT - RS",
-      "brand": "Therm-a-Rest",
-      "itemType": "Inflatable Sleeping Pad",
-      "catalogItemId": "695f23300ae7ad8d1ba15a17",
-      "gender": null,
-      "canonicalAsin": "B0CS4LDMJ3",
-      "amazonOffers": [
-        {
-          "externalProductId": "B0CS4LDMJ3",
-          "deepLink": "https://www.amazon.com/dp/B0CS4LDMJ3?tag=treklistapp-20",
-          "region": "global",
-          "priority": 10
-        }
-      ]
-    },
-    {
-      "name": "NeoAir Xlite NXT - RW",
-      "brand": "Therm-a-Rest",
-      "itemType": "Inflatable Sleeping Pad",
-      "catalogItemId": "695f22f60ae7ad8d1ba15a16",
-      "gender": null,
-      "canonicalAsin": "B0CS4LQ1WM",
-      "amazonOffers": [
-        {
-          "externalProductId": "B0CS4LQ1WM",
-          "deepLink": "https://www.amazon.com/dp/B0CS4LQ1WM?tag=treklistapp-20",
-          "region": "global",
-          "priority": 10
-        }
-      ]
-    },
-    {
-      "name": "NeoAir XTherm NXT L",
-      "brand": "Therm-a-Rest",
-      "itemType": "Inflatable Sleeping Pad",
-      "catalogItemId": "6990dc10eef4327937c05380",
-      "gender": null,
-      "canonicalAsin": "B0BKDVWT2P",
-      "amazonOffers": [
-        {
-          "externalProductId": "B0BKDVWT2P",
-          "deepLink": "https://www.amazon.com/dp/B0BKDVWT2P?tag=treklistapp-20",
-          "region": "global",
-          "priority": 0
-        }
-      ]
-    },
-    {
-      "name": "NeoAir XTherm NXT R",
-      "brand": "Therm-a-Rest",
-      "itemType": "Inflatable Sleeping Pad",
-      "catalogItemId": "6990daffeef4327937c05360",
-      "gender": null,
-      "canonicalAsin": "B08CK7J5Y3",
-      "amazonOffers": [
-        {
-          "externalProductId": "B08CK7J5Y3",
-          "deepLink": "https://www.amazon.com/dp/B08CK7J5Y3?tag=treklistapp-20",
-          "region": "global",
-          "priority": 0
-        }
-      ]
-    },
-    {
-      "name": "NeoAir XTherm NXT RW",
-      "brand": "Therm-a-Rest",
-      "itemType": "Inflatable Sleeping Pad",
-      "catalogItemId": "6990db95eef4327937c05370",
-      "gender": null,
-      "canonicalAsin": "B0BKC9SRQV",
-      "amazonOffers": [
-        {
-          "externalProductId": "B0BKC9SRQV",
-          "deepLink": "https://www.amazon.com/dp/B0BKC9SRQV?tag=treklistapp-20",
           "region": "global",
           "priority": 0
         }
@@ -3509,22 +3189,6 @@
         {
           "externalProductId": "B09X1H88VP",
           "deepLink": "https://www.amazon.com/dp/B09X1H88VP?tag=treklistapp-20",
-          "region": "global",
-          "priority": 0
-        }
-      ]
-    },
-    {
-      "name": "Titanium Long-Handle Spoon",
-      "brand": "Vargo",
-      "itemType": "Utensil",
-      "catalogItemId": "69933a63eef4327937c07abf",
-      "gender": null,
-      "canonicalAsin": "B004JKK6FG",
-      "amazonOffers": [
-        {
-          "externalProductId": "B004JKK6FG",
-          "deepLink": "https://www.amazon.com/dp/B004JKK6FG?tag=treklistapp-20",
           "region": "global",
           "priority": 0
         }
