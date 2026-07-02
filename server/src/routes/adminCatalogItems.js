@@ -214,6 +214,10 @@ function normalizeDimensions(raw) {
 // =============================================================================
 /**
  * Validates itemType and attributes before saving.
+ * Admin saves are LENIENT (strict:false): provided values are validated
+ * (enums/ranges enforced) but missing required fields don't block the save —
+ * items are often mid-curation, and attributes that vary per variant (e.g. a
+ * sleeping bag's temp rating) live on variant.attributes, not the base.
  * Returns { valid: true, itemType, attributes } or { valid: false, error: string }
  */
 function validateItemTypeAndAttributes(itemType, attributes) {
@@ -239,9 +243,11 @@ function validateItemTypeAndAttributes(itemType, attributes) {
     };
   }
 
-  // Validate attributes against schema
+  // Validate attributes against schema (lenient: see docblock)
   const attrs = attributes && typeof attributes === "object" ? attributes : {};
-  const result = validateAttributes(normalizedItemType, attrs);
+  const result = validateAttributes(normalizedItemType, attrs, {
+    strict: false,
+  });
 
   if (!result.valid) {
     return {
@@ -621,7 +627,7 @@ router.post("/", async (req, res) => {
       normalizedWeight = variantSet.defaultWeightGrams;
     }
 
-    const item = await CatalogItem.create({
+    const item = new CatalogItem({
       name: name.trim(),
       brand: brand && String(brand).trim(),
       category: category && String(category).trim(),
@@ -647,6 +653,10 @@ router.post("/", async (req, res) => {
       itemGroupId: normalizedItemGroupId,
       createdBy: req.userId,
     });
+    // The pre-save hook re-validates strictly by default; admin saves are
+    // lenient (route already validated provided values above).
+    item.$locals.lenientAttributes = true;
+    await item.save();
 
     const offerOps = sanitizedOffers.map((o) => ({
       updateOne: {

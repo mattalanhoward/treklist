@@ -128,13 +128,23 @@ function marketplaceFromAmazonUrlClient(url) {
 const getPrimaryOffer = (f) =>
   Array.isArray(f?.offers) && f.offers[0] ? f.offers[0] : blankOffer();
 
-function hasMissingRequiredAttributes(itemType, attributes) {
+function hasMissingRequiredAttributes(itemType, attributes, variants) {
   const schema = getSchemaForItemType(itemType);
   if (!schema) return false;
+  const variantList = Array.isArray(variants) ? variants : [];
+  const hasValue = (v) => v !== undefined && v !== null && v !== "";
   return Object.entries(schema.fields).some(([key, field]) => {
     if (!field.required || field.derived) return false;
-    const val = attributes?.[key];
-    return val === undefined || val === null || val === "";
+    if (hasValue(attributes?.[key])) return false;
+    // A required attribute that varies per variant (e.g. a sleeping bag's
+    // temp rating) is satisfied when EVERY variant overrides it.
+    if (
+      variantList.length &&
+      variantList.every((v) => hasValue(v?.attributes?.[key]))
+    ) {
+      return false;
+    }
+    return true;
   });
 }
 
@@ -148,7 +158,11 @@ function isItemIncomplete(item) {
     : !hasBaseWeight;
   if (missingWeight) return true;
   if (!item.itemType) return true;
-  return hasMissingRequiredAttributes(item.itemType, item.attributes);
+  return hasMissingRequiredAttributes(
+    item.itemType,
+    item.attributes,
+    item.variants,
+  );
 }
 
 function toOptionalNumber(val) {
@@ -2427,7 +2441,11 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
       !form.category ||
       !form.itemType ||
       (!hasVariants && !String(form.weightGrams || "").trim()),
-    attributes: hasMissingRequiredAttributes(form.itemType, form.attributes),
+    attributes: hasMissingRequiredAttributes(
+      form.itemType,
+      form.attributes,
+      form.variants,
+    ),
     variants:
       hasVariants &&
       form.variants.some((v) => !String(v.weightGrams ?? "").trim()),
@@ -3036,8 +3054,11 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
               {hasVariants && (
                 <div className="text-[11px] text-primary/70 bg-base-200/50 rounded p-2">
                   These are the BASE attributes. Per-variant overrides (e.g.
-                  volumeLiters per size) live in the Variants tab and merge
-                  over these when a variant is selected.
+                  volumeLiters per size, tempRatingC per temperature) live in
+                  the Variants tab and merge over these when a variant is
+                  selected. Required fields that vary per variant can stay
+                  blank here — they count as complete once every variant
+                  overrides them.
                 </div>
               )}
               <AttributeFields
