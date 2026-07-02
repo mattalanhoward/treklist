@@ -1,6 +1,8 @@
 # Admin Gear-Catalog Editor — Redesign Handoff
 
-_Created 2026-07-02. Goal: hand this to a planning model to produce an implementation plan, then build. It is a requirements + current-state + data-model + gotchas brief. Nothing here is built yet._
+_Created 2026-07-02. Goal: hand this to a planning model to produce an implementation plan, then build. It is a requirements + current-state + data-model + gotchas brief._
+
+> ✅ **v1 BUILT 2026-07-02** (branch `feature/catalog-curation`): tabbed edit modal (Details / Attributes / Variants / Media & Description / Offers) with per-tab completeness dots; new `client/src/components/VariantEditor.jsx` (axes editor, variant matrix with bulk weight column, per-variant attribute overrides, default-variant radio, generate-missing-combos + row delete for ragged); backend POST/PATCH accept `variantAxes`/`variants`/`defaultVariantKey` (`normalizeVariantSet` in `adminCatalogItems.js`: keys regenerated from options in axis order, weights rounded to grams, per-variant attrs validated leniently, base `weightGrams` syncs to the default variant); catalog table gained an Incomplete/Complete filter + yellow status dot + variant-count hint in the Weight column. Smoke-tested end-to-end against `treklist_local`. NOT built (still open): create-form tabs (add variants by editing after create), per-variant offers/ASINs (§7, future), server-side image status._
 
 ## 1. Why (the problem)
 
