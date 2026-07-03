@@ -228,14 +228,19 @@ export default function MyGearTileCard({
             <div className="text-sm text-primary/70 truncate">{item.brand}</div>
           ) : null}
 
-          <div style={{ fontSize: 14 }} className="font-semibold text-primary leading-snug line-clamp-2">
+          <div
+            style={{ fontSize: 14 }}
+            className={`font-semibold text-primary leading-snug ${
+              item.variantKey ? "line-clamp-1" : "line-clamp-2"
+            }`}
+          >
             {item.name}
-            {item.variantKey && (
-              <span className="ml-1.5 text-xs font-normal text-primary/50">
-                · {item.variantKey}
-              </span>
-            )}
           </div>
+          {item.variantKey && (
+            <div className="text-xs text-primary/50 truncate leading-snug">
+              {item.variantKey}
+            </div>
+          )}
 
           {/* Weight badge: mobile only */}
           {item.weight ? (
