@@ -1,0 +1,76 @@
+/**
+ * enrich-exped-mat-sizes.js — the original Exped scrape captured only ONE size per
+ * mat (M), so the split R-value pads (Ultra 6.5R, etc.) have no Size variant even
+ * though Exped sells M/MW/LW. This re-scrapes each Exped mat's product page, reads
+ * the per-size weights from the "Weight" spec div (e.g. "M: 440 g / MW: 545 g /
+ * LW: 590 g") and the per-size SKUs from the variation buttons, and adds a Size
+ * variant axis (each variant keeps its own weight + ?sku deep-link).
+ *
+ *   node src/scripts/enrich-exped-mat-sizes.js [--commit]   (local DB only)
+ */
+require("dotenv").config();
+const mongoose = require("mongoose");
+const { execFile } = require("child_process");
+const { promisify } = require("util");
+const execFileP = promisify(execFile);
+const COMMIT = process.argv.includes("--commit");
+if (COMMIT && process.env.MONGO_DB_NAME !== "treklist_local") { console.error("local only"); process.exit(1); }
+
+async function fetchHtml(url) {
+  const { stdout } = await execFileP("curl", ["-s", "--max-time", "30", "-A",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)", url], { maxBuffer: 20 * 1024 * 1024 });
+  return stdout;
+}
+
+// parse "<h4>Weight</h4><div>M: 440 g<br>MW: 545 g<br>LW: 590 g</div>" → [{size,weight}]
+function parseSizeWeights(html) {
+  const m = html.match(/>Weight<\/h4>\s*<div>([\s\S]*?)<\/div>/i);
+  if (!m) return [];
+  return [...m[1].matchAll(/([A-Za-z][\w ]*?):\s*([\d.]+)\s*g/g)]
+    .map((x) => ({ size: x[1].trim(), weight: Math.round(parseFloat(x[2])) }));
+}
+// parse variation buttons → { size: sku }
+function parseSkus(html, baseUrl) {
+  const out = {};
+  for (const x of html.matchAll(/sku=(\d+)"[^>]*title="([^"]+)"/g)) {
+    const size = x[2].trim().split(/\s+/).pop(); // "Ultra 6.5R MW" → "MW"
+    if (!out[size]) out[size] = `${baseUrl}?sku=${x[1]}`;
+  }
+  return out;
+}
+
+(async () => {
+  await mongoose.connect(process.env.MONGO_URI, { dbName: process.env.MONGO_DB_NAME });
+  const C = require("../models/catalogItem");
+  const O = require("../models/merchantOffer");
+  const mats = await C.find({ brandLC: "exped", isActive: { $ne: false },
+    itemType: { $in: ["Inflatable Sleeping Pad", "Foam Sleeping Pad"] } });
+  console.log(`Exped mats: ${mats.length}\n`);
+
+  let added = 0, single = 0, failed = 0;
+  for (const P of mats) {
+    if ((P.variants || []).some((v) => v.options?.get?.("Size"))) { continue; } // already has Size
+    const offer = await O.findOne({ productId: P._id }).lean();
+    const url = offer?.deepLink;
+    if (!url) { console.log(`  ⚠ ${P.name}: no offer URL`); failed++; continue; }
+    let html; try { html = await fetchHtml(url); } catch { console.log(`  ⚠ ${P.name}: fetch failed`); failed++; continue; }
+    const sizes = parseSizeWeights(html);
+    const skus = parseSkus(html, url.split("?")[0]);
+    if (sizes.length < 2) { console.log(`  · ${P.name}: single size (${sizes[0]?.weight ?? P.weightGrams}g)`); single++; continue; }
+
+    const variants = sizes.map((s) => ({ key: s.size, options: { Size: s.size },
+      weightGrams: s.weight, deepLink: skus[s.size] || undefined }));
+    console.log(`  ✚ ${P.name}: Size[${sizes.map((s) => `${s.size}:${s.weight}g`).join(" ")}]${skus[sizes[0].size] ? " +sku links" : ""}`);
+    if (COMMIT) {
+      P.variantAxes = [{ name: "Size", values: sizes.map((s) => s.size) }];
+      P.variants = variants;
+      P.defaultVariantKey = variants[0].key;
+      P.weightGrams = variants[0].weightGrams;
+      P.$locals.lenientAttributes = true;
+      await P.save();
+    }
+    added++;
+  }
+  console.log(`\n${COMMIT ? "APPLIED" : "DRY"} — sized:${added}  single:${single}  failed:${failed}`);
+  await mongoose.disconnect();
+})().catch((e) => { console.error(e); process.exit(1); });
