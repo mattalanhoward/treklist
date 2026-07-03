@@ -241,7 +241,9 @@ export default function SortableItem({
     <div
       ref={setNodeRef}
       style={style}
-      className="bg-base-100 px-3 sm:px-4 py-2.5 rounded shadow mb-2"
+      className={`bg-base-100 px-3 ${
+        isListMode ? "sm:px-3" : "sm:px-1"
+      } py-2 rounded shadow mb-2`}
     >
       {/* ========== MOBILE (both list/column collapse to this) ========== */}
       <div
@@ -356,11 +358,11 @@ export default function SortableItem({
       {isListMode && (
         <div
           className="hidden xl:grid items-center text-sm
-          grid-cols-[32px,176px,minmax(260px,1fr),96px,24px,24px,48px,24px,24px,24px,24px] gap-x-4"
+          grid-cols-[20px,168px,120px,minmax(140px,1fr),auto,96px,24px,24px,48px,24px,24px,24px,24px] gap-x-3"
         >
           {/* 1) Drag */}
           <div
-            className={`hide-on-touch justify-self-center text-secondary ${isLocked ? "invisible" : "cursor-grab"}`}
+            className={`hide-on-touch justify-self-start text-secondary ${isLocked ? "invisible" : "cursor-grab"}`}
             {...(isLocked ? {} : { ...attributes, ...listeners })}
           >
             <FaGripVertical />
@@ -376,27 +378,35 @@ export default function SortableItem({
             {tItemType(t, item.itemType) || "—"}
           </button>
 
-          {/* 3) Name/brand */}
+          {/* 3) Brand */}
+          <div
+            style={{ fontSize: 14 }}
+            className="text-primary/50 truncate text-left"
+            title={item.brand || ""}
+          >
+            {item.brand || ""}
+          </div>
+
+          {/* 4) Name (own column → names line up across rows) */}
           <button
             type="button"
             onClick={() => setDetailsOpen(true)}
             style={{ fontSize: 14 }}
-            className="flex items-center gap-1.5 min-w-0 text-primary text-left hover:text-primary/80"
+            className="min-w-0 truncate text-primary text-left hover:text-primary/80"
           >
-            <span className="truncate">
-              {item.brand && (
-                <span className="text-primary/50 mr-1">{item.brand}</span>
-              )}
-              {item.name}
-            </span>
+            {item.name}
+          </button>
+
+          {/* 5) Variant (sits to the right, next to the weight) */}
+          <div className="justify-self-end">
             {item.variantKey && (
-              <span className="flex-shrink-0 text-[11px] leading-none px-1.5 py-0.5 rounded-full bg-primary/5 text-primary/70 font-medium">
+              <span className="whitespace-nowrap text-[11px] leading-none px-1.5 py-0.5 rounded-full bg-primary/5 text-primary/70 font-medium">
                 {item.variantKey}
               </span>
             )}
-          </button>
+          </div>
 
-          {/* 4) Weight */}
+          {/* 6) Weight */}
           <div className="justify-self-end tabular-nums text-primary w-[96px] text-right">
             {weightText}
           </div>
