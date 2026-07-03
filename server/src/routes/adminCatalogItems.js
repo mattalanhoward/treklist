@@ -379,6 +379,11 @@ function normalizeVariantSet({
           .map((u) => u.trim())
       : undefined;
 
+    const deepLink =
+      v?.deepLink != null && String(v.deepLink).trim()
+        ? String(v.deepLink).trim()
+        : undefined;
+
     outVariants.push({
       key,
       options: cleanOptions,
@@ -386,6 +391,7 @@ function normalizeVariantSet({
       sku,
       attributes,
       ...(imageUrls && imageUrls.length ? { imageUrls } : {}),
+      ...(deepLink ? { deepLink } : {}),
     });
   }
 

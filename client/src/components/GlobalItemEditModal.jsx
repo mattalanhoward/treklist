@@ -948,8 +948,8 @@ export default function GlobalItemEditModal({
                 </button>
               )}
 
-              {!isCustom && primaryOffer?.deepLink && (
-                <ButtonLink href={primaryOffer.deepLink}>
+              {!isCustom && (selectedVariant?.deepLink || primaryOffer?.deepLink) && (
+                <ButtonLink href={selectedVariant?.deepLink || primaryOffer.deepLink}>
                   {primaryOffer.merchantName || t("globalItemEditModal.buttons.productPage")}
                 </ButtonLink>
               )}

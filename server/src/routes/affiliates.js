@@ -4,6 +4,7 @@ const { query, validationResult } = require("express-validator");
 const AffiliateProduct = require("../models/affiliateProduct");
 const GlobalItem = require("../models/globalItem");
 const MerchantOffer = require("../models/merchantOffer");
+const CatalogItem = require("../models/catalogItem");
 const { searchLimiter, resolveLimiter } = require("../middleware/rateLimiters");
 const { buildRegionPreferenceChain } = require("../utils/regionPrefs");
 
@@ -243,6 +244,7 @@ async function resolveBestOfferLink(req, res) {
     let group = itemGroupId ? String(itemGroupId) : null;
     let productId = null;
     let originalLink = null; // custom items only
+    let variantKey = null; // which catalog variant the user owns (routes the buy-link)
 
     if (globalItemId) {
       const gi = await GlobalItem.findOne({
@@ -255,6 +257,7 @@ async function resolveBestOfferLink(req, res) {
       }
 
       productId = gi.productId ? String(gi.productId) : null;
+      variantKey = gi.variantKey || null;
 
       // Only custom items should rely on link as a fallback
       originalLink = gi.link ? String(gi.link) : null;
@@ -277,7 +280,7 @@ async function resolveBestOfferLink(req, res) {
 
     // Cache key must never be null; for custom-only items use the globalItemId
     const key = productId || group || `gi:${globalItemId}`;
-    const cacheKey = `${key}|${offerChain[0]}`;
+    const cacheKey = `${key}|${offerChain[0]}|${variantKey || ""}`;
 
     // DEV: do NOT cache, or priority updates will look "broken"
     if (isProd) {
@@ -307,16 +310,25 @@ async function resolveBestOfferLink(req, res) {
         .lean();
     }
 
+    // The offer supplies network/merchant metadata; if the owned item is a specific
+    // variant that carries its own buy-link, route to THAT (not the placeholder).
+    let variantLink = null;
+    if (productId && variantKey) {
+      const cat = await CatalogItem.findById(productId).select("variants").lean();
+      const v = (cat?.variants || []).find((x) => x.key === variantKey);
+      if (v?.deepLink) variantLink = v.deepLink;
+    }
+
     // Winner offer
-    if (best?.deepLink) {
+    if (best?.deepLink || variantLink) {
       const payload = {
-        link: best.deepLink,
-        region: best.region,
-        network: best.network,
-        merchantId: best.merchantId,
-        merchantName: best.merchantName,
-        priority: typeof best.priority === "number" ? best.priority : 0,
-        source: "offer",
+        link: variantLink || best.deepLink,
+        region: best?.region ?? offerChain[0],
+        network: best?.network ?? "direct",
+        merchantId: best?.merchantId,
+        merchantName: best?.merchantName,
+        priority: typeof best?.priority === "number" ? best.priority : 0,
+        source: variantLink ? "offer-variant" : "offer",
       };
       if (isProd) cacheSet(cacheKey, payload, TTL_EXACT_MS);
       return res.json(payload);
@@ -395,12 +407,13 @@ router.get(
       const offerChain = buildRegionPreferenceChain(region);
 
       const gi = await GlobalItem.findOne({ _id: itemId, owner: req.userId })
-        .select("productId affiliate link")
+        .select("productId affiliate link variantKey")
         .lean();
 
       if (!gi) return res.json(null);
 
       const productId = gi.productId ? String(gi.productId) : null;
+      const variantKey = gi.variantKey || null;
       const group =
         gi?.affiliate?.itemGroupId || gi?.affiliate?.externalProductId || null;
 
@@ -424,13 +437,21 @@ router.get(
           .lean();
       }
 
-      if (best?.deepLink) {
+      // route to the owned variant's own buy-link if it has one
+      let variantLink = null;
+      if (productId && variantKey) {
+        const cat = await CatalogItem.findById(productId).select("variants").lean();
+        const v = (cat?.variants || []).find((x) => x.key === variantKey);
+        if (v?.deepLink) variantLink = v.deepLink;
+      }
+
+      if (best?.deepLink || variantLink) {
         return res.json({
-          merchant: best.merchantName || best.merchantId || null,
-          deeplink: best.deepLink,
-          source: "offer",
-          network: best.network,
-          priority: typeof best.priority === "number" ? best.priority : 0,
+          merchant: best?.merchantName || best?.merchantId || null,
+          deeplink: variantLink || best.deepLink,
+          source: variantLink ? "offer-variant" : "offer",
+          network: best?.network ?? "direct",
+          priority: typeof best?.priority === "number" ? best.priority : 0,
         });
       }
 

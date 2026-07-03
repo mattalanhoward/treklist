@@ -348,7 +348,11 @@ export default function CatalogItemPreviewModal({
         <div className="mt-3 flex justify-between flex-shrink-0">
           <div className="flex space-x-2">
             {(() => {
-              const buyLink = primaryOffer?.deepLink || item?.affiliate?.deepLink || item?.link;
+              const buyLink =
+                selectedVariant?.deepLink ||
+                primaryOffer?.deepLink ||
+                item?.affiliate?.deepLink ||
+                item?.link;
               const buyLabel = primaryOffer?.merchantName || item?.affiliate?.merchantName || null;
               return buyLink ? (
                 <ButtonLink href={buyLink}>

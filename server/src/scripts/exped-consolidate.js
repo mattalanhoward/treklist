@@ -61,6 +61,10 @@ const FAMS = [
     if (f.need) members = members.filter((m) => f.need(m.attributes || {}));
     if (members.length < 2) { console.log(`  skip ${f.parent} (${members.length} member)`); continue; }
 
+    // per-member buy-link (each variant routes to its own product page)
+    const memberOffers = await O.find({ productId: { $in: members.map((m) => m._id) } }).select("productId deepLink").lean();
+    const linkOf = new Map(memberOffers.map((o) => [String(o.productId), o.deepLink]));
+
     // build variant rows; dedupe by axis-key (prefer name matching dedupePreferName)
     const rows = [];
     for (const m of members) {
@@ -70,11 +74,11 @@ const FAMS = [
       const dup = rows.find((r) => !r.archiveOnly && r.dkey === dkey);
       if (dup) { // keep the preferred-named one, archive the other
         const preferNew = f.dedupePreferName && f.dedupePreferName.test(m.name) && !f.dedupePreferName.test(dup.doc.name);
-        if (preferNew) { rows.push({ archiveOnly: dup.doc }); Object.assign(dup, { key, opts, dkey, doc: m, wt: m.weightGrams, attrs: m.attributes || {}, imgs: m.imageUrls || [] }); }
+        if (preferNew) { rows.push({ archiveOnly: dup.doc }); Object.assign(dup, { key, opts, dkey, doc: m, wt: m.weightGrams, attrs: m.attributes || {}, imgs: m.imageUrls || [], link: linkOf.get(String(m._id)) }); }
         else rows.push({ archiveOnly: m });
         continue;
       }
-      rows.push({ key, dkey, opts, doc: m, wt: m.weightGrams, attrs: m.attributes || {}, imgs: m.imageUrls || [] });
+      rows.push({ key, dkey, opts, doc: m, wt: m.weightGrams, attrs: m.attributes || {}, imgs: m.imageUrls || [], link: linkOf.get(String(m._id)) });
     }
     const variants = rows.filter((r) => !r.archiveOnly);
     variants.sort((a, b) => (a.wt || 0) - (b.wt || 0));
@@ -87,7 +91,7 @@ const FAMS = [
 
     parent.name = f.parent;
     parent.variantAxes = f.axes.map(([ax]) => ({ name: ax, values: [...new Set(variants.map((v) => v.opts[ax]))] }));
-    parent.variants = variants.map((v) => ({ key: v.key, options: v.opts, weightGrams: v.wt, attributes: v.attrs, imageUrls: v.imgs && v.imgs.length ? v.imgs : undefined }));
+    parent.variants = variants.map((v) => ({ key: v.key, options: v.opts, weightGrams: v.wt, attributes: v.attrs, imageUrls: v.imgs && v.imgs.length ? v.imgs : undefined, deepLink: v.link || undefined }));
     parent.defaultVariantKey = parentRow.key;
     parent.weightGrams = parentRow.wt;
     parent.attributes = parentRow.attrs;

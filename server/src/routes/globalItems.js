@@ -595,6 +595,11 @@ router.post("/from-catalog/bulk", async (req, res) => {
             if (variant.attributes && typeof variant.attributes === "object") {
               resolvedAttributes = { ...(c.attributes || {}), ...variant.attributes };
             }
+            // The chosen variant's own buy-link overrides the item-level offer link
+            // so the owned item routes to exactly what was selected.
+            if (variant.deepLink && resolved) {
+              resolved.deepLink = variant.deepLink;
+            }
           }
         }
 

@@ -92,6 +92,13 @@ const VariantSchema = new mongoose.Schema(
     // look physically different (e.g. a 1P vs 3P tent, a 1R vs 10R pad).
     imageUrls: { type: [String], default: undefined },
 
+    // Optional per-variant buy-link. When set, the offer resolver + owned-item
+    // affiliate link route to THIS URL for the selected variant (instead of the
+    // item-level MerchantOffer deepLink, which is a single placeholder). The offer's
+    // network/merchant metadata still comes from the MerchantOffer; only the URL
+    // follows the variant. (Amazon per-variant ASINs would extend this later.)
+    deepLink: { type: String, trim: true },
+
     // Optional per-variant attribute overrides, merged OVER the item's base
     // `attributes` when this variant is selected (e.g. a Material axis where
     // each fabric has a different `mainFabric`). Shape matches `attributes`.
