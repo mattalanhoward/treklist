@@ -31,8 +31,11 @@ const MAP = {
   "The Atom": {
     RE30: `${B}/the-atom/products/the-atom-re30-black`,
     RE40: `${B}/the-atom/products/the-atom-re40-black`,
+    UL35: `${B}/the-atom/products/the-atom-custom`, // UL35 is a custom-only option
     Custom: `${B}/the-atom/products/the-atom-custom`,
   },
+  // ⚠ The Nanu has NO custom option — the "Custom" variant + axis value were removed
+  // (handled inline 2026-07-03, not re-run here); only RE25 / X25 remain.
   "The Nanu": {
     X25: `${B}/the-nanu/products/the-nanu-x25`,
     RE25: `${B}/the-nanu/products/the-nanu-re25`,
