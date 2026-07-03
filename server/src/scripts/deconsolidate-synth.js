@@ -27,6 +27,8 @@ const slug = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(
 function pvLabel(axis, pv) {
   if (/temp/i.test(axis)) { const f = (String(pv).match(/-?\d+/) || [])[0]; return f != null ? `${f}°F` : String(pv); }
   if (/capacit/i.test(axis)) { const n = (String(pv).match(/[\d.]+/) || [])[0]; return n ? `${n}P` : String(pv).trim(); }
+  // Volume: number only for packs ("Southwest 40", "Atmos AG 50"); use --vol-l for bottles ("Vecto 2L").
+  if (/volume/i.test(axis)) { const n = (String(pv).match(/[\d.]+/) || [])[0]; return n ? (process.argv.includes("--vol-l") ? `${n}L` : n) : String(pv).trim(); }
   return String(pv).trim();
 }
 // structured attributes the primary value contributes (so the split product filters)
