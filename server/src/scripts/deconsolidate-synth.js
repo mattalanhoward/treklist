@@ -38,6 +38,7 @@ function pvLabel(axis, pv, itemType) {
     if (/pack/i.test(itemType || "")) { const n = (s.match(/[\d.]+/) || [])[0]; return n || s; }
     return s;
   }
+  if (/configuration/i.test(axis)) { return /^standard$/i.test(String(pv).trim()) ? "" : String(pv).trim(); } // Standard = base name
   return String(pv).trim();
 }
 // structured attributes the primary value contributes (so the split product filters)
@@ -97,6 +98,7 @@ function pvAttrs(axis, pv) {
       const name = `${baseName} ${pvLabel(primaryAxis, pv, P.itemType)}`.trim();
       const attrs = { ...(P.attributes || {}), ...pvAttrs(primaryAxis, pv) };
       const weightGrams = fitVariants[0]?.weightGrams ?? vs[0].weightGrams;
+      const pvLink = vs.map((v) => v.deepLink).find(Boolean); // per-value buy-link when present
 
       console.log(`   ${first ? "↩ parent →" : "＋ create"} "${name}"  ${keep ? `[${fitAxes.join("×")} ${fitVariants.length}]` : "(single)"}  ${weightGrams}g  +${Object.keys(pvAttrs(primaryAxis, pv)).join(",")}`);
 
@@ -110,6 +112,7 @@ function pvAttrs(axis, pv) {
           P.attributes = attrs;
           P.$locals.lenientAttributes = true;
           await P.save();
+          if (offer && pvLink && pvLink !== offer.deepLink) await O.updateOne({ _id: offer._id }, { $set: { deepLink: pvLink } });
         } else {
           const doc = P.toObject();
           delete doc._id; delete doc.__v; delete doc.createdAt; delete doc.updatedAt;
@@ -125,7 +128,7 @@ function pvAttrs(axis, pv) {
           await ci.save();
           if (offer) {
             await O.create({ network: offer.network, region: offer.region, merchantId: offer.merchantId,
-              merchantName: offer.merchantName, deepLink: offer.deepLink, productId: ci._id,
+              merchantName: offer.merchantName, deepLink: pvLink || offer.deepLink, productId: ci._id,
               priority: offer.priority || 0, ...(offer.itemGroupId ? { itemGroupId: offer.itemGroupId } : {}) });
           }
           created++;

@@ -22,10 +22,11 @@ const PRIMARY = new Set(["Temperature", "Capacity", "Volume", "R-Value", "Temp R
 const primNum = (pv) => { const m = String(pv).match(/-?\d+/); return m ? m[0] : null; };
 // e.g. "www.exped.com/.../orion-ii-ul" → "Orion II UL"; "deepsleep-0c-30f" → "Deepsleep 0C 30F"
 const nameFromHandle = (url) => {
-  const seg = String(url || "").split(/[/?#]/).filter(Boolean).pop() || "";
+  let seg = String(url || "").split(/[/?#]/).filter(Boolean).pop() || "";
+  seg = seg.replace(/-0$/, "");                                                    // strip Exped CMS "-0" artifact
   return seg.split("-").filter(Boolean).map((w) => {
     if (/^(i{1,3}|iv|vi{0,3}|ix|xi{0,3})$/i.test(w)) return w.toUpperCase();      // roman numerals
-    if (/^(ul|xp|hl|dcf|sl)$/i.test(w)) return w.toUpperCase();                    // known acronyms
+    if (/^(ul|xp|hl|dcf|sl|sim)$/i.test(w)) return w.toUpperCase();                // known acronyms
     if (/^-?\d+(c|f)$/i.test(w)) return w.toUpperCase();                           // temp tokens 0c/30f
     return w.charAt(0).toUpperCase() + w.slice(1);
   }).join(" ");
@@ -87,7 +88,10 @@ const nameFromHandle = (url) => {
         // name the reverted parent: from its own deepLink slug (authoritative) when
         // --handle-name, else reconstruct from a sibling by swapping the primary number
         let title = P.name;
-        if (HANDLE_NAME && r.deepLink) {
+        // R-Value pad slugs are lossy (sim-25 = 2.5R) → token-swap the number from a
+        // sibling ("Ultra 5R" → "Ultra 1R"). Handle-name is reliable for tents/bags.
+        const useSwap = /r-?value/i.test(primaryAxis) || !HANDLE_NAME;
+        if (!useSwap && r.deepLink) {
           title = nameFromHandle(r.deepLink);
         } else if (siblingRow && siblingRow.target[0]) {
           const sName = siblingRow.target[0].name, sNum = primNum(siblingRow.pv), dNum = primNum(r.pv);
