@@ -263,10 +263,19 @@ export default function SortableItem({
               type="button"
               onClick={() => setDetailsOpen(true)}
               style={{ fontSize: 14 }}
-              className="truncate text-primary flex-1 min-w-0 text-left hover:text-primary/80"
+              className="flex items-center gap-1.5 text-primary flex-1 min-w-0 text-left hover:text-primary/80"
             >
-              {item.brand && <span className="mr-1">{item.brand}</span>}
-              {item.name}
+              <span className="truncate">
+                {item.brand && (
+                  <span className="text-primary/50 mr-1">{item.brand}</span>
+                )}
+                {item.name}
+              </span>
+              {item.variantKey && (
+                <span className="flex-shrink-0 text-[11px] leading-none px-1.5 py-0.5 rounded-full bg-primary/5 text-primary/70 font-medium">
+                  {item.variantKey}
+                </span>
+              )}
             </button>
           </div>
           {!isLocked && (
@@ -372,10 +381,19 @@ export default function SortableItem({
             type="button"
             onClick={() => setDetailsOpen(true)}
             style={{ fontSize: 14 }}
-            className="truncate text-primary text-left hover:text-primary/80"
+            className="flex items-center gap-1.5 min-w-0 text-primary text-left hover:text-primary/80"
           >
-            {item.brand && <span className="mr-1">{item.brand}</span>}
-            {item.name}
+            <span className="truncate">
+              {item.brand && (
+                <span className="text-primary/50 mr-1">{item.brand}</span>
+              )}
+              {item.name}
+            </span>
+            {item.variantKey && (
+              <span className="flex-shrink-0 text-[11px] leading-none px-1.5 py-0.5 rounded-full bg-primary/5 text-primary/70 font-medium">
+                {item.variantKey}
+              </span>
+            )}
           </button>
 
           {/* 4) Weight */}
@@ -546,10 +564,19 @@ export default function SortableItem({
             type="button"
             onClick={() => setDetailsOpen(true)}
             style={{ fontSize: 14 }}
-            className="row-start-2 col-start-1 col-span-6 min-w-0 truncate text-primary text-left hover:text-primary/80"
+            className="row-start-2 col-start-1 col-span-6 min-w-0 flex items-center gap-1.5 text-primary text-left hover:text-primary/80"
           >
-            {item.brand && <span className="mr-1">{item.brand}</span>}
-            {item.name}
+            <span className="truncate">
+              {item.brand && (
+                <span className="text-primary/50 mr-1">{item.brand}</span>
+              )}
+              {item.name}
+            </span>
+            {item.variantKey && (
+              <span className="flex-shrink-0 text-[11px] leading-none px-1.5 py-0.5 rounded-full bg-primary/5 text-primary/70 font-medium">
+                {item.variantKey}
+              </span>
+            )}
           </button>
 
           {/* R3 C1-2: Weight */}

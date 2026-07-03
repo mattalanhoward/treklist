@@ -33,7 +33,7 @@ async function addOfferFlagsToItems(items, userId) {
 
   const globalDocs = allGlobalItemIds.length
     ? await GlobalItem.find({ _id: { $in: allGlobalItemIds } })
-        .select("link productId affiliate status")
+        .select("link productId affiliate status variantKey")
         .lean()
     : [];
   const globalById = new Map(globalDocs.map((g) => [String(g._id), g]));
@@ -61,35 +61,34 @@ async function addOfferFlagsToItems(items, userId) {
     : [];
   const offerProductIds = new Set(offerDocs.map((o) => String(o.productId)));
 
-  // 5) Assign hasOffer + globalItemStatus to each item
+  // 5) Assign hasOffer + globalItemStatus + variantKey (from GearItem or its GlobalItem)
   return items.map((item) => {
     const g = item.globalItem ? globalById.get(String(item.globalItem)) : null;
     const globalItemStatus = g?.status || "owned";
+    const variantKey = item.variantKey ?? g?.variantKey ?? null;
 
-    // Direct link on the GearItem → always has offer
-    if (item.link) return { ...item, hasOffer: true, globalItemStatus };
-
-    // GearItem has its own productId
-    if (item.productId) {
-      return { ...item, hasOffer: offerProductIds.has(String(item.productId)), globalItemStatus };
-    }
-
-    // Fall back to the linked GlobalItem
-    if (g) {
-      if (g.link) return { ...item, hasOffer: true, globalItemStatus };
-      if (g.productId) {
-        return { ...item, hasOffer: offerProductIds.has(String(g.productId)), globalItemStatus };
+    let hasOffer = false;
+    if (item.link) {
+      hasOffer = true; // direct link on the GearItem
+    } else if (item.productId) {
+      hasOffer = offerProductIds.has(String(item.productId));
+    } else if (g) {
+      if (g.link) {
+        hasOffer = true;
+      } else if (g.productId) {
+        hasOffer = offerProductIds.has(String(g.productId));
+      } else {
+        const deep =
+          (typeof g.affiliate === "string" ? g.affiliate : null) ||
+          g.affiliate?.deepLink ||
+          g.affiliate?.awDeepLink ||
+          g.affiliate?.url ||
+          null;
+        if (deep) hasOffer = true;
       }
-      const deep =
-        (typeof g.affiliate === "string" ? g.affiliate : null) ||
-        g.affiliate?.deepLink ||
-        g.affiliate?.awDeepLink ||
-        g.affiliate?.url ||
-        null;
-      if (deep) return { ...item, hasOffer: true, globalItemStatus };
     }
 
-    return { ...item, hasOffer: false, globalItemStatus };
+    return { ...item, hasOffer, globalItemStatus, variantKey };
   });
 }
 
