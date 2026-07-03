@@ -20,15 +20,24 @@ const COMMIT = process.argv.includes("--commit");
 const BRAND = (flag("--brand", "") || "").toLowerCase();
 if (COMMIT && process.env.MONGO_DB_NAME !== "treklist_local") { console.error("local only"); process.exit(1); }
 
-const PRIMARY = new Set(["Temperature", "Temp Rating", "Temp/Fill", "Rating/Fill", "Fill", "Volume", "R-Value", "Capacity"]);
+// --primary <axis> restricts splitting to ONE axis (e.g. Katabatic: only "Temperature",
+// since its "Fill" is an overfill option to KEEP, not a warmth spec).
+const ONLY_AXIS = flag("--primary", null);
+const PRIMARY = ONLY_AXIS
+  ? new Set([ONLY_AXIS])
+  : new Set(["Temperature", "Temp Rating", "Temp/Fill", "Rating/Fill", "Fill", "Volume", "R-Value", "Capacity"]);
 const slug = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 // label used in the product NAME for a primary value
-function pvLabel(axis, pv) {
+function pvLabel(axis, pv, itemType) {
   if (/temp/i.test(axis)) { const f = (String(pv).match(/-?\d+/) || [])[0]; return f != null ? `${f}°F` : String(pv); }
   if (/capacit/i.test(axis)) { const n = (String(pv).match(/[\d.]+/) || [])[0]; return n ? `${n}P` : String(pv).trim(); }
-  // Volume: number only for packs ("Southwest 40", "Atmos AG 50"); use --vol-l for bottles ("Vecto 2L").
-  if (/volume/i.test(axis)) { const n = (String(pv).match(/[\d.]+/) || [])[0]; return n ? (process.argv.includes("--vol-l") ? `${n}L` : n) : String(pv).trim(); }
+  if (/volume/i.test(axis)) {
+    const s = String(pv).trim();
+    // packs: number only ("Southwest 40", "Atmos AG 50"); bottles/reservoirs: keep unit ("2L", "350ml")
+    if (/pack/i.test(itemType || "")) { const n = (s.match(/[\d.]+/) || [])[0]; return n || s; }
+    return s;
+  }
   return String(pv).trim();
 }
 // structured attributes the primary value contributes (so the split product filters)
@@ -39,7 +48,11 @@ function pvAttrs(axis, pv) {
     const F = parseInt(f, 10);
     return { tempRatingF: F, tempRatingC: Math.round((F - 32) * 5 / 9) };
   }
-  if (/volume/i.test(axis)) { const v = (String(pv).match(/\d+/) || [])[0]; return v ? { volumeLiters: parseInt(v, 10) } : {}; }
+  if (/volume/i.test(axis)) {
+    const s = String(pv); const n = (s.match(/[\d.]+/) || [])[0];
+    if (!n) return {};
+    return { volumeLiters: /ml/i.test(s) ? parseFloat(n) / 1000 : parseFloat(n) };
+  }
   if (/r-?value/i.test(axis)) { const r = (String(pv).match(/[\d.]+/) || [])[0]; return r ? { rValue: parseFloat(r) } : {}; }
   if (/capacit/i.test(axis)) { return { capacity: String(pv).trim() }; } // schema form e.g. "2-Person"
   return {};
@@ -81,7 +94,7 @@ function pvAttrs(axis, pv) {
             return { key: fitAxes.map((a) => o[a]).join(" / "), options: o, weightGrams: v.weightGrams, sku: v.sku }; })
         : [];
       const keep = fitVariants.length > 1;
-      const name = `${baseName} ${pvLabel(primaryAxis, pv)}`.trim();
+      const name = `${baseName} ${pvLabel(primaryAxis, pv, P.itemType)}`.trim();
       const attrs = { ...(P.attributes || {}), ...pvAttrs(primaryAxis, pv) };
       const weightGrams = fitVariants[0]?.weightGrams ?? vs[0].weightGrams;
 
@@ -101,7 +114,7 @@ function pvAttrs(axis, pv) {
           const doc = P.toObject();
           delete doc._id; delete doc.__v; delete doc.createdAt; delete doc.updatedAt;
           doc.name = name;
-          doc.itemGroupId = `${P.itemGroupId || slug(baseName)}-${slug(pvLabel(primaryAxis, pv))}`;
+          doc.itemGroupId = `${P.itemGroupId || slug(baseName)}-${slug(pvLabel(primaryAxis, pv, P.itemType))}`;
           doc.variantAxes = keep ? fitAxes.map((a) => ({ name: a, values: [...new Set(fitVariants.map((f) => f.options[a]))] })) : [];
           doc.variants = keep ? fitVariants : [];
           doc.defaultVariantKey = keep ? fitVariants[0]?.key : undefined;
