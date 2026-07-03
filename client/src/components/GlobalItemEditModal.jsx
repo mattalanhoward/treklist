@@ -11,6 +11,7 @@ import { useUserSettings } from "../contexts/UserSettings";
 import { FiX } from "react-icons/fi";
 import { tItemType, tCategory, CATALOG_CATEGORIES } from "../config/catalogTaxonomy";
 import ImageCarousel from "./ImageCarousel";
+import { merchantFromUrl } from "../utils/merchantFromUrl";
 import VariantSelector from "./VariantSelector";
 import ButtonLink from "./ui/ButtonLink";
 import Spinner from "../components/ui/Spinner";
@@ -950,7 +951,9 @@ export default function GlobalItemEditModal({
 
               {!isCustom && (selectedVariant?.deepLink || primaryOffer?.deepLink) && (
                 <ButtonLink href={selectedVariant?.deepLink || primaryOffer.deepLink}>
-                  {primaryOffer.merchantName || t("globalItemEditModal.buttons.productPage")}
+                  {(selectedVariant?.deepLink && merchantFromUrl(selectedVariant.deepLink)) ||
+                    primaryOffer.merchantName ||
+                    t("globalItemEditModal.buttons.productPage")}
                 </ButtonLink>
               )}
             </div>

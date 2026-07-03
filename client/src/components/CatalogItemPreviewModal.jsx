@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { FiX } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import ImageCarousel from "./ImageCarousel";
+import { merchantFromUrl } from "../utils/merchantFromUrl";
 import VariantSelector from "./VariantSelector";
 import ButtonLink from "./ui/ButtonLink";
 import { useUnit } from "../hooks/useUnit";
@@ -353,7 +354,11 @@ export default function CatalogItemPreviewModal({
                 primaryOffer?.deepLink ||
                 item?.affiliate?.deepLink ||
                 item?.link;
-              const buyLabel = primaryOffer?.merchantName || item?.affiliate?.merchantName || null;
+              const buyLabel =
+                (selectedVariant?.deepLink && merchantFromUrl(selectedVariant.deepLink)) ||
+                primaryOffer?.merchantName ||
+                item?.affiliate?.merchantName ||
+                null;
               return buyLink ? (
                 <ButtonLink href={buyLink}>
                   {buyLabel ?? t("globalItemEditModal.buttons.productPage")}
