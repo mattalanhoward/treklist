@@ -241,7 +241,7 @@ export default function SortableItem({
     <div
       ref={setNodeRef}
       style={style}
-      className="bg-base-100 px-3 sm:px-1 py-2 rounded shadow mb-2"
+      className="bg-base-100 px-3 sm:px-4 py-2.5 rounded shadow mb-2"
     >
       {/* ========== MOBILE (both list/column collapse to this) ========== */}
       <div
@@ -356,7 +356,7 @@ export default function SortableItem({
       {isListMode && (
         <div
           className="hidden xl:grid items-center text-sm
-          grid-cols-[32px,160px,minmax(260px,1fr),96px,24px,24px,48px,24px,24px,24px,24px] gap-x-2"
+          grid-cols-[32px,176px,minmax(260px,1fr),96px,24px,24px,48px,24px,24px,24px,24px] gap-x-4"
         >
           {/* 1) Drag */}
           <div
