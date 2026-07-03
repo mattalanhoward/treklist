@@ -70,6 +70,11 @@ export default function MyGearListItem({
             >
               {item.brand && <span className="mr-1">{item.brand}</span>}
               {item.name}
+              {item.variantKey && (
+                <span className="ml-1.5 text-primary/50 font-normal">
+                  · {item.variantKey}
+                </span>
+              )}
             </span>
           </div>
 
@@ -173,6 +178,11 @@ export default function MyGearListItem({
             >
               {item.brand && <span className="mr-1">{item.brand}</span>}
               {item.name}
+              {item.variantKey && (
+                <span className="ml-1.5 text-primary/50 font-normal">
+                  · {item.variantKey}
+                </span>
+              )}
             </button>
             {item.importedFromShare && (
               <span className="flex-shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-amber-100 border border-amber-200 text-amber-700">

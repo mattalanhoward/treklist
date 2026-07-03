@@ -541,19 +541,30 @@ router.post("/from-catalog/bulk", async (req, res) => {
       })[0];
     };
 
-    // Existing imports for this owner
+    // The chosen variant key for a catalog item (same logic as the resolution below):
+    // owning one variant must NOT block adding a different one.
+    const resolveKey = (c) => {
+      if (!Array.isArray(c.variants) || !c.variants.length) return null;
+      const chosen = variantSelections[String(c._id)] || c.defaultVariantKey || null;
+      const v = c.variants.find((x) => x.key === chosen);
+      return v ? v.key : null;
+    };
+
+    // Existing imports for this owner, keyed by productId + variantKey
     const existing = await GlobalItem.find({
       owner: req.userId,
       productId: { $in: catalogIds },
     })
-      .select("_id productId")
+      .select("_id productId variantKey")
       .lean();
 
-    const existingSet = new Set(existing.map((g) => String(g.productId)));
+    const existingSet = new Set(
+      existing.map((g) => `${g.productId}|${g.variantKey || ""}`)
+    );
 
     // Prepare upsert operations (idempotent, safe in races due to unique index)
     const ops = catalogItems
-      .filter((c) => !existingSet.has(String(c._id)))
+      .filter((c) => !existingSet.has(`${c._id}|${resolveKey(c) || ""}`))
       .map((c) => {
         const bestOffer = pickBestOffer(
           offersByProductId.get(String(c._id)) || []
@@ -639,7 +650,7 @@ router.post("/from-catalog/bulk", async (req, res) => {
 
         return {
           updateOne: {
-            filter: { owner: req.userId, productId: c._id },
+            filter: { owner: req.userId, productId: c._id, variantKey: resolveKey(c) },
             update: { $setOnInsert: payload },
             upsert: true,
           },

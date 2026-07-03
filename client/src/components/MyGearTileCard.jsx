@@ -230,6 +230,11 @@ export default function MyGearTileCard({
 
           <div style={{ fontSize: 14 }} className="font-semibold text-primary leading-snug line-clamp-2">
             {item.name}
+            {item.variantKey && (
+              <span className="ml-1.5 text-xs font-normal text-primary/50">
+                · {item.variantKey}
+              </span>
+            )}
           </div>
 
           {/* Weight badge: mobile only */}

@@ -166,12 +166,15 @@ GlobalItemSchema.index({ name: 1, owner: 1 });
 
 // ---- Deduping indexes (prevent duplicate imports) ----
 
-// One catalog product per owner
+// One catalog product + VARIANT per owner (a user can own e.g. the 50L AND 60L of the
+// same pack — different variantKey). variantKey null (non-variant items) is a value, so a
+// non-variant product still can't be added twice. ⚠ replaces the old uniq_owner_productId
+// index — that must be DROPPED (see migrate-globalitem-variant-index.js).
 GlobalItemSchema.index(
-  { owner: 1, productId: 1 },
+  { owner: 1, productId: 1, variantKey: 1 },
   {
     unique: true,
-    name: "uniq_owner_productId",
+    name: "uniq_owner_productId_variant",
     partialFilterExpression: {
       productId: { $exists: true, $type: "objectId" },
     },
