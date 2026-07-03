@@ -23,6 +23,8 @@ if (COMMIT && process.env.MONGO_DB_NAME !== "treklist_local") { console.error("l
 // --primary <axis> restricts splitting to ONE axis (e.g. Katabatic: only "Temperature",
 // since its "Fill" is an overfill option to KEEP, not a warmth spec).
 const ONLY_AXIS = flag("--primary", null);
+// --drop <regex> skips primary values (e.g. Atom "Custom" = a made-to-order builder, not a product)
+const DROP = flag("--drop", null) ? new RegExp(flag("--drop", null), "i") : null;
 const PRIMARY = ONLY_AXIS
   ? new Set([ONLY_AXIS])
   : new Set(["Temperature", "Temp Rating", "Temp/Fill", "Rating/Fill", "Fill", "Volume", "R-Value", "Capacity"]);
@@ -31,6 +33,7 @@ const slug = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(
 // label used in the product NAME for a primary value
 function pvLabel(axis, pv, itemType) {
   if (/temp\/fill|rating\/fill|^fill$/i.test(axis)) return String(pv).trim(); // Zenbivy: keep temp+fill ("25°F Down") to distinguish same-temp fills
+  if (/version/i.test(axis)) return String(pv).trim(); // Atom: "RE30"/"EP40" = fabric+volume code
   if (/temp/i.test(axis)) { const f = (String(pv).match(/-?\d+/) || [])[0]; return f != null ? `${f}°F` : String(pv); }
   if (/capacit/i.test(axis)) { const n = (String(pv).match(/[\d.]+/) || [])[0]; return n ? `${n}P` : String(pv).trim(); }
   if (/volume/i.test(axis)) {
@@ -61,6 +64,7 @@ function pvAttrs(axis, pv) {
     const f = (String(pv).match(/(-?\d+)\s*°?\s*F/i) || [])[1];
     if (f == null) return {}; const F = parseInt(f, 10); return { tempRatingF: F, tempRatingC: Math.round((F - 32) * 5 / 9) };
   }
+  if (/version/i.test(axis)) { const v = (String(pv).match(/\d+/) || [])[0]; return v ? { volumeLiters: parseInt(v, 10) } : {}; } // Atom: liters from code
   return {};
 }
 
@@ -95,6 +99,7 @@ function pvAttrs(axis, pv) {
     let first = true;
     for (const [pv, vs] of groups) {
       if (!vs.length) continue;
+      if (DROP && DROP.test(pv)) { console.log(`   ⊘ drop "${pv}"`); continue; }
       const fitVariants = fitAxes.length
         ? vs.map((v) => { const o = {}; fitAxes.forEach((a) => (o[a] = v.options.get(a)));
             return { key: fitAxes.map((a) => o[a]).join(" / "), options: o, weightGrams: v.weightGrams, sku: v.sku }; })
