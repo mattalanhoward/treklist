@@ -30,6 +30,7 @@ const slug = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(
 
 // label used in the product NAME for a primary value
 function pvLabel(axis, pv, itemType) {
+  if (/temp\/fill|rating\/fill|^fill$/i.test(axis)) return String(pv).trim(); // Zenbivy: keep temp+fill ("25°F Down") to distinguish same-temp fills
   if (/temp/i.test(axis)) { const f = (String(pv).match(/-?\d+/) || [])[0]; return f != null ? `${f}°F` : String(pv); }
   if (/capacit/i.test(axis)) { const n = (String(pv).match(/[\d.]+/) || [])[0]; return n ? `${n}P` : String(pv).trim(); }
   if (/volume/i.test(axis)) {
@@ -56,6 +57,10 @@ function pvAttrs(axis, pv) {
   }
   if (/r-?value/i.test(axis)) { const r = (String(pv).match(/[\d.]+/) || [])[0]; return r ? { rValue: parseFloat(r) } : {}; }
   if (/capacit/i.test(axis)) { return { capacity: String(pv).trim() }; } // schema form e.g. "2-Person"
+  if (/temp\/fill|rating\/fill/i.test(axis)) { // Zenbivy: pull temp out of "25°F Down"
+    const f = (String(pv).match(/(-?\d+)\s*°?\s*F/i) || [])[1];
+    if (f == null) return {}; const F = parseInt(f, 10); return { tempRatingF: F, tempRatingC: Math.round((F - 32) * 5 / 9) };
+  }
   return {};
 }
 
@@ -95,7 +100,9 @@ function pvAttrs(axis, pv) {
             return { key: fitAxes.map((a) => o[a]).join(" / "), options: o, weightGrams: v.weightGrams, sku: v.sku }; })
         : [];
       const keep = fitVariants.length > 1;
-      const name = `${baseName} ${pvLabel(primaryAxis, pv, P.itemType)}`.trim();
+      // dedup: don't append a label already present in the base name (Zenbivy "Uninsulated")
+      const lbl = pvLabel(primaryAxis, pv, P.itemType);
+      const name = (lbl && !baseName.toLowerCase().includes(lbl.toLowerCase())) ? `${baseName} ${lbl}` : baseName;
       const attrs = { ...(P.attributes || {}), ...pvAttrs(primaryAxis, pv) };
       const weightGrams = fitVariants[0]?.weightGrams ?? vs[0].weightGrams;
       const pvLink = vs.map((v) => v.deepLink).find(Boolean); // per-value buy-link when present
