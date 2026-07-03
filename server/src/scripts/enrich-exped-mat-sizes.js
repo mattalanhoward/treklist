@@ -22,6 +22,10 @@ async function fetchHtml(url) {
   return stdout;
 }
 
+// sensible display order; default = M (standard) when present, else the first.
+const SIZE_RANK = { XS: 0, S: 1, UNO: 1, M: 2, MW: 3, "DUO M": 3, L: 4, LW: 5, "DUO LW": 5, LXW: 6, XLW: 6, DUO: 7, "DUO QUEEN": 8, TRIO: 9 };
+const sizeRank = (s) => (s in SIZE_RANK ? SIZE_RANK[s] : 10);
+
 // parse "<h4>Weight</h4><div>M: 440 g<br>MW: 545 g<br>LW: 590 g</div>" → [{size,weight}]
 function parseSizeWeights(html) {
   const m = html.match(/>Weight<\/h4>\s*<div>([\s\S]*?)<\/div>/i);
@@ -43,29 +47,31 @@ function parseSkus(html, baseUrl) {
   await mongoose.connect(process.env.MONGO_URI, { dbName: process.env.MONGO_DB_NAME });
   const C = require("../models/catalogItem");
   const O = require("../models/merchantOffer");
-  const mats = await C.find({ brandLC: "exped", isActive: { $ne: false },
-    itemType: { $in: ["Inflatable Sleeping Pad", "Foam Sleeping Pad"] } });
-  console.log(`Exped mats: ${mats.length}\n`);
+  const TYPES = process.argv.includes("--bags")
+    ? ["Sleeping Bag", "Quilt"]
+    : ["Inflatable Sleeping Pad", "Foam Sleeping Pad"];
+  const mats = await C.find({ brandLC: "exped", isActive: { $ne: false }, itemType: { $in: TYPES } });
+  console.log(`Exped ${process.argv.includes("--bags") ? "bags" : "mats"}: ${mats.length}\n`);
 
   let added = 0, single = 0, failed = 0;
   for (const P of mats) {
-    if ((P.variants || []).some((v) => v.options?.get?.("Size"))) { continue; } // already has Size
     const offer = await O.findOne({ productId: P._id }).lean();
-    const url = offer?.deepLink;
+    const url = (offer?.deepLink || "").split("?")[0]; // base page (offer URL may be a size ?sku from an earlier run)
     if (!url) { console.log(`  ⚠ ${P.name}: no offer URL`); failed++; continue; }
     let html; try { html = await fetchHtml(url); } catch { console.log(`  ⚠ ${P.name}: fetch failed`); failed++; continue; }
-    const sizes = parseSizeWeights(html);
-    const skus = parseSkus(html, url.split("?")[0]);
+    const sizes = parseSizeWeights(html).sort((a, b) => sizeRank(a.size) - sizeRank(b.size));
+    const skus = parseSkus(html, url);
     if (sizes.length < 2) { console.log(`  · ${P.name}: single size (${sizes[0]?.weight ?? P.weightGrams}g)`); single++; continue; }
 
     const variants = sizes.map((s) => ({ key: s.size, options: { Size: s.size },
       weightGrams: s.weight, deepLink: skus[s.size] || undefined }));
-    console.log(`  ✚ ${P.name}: Size[${sizes.map((s) => `${s.size}:${s.weight}g`).join(" ")}]${skus[sizes[0].size] ? " +sku links" : ""}`);
+    const def = variants.find((v) => v.key === "M") || variants.find((v) => v.key === "UNO") || variants[0];
+    console.log(`  ✚ ${P.name}: Size[${sizes.map((s) => `${s.size}:${s.weight}g`).join(" ")}]  default:${def.key}${skus[sizes[0].size] ? " +sku links" : ""}`);
     if (COMMIT) {
       P.variantAxes = [{ name: "Size", values: sizes.map((s) => s.size) }];
       P.variants = variants;
-      P.defaultVariantKey = variants[0].key;
-      P.weightGrams = variants[0].weightGrams;
+      P.defaultVariantKey = def.key;
+      P.weightGrams = def.weightGrams;
       P.$locals.lenientAttributes = true;
       await P.save();
     }
