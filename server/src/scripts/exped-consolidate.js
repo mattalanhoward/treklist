@@ -19,6 +19,10 @@ if (COMMIT && process.env.MONGO_DB_NAME !== "treklist_local") { console.error("l
 const fabricOf = (n) => /\bUL\b/.test(n) ? "UL" : /XP/i.test(n) ? "XP Extreme" : /Extreme/i.test(n) ? "Extreme" : "Standard";
 const tempKey = (a) => `${a.tempRatingC}°C / ${a.tempRatingF}°F`;
 const rKey = (a) => `${a.rValue}R`;
+const PACK = ["Backpack", "Daypack"]; // pack families span both (sub-20L were retyped Daypack)
+const volNum = (n) => { const m = String(n).match(/\b(\d+)\b/); return m ? +m[1] : 0; };
+const volLabel = (a, n) => `${volNum(n)}L`;                         // packs: Volume from name
+const configOf = (prefix) => (a, n) => (String(n).replace(new RegExp(`^${prefix}\\s*`, "i"), "").trim() || "Standard"); // mats: Standard/Auto/Duo/Max/Ultra
 
 // each family: parent name, itemType, name-match, axis builder(s), default picker
 const FAMS = [
@@ -48,6 +52,31 @@ const FAMS = [
   { parent: "SIM Comfort Duo Mat", type: "Inflatable Sleeping Pad", match: /^SIM Comfort Duo /, axes: [["R-Value", rKey]] },
   { parent: "Versa Mat", type: "Inflatable Sleeping Pad", match: /^Versa \d.*R$/, axes: [["R-Value", rKey]] },
   { parent: "Flex Mat", type: "Inflatable Sleeping Pad", match: /^Flex \d.*R$/, axes: [["R-Value", rKey]] },
+  // ---- config mats: Configuration (Standard/Auto/Duo/Max/Ultra) ----
+  { parent: "MegaMat", type: "Inflatable Sleeping Pad", match: /^MegaMat/, kind: "config", axes: [["Configuration", configOf("MegaMat")]] },
+  { parent: "LuxeMat", type: "Inflatable Sleeping Pad", match: /^LuxeMat/, kind: "config", axes: [["Configuration", configOf("LuxeMat")]] },
+  { parent: "DeepSleep Mat", type: "Inflatable Sleeping Pad", match: /^DeepSleep Mat/i, kind: "config", axes: [["Configuration", configOf("DeepSleep Mat")]] },
+  // ---- packs: Volume (men's/unisex + separate "Wmns" parents; span Backpack+Daypack) ----
+  { parent: "Mountain Pro", type: PACK, match: /^Mountain Pro \d+$/, kind: "volume", axes: [["Volume", volLabel]] },
+  { parent: "Mountain Pro Wmns", type: PACK, match: /^Mountain Pro \d+ Wmns$/, kind: "volume", axes: [["Volume", volLabel]] },
+  { parent: "Couloir", type: PACK, match: /^Couloir \d+$/, kind: "volume", axes: [["Volume", volLabel]] },
+  { parent: "Couloir Wmns", type: PACK, match: /^Couloir \d+ Wmns$/, kind: "volume", axes: [["Volume", volLabel]] },
+  { parent: "Verglas", type: PACK, match: /^Verglas \d+$/, kind: "volume", axes: [["Volume", volLabel]] },
+  { parent: "Skyline", type: PACK, match: /^Skyline \d+$/, kind: "volume", axes: [["Volume", volLabel]] },
+  { parent: "Impulse", type: PACK, match: /^Impulse \d+$/, kind: "volume", axes: [["Volume", volLabel]] },
+  { parent: "Icefall", type: PACK, match: /^Icefall \d+$/, kind: "volume", axes: [["Volume", volLabel]] },
+  { parent: "Serac", type: PACK, match: /^Serac \d+$/, kind: "volume", axes: [["Volume", volLabel]] },
+  { parent: "Torrent", type: PACK, match: /^Torrent \d+$/, kind: "volume", axes: [["Volume", volLabel]] },
+  { parent: "Lightning", type: PACK, match: /^Lightning \d+$/, kind: "volume", axes: [["Volume", volLabel]] },
+  { parent: "Cloudburst", type: PACK, match: /^Cloudburst \d+$/, kind: "volume", axes: [["Volume", volLabel]] },
+  { parent: "Metro", type: PACK, match: /^Metro \d+$/, kind: "volume", axes: [["Volume", volLabel]] },
+  { parent: "Summit Hike", type: PACK, match: /^Summit Hike \d+$/, kind: "volume", axes: [["Volume", volLabel]] },
+  { parent: "Summit Lite", type: PACK, match: /^Summit Lite \d+$/, kind: "volume", axes: [["Volume", volLabel]] },
+  { parent: "Black Ice", type: PACK, match: /^Black Ice \d+$/, kind: "volume", axes: [["Volume", volLabel]] },
+  { parent: "Ridgeline", type: PACK, match: /^Ridgeline \d+$/, kind: "volume", axes: [["Volume", volLabel]] },
+  { parent: "Typhoon", type: PACK, match: /^Typhoon \d+$/, kind: "volume", axes: [["Volume", volLabel]] },
+  { parent: "Cruiser", type: PACK, match: /^Cruiser \d+$/, kind: "volume", axes: [["Volume", volLabel]] },
+  { parent: "Whiteout", type: PACK, match: /^Whiteout \d+$/i, kind: "volume", axes: [["Volume", volLabel]] },
 ];
 
 (async () => {
@@ -57,7 +86,8 @@ const FAMS = [
   let famDone = 0, archived = 0;
 
   for (const f of FAMS) {
-    let members = await C.find({ brand: /^exped$/i, isActive: true, itemType: f.type, name: f.match }).lean();
+    const typeQ = Array.isArray(f.type) ? { $in: f.type } : f.type;
+    let members = await C.find({ brand: /^exped$/i, isActive: true, itemType: typeQ, name: f.match }).lean();
     if (f.need) members = members.filter((m) => f.need(m.attributes || {}));
     if (members.length < 2) { console.log(`  skip ${f.parent} (${members.length} member)`); continue; }
 
@@ -81,8 +111,14 @@ const FAMS = [
       rows.push({ key, dkey, opts, doc: m, wt: m.weightGrams, attrs: m.attributes || {}, imgs: m.imageUrls || [], link: linkOf.get(String(m._id)) });
     }
     const variants = rows.filter((r) => !r.archiveOnly);
-    variants.sort((a, b) => (a.wt || 0) - (b.wt || 0));
-    const parentRow = variants[0];
+    if (f.kind === "volume") variants.sort((a, b) => volNum(a.doc.name) - volNum(b.doc.name)); // display: small→large
+    else variants.sort((a, b) => (a.wt || 0) - (b.wt || 0));
+    // parent = the base whose attributes are valid for the item type / is the nominal model:
+    //  volume packs → largest volume (Backpack needs volumeLiters≥20); config mats → "Standard"; else lightest.
+    let parentRow;
+    if (f.kind === "volume") parentRow = variants.reduce((mx, v) => (volNum(v.doc.name) >= volNum(mx.doc.name) ? v : mx), variants[0]);
+    else if (f.kind === "config") parentRow = variants.find((v) => v.key === "Standard") || variants[variants.length - 1];
+    else parentRow = variants[0];
     const parent = await C.findById(parentRow.doc._id);
 
     console.log(`\n■ ${f.parent}  ← ${variants.length} variants${rows.length > variants.length ? " (+" + (rows.length - variants.length) + " dup archived)" : ""}`);
@@ -98,8 +134,13 @@ const FAMS = [
     parent.$locals.lenientAttributes = true;
     await parent.save();
 
-    // archive the non-parent members + dup losers, delete their offers
-    const toArchive = [...variants.slice(1).map((v) => v.doc._id), ...rows.filter((r) => r.archiveOnly).map((r) => r.archiveOnly._id)];
+    // archive every member EXCEPT the chosen parent (parent may not be variants[0]
+    // for volume/config kinds) + dup losers, and delete their offers
+    const keepId = String(parentRow.doc._id);
+    const toArchive = [
+      ...variants.filter((v) => String(v.doc._id) !== keepId).map((v) => v.doc._id),
+      ...rows.filter((r) => r.archiveOnly).map((r) => r.archiveOnly._id),
+    ];
     for (const id of toArchive) { await C.updateOne({ _id: id }, { $set: { isActive: false } }); await O.deleteMany({ productId: id }); archived++; }
     famDone++;
   }
