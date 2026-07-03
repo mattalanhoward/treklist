@@ -17,8 +17,19 @@ const COMMIT = process.argv.includes("--commit");
 const BRAND = (flag("--brand", "") || "").toLowerCase();
 if (COMMIT && process.env.MONGO_DB_NAME !== "treklist_local") { console.error("local only"); process.exit(1); }
 
+const HANDLE_NAME = process.argv.includes("--handle-name"); // derive parent name from its deepLink slug
 const PRIMARY = new Set(["Temperature", "Capacity", "Volume", "R-Value", "Temp Rating", "Fill Weight", "Fill"]);
 const primNum = (pv) => { const m = String(pv).match(/-?\d+/); return m ? m[0] : null; };
+// e.g. "www.exped.com/.../orion-ii-ul" → "Orion II UL"; "deepsleep-0c-30f" → "Deepsleep 0C 30F"
+const nameFromHandle = (url) => {
+  const seg = String(url || "").split(/[/?#]/).filter(Boolean).pop() || "";
+  return seg.split("-").filter(Boolean).map((w) => {
+    if (/^(i{1,3}|iv|vi{0,3}|ix|xi{0,3})$/i.test(w)) return w.toUpperCase();      // roman numerals
+    if (/^(ul|xp|hl|dcf|sl)$/i.test(w)) return w.toUpperCase();                    // known acronyms
+    if (/^-?\d+(c|f)$/i.test(w)) return w.toUpperCase();                           // temp tokens 0c/30f
+    return w.charAt(0).toUpperCase() + w.slice(1);
+  }).join(" ");
+};
 
 (async () => {
   await mongoose.connect(process.env.MONGO_URI, { dbName: process.env.MONGO_DB_NAME });
@@ -73,9 +84,12 @@ const primNum = (pv) => { const m = String(pv).match(/-?\d+/); return m ? m[0] :
       const keep = fitVariants.length > 1;
 
       if (isParent) {
-        // reconstruct name from a sibling by swapping the primary number
+        // name the reverted parent: from its own deepLink slug (authoritative) when
+        // --handle-name, else reconstruct from a sibling by swapping the primary number
         let title = P.name;
-        if (siblingRow && siblingRow.target[0]) {
+        if (HANDLE_NAME && r.deepLink) {
+          title = nameFromHandle(r.deepLink);
+        } else if (siblingRow && siblingRow.target[0]) {
           const sName = siblingRow.target[0].name, sNum = primNum(siblingRow.pv), dNum = primNum(r.pv);
           title = (sNum && dNum && sName.includes(sNum)) ? sName.replace(sNum, dNum) : `${P.name} ${dNum || ""}`.trim();
         }
