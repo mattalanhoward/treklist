@@ -247,62 +247,116 @@ export default function SortableItem({
     >
       {/* ========== MOBILE (both list/column collapse to this) ========== */}
       <div
-        className={`${twoRowVisibilityClasses} grid grid-rows-[auto_auto_auto] gap-y-1 text-sm`}
+        className={`${twoRowVisibilityClasses} grid ${
+          isListMode ? "grid-rows-[auto_auto]" : "grid-rows-[auto_auto_auto]"
+        } gap-y-1 text-sm`}
       >
-        {/* Row 1: item type + actions (swap · delete) */}
-        <div className="flex items-center justify-between gap-2">
-          <button
-            type="button"
-            onClick={() => setDetailsOpen(true)}
-            style={{ fontSize: 14 }}
-            className="font-semibold text-primary truncate text-left hover:text-primary/80 min-w-0"
-          >
-            {tItemType(t, item.itemType) || "—"}
-          </button>
-          {!isLocked && (
-            <div className="flex items-center gap-1 flex-shrink-0">
-              <button
-                data-tour="item-swap"
-                type="button"
-                onClick={() => setSwapOpen(true)}
-                className="p-1 text-primary/60 hover:text-primary focus:outline-none"
-                title={t("gearList.actions.swap", "Swap item")}
-              >
-                <FiRefreshCw className="text-sm" />
-              </button>
-              <button
-                type="button"
-                onClick={() => onDelete?.(catId, item._id)}
-                className="p-1 text-primary/60 hover:text-primary focus:outline-none"
-                title={t("gearList.confirm.removeItemConfirm")}
-              >
-                <FiTrash2 className="text-sm" />
-              </button>
+        {isListMode ? (
+          /* LIST MOBILE — Row 1: type + name (inline) · variant + actions */
+          <div className="flex items-center justify-between gap-2 min-w-0">
+            <button
+              type="button"
+              onClick={() => setDetailsOpen(true)}
+              style={{ fontSize: 14 }}
+              className="flex items-baseline gap-1.5 min-w-0 text-left hover:text-primary/80"
+            >
+              <span className="font-semibold text-primary flex-shrink-0">
+                {tItemType(t, item.itemType) || "—"}
+              </span>
+              <span className="truncate text-primary">
+                {item.brand && (
+                  <span className="text-primary/50 mr-1">{item.brand}</span>
+                )}
+                {item.name}
+              </span>
+            </button>
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              {item.variantKey && (
+                <span className="whitespace-nowrap text-[11px] leading-none px-1.5 py-0.5 rounded-full bg-primary/5 text-primary/70 font-medium">
+                  {item.variantKey}
+                </span>
+              )}
+              {!isLocked && (
+                <>
+                  <button
+                    data-tour="item-swap"
+                    type="button"
+                    onClick={() => setSwapOpen(true)}
+                    className="p-1 text-primary/60 hover:text-primary focus:outline-none"
+                    title={t("gearList.actions.swap", "Swap item")}
+                  >
+                    <FiRefreshCw className="text-sm" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onDelete?.(catId, item._id)}
+                    className="p-1 text-primary/60 hover:text-primary focus:outline-none"
+                    title={t("gearList.confirm.removeItemConfirm")}
+                  >
+                    <FiTrash2 className="text-sm" />
+                  </button>
+                </>
+              )}
             </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <>
+            {/* COLUMN MOBILE — Row 1: type + actions */}
+            <div className="flex items-center justify-between gap-2">
+              <button
+                type="button"
+                onClick={() => setDetailsOpen(true)}
+                style={{ fontSize: 14 }}
+                className="font-semibold text-primary truncate text-left hover:text-primary/80 min-w-0"
+              >
+                {tItemType(t, item.itemType) || "—"}
+              </button>
+              {!isLocked && (
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <button
+                    data-tour="item-swap"
+                    type="button"
+                    onClick={() => setSwapOpen(true)}
+                    className="p-1 text-primary/60 hover:text-primary focus:outline-none"
+                    title={t("gearList.actions.swap", "Swap item")}
+                  >
+                    <FiRefreshCw className="text-sm" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onDelete?.(catId, item._id)}
+                    className="p-1 text-primary/60 hover:text-primary focus:outline-none"
+                    title={t("gearList.confirm.removeItemConfirm")}
+                  >
+                    <FiTrash2 className="text-sm" />
+                  </button>
+                </div>
+              )}
+            </div>
 
-        {/* Row 2: brand · name · variant */}
-        <button
-          type="button"
-          onClick={() => setDetailsOpen(true)}
-          style={{ fontSize: 14 }}
-          className="flex items-center gap-1.5 min-w-0 text-primary text-left hover:text-primary/80"
-        >
-          <span className="truncate">
-            {item.brand && (
-              <span className="text-primary/50 mr-1">{item.brand}</span>
-            )}
-            {item.name}
-          </span>
-          {item.variantKey && (
-            <span className="flex-shrink-0 text-[11px] leading-none px-1.5 py-0.5 rounded-full bg-primary/5 text-primary/70 font-medium">
-              {item.variantKey}
-            </span>
-          )}
-        </button>
+            {/* COLUMN MOBILE — Row 2: brand · name (truncate) … variant (far right) */}
+            <button
+              type="button"
+              onClick={() => setDetailsOpen(true)}
+              style={{ fontSize: 14 }}
+              className="flex items-center justify-between gap-2 min-w-0 text-primary text-left hover:text-primary/80"
+            >
+              <span className="truncate min-w-0">
+                {item.brand && (
+                  <span className="text-primary/50 mr-1">{item.brand}</span>
+                )}
+                {item.name}
+              </span>
+              {item.variantKey && (
+                <span className="flex-shrink-0 whitespace-nowrap text-[11px] leading-none px-1.5 py-0.5 rounded-full bg-primary/5 text-primary/70 font-medium">
+                  {item.variantKey}
+                </span>
+              )}
+            </button>
+          </>
+        )}
 
-        {/* Row 3: weight · consumable · worn · qty · cart · wishlist */}
+        {/* Row (shared): weight · consumable · worn · qty · cart · wishlist */}
         <div className="flex items-center justify-between gap-2">
           <span className="tabular-nums text-primary">{weightText}</span>
 
@@ -566,30 +620,28 @@ export default function SortableItem({
             </button>
           )}
 
-          {/* R2 C1-6: Brand / Name */}
+          {/* R2 C1-6: Brand / Name (variant now lives on row 3, next to weight) */}
           <button
             type="button"
             onClick={() => setDetailsOpen(true)}
             style={{ fontSize: 14 }}
-            className="row-start-2 col-start-1 col-span-6 min-w-0 flex items-center gap-1.5 text-primary text-left hover:text-primary/80"
+            className="row-start-2 col-start-1 col-span-6 min-w-0 truncate text-primary text-left hover:text-primary/80"
           >
-            <span className="truncate">
-              {item.brand && (
-                <span className="text-primary/50 mr-1">{item.brand}</span>
-              )}
-              {item.name}
-            </span>
+            {item.brand && (
+              <span className="text-primary/50 mr-1">{item.brand}</span>
+            )}
+            {item.name}
+          </button>
+
+          {/* R3 C1-2: Weight + variant (fills the space between weight and the icons) */}
+          <div className="row-start-3 col-start-1 col-span-2 flex items-center gap-2 min-w-0">
+            <span className="text-sm text-primary tabular-nums">{weightText}</span>
             {item.variantKey && (
-              <span className="flex-shrink-0 text-[11px] leading-none px-1.5 py-0.5 rounded-full bg-primary/5 text-primary/70 font-medium">
+              <span className="flex-shrink-0 whitespace-nowrap text-[11px] leading-none px-1.5 py-0.5 rounded-full bg-primary/5 text-primary/70 font-medium">
                 {item.variantKey}
               </span>
             )}
-          </button>
-
-          {/* R3 C1-2: Weight */}
-          <span className="row-start-3 col-start-1 col-span-2 text-sm text-primary tabular-nums">
-            {weightText}
-          </span>
+          </div>
 
           {/* R3 C3: Knife (consumable) */}
           <FaUtensils
