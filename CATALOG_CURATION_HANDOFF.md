@@ -239,6 +239,7 @@ A clean, consistent catalog, then migrate to prod. **Clean bar** = every active 
 4. Insert the local **active** catalog + its MerchantOffers into prod, keeping local `_id`s (no collision — prod ids differ).
 5. Verify: active catalog = the new set; a sample existing user's gear still renders + has its buy button; 0 orphan offers.
    - Tradeoffs (acceptable): existing users don't retroactively get variants on already-owned items; ~610 archived ghosts linger.
+6. **GlobalItem index migration (REQUIRED on deploy):** `node src/scripts/migrate-globalitem-variant-index.js --db TrekList --confirm TrekList` — drops the old `{owner,productId}` unique + stale `_status` orphan indexes and creates `{owner,productId,variantKey}`, so users can own multiple variants of one item (fixed 2026-07-03). Also run `backfill-variant-links.js --db TrekList --confirm TrekList` to point owned items' `affiliate.deepLink` at their per-variant URL.
 
 ## Immediate insurance to take
 - `mongodump treklist_local` (the whole curated catalog only exists in this one DB).
