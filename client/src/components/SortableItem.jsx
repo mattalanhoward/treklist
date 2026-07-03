@@ -247,39 +247,18 @@ export default function SortableItem({
     >
       {/* ========== MOBILE (both list/column collapse to this) ========== */}
       <div
-        className={`${twoRowVisibilityClasses} grid grid-rows-[auto_auto] gap-y-1 gap-x-2 text-sm`}
+        className={`${twoRowVisibilityClasses} grid grid-rows-[auto_auto_auto] gap-y-1 text-sm`}
       >
-        {/* Row 1: type + name/brand + actions */}
-        <div className="row-start-1 col-span-2 flex items-center justify-between space-x-2 overflow-x-hidden">
-          {/* Text block gets the overflow handling, not the whole row */}
-          <div className="flex items-center space-x-1 overflow-hidden min-w-0">
-            <button
-              type="button"
-              onClick={() => setDetailsOpen(true)}
-              style={{ fontSize: 14 }}
-              className="font-semibold text-primary flex-shrink-0 hover:text-primary/80"
-            >
-              {tItemType(t, item.itemType) || "—"}
-            </button>
-            <button
-              type="button"
-              onClick={() => setDetailsOpen(true)}
-              style={{ fontSize: 14 }}
-              className="flex items-center gap-1.5 text-primary flex-1 min-w-0 text-left hover:text-primary/80"
-            >
-              <span className="truncate">
-                {item.brand && (
-                  <span className="text-primary/50 mr-1">{item.brand}</span>
-                )}
-                {item.name}
-              </span>
-              {item.variantKey && (
-                <span className="flex-shrink-0 text-[11px] leading-none px-1.5 py-0.5 rounded-full bg-primary/5 text-primary/70 font-medium">
-                  {item.variantKey}
-                </span>
-              )}
-            </button>
-          </div>
+        {/* Row 1: item type + actions (swap · delete) */}
+        <div className="flex items-center justify-between gap-2">
+          <button
+            type="button"
+            onClick={() => setDetailsOpen(true)}
+            style={{ fontSize: 14 }}
+            className="font-semibold text-primary truncate text-left hover:text-primary/80 min-w-0"
+          >
+            {tItemType(t, item.itemType) || "—"}
+          </button>
           {!isLocked && (
             <div className="flex items-center gap-1 flex-shrink-0">
               <button
@@ -302,12 +281,30 @@ export default function SortableItem({
             </div>
           )}
         </div>
-        {/* Row 2: left (weight) · right (Buy · icons · qty) */}
-        <div className="row-start-2 col-span-2 grid grid-cols-[1fr_auto] items-center">
-          {/* Left group (fixed column sizes) */}
-          <div className="grid grid-cols-[70px_75px] text-primary">
-            <span className="tabular-nums text-left">{weightText}</span>
-          </div>
+
+        {/* Row 2: brand · name · variant */}
+        <button
+          type="button"
+          onClick={() => setDetailsOpen(true)}
+          style={{ fontSize: 14 }}
+          className="flex items-center gap-1.5 min-w-0 text-primary text-left hover:text-primary/80"
+        >
+          <span className="truncate">
+            {item.brand && (
+              <span className="text-primary/50 mr-1">{item.brand}</span>
+            )}
+            {item.name}
+          </span>
+          {item.variantKey && (
+            <span className="flex-shrink-0 text-[11px] leading-none px-1.5 py-0.5 rounded-full bg-primary/5 text-primary/70 font-medium">
+              {item.variantKey}
+            </span>
+          )}
+        </button>
+
+        {/* Row 3: weight · consumable · worn · qty · cart · wishlist */}
+        <div className="flex items-center justify-between gap-2">
+          <span className="tabular-nums text-primary">{weightText}</span>
 
           {/* Right group (mobile): 🍴 | 👕 | qty | 🛒 | ⭐ */}
           <div className="flex items-center gap-3">

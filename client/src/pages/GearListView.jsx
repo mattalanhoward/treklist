@@ -711,8 +711,8 @@ export default function GearListView({
         if (viewMode === "list" && listContainerRef.current) {
           return listContainerRef.current.clientWidth;
         }
-        // Column mode: match SortableColumn width (w-90 = 344px mobile, sm:w-64 = 256px)
-        return window.innerWidth >= 640 ? 256 : 344;
+        // Column mode: match SortableColumn width (w-90 = 344px mobile, sm:w-72 = 288px)
+        return window.innerWidth >= 640 ? 288 : 344;
       },
     };
   });
@@ -1537,7 +1537,7 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
             ))}
 
             {!isLocked && (
-              <div className="snap-center flex-shrink-0 mt-0 mb-0 w-90 sm:w-64 flex flex-col h-full px-2">
+              <div className="snap-center flex-shrink-0 mt-0 mb-0 w-90 sm:w-72 flex flex-col h-full px-2">
                 {addingNewCat ? (
                   <div>
                     <input
