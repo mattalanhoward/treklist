@@ -423,10 +423,12 @@ export default function GlobalItemEditModal({
       itemType: template.itemType || "",
       name: template.name || "",
       brand: template.brand || "",
-      description: template.description || "",
+      // Per-variant description (e.g. a quilt's 20° vs 40° blurb) wins when the
+      // selected variant carries one; else the item-level description.
+      description: selectedVariant?.description || template.description || "",
       link: template.link || "",
     }));
-  }, [isImported, template, itemId, item]);
+  }, [isImported, template, itemId, item, selectedVariant]);
 
   // Recalc display weight when unit or item changes
   useEffect(() => {

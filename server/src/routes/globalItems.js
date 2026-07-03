@@ -592,6 +592,7 @@ router.post("/from-catalog/bulk", async (req, res) => {
         let resolvedWeight = c.weightGrams;
         let resolvedVariantKey = null;
         let resolvedAttributes = c.attributes;
+        let resolvedDescription = c.description;
         if (Array.isArray(c.variants) && c.variants.length) {
           const chosenKey =
             variantSelections[String(c._id)] || c.defaultVariantKey || null;
@@ -605,6 +606,11 @@ router.post("/from-catalog/bulk", async (req, res) => {
             // merged onto the base so the owned item reflects what was chosen.
             if (variant.attributes && typeof variant.attributes === "object") {
               resolvedAttributes = { ...(c.attributes || {}), ...variant.attributes };
+            }
+            // Per-variant description (e.g. a quilt's 20° vs 40° blurb) is
+            // snapshotted so the owned item reflects the chosen variant.
+            if (variant.description) {
+              resolvedDescription = variant.description;
             }
             // The chosen variant's own buy-link overrides the item-level offer link
             // so the owned item routes to exactly what was selected.
@@ -620,7 +626,7 @@ router.post("/from-catalog/bulk", async (req, res) => {
           name: c.name,
           brand: c.brand,
           itemType: c.itemType || c.subcategory || c.category || null,
-          description: c.description,
+          description: resolvedDescription,
           weight: resolvedWeight,
           variantKey: resolvedVariantKey,
           attributes: sanitizeAttributes(resolvedAttributes),

@@ -384,6 +384,11 @@ function normalizeVariantSet({
         ? String(v.deepLink).trim()
         : undefined;
 
+    const description =
+      v?.description != null && String(v.description).trim()
+        ? String(v.description).trim()
+        : undefined;
+
     outVariants.push({
       key,
       options: cleanOptions,
@@ -392,6 +397,7 @@ function normalizeVariantSet({
       attributes,
       ...(imageUrls && imageUrls.length ? { imageUrls } : {}),
       ...(deepLink ? { deepLink } : {}),
+      ...(description ? { description } : {}),
     });
   }
 

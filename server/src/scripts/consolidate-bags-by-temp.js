@@ -19,6 +19,10 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 const COMMIT = process.argv.includes("--commit");
+// --enrich: don't re-consolidate; instead backfill per-variant `attributes` +
+// `description` onto ALREADY-consolidated parents (temp ratings + blurb differ per
+// temperature). Reads the archived per-temp siblings + the parent's own base.
+const ENRICH = process.argv.includes("--enrich");
 const flag = (n, d) => { const i = process.argv.indexOf(n); return i !== -1 ? process.argv[i + 1] : d; };
 const ONLY = (flag("--brand", "all") || "all").toLowerCase();
 if (COMMIT && process.env.MONGO_DB_NAME !== "treklist_local") { console.error("local only"); process.exit(1); }
@@ -55,10 +59,51 @@ const FAMS = [
   { key: "hmg", brandLC: "hyperlite mountain gear", parent: "Ultralight Quilt", match: /-Degree.*Quilt/i, temp: hmgTemp },
 ];
 
+const optTemp = (v) => (v.options?.get ? v.options.get("Temperature") : v.options?.Temperature);
+
+// Backfill per-variant attributes + description onto an already-consolidated parent.
+async function enrich(C) {
+  let done = 0;
+  for (const f of FAMS) {
+    if (ONLY !== "all" && ONLY !== f.key) continue;
+    const parent = await C.findOne({ brandLC: f.brandLC, name: f.parent, isActive: { $ne: false } });
+    if (!parent || !(parent.variants || []).length) { console.log(`  skip ${f.parent} (not consolidated)`); continue; }
+
+    // temp -> {attributes, description}: the parent's base covers its default temp;
+    // the (archived) per-temp siblings cover the rest.
+    const tempMap = {};
+    const defVar = parent.variants.find((v) => v.key === parent.defaultVariantKey) || parent.variants[0];
+    tempMap[optTemp(defVar)] = { attributes: parent.attributes, description: parent.description };
+    const sibs = await C.find({ brandLC: f.brandLC, itemType: { $in: ["Sleeping Bag", "Quilt"] }, name: f.match }).lean();
+    for (const s of sibs) {
+      const t = f.temp(s.name);
+      if (!t || String(s._id) === String(parent._id)) continue;
+      const hasAttrs = tempMap[t]?.attributes && Object.keys(tempMap[t].attributes).length;
+      if (!tempMap[t] || !hasAttrs) tempMap[t] = { attributes: s.attributes, description: s.description };
+    }
+
+    let set = 0;
+    for (const v of parent.variants) {
+      const e = tempMap[optTemp(v)];
+      if (!e) continue;
+      if (e.attributes && Object.keys(e.attributes).length) v.attributes = e.attributes;
+      if (e.description) v.description = e.description;
+      set++;
+    }
+    parent.markModified("variants");
+    parent.$locals.lenientAttributes = true;
+    console.log(`${COMMIT ? "✓" : "·"} ${f.parent}: ${set}/${parent.variants.length} variants  temps:[${Object.keys(tempMap).join(", ")}]`);
+    if (COMMIT) await parent.save();
+    done++;
+  }
+  console.log(`\n${COMMIT ? "APPLIED" : "DRY"} enrich — families:${done}`);
+}
+
 (async () => {
   await mongoose.connect(process.env.MONGO_URI, { dbName: process.env.MONGO_DB_NAME });
   const C = require("../models/catalogItem");
   const O = require("../models/merchantOffer");
+  if (ENRICH) { await enrich(C); await mongoose.disconnect(); return; }
   let famDone = 0, archived = 0;
 
   for (const f of FAMS) {
@@ -78,7 +123,7 @@ const FAMS = [
       sizes: (m.variants || []).length
         ? m.variants.map((v) => ({ size: v.key, wt: v.weightGrams, sku: v.sku }))
         : [{ size: null, wt: m.weightGrams, sku: m.externalIds?.sku }],
-      imgs: m.imageUrls || [],
+      imgs: m.imageUrls || [], attrs: m.attributes, desc: m.description,
     })).filter((r) => r.temp);
 
     // dedupe two members sharing a temperature (e.g. TAR Boost EU+US): keep the one
@@ -113,6 +158,8 @@ const FAMS = [
           options, weightGrams: s.wt,
           imageUrls: r.imgs.length ? r.imgs : undefined,
           deepLink: r.link || undefined, sku: s.sku || undefined,
+          attributes: r.attrs && Object.keys(r.attrs).length ? r.attrs : undefined,
+          description: r.desc || undefined,
         });
       }
     }

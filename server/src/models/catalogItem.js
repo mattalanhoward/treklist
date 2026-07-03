@@ -103,6 +103,11 @@ const VariantSchema = new mongoose.Schema(
     // `attributes` when this variant is selected (e.g. a Material axis where
     // each fabric has a different `mainFabric`). Shape matches `attributes`.
     attributes: { type: mongoose.Schema.Types.Mixed },
+
+    // Optional per-variant description. When set, the UI shows THIS instead of
+    // the item-level description for the selected variant (e.g. a quilt's 20° vs
+    // 40° blurb differs). Falls back to the item-level `description`.
+    description: { type: String, trim: true },
   },
   { _id: false },
 );

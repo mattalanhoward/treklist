@@ -338,7 +338,7 @@ export default function CatalogItemPreviewModal({
                 {t("globalItemModal.labels.description")}
               </label>
               <div className="text-primary/90 whitespace-pre-line leading-6 min-h-[60px] pr-2">
-                {item.description || "—"}
+                {selectedVariant?.description || item.description || "—"}
               </div>
             </div>
           </>
