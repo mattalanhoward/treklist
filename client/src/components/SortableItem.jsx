@@ -270,12 +270,7 @@ export default function SortableItem({
                 {item.name}
               </span>
             </button>
-            <div className="flex items-center gap-1.5 flex-shrink-0">
-              {item.variantKey && (
-                <span className="whitespace-nowrap text-[11px] leading-none px-1.5 py-0.5 rounded-full bg-primary/5 text-primary/70 font-medium">
-                  {item.variantKey}
-                </span>
-              )}
+            <div className="flex items-center gap-1 flex-shrink-0">
               {!isLocked && (
                 <>
                   <button
@@ -334,31 +329,31 @@ export default function SortableItem({
               )}
             </div>
 
-            {/* COLUMN MOBILE — Row 2: brand · name (truncate) … variant (far right) */}
+            {/* COLUMN MOBILE — Row 2: brand · name (variant is on the weight row below) */}
             <button
               type="button"
               onClick={() => setDetailsOpen(true)}
               style={{ fontSize: 14 }}
-              className="flex items-center justify-between gap-2 min-w-0 text-primary text-left hover:text-primary/80"
+              className="min-w-0 truncate text-primary text-left hover:text-primary/80"
             >
-              <span className="truncate min-w-0">
-                {item.brand && (
-                  <span className="text-primary/50 mr-1">{item.brand}</span>
-                )}
-                {item.name}
-              </span>
-              {item.variantKey && (
-                <span className="flex-shrink-0 whitespace-nowrap text-[11px] leading-none px-1.5 py-0.5 rounded-full bg-primary/5 text-primary/70 font-medium">
-                  {item.variantKey}
-                </span>
+              {item.brand && (
+                <span className="text-primary/50 mr-1">{item.brand}</span>
               )}
+              {item.name}
             </button>
           </>
         )}
 
-        {/* Row (shared): weight · consumable · worn · qty · cart · wishlist */}
+        {/* Row (shared): weight · variant · consumable · worn · qty · cart · wishlist */}
         <div className="flex items-center justify-between gap-2">
-          <span className="tabular-nums text-primary">{weightText}</span>
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="tabular-nums text-primary">{weightText}</span>
+            {item.variantKey && (
+              <span className="flex-shrink-0 whitespace-nowrap text-[11px] leading-none px-1.5 py-0.5 rounded-full bg-primary/5 text-primary/70 font-medium">
+                {item.variantKey}
+              </span>
+            )}
+          </div>
 
           {/* Right group (mobile): 🍴 | 👕 | qty | 🛒 | ⭐ */}
           <div className="flex items-center gap-3">
