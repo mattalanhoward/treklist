@@ -39,6 +39,10 @@ function primarySpec(name) {
   let m = name.match(/\b(\d+)\s*P\b/i); if (m) return { kind: "capacity", val: m[1] };
   m = name.match(/(-?\d+)\s*°/); if (m) return { kind: "temp", val: m[1] };
   m = name.match(/\b(\d+)\s*L\b/); if (m) return { kind: "volume", val: m[1] };
+  // brands that name volumes without the L (HMG "Unbound 40"): opt-in via flag
+  if (process.argv.includes("--trailing-num-as-volume")) {
+    m = name.match(/\b(\d+)\s*$/); if (m) return { kind: "volume", val: m[1] };
+  }
   return null;
 }
 
@@ -84,8 +88,11 @@ const stripQ = (u) => String(u).split("?")[0];
     if (!spec) { skipped.push(`${it.name} — no primary spec in name`); continue; }
 
     let vars = prod.variants.filter((v) => variantMatches(v.title, spec));
-    const reg = vars.filter((v) => /regular/i.test(v.title));
-    if (reg.length) vars = [...reg, ...vars.filter((v) => !reg.includes(v))];
+    // rank by token overlap with the item name (disambiguates fill lines like
+    // "ExpeDRY Goose 900+ FP" vs "Ultrasonic Muscovy" on combined pages), then prefer Regular size
+    const toks = it.name.toLowerCase().split(/[^a-z0-9+]+/).filter((t) => t.length > 2);
+    const score = (v) => { const t = v.title.toLowerCase(); return toks.filter((k) => t.includes(k)).length + (/regular/i.test(v.title) ? 0.5 : 0); };
+    vars = vars.sort((a, b) => score(b) - score(a));
     if (!vars.length) { skipped.push(`${it.name} — no variant matches ${spec.kind}:${spec.val} in ${prod.handle}`); continue; }
     const varIds = new Set(vars.map((v) => v.id));
     const otherVarIds = new Set(prod.variants.filter((v) => !varIds.has(v.id)).map((v) => v.id));

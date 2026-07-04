@@ -54,3 +54,37 @@ Source: seatosummit.com Shopify feed (624 products) + seatosummit.com/.eu spec p
 - FIXED **Aeros Premium Pillow — Deluxe** weight 77 g (copied from Regular) → **175 g** (S2S EU spec).
 - LEFT AS-IS (logged): Aeros Premium pillows + Pocket Towel sizes are separate items with per-size Amazon ASINs — consolidation blocked on variantKey-aware offers (same project as Osprey per-volume ASINs, revisit ~2026-07-07).
 - "- Long/Short Handle" spork names are real products, not colorways.
+
+## Zenbivy — 107 active. CLEAN (shared images = selector-page brand limitation)
+Source: zenbivy.com Shopify feed (84 products).
+- FIXED 23 items' galleries via feed variant images with token-rank disambiguation (fill lines): PrimaLoft®/Synthetic splits now show their synthetic-specific photos (Light Sheet/Quilt/Convertible, Core Quilt 30°F, Ultralight Sheet/Quilt synthetics), Overland/ZipBed pairs differentiated, UL Dirtbed/Ultralight Ultrasonic-900FP got own-handle photos.
+- ACCEPTED remaining 12 shared groups: same-page temp/fill siblings — Zenbivy photographs per COLOR only (verified in feed); consistent with the selector-split design (shared buy-links are expected).
+- FLAGGED (not changed): BOTH "Overland ZipBed" (2041 g Syn / 1615 g Down) AND "ZipBed Overland" (1996 g / 1497 g) are live, distinct products in Zenbivy's own feed (different product IDs, weights, handles — looks like two generations sold simultaneously). Left both active; user may want to archive one.
+- ACCEPTED 22 no-weight items — all configurable bed/bundle products ("Build a … Bundle", "… Bed Bundle", UL Dirtbed™, Core/Light/Overland Beds) per blank-ok-for-configurable policy.
+
+## Zpacks — 130 active. CLEAN
+Source: zpacks.com Shopify feed (500 products).
+- FIXED **Arc Haul Ultra buy-link bug**: all 8 volume items (40/50/60/70 × M/W) deep-linked to the 60L page; each now links to its own per-volume page (variant-link pattern) AND carries that page's own gallery (40/50/60/70 hero shots differ).
+- FIXED Classic Sleeping Bag temp trio galleries (feed refresh).
+- RENAMED "Zpacks Octa Fleece Hoody - Full Zip/Pullover" → "Octa Fleece Hoody - …" (doubled brand text).
+- ACCEPTED 5 remaining shared-image groups (Mummy 10/20, Zip Around 10/20/30, Solo Quilt 10/20/30, Classic 10/20/30, Summer Quilt 30/40): one-page temp-selector products photographed once by the brand — the designed selector-share pattern.
+- "- Full Zip"/"- Pullover" names are genuine configs, not colorways.
+
+## HMG — 79 active. CLEAN (1 brand-limitation group)
+Source: hyperlitemountaingear.com Shopify feed (118 products). HMG sells one page per model with a Volume selector (correct selector-share links).
+- FIXED per-volume variant images on 20 items: NorthRim 70, Unbound 55, Porter 55/70/85, Roll-Top Food Bag 15, Roll-Top Stuff Sacks 3/5/10/15/25/43, + gallery refreshes (Windrider/Southwest/Junction).
+- ACCEPTED: Ice Pack 40/55/70 — HMG's own feed uses one photo for all volumes.
+- Added `--trailing-num-as-volume` flag to qa-feed-variant-images.js (HMG names volumes without "L").
+
+## Therm-a-Rest — 51 → 48 active. CLEAN
+Source: Cascade Designs combined Shopify store + thermarest.com PDP "Tech Specs" tables (new script `qa-tar-weights.js` parses per-size weight tables incl. R-value-row and kg layouts).
+- ARCHIVED 3 US/EU double-listings (Trail Pro -eu, NeoLoft -eu, Compressible Pillow Cinch -eu; 0 refs) — US item kept; Pillow Cinch US inherited the EU twin's weight+size variants (283 g).
+- BACKFILLED published per-size weights on **14 items** (Size variants + base): Corus 32F (560/620), Corus 20F (735/815), Polar Ranger -20F (1480/1560), Parsec 20F (820/886), Parsec 0F (1100/1194), Boost 650 20F (6 sizes 1021–1737), Boost 650 32F (804–1317), NeoLoft (710/850/910), Trail Pro (850/1080), Trail ProLite (680/880/910), Trail Pro MAX (1160/1240), Honcho Poncho (690), Honcho Poncho Down (529), + **Ohm 20F Regular 635 g** (SectionHiker+SportFits corroborated; Long unpublished → unweighted variant, FLAGGED).
+- FLAGGED (no published weight, accessories): Synergy Luxe Sheets 30" Coupler, Trekker Pillow Case.
+
+## MSR — 140 → 135 active. CLEAN (1 accessory flag)
+Same Cascade store; US PDPs carry "Minimum Weight: x lb (y kg)" (new script `qa-msr-fix.js`).
+- FIXED **12 dead buy-links**: offers pointed at region-gated `-eu` handles (404 for US) — re-pointed to the same-title US handles (LT/Remote/Access/FreeLite/DragonFly/Front Range); Tindheim 2/3 are EU-market-only → linked to the working `/en-eu/` URLs.
+- ARCHIVED 2 duplicate stove listings (DragonFly -eu, "whisperlite-universal-stove" double; 0 refs) and the **discontinued NX generation trio** (Hubba Hubba NX 2, Hubba NX Solo, Mutha Hubba NX 3 — pages 404, 0 refs, superseded by LT/HD lines in catalog).
+- BACKFILLED ~25 published minimum weights from US PDPs (Hubba Hubba LT/HD/Bikepack, Remote 2/3, Elixir 2/4, Advance Pro 2, Front Range, stoves/pots incl. DragonFly 401 g, WhisperLite Int'l 318 g…) + FreeLite 1/2/3 minimums 740/910/1070 g (REI/Switchback corroborated; brand page lists packaged) + Tindheim 2/3 2480/2910 g (brand-stated via UK retailers).
+- FLAGGED: Snowshoe Carry Pack (no published weight).
