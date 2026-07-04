@@ -27,3 +27,30 @@ Source: nemoequipment.com Shopify feed (95 products) + PDP spec JSON.
 - ACCEPTED (brand limitation, one photo per family, verified per-color-only variant images in feed): Dragonfly OSMO tents 1P/2P/3P + footprints, Dragonfly Bikepack tents, Tracker/Hornet/Kunai footprints share img0.
 - NOTE: Nemo names contain U+202F (narrow no-break space) after ™ — match by _id/regex, not exact string.
 - New reusable script: `qa-feed-variant-images.js` (--brand --feed; matches item primary spec → feed variant featured image; excludes other variants' photos).
+
+## Big Agnes — 118 → 116 active. CLEAN
+Source: bigagnes.com Shopify feed (286 products) + retailer cross-check (Campman/REI).
+- FIXED **Torchlight EXP 0° / Regular** (§7 corrupt 748 g): set 1644 g — verified 3 lb 10 oz on Campman (Small 3lb5oz / Long 4lb corroborate DB 1501/1810). Base weight synced (default=Regular).
+- BLANKED **Sidewinder 20° / Long** (§7: 1678 g copied from Sidewinder 0° Long in BA's own feed) — no published source found (the "Sidewinder SL 20" specs online are a different, older model). **FLAGGED for user.**
+- FOUND+FIXED third feed corruption: **Greystone 20°** had Long=Regular=1089 g and no size axis; added Size[Regular,Long], Regular=1089 (fits 30°→816 / 0°→1497 progression), Long left unweighted. **FLAGGED for user.**
+- ARCHIVED superseded old-gen "**Copper Spur HV UL - 2p/3p**" (BA dropped "HV" — current line is "Copper Spur UL2/UL3" per feed titles); re-pointed 1 GlobalItem ref + the 2 dangling Copper Spur refs → new UL2/UL3 items. 0 dangling refs remain.
+- ACCEPTED shared images (verified BRAND LIMITATION — BA's own feed reuses identical files across siblings: Torchlight EXP 0/20/30, Sidewinder 0/20, Greystone 0/20/30, W's Anthracite/Greystone pairs, mtnGLO UL2/UL3, XL/Bikepack/Platinum/Sarvis/String Ridge footprint pairs).
+- NOTE: "Pitchpine VST 1.5 Footprint" handle is `footprint-pitchpine-vst-3` — BA's own stale slug; title+page correct.
+
+## Exped — 224 active. CLEAN (4 verified brand-reuse image groups remain)
+Source: exped.com product pages (JS-rendered; gallery = rokka.io fe_nuxt_crop_product URLs, rewritten to the catalog's w-933 style).
+- RENAMED 4 mats where the DB name was the lossy slug-decode and the ATTRIBUTE was right (verified via live page <title>): "Flex 1R"→**Flex 1.5R**, "Dura 6R"→**Dura 6.5R**, "Ultra 1.5R Mummy"→**Ultra 1R Mummy**, "Versa 1.5R"→**Versa 1R**.
+- FIXED own-page galleries for 9 mat-family splits: LuxeMat Duo/Auto, MegaMat Ultra/Duo/Max/Auto/Max Duo, DeepSleep Duo/Auto (each had the base model's photo).
+- Reordered MegaMat LuxeWool Cover Auto gallery (its page leads with the LuxeMat Auto photo; own packed-shot now first).
+- ACCEPTED brand reuse (each item's OWN page leads with the same file): Cassira 2/3, Vega 2/3, Orion/Venus/Ceres/Polaris/Vela footprints (one generic 4S_Footprint photo), Bike+Hike Poncho pair.
+- "Ultra -20°" is Exped's °C naming (attr -4°F correct); qa-audit now converts °C names (SIMOND "0°c" too) instead of flagging.
+- New script: `qa-exped-images.js`.
+
+## Sea to Summit — 209 → 202 active. CLEAN
+Source: seatosummit.com Shopify feed (624 products) + seatosummit.com/.eu spec pages.
+- FIXED per-temp images on **24 bag/quilt splits** (Spark ×4, Spark Pro, Spark W ×3, Trek ×3, Trek W, Ascent ×2, Ascent W ×2, Ember ×2, Basecamp, Traveller, Tanami…) via feed variant images; plus 3 more (Hamelin/Boab/Hamelin W 15°F) by temp-coded image filenames (feed had no variant links).
+- ARCHIVED **7 superseded legacy twins** (no offer, no itemGroupId) after re-pointing 16 GlobalItem + 11 GearItem refs to the feed-sourced items with correct variantKeys: 5× per-volume "Lightweight Dry Bag" (→ consolidated item, vk 3L/5L/8L/13L/20L), Silk Blend Liner, 23 g "Ultra-Fine" head net (weight matched no real S2S product).
+- FIXED **Lightweight Dry Bag variant weights** to brand-published specs (34/45/50/67/81/91/115 g for 1.5–35L) — feed grams were shipping weights (61–166 g).
+- FIXED **Aeros Premium Pillow — Deluxe** weight 77 g (copied from Regular) → **175 g** (S2S EU spec).
+- LEFT AS-IS (logged): Aeros Premium pillows + Pocket Towel sizes are separate items with per-size Amazon ASINs — consolidation blocked on variantKey-aware offers (same project as Osprey per-volume ASINs, revisit ~2026-07-07).
+- "- Long/Short Handle" spork names are real products, not colorways.

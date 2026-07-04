@@ -9,6 +9,10 @@
  *
  *   node src/scripts/qa-feed-variant-images.js --brand nemo --feed <cached-feed.json> [--commit]
  *
+ * --by-handle mode: when each split sibling has its OWN product page (Big Agnes
+ * bags/footprints), skip variant matching and simply sync imageUrls from the item's
+ * own feed product (only when img0 differs from the feed's first image).
+ *
  * Feed file = JSON array of Shopify products (products.json pages merged).
  * Items are matched to products by the offer deepLink handle. Items without a
  * primary spec in the name, or whose product has no per-variant images, are
@@ -64,6 +68,18 @@ const stripQ = (u) => String(u).split("?")[0];
     const handle = (link.match(/\/products\/([a-z0-9-]+)/) || [])[1];
     const prod = handle && byHandle[handle];
     if (!prod) { skipped.push(`${it.name} — no feed product (handle ${handle || "?"})`); continue; }
+
+    if (process.argv.includes("--by-handle")) {
+      const urls = (prod.images || []).map((im) => im.src).slice(0, 8);
+      if (!urls.length) { skipped.push(`${it.name} — feed product has no images`); continue; }
+      const cur0 = stripQ((it.imageUrls || [])[0] || "");
+      if (cur0 === stripQ(urls[0])) continue;
+      console.log(`${COMMIT ? "[COMMIT]" : "[dry]"} ${it.name} img0 ${cur0.split("/").pop()} -> ${stripQ(urls[0]).split("/").pop()} (${urls.length} imgs) [${handle}]`);
+      fixed++;
+      if (COMMIT) await CatalogItem.collection.updateOne({ _id: it._id }, { $set: { imageUrls: urls } });
+      continue;
+    }
+
     const spec = primarySpec(it.name);
     if (!spec) { skipped.push(`${it.name} — no primary spec in name`); continue; }
 
