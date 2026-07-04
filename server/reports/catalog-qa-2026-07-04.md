@@ -88,3 +88,48 @@ Same Cascade store; US PDPs carry "Minimum Weight: x lb (y kg)" (new script `qa-
 - ARCHIVED 2 duplicate stove listings (DragonFly -eu, "whisperlite-universal-stove" double; 0 refs) and the **discontinued NX generation trio** (Hubba Hubba NX 2, Hubba NX Solo, Mutha Hubba NX 3 — pages 404, 0 refs, superseded by LT/HD lines in catalog).
 - BACKFILLED ~25 published minimum weights from US PDPs (Hubba Hubba LT/HD/Bikepack, Remote 2/3, Elixir 2/4, Advance Pro 2, Front Range, stoves/pots incl. DragonFly 401 g, WhisperLite Int'l 318 g…) + FreeLite 1/2/3 minimums 740/910/1070 g (REI/Switchback corroborated; brand page lists packaged) + Tindheim 2/3 2480/2910 g (brand-stated via UK retailers).
 - FLAGGED: Snowshoe Carry Pack (no published weight).
+
+## Small re-split brands
+- **CNOC (15) — CLEAN.** Per-volume variant images fixed on Vecto 1L/3L + VectoX 3L (feed) and Hydriam/HydriamX flasks 350/500/750ml (per-size featured images from cnocoutdoors.com feed; offers stay on minimalgear).
+- **Katabatic (21) — CLEAN.** Same bug class as Zpacks Arc Haul: all 5 Flex quilts deep-linked to the 15°F page. Re-pointed each to its own page (flex-5-f-quilt/-15/-22/-30/-40), adopted each page's gallery, renamed to brand form "Flex 15°F Quilt". FLAGGED: Flex 40°F variant weights identical to 30°F in Katabatic's own feed (848/826 g etc.) — brand data suspicious, left as-is.
+- **Enlightened Equipment (7) — verified.** Items link per-temp Farlite pages and already carry each Farlite product's own images; Farlite reuses one photo per model line (Rev APEX trio, Enigma pair) = reseller limitation.
+- **Nashville (7)** — Cutaway 20/30/40 share the brand's single photo (verified: one featured image for all volume variants) = brand limitation.
+- **Dandee (10)** — Standard 20/27/35: brand sells ONE custom-build page (variants = "Customization Charge"); no per-volume weights or photos published. Weights stay blank + FLAGGED (§7 confirmed).
+- **Atelier (7)** — Daybride 15 got its own EN-product gallery (was sharing the Hybride photo); Sakasek + Sakabouf weights set to 40 g (store-published 0.04 kg).
+- **Cumulus (16), Atom Packs (15)** — already clean (Atom UL35 single custom-page image = known acceptable).
+
+## Non-split brands & cross-brand sweeps
+- **M/W same-name pairs renamed** with gender prefix (+gender attr where missing): Hoka Speedgoat 6/6 GTX/7, La Sportiva Wildcat/2.0 GTX, Salomon Speedcross 6 + GORE-TEX (one was mis-gendered: 524 g "Mens" = women's pair weight → Women's), Smartwool Merino 120/150/250 tops + 250 bottoms, Darn Tough Micro Crew ×2, Injinji Trail Mini-Crew (Darn Tough/Injinji genders verified via Amazon listing titles).
+- **Hoka Women's Speedgoat 6 GTX had the non-GTX ASIN + image** → fixed to B0DKNVW7JK with own gallery. AirPods 4 ANC got its own gallery (shared the base model's).
+- **Outdoor Research (451)**: 8 pairs were per-COLOR double-imports (both product IDs live in OR's feed — OR lists per color). Archived 8 color twins (0 refs), keeping the plausible-weight one (Snowcrew 635 g, Gradient Beanie 51 g).
+- **Decathlon family (SIMOND/QUECHUA/FORCLAZ/Kiprun)**: stripped trailing colorway suffixes on **54 names** ("… - Black"); 1 collision archived (Groundsheet MT900 1P "Undyed" twin); archived 2 SIMOND colorway dups (Merino LS tee, W trousers) + 1 case-only dup tarp. Makalu I (M) 1070 g + Makalu II (L) 1410 g set from Decathlon specs.
+- **Gossamer**: archived legacy Polycryo Footprint twin (feed item kept).
+- **S2S/TaR/MSR merchant + Cascade dup work** — see brand sections.
+- **Merchant naming normalized**: 1,158 direct offers re-keyed from legacy slugs (hyperlitemountaingear, zpacks, gossamergear, durstongear, outdoorresearch, sambob, hyberg, direct-farpointe) to the canonical `direct-<brand>` ids; 2 duplicate offers dropped. Remaining "variance" = genuinely multi-merchant brands (Tarptent direct+GGG, Cumulus GGG+Farlite, CNOC minimalgear+direct, currency items).
+
+## Final catalog-wide sweep (§5) — all clean or explained
+| Check | Result |
+|---|---|
+| Active items | **2,403** (from 2,428: +6 revived, −31 archived dups/twins/discontinued) |
+| Standard violations (primary-spec variant axes) | **0** |
+| Zero-offer / dup-offer / orphan-offer items | **0 / 0 / 0** |
+| Dangling GlobalItem/GearItem refs | **0** (21/12 refs to archived items = designed archive-and-readd behavior) |
+| validateAttributes failures | **0** |
+| Shared imageUrls[0] groups | 52 — every one verified as the brand publishing a single photo for siblings (BA 12, Zenbivy 12, Nemo 6, Zpacks 5, Hyberg 5, Exped 4, EE 2, SIMOND 2 per-size, HMG/Nashville/Dandee/OR-gaiter/AirPods-family 1 each) |
+| Name↔attr mismatches | 11 — all parser false-positives on "50+10L" dual-volume names (attrs correct) |
+| Missing weights (weight-bearing types) | 33 — 22 Zenbivy configurable bundles (policy-OK) + 11 flagged below |
+| Exact-name dups | 1 — flagged SIMOND pair below |
+| Colorway-suffix names | 24 remaining are NOT colors ("- Long Handle", "- Full Zip", "- Wide", "- Past Season"…) |
+
+## FLAGGED FOR USER (needs judgment)
+1. **Big Agnes Sidewinder 20° / Long** — corrupt in BA's own feed (copied 0° value); blanked; no published source found.
+2. **Big Agnes Greystone 20° / Long** — same class (Long=Regular in feed); size axis added, Long unweighted.
+3. **Zenbivy "Overland ZipBed" AND "ZipBed Overland"** — two live distinct products in Zenbivy's feed (two generations?). Both kept; consider archiving one.
+4. **Katabatic Flex 40°F** — variant weights identical to 30°F in the brand's own feed.
+5. **Therm-a-Rest Ohm 20F / Long** — Regular set to 635 g (corroborated); Long unpublished.
+6. **SIMOND "10°c … MT900" ×2** — same name, 700 g vs 630 g, two Awin products (likely Decathlon size listings M/L); left both.
+7. **No published weight (left blank)**: Dandee Standard 20/27/35, SIMOND Makalu III (L) + MT500 Twinnable 10°/15°, MSR Snowshoe Carry Pack, TaR Synergy Luxe Sheets + Trekker Pillow Case, Gossamer SitLight, Vargo ExoTi Bags, Hyberg AER PACK (known), Durston X-Dome Pro 1+ (specs not yet published by Durston).
+8. **Aeros pillows / Pocket Towel sizes as separate Amazon-ASIN items** — consolidation blocked on variantKey-aware offers (same bucket as Osprey per-volume ASIN routing, revisit ~2026-07-07).
+
+## New reusable scripts (server/src/scripts/)
+`qa-audit.js` (read-only §5 sweeps, --brand/--check), `qa-feed-variant-images.js` (--by-handle, --trailing-num-as-volume, token-rank fill disambiguation), `qa-osprey-fix.js`, `qa-osprey-images.js`, `qa-exped-images.js`, `qa-tar-weights.js`, `qa-msr-fix.js`, `qa-strip-color-suffix.js`.
