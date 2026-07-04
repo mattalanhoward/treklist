@@ -541,6 +541,12 @@ const SCHEMAS = {
         label: "Water Resistance",
         options: ["None", "DWR Coated", "Water Resistant", "Waterproof"],
       },
+      mainFabric: {
+        type: "string",
+        required: false,
+        label: "Main Fabric",
+        // e.g., "DCF", "X-Pac VX21", "Robic Nylon", "Dyneema"
+      },
       laptopSleeveSize: {
         type: "number",
         required: false,
