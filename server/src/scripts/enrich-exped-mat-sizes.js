@@ -24,20 +24,32 @@ async function fetchHtml(url) {
 
 // sensible display order; default = M (standard) when present, else the first.
 const SIZE_RANK = { XS: 0, S: 1, UNO: 1, M: 2, MW: 3, "DUO M": 3, L: 4, LW: 5, "DUO LW": 5, LXW: 6, XLW: 6, DUO: 7, "DUO QUEEN": 8, TRIO: 9 };
-const sizeRank = (s) => (s in SIZE_RANK ? SIZE_RANK[s] : 10);
+const sizeRank = (s) => {
+  const lit = String(s).match(/^([\d.]+)L$/); // drybag liter sizes sort numerically
+  if (lit) return 10 + parseFloat(lit[1]);
+  return s in SIZE_RANK ? SIZE_RANK[s] : 10;
+};
 
 // parse "<h4>Weight</h4><div>M: 440 g<br>MW: 545 g<br>LW: 590 g</div>" → [{size,weight}]
+// drybags label sizes in liters: "1 l: 20 g<br>3 l: 32 g" → size "1L", "3L" (skip "Set")
 function parseSizeWeights(html) {
   const m = html.match(/>Weight<\/h4>\s*<div>([\s\S]*?)<\/div>/i);
   if (!m) return [];
-  return [...m[1].matchAll(/([A-Za-z][\w ]*?):\s*([\d.]+)\s*g/g)]
-    .map((x) => ({ size: x[1].trim(), weight: Math.round(parseFloat(x[2])) }));
+  return [...m[1].matchAll(/([A-Za-z0-9][\w .]*?):\s*([\d.]+)\s*g/g)]
+    .map((x) => {
+      let size = x[1].trim();
+      const lit = size.match(/^([\d.]+)\s*l$/i);
+      if (lit) size = `${lit[1]}L`;
+      return { size, weight: Math.round(parseFloat(x[2])) };
+    })
+    .filter((s) => !/^set$/i.test(s.size));
 }
 // parse variation buttons → { size: sku }
 function parseSkus(html, baseUrl) {
   const out = {};
   for (const x of html.matchAll(/sku=(\d+)"[^>]*title="([^"]+)"/g)) {
-    const size = x[2].trim().split(/\s+/).pop(); // "Ultra 6.5R MW" → "MW"
+    let size = x[2].trim().split(/\s+/).pop(); // "Ultra 6.5R MW" → "MW"
+    if (/^[\d.]+$/.test(size)) size = `${size}L`; // "Drybag Versa 1" → "1L"
     if (!out[size]) out[size] = `${baseUrl}?sku=${x[1]}`;
   }
   return out;
@@ -51,7 +63,9 @@ function parseSkus(html, baseUrl) {
     ? ["Sleeping Bag", "Quilt"]
     : process.argv.includes("--packs")
       ? ["Backpack", "Daypack", "Pillow"]
-      : ["Inflatable Sleeping Pad", "Foam Sleeping Pad"];
+      : process.argv.includes("--drybags")
+        ? ["Dry Bag / Stuff Sack", "Pack Liner"]
+        : ["Inflatable Sleeping Pad", "Foam Sleeping Pad"];
   const mats = await C.find({ brandLC: "exped", isActive: { $ne: false }, itemType: { $in: TYPES } });
   console.log(`Exped ${process.argv.includes("--bags") ? "bags" : "mats"}: ${mats.length}\n`);
 

@@ -158,18 +158,73 @@ router.get("/items", auth, async (req, res) => {
           // Each token must match at least one field (handles "Osprey Exos" → brand + name)
           query.$and = tokens.map((token) => ({ $or: fields(tokenRegex(token)) }));
         }
+        query._searchTokens = tokens; // consumed below, not a Mongo field
       }
     }
 
-    const items = await CatalogItem.find(query)
-      .collation({ locale: "en", strength: 2 })
-      .sort({ brand: 1, name: 1 })
-      .lean()
-      .skip(Number(skip))
-      .limit(Math.min(Number(limit), 200))
-      .select(
-        "name brand category subcategory itemType description weightGrams imageUrls tags updatedAt",
-      );
+    const PROJECTION =
+      "name brand category subcategory itemType description weightGrams imageUrls tags updatedAt";
+
+    let items;
+    const searchTokens = query._searchTokens;
+    delete query._searchTokens;
+    if (searchTokens) {
+      // Rank by WHERE the tokens matched: name > brand > subcategory > tags, so a
+      // name hit ("…Pillow") always outranks a tag/cross-sell hit. Ties stay A→Z.
+      const tokenScore = (token) => {
+        const rx = tokenRegex(token);
+        const match = (input) => ({
+          $cond: [{ $regexMatch: { input: { $ifNull: [input, ""] }, regex: rx } }, 1, 0],
+        });
+        const tagsMatch = {
+          $cond: [
+            {
+              $gt: [
+                {
+                  $size: {
+                    $filter: {
+                      input: { $ifNull: ["$tags", []] },
+                      cond: { $regexMatch: { input: "$$this", regex: rx } },
+                    },
+                  },
+                },
+                0,
+              ],
+            },
+            1,
+            0,
+          ],
+        };
+        return {
+          $add: [
+            { $multiply: [match("$name"), 8] },
+            { $multiply: [match("$brand"), 4] },
+            { $multiply: [match("$subcategory"), 2] },
+            tagsMatch,
+          ],
+        };
+      };
+      items = await CatalogItem.aggregate([
+        { $match: query },
+        { $addFields: { _score: { $add: searchTokens.map(tokenScore) } } },
+        { $sort: { _score: -1, brand: 1, name: 1 } },
+        { $skip: Number(skip) },
+        { $limit: Math.min(Number(limit), 200) },
+        {
+          $project: Object.fromEntries(
+            PROJECTION.split(" ").map((f) => [f, 1]),
+          ),
+        },
+      ]).collation({ locale: "en", strength: 2 });
+    } else {
+      items = await CatalogItem.find(query)
+        .collation({ locale: "en", strength: 2 })
+        .sort({ brand: 1, name: 1 })
+        .lean()
+        .skip(Number(skip))
+        .limit(Math.min(Number(limit), 200))
+        .select(PROJECTION);
+    }
 
     const offers = await MerchantOffer.find({
       productId: { $in: items.map((i) => i._id) },

@@ -151,3 +151,22 @@ Same Cascade store; US PDPs carry "Minimum Weight: x lb (y kg)" (new script `qa-
 - **Deuter daypacks have no variants** — manual entries; revisit when importing deuter.com (added to brand backlog).
 - **Cumulus + Enlightened Equipment sleeping bags need size/temp variants** — not obtainable from current 3rd-party sources (GGG/Farlite); needs direct-source work later.
 - **Brand backlog additions**: Kiwi Ultralight (kiwiultralight.co.nz), Marmot (marmot.eu), GramXpert (gramxpert.eu), Deuter (deuter.com/nl-nl).
+
+---
+# Follow-up session 2026-07-05 (2) — search ranking + dry-bag pass
+
+## Search endpoint (code, `routes/catalog.js`)
+- `/items?q=` now ranks by WHERE tokens matched — name (8) > brand (4) > subcategory (2) > tags (1) via scored aggregation; ties stay alphabetical. Non-search browsing unchanged.
+- Purged feed junk tags (`related-*`, `recommended-*`, `AltText.ai`) from 122 items — these cross-sell tags were why "pillow" returned Big Agnes sleeping bags. Verified: "pillow" now returns only pillows, name-matches first.
+
+## Dry-bag standard pass (decision: consolidate to ONE item per product line + Size axis)
+Rationale: this was already the pattern for ~90% of the catalog (all S2S, Zpacks, Zenbivy, Hyberg, SealLine, Gossamer, HMG's own Drawstring Stuff Sacks); every brand sells these as one page with a size dropdown; stuff-sack volume is a size pick, not product identity. The REI "product per capacity" rule stays for capacity-defining gear (packs, bottles, canisters).
+- **HMG**: consolidated Roll-Top Stuff Sacks 3/5/10/15/25/43 → one item (Size 3–43L, per-size weights) and Roll-Top Food Bag 10/15 → one item; parents carry the feed product gallery; 6 per-volume items archived (0 refs).
+- **SIMOND**: consolidated Ultra-light 7/13/22 Litre Waterproof Bags → "Ultra-Light Waterproof Bag" (Size 7/13/22L, per-size weights + per-size Awin deepLinks); 2 archived.
+- **Exped**: archived 3 color-edition dups (Drybag Versa black/olive/Bright, 0 refs — user: color noise); added **liter-labeled Size variants with per-size weights + per-size ?sku links to 17 storage items** (Drybag Versa/Ultra/Dura/Clear/Crush/Compression/Telecompression/First Aid, Stuffbag Ultra/Versa/Mesh, Organizer lines, Case Padded) via the extended enrich script (`--drybags`) — volumes now visible as variant labels.
+- **Zpacks**: archived stale "Dry Bags" item (handle no longer in Zpacks' feed; duplicate of the consolidated 7-size "Dry Bag").
+- Left as-is (correct): S2S/Zenbivy/Hyberg/SealLine/Gossamer consolidated families; named one-off sacks (Dandee Ditty, Zpacks named food bags/pillow dry bags, MSR/Zpacks stove sacks).
+
+## Other
+- Archived the 2 HMG-reseller "Vargo Titanium Ti-Lite 750/900ml Mug" items (0 refs; Vargo-brand originals with vargooutdoors links remain).
+- Brand backlog additions (need heavy filtering): Nitecore, Flextail, Katadyn; **Snow Peak + TOAKS marked REPLACE-ALL** (current entries are manual Amazon imports; brand stores have full data).
