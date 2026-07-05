@@ -49,7 +49,9 @@ function parseSkus(html, baseUrl) {
   const O = require("../models/merchantOffer");
   const TYPES = process.argv.includes("--bags")
     ? ["Sleeping Bag", "Quilt"]
-    : ["Inflatable Sleeping Pad", "Foam Sleeping Pad"];
+    : process.argv.includes("--packs")
+      ? ["Backpack", "Daypack", "Pillow"]
+      : ["Inflatable Sleeping Pad", "Foam Sleeping Pad"];
   const mats = await C.find({ brandLC: "exped", isActive: { $ne: false }, itemType: { $in: TYPES } });
   console.log(`Exped ${process.argv.includes("--bags") ? "bags" : "mats"}: ${mats.length}\n`);
 

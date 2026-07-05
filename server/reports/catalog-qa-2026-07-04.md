@@ -133,3 +133,21 @@ Same Cascade store; US PDPs carry "Minimum Weight: x lb (y kg)" (new script `qa-
 
 ## New reusable scripts (server/src/scripts/)
 `qa-audit.js` (read-only §5 sweeps, --brand/--check), `qa-feed-variant-images.js` (--by-handle, --trailing-num-as-volume, token-rank fill disambiguation), `qa-osprey-fix.js`, `qa-osprey-images.js`, `qa-exped-images.js`, `qa-tar-weights.js`, `qa-msr-fix.js`, `qa-strip-color-suffix.js`.
+
+---
+# Follow-up session 2026-07-05 (user-supplied specs + notes)
+
+## Fixed
+- **Big Agnes Sidewinder 20° / Long → 1230 g** and **Greystone 20° / Long → 1100 g** (user-supplied brand spec screenshots; both former FLAGGED items now resolved — Sidewinder 998/1134/1230, Greystone 1089/1100).
+- **Archived the 3 Amazon "Aeros Premium Inflatable Travel Pillow — Deluxe/Large/Regular"** items (0 refs) — superseded by the S2S-page "Aeros Premium Pillow" (Regular/Large/XL variants).
+- **Removed the synthetic Fabric axis (Ultra 100X / UltraEPX) from Arc Haul Ultra 60 + Women's 60** — verified against Zpacks' own page options (Color|Torso / Shoulder Straps / Belt Length only; UltraEPX is a separate component product). Bases kept at 642 g / 597 g.
+- **Shortened verbose Zpacks pack sizing** on 5 packs (Super Nero Ultra 50L, Arc Haul Scout 50L, Arc Blast 55L, Arc Zip 57L, Arc Air DCF 50L): "Short (17-20 inches) / Small (26-32 inches)" → "S / S" style; axis values, keys, defaults and GlobalItem.variantKey refs all updated.
+- **Big Agnes Sweetwater UL 28/43/60 got Torso Size variants** from the BA feed (28: S/M+M/L; 43/60: S/M/L; BA publishes one weight per pack so all sizes carry it). Causeway 28L is color-only (correct as is).
+- **Exped pillows got Size variants with per-size weights + per-size ?sku links** (REM 125/185, Down 140/175, DeepSleep 180/230, Ultra 50/60) — this was the "pillow variants not displayed" issue. **Exped backpacks checked: genuinely one-size on Exped's own spec pages** (adjustable torso, single published weight, no size SKUs) — nothing to add.
+
+## Noted for later (user)
+- **SIMOND / QUECHUA / FORCLAZ / Decathlon**: separate REI-rule pass planned (many items).
+- **Search relevance**: typing "pillow" surfaces Big Agnes liners/bags — likely description-text matching (BA bags mention pillow pockets); fix belongs in the search endpoint scoring (name > description), not catalog data.
+- **Deuter daypacks have no variants** — manual entries; revisit when importing deuter.com (added to brand backlog).
+- **Cumulus + Enlightened Equipment sleeping bags need size/temp variants** — not obtainable from current 3rd-party sources (GGG/Farlite); needs direct-source work later.
+- **Brand backlog additions**: Kiwi Ultralight (kiwiultralight.co.nz), Marmot (marmot.eu), GramXpert (gramxpert.eu), Deuter (deuter.com/nl-nl).
