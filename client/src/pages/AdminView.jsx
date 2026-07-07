@@ -10,6 +10,7 @@ import { toast } from "react-hot-toast";
 import { FiEdit2, FiX, FiChevronUp, FiChevronDown, FiUsers, FiUser, FiCopy, FiExternalLink, FiCheck, FiSlash } from "react-icons/fi";
 
 function ImageStatusCell({ imageUrls }) {
+  // Health probe: must check the original stored URL, never a resized variant.
   const firstUrl = Array.isArray(imageUrls) && imageUrls[0] ? imageUrls[0] : null;
   const [status, setStatus] = useState(firstUrl ? "loading" : "none");
 
@@ -34,6 +35,7 @@ import AttributeFields, {
   getSchemaForItemType,
 } from "../components/AttributeFields";
 import VariantEditor from "../components/VariantEditor";
+import { resizedImageUrl } from "../utils/imageCdn";
 
 const TABS = [
   { id: "gearCatalog", label: "Gear catalog" },
@@ -265,7 +267,7 @@ function DecathlonImportPanel({ onImported, onEditItem }) {
                 <div key={product.externalProductId} className="border border-base-200 rounded-lg overflow-hidden flex flex-col">
                   {product.imageUrl && (
                     <img
-                      src={product.imageUrl}
+                      src={resizedImageUrl(product.imageUrl, 400)}
                       alt={product.name}
                       className="w-full h-36 object-contain bg-base-100 p-2"
                     />
@@ -2197,7 +2199,7 @@ function ViewCatalogItemModal({ item, onClose }) {
           {imageUrl && (
             <div className="flex justify-center">
               <img
-                src={imageUrl}
+                src={resizedImageUrl(imageUrl, 400)}
                 alt={item.name}
                 className="max-h-48 max-w-full object-contain rounded"
               />

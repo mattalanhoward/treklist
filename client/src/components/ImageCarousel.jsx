@@ -2,6 +2,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { FiChevronLeft, FiChevronRight, FiX, FiMaximize2 } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
+import { resizedImageUrl } from "../utils/imageCdn";
+
+const CAROUSEL_WIDTH = 800;
+const LIGHTBOX_WIDTH = 1600;
 
 function Lightbox({ images, startIndex, onClose }) {
   const { t } = useTranslation("common");
@@ -45,7 +49,7 @@ function Lightbox({ images, startIndex, onClose }) {
 
       {/* Image */}
       <img
-        src={images[index]}
+        src={resizedImageUrl(images[index], LIGHTBOX_WIDTH)}
         alt=""
         onClick={(e) => e.stopPropagation()}
         className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg select-none"
@@ -104,6 +108,13 @@ export default function ImageCarousel({
     return (Array.isArray(images) ? images : []).filter(Boolean);
   }, [images]);
 
+  // Downscaled versions for inline display (and preloading); the lightbox
+  // resizes from the originals separately so zoom stays sharp.
+  const displayImages = useMemo(
+    () => safeImages.map((u) => resizedImageUrl(u, CAROUSEL_WIDTH)),
+    [safeImages],
+  );
+
   const [index, setIndex] = useState(0);
   const [loadedSet, setLoadedSet] = useState(() => new Set());
   const [lightboxIndex, setLightboxIndex] = useState(null);
@@ -115,10 +126,10 @@ export default function ImageCarousel({
   }, [safeImages.join("|")]);
 
   useEffect(() => {
-    if (safeImages.length === 0) return;
+    if (displayImages.length === 0) return;
     let cancelled = false;
     const nextLoaded = new Set();
-    const imgs = safeImages.map((src) => {
+    const imgs = displayImages.map((src) => {
       const im = new Image();
       im.onload = () => {
         if (cancelled) return;
@@ -130,7 +141,7 @@ export default function ImageCarousel({
     });
     return () => { cancelled = true; void imgs; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [safeImages.join("|")]);
+  }, [displayImages.join("|")]);
 
   if (loading) {
     return <div className={`w-full ${heightClass} rounded-xl bg-base-200 animate-pulse ${className}`} />;
@@ -141,7 +152,7 @@ export default function ImageCarousel({
   }
 
   const clampedIndex = Math.min(index, safeImages.length - 1);
-  const current = safeImages[clampedIndex];
+  const current = displayImages[clampedIndex];
   const isCurrentLoaded = loadedSet.has(current);
   const showNav = safeImages.length > 1;
 

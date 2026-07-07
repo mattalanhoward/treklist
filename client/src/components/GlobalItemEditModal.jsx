@@ -20,6 +20,7 @@ import {
   invalidateGlobalItemCache,
 } from "../services/globalItemCache";
 import { formatAttributesForDisplay } from "../utils/attributeLabels";
+import { resizedImageUrl } from "../utils/imageCdn";
 
 export default function GlobalItemEditModal({
   item,
@@ -304,7 +305,10 @@ export default function GlobalItemEditModal({
       }
     };
 
-    img.src = safeCatalogImages[0];
+    // Preload the same downscaled URL the carousel will display, so this
+    // both gates the image block and warms the cache without pulling the
+    // full-size original.
+    img.src = resizedImageUrl(safeCatalogImages[0], 800);
 
     return () => {
       cancelled = true;

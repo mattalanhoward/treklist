@@ -2,6 +2,7 @@
 import { FiTrash2, FiExternalLink, FiCheckSquare, FiSquare, FiStar } from "react-icons/fi";
 import { FaStar } from "react-icons/fa";
 import { tItemType } from "../config/catalogTaxonomy";
+import { resizedImageUrl } from "../utils/imageCdn";
 
 function pickFirstImageUrl(item) {
   if (!item) return null;
@@ -115,7 +116,7 @@ export default function MyGearTileCard({
       >
         {imageUrl ? (
           <img
-            src={imageUrl}
+            src={resizedImageUrl(imageUrl, 400)}
             alt={item.name || "Gear item"}
             className="w-full h-full object-cover sm:object-contain sm:p-3 sm:max-h-full sm:max-w-full"
             loading="lazy"
