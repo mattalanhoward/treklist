@@ -48,7 +48,7 @@ function normalize(str = "") {
 }
 
 // ── Item row ──────────────────────────────────────────────────────────────────
-function ItemRow({ item, selected, onToggle, onViewDetails, multiSelect, disabled, badge, subLabel, priceLabel }) {
+function ItemRow({ item, selected, onToggle, onViewDetails, multiSelect, disabled, badge, subLabel, variantLabel, priceLabel }) {
   const id = String(item._id);
   return (
     <li
@@ -79,18 +79,34 @@ function ItemRow({ item, selected, onToggle, onViewDetails, multiSelect, disable
         className={`flex-1 min-w-0 ${onViewDetails && !disabled ? "cursor-pointer" : ""}`}
         onClick={() => onViewDetails && !disabled && onViewDetails(item)}
       >
-        <div className={`text-sm font-medium text-primary truncate ${onViewDetails && !disabled ? "hover:underline" : ""}`}>
-          {item.brand && <span className="mr-1">{item.brand}</span>}
-          {item.name}
+        <div className="flex items-center gap-2">
+          <div className={`flex-1 min-w-0 text-sm font-medium text-primary truncate ${onViewDetails && !disabled ? "hover:underline" : ""}`}>
+            {item.brand && <span className="mr-1">{item.brand}</span>}
+            {item.name}
+          </div>
+          {priceLabel && (
+            <span className="text-xs text-secondary flex-shrink-0 font-medium">{priceLabel}</span>
+          )}
+          {badge && (
+            <span className="text-xs text-primary/40 flex-shrink-0">{badge}</span>
+          )}
         </div>
-        {subLabel && <div className="text-xs text-primary/50">{subLabel}</div>}
+        {(subLabel || variantLabel) && (
+          <div className="flex items-center gap-2 text-xs text-primary/50">
+            {subLabel && <span className="flex-shrink-0">{subLabel}</span>}
+            {variantLabel && (
+              <div className="flex-1 min-w-0 flex justify-end">
+                <span
+                  className="max-w-full truncate rounded-full bg-secondary/10 text-secondary px-2 py-0.5 text-[11px] font-medium"
+                  title={variantLabel}
+                >
+                  {variantLabel}
+                </span>
+              </div>
+            )}
+          </div>
+        )}
       </div>
-      {priceLabel && (
-        <span className="text-xs text-secondary ml-2 flex-shrink-0 font-medium">{priceLabel}</span>
-      )}
-      {badge && (
-        <span className="text-xs text-primary/40 ml-2 flex-shrink-0">{badge}</span>
-      )}
     </li>
   );
 }
@@ -149,6 +165,7 @@ function ResultSection({ title, items, type, myGearSelected, catalogSelected, on
                 disabled={disabled}
                 badge={disabled ? t("smartItemSearch.added", "Added") : null}
                 subLabel={item.itemType || null}
+                variantLabel={item.variantKey || null}
               />
             );
           } else {
