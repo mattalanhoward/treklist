@@ -252,7 +252,7 @@ export default function SortableItem({
         } gap-y-1 text-sm`}
       >
         {isListMode ? (
-          /* LIST MOBILE — Row 1: type + name (inline) · variant + actions */
+          /* LIST MOBILE — Row 1: type + name (inline) · actions */
           <div className="flex items-center justify-between gap-2 min-w-0">
             <button
               type="button"
@@ -329,7 +329,7 @@ export default function SortableItem({
               )}
             </div>
 
-            {/* COLUMN MOBILE — Row 2: brand · name (variant is on the weight row below) */}
+            {/* COLUMN MOBILE — Row 2: brand · name */}
             <button
               type="button"
               onClick={() => setDetailsOpen(true)}
@@ -344,15 +344,10 @@ export default function SortableItem({
           </>
         )}
 
-        {/* Row (shared): weight · variant · consumable · worn · qty · cart · wishlist */}
+        {/* Row (shared): weight · consumable · worn · qty · cart · wishlist */}
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
             <span className="tabular-nums text-primary">{weightText}</span>
-            {item.variantKey && (
-              <span className="flex-shrink-0 whitespace-nowrap text-[11px] leading-none px-1.5 py-0.5 rounded-full bg-primary/5 text-primary/70 font-medium">
-                {item.variantKey}
-              </span>
-            )}
           </div>
 
           {/* Right group (mobile): 🍴 | 👕 | qty | 🛒 | ⭐ */}
@@ -400,11 +395,11 @@ export default function SortableItem({
         </div>
       </div>
       {/* ========== DESKTOP LIST MODE (single row) ========== */}
-      {/* cols: drag | type | name | weight | knife | shirt | qty | cart | star | swap | trash */}
+      {/* cols: drag | type | brand | name | weight | knife | shirt | qty | cart | star | swap | trash */}
       {isListMode && (
         <div
           className="hidden xl:grid items-center text-sm
-          grid-cols-[20px,168px,120px,minmax(140px,1fr),auto,96px,24px,24px,48px,24px,24px,24px,24px] gap-x-3"
+          grid-cols-[20px,minmax(130px,1fr),minmax(130px,1fr),minmax(130px,1fr),96px,24px,24px,48px,24px,24px,24px,24px] gap-x-3"
         >
           {/* 1) Drag */}
           <div
@@ -443,16 +438,7 @@ export default function SortableItem({
             {item.name}
           </button>
 
-          {/* 5) Variant (sits to the right, next to the weight) */}
-          <div className="justify-self-end">
-            {item.variantKey && (
-              <span className="whitespace-nowrap text-[11px] leading-none px-1.5 py-0.5 rounded-full bg-primary/5 text-primary/70 font-medium">
-                {item.variantKey}
-              </span>
-            )}
-          </div>
-
-          {/* 6) Weight */}
+          {/* 5) Weight */}
           <div className="justify-self-end tabular-nums text-primary w-[96px] text-right">
             {weightText}
           </div>
@@ -615,7 +601,7 @@ export default function SortableItem({
             </button>
           )}
 
-          {/* R2 C1-6: Brand / Name (variant now lives on row 3, next to weight) */}
+          {/* R2 C1-6: Brand / Name */}
           <button
             type="button"
             onClick={() => setDetailsOpen(true)}
@@ -628,14 +614,9 @@ export default function SortableItem({
             {item.name}
           </button>
 
-          {/* R3 C1-2: Weight + variant (fills the space between weight and the icons) */}
+          {/* R3 C1-2: Weight */}
           <div className="row-start-3 col-start-1 col-span-2 flex items-center gap-2 min-w-0">
             <span className="text-sm text-primary tabular-nums">{weightText}</span>
-            {item.variantKey && (
-              <span className="flex-shrink-0 whitespace-nowrap text-[11px] leading-none px-1.5 py-0.5 rounded-full bg-primary/5 text-primary/70 font-medium">
-                {item.variantKey}
-              </span>
-            )}
           </div>
 
           {/* R3 C3: Knife (consumable) */}
