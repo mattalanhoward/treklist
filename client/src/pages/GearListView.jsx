@@ -1097,7 +1097,7 @@ export default function GearListView({
 
   const headerPadding =
     viewMode === "list"
-      ? "pl-6 sm:w-4/5 sm:mx-auto"
+      ? "pl-6 sm:w-full sm:max-w-[1600px] sm:mx-auto"
       : collapsed
         ? "pl-0 sm:pl-15"
         : "pl-0 sm:pl-6";
@@ -1444,7 +1444,7 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
         }
       >
         {viewMode === "list" ? (
-          <div ref={listContainerRef} className="flex-1 overflow-y-auto px-2 py-2 sm:w-4/5 sm:mx-auto">
+          <div ref={listContainerRef} className="flex-1 overflow-y-auto px-2 py-2 sm:px-14 sm:w-full sm:max-w-[1600px] sm:mx-auto">
             {categories.map((cat) => (
               <SortableSection
                 key={cat._id}
