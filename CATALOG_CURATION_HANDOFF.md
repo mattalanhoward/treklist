@@ -1,6 +1,53 @@
 # Catalog Curation Handoff
 
-_Last updated: 2026-07-02. Working DB: `treklist_local` (Mongo via `server/.env` `MONGO_URI`). All work is LOCAL data + code committed/pushed on `dev`._
+_Last updated: 2026-07-07. Working DB: `treklist_local` (Mongo via `server/.env` `MONGO_URI` — ⚠ the URI's default path db is PROD `treklist`; the app overrides via mongoose `dbName`, but raw scripts/mongodump must explicitly `.useDb("treklist_local")` / swap the URI path). All work is LOCAL data. Code is committed on branch **`feature/catalog-curation`** (not `dev` — that branch no longer exists; `main` is the only long-lived branch, see [[barcode-and-ai-rework]])._
+
+## ▶▶ START HERE (2026-07-07) — resume brand-by-brand additions
+
+**Catalog state:** De-consolidation onto the locked variant standard is COMPLETE (0 violations catalog-wide) and a full accuracy QA pass is COMPLETE. **2,403 active items** as of the 2026-07-04 QA run (count has crept slightly since via small fixes). Everything below "▶▶ OSPREY" in this file is the historical per-brand log — read it when you need detail on how a specific brand was done, but it's not where to start.
+
+**The standing rule for every new brand (LOCKED 2026-07-03, do not relitigate):** the spec that defines what the item *is* (volume/temperature/R-value/occupancy) → its own product name/CatalogItem. The spec that defines how it *fits* (torso/length/fabric) → a variant axis. Color is never a variant; Men's/Women's are always separate products. Full rule + edge cases in the "REI model" section search below, or ask for `feedback-catalog-variant-standard` from memory.
+
+**Buy-link pattern per brand (LOCKED 2026-07-03):** check whether picking a size/variant on the brand's own site changes the URL. If yes → set a `deepLink` per variant. If the brand uses one page with an on-page selector (most Shopify stores, e.g. HMG/Zpacks/Sea to Summit) → one item-level MerchantOffer, no per-variant links.
+
+**Standard pipeline for a new Shopify/Woo brand:**
+1. Probe the feed: `curl <domain>/products.json` (Shopify) or `<domain>/wp-json/wc/store/v1/products` (Woo). If Cloudflare-blocked and not Shopify/Woo, it needs an affiliate network (AvantLink/Impact — none currently available) or manual copy-paste (see the Osprey pattern below for that flow), or a per-page scrape (see Exped/FarPointe patterns below).
+2. Import: `ingest-shopify-catalog.js --domain <domain> --brand "<Brand>" --merchant-name "<Brand>" --commit` (direct/unmonetized offers). ⚠ Cloudflare sometimes TRIMS the top-level `/products.json` list — verify count via a per-collection/vendor curl with a UA header if the top-level count looks low (bit us on GGG).
+3. Type: `ai-type-untyped.js --brand <Brand> --commit`.
+4. Curate with a one-off `curate-<brand>.js`: archive noise (parts, gift cards, resold 3rd-party care products, MTO/blem/custom, car-camping), dedupe repeat listings, fix AI mistypes, backfill categories, consolidate variants per the standard above.
+5. Verify: active count, 0 items without an offer, spot-check a few typings.
+6. Log what you did in this file's brand-pipeline section below (new entry, same format as existing ones) — this file is the durable record.
+
+**Default decisions to apply WITHOUT asking** (user delegated this 2026-07-01, [[feedback-autonomous-brand-curation]] in memory has full detail): archive parts/O-rings/gift-cards/service-products/resold-care-products/custom-MTO/car-camping noise; archive peripheral apparel on hardware brands but keep core technical apparel; trust per-variant weights that genuinely vary, null obvious placeholder weights (flag a TODO instead of fabricating); brand-direct unmonetized offers when no affiliate access. **Only pause to ask on genuinely high-impact ambiguity**, or anything that would overwrite/replace already-curated brand data (existing curated items always take precedence — never re-import over a hand-curated brand).
+
+**⚠️ Critical gotcha:** never call `.save()` on a `CatalogItem` doc loaded with `.select()` — the pre-save hook re-normalizes every field from `this.*` and silently blanks anything not selected (caused a real data-loss incident 2026-06-29). Use `CatalogItem.collection.updateOne({ _id }, { $set: {...} })` for field patches instead.
+
+**Next brands to pick up (from the backlog — none of these are started yet):**
+| Brand | Notes |
+|---|---|
+| Smartwool | merino base layers/socks; apparel-heavy |
+| Icebreaker | merino apparel |
+| Gregory | backpacks |
+| Mountain Hardwear | Demandware/SFCC + Cloudflare — likely no open feed (same blocker as Osprey), needs affiliate or manual |
+| Neve Gear | AU multi-brand retailer, unconfirmed platform |
+| Feathered Friends | down bags + jackets |
+| Kiwi Ultralight | NZ cottage |
+| Marmot | check platform |
+| GramXpert | EU cottage |
+| Deuter | enterprise nginx, likely no open feed; existing catalog Deuter daypacks are manual entries w/ no variants — revisit those too |
+| Nitecore | headlamps/power — site is mostly unrelated flashlight/vape gear, heavy filtering needed |
+| Flextail | pumps, small line |
+| Katadyn | filters — group site also has Optimus/Trek'n Eat, needs filtering |
+| Snow Peak | current catalog items are ALL manual Amazon entries → REPLACE entirely from snowpeak.com once a feed is confirmed |
+| TOAKS | current catalog items are ALL manual Amazon entries → REPLACE entirely from toaksoutdoor.com once a feed is confirmed |
+| Big Agnes | researched 2026-07-03, Shopify feed confirmed (286 products, tent-heavy) — see its existing entry further down for scope notes; not started |
+| Black Diamond | researched 2026-07-02, Shopify but high-junk (climbing/ski) — keep-list already scoped further down; not started |
+| LiteAF | researched 2026-07-02, WooCommerce Store API confirmed working — scope notes further down; not started |
+| Altra | researched 2026-07-02, Shopify feed confirmed — scope notes further down; not started |
+
+No-feed brands that need affiliate access or a scrape decision the user hasn't greenlit yet (don't start without checking in): Hoka, Kahtoola, Granite Gear, Petzl (partially covered by Black Diamond headlamps). Osprey has 4 remaining models blocked on the user pasting specs (Kyte LT, Sportlite 25L, Hikelite LT 30, Kestrel 38L) — see the "▶▶ OSPREY" section immediately below for the exact resume point.
+
+**Open QA flags (not blockers, just not yet resolved — full list in `server/reports/catalog-qa-2026-07-04.md`):** Zenbivy has both "Overland ZipBed" and "ZipBed Overland" live (likely a dup, consider archiving one); Katabatic Flex 40°F variant weight matches the brand's own 30°F row (their feed's error, not ours); SIMOND "10°c MT900" listed twice at 700g/630g (likely a Decathlon size mismatch); ~10 items have genuinely unpublished weights (Dandee ×3, Makalu III, MT500 Twinnable ×2, X-Dome Pro 1+, MSR Snowshoe Carry Pack, TaR Synergy/Trekker, Gossamer SitLight, Vargo ExoTi). SIMOND/QUECHUA/FORCLAZ/Decathlon haven't had a dedicated REI-rule variant pass yet (large item count). Cumulus/EE bags need variants not obtainable from the GGG/Farlite back-doors (would need direct-source work).
 
 > 🔧 **Admin editor redesign brief:** `ADMIN_CATALOG_REDESIGN_HANDOFF.md` (repo root) — tabbed catalog editor + a **Variants tab** (no way to edit per-variant weights today; blocks e.g. Nemo weight entry). Feed it to a planning model, then build.
 
