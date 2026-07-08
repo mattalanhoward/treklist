@@ -355,7 +355,13 @@
       "viewAsChecklist": "Checkliste",
       "copyList": "Liste kopieren",
       "shareList": "Liste teilen",
-      "deleteList": "Liste löschen"
+      "deleteList": "Liste löschen",
+      "lockList": "Liste sperren",
+      "unlockList": "Liste entsperren",
+      "lockListA11y": "Liste sperren, um Bearbeitung zu verhindern",
+      "unlockListA11y": "Liste entsperren, um Bearbeitung zu erlauben",
+      "reorderA11y": "Elemente neu anordnen",
+      "exitReorderA11y": "Neuanordnungsmodus verlassen"
     },
     "confirm": {
       "removeItemTitle": "Dieses Element entfernen?",
@@ -391,7 +397,10 @@
       "listDeleted": "Liste gelöscht",
       "listDeleteFailed": "Liste konnte nicht gelöscht werden.",
       "toggleWornFailed": "Getragen-Status konnte nicht aktualisiert werden.",
-      "toggleConsumableFailed": "Verbrauchs-Status konnte nicht aktualisiert werden."
+      "toggleConsumableFailed": "Verbrauchs-Status konnte nicht aktualisiert werden.",
+      "listLocked": "Liste gesperrt",
+      "listUnlocked": "Liste entsperrt",
+      "lockToggleFailed": "Sperre konnte nicht umgeschaltet werden."
     },
     "addCategory": {
       "button": "Kategorie hinzufügen",
@@ -1165,14 +1174,19 @@
       "quantity": "Menge",
       "viewProduct": "Produkt ansehen",
       "viewProductPaid": "Produkt ansehen (bezahlter Link)"
-    }
+    },
+    "link": "Link",
+    "notesHeader": "Reisenotizen",
+    "route": "Route"
   },
   "affiliateDisclosure": {
     "public": {
-      "body": "Diese Seite kann Affiliate-Links enthalten. Bei Käufen über diese Links kann eine Provision verdient werden, ohne zusätzliche Kosten für dich."
+      "body": "Diese Seite kann Affiliate-Links enthalten. Bei Käufen über diese Links kann eine Provision verdient werden, ohne zusätzliche Kosten für dich.",
+      "bodyShort": "Diese Seite kann Affiliate-Links enthalten."
     },
     "private": {
-      "body": "Diese Seite kann Affiliate-Links enthalten. Bei Käufen über diese Links kann eine Provision verdient werden, ohne zusätzliche Kosten für dich."
+      "body": "Diese Seite kann Affiliate-Links enthalten. Bei Käufen über diese Links kann eine Provision verdient werden, ohne zusätzliche Kosten für dich.",
+      "bodyShort": "Diese Seite kann Affiliate-Links enthalten."
     }
   },
   "safetyDisclaimer": {
@@ -1240,13 +1254,13 @@
             "title": "Intelligente Gewichtssummen",
             "text": "Basis, getragen, Verbrauch in Echtzeit."
           },
-          "quickAdd": {
-            "title": "Schnell hinzufügen und suchen",
-            "text": "Finde Ausrüstung schnell und bearbeite von überall."
-          },
           "checklist": {
             "title": "Pack-Checkliste",
             "text": "Mit einem Tip abhaken und sauber als PDF exportieren."
+          },
+          "community": {
+            "title": "Deine Trail-Community, direkt eingebaut",
+            "text": "Frag nach Ausrüstung, Packlisten oder deiner Route. Antworten von Gleichgesinnten, die die Strecke schon gegangen sind oder die Ausrüstung genutzt haben."
           }
         }
       },
@@ -1254,10 +1268,6 @@
         "title": "Für die Planung gemacht",
         "subtitle": "Spalten- oder Listenansicht – was besser zu deiner Planung passt.",
         "bullets": {
-          "drag": {
-            "title": "Zwischen Kategorien ziehen",
-            "text": "Verschiebe Items in deinem Setup, wenn sich dein Plan verändert."
-          },
           "gearLibrary": {
             "title": "Deine Ausrüstungsbibliothek, für jede Tour wiederverwendet",
             "text": "Füge etwas einmal hinzu und es bleibt in deiner persönlichen Bibliothek. Füge es in jede zukünftige Liste ein, ohne es erneut eingeben zu müssen."

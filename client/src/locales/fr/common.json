@@ -362,7 +362,13 @@
       "viewAsChecklist": "Checklist",
       "copyList": "Copier la liste",
       "shareList": "Partager la liste",
-      "deleteList": "Supprimer la liste"
+      "deleteList": "Supprimer la liste",
+      "lockList": "Verrouiller la liste",
+      "unlockList": "Déverrouiller la liste",
+      "lockListA11y": "Verrouiller la liste pour empêcher les modifications",
+      "unlockListA11y": "Déverrouiller la liste pour autoriser les modifications",
+      "reorderA11y": "Réorganiser les articles",
+      "exitReorderA11y": "Quitter le mode réorganisation"
     },
     "confirm": {
       "removeItemTitle": "Supprimer cet article ?",
@@ -398,7 +404,10 @@
       "listDeleted": "Liste supprimée",
       "listDeleteFailed": "Impossible de supprimer la liste.",
       "toggleWornFailed": "Impossible de mettre à jour le statut « porté ».",
-      "toggleConsumableFailed": "Impossible de mettre à jour le statut « consommable »."
+      "toggleConsumableFailed": "Impossible de mettre à jour le statut « consommable ».",
+      "listLocked": "Liste verrouillée",
+      "listUnlocked": "Liste déverrouillée",
+      "lockToggleFailed": "Impossible de modifier le verrouillage."
     },
     "addCategory": {
       "button": "Ajouter une catégorie",
@@ -1172,14 +1181,19 @@
       "quantity": "Quantité",
       "viewProduct": "Voir le produit",
       "viewProductPaid": "Voir le produit (lien rémunéré)"
-    }
+    },
+    "link": "Lien",
+    "notesHeader": "Notes de voyage",
+    "route": "Itinéraire"
   },
   "affiliateDisclosure": {
     "public": {
-      "body": "Cette page peut contenir des liens d'affiliation. Les achats effectués via ces liens peuvent générer une commission sans frais supplémentaires pour vous."
+      "body": "Cette page peut contenir des liens d'affiliation. Les achats effectués via ces liens peuvent générer une commission sans frais supplémentaires pour vous.",
+      "bodyShort": "Cette page peut contenir des liens d'affiliation."
     },
     "private": {
-      "body": "Cette page peut contenir des liens d'affiliation. Les achats effectués via ces liens peuvent générer une commission sans frais supplémentaires pour vous."
+      "body": "Cette page peut contenir des liens d'affiliation. Les achats effectués via ces liens peuvent générer une commission sans frais supplémentaires pour vous.",
+      "bodyShort": "Cette page peut contenir des liens d'affiliation."
     }
   },
   "safetyDisclaimer": {
@@ -1247,13 +1261,13 @@
             "title": "Totaux de poids intelligents",
             "text": "Poids de base, porté et consommables en temps réel."
           },
-          "quickAdd": {
-            "title": "Ajout rapide et recherche",
-            "text": "Trouvez votre équipement rapidement et modifiez depuis n’importe où."
-          },
           "checklist": {
             "title": "Checklist de préparation",
             "text": "Un tap pour cocher, export PDF propre."
+          },
+          "community": {
+            "title": "Votre communauté de randonneurs, intégrée",
+            "text": "Posez des questions sur l'équipement, les listes ou votre itinéraire. Obtenez des réponses de randonneurs qui ont déjà fait la route ou utilisé le matériel."
           }
         }
       },
@@ -1261,10 +1275,6 @@
         "title": "Conçu pour planifier",
         "subtitle": "Vue colonnes ou vue liste, selon votre façon de planifier.",
         "bullets": {
-          "drag": {
-            "title": "Glisser entre catégories",
-            "text": "Déplacez des articles dans votre kit au fil de l’évolution de votre plan."
-          },
           "gearLibrary": {
             "title": "Votre bibliothèque d'équipement, réutilisée à chaque voyage",
             "text": "Ajoutez un article une fois et il reste dans votre bibliothèque personnelle. Ajoutez-le à n'importe quelle liste future sans rien ressaisir."
