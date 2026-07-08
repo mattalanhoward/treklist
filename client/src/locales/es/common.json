@@ -631,6 +631,8 @@
     "allBrands": "Todas las marcas",
     "myGear": "Mi equipo",
     "fromCatalog": "Del catálogo",
+    "catalogResultCount_one": "{{count}} artículo en el catálogo",
+    "catalogResultCount_other": "{{count}} artículos en el catálogo",
     "added": "Añadido",
     "noGearYet": "Sin equipo aún. Busca en el catálogo o describe un artículo arriba.",
     "browseHint": "Busca en el catálogo o toca una categoría para explorar.",

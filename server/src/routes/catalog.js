@@ -141,7 +141,7 @@ router.get("/items", auth, async (req, res) => {
           .lean();
         const skus = affiliates.map((p) => p.externalProductId);
         if (skus.length === 0) {
-          return res.json([]);
+          return res.json({ items: [], total: 0 });
         }
         query["externalIds.sku"] = { $in: skus };
       } else {
@@ -163,11 +163,14 @@ router.get("/items", auth, async (req, res) => {
     }
 
     const PROJECTION =
-      "name brand category subcategory itemType description weightGrams imageUrls tags updatedAt";
+      "name brand category subcategory itemType description weightGrams imageUrls tags updatedAt variantAxes defaultVariantKey";
 
     let items;
     const searchTokens = query._searchTokens;
     delete query._searchTokens;
+
+    const total = await CatalogItem.countDocuments(query).collation({ locale: "en", strength: 2 });
+
     if (searchTokens) {
       // Rank by WHERE the tokens matched: name > brand > subcategory > tags, so a
       // name hit ("…Pillow") always outranks a tag/cross-sell hit. Ties stay A→Z.
@@ -262,7 +265,7 @@ router.get("/items", auth, async (req, res) => {
         }),
     }));
 
-    res.json(safeItems);
+    res.json({ items: safeItems, total });
   } catch (err) {
     console.error("GET /api/catalog/items error", err);
     res.status(500).json({ message: "Failed to load catalog items." });

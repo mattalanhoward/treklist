@@ -631,6 +631,8 @@
     "allBrands": "Tutti i marchi",
     "myGear": "Il mio equipaggiamento",
     "fromCatalog": "Dal catalogo",
+    "catalogResultCount_one": "{{count}} articolo nel catalogo",
+    "catalogResultCount_other": "{{count}} articoli nel catalogo",
     "added": "Aggiunto",
     "noGearYet": "Nessun equipaggiamento. Cerca nel catalogo o descrivi un articolo sopra.",
     "browseHint": "Cerca nel catalogo o tocca una categoria per sfogliare.",

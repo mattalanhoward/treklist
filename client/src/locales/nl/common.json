@@ -631,6 +631,8 @@
     "allBrands": "Alle merken",
     "myGear": "Mijn uitrusting",
     "fromCatalog": "Uit de catalogus",
+    "catalogResultCount_one": "{{count}} artikel in de catalogus",
+    "catalogResultCount_other": "{{count}} artikelen in de catalogus",
     "added": "Toegevoegd",
     "noGearYet": "Nog geen uitrusting. Zoek in de catalogus of beschrijf een artikel hierboven.",
     "browseHint": "Zoek in de catalogus of tik op een categorie om te bladeren.",

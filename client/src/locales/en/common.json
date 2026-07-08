@@ -647,6 +647,8 @@
     "allBrands": "All Brands",
     "myGear": "My Gear",
     "fromCatalog": "From Catalog",
+    "catalogResultCount_one": "{{count}} item in catalog",
+    "catalogResultCount_other": "{{count}} items in catalog",
     "added": "Added",
     "noGearYet": "No gear yet. Search the catalog or describe an item above.",
     "browseHint": "Search the catalog above, or tap a category to browse.",
