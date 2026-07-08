@@ -90,55 +90,58 @@ export default function NotificationBell() {
         )}
       </button>
 
-      {open && (
-        <div className="absolute right-0 top-full mt-2 w-80 bg-base-100 border border-base-200 rounded-xl shadow-xl z-50 overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-base-200">
-            <span className="font-semibold text-sm">Notifications</span>
-            {unreadCount > 0 && (
-              <button
-                onClick={handleMarkAllRead}
-                className="text-xs text-primary hover:underline"
-              >
-                Mark all read
-              </button>
-            )}
-          </div>
-
-          <div className="max-h-96 overflow-y-auto">
-            {notifications.length === 0 ? (
-              <p className="text-sm opacity-50 text-center py-8">No notifications yet</p>
-            ) : (
-              notifications.map((n) => (
-                <button
-                  key={n._id}
-                  onClick={() => handleNotificationClick(n)}
-                  className={`w-full text-left px-4 py-3 hover:bg-base-200 transition-colors border-b border-base-200 last:border-0 ${
-                    !n.isRead ? "bg-primary/5" : ""
-                  }`}
-                >
-                  <div className="flex items-start gap-2">
-                    {!n.isRead && (
-                      <span className="mt-1.5 w-2 h-2 rounded-full bg-primary shrink-0" />
-                    )}
-                    <div className={!n.isRead ? "" : "ml-4"}>
-                      <p className="text-xs leading-snug">
-                        <span className="font-semibold">{n.fromUserId?.trailname || "Someone"}</span>{" "}
-                        {TYPE_LABELS[n.type] || "interacted with your content"}
-                        {n.postId?.title && (
-                          <span className="opacity-60"> — {n.postId.title}</span>
-                        )}
-                      </p>
-                      <p className="text-xs opacity-40 mt-0.5">
-                        {formatDistanceToNow(new Date(n.createdAt), { addSuffix: true })}
-                      </p>
-                    </div>
-                  </div>
-                </button>
-              ))
-            )}
-          </div>
+      <div
+        aria-hidden={!open}
+        className={`absolute right-0 top-full mt-2 w-80 bg-base-100 border border-base-200 rounded-xl shadow-xl z-50 overflow-hidden origin-top-right transition-all duration-150 ease-out ${
+          open ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
+        }`}
+      >
+        <div className="flex items-center justify-between px-4 py-3 border-b border-base-200">
+          <span className="font-semibold text-sm">Notifications</span>
+          {unreadCount > 0 && (
+            <button
+              onClick={handleMarkAllRead}
+              className="text-xs text-primary hover:underline"
+            >
+              Mark all read
+            </button>
+          )}
         </div>
-      )}
+
+        <div className="max-h-96 overflow-y-auto">
+          {notifications.length === 0 ? (
+            <p className="text-sm opacity-50 text-center py-8">No notifications yet</p>
+          ) : (
+            notifications.map((n) => (
+              <button
+                key={n._id}
+                onClick={() => handleNotificationClick(n)}
+                className={`w-full text-left px-4 py-3 hover:bg-base-200 transition-colors border-b border-base-200 last:border-0 ${
+                  !n.isRead ? "bg-primary/5" : ""
+                }`}
+              >
+                <div className="flex items-start gap-2">
+                  {!n.isRead && (
+                    <span className="mt-1.5 w-2 h-2 rounded-full bg-primary shrink-0" />
+                  )}
+                  <div className={!n.isRead ? "" : "ml-4"}>
+                    <p className="text-xs leading-snug">
+                      <span className="font-semibold">{n.fromUserId?.trailname || "Someone"}</span>{" "}
+                      {TYPE_LABELS[n.type] || "interacted with your content"}
+                      {n.postId?.title && (
+                        <span className="opacity-60"> — {n.postId.title}</span>
+                      )}
+                    </p>
+                    <p className="text-xs opacity-40 mt-0.5">
+                      {formatDistanceToNow(new Date(n.createdAt), { addSuffix: true })}
+                    </p>
+                  </div>
+                </div>
+              </button>
+            ))
+          )}
+        </div>
+      </div>
     </div>
   );
 }

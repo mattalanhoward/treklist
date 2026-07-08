@@ -14,9 +14,22 @@ function mergeRefs(refA, refB) {
 
 export default function DropdownMenu({ trigger, items, menuWidth = "w-44" }) {
   const [open, setOpen] = useState(false);
+  // Stays true through the close transition so the portal isn't yanked out
+  // mid-fade; unmounts ~150ms after `open` goes false (matches duration-150).
+  const [rendered, setRendered] = useState(false);
   const [position, setPosition] = useState(null);
   const triggerRef = useRef(null);
   const menuRef = useRef(null);
+
+  useEffect(() => {
+    if (open) {
+      setRendered(true);
+      return;
+    }
+    if (!rendered) return;
+    const timer = setTimeout(() => setRendered(false), 150);
+    return () => clearTimeout(timer);
+  }, [open, rendered]);
 
   const toggleOpen = (event) => {
     event?.stopPropagation?.();
@@ -80,17 +93,20 @@ export default function DropdownMenu({ trigger, items, menuWidth = "w-44" }) {
   });
 
   const menu =
-    open && position && typeof document !== "undefined"
+    rendered && position && typeof document !== "undefined"
       ? createPortal(
           <div
             ref={menuRef}
+            aria-hidden={!open}
             style={{
               position: "absolute",
               top: position.top,
               right: position.right,
               zIndex: 50,
             }}
-            className={`mt-1 rounded shadow-lg border border-base-300 bg-base-100 ${menuWidth}`}
+            className={`mt-1 rounded shadow-lg border border-base-300 bg-base-100 origin-top-right transition-all duration-150 ease-out ${menuWidth} ${
+              open ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
+            }`}
           >
             <ul className="py-1 text-sm text-primary">
               {items.map((item) =>

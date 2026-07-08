@@ -1184,42 +1184,58 @@ export default function SmartItemSearch({
           )}
 
           {/* Category / Subcategory / Brand dropdowns — collapsed until Browse (or an active filter) */}
-          {tabLayout && (showFilters || categoryFilter || subcategoryFilter || brandFilter) && (
-            <div className="mt-2 flex gap-1.5">
-              <select
-                value={categoryFilter || ""}
-                onChange={(e) => setCategoryFilter(e.target.value || null)}
-                className="flex-1 min-w-0 border border-primary/20 rounded-lg px-2 py-1.5 text-xs text-primary bg-base-100 cursor-pointer"
+          {tabLayout && (
+            <div
+              className={`grid transition-[grid-template-rows] duration-200 ease-in-out ${
+                showFilters || categoryFilter || subcategoryFilter || brandFilter
+                  ? "grid-rows-[1fr]"
+                  : "grid-rows-[0fr]"
+              }`}
+            >
+              <div
+                className={`overflow-hidden transition-opacity duration-150 ease-in-out ${
+                  showFilters || categoryFilter || subcategoryFilter || brandFilter
+                    ? "opacity-100"
+                    : "opacity-0"
+                }`}
               >
-                <option value="">{t("smartItemSearch.allCategories", "All Categories")}</option>
-                {CATALOG_CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {tCategory(t, cat)}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={subcategoryFilter || ""}
-                onChange={(e) => setSubcategoryFilter(e.target.value || null)}
-                disabled={!categoryFilter || !(CATALOG_SUBCATEGORIES[categoryFilter]?.length)}
-                className="flex-1 min-w-0 border border-primary/20 rounded-lg px-2 py-1.5 text-xs text-primary bg-base-100 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                <option value="">{t("smartItemSearch.allTypes", "All Types")}</option>
-                {(CATALOG_SUBCATEGORIES[categoryFilter] || []).map((sub) => (
-                  <option key={sub} value={sub}>{sub}</option>
-                ))}
-              </select>
-              <select
-                value={brandFilter || ""}
-                onChange={(e) => setBrandFilter(e.target.value || null)}
-                disabled={brandOptions.length === 0}
-                className="flex-1 min-w-0 border border-primary/20 rounded-lg px-2 py-1.5 text-xs text-primary bg-base-100 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                <option value="">{t("smartItemSearch.allBrands", "All Brands")}</option>
-                {brandOptions.map((b) => (
-                  <option key={b} value={b}>{b}</option>
-                ))}
-              </select>
+                <div className="mt-2 flex gap-1.5">
+                  <select
+                    value={categoryFilter || ""}
+                    onChange={(e) => setCategoryFilter(e.target.value || null)}
+                    className="flex-1 min-w-0 border border-primary/20 rounded-lg px-2 py-1.5 text-xs text-primary bg-base-100 cursor-pointer"
+                  >
+                    <option value="">{t("smartItemSearch.allCategories", "All Categories")}</option>
+                    {CATALOG_CATEGORIES.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {tCategory(t, cat)}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    value={subcategoryFilter || ""}
+                    onChange={(e) => setSubcategoryFilter(e.target.value || null)}
+                    disabled={!categoryFilter || !(CATALOG_SUBCATEGORIES[categoryFilter]?.length)}
+                    className="flex-1 min-w-0 border border-primary/20 rounded-lg px-2 py-1.5 text-xs text-primary bg-base-100 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    <option value="">{t("smartItemSearch.allTypes", "All Types")}</option>
+                    {(CATALOG_SUBCATEGORIES[categoryFilter] || []).map((sub) => (
+                      <option key={sub} value={sub}>{sub}</option>
+                    ))}
+                  </select>
+                  <select
+                    value={brandFilter || ""}
+                    onChange={(e) => setBrandFilter(e.target.value || null)}
+                    disabled={brandOptions.length === 0}
+                    className="flex-1 min-w-0 border border-primary/20 rounded-lg px-2 py-1.5 text-xs text-primary bg-base-100 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    <option value="">{t("smartItemSearch.allBrands", "All Brands")}</option>
+                    {brandOptions.map((b) => (
+                      <option key={b} value={b}>{b}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
             </div>
           )}
         </div>

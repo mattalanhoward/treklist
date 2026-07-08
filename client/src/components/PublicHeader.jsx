@@ -128,26 +128,29 @@ export default function PublicHeader({
             </svg>
           </button>
 
-          {langOpen && (
-            <div className="absolute right-0 top-full mt-2 bg-white rounded-md shadow-lg py-1 z-50 min-w-[9rem] border border-gray-100">
-              {LANG_OPTIONS.map((opt) => (
-                <button
-                  key={opt.code}
-                  type="button"
-                  onClick={() => {
-                    setLanguage(opt.code);
-                    setLangOpen(false);
-                  }}
-                  className={`flex items-center gap-2 w-full px-3 py-2 text-sm text-left hover:bg-gray-50 transition ${
-                    language === opt.code ? "font-semibold" : ""
-                  }`}
-                >
-                  <span className="text-base">{opt.flag}</span>
-                  <span className="text-gray-700">{opt.label}</span>
-                </button>
-              ))}
-            </div>
-          )}
+          <div
+            aria-hidden={!langOpen}
+            className={`absolute right-0 top-full mt-2 bg-white rounded-md shadow-lg py-1 z-50 min-w-[9rem] border border-gray-100 origin-top-right transition-all duration-150 ease-out ${
+              langOpen ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
+            }`}
+          >
+            {LANG_OPTIONS.map((opt) => (
+              <button
+                key={opt.code}
+                type="button"
+                onClick={() => {
+                  setLanguage(opt.code);
+                  setLangOpen(false);
+                }}
+                className={`flex items-center gap-2 w-full px-3 py-2 text-sm text-left hover:bg-gray-50 transition ${
+                  language === opt.code ? "font-semibold" : ""
+                }`}
+              >
+                <span className="text-base">{opt.flag}</span>
+                <span className="text-gray-700">{opt.label}</span>
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Login — hidden on mobile to prevent wrapping */}

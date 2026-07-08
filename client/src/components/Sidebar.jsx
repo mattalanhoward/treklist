@@ -275,9 +275,14 @@ export default function Sidebar({
           )}
         </button>
 
-        {/* Icon rail — desktop only, shown when collapsed */}
-        {collapsed && (
-          <div className="hidden sm:flex flex-col items-center pt-3 gap-1 overflow-hidden">
+        {/* Content crossfade wrapper — clips both layers during the width transition */}
+        <div className="absolute inset-0 overflow-hidden">
+          {/* Icon rail — desktop only, fades in near the end of a collapse */}
+          <div
+            className={`hidden sm:flex flex-col items-center pt-3 gap-1 absolute inset-0 transition-opacity duration-150 ease-in-out ${
+              collapsed ? "opacity-100 delay-150" : "opacity-0 delay-0 pointer-events-none"
+            }`}
+          >
             {isAdmin && (
               <button
                 type="button"
@@ -331,10 +336,13 @@ export default function Sidebar({
               <BsBackpack4 className="w-4 h-4" />
             </button>
           </div>
-        )}
 
-        {!collapsed && (
-          <div className="h-full flex flex-col overflow-hidden">
+          {/* Labeled content — fades out immediately on collapse, fades in near the end of an expand */}
+          <div
+            className={`h-full flex flex-col absolute inset-0 transition-opacity duration-150 ease-in-out ${
+              collapsed ? "opacity-0 delay-0 pointer-events-none" : "opacity-100 delay-150"
+            }`}
+          >
             {/* Top bar — Admin link for admins only */}
             {isAdmin && (
               <section className="flex items-center px-4 border-b border-base-100 flex-shrink-0 h-10">
@@ -378,31 +386,43 @@ export default function Sidebar({
                   )}
                 </button>
               </div>
-              {!communitiesCollapsed && (() => {
-                const favorites = communities.filter((c) => c.favorited);
-                if (favorites.length === 0) {
-                  return (
-                    <p className="text-xs opacity-40 px-2 mt-2">
-                      Star a community to pin it here.
-                    </p>
-                  );
-                }
-                return (
-                  <ul className="overflow-y-auto max-h-48 space-y-1 text-secondaryAlt mt-2">
-                    {favorites.map((c) => (
-                      <li key={c._id}>
-                        <button
-                          type="button"
-                          onClick={() => { onOpenCommunity(c.slug); if (isMobile()) setCollapsed(true); }}
-                          className="w-full text-left block py-1 px-2 rounded-lg whitespace-nowrap overflow-hidden truncate text-sm hover:bg-primaryAlt hover:text-neutral"
-                        >
-                          {t(`communities.${c.slug}.name`, { defaultValue: c.name })}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                );
-              })()}
+              <div
+                className={`grid transition-[grid-template-rows] duration-200 ease-in-out ${
+                  communitiesCollapsed ? "grid-rows-[0fr]" : "grid-rows-[1fr]"
+                }`}
+              >
+                <div
+                  className={`overflow-hidden transition-opacity duration-150 ease-in-out ${
+                    communitiesCollapsed ? "opacity-0" : "opacity-100"
+                  }`}
+                >
+                  {(() => {
+                    const favorites = communities.filter((c) => c.favorited);
+                    if (favorites.length === 0) {
+                      return (
+                        <p className="text-xs opacity-40 px-2 mt-2">
+                          Star a community to pin it here.
+                        </p>
+                      );
+                    }
+                    return (
+                      <ul className="overflow-y-auto max-h-48 space-y-1 text-secondaryAlt mt-2">
+                        {favorites.map((c) => (
+                          <li key={c._id}>
+                            <button
+                              type="button"
+                              onClick={() => { onOpenCommunity(c.slug); if (isMobile()) setCollapsed(true); }}
+                              className="w-full text-left block py-1 px-2 rounded-lg whitespace-nowrap overflow-hidden truncate text-sm hover:bg-primaryAlt hover:text-neutral"
+                            >
+                              {t(`communities.${c.slug}.name`, { defaultValue: c.name })}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    );
+                  })()}
+                </div>
+              </div>
             </section>
             )}
             {/* Gear Lists section */}
@@ -447,8 +467,16 @@ export default function Sidebar({
                   <FiPlus />
                 </button>
               </div>
-              {!sidebarGearListsCollapsed && (
-                <>
+              <div
+                className={`grid transition-[grid-template-rows] duration-200 ease-in-out ${
+                  sidebarGearListsCollapsed ? "grid-rows-[0fr]" : "grid-rows-[1fr]"
+                }`}
+              >
+                <div
+                  className={`overflow-hidden transition-opacity duration-150 ease-in-out ${
+                    sidebarGearListsCollapsed ? "opacity-0" : "opacity-100"
+                  }`}
+                >
                   <ul className="overflow-y-auto max-h-48 space-y-1 text-secondaryAlt mt-2">
                     {sortedLists.map((l) => (
                       <li key={l._id} className="flex items-center">
@@ -473,8 +501,8 @@ export default function Sidebar({
                       </li>
                     ))}
                   </ul>
-                </>
-              )}
+                </div>
+              </div>
             </section>
 
             {/* Templates link */}
@@ -534,8 +562,16 @@ export default function Sidebar({
                 </button>
               </div>
 
-              {!sidebarMyGearCollapsed && (
-                <>
+              <div
+                className={`grid flex-1 min-h-0 transition-[grid-template-rows] duration-200 ease-in-out ${
+                  sidebarMyGearCollapsed ? "grid-rows-[0fr]" : "grid-rows-[1fr]"
+                }`}
+              >
+                <div
+                  className={`overflow-hidden min-h-0 flex flex-col transition-opacity duration-150 ease-in-out ${
+                    sidebarMyGearCollapsed ? "opacity-0" : "opacity-100"
+                  }`}
+                >
                   <input
                     className="w-full rounded-lg py-1 px-2 mt-2 bg-base-100 text-primary border border-primary mb-3"
                     placeholder={t("sidebar.searchGearPlaceholder")}
@@ -559,8 +595,8 @@ export default function Sidebar({
                       </li>
                     )}
                   </ul>
-                </>
-              )}
+                </div>
+              </div>
 
               {showCreateModal && (
                 <GlobalItemModal
@@ -619,7 +655,7 @@ export default function Sidebar({
               </section>
             </div> */}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
