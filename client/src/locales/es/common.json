@@ -355,7 +355,13 @@
       "viewAsChecklist": "Checklist",
       "copyList": "Copiar lista",
       "shareList": "Compartir lista",
-      "deleteList": "Eliminar lista"
+      "deleteList": "Eliminar lista",
+      "lockList": "Bloquear lista",
+      "unlockList": "Desbloquear lista",
+      "lockListA11y": "Bloquear la lista para evitar ediciones",
+      "unlockListA11y": "Desbloquear la lista para permitir ediciones",
+      "reorderA11y": "Reordenar artículos",
+      "exitReorderA11y": "Salir del modo de reordenar"
     },
     "confirm": {
       "removeItemTitle": "¿Eliminar este artículo?",
@@ -391,7 +397,10 @@
       "listDeleted": "Lista eliminada",
       "listDeleteFailed": "No se pudo eliminar la lista.",
       "toggleWornFailed": "No se pudo actualizar el estado de llevado.",
-      "toggleConsumableFailed": "No se pudo actualizar el estado de consumible."
+      "toggleConsumableFailed": "No se pudo actualizar el estado de consumible.",
+      "listLocked": "Lista bloqueada",
+      "listUnlocked": "Lista desbloqueada",
+      "lockToggleFailed": "No se pudo cambiar el bloqueo."
     },
     "addCategory": {
       "button": "Añadir categoría",
@@ -631,6 +640,8 @@
     "allBrands": "Todas las marcas",
     "myGear": "Mi equipo",
     "fromCatalog": "Del catálogo",
+    "catalogResultCount_one": "{{count}} artículo en el catálogo",
+    "catalogResultCount_other": "{{count}} artículos en el catálogo",
     "added": "Añadido",
     "noGearYet": "Sin equipo aún. Busca en el catálogo o describe un artículo arriba.",
     "browseHint": "Busca en el catálogo o toca una categoría para explorar.",
@@ -758,7 +769,7 @@
       "adding": "Añadiendo…",
       "importAndAdd_one": "Importar y añadir {{count}}",
       "importAndAdd_other": "Importar y añadir {{count}}",
-      "create": "Crear"
+      "createAndAdd": "Crear y añadir"
     },
     "catalog": {
       "searchPlaceholder": "Buscar en el catálogo…",
@@ -1163,14 +1174,19 @@
       "quantity": "Cantidad",
       "viewProduct": "Ver producto",
       "viewProductPaid": "Ver producto (enlace pagado)"
-    }
+    },
+    "link": "Enlace",
+    "notesHeader": "Notas del viaje",
+    "route": "Ruta"
   },
   "affiliateDisclosure": {
     "public": {
-      "body": "Esta página puede contener enlaces de afiliados. Las compras realizadas a través de estos enlaces pueden generar una comisión sin coste adicional para ti."
+      "body": "Esta página puede contener enlaces de afiliados. Las compras realizadas a través de estos enlaces pueden generar una comisión sin coste adicional para ti.",
+      "bodyShort": "Esta página puede contener enlaces de afiliados."
     },
     "private": {
-      "body": "Esta página puede contener enlaces de afiliados. Las compras realizadas a través de estos enlaces pueden generar una comisión sin coste adicional para ti."
+      "body": "Esta página puede contener enlaces de afiliados. Las compras realizadas a través de estos enlaces pueden generar una comisión sin coste adicional para ti.",
+      "bodyShort": "Esta página puede contener enlaces de afiliados."
     }
   },
   "safetyDisclaimer": {
@@ -1238,13 +1254,13 @@
             "title": "Totales de peso inteligentes",
             "text": "Base, llevado y consumibles en tiempo real."
           },
-          "quickAdd": {
-            "title": "Añadir y buscar rápido",
-            "text": "Encuentra equipo rápido y edita desde cualquier parte."
-          },
           "checklist": {
             "title": "Checklist de empaque",
             "text": "Empaca con un toque y exporta un PDF limpio."
+          },
+          "community": {
+            "title": "Tu comunidad de senderismo, integrada",
+            "text": "Pregunta sobre equipo, listas de equipo o tu itinerario. Recibe respuestas de excursionistas afines que ya han hecho la ruta o usado el equipo."
           }
         }
       },
@@ -1252,10 +1268,6 @@
         "title": "Hecho para planificar",
         "subtitle": "Vista por columnas o por lista, la que encaje con tu forma de planificar.",
         "bullets": {
-          "drag": {
-            "title": "Arrastra entre categorías",
-            "text": "Mueve artículos por tu kit a medida que tu plan evoluciona."
-          },
           "gearLibrary": {
             "title": "Tu biblioteca de equipo, reutilizada en cada viaje",
             "text": "Añade algo una vez y queda en tu biblioteca personal. Agrégalo a cualquier lista futura sin volver a introducir nada."

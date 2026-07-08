@@ -1,0 +1,3214 @@
+{
+  "_note": "Backup of every active catalog item's Amazon links, for replay when the schema gains variant-level offers. For multi-volume items, asinsByVolume maps each volume to its ASIN; pendingVolumes = volumes still needing an ASIN. Only the canonical ASIN is currently stored in the DB; extras live in build-asin-ledger.js EXTRA_ASINS. See project-per-variant-offer-routing + CATALOG_CURATION_HANDOFF.md.",
+  "generatedAt": "2026-07-02T10:11:36.671Z",
+  "counts": {
+    "itemsWithAsin": 194,
+    "multiVolume": 13,
+    "multiVolumeWithPendingAsins": 0
+  },
+  "pendingSummary": [],
+  "items": [
+    {
+      "name": "Lone Peak 9 - Men's",
+      "brand": "Altra",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "6989aa7eaa55c19d3bdf10ad",
+      "gender": "Mens",
+      "canonicalAsin": "B0D482FYS4",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0D482FYS4",
+          "deepLink": "https://www.amazon.com/dp/B0D482FYS4?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Lone Peak 9 - Women's",
+      "brand": "Altra",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "6989a9a8aa55c19d3bdf109d",
+      "gender": "Womens",
+      "canonicalAsin": "B0D47Z3FHX",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0D47Z3FHX",
+          "deepLink": "https://www.amazon.com/dp/B0D47Z3FHX?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Timp 6 - Men's",
+      "brand": "Altra",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "69920b63eef4327937c0688d",
+      "gender": "Mens",
+      "canonicalAsin": "B0FD2LLZ92",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0FD2LLZ92",
+          "deepLink": "https://www.amazon.com/dp/B0FD2LLZ92?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Timp 6 - Women's",
+      "brand": "Altra",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "69920beeeef4327937c068bd",
+      "gender": "Womens",
+      "canonicalAsin": "B0FD2W1YNH",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0FD2W1YNH",
+          "deepLink": "https://www.amazon.com/dp/B0FD2W1YNH?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "EU Travel Adapter (Type E/F)",
+      "brand": "Anker",
+      "itemType": "Travel Charger",
+      "catalogItemId": "6956837de9f5d8692a3e070d",
+      "gender": null,
+      "canonicalAsin": "B0CZLGPPGL",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0CZLGPPGL",
+          "deepLink": "https://www.amazon.com/dp/B0CZLGPPGL?tag=treklistapp-20",
+          "region": "us",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Nano 47W USB C Charger",
+      "brand": "Anker",
+      "itemType": "Travel Charger",
+      "catalogItemId": "69c2d7f0bb838b034d668594",
+      "gender": null,
+      "canonicalAsin": "B0BDKCBJ95",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0BDKCBJ95",
+          "deepLink": "https://www.amazon.com/dp/B0BDKCBJ95?tag=treklistapp-20",
+          "region": "us",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Nano Travel Adapter",
+      "brand": "Anker",
+      "itemType": "Travel Charger",
+      "catalogItemId": "69b983733d7dec6b9c8bce7e",
+      "gender": null,
+      "canonicalAsin": "B0DHVNW1CN",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0DHVNW1CN",
+          "deepLink": "https://www.amazon.com/dp/B0DHVNW1CN?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "PowerCore Essential 20k",
+      "brand": "Anker",
+      "itemType": "Power Bank",
+      "catalogItemId": "6956837de9f5d8692a3e06cf",
+      "gender": null,
+      "canonicalAsin": "B0D5CQ9CHQ",
+      "amazonOffers": [
+        {
+          "externalProductId": "B07SQ5MQ6K",
+          "deepLink": "https://www.amazon.com/dp/B0D5CQ9CHQ?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "PowerCore Slim 10k",
+      "brand": "Anker",
+      "itemType": "Power Bank",
+      "catalogItemId": "6969f8df4803ccebe4314b10",
+      "gender": null,
+      "canonicalAsin": "B0D5CLSMFB",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0D5CLSMFB",
+          "deepLink": "https://www.amazon.com/dp/B0D5CLSMFB?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "USB C to USB C (1FT)",
+      "brand": "Anker",
+      "itemType": "Charging Cable",
+      "catalogItemId": "6956837de9f5d8692a3e070f",
+      "gender": null,
+      "canonicalAsin": "B09H2DMR4K",
+      "amazonOffers": [
+        {
+          "externalProductId": "B09H2DMR4K",
+          "deepLink": "https://www.amazon.com/dp/B09H2DMR4K?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "AirPods 4",
+      "brand": "Apple",
+      "itemType": "Earbuds",
+      "catalogItemId": "696a44544803ccebe4314b14",
+      "gender": null,
+      "canonicalAsin": "B0DGHMNQ5Z",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0DGHMNQ5Z",
+          "deepLink": "https://www.amazon.com/dp/B0DGHMNQ5Z?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "AirPods 4 with Active Noise Cancelling",
+      "brand": "Apple",
+      "itemType": "Earbuds",
+      "catalogItemId": "696a33754803ccebe4314b13",
+      "gender": null,
+      "canonicalAsin": "B0DGJ7HYG1",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0DGJ7HYG1",
+          "deepLink": "https://www.amazon.com/dp/B0DGJ7HYG1?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Airpods Pro 3",
+      "brand": "Apple",
+      "itemType": "Earbuds",
+      "catalogItemId": "696a310e1d02c9b950130c5b",
+      "gender": null,
+      "canonicalAsin": "B0FQFB8FMG",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0FQFB8FMG",
+          "deepLink": "https://www.amazon.com/dp/B0FQFB8FMG?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "iPhone 14 Pro 256gb",
+      "brand": "Apple",
+      "itemType": "Smartphone",
+      "catalogItemId": "6956837de9f5d8692a3e070b",
+      "gender": null,
+      "canonicalAsin": "B0BN96CCM6",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0BN96CCM6",
+          "deepLink": "https://www.amazon.com/dp/B0BN96CCM6?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Wall Charger Double USB C",
+      "brand": "Apple",
+      "itemType": "Travel Charger",
+      "catalogItemId": "6956837de9f5d8692a3e06d6",
+      "gender": null,
+      "canonicalAsin": "B0D7FWNDZJ",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0D7FWNDZJ",
+          "deepLink": "https://www.amazon.com/dp/B0D7FWNDZJ?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Water Treatment Drops",
+      "brand": "Aquamira",
+      "itemType": "Water Filter",
+      "catalogItemId": "699622b500ab522adb21a3b5",
+      "gender": null,
+      "canonicalAsin": "B0078SA5SE",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0078SA5SE",
+          "deepLink": "https://www.amazon.com/dp/B0078SA5SE?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Men's SILVER 2N1 5IN SHORT",
+      "brand": "ASICS",
+      "itemType": "Hiking Shorts",
+      "catalogItemId": "696a6a774803ccebe4314b1a",
+      "gender": "Mens",
+      "canonicalAsin": "B0DS2W37XQ",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0DS2W37XQ",
+          "deepLink": "https://www.amazon.com/dp/B0DS2W37XQ?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Men's SILVER 2N1 7IN SHORT",
+      "brand": "ASICS",
+      "itemType": "Hiking Shorts",
+      "catalogItemId": "6956837de9f5d8692a3e06e7",
+      "gender": "Mens",
+      "canonicalAsin": "B0DWNMJMKR",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0DWNMJMKR",
+          "deepLink": "https://www.amazon.com/dp/B0DWNMJMKR?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Enamel Coffee Mug",
+      "brand": "ASR Outdoor",
+      "itemType": "Coffee Mug",
+      "catalogItemId": "698c50f32a7e5176d6162d41",
+      "gender": null,
+      "canonicalAsin": "B0F2CDBHGD",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0F2CDBHGD",
+          "deepLink": "https://www.amazon.com/dp/B0F2CDBHGD?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "BV425 Sprint S",
+      "brand": "BearVault",
+      "itemType": "Bear Canister",
+      "catalogItemId": "698c573671d3cc2e8efce7a3",
+      "gender": null,
+      "canonicalAsin": "B002YNEECG",
+      "amazonOffers": [
+        {
+          "externalProductId": "B002YNEECG",
+          "deepLink": "https://www.amazon.com/dp/B002YNEECG?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "BV450 Jaunt M",
+      "brand": "BearVault",
+      "itemType": "Bear Canister",
+      "catalogItemId": "698c52292a7e5176d6162d51",
+      "gender": null,
+      "canonicalAsin": "B001V9HENU",
+      "amazonOffers": [
+        {
+          "externalProductId": "B001V9HENU",
+          "deepLink": "https://www.amazon.com/dp/B001V9HENU?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "BV475 Trek L",
+      "brand": "BearVault",
+      "itemType": "Bear Canister",
+      "catalogItemId": "698c57d871d3cc2e8efce7cc",
+      "gender": null,
+      "canonicalAsin": "B0B4H1S6R2",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0B4H1S6R2",
+          "deepLink": "https://www.amazon.com/dp/B0B4H1S6R2?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "BV500 Journey XL",
+      "brand": "BearVault",
+      "itemType": "Bear Canister",
+      "catalogItemId": "698c584f71d3cc2e8efce7dc",
+      "gender": null,
+      "canonicalAsin": "B0019LSGQE",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0019LSGQE",
+          "deepLink": "https://www.amazon.com/dp/B0019LSGQE?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Copper Spur HV UL - 2p",
+      "brand": "Big Agnes",
+      "itemType": "Backpacking Tent",
+      "catalogItemId": "6996241400ab522adb21a3e3",
+      "gender": null,
+      "canonicalAsin": "B08175941C",
+      "amazonOffers": [
+        {
+          "externalProductId": "B08175941C",
+          "deepLink": "https://www.amazon.com/dp/B08175941C?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Copper Spur HV UL - 3p",
+      "brand": "Big Agnes",
+      "itemType": "Backpacking Tent",
+      "catalogItemId": "6995914a2733afbc92a585ae",
+      "gender": null,
+      "canonicalAsin": "B08175J99W",
+      "amazonOffers": [
+        {
+          "externalProductId": "B08175J99W",
+          "deepLink": "https://www.amazon.com/dp/B08175J99W?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Alpine Carbon Cork Hiking Poles",
+      "brand": "Black Diamond",
+      "itemType": "Trekking Poles",
+      "catalogItemId": "6956837de9f5d8692a3e06d0",
+      "gender": null,
+      "canonicalAsin": "B07KXZ9JGZ",
+      "amazonOffers": [
+        {
+          "externalProductId": "B07KXZ9JGZ",
+          "deepLink": "https://www.amazon.com/dp/B07KXZ9JGZ?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Distance Aluminum FLZ Poles",
+      "brand": "Black Diamond",
+      "itemType": "Trekking Poles",
+      "catalogItemId": "69848695233653e26e38820c",
+      "gender": null,
+      "canonicalAsin": "B09N7X6BND",
+      "amazonOffers": [
+        {
+          "externalProductId": "B09N7X6BND",
+          "deepLink": "https://www.amazon.com/dp/B09N7X6BND?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Distance Aluminum Z Poles",
+      "brand": "Black Diamond",
+      "itemType": "Trekking Poles",
+      "catalogItemId": "696bac594803ccebe4314b28",
+      "gender": null,
+      "canonicalAsin": "B09N7WGLJH",
+      "amazonOffers": [
+        {
+          "externalProductId": "B09N7WGLJH",
+          "deepLink": "https://www.amazon.com/dp/B09N7WGLJH?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Distance Carbon FLZ Poles",
+      "brand": "Black Diamond",
+      "itemType": "Trekking Poles",
+      "catalogItemId": "698485f0233653e26e3881fc",
+      "gender": null,
+      "canonicalAsin": "B0F74K9DP8",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0F74K9DP8",
+          "deepLink": "https://www.amazon.com/dp/B0F74K9DP8?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Distance Carbon Z Poles",
+      "brand": "Black Diamond",
+      "itemType": "Trekking Poles",
+      "catalogItemId": "696bab841d02c9b950131501",
+      "gender": null,
+      "canonicalAsin": "B0DZXHTS71",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0DZXHTS71",
+          "deepLink": "https://www.amazon.com/dp/B0DZXHTS71?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Fineline Stretch Shell",
+      "brand": "Black Diamond",
+      "itemType": "Rain Jacket",
+      "catalogItemId": "69c0fab2156238dd36532bf9",
+      "gender": "Mens",
+      "canonicalAsin": "B0DKJYNHJP",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0DKJYNHJP",
+          "deepLink": "https://www.amazon.com/dp/B0DKJYNHJP?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Men's Crag Half-Finger Gloves",
+      "brand": "Black Diamond",
+      "itemType": "Gloves (Insulated)",
+      "catalogItemId": "699dc732cefe45afeb9127e4",
+      "gender": "Mens",
+      "canonicalAsin": "B081BBD3R6",
+      "amazonOffers": [
+        {
+          "externalProductId": "B081BBD3R6",
+          "deepLink": "https://www.amazon.com/dp/B081BBD3R6?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Storm 450",
+      "brand": "Black Diamond",
+      "itemType": "Headlamp",
+      "catalogItemId": "6984e3a4233653e26e388d34",
+      "gender": null,
+      "canonicalAsin": "B09NQJQV29",
+      "amazonOffers": [
+        {
+          "externalProductId": "B09NQJQV29",
+          "deepLink": "https://www.amazon.com/dp/B09NQJQV29?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Foot Glide Anti Blister Balm",
+      "brand": "Body Glide",
+      "itemType": "Blister Prevention",
+      "catalogItemId": "6994458c71a6dac47cb88c5b",
+      "gender": null,
+      "canonicalAsin": "B00115UN9Q",
+      "amazonOffers": [
+        {
+          "externalProductId": "B00115UN9Q",
+          "deepLink": "https://www.amazon.com/dp/B00115UN9Q?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Cascadia 19 GTX Men’s",
+      "brand": "Brooks",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "69a2eb1b6989e858cb7b7698",
+      "gender": "Mens",
+      "canonicalAsin": "B0DM3K42Y5",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0DM3K42Y5",
+          "deepLink": "https://www.amazon.com/dp/B0DM3K42Y5?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Cascadia 19 Men's",
+      "brand": "Brooks",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "69a2ec7c6989e858cb7b76e8",
+      "gender": "Mens",
+      "canonicalAsin": "B0DM34FJR3",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0DM34FJR3",
+          "deepLink": "https://www.amazon.com/dp/B0DM34FJR3?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Cascadia 19 Women's",
+      "brand": "Brooks",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "69a2eb766989e858cb7b76a4",
+      "gender": "Womens",
+      "canonicalAsin": "B0DM3VWPRX",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0DM3VWPRX",
+          "deepLink": "https://www.amazon.com/dp/B0DM3VWPRX?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "BRS-3000T",
+      "brand": "BRS",
+      "itemType": "Backpacking Stove (Canister)",
+      "catalogItemId": "699762a7cefe45afeb90e913",
+      "gender": null,
+      "canonicalAsin": "B00NNMF70U",
+      "amazonOffers": [
+        {
+          "externalProductId": "B00NNMF70U",
+          "deepLink": "https://www.amazon.com/dp/B00NNMF70U?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Lightweight Merino Wool Neck Gaiter",
+      "brand": "Buff",
+      "itemType": "Hat/Headwear",
+      "catalogItemId": "6994480171a6dac47cb88c99",
+      "gender": null,
+      "canonicalAsin": "B009VU2TQI",
+      "amazonOffers": [
+        {
+          "externalProductId": "B009VU2TQI",
+          "deepLink": "https://www.amazon.com/dp/B009VU2TQI?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Beeswax Lip Balm",
+      "brand": "Burt's Bees",
+      "itemType": "Toiletry",
+      "catalogItemId": "6956837de9f5d8692a3e0705",
+      "gender": null,
+      "canonicalAsin": "B005KG7V3I",
+      "amazonOffers": [
+        {
+          "externalProductId": "B005KG7V3I",
+          "deepLink": "https://www.amazon.com/dp/B005KG7V3I?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "A Pilgrim's Guide to the Camino de Santiago",
+      "brand": "Camino Guides",
+      "itemType": "Guidebook",
+      "catalogItemId": "69728747128b3e450984f3a7",
+      "gender": null,
+      "canonicalAsin": "1912216337",
+      "amazonOffers": [
+        {
+          "externalProductId": "1912216337",
+          "deepLink": "https://www.amazon.com/dp/1912216337?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Knit Cuffed Beanie",
+      "brand": "Carhartt",
+      "itemType": "Hat/Headwear",
+      "catalogItemId": "6956837de9f5d8692a3e06c7",
+      "gender": null,
+      "canonicalAsin": "B0D32788GM",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0D32788GM",
+          "deepLink": "https://www.amazon.com/dp/B0D32788GM?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Alta Via 1 Trekking in the Dolomites",
+      "brand": "Cicerone Trekking Guides",
+      "itemType": "Guidebook",
+      "catalogItemId": "6956837de9f5d8692a3e06d5",
+      "gender": null,
+      "canonicalAsin": "1786310813",
+      "amazonOffers": [
+        {
+          "externalProductId": "1786310813",
+          "deepLink": "https://www.amazon.com/dp/1786310813?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Alta Via 2 - Trekking in the Dolomites",
+      "brand": "Cicerone Trekking Guides",
+      "itemType": "Guidebook",
+      "catalogItemId": "69728411128b3e450984f377",
+      "gender": null,
+      "canonicalAsin": "178631097X",
+      "amazonOffers": [
+        {
+          "externalProductId": "178631097X",
+          "deepLink": "https://www.amazon.com/dp/178631097X?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Trekking Chamonix to Zermatt",
+      "brand": "Cicerone Trekking Guides",
+      "itemType": "Guidebook",
+      "catalogItemId": "697285d4128b3e450984f397",
+      "gender": null,
+      "canonicalAsin": "1786311380",
+      "amazonOffers": [
+        {
+          "externalProductId": "1786311380",
+          "deepLink": "https://www.amazon.com/dp/1786311380?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Trekking the GR20 Corsica: The High Level Route",
+      "brand": "Cicerone Trekking Guides",
+      "itemType": "Guidebook",
+      "catalogItemId": "69728231e72166fc88dd3e8a",
+      "gender": null,
+      "canonicalAsin": "1786310678",
+      "amazonOffers": [
+        {
+          "externalProductId": "1786310678",
+          "deepLink": "https://www.amazon.com/dp/1786310678?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Trekking the Tour du Mont Blanc",
+      "brand": "Cicerone Trekking Guides",
+      "itemType": "Guidebook",
+      "catalogItemId": "69728513128b3e450984f387",
+      "gender": null,
+      "canonicalAsin": "178631228X",
+      "amazonOffers": [
+        {
+          "externalProductId": "178631228X",
+          "deepLink": "https://www.amazon.com/dp/178631228X?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Walking The Skye Trail",
+      "brand": "Cicerone Trekking Guides",
+      "itemType": "Guidebook",
+      "catalogItemId": "69b963a23d7dec6b9c8bc9d3",
+      "gender": null,
+      "canonicalAsin": "1786311860",
+      "amazonOffers": [
+        {
+          "externalProductId": "1786311860",
+          "deepLink": "https://www.amazon.com/dp/1786311860?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Walking The West Highland Way",
+      "brand": "Cicerone Trekking Guides",
+      "itemType": "Guidebook",
+      "catalogItemId": "69b962ff3d7dec6b9c8bc9b8",
+      "gender": null,
+      "canonicalAsin": "1786311771",
+      "amazonOffers": [
+        {
+          "externalProductId": "1786311771",
+          "deepLink": "https://www.amazon.com/dp/1786311771?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Blister Care Pads",
+      "brand": "Compeed",
+      "itemType": "Blister Prevention",
+      "catalogItemId": "6a1812609300614d98ada53f",
+      "gender": null,
+      "canonicalAsin": "B07RHZBXTG",
+      "amazonOffers": [
+        {
+          "externalProductId": "B07RHZBXTG",
+          "deepLink": "https://www.amazon.com/dp/B07RHZBXTG?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Micro Crew Lightweight Cushion",
+      "brand": "Darn Tough",
+      "itemType": "Hiking Socks",
+      "catalogItemId": "696cf8104803ccebe4314b5a",
+      "gender": null,
+      "canonicalAsin": "B07QNTWWHZ",
+      "amazonOffers": [
+        {
+          "externalProductId": "B07QNTWWHZ",
+          "deepLink": "https://www.amazon.com/dp/B07QNTWWHZ?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Micro Crew Lightweight Cushion",
+      "brand": "Darn Tough",
+      "itemType": "Hiking Socks",
+      "catalogItemId": "6956837de9f5d8692a3e06d1",
+      "gender": null,
+      "canonicalAsin": "B0BQ8CK8LX",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0BQ8CK8LX",
+          "deepLink": "https://www.amazon.com/dp/B0BQ8CK8LX?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Micro Crew Midweight Cushion",
+      "brand": "Darn Tough",
+      "itemType": "Hiking Socks",
+      "catalogItemId": "696cfa134803ccebe4314b5b",
+      "gender": null,
+      "canonicalAsin": "B0FF2MT5F8",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0FF2MT5F8",
+          "deepLink": "https://www.amazon.com/dp/B0FF2MT5F8?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Micro Crew Midweight Cushion",
+      "brand": "Darn Tough",
+      "itemType": "Hiking Socks",
+      "catalogItemId": "695818770ae7ad8d1ba159fe",
+      "gender": null,
+      "canonicalAsin": "B01AITV95C",
+      "amazonOffers": [
+        {
+          "externalProductId": "B01AITV95C",
+          "deepLink": "https://www.amazon.com/dp/B01AITV95C?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "N2X Relaxed Taper",
+      "brand": "Deur",
+      "itemType": "Hiking Pants",
+      "catalogItemId": "6956837de9f5d8692a3e06c8",
+      "gender": "Mens",
+      "canonicalAsin": "B0FRV2KTSF",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0FRV2KTSF",
+          "deepLink": "https://www.amazon.com/dp/B0FRV2KTSF?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Speed Lite 21",
+      "brand": "Deuter",
+      "itemType": "Daypack",
+      "catalogItemId": "697cc199e502d6eea02e854f",
+      "gender": "Unisex",
+      "canonicalAsin": "B0D5R5Z4GZ",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0D5R5Z4GZ",
+          "deepLink": "https://www.amazon.com/dp/B0D5R5Z4GZ?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Speed Lite Pro 23",
+      "brand": "Deuter",
+      "itemType": "Daypack",
+      "catalogItemId": "6989bf8aaa55c19d3bdf13f3",
+      "gender": "Womens",
+      "canonicalAsin": "B0F2QY727M",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0F2QY727M",
+          "deepLink": "https://www.amazon.com/dp/B0F2QY727M?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Speed Lite Pro 25",
+      "brand": "Deuter",
+      "itemType": "Daypack",
+      "catalogItemId": "697cc0c8e502d6eea02e853f",
+      "gender": "Unisex",
+      "canonicalAsin": "B0D5R95C4J",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0D5R95C4J",
+          "deepLink": "https://www.amazon.com/Deuter-Unisex-Mountain-Hiking-Backpack/dp/B0D5R95C4J/",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Trail 23 SL Pack",
+      "brand": "Deuter",
+      "itemType": "Daypack",
+      "catalogItemId": "6989c065aa55c19d3bdf1403",
+      "gender": "Womens",
+      "canonicalAsin": "B0B21QKYXN",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0B21QKYXN",
+          "deepLink": "https://www.amazon.com/dp/B0B21QKYXN?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Trail 28 SL Pack",
+      "brand": "Deuter",
+      "itemType": "Daypack",
+      "catalogItemId": "6989c1f2aa55c19d3bdf1431",
+      "gender": "Womens",
+      "canonicalAsin": "B0B21MWW9L",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0B21MWW9L",
+          "deepLink": "https://www.amazon.com/dp/B0B21MWW9L?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Trail 30 Pack",
+      "brand": "Deuter",
+      "itemType": "Daypack",
+      "catalogItemId": "6989c134aa55c19d3bdf1413",
+      "gender": "Mens",
+      "canonicalAsin": "B0B21Q5VHF",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0B21Q5VHF",
+          "deepLink": "https://www.amazon.com/dp/B0B21Q5VHF?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Dove Invisible Solid Deodorant",
+      "brand": "Dove",
+      "itemType": "Toiletry",
+      "catalogItemId": "696f37cfc5cb8dfe2c0ea689",
+      "gender": null,
+      "canonicalAsin": "B000GCHVGI",
+      "amazonOffers": [
+        {
+          "externalProductId": "B000GCHVGI",
+          "deepLink": "https://www.amazon.com/dp/B000GCHVGI?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Dove Men+Care Roll on Deodorant",
+      "brand": "Dove",
+      "itemType": "Toiletry",
+      "catalogItemId": "6956837de9f5d8692a3e0707",
+      "gender": "Mens",
+      "canonicalAsin": "B00VU2XPBS",
+      "amazonOffers": [
+        {
+          "externalProductId": "B00VU2XPBS",
+          "deepLink": "https://www.amazon.com/dp/B00VU2XPBS?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Castile Soap",
+      "brand": "Dr. Bronner's",
+      "itemType": "Toiletry",
+      "catalogItemId": "6956837de9f5d8692a3e0703",
+      "gender": null,
+      "canonicalAsin": "B000Z96LTA",
+      "amazonOffers": [
+        {
+          "externalProductId": "B000Z96LTA",
+          "deepLink": "https://www.amazon.com/dp/B000Z96LTA?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Blister Prevention Patches",
+      "brand": "Engo",
+      "itemType": "Blister Prevention",
+      "catalogItemId": "6994475171a6dac47cb88c89",
+      "gender": null,
+      "canonicalAsin": "B003URZNW0",
+      "amazonOffers": [
+        {
+          "externalProductId": "B003URZNW0",
+          "deepLink": "https://www.amazon.com/dp/B003URZNW0?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Men's Give-N-Go 2.0 6\" Boxer Brief",
+      "brand": "ExOfficio",
+      "itemType": "Underwear",
+      "catalogItemId": "6956837de9f5d8692a3e06c3",
+      "gender": "Mens",
+      "canonicalAsin": "B0F94JC5M4",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0F94JC5M4",
+          "deepLink": "https://www.amazon.com/dp/B0F94JC5M4?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Ulvo 23",
+      "brand": "Fjallraven",
+      "itemType": "Daypack",
+      "catalogItemId": "6989c301aa55c19d3bdf1441",
+      "gender": "Unisex",
+      "canonicalAsin": "B07HFDYH6H",
+      "amazonOffers": [
+        {
+          "externalProductId": "B07HFDYH6H",
+          "deepLink": "https://www.amazon.com/dp/B07HFDYH6H?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Ulvo 30",
+      "brand": "Fjallraven",
+      "itemType": "Daypack",
+      "catalogItemId": "6989c3a9aa55c19d3bdf1451",
+      "gender": "Unisex",
+      "canonicalAsin": "B07VB9KR31",
+      "amazonOffers": [
+        {
+          "externalProductId": "B07VB9KR31",
+          "deepLink": "https://www.amazon.com/dp/B07VB9KR31?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Zero Pump Air Pump",
+      "brand": "Flextail",
+      "itemType": "Other",
+      "catalogItemId": "697cb486e502d6eea02e8524",
+      "gender": null,
+      "canonicalAsin": "B0CQCTY24W",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0CQCTY24W",
+          "deepLink": "https://www.amazon.com/dp/B0CQCTY24W?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Fingerless Glove",
+      "brand": "Fox River",
+      "itemType": "Gloves (Insulated)",
+      "catalogItemId": "695e4996232e7ebc80ca0ad2",
+      "gender": null,
+      "canonicalAsin": "B08LXJTH6W",
+      "amazonOffers": [
+        {
+          "externalProductId": "B08LXJTH6W",
+          "deepLink": "https://www.amazon.com/dp/B08LXJTH6W?tag=treklistapp-20",
+          "region": "us",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Forerunner 970",
+      "brand": "Garmin",
+      "itemType": "Smartwatch",
+      "catalogItemId": "696f54b2c5cb8dfe2c0ea836",
+      "gender": null,
+      "canonicalAsin": "B0F9GYK893",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0F9GYK893",
+          "deepLink": "https://www.amazon.com/dp/B0F9GYK893?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Zulu LT 20",
+      "brand": "Gregory",
+      "itemType": "Daypack",
+      "catalogItemId": "69836b2d233653e26e387cca",
+      "gender": "Unisex",
+      "canonicalAsin": "B0CT9735M9",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0CT9735M9",
+          "deepLink": "https://www.amazon.com/dp/B0CT9735M9?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Zulu LT 25",
+      "brand": "Gregory",
+      "itemType": "Daypack",
+      "catalogItemId": "69836a8a233653e26e387cae",
+      "gender": "Unisex",
+      "canonicalAsin": "B0FD312P59",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0FD312P59",
+          "deepLink": "https://www.amazon.com/dp/B0FD312P59?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Zulu LT 28",
+      "brand": "Gregory",
+      "itemType": "Daypack",
+      "catalogItemId": "69836902233653e26e387c74",
+      "gender": "Unisex",
+      "canonicalAsin": "B0CT9PDK5J",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0CT9PDK5J",
+          "deepLink": "https://www.amazon.com/dp/B0CT9PDK5J?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Hoka Men's Hopara 2",
+      "brand": "Hoka",
+      "itemType": "Sandals",
+      "catalogItemId": "6994416a71a6dac47cb88bd3",
+      "gender": "Mens",
+      "canonicalAsin": "B0D5H64VRN",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0D5H64VRN",
+          "deepLink": "https://www.amazon.com/dp/B0D5H64VRN?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Hoka Women's Hopara 2",
+      "brand": "Hoka",
+      "itemType": "Sandals",
+      "catalogItemId": "6994428371a6dac47cb88bf6",
+      "gender": "Womens",
+      "canonicalAsin": "B0D4B2SM5H",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0D4B2SM5H",
+          "deepLink": "https://www.amazon.com/dp/B0D4B2SM5H?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Speedgoat 6",
+      "brand": "Hoka",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "6989a4adaa55c19d3bdf102b",
+      "gender": "Mens",
+      "canonicalAsin": "B0GFH26H3N",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0GFH26H3N",
+          "deepLink": "https://www.amazon.com/dp/B0GFH26H3N?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Speedgoat 6",
+      "brand": "Hoka",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "6989a567aa55c19d3bdf103b",
+      "gender": "Womens",
+      "canonicalAsin": "B0DN65BN7T",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0DN65BN7T",
+          "deepLink": "https://www.amazon.com/dp/B0DN65BN7T?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Speedgoat 6 GTX",
+      "brand": "Hoka",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "6989a668aa55c19d3bdf104b",
+      "gender": "Womens",
+      "canonicalAsin": "B0DN65BN7T",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0DN65BN7T",
+          "deepLink": "https://www.amazon.com/dp/B0DN65BN7T?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Speedgoat 6 GTX",
+      "brand": "Hoka",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "6989a710aa55c19d3bdf105b",
+      "gender": "Mens",
+      "canonicalAsin": "B0CPC1R3ZB",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0CPC1R3ZB",
+          "deepLink": "https://www.amazon.com/Speedgoat-Sneaker-Stardust-Outer-Orbit/dp/B0CPC1R3ZB?crid=20AUVK3FRU5WN&dib=eyJ2IjoiMSJ9.mirrk3VD7iWg2vMkbSs9Zf09qM15kOV1O4UrBPJPg5s5U-yn24BfNGnC02fzDQnJsuP3t-5KGePlGEQFPdYDzG2KP34Yr0uLDXeusCoNCOQdATfaTAYrD8eHzOO7Yw2n83fPHM7qdUBjzBbE-sfBHx_LeOZ8QZ6E0X74PfHCU_AgPahAdxK9tbjjUgnrcDEzIaqDxOy1wZ1yXkozG0ZCgg.xJEnO-MLxHjBd-Lb3QG38N3GJx1lA4U16HUm9Q2Al5g&dib_tag=se&keywords=Speedgoat+6+gtx&qid=1770628625&sprefix=speedgoat+6+gtx%2Caps%2C214&sr=8-10&linkCode=ll2&tag=treklistapp-20&linkId=99e6501088ce0e6e685c32f07a977fa0&language=en_US&ref_=as_li_ss_tl",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Speedgoat 7",
+      "brand": "Hoka",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "6989a7c1aa55c19d3bdf106b",
+      "gender": "Mens",
+      "canonicalAsin": "B0F9R4N598",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0F9R4N598",
+          "deepLink": "https://www.amazon.com/dp/B0F9R4N598?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Speedgoat 7",
+      "brand": "Hoka",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "6989a838aa55c19d3bdf107b",
+      "gender": "Womens",
+      "canonicalAsin": "B0F9R58RYQ",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0F9R58RYQ",
+          "deepLink": "https://www.amazon.com/dp/B0F9R58RYQ?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Hand Sanitizer Spray - Plant Based",
+      "brand": "Honest",
+      "itemType": "Toiletry",
+      "catalogItemId": "6956837de9f5d8692a3e0704",
+      "gender": null,
+      "canonicalAsin": "B07CL6X8SZ",
+      "amazonOffers": [
+        {
+          "externalProductId": "B07CL6X8SZ",
+          "deepLink": "https://www.amazon.com/dp/B07CL6X8SZ?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Anti-Diarrheal Medicine",
+      "brand": "Imodium",
+      "itemType": "Medication",
+      "catalogItemId": "696f52cac5cb8dfe2c0ea82e",
+      "gender": null,
+      "canonicalAsin": "B000GCED0U",
+      "amazonOffers": [
+        {
+          "externalProductId": "B000GCED0U",
+          "deepLink": "https://www.amazon.com/dp/B000GCED0U?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Trail Midweight Mini-Crew",
+      "brand": "Injinji",
+      "itemType": "Hiking Socks",
+      "catalogItemId": "698ae954aa55c19d3bdf1ffa",
+      "gender": null,
+      "canonicalAsin": "B00AK8DO3M",
+      "amazonOffers": [
+        {
+          "externalProductId": "B00AK8DO3M",
+          "deepLink": "https://www.amazon.com/dp/B00AK8DO3M?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Toothbrush",
+      "brand": "Jordan",
+      "itemType": "Toiletry",
+      "catalogItemId": "6956837de9f5d8692a3e0701",
+      "gender": null,
+      "canonicalAsin": "B08VBPL3CV",
+      "amazonOffers": [
+        {
+          "externalProductId": "B08VBPL3CV",
+          "deepLink": "https://www.amazon.com/dp/B08VBPL3CV?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "MICROspikes",
+      "brand": "Kahtoola",
+      "itemType": "Other",
+      "catalogItemId": "699ef373725345becdb862cb",
+      "gender": null,
+      "canonicalAsin": "B00RXXJ0V2",
+      "amazonOffers": [
+        {
+          "externalProductId": "B00RXXJ0V2",
+          "deepLink": "https://www.amazon.com/dp/B00RXXHP28?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "BeFree 1.0L",
+      "brand": "Katadyn",
+      "itemType": "Water Filter",
+      "catalogItemId": "698333dc452d7124b3647c63",
+      "gender": null,
+      "canonicalAsin": "B075X5R67T",
+      "amazonOffers": [
+        {
+          "externalProductId": "B075X5R67T",
+          "deepLink": "https://www.amazon.com/dp/B075X5R67T?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Wildcat",
+      "brand": "La Sportiva",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "6956837de9f5d8692a3e06ec",
+      "gender": "Womens",
+      "canonicalAsin": "B081XVN9LC",
+      "amazonOffers": [
+        {
+          "externalProductId": "B081XVN9LC",
+          "deepLink": "https://www.amazon.com/Sportiva-Womens-Wildcat-Running-Hibiscus/dp/B081XVN9LC?crid=27GO1DS7JEG43&dib=eyJ2IjoiMSJ9.GdjH-0tmRsr842L1hXD7Tkj1KhzJiLuOSyXE7ts7S1VVgR1PDlaeXhHpl-p9DuJO7W2XW84rS30HS4ubCZaHLbCCU0M2DTppnO-hzHvsF-p7voiUtru-s6PwAvag4BaQNoRvFBATBZr_cX_r-M-ffbTjelxH3UeeBmy3qd6J09XRBR7tGY_0yrfuQJjXO3ZU3evDedUtJvsRfuX9Uxb_cpYaG4QAS1j2FU9iGMF9J4VGoZYsXvOnVLz5Ebx3Rv8GysWVTKKK58zC_hctbLs4jjpyTpH6hY02mMz5gosBiIM.S63uoLRaAM9MvvlpZu7GgGcoGDmR1uONBgbyDgqMLbc&dib_tag=se&keywords=la%2Bsportiva%2Bwildcat%2Bwomens&qid=1770630378&sprefix=la%2Bsportiva%2Bwildcat%2Bwomens%2Caps%2C245&sr=8-1-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&th=1&psc=1&linkCode=ll2&tag=treklistapp-20&linkId=c1a1a8f6358f8c01f7e1f61d93071321&language=en_US&ref_=as_li_ss_tl",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Wildcat",
+      "brand": "La Sportiva",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "6989add2aa55c19d3bdf111a",
+      "gender": "Mens",
+      "canonicalAsin": "B081XVKZJ3",
+      "amazonOffers": [
+        {
+          "externalProductId": "B081XVKZJ3",
+          "deepLink": "https://www.amazon.com/dp/B081XVKZJ3?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Wildcat 2.0 GTX",
+      "brand": "La Sportiva",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "6989ae72aa55c19d3bdf1138",
+      "gender": "Womens",
+      "canonicalAsin": "B0CS7L5JQJ",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0CS7L5JQJ",
+          "deepLink": "https://www.amazon.com/dp/B0CS7L5JQJ?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Wildcat 2.0 GTX",
+      "brand": "La Sportiva",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "6989acc4aa55c19d3bdf10f0",
+      "gender": "Mens",
+      "canonicalAsin": "B0CS7DRMZZ",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0CS7DRMZZ",
+          "deepLink": "https://www.amazon.com/Sportiva-Wildcat-Running-Black-Pumpkin/dp/B0CS7DRMZZ?crid=DLW0NQBQ2TTE&dib=eyJ2IjoiMSJ9.p1JOXmqotDzyheJSGPCxpZhUyIDKJ9qBMS7P6xeUadUpDp7GRs9ZdxzmRAeDSDvlkZQMoIiDKQ78VKuBHDnWnszScMyTbbbKILPxpsLVD64UKsvTaEyfay-F_aMNq639dRfEfKbnfqzeoF4DEUVRgZySCfU13vv_WCmdXx42Q3auc7qCgQnVkoZQ2nBrYeTQgeUMMuYPdgTXBqzLiBPRD3OXHQOlDvx6GqjVXLnDr_H4l7ejQaNGhx_P3n0wmCRKVlbLD2QfOsU9UYfp-rcKKVOuQDj5UbX4b2k3UIo3d58.z3_oFZ1yH6Oq57sB1-we97SGsyO3VfNciuUK3P6x-iI&dib_tag=se&keywords=la%2Bsportiva%2Bwildcat%2Bmens&qid=1770630108&sprefix=wildcat%2Bla%2Bsport%2Caps%2C220&sr=8-7&th=1&psc=1&linkCode=ll2&tag=treklistapp-20&linkId=5615609464c3c593a57514b2ada64bee&language=en_US&ref_=as_li_ss_tl",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Black Series",
+      "brand": "Leki",
+      "itemType": "Trekking Poles",
+      "catalogItemId": "698a300aaa55c19d3bdf18fe",
+      "gender": null,
+      "canonicalAsin": "B09RX1B1K6",
+      "amazonOffers": [
+        {
+          "externalProductId": "B09RX1B1K6",
+          "deepLink": "https://www.amazon.com/dp/B09RX1B1K6?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Makalu FX Carbon AS",
+      "brand": "Leki",
+      "itemType": "Trekking Poles",
+      "catalogItemId": "6992093deef4327937c067e3",
+      "gender": null,
+      "canonicalAsin": "B09RPP5R95",
+      "amazonOffers": [
+        {
+          "externalProductId": "B09RPP5R95",
+          "deepLink": "https://www.amazon.com/dp/B09RPP5R95?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Ultratrail FX.One",
+      "brand": "Leki",
+      "itemType": "Trekking Poles",
+      "catalogItemId": "698a2c79aa55c19d3bdf18d2",
+      "gender": null,
+      "canonicalAsin": "B09RX1R6VX",
+      "amazonOffers": [
+        {
+          "externalProductId": "B09RX1R6VX",
+          "deepLink": "https://www.amazon.com/dp/B09RX1R6VX?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Ultratrail FX.One Superlite",
+      "brand": "Leki",
+      "itemType": "Trekking Poles",
+      "catalogItemId": "698a2db9aa55c19d3bdf18ee",
+      "gender": null,
+      "canonicalAsin": "B09RX14LJV",
+      "amazonOffers": [
+        {
+          "externalProductId": "B09RX14LJV",
+          "deepLink": "https://www.amazon.com/dp/B09RX14LJV?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Leukotape P Medical Tape",
+      "brand": "Leukotape",
+      "itemType": "Blister Prevention",
+      "catalogItemId": "6a1810b09300614d98ada1e2",
+      "gender": null,
+      "canonicalAsin": "B000E59HXC",
+      "amazonOffers": [
+        {
+          "externalProductId": "B000E59HXC",
+          "deepLink": "https://www.amazon.com/dp/B000E59HXC?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Levi’s Multi-Purpose Bandana",
+      "brand": "Levi’s",
+      "itemType": "Hat/Headwear",
+      "catalogItemId": "6956837de9f5d8692a3e0709",
+      "gender": null,
+      "canonicalAsin": "B00IOGLX9Y",
+      "amazonOffers": [
+        {
+          "externalProductId": "B00IOGLX9Y",
+          "deepLink": "https://www.amazon.com/dp/B00IOGLX9Y?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Peak Series 1L",
+      "brand": "LifeStraw",
+      "itemType": "Water Filter",
+      "catalogItemId": "6996220d00ab522adb21a397",
+      "gender": null,
+      "canonicalAsin": "B09SBNDKXG",
+      "amazonOffers": [
+        {
+          "externalProductId": "B09SBNDKXG",
+          "deepLink": "https://www.amazon.com/dp/B09SBNDKXG?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Diamond Solar Lamp",
+      "brand": "Little Sun",
+      "itemType": "Camp Lantern",
+      "catalogItemId": "699410beeef4327937c083af",
+      "gender": null,
+      "canonicalAsin": "B0784Q9WVT",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0784Q9WVT",
+          "deepLink": "https://www.amazon.co.uk/dp/B0784Q9WVT/",
+          "region": "uk",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Universal Travel Adapter Plug GB/UK",
+      "brand": "Maclean",
+      "itemType": "Travel Charger",
+      "catalogItemId": "69c2d99ebb838b034d66870f",
+      "gender": null,
+      "canonicalAsin": "B0711RT7LS",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0711RT7LS",
+          "deepLink": "https://www.amazon.nl/dp/B0711RT7LS?tag=treklistapp-20",
+          "region": "eu",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Always Summer 40°",
+      "brand": "Marmot",
+      "itemType": "Sleeping Bag",
+      "catalogItemId": "6956837de9f5d8692a3e06f7",
+      "gender": "Unisex",
+      "canonicalAsin": "B09Z6YWBXB",
+      "amazonOffers": [
+        {
+          "externalProductId": "B09Z6YWBXB",
+          "deepLink": "https://www.amazon.com/dp/B09Z6YWBXB?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Men's Precip Eco",
+      "brand": "Marmot",
+      "itemType": "Rain Jacket",
+      "catalogItemId": "696f4666c5cb8dfe2c0ea7c0",
+      "gender": "Mens",
+      "canonicalAsin": "B0CMRWB92D",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0CMRWB92D",
+          "deepLink": "https://www.amazon.com/dp/B0CMRWB92D?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Canyon Short Sleeve Men's",
+      "brand": "Mountain Hardwear",
+      "itemType": "Hiking Shirt",
+      "catalogItemId": "699093aceef4327937c03f7a",
+      "gender": "Mens",
+      "canonicalAsin": "B0D1LYCKZR",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0D1LYCKZR",
+          "deepLink": "https://www.amazon.com/dp/B0D1LYCKZR?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Ghost Whisperer",
+      "brand": "Mountain Hardwear",
+      "itemType": "Insulated Jacket",
+      "catalogItemId": "6956837de9f5d8692a3e0710",
+      "gender": "Mens",
+      "canonicalAsin": "B0CLG1K6NF",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0CLG1K6NF",
+          "deepLink": "https://www.amazon.com/dp/B0CLG1K6NF?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Ghost Whisperer Hoody",
+      "brand": "Mountain Hardwear",
+      "itemType": "Insulated Jacket",
+      "catalogItemId": "6957bc250ae7ad8d1ba159e9",
+      "gender": "Mens",
+      "canonicalAsin": "B0F6DH95FY",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0F6DH95FY",
+          "deepLink": "https://www.amazon.com/dp/B0F6DH95FY?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Ultra Sheer Dry-Touch Sunscreen",
+      "brand": "Neutrogena",
+      "itemType": "Toiletry",
+      "catalogItemId": "6956837de9f5d8692a3e0702",
+      "gender": null,
+      "canonicalAsin": "B000EPA4GQ",
+      "amazonOffers": [
+        {
+          "externalProductId": "B000EPA4GQ",
+          "deepLink": "https://www.amazon.com/dp/B000EPA4GQ?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "NB Air 5000mAh",
+      "brand": "Nitecore",
+      "itemType": "Power Bank",
+      "catalogItemId": "6969fca64803ccebe4314b11",
+      "gender": null,
+      "canonicalAsin": "B0DYPZZ3G1",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0DYPZZ3G1",
+          "deepLink": "https://www.amazon.com/dp/B0DYPZZ3G1?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "NB Plus 10,000mAh",
+      "brand": "Nitecore",
+      "itemType": "Power Bank",
+      "catalogItemId": "6969fc551d02c9b950130ae2",
+      "gender": null,
+      "canonicalAsin": "B0FLT6TQ77",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0FLT6TQ77",
+          "deepLink": "https://www.amazon.com/dp/B0FLT6TQ77?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "NB20000",
+      "brand": "Nitecore",
+      "itemType": "Power Bank",
+      "catalogItemId": "6969ff064803ccebe4314b12",
+      "gender": null,
+      "canonicalAsin": "B0DDVXN9YT",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0DDVXN9YT",
+          "deepLink": "https://www.amazon.com/dp/B0DDVXN9YT?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Atmos AG",
+      "brand": "Osprey",
+      "itemType": "Backpack",
+      "catalogItemId": "6989c769aa55c19d3bdf149f",
+      "gender": "Mens",
+      "canonicalAsin": "B09JXX4BYT",
+      "amazonOffers": [
+        {
+          "externalProductId": "B09JXX4BYT",
+          "deepLink": "https://www.amazon.com/dp/B09JXX4BYT?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ],
+      "multiVolume": true,
+      "asinsByVolume": {
+        "65L": "B09JXQ6JPD"
+      },
+      "canonicalVolume": null,
+      "pendingVolumes": []
+    },
+    {
+      "name": "Atmos AG LT",
+      "brand": "Osprey",
+      "itemType": "Backpack",
+      "catalogItemId": "6989c839aa55c19d3bdf14bb",
+      "gender": "Mens",
+      "canonicalAsin": "B0BKQHLZ7Y",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0BKQHLZ7Y",
+          "deepLink": "https://www.amazon.com/dp/B0BKQHLZ7Y?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ],
+      "multiVolume": true,
+      "asinsByVolume": {
+        "65L": "B0BKQJVHHQ"
+      },
+      "canonicalVolume": null,
+      "pendingVolumes": []
+    },
+    {
+      "name": "Aura AG",
+      "brand": "Osprey",
+      "itemType": "Backpack",
+      "catalogItemId": "6a4404d4eb3bd36fe2b276c3",
+      "gender": "Womens",
+      "canonicalAsin": "B09JXJ9CM4",
+      "amazonOffers": [
+        {
+          "externalProductId": "B09JXJ9CM4",
+          "deepLink": "https://www.amazon.com/dp/B09JXJ9CM4?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ],
+      "multiVolume": true,
+      "asinsByVolume": {
+        "50L": "B09JXJ9CM4",
+        "65L": "B09JXJVDRT"
+      },
+      "canonicalVolume": "50L",
+      "pendingVolumes": []
+    },
+    {
+      "name": "Aura AG LT",
+      "brand": "Osprey",
+      "itemType": "Backpack",
+      "catalogItemId": "6a44093ab66ef217da465271",
+      "gender": "Womens",
+      "canonicalAsin": "B0BKQJH4Q2",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0BKQJH4Q2",
+          "deepLink": "https://www.amazon.com/dp/B0BKQJH4Q2?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ],
+      "multiVolume": true,
+      "asinsByVolume": {
+        "65L": "B0BKQJH4Q2",
+        "50L": "B0BKQGL3BY"
+      },
+      "canonicalVolume": "65L",
+      "pendingVolumes": []
+    },
+    {
+      "name": "Eja",
+      "brand": "Osprey",
+      "itemType": "Backpack",
+      "catalogItemId": "6952cd8e77f0204ff7da39a3",
+      "gender": "Womens",
+      "canonicalAsin": "B0DS6MK66Y",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0DS6MK66Y",
+          "deepLink": "https://www.amazon.com/dp/B0DS6MK66Y?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ],
+      "multiVolume": true,
+      "asinsByVolume": {
+        "38L": "B0DS6LX8WC",
+        "58L": "B09JXSNYGW"
+      },
+      "canonicalVolume": null,
+      "pendingVolumes": []
+    },
+    {
+      "name": "Eja Pro 55",
+      "brand": "Osprey",
+      "itemType": "Backpack",
+      "catalogItemId": "69832fa2452d7124b3647c0a",
+      "gender": "Womens",
+      "canonicalAsin": "B0BTTRJJ88",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0BTTRJJ88",
+          "deepLink": "https://www.amazon.com/dp/B0BTTRJJ88?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Exos",
+      "brand": "Osprey",
+      "itemType": "Backpack",
+      "catalogItemId": "6952b1d477f0204ff7da393d",
+      "gender": "Mens",
+      "canonicalAsin": "B0DS6LN8C5",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0DS6LN8C5",
+          "deepLink": "https://www.amazon.com/dp/B0DS6LN8C5?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ],
+      "multiVolume": true,
+      "asinsByVolume": {
+        "38L": "B0DS6JGQLJ",
+        "58L": "B0DS6MSDF2"
+      },
+      "canonicalVolume": null,
+      "pendingVolumes": []
+    },
+    {
+      "name": "Exos Pro 55",
+      "brand": "Osprey",
+      "itemType": "Backpack",
+      "catalogItemId": "69832ee5452d7124b3647bfa",
+      "gender": "Mens",
+      "canonicalAsin": "B0BTTQRJTL",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0BTTQRJTL",
+          "deepLink": "https://www.amazon.com/dp/B0BTTQRJTL?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Hikelite",
+      "brand": "Osprey",
+      "itemType": "Daypack",
+      "catalogItemId": "6996cf0c00ab522adb21a940",
+      "gender": "Unisex",
+      "canonicalAsin": "B0FGY23CXN",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0BKQJC98R",
+          "deepLink": "https://www.amazon.com/dp/B0BKQJC98R?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ],
+      "multiVolume": true,
+      "asinsByVolume": {
+        "18L": "B0FGY23CXN",
+        "26L": "B0FGXZ57PD",
+        "28L": "B0FGXYJM3R",
+        "32L": "B0FGXZ1N8C"
+      },
+      "canonicalVolume": "18L",
+      "pendingVolumes": []
+    },
+    {
+      "name": "Hikelite LT 30",
+      "brand": "Osprey",
+      "itemType": "Daypack",
+      "catalogItemId": "6996cc0c00ab522adb21a8d4",
+      "gender": "Unisex",
+      "canonicalAsin": "B0G6GG4FYQ",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0G6GG4FYQ",
+          "deepLink": "https://www.amazon.com/dp/B0G6GG4FYQ?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Kestrel 38L",
+      "brand": "Osprey",
+      "itemType": "Backpack",
+      "catalogItemId": "69a404b79ad0c05548ec3792",
+      "gender": "Mens",
+      "canonicalAsin": "B0BKQJBMVH",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0BKQJBMVH",
+          "deepLink": "https://www.amazon.com/dp/B0BKQJBMVH?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Kyte LT",
+      "brand": "Osprey",
+      "itemType": "Backpack",
+      "catalogItemId": "69961dd500ab522adb21a2e1",
+      "gender": "Womens",
+      "canonicalAsin": "B0G6GBS5WP",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0G6GBS5WP",
+          "deepLink": "https://www.amazon.com/dp/B0G6GBS5WP?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Sirrus",
+      "brand": "Osprey",
+      "itemType": "Backpack",
+      "catalogItemId": "695451150ae7ad8d1ba159a8",
+      "gender": "Womens",
+      "canonicalAsin": "B0G6GKWX8D",
+      "amazonOffers": [
+        {
+          "externalProductId": "B09JY35BHR",
+          "deepLink": "https://www.amazon.com/dp/B09JY35BHR?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ],
+      "multiVolume": true,
+      "asinsByVolume": {
+        "24L": "B0G6GKWX8D",
+        "34L": "B0G6GKJMWH",
+        "36L": "B0G6GQNVJ8",
+        "44L": "B0G6G8S24G"
+      },
+      "canonicalVolume": "24L",
+      "pendingVolumes": []
+    },
+    {
+      "name": "Sportlite 25L",
+      "brand": "Osprey",
+      "itemType": "Daypack",
+      "catalogItemId": "69834de4233653e26e387c40",
+      "gender": "Unisex",
+      "canonicalAsin": "B09MSWMSH9",
+      "amazonOffers": [
+        {
+          "externalProductId": "B09MSWMSH9",
+          "deepLink": "https://www.amazon.com/dp/B09MSWMSH9?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Stratos",
+      "brand": "Osprey",
+      "itemType": "Backpack",
+      "catalogItemId": "6952d06d77f0204ff7da39d1",
+      "gender": "Mens",
+      "canonicalAsin": "B0G6GD7JLS",
+      "amazonOffers": [
+        {
+          "externalProductId": "B09JXX63R4",
+          "deepLink": "https://www.amazon.com/dp/B09JXX63R4?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ],
+      "multiVolume": true,
+      "asinsByVolume": {
+        "24L": "B0G6GD7JLS",
+        "34L": "B09JXJDNGD",
+        "36L": "B09JXK4YSD",
+        "44L": "B09JY5VYPZ"
+      },
+      "canonicalVolume": "24L",
+      "pendingVolumes": []
+    },
+    {
+      "name": "Talon",
+      "brand": "Osprey",
+      "itemType": "Backpack",
+      "catalogItemId": "6995e68500ab522adb21a146",
+      "gender": "Mens",
+      "canonicalAsin": "B0DSCN3TZC",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0DSCQGTJ8",
+          "deepLink": "https://www.amazon.com/dp/B0DSCQGTJ8?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ],
+      "multiVolume": true,
+      "asinsByVolume": {
+        "22L": "B0DSCN3TZC",
+        "26L": "B0DSCP1V9L",
+        "33L": "B0DSCM7SHN",
+        "44L": "B0DSCMQG64"
+      },
+      "canonicalVolume": "22L",
+      "pendingVolumes": []
+    },
+    {
+      "name": "Talon Velocity",
+      "brand": "Osprey",
+      "itemType": "Daypack",
+      "catalogItemId": "699a0e51cefe45afeb910185",
+      "gender": "Mens",
+      "canonicalAsin": "B0CGQ3P6WB",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0CGQ47S15",
+          "deepLink": "https://www.amazon.com/dp/B0CGQ47S15?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ],
+      "multiVolume": true,
+      "asinsByVolume": {
+        "20L": "B0CGQ3P6WB",
+        "30L": "B0CGQ46WN1"
+      },
+      "canonicalVolume": "20L",
+      "pendingVolumes": []
+    },
+    {
+      "name": "Tempest",
+      "brand": "Osprey",
+      "itemType": "Backpack",
+      "catalogItemId": "69961bd000ab522adb21a2a6",
+      "gender": "Womens",
+      "canonicalAsin": "B0DSCQF6QH",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0DSCQF6QH",
+          "deepLink": "https://www.amazon.com/dp/B0DSCQF6QH?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ],
+      "multiVolume": true,
+      "asinsByVolume": {
+        "22L": "B0DSCQF6QH",
+        "26L": "B0DSCNN9WY",
+        "33L": "B0DSCM8ZTS"
+      },
+      "canonicalVolume": "22L",
+      "pendingVolumes": []
+    },
+    {
+      "name": "Tempest Velocity",
+      "brand": "Osprey",
+      "itemType": "Daypack",
+      "catalogItemId": "6a44cb40a2a08e19a38daf73",
+      "gender": "Womens",
+      "canonicalAsin": "B0CGQ3PDB1",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0CGQ3PDB1",
+          "deepLink": "https://www.amazon.com/dp/B0CGQ3PDB1?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ],
+      "multiVolume": true,
+      "asinsByVolume": {
+        "20L": "B0CGQ3PDB1",
+        "30L": "B0CGQ5NGL1"
+      },
+      "canonicalVolume": "20L",
+      "pendingVolumes": []
+    },
+    {
+      "name": "Microlight Alpine Hooded Down Jacket - Men's",
+      "brand": "Rab",
+      "itemType": "Insulated Jacket",
+      "catalogItemId": "698dc07586e94fdf398ea38c",
+      "gender": "Mens",
+      "canonicalAsin": "B08CK2F478",
+      "amazonOffers": [
+        {
+          "externalProductId": "B08CK2F478",
+          "deepLink": "https://www.amazon.com/dp/B08CK2F478?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Microlight Alpine Hooded Down Jacket - Women's",
+      "brand": "Rab",
+      "itemType": "Insulated Jacket",
+      "catalogItemId": "698dc20086e94fdf398ea39c",
+      "gender": "Womens",
+      "canonicalAsin": "B0FBK9SK3B",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0FBK9SK3B",
+          "deepLink": "https://www.amazon.com/dp/B0FBK9SK3B?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Microlight Down Jacket - Men's",
+      "brand": "Rab",
+      "itemType": "Insulated Jacket",
+      "catalogItemId": "698dc31f86e94fdf398ea3b8",
+      "gender": "Mens",
+      "canonicalAsin": "B08CK4M8DT",
+      "amazonOffers": [
+        {
+          "externalProductId": "B08CK4M8DT",
+          "deepLink": "https://www.amazon.com/dp/B08CK4M8DT?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Microlight Down Jacket - Women's",
+      "brand": "Rab",
+      "itemType": "Insulated Jacket",
+      "catalogItemId": "698dc46486e94fdf398ea3d9",
+      "gender": "Womens",
+      "canonicalAsin": "B08CK7J5Y3",
+      "amazonOffers": [
+        {
+          "externalProductId": "B08CK7J5Y3",
+          "deepLink": "https://www.amazon.com/dp/B08CK7J5Y3?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Protium ND 18 Women's",
+      "brand": "Rab",
+      "itemType": "Daypack",
+      "catalogItemId": "6995d4c000ab522adb219ff5",
+      "gender": "Womens",
+      "canonicalAsin": "B0DLLN7KN5",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0DLLN7KN5",
+          "deepLink": "https://www.amazon.com/dp/B0DLLN7KN5?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Protium ND 25 Women's",
+      "brand": "Rab",
+      "itemType": "Daypack",
+      "catalogItemId": "6995d58200ab522adb21a000",
+      "gender": "Womens",
+      "canonicalAsin": "B0DLLNSGYS",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0DLLNSGYS",
+          "deepLink": "https://www.amazon.com/dp/B0DLLNSGYS?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Protium ND 33 Women's",
+      "brand": "Rab",
+      "itemType": "Daypack",
+      "catalogItemId": "6995d66000ab522adb21a038",
+      "gender": "Womens",
+      "canonicalAsin": "B0DLLPFVVH",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0DLLPFVVH",
+          "deepLink": "https://www.amazon.com/dp/B0DLLPFVVH?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Veil XP 20",
+      "brand": "Rab",
+      "itemType": "Daypack",
+      "catalogItemId": "69957f1671a6dac47cb89ec9",
+      "gender": "Unisex",
+      "canonicalAsin": "B0DLLPPFP9",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0DLLPPFP9",
+          "deepLink": "https://www.amazon.com/dp/B0DLLPPFP9?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Veil XP 30",
+      "brand": "Rab",
+      "itemType": "Daypack",
+      "catalogItemId": "6995d37f00ab522adb219fb0",
+      "gender": "Unisex",
+      "canonicalAsin": "B0DLLNQSR7",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0DLLNQSR7",
+          "deepLink": "https://www.amazon.com/dp/B0DLLNQSR7?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Speedcross 6",
+      "brand": "Salomon",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "69898f7afb2ab55690c6074b",
+      "gender": "Mens",
+      "canonicalAsin": "B0B31CD8CG",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0B31CD8CG",
+          "deepLink": "https://www.amazon.com/dp/B0B31CD8CG?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Speedcross 6",
+      "brand": "Salomon",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "6989a211aa55c19d3bdf0ffe",
+      "gender": "Mens",
+      "canonicalAsin": "B0C46Q9D3P",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0C46Q9D3P",
+          "deepLink": "https://www.amazon.com/dp/B0C46Q9D3P?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Speedcross 6 GORE-TEX",
+      "brand": "Salomon",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "6989a134aa55c19d3bdf0fe6",
+      "gender": "Womens",
+      "canonicalAsin": "B0CN36DR93",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0CN36DR93",
+          "deepLink": "https://www.amazon.com/dp/B0CN36DR93?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Speedcross 6 GORE-TEX",
+      "brand": "Salomon",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "6989a014aa55c19d3bdf0fb5",
+      "gender": "Mens",
+      "canonicalAsin": "B0C46LP6RL",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0C46LP6RL",
+          "deepLink": "https://www.amazon.com/dp/B0C46LP6RL?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Peregrine 16 - Women's",
+      "brand": "Saucony",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "699f142a725345becdb86790",
+      "gender": "Womens",
+      "canonicalAsin": "B0F9LGMGFD",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0F9LGMGFD",
+          "deepLink": "https://www.amazon.com/dp/B0F9LGMGFD?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Peregrine 16 Men's",
+      "brand": "Saucony",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "699f137c725345becdb86770",
+      "gender": "Mens",
+      "canonicalAsin": "B0F9LLG8VF",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0F9LLG8VF",
+          "deepLink": "https://www.amazon.com/dp/B0F9LLG8VF?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Micro Squeeze Water Filtration System",
+      "brand": "Sawyer",
+      "itemType": "Water Filter",
+      "catalogItemId": "6996205c00ab522adb21a378",
+      "gender": null,
+      "canonicalAsin": "B07HBMC32Y",
+      "amazonOffers": [
+        {
+          "externalProductId": "B07HBMC32Y",
+          "deepLink": "https://www.amazon.com/dp/B07HBMC32Y?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Mini Water Filtration System",
+      "brand": "Sawyer",
+      "itemType": "Water Filter",
+      "catalogItemId": "69961fd500ab522adb21a35a",
+      "gender": null,
+      "canonicalAsin": "B00FA2RLX2",
+      "amazonOffers": [
+        {
+          "externalProductId": "B00FA2RLX2",
+          "deepLink": "https://www.amazon.com/dp/B00FA2RLX2?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Squeeze Water Filtration System",
+      "brand": "Sawyer",
+      "itemType": "Water Filter",
+      "catalogItemId": "6956837de9f5d8692a3e0706",
+      "gender": null,
+      "canonicalAsin": "B00B1OSU4W",
+      "amazonOffers": [
+        {
+          "externalProductId": "B00B1OSU4W",
+          "deepLink": "https://www.amazon.com/dp/B00B1OSU4W?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Aeros Premium Inflatable Travel Pillow — Deluxe",
+      "brand": "Sea to Summit",
+      "itemType": "Pillow",
+      "catalogItemId": "6968d7564803ccebe4314b0f",
+      "gender": null,
+      "canonicalAsin": "B07PCSHY35",
+      "amazonOffers": [
+        {
+          "externalProductId": "B07PCSHY35",
+          "deepLink": "https://www.amazon.com/dp/B07PCSHY35?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Aeros Premium Inflatable Travel Pillow — Large",
+      "brand": "Sea to Summit",
+      "itemType": "Pillow",
+      "catalogItemId": "6968d62d4803ccebe4314b0e",
+      "gender": null,
+      "canonicalAsin": "B07P7HZQNG",
+      "amazonOffers": [
+        {
+          "externalProductId": "B07P7HZQNG",
+          "deepLink": "https://www.amazon.com/dp/B07P7HZQNG?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Aeros Premium Inflatable Travel Pillow — Regular",
+      "brand": "Sea to Summit",
+      "itemType": "Pillow",
+      "catalogItemId": "6956837de9f5d8692a3e06f5",
+      "gender": null,
+      "canonicalAsin": "B07P7J7BV8",
+      "amazonOffers": [
+        {
+          "externalProductId": "B07P7J7BV8",
+          "deepLink": "https://www.amazon.com/dp/B07P7J7BV8?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Drylite Towel - L",
+      "brand": "Sea to Summit",
+      "itemType": "Travel Towel",
+      "catalogItemId": "69944a1771a6dac47cb88cfe",
+      "gender": null,
+      "canonicalAsin": "B09RTFB2KD",
+      "amazonOffers": [
+        {
+          "externalProductId": "B09RTFB2KD",
+          "deepLink": "https://www.amazon.com/dp/B09RTFB2KD?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Drylite Towel - M",
+      "brand": "Sea to Summit",
+      "itemType": "Travel Towel",
+      "catalogItemId": "6994495c71a6dac47cb88ccc",
+      "gender": null,
+      "canonicalAsin": "B09RTGFBFM",
+      "amazonOffers": [
+        {
+          "externalProductId": "B09RTGFBFM",
+          "deepLink": "https://www.amazon.com/dp/B09RTGFBFM?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Lightweight Dry Bag",
+      "brand": "Sea to Summit",
+      "itemType": "Dry Bag / Stuff Sack",
+      "catalogItemId": "695820260ae7ad8d1ba15a02",
+      "gender": null,
+      "canonicalAsin": "B0BVWHKP1L",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0BVWHKP1L",
+          "deepLink": "https://www.amazon.com/dp/B0BVWHKP1L?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Lightweight Dry Bag",
+      "brand": "Sea to Summit",
+      "itemType": "Dry Bag / Stuff Sack",
+      "catalogItemId": "695820790ae7ad8d1ba15a05",
+      "gender": null,
+      "canonicalAsin": "B0BVWLL9PJ",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0BVWLL9PJ",
+          "deepLink": "https://www.amazon.com/dp/B0BVWLL9PJ?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Lightweight Dry Bag",
+      "brand": "Sea to Summit",
+      "itemType": "Dry Bag / Stuff Sack",
+      "catalogItemId": "6958204d0ae7ad8d1ba15a03",
+      "gender": null,
+      "canonicalAsin": "B0BVWLZ673",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0BVWLZ673",
+          "deepLink": "https://www.amazon.com/dp/B0BVWLZ673?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Lightweight Dry Bag",
+      "brand": "Sea to Summit",
+      "itemType": "Dry Bag / Stuff Sack",
+      "catalogItemId": "6956837de9f5d8692a3e070e",
+      "gender": null,
+      "canonicalAsin": "B0BVWGCKZF",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0BVWGCKZF",
+          "deepLink": "https://www.amazon.com/dp/B0BVWGCKZF?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Lightweight Dry Bag",
+      "brand": "Sea to Summit",
+      "itemType": "Dry Bag / Stuff Sack",
+      "catalogItemId": "695820670ae7ad8d1ba15a04",
+      "gender": null,
+      "canonicalAsin": "B0BVWHS656",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0BVWHS656",
+          "deepLink": "https://www.amazon.com/dp/B0BVWHS656?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Portable Pocket Towel - S",
+      "brand": "Sea to Summit",
+      "itemType": "Travel Towel",
+      "catalogItemId": "696f4d3cc5cb8dfe2c0ea7fa",
+      "gender": null,
+      "canonicalAsin": "B09RTD864V",
+      "amazonOffers": [
+        {
+          "externalProductId": "B09RTD864V",
+          "deepLink": "https://www.amazon.com/dp/B09RTD864V?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Silk Blend Sleeping Bag Liner",
+      "brand": "Sea to Summit",
+      "itemType": "Sleeping Bag Liner",
+      "catalogItemId": "6956837de9f5d8692a3e06f9",
+      "gender": null,
+      "canonicalAsin": "B0CT49T197",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0CT49T197",
+          "deepLink": "https://www.amazon.com/dp/B0CT49T197?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Traveller Down Sleeping Bag Blanket - 30",
+      "brand": "Sea to Summit",
+      "itemType": "Sleeping Bag",
+      "catalogItemId": "69944fe571a6dac47cb88d41",
+      "gender": "Unisex",
+      "canonicalAsin": "B07PGWLWFL",
+      "amazonOffers": [
+        {
+          "externalProductId": "B07PGWLWFL",
+          "deepLink": "https://www.amazon.com/dp/B07PGWLWFL?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Traveller Down Sleeping Bag Blanket - 45",
+      "brand": "Sea to Summit",
+      "itemType": "Sleeping Bag",
+      "catalogItemId": "69944b2171a6dac47cb88d25",
+      "gender": "Unisex",
+      "canonicalAsin": "B0CTPKL4T9",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0CTPKL4T9",
+          "deepLink": "https://www.amazon.com/dp/B0CTPKL4T9?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Ultra-Fine Mesh Mosquito Head Net",
+      "brand": "Sea to Summit",
+      "itemType": "Mosquito Head Net",
+      "catalogItemId": "69933864eef4327937c07a94",
+      "gender": null,
+      "canonicalAsin": "B01MU00T0C",
+      "amazonOffers": [
+        {
+          "externalProductId": "B01MU00T0C",
+          "deepLink": "https://www.amazon.com/dp/B01MU00T0C?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Ultralight Hiking Umbrella",
+      "brand": "Six Moon Designs",
+      "itemType": "Umbrella",
+      "catalogItemId": "6973605d128b3e450984f6fa",
+      "gender": null,
+      "canonicalAsin": "B07NP6R1DD",
+      "amazonOffers": [
+        {
+          "externalProductId": "B07NP6R1DD",
+          "deepLink": "https://www.amazon.com/dp/B07NP6R1DD?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Merino 120 SS Top",
+      "brand": "Smartwool",
+      "itemType": "Base Layer Top",
+      "catalogItemId": "6956837de9f5d8692a3e06ea",
+      "gender": "Mens",
+      "canonicalAsin": "B09LFW62S7",
+      "amazonOffers": [
+        {
+          "externalProductId": "B09LFW62S7",
+          "deepLink": "https://www.amazon.com/dp/B09LFW62S7?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Merino 120 SS Top",
+      "brand": "Smartwool",
+      "itemType": "Base Layer Top",
+      "catalogItemId": "6957e2260ae7ad8d1ba159f8",
+      "gender": "Womens",
+      "canonicalAsin": "B0D756GVPW",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0D756GVPW",
+          "deepLink": "https://www.amazon.com/dp/B0D756GVPW?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Merino 150 LS Top",
+      "brand": "Smartwool",
+      "itemType": "Base Layer Top",
+      "catalogItemId": "6956837de9f5d8692a3e06e9",
+      "gender": "Mens",
+      "canonicalAsin": "B0BKWW95KR",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0BKWW95KR",
+          "deepLink": "https://www.amazon.com/dp/B0BKWW95KR?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Merino 150 LS Top",
+      "brand": "Smartwool",
+      "itemType": "Base Layer Top",
+      "catalogItemId": "6957e51b0ae7ad8d1ba159fa",
+      "gender": "Womens",
+      "canonicalAsin": "B0BKWWP7DY",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0BKWWP7DY",
+          "deepLink": "https://www.amazon.com/dp/B0BKWWP7DY?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Merino 250 Bottoms",
+      "brand": "Smartwool",
+      "itemType": "Base Layer Bottom",
+      "catalogItemId": "6956837de9f5d8692a3e06cc",
+      "gender": "Mens",
+      "canonicalAsin": "B09PTPJSQL",
+      "amazonOffers": [
+        {
+          "externalProductId": "B09PTPJSQL",
+          "deepLink": "https://www.amazon.com/dp/B09PTPJSQL?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Merino 250 Bottoms",
+      "brand": "Smartwool",
+      "itemType": "Base Layer Bottom",
+      "catalogItemId": "6957df9e0ae7ad8d1ba159f7",
+      "gender": "Womens",
+      "canonicalAsin": "B0CJ1K9GNZ",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0CJ1K9GNZ",
+          "deepLink": "https://www.amazon.com/dp/B0CJ1K9GNZ?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Merino 250 LS Top",
+      "brand": "Smartwool",
+      "itemType": "Base Layer Top",
+      "catalogItemId": "6957e3360ae7ad8d1ba159f9",
+      "gender": "Womens",
+      "canonicalAsin": "B0CR4GB9SB",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0CR4GB9SB",
+          "deepLink": "https://www.amazon.com/dp/B0CR4GB9SB?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Merino 250 LS Top",
+      "brand": "Smartwool",
+      "itemType": "Base Layer Top",
+      "catalogItemId": "6956837de9f5d8692a3e06e8",
+      "gender": "Mens",
+      "canonicalAsin": "B0B1937J29",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0B1937J29",
+          "deepLink": "https://www.amazon.com/dp/B0B1937J29?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "GigaPower Stove",
+      "brand": "Snow Peak",
+      "itemType": "Backpacking Stove (Canister)",
+      "catalogItemId": "6984e623233653e26e388ea4",
+      "gender": null,
+      "canonicalAsin": "B083V3C65N",
+      "amazonOffers": [
+        {
+          "externalProductId": "B083V3C65N",
+          "deepLink": "https://www.amazon.com/dp/B083V3C65N?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Fuel 250g Gold",
+      "brand": "Snowpeak",
+      "itemType": "Stove Fuel",
+      "catalogItemId": "6984e6f1233653e26e38900b",
+      "gender": null,
+      "canonicalAsin": "B0001WB10U",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0001WB10U",
+          "deepLink": "https://www.amazon.com/dp/B0001WB10U?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Trek 1400 Pot Titanium",
+      "brand": "Snowpeak",
+      "itemType": "Backpacking Pot",
+      "catalogItemId": "696b5f8c4803ccebe4314b1b",
+      "gender": null,
+      "canonicalAsin": "B000AR2N3U",
+      "amazonOffers": [
+        {
+          "externalProductId": "B000AR2N3U",
+          "deepLink": "https://www.amazon.com/dp/B000AR2N3U?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Trek 700 Pot Titanium",
+      "brand": "Snowpeak",
+      "itemType": "Backpacking Pot",
+      "catalogItemId": "6956837de9f5d8692a3e06c5",
+      "gender": null,
+      "canonicalAsin": "B000AR2N7Q",
+      "amazonOffers": [
+        {
+          "externalProductId": "B000AR2N7Q",
+          "deepLink": "https://www.amazon.com/dp/B000AR2N7Q?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Men's Paramount Convertible Pant",
+      "brand": "The North Face",
+      "itemType": "Convertible Pants",
+      "catalogItemId": "6994401f71a6dac47cb88bc3",
+      "gender": "Mens",
+      "canonicalAsin": "B0CNBJCX8M",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0CNBJCX8M",
+          "deepLink": "https://www.amazon.com/dp/B0CNBJCX8M?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Deuce of Spades #2",
+      "brand": "TheTentLab",
+      "itemType": "Other",
+      "catalogItemId": "6956837de9f5d8692a3e06e3",
+      "gender": null,
+      "canonicalAsin": "B07BFHT4P3",
+      "amazonOffers": [
+        {
+          "externalProductId": "B07BFHT4P3",
+          "deepLink": "https://www.amazon.com/dp/B07BFHT4P3?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Titanium Long Handle Spoon",
+      "brand": "Toaks",
+      "itemType": "Utensil",
+      "catalogItemId": "696baf204803ccebe4314b29",
+      "gender": null,
+      "canonicalAsin": "B00EZHML88",
+      "amazonOffers": [
+        {
+          "externalProductId": "B00EZHML88",
+          "deepLink": "https://www.amazon.com/dp/B00EZHML88?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Titanium Long Handle Spoon (Polished Bowl)",
+      "brand": "Toaks",
+      "itemType": "Utensil",
+      "catalogItemId": "6956837de9f5d8692a3e06c6",
+      "gender": null,
+      "canonicalAsin": "B00J1BV01C",
+      "amazonOffers": [
+        {
+          "externalProductId": "B00J1BV01C",
+          "deepLink": "https://www.amazon.com/dp/B00J1BV01C?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "TOAKS Titanium 375 mL Pot",
+      "brand": "Toaks",
+      "itemType": "Backpacking Pot",
+      "catalogItemId": "696b66614803ccebe4314b1c",
+      "gender": null,
+      "canonicalAsin": "B009AP2ZFY",
+      "amazonOffers": [
+        {
+          "externalProductId": "B009AP2ZFY",
+          "deepLink": "https://www.amazon.com/dp/B009AP2ZFY?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "TOAKS Titanium 450 mL Pot",
+      "brand": "Toaks",
+      "itemType": "Backpacking Pot",
+      "catalogItemId": "696b66df4803ccebe4314b1d",
+      "gender": null,
+      "canonicalAsin": "B0CTKWJDXX",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0CTKWJDXX",
+          "deepLink": "https://www.amazon.com/dp/B0CTKWJDXX?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "TOAKS Titanium 650 mL Pot",
+      "brand": "Toaks",
+      "itemType": "Backpacking Pot",
+      "catalogItemId": "696b67ae4803ccebe4314b1f",
+      "gender": null,
+      "canonicalAsin": "B00SMFNAZW",
+      "amazonOffers": [
+        {
+          "externalProductId": "B00SMFNAZW",
+          "deepLink": "https://www.amazon.com/dp/B00SMFNAZW?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "TOAKS Titanium 700 mL (Wide) Pot",
+      "brand": "Toaks",
+      "itemType": "Backpacking Pot",
+      "catalogItemId": "696b68124803ccebe4314b20",
+      "gender": null,
+      "canonicalAsin": "B00RMPPXBC",
+      "amazonOffers": [
+        {
+          "externalProductId": "B00RMPPXBC",
+          "deepLink": "https://www.amazon.com/dp/B00RMPPXBC?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "TOAKS Titanium 750 mL Pot",
+      "brand": "Toaks",
+      "itemType": "Backpacking Pot",
+      "catalogItemId": "696b62e81d02c9b95013133b",
+      "gender": null,
+      "canonicalAsin": "B009B98FGW",
+      "amazonOffers": [
+        {
+          "externalProductId": "B009B98FGW",
+          "deepLink": "https://www.amazon.com/dp/B009B98FGW?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "TOAKS Titanium 900 mL Pot (Tall)",
+      "brand": "Toaks",
+      "itemType": "Backpacking Pot",
+      "catalogItemId": "696b6a434803ccebe4314b23",
+      "gender": null,
+      "canonicalAsin": "B00JZ1CLE8",
+      "amazonOffers": [
+        {
+          "externalProductId": "B00JZ1CLE8",
+          "deepLink": "https://www.amazon.com/dp/B00JZ1CLE8?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Toothpaste",
+      "brand": "Tom's of Maine",
+      "itemType": "Toiletry",
+      "catalogItemId": "6956837de9f5d8692a3e0700",
+      "gender": null,
+      "canonicalAsin": "B000NQ0UG0",
+      "amazonOffers": [
+        {
+          "externalProductId": "B000NQ0UG0",
+          "deepLink": "https://www.amazon.com/dp/B000NQ0UG0?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "Traverse - Men's",
+      "brand": "Topo Athletic",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "699f1505725345becdb867b0",
+      "gender": "Mens",
+      "canonicalAsin": "B0D7NPVQ95",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0D7NPVQ95",
+          "deepLink": "https://www.amazon.com/dp/B0D7NPVQ95?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Traverse - Women's",
+      "brand": "Topo Athletic",
+      "itemType": "Trail Running Shoes",
+      "catalogItemId": "699f158e725345becdb867bd",
+      "gender": "Womens",
+      "canonicalAsin": "B0CKC15HLV",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0CKC15HLV",
+          "deepLink": "https://www.amazon.com/dp/B0CKC15HLV?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Acetaminophen 500 mg",
+      "brand": "Tylenol",
+      "itemType": "Medication",
+      "catalogItemId": "696f51c4c5cb8dfe2c0ea826",
+      "gender": null,
+      "canonicalAsin": "B00TJ77KXU",
+      "amazonOffers": [
+        {
+          "externalProductId": "B00TJ77KXU",
+          "deepLink": "https://www.amazon.com/dp/B00TJ77KXU?tag=treklistapp-20",
+          "region": "global",
+          "priority": 10
+        }
+      ]
+    },
+    {
+      "name": "EU Plug Travel Adapter",
+      "brand": "Ugreen",
+      "itemType": "Travel Charger",
+      "catalogItemId": "69c175f6bb838b034d666f0f",
+      "gender": null,
+      "canonicalAsin": "B0FM7X7PNK",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0FM7X7PNK",
+          "deepLink": "https://www.amazon.com/dp/B0FM7X7PNK?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "UK Plug Travel Adapter",
+      "brand": "Ugreen",
+      "itemType": "Travel Charger",
+      "catalogItemId": "69c17480bb838b034d666ef0",
+      "gender": null,
+      "canonicalAsin": "B0FM7SXHSB",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0FM7SXHSB",
+          "deepLink": "https://www.amazon.com/dp/B0FM7SXHSB?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "US Plug Travel Adapter",
+      "brand": "Ugreen",
+      "itemType": "Travel Charger",
+      "catalogItemId": "69c1764cbb838b034d666f2c",
+      "gender": null,
+      "canonicalAsin": "B0FM831NNV",
+      "amazonOffers": [
+        {
+          "externalProductId": "B0FM831NNV",
+          "deepLink": "https://www.amazon.com/dp/B0FM831NNV?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Nexode 65W USB C Charger",
+      "brand": "UGreen",
+      "itemType": "Travel Charger",
+      "catalogItemId": "69c0f7fc156238dd36532b8a",
+      "gender": null,
+      "canonicalAsin": "B09X1H88VP",
+      "amazonOffers": [
+        {
+          "externalProductId": "B09X1H88VP",
+          "deepLink": "https://www.amazon.com/dp/B09X1H88VP?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    },
+    {
+      "name": "Folding Pocket Knife Nail Clip 580",
+      "brand": "Victorinox",
+      "itemType": "Pocket Knife",
+      "catalogItemId": "698c58e571d3cc2e8efce7ec",
+      "gender": null,
+      "canonicalAsin": "B00K3LGRAS",
+      "amazonOffers": [
+        {
+          "externalProductId": "B00K3LGRAS",
+          "deepLink": "https://www.amazon.com/dp/B00K3LGRAS?tag=treklistapp-20",
+          "region": "global",
+          "priority": 0
+        }
+      ]
+    }
+  ]
+}

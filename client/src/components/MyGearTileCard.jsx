@@ -2,6 +2,7 @@
 import { FiTrash2, FiExternalLink, FiCheckSquare, FiSquare, FiStar } from "react-icons/fi";
 import { FaStar } from "react-icons/fa";
 import { tItemType } from "../config/catalogTaxonomy";
+import { resizedImageUrl } from "../utils/imageCdn";
 
 function pickFirstImageUrl(item) {
   if (!item) return null;
@@ -115,7 +116,7 @@ export default function MyGearTileCard({
       >
         {imageUrl ? (
           <img
-            src={imageUrl}
+            src={resizedImageUrl(imageUrl, 400)}
             alt={item.name || "Gear item"}
             className="w-full h-full object-cover sm:object-contain sm:p-3 sm:max-h-full sm:max-w-full"
             loading="lazy"
@@ -228,9 +229,19 @@ export default function MyGearTileCard({
             <div className="text-sm text-primary/70 truncate">{item.brand}</div>
           ) : null}
 
-          <div style={{ fontSize: 14 }} className="font-semibold text-primary leading-snug line-clamp-2">
+          <div
+            style={{ fontSize: 14 }}
+            className={`font-semibold text-primary leading-snug ${
+              item.variantKey ? "line-clamp-1" : "line-clamp-2"
+            }`}
+          >
             {item.name}
           </div>
+          {item.variantKey && (
+            <div className="text-xs text-primary/50 truncate leading-snug">
+              {item.variantKey}
+            </div>
+          )}
 
           {/* Weight badge: mobile only */}
           {item.weight ? (

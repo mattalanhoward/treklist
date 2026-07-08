@@ -214,6 +214,10 @@ function normalizeDimensions(raw) {
 // =============================================================================
 /**
  * Validates itemType and attributes before saving.
+ * Admin saves are LENIENT (strict:false): provided values are validated
+ * (enums/ranges enforced) but missing required fields don't block the save —
+ * items are often mid-curation, and attributes that vary per variant (e.g. a
+ * sleeping bag's temp rating) live on variant.attributes, not the base.
  * Returns { valid: true, itemType, attributes } or { valid: false, error: string }
  */
 function validateItemTypeAndAttributes(itemType, attributes) {
@@ -239,9 +243,11 @@ function validateItemTypeAndAttributes(itemType, attributes) {
     };
   }
 
-  // Validate attributes against schema
+  // Validate attributes against schema (lenient: see docblock)
   const attrs = attributes && typeof attributes === "object" ? attributes : {};
-  const result = validateAttributes(normalizedItemType, attrs);
+  const result = validateAttributes(normalizedItemType, attrs, {
+    strict: false,
+  });
 
   if (!result.valid) {
     return {
@@ -255,6 +261,164 @@ function validateItemTypeAndAttributes(itemType, attributes) {
     valid: true,
     itemType: normalizedItemType,
     attributes: result.cleaned,
+  };
+}
+
+// =============================================================================
+// VARIANT VALIDATION HELPER
+// =============================================================================
+/**
+ * Normalizes { variantAxes, variants, defaultVariantKey } as one coherent set.
+ * - axis names/values trimmed, deduped; every axis needs a name and values
+ * - variant keys are REGENERATED from options in axis order (" / " separator)
+ * - per-variant weights rounded to whole grams
+ * - per-variant attributes validated leniently (enums/ranges enforced, required
+ *   fields not) and replaced with the cleaned result
+ * - defaultVariantKey coerced to an existing key (first variant as fallback)
+ * Returns { error } or
+ * { variantAxes, variants, defaultVariantKey, defaultWeightGrams }.
+ */
+function normalizeVariantSet({
+  variantAxes,
+  variants,
+  defaultVariantKey,
+  itemType,
+}) {
+  const axes = [];
+  const seenAxis = new Set();
+  for (const a of Array.isArray(variantAxes) ? variantAxes : []) {
+    const name = String(a?.name ?? "").trim();
+    if (!name) return { error: "Each variant axis needs a name." };
+    if (seenAxis.has(name))
+      return { error: `Duplicate variant axis "${name}".` };
+    seenAxis.add(name);
+
+    const values = [];
+    const seenVal = new Set();
+    for (const raw of Array.isArray(a?.values) ? a.values : []) {
+      const val = String(raw ?? "").trim();
+      if (!val || seenVal.has(val)) continue;
+      seenVal.add(val);
+      values.push(val);
+    }
+    if (!values.length)
+      return { error: `Variant axis "${name}" has no values.` };
+    axes.push({ name, values });
+  }
+
+  const rawVariants = Array.isArray(variants) ? variants : [];
+  if (rawVariants.length && !axes.length) {
+    return { error: "Variants require at least one variant axis." };
+  }
+
+  const outVariants = [];
+  const seenKeys = new Set();
+  for (const v of rawVariants) {
+    const options =
+      v?.options && typeof v.options === "object" ? v.options : {};
+    const cleanOptions = {};
+    const parts = [];
+    for (const axis of axes) {
+      const val = String(options[axis.name] ?? "").trim();
+      if (!val) {
+        return {
+          error: `A variant is missing a value for axis "${axis.name}".`,
+        };
+      }
+      if (!axis.values.includes(val)) {
+        return {
+          error: `Variant value "${val}" is not a value of axis "${axis.name}".`,
+        };
+      }
+      cleanOptions[axis.name] = val;
+      parts.push(val);
+    }
+    const key = parts.join(" / ");
+    if (seenKeys.has(key)) return { error: `Duplicate variant "${key}".` };
+    seenKeys.add(key);
+
+    let weightGrams;
+    if (
+      v?.weightGrams !== undefined &&
+      v?.weightGrams !== null &&
+      v?.weightGrams !== ""
+    ) {
+      const n = Number(v.weightGrams);
+      if (Number.isNaN(n) || n < 0) {
+        return { error: `Invalid weight for variant "${key}".` };
+      }
+      weightGrams = Math.round(n);
+    }
+
+    let attributes;
+    if (
+      v?.attributes &&
+      typeof v.attributes === "object" &&
+      Object.keys(v.attributes).length
+    ) {
+      if (!itemType || !isValidItemType(itemType)) {
+        return {
+          error: "Set a valid item type before adding per-variant attributes.",
+        };
+      }
+      const res = validateAttributes(itemType, v.attributes, {
+        strict: false,
+      });
+      if (!res.valid) {
+        return { error: `Variant "${key}": ${res.errors.join(", ")}` };
+      }
+      if (Object.keys(res.cleaned).length) attributes = res.cleaned;
+    }
+
+    const sku =
+      v?.sku != null && String(v.sku).trim() ? String(v.sku).trim() : undefined;
+
+    const imageUrls = Array.isArray(v?.imageUrls)
+      ? v.imageUrls
+          .filter((u) => typeof u === "string" && u.trim())
+          .map((u) => u.trim())
+      : undefined;
+
+    const deepLink =
+      v?.deepLink != null && String(v.deepLink).trim()
+        ? String(v.deepLink).trim()
+        : undefined;
+
+    const description =
+      v?.description != null && String(v.description).trim()
+        ? String(v.description).trim()
+        : undefined;
+
+    outVariants.push({
+      key,
+      options: cleanOptions,
+      weightGrams,
+      sku,
+      attributes,
+      ...(imageUrls && imageUrls.length ? { imageUrls } : {}),
+      ...(deepLink ? { deepLink } : {}),
+      ...(description ? { description } : {}),
+    });
+  }
+
+  let defaultKey = String(defaultVariantKey || "").trim() || undefined;
+  if (outVariants.length) {
+    if (!defaultKey || !seenKeys.has(defaultKey))
+      defaultKey = outVariants[0].key;
+  } else {
+    defaultKey = undefined;
+  }
+
+  const def = defaultKey
+    ? outVariants.find((x) => x.key === defaultKey)
+    : undefined;
+
+  return {
+    variantAxes: axes,
+    variants: outVariants,
+    defaultVariantKey: defaultKey,
+    defaultWeightGrams:
+      def && typeof def.weightGrams === "number" ? def.weightGrams : undefined,
   };
 }
 
@@ -340,6 +504,23 @@ router.get("/item-types", async (req, res) => {
 });
 
 // =============================================================================
+// GET /api/admin/catalog-items/brands
+// Distinct brands across the WHOLE catalog (active + archived) — powers the admin
+// brand filter dropdown (which must not be limited to the current page of results).
+// =============================================================================
+router.get("/brands", async (req, res) => {
+  try {
+    const brands = (await CatalogItem.distinct("brand"))
+      .filter(Boolean)
+      .sort((a, b) => a.localeCompare(b));
+    res.json({ brands });
+  } catch (err) {
+    console.error("GET /api/admin/catalog-items/brands error", err);
+    res.status(500).json({ message: "Failed to get brands." });
+  }
+});
+
+// =============================================================================
 // POST /api/admin/catalog-items
 // =============================================================================
 router.post("/", async (req, res) => {
@@ -360,6 +541,9 @@ router.post("/", async (req, res) => {
       canonicalAsin,
       itemGroupId,
       attributes,
+      variantAxes,
+      variants,
+      defaultVariantKey,
     } = req.body || {};
 
     if (!name || typeof name !== "string") {
@@ -372,6 +556,26 @@ router.post("/", async (req, res) => {
     const attrValidation = validateItemTypeAndAttributes(itemType, attributes);
     if (!attrValidation.valid) {
       return res.status(400).json({ message: attrValidation.error });
+    }
+
+    // =========================================================================
+    // VALIDATE VARIANTS (optional)
+    // =========================================================================
+    let variantSet = null;
+    if (
+      variantAxes !== undefined ||
+      variants !== undefined ||
+      defaultVariantKey !== undefined
+    ) {
+      variantSet = normalizeVariantSet({
+        variantAxes,
+        variants,
+        defaultVariantKey,
+        itemType: attrValidation.itemType,
+      });
+      if (variantSet.error) {
+        return res.status(400).json({ message: variantSet.error });
+      }
     }
 
     const rawOffers = Array.isArray(offers)
@@ -440,7 +644,15 @@ router.post("/", async (req, res) => {
     // =========================================================================
     // CREATE CATALOG ITEM
     // =========================================================================
-    const item = await CatalogItem.create({
+    // Base weight tracks the default variant when variants are provided.
+    if (
+      normalizedWeight === undefined &&
+      typeof variantSet?.defaultWeightGrams === "number"
+    ) {
+      normalizedWeight = variantSet.defaultWeightGrams;
+    }
+
+    const item = new CatalogItem({
       name: name.trim(),
       brand: brand && String(brand).trim(),
       category: category && String(category).trim(),
@@ -451,6 +663,13 @@ router.post("/", async (req, res) => {
       attributes: attrValidation.attributes, // Use validated + derived attributes
       imageUrls: normalizedImageUrls,
       weightGrams: normalizedWeight,
+      ...(variantSet
+        ? {
+            variantAxes: variantSet.variantAxes,
+            variants: variantSet.variants,
+            defaultVariantKey: variantSet.defaultVariantKey,
+          }
+        : {}),
       dimensions: dimNorm.clear ? undefined : dimNorm.dimensions,
       tags: Array.isArray(tags)
         ? tags.filter(Boolean).map((t) => String(t).trim())
@@ -459,6 +678,10 @@ router.post("/", async (req, res) => {
       itemGroupId: normalizedItemGroupId,
       createdBy: req.userId,
     });
+    // The pre-save hook re-validates strictly by default; admin saves are
+    // lenient (route already validated provided values above).
+    item.$locals.lenientAttributes = true;
+    await item.save();
 
     const offerOps = sanitizedOffers.map((o) => ({
       updateOne: {
@@ -528,6 +751,9 @@ router.patch("/:id", async (req, res) => {
       "isActive",
       "canonicalAsin",
       "itemGroupId",
+      "variantAxes",
+      "variants",
+      "defaultVariantKey",
     ];
 
     for (const key of allowedFields) {
@@ -599,6 +825,72 @@ router.patch("/:id", async (req, res) => {
       // Use validated values
       updates.itemType = attrValidation.itemType;
       updates.attributes = attrValidation.attributes;
+    }
+
+    // =========================================================================
+    // VALIDATE VARIANTS
+    // =========================================================================
+    // Variant fields are normalized as one coherent set: fields not present in
+    // the payload are read from the existing document so a partial update (e.g.
+    // only defaultVariantKey) can't leave axes/variants/default inconsistent.
+    const hasVariantUpdate = [
+      "variantAxes",
+      "variants",
+      "defaultVariantKey",
+    ].some((k) => Object.prototype.hasOwnProperty.call(req.body, k));
+
+    if (hasVariantUpdate) {
+      const existing = await CatalogItem.findById(req.params.id)
+        .select("itemType variantAxes variants defaultVariantKey")
+        .lean();
+      if (!existing) {
+        return res.status(404).json({ message: "Catalog item not found." });
+      }
+
+      const effectiveItemType = hasItemType
+        ? updates.itemType
+        : existing.itemType;
+
+      const variantSet = normalizeVariantSet({
+        variantAxes: Object.prototype.hasOwnProperty.call(
+          req.body,
+          "variantAxes",
+        )
+          ? req.body.variantAxes
+          : existing.variantAxes,
+        variants: Object.prototype.hasOwnProperty.call(req.body, "variants")
+          ? req.body.variants
+          : existing.variants,
+        defaultVariantKey: Object.prototype.hasOwnProperty.call(
+          req.body,
+          "defaultVariantKey",
+        )
+          ? req.body.defaultVariantKey
+          : existing.defaultVariantKey,
+        itemType: effectiveItemType,
+      });
+      if (variantSet.error) {
+        return res.status(400).json({ message: variantSet.error });
+      }
+
+      updates.variantAxes = variantSet.variantAxes;
+      updates.variants = variantSet.variants;
+      if (variantSet.defaultVariantKey) {
+        updates.defaultVariantKey = variantSet.defaultVariantKey;
+      } else {
+        updates.$unset = { ...(updates.$unset || {}), defaultVariantKey: 1 };
+        delete updates.defaultVariantKey;
+      }
+
+      // Base weight tracks the default variant unless the payload sets it
+      // explicitly.
+      if (
+        variantSet.variants.length &&
+        typeof variantSet.defaultWeightGrams === "number" &&
+        !Object.prototype.hasOwnProperty.call(req.body, "weightGrams")
+      ) {
+        updates.weightGrams = variantSet.defaultWeightGrams;
+      }
     }
 
     // Dimensions (allow clear)

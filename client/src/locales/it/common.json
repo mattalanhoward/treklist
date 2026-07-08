@@ -355,7 +355,13 @@
       "viewAsChecklist": "Checklist",
       "copyList": "Copia lista",
       "shareList": "Condividi lista",
-      "deleteList": "Elimina lista"
+      "deleteList": "Elimina lista",
+      "lockList": "Blocca lista",
+      "unlockList": "Sblocca lista",
+      "lockListA11y": "Blocca la lista per impedire modifiche",
+      "unlockListA11y": "Sblocca la lista per consentire modifiche",
+      "reorderA11y": "Riordina elementi",
+      "exitReorderA11y": "Esci dalla modalità riordino"
     },
     "confirm": {
       "removeItemTitle": "Rimuovere questo articolo?",
@@ -391,7 +397,10 @@
       "listDeleted": "Lista eliminata",
       "listDeleteFailed": "Impossibile eliminare la lista.",
       "toggleWornFailed": "Impossibile aggiornare lo stato indossato.",
-      "toggleConsumableFailed": "Impossibile aggiornare lo stato consumabile."
+      "toggleConsumableFailed": "Impossibile aggiornare lo stato consumabile.",
+      "listLocked": "Lista bloccata",
+      "listUnlocked": "Lista sbloccata",
+      "lockToggleFailed": "Impossibile modificare il blocco."
     },
     "addCategory": {
       "button": "Aggiungi categoria",
@@ -631,6 +640,8 @@
     "allBrands": "Tutti i marchi",
     "myGear": "Il mio equipaggiamento",
     "fromCatalog": "Dal catalogo",
+    "catalogResultCount_one": "{{count}} articolo nel catalogo",
+    "catalogResultCount_other": "{{count}} articoli nel catalogo",
     "added": "Aggiunto",
     "noGearYet": "Nessun equipaggiamento. Cerca nel catalogo o descrivi un articolo sopra.",
     "browseHint": "Cerca nel catalogo o tocca una categoria per sfogliare.",
@@ -758,7 +769,7 @@
       "adding": "Aggiunta…",
       "importAndAdd_one": "Importa e aggiungi {{count}}",
       "importAndAdd_other": "Importa e aggiungi {{count}}",
-      "create": "Crea"
+      "createAndAdd": "Crea e aggiungi"
     },
     "catalog": {
       "searchPlaceholder": "Cerca nel catalogo…",
@@ -1163,14 +1174,19 @@
       "quantity": "Quantità",
       "viewProduct": "Vedi prodotto",
       "viewProductPaid": "Vedi prodotto (link a pagamento)"
-    }
+    },
+    "link": "Link",
+    "notesHeader": "Note di viaggio",
+    "route": "Percorso"
   },
   "affiliateDisclosure": {
     "public": {
-      "body": "Questa pagina può contenere link di affiliazione. Gli acquisti effettuati tramite questi link possono generare una commissione senza costi aggiuntivi per te."
+      "body": "Questa pagina può contenere link di affiliazione. Gli acquisti effettuati tramite questi link possono generare una commissione senza costi aggiuntivi per te.",
+      "bodyShort": "Questa pagina può contenere link di affiliazione."
     },
     "private": {
-      "body": "Questa pagina può contenere link di affiliazione. Gli acquisti effettuati tramite questi link possono generare una commissione senza costi aggiuntivi per te."
+      "body": "Questa pagina può contenere link di affiliazione. Gli acquisti effettuati tramite questi link possono generare una commissione senza costi aggiuntivi per te.",
+      "bodyShort": "Questa pagina può contenere link di affiliazione."
     }
   },
   "safetyDisclaimer": {
@@ -1238,13 +1254,13 @@
             "title": "Totali di peso intelligenti",
             "text": "Base, indossato e consumabili in tempo reale."
           },
-          "quickAdd": {
-            "title": "Aggiunta rapida e ricerca",
-            "text": "Trova l'attrezzatura in fretta e modifica da qualsiasi punto."
-          },
           "checklist": {
             "title": "Checklist di preparazione",
             "text": "Un tap per spuntare e un PDF pulito da esportare."
+          },
+          "community": {
+            "title": "La tua community del sentiero, integrata",
+            "text": "Chiedi informazioni su attrezzatura, liste o il tuo itinerario. Ricevi risposte da escursionisti che hanno già percorso il sentiero o usato l'attrezzatura."
           }
         }
       },
@@ -1252,10 +1268,6 @@
         "title": "Fatto per la pianificazione",
         "subtitle": "Vista a colonne o a lista, quella che rispecchia il tuo modo di pianificare.",
         "bullets": {
-          "drag": {
-            "title": "Trascina tra categorie",
-            "text": "Sposta gli elementi nel tuo kit mentre il piano cambia."
-          },
           "gearLibrary": {
             "title": "La tua libreria di attrezzatura, riutilizzata per ogni viaggio",
             "text": "Aggiungi qualcosa una volta e resta nella tua libreria personale. Usala in qualsiasi lista futura senza reinserire nulla."

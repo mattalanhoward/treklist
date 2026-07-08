@@ -10,6 +10,7 @@ import { toast } from "react-hot-toast";
 import { FiEdit2, FiX, FiChevronUp, FiChevronDown, FiUsers, FiUser, FiCopy, FiExternalLink, FiCheck, FiSlash } from "react-icons/fi";
 
 function ImageStatusCell({ imageUrls }) {
+  // Health probe: must check the original stored URL, never a resized variant.
   const firstUrl = Array.isArray(imageUrls) && imageUrls[0] ? imageUrls[0] : null;
   const [status, setStatus] = useState(firstUrl ? "loading" : "none");
 
@@ -31,7 +32,10 @@ import ConfirmDialog from "../components/ConfirmDialog";
 import { useUserSettings } from "../contexts/UserSettings";
 import AttributeFields, {
   getItemTypesForCategory,
+  getSchemaForItemType,
 } from "../components/AttributeFields";
+import VariantEditor from "../components/VariantEditor";
+import { resizedImageUrl } from "../utils/imageCdn";
 
 const TABS = [
   { id: "gearCatalog", label: "Gear catalog" },
@@ -125,6 +129,43 @@ function marketplaceFromAmazonUrlClient(url) {
 
 const getPrimaryOffer = (f) =>
   Array.isArray(f?.offers) && f.offers[0] ? f.offers[0] : blankOffer();
+
+function hasMissingRequiredAttributes(itemType, attributes, variants) {
+  const schema = getSchemaForItemType(itemType);
+  if (!schema) return false;
+  const variantList = Array.isArray(variants) ? variants : [];
+  const hasValue = (v) => v !== undefined && v !== null && v !== "";
+  return Object.entries(schema.fields).some(([key, field]) => {
+    if (!field.required || field.derived) return false;
+    if (hasValue(attributes?.[key])) return false;
+    // A required attribute that varies per variant (e.g. a sleeping bag's
+    // temp rating) is satisfied when EVERY variant overrides it.
+    if (
+      variantList.length &&
+      variantList.every((v) => hasValue(v?.attributes?.[key]))
+    ) {
+      return false;
+    }
+    return true;
+  });
+}
+
+// "Yellow" items: missing weight or missing required attributes (or untyped).
+// Mirrors the per-tab completeness dots in the edit modal.
+function isItemIncomplete(item) {
+  const variants = Array.isArray(item.variants) ? item.variants : [];
+  const hasBaseWeight = typeof item.weightGrams === "number";
+  const missingWeight = variants.length
+    ? !hasBaseWeight && variants.some((v) => typeof v.weightGrams !== "number")
+    : !hasBaseWeight;
+  if (missingWeight) return true;
+  if (!item.itemType) return true;
+  return hasMissingRequiredAttributes(
+    item.itemType,
+    item.attributes,
+    item.variants,
+  );
+}
 
 function toOptionalNumber(val) {
   if (val === "" || val === null || val === undefined) return undefined;
@@ -226,7 +267,7 @@ function DecathlonImportPanel({ onImported, onEditItem }) {
                 <div key={product.externalProductId} className="border border-base-200 rounded-lg overflow-hidden flex flex-col">
                   {product.imageUrl && (
                     <img
-                      src={product.imageUrl}
+                      src={resizedImageUrl(product.imageUrl, 400)}
                       alt={product.name}
                       className="w-full h-36 object-contain bg-base-100 p-2"
                     />
@@ -275,6 +316,7 @@ function GearCatalogSection({
   onSeedConsumed,
 }) {
   const [items, setItems] = useState([]);
+  const [allBrands, setAllBrands] = useState([]); // whole-catalog brands for the filter dropdown
   const [serverTotal, setServerTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -293,6 +335,7 @@ function GearCatalogSection({
   const [filterBrand, setFilterBrand] = useState("all");
   const [filterNetwork, setFilterNetwork] = useState("all");
   const [filterImage, setFilterImage] = useState("all");
+  const [filterCompleteness, setFilterCompleteness] = useState("all");
   const [sort, setSort] = useState({ field: "updatedAt", dir: "desc" });
 
   // Pagination
@@ -377,6 +420,21 @@ function GearCatalogSection({
     return () => clearTimeout(searchTimerRef.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, search, filterCategory, filterBrand, showArchived, sort.field, sort.dir]);
+
+  // Load the full catalog's distinct brands once, so the brand filter isn't limited
+  // to the current page of results.
+  useEffect(() => {
+    let cancelled = false;
+    api
+      .get("/admin/catalog-items/brands")
+      .then(({ data }) => {
+        if (!cancelled) setAllBrands(data?.brands || []);
+      })
+      .catch((err) => console.error("Failed to load brands", err));
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (!duplicateSeed) return;
@@ -827,10 +885,12 @@ function GearCatalogSection({
     return buildCategoryOptions({ existing });
   }, [items]);
 
-  const brandOptions = useMemo(
-    () => Array.from(new Set(items.map((i) => i.brand).filter(Boolean))).sort(),
-    [items],
-  );
+  const brandOptions = useMemo(() => {
+    // Prefer the whole-catalog brand list; fall back to the current page's brands
+    // until it loads (or if the request failed) so the dropdown is never empty.
+    if (allBrands.length) return allBrands;
+    return Array.from(new Set(items.map((i) => i.brand).filter(Boolean))).sort();
+  }, [allBrands, items]);
 
   const networkOptions = useMemo(() => {
     const nets = items
@@ -851,9 +911,13 @@ function GearCatalogSection({
         filterImage === "all" ||
         (filterImage === "has_image" && hasImage) ||
         (filterImage === "no_image" && !hasImage);
-      return networkMatches && imageMatches;
+      const completenessMatches =
+        filterCompleteness === "all" ||
+        (filterCompleteness === "incomplete" && isItemIncomplete(item)) ||
+        (filterCompleteness === "complete" && !isItemIncomplete(item));
+      return networkMatches && imageMatches && completenessMatches;
     });
-  }, [items, filterNetwork, filterImage]);
+  }, [items, filterNetwork, filterImage, filterCompleteness]);
 
   const sortedItems = useMemo(() => {
     const dir = sort.dir === "asc" ? 1 : -1;
@@ -1782,12 +1846,26 @@ function GearCatalogSection({
                         <option value="has_image">Has image</option>
                         <option value="no_image">No image</option>
                       </select>
+
+                      <select
+                        className="select select-xs select-bordered"
+                        value={filterCompleteness}
+                        onChange={(e) => {
+                          setFilterCompleteness(e.target.value);
+                          setPage(0);
+                        }}
+                        title="Incomplete = missing weight (base or per-variant), untyped, or missing required attributes"
+                      >
+                        <option value="all">All items</option>
+                        <option value="incomplete">Incomplete only</option>
+                        <option value="complete">Complete only</option>
+                      </select>
                     </div>
                   </div>
 
                   {items.length === 0 && (
                     <div className="px-3 py-2 text-xs text-primary/70">
-                      {search.trim() || filterCategory !== "all" || filterBrand !== "all" || filterNetwork !== "all" || filterImage !== "all"
+                      {search.trim() || filterCategory !== "all" || filterBrand !== "all" || filterNetwork !== "all" || filterImage !== "all" || filterCompleteness !== "all"
                         ? "No items match your search. Try a different term or clear the filters."
                         : "No catalog items yet. Use the form above to add your first affiliate-backed gear item."}
                     </div>
@@ -1918,10 +1996,19 @@ function GearCatalogSection({
                                 : "–"}
                             </td>
 
-                            <td className="px-3 py-2 text-right align-top">
+                            <td className="px-3 py-2 text-right align-top whitespace-nowrap">
                               {typeof item.weightGrams === "number"
                                 ? `${item.weightGrams} g`
                                 : "–"}
+                              {Array.isArray(item.variants) &&
+                                item.variants.length > 0 && (
+                                  <span
+                                    className="ml-1 text-[10px] text-primary/50"
+                                    title={`${item.variants.length} variants`}
+                                  >
+                                    ×{item.variants.length}
+                                  </span>
+                                )}
                             </td>
 
                             <td className="px-3 py-2 text-center align-top">
@@ -1939,6 +2026,12 @@ function GearCatalogSection({
                               >
                                 {item.isActive ? "Active" : "Archived"}
                               </span>
+                              {isItemIncomplete(item) && (
+                                <span
+                                  className="inline-block w-2 h-2 rounded-full bg-warning ml-1.5"
+                                  title="Incomplete: missing weight, untyped, or missing required attributes"
+                                />
+                              )}
                             </td>
 
                             <td className="px-3 py-2 text-right align-top">
@@ -2106,7 +2199,7 @@ function ViewCatalogItemModal({ item, onClose }) {
           {imageUrl && (
             <div className="flex justify-center">
               <img
-                src={imageUrl}
+                src={resizedImageUrl(imageUrl, 400)}
                 alt={item.name}
                 className="max-h-48 max-w-full object-contain rounded"
               />
@@ -2277,6 +2370,31 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
       canonicalAsin: item?.canonicalAsin || "",
       itemGroupId: item?.itemGroupId || "",
 
+      // Variant matrix (weights kept as strings for the inputs)
+      variantAxes: Array.isArray(item?.variantAxes)
+        ? item.variantAxes.map((a) => ({
+            name: a?.name || "",
+            values: Array.isArray(a?.values) ? [...a.values] : [],
+          }))
+        : [],
+      variants: Array.isArray(item?.variants)
+        ? item.variants.map((v) => ({
+            key: v?.key || "",
+            options:
+              v?.options && typeof v.options === "object"
+                ? { ...v.options }
+                : {},
+            weightGrams:
+              typeof v?.weightGrams === "number" ? String(v.weightGrams) : "",
+            sku: v?.sku || "",
+            attributes:
+              v?.attributes && typeof v.attributes === "object"
+                ? { ...v.attributes }
+                : {},
+          }))
+        : [],
+      defaultVariantKey: item?.defaultVariantKey || "",
+
       // Amazon lookup helpers
       amazonAsinLookup:
         item?.canonicalAsin ||
@@ -2297,6 +2415,8 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
     };
   });
 
+  const [activeTab, setActiveTab] = useState("details");
+
   // Locked categories + ensure current value is selectable (legacy-safe)
   const categorySelectOptions = buildCategoryOptions({
     existing: [], // locked list only
@@ -2313,6 +2433,41 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
 
   const getPrimaryOffer = (f) =>
     Array.isArray(f.offers) && f.offers[0] ? f.offers[0] : blankOffer();
+
+  const hasVariants = form.variants.length > 0;
+
+  // Per-tab completeness (drives the yellow dots in the tab bar)
+  const tabWarnings = {
+    details:
+      !form.name.trim() ||
+      !form.category ||
+      !form.itemType ||
+      (!hasVariants && !String(form.weightGrams || "").trim()),
+    attributes: hasMissingRequiredAttributes(
+      form.itemType,
+      form.attributes,
+      form.variants,
+    ),
+    variants:
+      hasVariants &&
+      form.variants.some((v) => !String(v.weightGrams ?? "").trim()),
+    media: !form.imageUrlsText.trim(),
+    offers: !(Array.isArray(form.offers) ? form.offers : []).some(
+      (o) =>
+        String(o.network || "").trim() && String(o.url || "").trim(),
+    ),
+  };
+
+  const EDIT_TABS = [
+    { id: "details", label: "Details" },
+    { id: "attributes", label: "Attributes" },
+    {
+      id: "variants",
+      label: hasVariants ? `Variants (${form.variants.length})` : "Variants",
+    },
+    { id: "media", label: "Media & Description" },
+    { id: "offers", label: "Offers" },
+  ];
 
   const updateOffer = (idx, key, value) => {
     setForm((prev) => {
@@ -2567,7 +2722,11 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
         modelNumber: form.modelNumber.trim() || undefined,
         description: form.description.trim() || undefined,
         attributes,
-        weightGrams: toOptionalNumber(form.weightGrams),
+        // With variants, base weight is synced server-side to the default
+        // variant's weight — don't send it.
+        ...(form.variants.length
+          ? {}
+          : { weightGrams: toOptionalNumber(form.weightGrams) }),
         dimensions:
           form.dimLength ||
           form.dimWidth ||
@@ -2595,6 +2754,23 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
           form.canonicalAsin.trim() === "" ? null : form.canonicalAsin.trim(),
         itemGroupId:
           form.itemGroupId.trim() === "" ? null : form.itemGroupId.trim(),
+
+        // Variant matrix. Keys are regenerated server-side from options in
+        // axis order; per-variant attributes are validated leniently.
+        variantAxes: form.variantAxes
+          .filter((a) => String(a.name).trim() && a.values.length)
+          .map((a) => ({ name: a.name.trim(), values: a.values })),
+        variants: form.variants.map((v) => ({
+          key: v.key,
+          options: v.options,
+          weightGrams: toOptionalNumber(v.weightGrams) ?? null,
+          sku: String(v.sku || "").trim() || undefined,
+          attributes:
+            v.attributes && Object.keys(v.attributes).length
+              ? v.attributes
+              : undefined,
+        })),
+        defaultVariantKey: form.defaultVariantKey || undefined,
 
         // ✅ IMPORTANT: send offers (server reads offers + supports url/deepLink)
         offers: form.offers.map((o) => ({
@@ -2631,8 +2807,6 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
     }
   };
 
-  const primaryNetwork = getPrimaryOffer(form).network;
-
   return (
     <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-50">
       <form
@@ -2643,6 +2817,9 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
         <div className="flex items-center justify-between px-4 pt-3 pb-2 sm:px-6 border-b border-base-200">
           <h2 className="text-sm font-semibold text-primary">
             Edit catalog item
+            {form.name ? (
+              <span className="font-normal text-primary/60"> — {form.name}</span>
+            ) : null}
           </h2>
           <button
             type="button"
@@ -2655,13 +2832,35 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
           </button>
         </div>
 
-        <div className="px-4 py-4 sm:px-6 sm:py-6 space-y-3">
-          {/* 1) ITEM DETAILS */}
-          <div className="space-y-2">
-            <div className="text-sm font-semibold text-primary">
-              Item Details
-            </div>
+        {/* Tabs */}
+        <div className="flex flex-wrap gap-1 px-4 sm:px-6 pt-2 border-b border-base-200 sticky top-0 bg-neutralAlt z-10">
+          {EDIT_TABS.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setActiveTab(t.id)}
+              className={
+                "px-3 py-1.5 text-xs font-semibold rounded-t border-b-2 -mb-px transition-colors " +
+                (activeTab === t.id
+                  ? "border-secondary text-primary"
+                  : "border-transparent text-primary/60 hover:text-primary")
+              }
+            >
+              {t.label}
+              {tabWarnings[t.id] && (
+                <span
+                  className="inline-block w-1.5 h-1.5 rounded-full bg-warning ml-1.5 align-middle"
+                  title="Incomplete"
+                />
+              )}
+            </button>
+          ))}
+        </div>
 
+        <div className="px-4 py-4 sm:px-6 sm:py-6 space-y-3">
+          {/* DETAILS TAB */}
+          {activeTab === "details" && (
+            <div className="space-y-3">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                 {/* Row 1 */}
                 <div>
@@ -2772,26 +2971,8 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                 </div>
               </div>
 
-              {/* 3) MEDIA & SPECS */}
-              <div className="space-y-3 border-t border-base-200 pt-4">
-                <div className="text-xs font-semibold text-primary/80">
-                  Media & specs
-                </div>
-
-                <div>
-                  <label className="block font-medium text-primary mb-0.5">
-                    Attributes
-                  </label>
-                  <AttributeFields
-                    itemType={form.itemType}
-                    attributes={form.attributes}
-                    onChange={(newAttrs) =>
-                      setForm((prev) => ({ ...prev, attributes: newAttrs }))
-                    }
-                  />
-                </div>
-
-                <div>
+              {/* Weight & dimensions */}
+              <div className="border-t border-base-200 pt-3">
                   <label className="block font-medium text-primary mb-0.5">
                     Weight / Dimensions
                   </label>
@@ -2801,7 +2982,13 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                       name="weightGrams"
                       value={form.weightGrams}
                       onChange={handleChange}
-                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary"
+                      disabled={hasVariants}
+                      title={
+                        hasVariants
+                          ? "Tracks the default variant's weight (edit in the Variants tab)"
+                          : undefined
+                      }
+                      className="mt-0.5 block w-full border border-primary rounded px-2 py-1 text-primary disabled:opacity-50"
                       placeholder="Weight (g)"
                       min="0"
                     />
@@ -2852,8 +3039,71 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                   <span className="block text-[11px] text-primary/70">
                     Dimensions stored as L × W × H (cm). Note: e.g. "Packed", "Varies by size"
                   </span>
-                </div>
+                  {hasVariants && (
+                    <span className="block text-[11px] text-primary/70">
+                      Base weight tracks the default variant (
+                      {form.defaultVariantKey || "—"}) — edit it in the
+                      Variants tab.
+                    </span>
+                  )}
+              </div>
+            </div>
+          )}
 
+          {/* ATTRIBUTES TAB (base attributes; variants can override per-variant) */}
+          {activeTab === "attributes" && (
+            <div className="space-y-2">
+              {hasVariants && (
+                <div className="text-[11px] text-primary/70 bg-base-200/50 rounded p-2">
+                  These are the BASE attributes. Per-variant overrides (e.g.
+                  volumeLiters per size, tempRatingC per temperature) live in
+                  the Variants tab and merge over these when a variant is
+                  selected. Required fields that vary per variant can stay
+                  blank here — they count as complete once every variant
+                  overrides them.
+                </div>
+              )}
+              <AttributeFields
+                itemType={form.itemType}
+                attributes={form.attributes}
+                onChange={(newAttrs) =>
+                  setForm((prev) => ({ ...prev, attributes: newAttrs }))
+                }
+              />
+            </div>
+          )}
+
+          {/* VARIANTS TAB */}
+          {activeTab === "variants" && (
+            <VariantEditor
+              itemType={form.itemType}
+              variantAxes={form.variantAxes}
+              variants={form.variants}
+              defaultVariantKey={form.defaultVariantKey}
+              onChange={({ variantAxes, variants, defaultVariantKey }) =>
+                setForm((prev) => {
+                  const def = variants.find(
+                    (v) => v.key === defaultVariantKey,
+                  );
+                  return {
+                    ...prev,
+                    variantAxes,
+                    variants,
+                    defaultVariantKey,
+                    // Base weight mirrors the default variant for display.
+                    weightGrams:
+                      def && String(def.weightGrams ?? "").trim()
+                        ? String(def.weightGrams)
+                        : prev.weightGrams,
+                  };
+                })
+              }
+            />
+          )}
+
+          {/* MEDIA & DESCRIPTION TAB */}
+          {activeTab === "media" && (
+            <div className="space-y-3">
                 <div>
                   <label className="block font-medium text-primary mb-0.5">
                     Description
@@ -2900,9 +3150,8 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                     />
                   </div>
                 </div>
-              </div>
 
-              {/* 4) PREFILL SOURCE */}
+              {/* PREFILL SOURCE */}
               <div className="space-y-3 border-t border-base-200 pt-4">
                 <div className="text-xs font-semibold text-primary/80">
                   Prefill source
@@ -3019,9 +3268,12 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                 />
                 <span>Overwrite existing fields when applying prefill</span>
               </label>
+            </div>
+          )}
 
-              {/* 5) PRIMARY OFFER */}
-              <div className="space-y-3 border-t border-base-200 pt-4">
+          {/* OFFERS TAB */}
+          {activeTab === "offers" && (
+            <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="text-xs font-semibold text-primary/80">
                     Primary offer
@@ -3299,8 +3551,8 @@ function EditCatalogItemModal({ item, onClose, onSaved }) {
                   })}
                 </div>
               )}
-              </div>
             </div>
+          )}
 
           <div className="flex justify-end gap-2 pt-3 border-t border-base-200 mt-2">
             <button

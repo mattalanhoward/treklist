@@ -541,19 +541,30 @@ router.post("/from-catalog/bulk", async (req, res) => {
       })[0];
     };
 
-    // Existing imports for this owner
+    // The chosen variant key for a catalog item (same logic as the resolution below):
+    // owning one variant must NOT block adding a different one.
+    const resolveKey = (c) => {
+      if (!Array.isArray(c.variants) || !c.variants.length) return null;
+      const chosen = variantSelections[String(c._id)] || c.defaultVariantKey || null;
+      const v = c.variants.find((x) => x.key === chosen);
+      return v ? v.key : null;
+    };
+
+    // Existing imports for this owner, keyed by productId + variantKey
     const existing = await GlobalItem.find({
       owner: req.userId,
       productId: { $in: catalogIds },
     })
-      .select("_id productId")
+      .select("_id productId variantKey")
       .lean();
 
-    const existingSet = new Set(existing.map((g) => String(g.productId)));
+    const existingSet = new Set(
+      existing.map((g) => `${g.productId}|${g.variantKey || ""}`)
+    );
 
     // Prepare upsert operations (idempotent, safe in races due to unique index)
     const ops = catalogItems
-      .filter((c) => !existingSet.has(String(c._id)))
+      .filter((c) => !existingSet.has(`${c._id}|${resolveKey(c) || ""}`))
       .map((c) => {
         const bestOffer = pickBestOffer(
           offersByProductId.get(String(c._id)) || []
@@ -580,6 +591,8 @@ router.post("/from-catalog/bulk", async (req, res) => {
         // so the edit modal shows what the user owns.
         let resolvedWeight = c.weightGrams;
         let resolvedVariantKey = null;
+        let resolvedAttributes = c.attributes;
+        let resolvedDescription = c.description;
         if (Array.isArray(c.variants) && c.variants.length) {
           const chosenKey =
             variantSelections[String(c._id)] || c.defaultVariantKey || null;
@@ -588,6 +601,21 @@ router.post("/from-catalog/bulk", async (req, res) => {
             resolvedVariantKey = variant.key;
             if (typeof variant.weightGrams === "number") {
               resolvedWeight = variant.weightGrams;
+            }
+            // Per-variant attribute overrides (e.g. Material -> mainFabric) are
+            // merged onto the base so the owned item reflects what was chosen.
+            if (variant.attributes && typeof variant.attributes === "object") {
+              resolvedAttributes = { ...(c.attributes || {}), ...variant.attributes };
+            }
+            // Per-variant description (e.g. a quilt's 20° vs 40° blurb) is
+            // snapshotted so the owned item reflects the chosen variant.
+            if (variant.description) {
+              resolvedDescription = variant.description;
+            }
+            // The chosen variant's own buy-link overrides the item-level offer link
+            // so the owned item routes to exactly what was selected.
+            if (variant.deepLink && resolved) {
+              resolved.deepLink = variant.deepLink;
             }
           }
         }
@@ -598,10 +626,10 @@ router.post("/from-catalog/bulk", async (req, res) => {
           name: c.name,
           brand: c.brand,
           itemType: c.itemType || c.subcategory || c.category || null,
-          description: c.description,
+          description: resolvedDescription,
           weight: resolvedWeight,
           variantKey: resolvedVariantKey,
-          attributes: sanitizeAttributes(c.attributes),
+          attributes: sanitizeAttributes(resolvedAttributes),
           ...(typeof resolvedWeight === "number" && { weightSource: "catalog" }),
           tags: c.tags,
           catalogCategory: c.category || null,
@@ -628,7 +656,7 @@ router.post("/from-catalog/bulk", async (req, res) => {
 
         return {
           updateOne: {
-            filter: { owner: req.userId, productId: c._id },
+            filter: { owner: req.userId, productId: c._id, variantKey: resolveKey(c) },
             update: { $setOnInsert: payload },
             upsert: true,
           },

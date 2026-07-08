@@ -452,56 +452,66 @@ export default function MyGearView({ collapsed }) {
         </p>
 
         {/* Desktop: Selection action bar */}
-        {selectionMode && (
-          <div className="hidden sm:flex items-center justify-between gap-4 mt-2 pt-2 border-t border-primary/10">
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-primary/60">
-                {selectedIds.size > 0
-                  ? t("myGear.selected", "{{count}} selected", { count: selectedIds.size })
-                  : t("myGear.selectItems", "Select items")}
-              </span>
-              {selectedIds.size > 0 && (
+        <div
+          className={`hidden sm:grid transition-[grid-template-rows] duration-200 ease-in-out ${
+            selectionMode ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+          }`}
+        >
+          <div
+            className={`overflow-hidden transition-opacity duration-150 ease-in-out ${
+              selectionMode ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <div className="flex items-center justify-between gap-4 mt-2 pt-2 border-t border-primary/10">
+              <div className="flex items-center gap-3">
+                <span className="text-sm text-primary/60">
+                  {selectedIds.size > 0
+                    ? t("myGear.selected", "{{count}} selected", { count: selectedIds.size })
+                    : t("myGear.selectItems", "Select items")}
+                </span>
+                {selectedIds.size > 0 && (
+                  <button
+                    type="button"
+                    onClick={clearSelection}
+                    className="text-sm text-secondary hover:text-secondary/80"
+                  >
+                    {t("myGear.actions.clearSelection", "Clear")}
+                  </button>
+                )}
+              </div>
+              <div className="flex items-center gap-2">
+                {selectedIds.size > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setConfirmBulkDelete(true)}
+                    disabled={actionLoading === "bulk"}
+                    className="flex items-center gap-1 px-2 py-1 text-sm bg-error/10 text-error hover:bg-error/20 rounded"
+                  >
+                    <FiTrash2 className="text-xs" />
+                    {t("myGear.actions.deleteSelected", "Delete")}
+                  </button>
+                )}
+                {filteredItems.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={selectAll}
+                    className="text-sm text-secondary hover:text-secondary/80"
+                  >
+                    {t("myGear.actions.selectAll", "Select all")}
+                  </button>
+                )}
                 <button
                   type="button"
-                  onClick={clearSelection}
-                  className="text-sm text-secondary hover:text-secondary/80"
+                  onClick={exitSelectionMode}
+                  className="flex items-center gap-1 px-2 py-1 text-sm text-primary/70 hover:text-primary rounded"
                 >
-                  {t("myGear.actions.clearSelection", "Clear")}
+                  <FiX className="text-xs" />
+                  {t("actions.cancel", "Cancel")}
                 </button>
-              )}
-            </div>
-            <div className="flex items-center gap-2">
-              {selectedIds.size > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setConfirmBulkDelete(true)}
-                  disabled={actionLoading === "bulk"}
-                  className="flex items-center gap-1 px-2 py-1 text-sm bg-error/10 text-error hover:bg-error/20 rounded"
-                >
-                  <FiTrash2 className="text-xs" />
-                  {t("myGear.actions.deleteSelected", "Delete")}
-                </button>
-              )}
-              {filteredItems.length > 0 && (
-                <button
-                  type="button"
-                  onClick={selectAll}
-                  className="text-sm text-secondary hover:text-secondary/80"
-                >
-                  {t("myGear.actions.selectAll", "Select all")}
-                </button>
-              )}
-              <button
-                type="button"
-                onClick={exitSelectionMode}
-                className="flex items-center gap-1 px-2 py-1 text-sm text-primary/70 hover:text-primary rounded"
-              >
-                <FiX className="text-xs" />
-                {t("actions.cancel", "Cancel")}
-              </button>
+              </div>
             </div>
           </div>
-        )}
+        </div>
 
         {/* Mobile: stacked layout */}
         <div className="sm:hidden space-y-2">
@@ -555,56 +565,66 @@ export default function MyGearView({ collapsed }) {
           </div>
 
           {/* Mobile selection action bar */}
-          {selectionMode && (
-            <div className="flex items-center justify-between gap-2 py-1 border-t border-primary/10 pt-2">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-primary/60">
-                  {selectedIds.size > 0
-                    ? t("myGear.selected", "{{count}} selected", { count: selectedIds.size })
-                    : t("myGear.selectItems", "Select items")}
-                </span>
-                {selectedIds.size > 0 && (
+          <div
+            className={`grid transition-[grid-template-rows] duration-200 ease-in-out ${
+              selectionMode ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+            }`}
+          >
+            <div
+              className={`overflow-hidden transition-opacity duration-150 ease-in-out ${
+                selectionMode ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <div className="flex items-center justify-between gap-2 py-1 border-t border-primary/10 pt-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-primary/60">
+                    {selectedIds.size > 0
+                      ? t("myGear.selected", "{{count}} selected", { count: selectedIds.size })
+                      : t("myGear.selectItems", "Select items")}
+                  </span>
+                  {selectedIds.size > 0 && (
+                    <button
+                      type="button"
+                      onClick={clearSelection}
+                      className="text-sm text-secondary hover:text-secondary/80"
+                    >
+                      {t("myGear.actions.clearSelection", "Clear")}
+                    </button>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  {selectedIds.size > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setConfirmBulkDelete(true)}
+                      disabled={actionLoading === "bulk"}
+                      className="p-1.5 text-error hover:bg-error/10 rounded"
+                      title={t("myGear.actions.deleteSelected", "Delete selected")}
+                    >
+                      <FiTrash2 className="text-sm" />
+                    </button>
+                  )}
+                  {filteredItems.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={selectAll}
+                      className="text-sm text-secondary hover:text-secondary/80"
+                    >
+                      {t("myGear.actions.selectAll", "Select all")}
+                    </button>
+                  )}
                   <button
                     type="button"
-                    onClick={clearSelection}
-                    className="text-sm text-secondary hover:text-secondary/80"
+                    onClick={exitSelectionMode}
+                    className="flex items-center gap-1 px-2 py-1 text-sm text-primary/70 hover:text-primary rounded"
                   >
-                    {t("myGear.actions.clearSelection", "Clear")}
+                    <FiX className="text-xs" />
+                    {t("actions.cancel", "Cancel")}
                   </button>
-                )}
-              </div>
-              <div className="flex items-center gap-2">
-                {selectedIds.size > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => setConfirmBulkDelete(true)}
-                    disabled={actionLoading === "bulk"}
-                    className="p-1.5 text-error hover:bg-error/10 rounded"
-                    title={t("myGear.actions.deleteSelected", "Delete selected")}
-                  >
-                    <FiTrash2 className="text-sm" />
-                  </button>
-                )}
-                {filteredItems.length > 0 && (
-                  <button
-                    type="button"
-                    onClick={selectAll}
-                    className="text-sm text-secondary hover:text-secondary/80"
-                  >
-                    {t("myGear.actions.selectAll", "Select all")}
-                  </button>
-                )}
-                <button
-                  type="button"
-                  onClick={exitSelectionMode}
-                  className="flex items-center gap-1 px-2 py-1 text-sm text-primary/70 hover:text-primary rounded"
-                >
-                  <FiX className="text-xs" />
-                  {t("actions.cancel", "Cancel")}
-                </button>
+                </div>
               </div>
             </div>
-          )}
+          </div>
 
           {/* Search - full width on mobile */}
           <div className="relative">

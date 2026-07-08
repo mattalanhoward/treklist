@@ -711,8 +711,8 @@ export default function GearListView({
         if (viewMode === "list" && listContainerRef.current) {
           return listContainerRef.current.clientWidth;
         }
-        // Column mode: match SortableColumn width (w-90 = 344px mobile, sm:w-64 = 256px)
-        return window.innerWidth >= 640 ? 256 : 344;
+        // Column mode: match SortableColumn width (w-90 = 344px mobile, sm:w-72 = 288px)
+        return window.innerWidth >= 640 ? 288 : 344;
       },
     };
   });
@@ -1097,7 +1097,7 @@ export default function GearListView({
 
   const headerPadding =
     viewMode === "list"
-      ? "pl-6 sm:w-4/5 sm:mx-auto"
+      ? "pl-6 sm:w-full sm:max-w-[1600px] sm:mx-auto"
       : collapsed
         ? "pl-0 sm:pl-15"
         : "pl-0 sm:pl-6";
@@ -1444,7 +1444,7 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
         }
       >
         {viewMode === "list" ? (
-          <div ref={listContainerRef} className="flex-1 overflow-y-auto px-2 py-2 sm:w-4/5 sm:mx-auto">
+          <div ref={listContainerRef} className="flex-1 overflow-y-auto px-2 py-2 sm:px-14 sm:w-full sm:max-w-[1600px] sm:mx-auto">
             {categories.map((cat) => (
               <SortableSection
                 key={cat._id}
@@ -1537,7 +1537,7 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
             ))}
 
             {!isLocked && (
-              <div className="snap-center flex-shrink-0 mt-0 mb-0 w-90 sm:w-64 flex flex-col h-full px-2">
+              <div className="snap-center flex-shrink-0 mt-0 mb-0 w-90 sm:w-72 flex flex-col h-full px-2">
                 {addingNewCat ? (
                   <div>
                     <input

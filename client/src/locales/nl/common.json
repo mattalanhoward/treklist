@@ -355,7 +355,13 @@
       "viewAsChecklist": "Bekijken als checklist",
       "copyList": "Lijst kopiëren",
       "shareList": "Lijst delen",
-      "deleteList": "Lijst verwijderen"
+      "deleteList": "Lijst verwijderen",
+      "lockList": "Lijst vergrendelen",
+      "unlockList": "Lijst ontgrendelen",
+      "lockListA11y": "Vergrendel de lijst om bewerken te voorkomen",
+      "unlockListA11y": "Ontgrendel de lijst om bewerken toe te staan",
+      "reorderA11y": "Items herschikken",
+      "exitReorderA11y": "Herschikmodus verlaten"
     },
     "confirm": {
       "removeItemTitle": "Dit item verwijderen?",
@@ -391,7 +397,10 @@
       "listDeleted": "Lijst verwijderd",
       "listDeleteFailed": "Lijst kon niet worden verwijderd.",
       "toggleWornFailed": "Status 'gedragen' kon niet worden bijgewerkt.",
-      "toggleConsumableFailed": "Status 'verbruikbaar' kon niet worden bijgewerkt."
+      "toggleConsumableFailed": "Status 'verbruikbaar' kon niet worden bijgewerkt.",
+      "listLocked": "Lijst vergrendeld",
+      "listUnlocked": "Lijst ontgrendeld",
+      "lockToggleFailed": "Vergrendeling kon niet worden gewijzigd."
     },
     "addCategory": {
       "button": "Categorie toevoegen",
@@ -631,6 +640,8 @@
     "allBrands": "Alle merken",
     "myGear": "Mijn uitrusting",
     "fromCatalog": "Uit de catalogus",
+    "catalogResultCount_one": "{{count}} artikel in de catalogus",
+    "catalogResultCount_other": "{{count}} artikelen in de catalogus",
     "added": "Toegevoegd",
     "noGearYet": "Nog geen uitrusting. Zoek in de catalogus of beschrijf een artikel hierboven.",
     "browseHint": "Zoek in de catalogus of tik op een categorie om te bladeren.",
@@ -1163,14 +1174,19 @@
       "quantity": "Aantal",
       "viewProduct": "Bekijk product",
       "viewProductPaid": "Bekijk product (betaalde link)"
-    }
+    },
+    "link": "Link",
+    "notesHeader": "Reisnotities",
+    "route": "Route"
   },
   "affiliateDisclosure": {
     "public": {
-      "body": "Deze pagina kan affiliate-links bevatten. Aankopen via deze links kunnen een commissie opleveren, zonder extra kosten voor jou."
+      "body": "Deze pagina kan affiliate-links bevatten. Aankopen via deze links kunnen een commissie opleveren, zonder extra kosten voor jou.",
+      "bodyShort": "Deze pagina kan affiliate-links bevatten."
     },
     "private": {
-      "body": "Deze pagina kan affiliate-links bevatten. Aankopen via deze links kunnen een commissie opleveren, zonder extra kosten voor jou."
+      "body": "Deze pagina kan affiliate-links bevatten. Aankopen via deze links kunnen een commissie opleveren, zonder extra kosten voor jou.",
+      "bodyShort": "Deze pagina kan affiliate-links bevatten."
     }
   },
   "safetyDisclaimer": {
@@ -1238,13 +1254,13 @@
             "title": "Slimme gewichtstotalen",
             "text": "Basis, gedragen en verbruikbaar in realtime."
           },
-          "quickAdd": {
-            "title": "Snel toevoegen en zoeken",
-            "text": "Vind uitrusting snel en bewerk overal."
-          },
           "checklist": {
             "title": "Pak checklist",
             "text": "Met één tik afvinken en een nette PDF export."
+          },
+          "community": {
+            "title": "Jouw trailcommunity, ingebouwd",
+            "text": "Stel vragen over uitrusting, paklijsten of je route. Krijg antwoord van gelijkgestemde wandelaars die de route al hebben gelopen of de uitrusting hebben gebruikt."
           }
         }
       },
@@ -1252,10 +1268,6 @@
         "title": "Gemaakt om te plannen",
         "subtitle": "Kolomweergave of lijstweergave, kies wat bij je past.",
         "bullets": {
-          "drag": {
-            "title": "Sleep tussen categorieën",
-            "text": "Verplaats items terwijl je je uitrusting bijstelt."
-          },
           "gearLibrary": {
             "title": "Jouw uitrustingsbibliotheek, hergebruikt voor elke trip",
             "text": "Voeg iets één keer toe en het staat in je persoonlijke bibliotheek. Gebruik het in elke volgende lijst zonder opnieuw in te voeren."

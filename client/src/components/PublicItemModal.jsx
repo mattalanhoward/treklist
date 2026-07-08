@@ -2,6 +2,7 @@
 import React from "react";
 import { FiX } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
+import { resizedImageUrl } from "../utils/imageCdn";
 
 function gToOz(g) {
   return typeof g === "number" ? g / 28.349523125 : null;
@@ -69,7 +70,7 @@ export default function PublicItemModal({ item, onClose, unit }) {
             <div className="sm:hidden mb-3 flex items-center justify-center bg-white rounded border border-[rgba(var(--color-primary-rgb),0.15)] py-2 px-2">
               <div className="h-[200px] w-full overflow-hidden flex items-center justify-center">
                 <img
-                  src={safeImages[0]}
+                  src={resizedImageUrl(safeImages[0], 800)}
                   alt={`${item.brand ? item.brand + " " : ""}${item.name || ""}`}
                   className="max-h-full max-w-full object-contain"
                 />
@@ -108,7 +109,7 @@ export default function PublicItemModal({ item, onClose, unit }) {
                 <div className="bg-white rounded border border-[rgba(var(--color-primary-rgb),0.15)] py-2 px-2 w-full max-w-md">
                   <div className="h-[260px] w-full overflow-hidden flex items-center justify-center">
                     <img
-                      src={safeImages[0]}
+                      src={resizedImageUrl(safeImages[0], 800)}
                       alt={`${item.brand ? item.brand + " " : ""}${item.name || ""}`}
                       className="max-h-full max-w-full object-contain"
                     />

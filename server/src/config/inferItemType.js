@@ -255,8 +255,10 @@ const CATEGORY_BY_ITEM_TYPE = {
   // "Other" intentionally absent -> leaves category/subcategory unset.
 };
 
-const WOMENS_RE = /\b(women'?s|woman'?s|female|ladies|ladies')\b/i;
-const MENS_RE = /\b(men'?s|man'?s|male)\b/i; // word-boundary avoids matching "women"
+// apostrophe class [’'] covers both straight ' and curly ’ (curly broke gendered
+// category detection for brands like Katabatic — see backfill-gender.js).
+const WOMENS_RE = /\b(women[’']?s|woman[’']?s|female|ladies|ladies[’'])\b/i;
+const MENS_RE = /\b(men[’']?s|man[’']?s|male)\b/i; // word-boundary avoids matching "women"
 
 function genderClothingCategory(name) {
   const w = WOMENS_RE.test(name);
@@ -293,12 +295,10 @@ function categoryForItemType(itemType, name = "") {
     return { category: "Footwear", subcategory: genderFootwearSub(name) };
   }
   if (opts && opts.gendered) {
+    // Unisex Clothing now carries the same garment subcategories as Men's/Women's
+    // (see catalogTaxonomy.js), so attach the mapped subcategory for every gender.
     const category = genderClothingCategory(name);
-    // Unisex Clothing's subcategory list doesn't carry Base Layers/Shirts/etc.,
-    // so only attach the mapped subcategory for Men's/Women's.
-    return category === "Unisex Clothing"
-      ? { category }
-      : { category, subcategory: sub || undefined };
+    return { category, subcategory: sub || undefined };
   }
   return { category: cat || undefined, subcategory: sub || undefined };
 }

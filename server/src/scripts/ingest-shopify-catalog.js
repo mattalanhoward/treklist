@@ -84,6 +84,13 @@ const SKIP_BRANDS = new Set(
 //   --collapse-color       merge items that differ only by a "(<color>)" name suffix
 //                          (some makers list each colorway as its own product)
 const EXCLUDE_RE = flag("--exclude", null) ? new RegExp(flag("--exclude", null), "i") : null;
+// --collections a,b,c   restrict the SOURCE to these Shopify collections (union of
+//                       /collections/<h>/products.json) instead of the whole store.
+//                       Use when only some product lines are in scope (Big Agnes).
+// --handles h1,h2       ALSO include these specific product handles (/products/<h>.json).
+//                       Use to add individual in-scope items outside the chosen collections.
+const COLLECTIONS = (flag("--collections", "") || "").split(",").map((s) => s.trim()).filter(Boolean);
+const HANDLES = (flag("--handles", "") || "").split(",").map((s) => s.trim()).filter(Boolean);
 const COLLAPSE_COLOR = args.includes("--collapse-color");
 const COLOR_PAREN =
   /\s*\([^)]*\b(?:black|olive|drab|green|grey|gray|brown|red|storm|mountain|navy|blue|charcoal|orange|tan|coyote|stone|sand|teal|purple|pink|white|natural|camo|berry|mustard|forest|burnt)\b[^)]*\)\s*/i;
@@ -112,7 +119,7 @@ if (COMMIT && !LOCAL_DBS.has(DB) && flag("--confirm", null) !== DB) {
 
 // Tags / product_types / titles that mark internal, resale, or non-gear noise.
 const JUNK_TAG = /^(dummy|criteo-exclude|all-bargains|backpack-bargains|return|package_protection)$/i;
-const JUNK_TYPE = /(dummy|resale|materials|return|package_protection|bargain|gift\s*card)/i;
+const JUNK_TYPE = /(dummy|resale|materials|return|package_protection|bargain|gift\s*card|like\s*new|spare\s*part)/i;
 const JUNK_TITLE = /(bargain|gift card|\bdummy\b|sample sale|e-?gift)/i;
 
 // ---------------------------------------------------------------------------
@@ -145,6 +152,35 @@ async function fetchAll() {
     if (products.length < 250) break;
   }
   return out;
+}
+
+async function curlJson(url) {
+  const { stdout } = await execFileP(
+    "curl",
+    ["-s", "--max-time", "30", "-A", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)", url],
+    { maxBuffer: 50 * 1024 * 1024 },
+  );
+  try { return JSON.parse(stdout); } catch { return null; }
+}
+
+// Fetch one collection's products (paged), then any explicit handles, and union
+// by product id so a product in two collections is imported once.
+async function fetchCollectionsAndHandles() {
+  const byId = new Map();
+  for (const h of COLLECTIONS) {
+    for (let page = 1; page <= 20; page++) {
+      const data = await curlJson(`https://${DOMAIN}/collections/${h}/products.json?limit=250&page=${page}`);
+      const products = (data && data.products) || [];
+      if (!products.length) break;
+      for (const p of products) byId.set(p.id, p);
+      if (products.length < 250) break;
+    }
+  }
+  for (const h of HANDLES) {
+    const data = await curlJson(`https://${DOMAIN}/products/${h}.json`);
+    if (data && data.product) byId.set(data.product.id, data.product);
+  }
+  return [...byId.values()];
 }
 
 // ---------------------------------------------------------------------------
@@ -327,7 +363,10 @@ function toCatalogItem(p) {
   const weighted = variants.filter((v) => v.weightGrams);
   const distinctWeights = new Set(weighted.map((v) => v.weightGrams)).size;
   if (distinctWeights < 2) {
-    weightGrams = weighted.length === 1 ? weighted[0].weightGrams : undefined;
+    // All (kept) variants share ONE weight — collapse to a single base product but
+    // KEEP that shared weight (using ===1 dropped the weight whenever a product had
+    // ≥2 same-weight sizes, e.g. Big Agnes Greystone 20°/Sweetwater UL).
+    weightGrams = weighted.length ? weighted[0].weightGrams : undefined;
     variantAxes = [];
     variants = [];
     defaultVariantKey = undefined;
@@ -490,8 +529,10 @@ async function writeCatalogItems(mapped) {
 // Main (dry-run by default; --commit writes)
 // ---------------------------------------------------------------------------
 (async () => {
-  console.log(`Fetching ${DOMAIN} (${PLATFORM}) ...`);
-  const raw = PLATFORM === "woo" ? await fetchAllWoo() : await fetchAll();
+  const scoped = COLLECTIONS.length || HANDLES.length;
+  console.log(`Fetching ${DOMAIN} (${PLATFORM})${scoped ? ` [collections: ${COLLECTIONS.join(",") || "—"}${HANDLES.length ? ` +handles: ${HANDLES.join(",")}` : ""}]` : ""} ...`);
+  const raw =
+    PLATFORM === "woo" ? await fetchAllWoo() : scoped ? await fetchCollectionsAndHandles() : await fetchAll();
   let nJunk = 0, nFood = 0, nBrand = 0, nExcl = 0;
   const kept = raw.filter((p) => {
     if (isJunk(p)) { nJunk++; return false; }

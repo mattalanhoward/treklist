@@ -241,61 +241,113 @@ export default function SortableItem({
     <div
       ref={setNodeRef}
       style={style}
-      className="bg-base-100 px-3 sm:px-1 py-2 rounded shadow mb-2"
+      className={`bg-base-100 px-3 ${
+        isListMode ? "sm:px-3" : "sm:px-1"
+      } py-2 rounded shadow mb-2`}
     >
       {/* ========== MOBILE (both list/column collapse to this) ========== */}
       <div
-        className={`${twoRowVisibilityClasses} grid grid-rows-[auto_auto] gap-y-1 gap-x-2 text-sm`}
+        className={`${twoRowVisibilityClasses} grid ${
+          isListMode ? "grid-rows-[auto_auto]" : "grid-rows-[auto_auto_auto]"
+        } gap-y-1 text-sm`}
       >
-        {/* Row 1: type + name/brand + actions */}
-        <div className="row-start-1 col-span-2 flex items-center justify-between space-x-2 overflow-x-hidden">
-          {/* Text block gets the overflow handling, not the whole row */}
-          <div className="flex items-center space-x-1 overflow-hidden min-w-0">
+        {isListMode ? (
+          /* LIST MOBILE — Row 1: type + name (inline) · actions */
+          <div className="flex items-center justify-between gap-2 min-w-0">
             <button
               type="button"
               onClick={() => setDetailsOpen(true)}
               style={{ fontSize: 14 }}
-              className="font-semibold text-primary flex-shrink-0 hover:text-primary/80"
+              className="flex items-baseline gap-1.5 min-w-0 text-left hover:text-primary/80"
             >
-              {tItemType(t, item.itemType) || "—"}
+              <span className="font-semibold text-primary flex-shrink-0">
+                {tItemType(t, item.itemType) || "—"}
+              </span>
+              <span className="truncate text-primary">
+                {item.brand && (
+                  <span className="text-primary/50 mr-1">{item.brand}</span>
+                )}
+                {item.name}
+              </span>
             </button>
+            <div className="flex items-center gap-1 flex-shrink-0">
+              {!isLocked && (
+                <>
+                  <button
+                    data-tour="item-swap"
+                    type="button"
+                    onClick={() => setSwapOpen(true)}
+                    className="p-1 text-primary/60 hover:text-primary focus:outline-none"
+                    title={t("gearList.actions.swap", "Swap item")}
+                  >
+                    <FiRefreshCw className="text-sm" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onDelete?.(catId, item._id)}
+                    className="p-1 text-primary/60 hover:text-primary focus:outline-none"
+                    title={t("gearList.confirm.removeItemConfirm")}
+                  >
+                    <FiTrash2 className="text-sm" />
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* COLUMN MOBILE — Row 1: type + actions */}
+            <div className="flex items-center justify-between gap-2">
+              <button
+                type="button"
+                onClick={() => setDetailsOpen(true)}
+                style={{ fontSize: 14 }}
+                className="font-semibold text-primary truncate text-left hover:text-primary/80 min-w-0"
+              >
+                {tItemType(t, item.itemType) || "—"}
+              </button>
+              {!isLocked && (
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <button
+                    data-tour="item-swap"
+                    type="button"
+                    onClick={() => setSwapOpen(true)}
+                    className="p-1 text-primary/60 hover:text-primary focus:outline-none"
+                    title={t("gearList.actions.swap", "Swap item")}
+                  >
+                    <FiRefreshCw className="text-sm" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onDelete?.(catId, item._id)}
+                    className="p-1 text-primary/60 hover:text-primary focus:outline-none"
+                    title={t("gearList.confirm.removeItemConfirm")}
+                  >
+                    <FiTrash2 className="text-sm" />
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* COLUMN MOBILE — Row 2: brand · name */}
             <button
               type="button"
               onClick={() => setDetailsOpen(true)}
               style={{ fontSize: 14 }}
-              className="truncate text-primary flex-1 min-w-0 text-left hover:text-primary/80"
+              className="min-w-0 truncate text-primary text-left hover:text-primary/80"
             >
-              {item.brand && <span className="mr-1">{item.brand}</span>}
+              {item.brand && (
+                <span className="text-primary/50 mr-1">{item.brand}</span>
+              )}
               {item.name}
             </button>
-          </div>
-          {!isLocked && (
-            <div className="flex items-center gap-1 flex-shrink-0">
-              <button
-                data-tour="item-swap"
-                type="button"
-                onClick={() => setSwapOpen(true)}
-                className="p-1 text-primary/60 hover:text-primary focus:outline-none"
-                title={t("gearList.actions.swap", "Swap item")}
-              >
-                <FiRefreshCw className="text-sm" />
-              </button>
-              <button
-                type="button"
-                onClick={() => onDelete?.(catId, item._id)}
-                className="p-1 text-primary/60 hover:text-primary focus:outline-none"
-                title={t("gearList.confirm.removeItemConfirm")}
-              >
-                <FiTrash2 className="text-sm" />
-              </button>
-            </div>
-          )}
-        </div>
-        {/* Row 2: left (weight) · right (Buy · icons · qty) */}
-        <div className="row-start-2 col-span-2 grid grid-cols-[1fr_auto] items-center">
-          {/* Left group (fixed column sizes) */}
-          <div className="grid grid-cols-[70px_75px] text-primary">
-            <span className="tabular-nums text-left">{weightText}</span>
+          </>
+        )}
+
+        {/* Row (shared): weight · consumable · worn · qty · cart · wishlist */}
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="tabular-nums text-primary">{weightText}</span>
           </div>
 
           {/* Right group (mobile): 🍴 | 👕 | qty | 🛒 | ⭐ */}
@@ -343,15 +395,15 @@ export default function SortableItem({
         </div>
       </div>
       {/* ========== DESKTOP LIST MODE (single row) ========== */}
-      {/* cols: drag | type | name | weight | knife | shirt | qty | cart | star | swap | trash */}
+      {/* cols: drag | type | brand | name | weight | knife | shirt | qty | cart | star | swap | trash */}
       {isListMode && (
         <div
           className="hidden xl:grid items-center text-sm
-          grid-cols-[32px,160px,minmax(260px,1fr),96px,24px,24px,48px,24px,24px,24px,24px] gap-x-2"
+          grid-cols-[20px,minmax(130px,1fr),minmax(130px,1fr),minmax(130px,1fr),96px,24px,24px,48px,24px,24px,24px,24px] gap-x-3"
         >
           {/* 1) Drag */}
           <div
-            className={`hide-on-touch justify-self-center text-secondary ${isLocked ? "invisible" : "cursor-grab"}`}
+            className={`hide-on-touch justify-self-start text-secondary ${isLocked ? "invisible" : "cursor-grab"}`}
             {...(isLocked ? {} : { ...attributes, ...listeners })}
           >
             <FaGripVertical />
@@ -367,18 +419,26 @@ export default function SortableItem({
             {tItemType(t, item.itemType) || "—"}
           </button>
 
-          {/* 3) Name/brand */}
+          {/* 3) Brand */}
+          <div
+            style={{ fontSize: 14 }}
+            className="text-primary/50 truncate text-left"
+            title={item.brand || ""}
+          >
+            {item.brand || ""}
+          </div>
+
+          {/* 4) Name (own column → names line up across rows) */}
           <button
             type="button"
             onClick={() => setDetailsOpen(true)}
             style={{ fontSize: 14 }}
-            className="truncate text-primary text-left hover:text-primary/80"
+            className="min-w-0 truncate text-primary text-left hover:text-primary/80"
           >
-            {item.brand && <span className="mr-1">{item.brand}</span>}
             {item.name}
           </button>
 
-          {/* 4) Weight */}
+          {/* 5) Weight */}
           <div className="justify-self-end tabular-nums text-primary w-[96px] text-right">
             {weightText}
           </div>
@@ -548,14 +608,16 @@ export default function SortableItem({
             style={{ fontSize: 14 }}
             className="row-start-2 col-start-1 col-span-6 min-w-0 truncate text-primary text-left hover:text-primary/80"
           >
-            {item.brand && <span className="mr-1">{item.brand}</span>}
+            {item.brand && (
+              <span className="text-primary/50 mr-1">{item.brand}</span>
+            )}
             {item.name}
           </button>
 
           {/* R3 C1-2: Weight */}
-          <span className="row-start-3 col-start-1 col-span-2 text-sm text-primary tabular-nums">
-            {weightText}
-          </span>
+          <div className="row-start-3 col-start-1 col-span-2 flex items-center gap-2 min-w-0">
+            <span className="text-sm text-primary tabular-nums">{weightText}</span>
+          </div>
 
           {/* R3 C3: Knife (consumable) */}
           <FaUtensils

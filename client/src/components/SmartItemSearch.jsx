@@ -13,6 +13,7 @@ import { useWeightInput } from "../hooks/useWeightInput";
 import Spinner from "./ui/Spinner";
 import LinkInput from "./LinkInput";
 import CatalogItemPreviewModal from "./CatalogItemPreviewModal";
+import { shortLabel } from "./VariantSelector";
 import PhotoScanModal from "./PhotoScanModal";
 import useStagedMessage from "../hooks/useStagedMessage";
 
@@ -48,10 +49,42 @@ function normalize(str = "") {
 }
 
 // ── Item row ──────────────────────────────────────────────────────────────────
-function ItemRow({ item, selected, onToggle, onViewDetails, multiSelect, disabled, badge, subLabel, priceLabel }) {
+function ItemRow({
+  item,
+  selected,
+  onToggle,
+  onViewDetails,
+  multiSelect,
+  disabled,
+  badge,
+  subLabel,
+  variantLabel,
+  priceLabel,
+  variantAxis,
+  selectedVariantValue,
+  variantExpanded,
+  onToggleVariantExpand,
+  onPickVariant,
+}) {
   const id = String(item._id);
+  const rowRef = useRef(null);
+
+  // Click outside the row while the variant strip is open (without picking a
+  // value) collapses it back to the summary pill.
+  useEffect(() => {
+    if (!variantExpanded) return;
+    const handleClickOutside = (e) => {
+      if (rowRef.current && !rowRef.current.contains(e.target)) {
+        onToggleVariantExpand(id);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [variantExpanded, id, onToggleVariantExpand]);
+
   return (
     <li
+      ref={rowRef}
       className={`flex items-center px-3 py-2 rounded border transition-colors ${
         disabled
           ? "border-primary/10 opacity-50"
@@ -75,22 +108,84 @@ function ItemRow({ item, selected, onToggle, onViewDetails, multiSelect, disable
           className="h-4 w-4 text-secondary border-primary rounded pointer-events-none"
         />
       </button>
-      <div
-        className={`flex-1 min-w-0 ${onViewDetails && !disabled ? "cursor-pointer" : ""}`}
-        onClick={() => onViewDetails && !disabled && onViewDetails(item)}
-      >
-        <div className={`text-sm font-medium text-primary truncate ${onViewDetails && !disabled ? "hover:underline" : ""}`}>
-          {item.brand && <span className="mr-1">{item.brand}</span>}
-          {item.name}
+      <div className="flex-1 min-w-0">
+        <div
+          className={`flex-1 min-w-0 ${onViewDetails && !disabled ? "cursor-pointer" : ""}`}
+          onClick={() => onViewDetails && !disabled && onViewDetails(item)}
+        >
+          <div className="flex items-center gap-2">
+            <div className={`flex-1 min-w-0 text-sm font-medium text-primary truncate ${onViewDetails && !disabled ? "hover:underline" : ""}`}>
+              {item.brand && <span className="mr-1">{item.brand}</span>}
+              {item.name}
+            </div>
+            {priceLabel && (
+              <span className="text-xs text-secondary flex-shrink-0 font-medium">{priceLabel}</span>
+            )}
+            {badge && (
+              <span className="text-xs text-primary/40 flex-shrink-0">{badge}</span>
+            )}
+          </div>
+          {(subLabel || variantLabel || variantAxis) && (
+            <div className="flex items-center gap-2 text-xs text-primary/50">
+              {subLabel && <span className="flex-shrink-0">{subLabel}</span>}
+              {variantLabel && (
+                <div className="flex-1 min-w-0 flex justify-end">
+                  <span
+                    className="max-w-full truncate rounded-full bg-secondary/10 text-secondary px-2 py-0.5 text-[11px] font-medium"
+                    title={variantLabel}
+                  >
+                    {variantLabel}
+                  </span>
+                </div>
+              )}
+              {variantAxis && !variantExpanded && (
+                <div className="flex-1 min-w-0 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onToggleVariantExpand(id);
+                    }}
+                    className="max-w-full truncate rounded-full bg-secondary/10 text-secondary px-2 py-0.5 !text-[11px] font-medium hover:bg-secondary/20 transition-colors"
+                    title={selectedVariantValue}
+                  >
+                    {shortLabel(selectedVariantValue)}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
-        {subLabel && <div className="text-xs text-primary/50">{subLabel}</div>}
+        {variantAxis && variantExpanded && (
+          <div
+            className="mt-1 flex items-center gap-1 overflow-x-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {variantAxis.values.map((val) => {
+              const isSel = val === selectedVariantValue;
+              return (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onPickVariant(id, val);
+                  }}
+                  title={val}
+                  aria-pressed={isSel}
+                  className={`flex-shrink-0 whitespace-nowrap rounded-full px-2 py-0.5 !text-[11px] font-medium border transition-colors ${
+                    isSel
+                      ? "bg-secondary text-white border-secondary"
+                      : "border-secondary/30 text-secondary hover:bg-secondary/10"
+                  }`}
+                >
+                  {shortLabel(val)}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
-      {priceLabel && (
-        <span className="text-xs text-secondary ml-2 flex-shrink-0 font-medium">{priceLabel}</span>
-      )}
-      {badge && (
-        <span className="text-xs text-primary/40 ml-2 flex-shrink-0">{badge}</span>
-      )}
     </li>
   );
 }
@@ -118,7 +213,7 @@ function AiSearchProgress({ urlQuery }) {
 }
 
 // ── Section (My Gear or Catalog) ──────────────────────────────────────────────
-function ResultSection({ title, items, type, myGearSelected, catalogSelected, onToggleMyGear, onToggleCatalog, onViewCatalogDetails, onViewMyGearDetails, multiSelect, existingGlobalIds, existingProductIds, loading }) {
+function ResultSection({ title, items, type, myGearSelected, catalogSelected, onToggleMyGear, onToggleCatalog, onViewCatalogDetails, onViewMyGearDetails, multiSelect, existingGlobalIds, existingProductIds, loading, catalogVariantSelections, expandedVariantRowId, onToggleVariantExpand, onPickVariant }) {
   const { t } = useTranslation("common");
   if (loading) {
     return (
@@ -149,6 +244,7 @@ function ResultSection({ title, items, type, myGearSelected, catalogSelected, on
                 disabled={disabled}
                 badge={disabled ? t("smartItemSearch.added", "Added") : null}
                 subLabel={item.itemType || null}
+                variantLabel={item.variantKey || null}
               />
             );
           } else {
@@ -156,6 +252,16 @@ function ResultSection({ title, items, type, myGearSelected, catalogSelected, on
             const priceLabel =
               offer?.price ? `$${offer.price} · ${offer.merchantName || ""}`.replace(/ · $/, "") : null;
             const disabled = existingProductIds?.has(id);
+            // Only offer the inline quick-pick for single-axis variants (the vast
+            // majority — sizes, volumes, lengths). Multi-axis items (e.g. Size ×
+            // Color) fall back to the full preview modal's VariantSelector.
+            const axis =
+              !disabled && item.variantAxes?.length === 1 && item.variantAxes[0].values?.length > 1
+                ? item.variantAxes[0]
+                : null;
+            const selectedVariantValue = axis
+              ? catalogVariantSelections?.[id] || item.defaultVariantKey || axis.values[0]
+              : null;
             return (
               <ItemRow
                 key={id}
@@ -168,6 +274,11 @@ function ResultSection({ title, items, type, myGearSelected, catalogSelected, on
                 badge={disabled ? t("smartItemSearch.added", "Added") : null}
                 subLabel={item.itemType || item.subcategory || null}
                 priceLabel={priceLabel}
+                variantAxis={axis}
+                selectedVariantValue={selectedVariantValue}
+                variantExpanded={expandedVariantRowId === id}
+                onToggleVariantExpand={onToggleVariantExpand}
+                onPickVariant={onPickVariant}
               />
             );
           }
@@ -440,10 +551,18 @@ export default function SmartItemSearch({
   // Catalog
   const [catalogResults, setCatalogResults] = useState([]);
   const [catalogLoading, setCatalogLoading] = useState(false);
+  // Result counts — catalogTotal reflects the current filter/search; catalogAllTotal
+  // is the whole-catalog size (fetched once) shown before any search narrows it.
+  const [catalogTotal, setCatalogTotal] = useState(null);
+  const [catalogAllTotal, setCatalogAllTotal] = useState(null);
 
   // Selection
   const [myGearSelected, setMyGearSelected] = useState(new Set());
   const [catalogSelected, setCatalogSelected] = useState(new Set());
+
+  // Quick variant pick for single-axis catalog items — { [catalogItemId]: value }
+  const [catalogVariantSelections, setCatalogVariantSelections] = useState({});
+  const [expandedVariantRowId, setExpandedVariantRowId] = useState(null);
 
   // AI state
   const [aiLoading, setAiLoading] = useState(false);
@@ -576,6 +695,14 @@ export default function SmartItemSearch({
       .finally(() => setMyGearLoading(false));
   }, [showMyGear]);
 
+  // Whole-catalog size, fetched once — the baseline shown before any search/filter narrows it
+  useEffect(() => {
+    api
+      .get("/catalog/items", { params: { limit: 1 } })
+      .then(({ data }) => setCatalogAllTotal(data?.total ?? null))
+      .catch(() => {});
+  }, []);
+
   // Debounce
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedQuery(query), 400);
@@ -605,11 +732,13 @@ export default function SmartItemSearch({
     if (!debouncedQuery && !categoryFilter && !subcategoryFilter && !brandFilter) {
       setCatalogResults([]);
       setCatalogLoading(false);
+      setCatalogTotal(null);
       return;
     }
     if (isUrl(debouncedQuery)) {
       setCatalogResults([]);
       setCatalogLoading(false);
+      setCatalogTotal(0);
       return;
     }
     setCatalogLoading(true);
@@ -624,8 +753,14 @@ export default function SmartItemSearch({
     if (brandFilter) params.brand = brandFilter;
     api
       .get("/catalog/items", { params })
-      .then(({ data }) => setCatalogResults(data || []))
-      .catch(() => setCatalogResults([]))
+      .then(({ data }) => {
+        setCatalogResults(data?.items || []);
+        setCatalogTotal(data?.total ?? null);
+      })
+      .catch(() => {
+        setCatalogResults([]);
+        setCatalogTotal(null);
+      })
       .finally(() => setCatalogLoading(false));
   }, [debouncedQuery, categoryFilter, subcategoryFilter, brandFilter]);
 
@@ -693,6 +828,23 @@ export default function SmartItemSearch({
       });
     }
   };
+
+  const toggleVariantExpand = (id) => {
+    setExpandedVariantRowId((prev) => (prev === id ? null : id));
+  };
+
+  // Picking a variant pill both records the choice and selects the row (if not
+  // already selected), so a single tap is enough to queue it for Add.
+  const pickCatalogVariant = (id, value) => {
+    setCatalogVariantSelections((prev) => ({ ...prev, [id]: value }));
+    setExpandedVariantRowId(null);
+    if (!catalogSelected.has(id)) toggleCatalog(id);
+  };
+
+  // Collapse any open variant picker when the result set changes underneath it.
+  useEffect(() => {
+    setExpandedVariantRowId(null);
+  }, [catalogResults]);
 
   // "Already added" detection for catalog rows: list contexts pass the list's
   // productIds explicitly; everywhere else fall back to My Gear ownership
@@ -817,8 +969,17 @@ export default function SmartItemSearch({
       }
     } else if (catalogSelected.size > 0) {
       setConfirming(true);
+      const variantSelections = Object.fromEntries(
+        [...catalogSelected]
+          .filter((id) => catalogVariantSelections[id])
+          .map((id) => [id, catalogVariantSelections[id]]),
+      );
       try {
-        await onConfirm({ source: "catalog", catalogIds: [...catalogSelected] });
+        await onConfirm({
+          source: "catalog",
+          catalogIds: [...catalogSelected],
+          ...(Object.keys(variantSelections).length ? { variantSelections } : {}),
+        });
       } finally {
         setConfirming(false);
       }
@@ -849,6 +1010,7 @@ export default function SmartItemSearch({
           : labelAdd;
 
   const hasSearchIntent = debouncedQuery.trim() || categoryFilter || subcategoryFilter || brandFilter;
+  const catalogCountForDisplay = hasSearchIntent ? catalogTotal : catalogAllTotal;
   const hasNoResults =
     hasSearchIntent &&
     !catalogLoading &&
@@ -991,19 +1153,25 @@ export default function SmartItemSearch({
               <FiCamera size={16} />
             </button>
           </div>
-          {!query && !tabLayout && (
+          {!tabLayout && (
             <p className="text-xs text-primary/35 mt-1.5 px-1">
-              {t("smartItemSearch.searchHint", "Brand · Model · Size or variant")}
+              {catalogCountForDisplay != null
+                ? t("smartItemSearch.catalogResultCount", "{{count}} items in catalog", { count: catalogCountForDisplay })
+                : !query
+                  ? t("smartItemSearch.searchHint", "Brand · Model · Size or variant")
+                  : " "}
             </p>
           )}
 
-          {/* Hint + browse toggle — tabLayout Import tab only */}
+          {/* Result count + browse toggle — tabLayout Import tab only */}
           {tabLayout && (
             <div className="mt-1.5 flex items-center justify-between gap-2">
               <p className="text-xs text-primary/35 truncate">
-                {!query
-                  ? t("smartItemSearch.tabSearchHint", "Type & press Enter · Paste a link · Snap a photo")
-                  : " "}
+                {catalogCountForDisplay != null
+                  ? t("smartItemSearch.catalogResultCount", "{{count}} items in catalog", { count: catalogCountForDisplay })
+                  : !query
+                    ? t("smartItemSearch.tabSearchHint", "Type & press Enter · Paste a link · Snap a photo")
+                    : " "}
               </p>
               <button
                 type="button"
@@ -1016,42 +1184,58 @@ export default function SmartItemSearch({
           )}
 
           {/* Category / Subcategory / Brand dropdowns — collapsed until Browse (or an active filter) */}
-          {tabLayout && (showFilters || categoryFilter || subcategoryFilter || brandFilter) && (
-            <div className="mt-2 flex gap-1.5">
-              <select
-                value={categoryFilter || ""}
-                onChange={(e) => setCategoryFilter(e.target.value || null)}
-                className="flex-1 min-w-0 border border-primary/20 rounded-lg px-2 py-1.5 text-xs text-primary bg-base-100 cursor-pointer"
+          {tabLayout && (
+            <div
+              className={`grid transition-[grid-template-rows] duration-200 ease-in-out ${
+                showFilters || categoryFilter || subcategoryFilter || brandFilter
+                  ? "grid-rows-[1fr]"
+                  : "grid-rows-[0fr]"
+              }`}
+            >
+              <div
+                className={`overflow-hidden transition-opacity duration-150 ease-in-out ${
+                  showFilters || categoryFilter || subcategoryFilter || brandFilter
+                    ? "opacity-100"
+                    : "opacity-0"
+                }`}
               >
-                <option value="">{t("smartItemSearch.allCategories", "All Categories")}</option>
-                {CATALOG_CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {tCategory(t, cat)}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={subcategoryFilter || ""}
-                onChange={(e) => setSubcategoryFilter(e.target.value || null)}
-                disabled={!categoryFilter || !(CATALOG_SUBCATEGORIES[categoryFilter]?.length)}
-                className="flex-1 min-w-0 border border-primary/20 rounded-lg px-2 py-1.5 text-xs text-primary bg-base-100 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                <option value="">{t("smartItemSearch.allTypes", "All Types")}</option>
-                {(CATALOG_SUBCATEGORIES[categoryFilter] || []).map((sub) => (
-                  <option key={sub} value={sub}>{sub}</option>
-                ))}
-              </select>
-              <select
-                value={brandFilter || ""}
-                onChange={(e) => setBrandFilter(e.target.value || null)}
-                disabled={brandOptions.length === 0}
-                className="flex-1 min-w-0 border border-primary/20 rounded-lg px-2 py-1.5 text-xs text-primary bg-base-100 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                <option value="">{t("smartItemSearch.allBrands", "All Brands")}</option>
-                {brandOptions.map((b) => (
-                  <option key={b} value={b}>{b}</option>
-                ))}
-              </select>
+                <div className="mt-2 flex gap-1.5">
+                  <select
+                    value={categoryFilter || ""}
+                    onChange={(e) => setCategoryFilter(e.target.value || null)}
+                    className="flex-1 min-w-0 border border-primary/20 rounded-lg px-2 py-1.5 text-xs text-primary bg-base-100 cursor-pointer"
+                  >
+                    <option value="">{t("smartItemSearch.allCategories", "All Categories")}</option>
+                    {CATALOG_CATEGORIES.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {tCategory(t, cat)}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    value={subcategoryFilter || ""}
+                    onChange={(e) => setSubcategoryFilter(e.target.value || null)}
+                    disabled={!categoryFilter || !(CATALOG_SUBCATEGORIES[categoryFilter]?.length)}
+                    className="flex-1 min-w-0 border border-primary/20 rounded-lg px-2 py-1.5 text-xs text-primary bg-base-100 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    <option value="">{t("smartItemSearch.allTypes", "All Types")}</option>
+                    {(CATALOG_SUBCATEGORIES[categoryFilter] || []).map((sub) => (
+                      <option key={sub} value={sub}>{sub}</option>
+                    ))}
+                  </select>
+                  <select
+                    value={brandFilter || ""}
+                    onChange={(e) => setBrandFilter(e.target.value || null)}
+                    disabled={brandOptions.length === 0}
+                    className="flex-1 min-w-0 border border-primary/20 rounded-lg px-2 py-1.5 text-xs text-primary bg-base-100 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    <option value="">{t("smartItemSearch.allBrands", "All Brands")}</option>
+                    {brandOptions.map((b) => (
+                      <option key={b} value={b}>{b}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -1190,6 +1374,10 @@ export default function SmartItemSearch({
                   existingGlobalIds={existingGlobalIds}
                   existingProductIds={effectiveProductIds}
                   loading={catalogLoading}
+                  catalogVariantSelections={catalogVariantSelections}
+                  expandedVariantRowId={expandedVariantRowId}
+                  onToggleVariantExpand={toggleVariantExpand}
+                  onPickVariant={pickCatalogVariant}
                 />
               )}
 

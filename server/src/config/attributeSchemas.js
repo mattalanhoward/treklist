@@ -541,6 +541,12 @@ const SCHEMAS = {
         label: "Water Resistance",
         options: ["None", "DWR Coated", "Water Resistant", "Waterproof"],
       },
+      mainFabric: {
+        type: "string",
+        required: false,
+        label: "Main Fabric",
+        // e.g., "DCF", "X-Pac VX21", "Robic Nylon", "Dyneema"
+      },
       laptopSleeveSize: {
         type: "number",
         required: false,
@@ -2106,6 +2112,7 @@ const SCHEMAS = {
           "High-Loft Fleece",
           "Sherpa Fleece",
           "Sweater Fleece",
+          "Alpha Direct", // Polartec Alpha Direct / active-insulation knits (incl. Teijin Octa)
         ],
       },
       fleeceWeight: {

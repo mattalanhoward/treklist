@@ -11,6 +11,7 @@ import { useUserSettings } from "../contexts/UserSettings";
 import { FiX } from "react-icons/fi";
 import { tItemType, tCategory, CATALOG_CATEGORIES } from "../config/catalogTaxonomy";
 import ImageCarousel from "./ImageCarousel";
+import { merchantFromUrl } from "../utils/merchantFromUrl";
 import VariantSelector from "./VariantSelector";
 import ButtonLink from "./ui/ButtonLink";
 import Spinner from "../components/ui/Spinner";
@@ -19,6 +20,7 @@ import {
   invalidateGlobalItemCache,
 } from "../services/globalItemCache";
 import { formatAttributesForDisplay } from "../utils/attributeLabels";
+import { resizedImageUrl } from "../utils/imageCdn";
 
 export default function GlobalItemEditModal({
   item,
@@ -303,7 +305,10 @@ export default function GlobalItemEditModal({
       }
     };
 
-    img.src = safeCatalogImages[0];
+    // Preload the same downscaled URL the carousel will display, so this
+    // both gates the image block and warms the cache without pulling the
+    // full-size original.
+    img.src = resizedImageUrl(safeCatalogImages[0], 800);
 
     return () => {
       cancelled = true;
@@ -324,6 +329,17 @@ export default function GlobalItemEditModal({
       ) || null
     );
   }, [hasVariants, variants, variantAxes, selectedOptions]);
+
+  // Catalog images shown for the item, preferring the selected variant's own
+  // images (variants can look different) and falling back to the item images.
+  const displayCatalogImages = useMemo(() => {
+    const v = Array.isArray(selectedVariant?.imageUrls)
+      ? selectedVariant.imageUrls.filter(
+          (u) => typeof u === "string" && /^https?:\/\//i.test(u.trim()),
+        )
+      : [];
+    return v.length ? v : safeCatalogImages;
+  }, [selectedVariant, safeCatalogImages]);
 
   // Initialize the dropdowns from the stored variantKey, else the catalog
   // default, else the first variant — WITHOUT touching the weight (already
@@ -411,10 +427,12 @@ export default function GlobalItemEditModal({
       itemType: template.itemType || "",
       name: template.name || "",
       brand: template.brand || "",
-      description: template.description || "",
+      // Per-variant description (e.g. a quilt's 20° vs 40° blurb) wins when the
+      // selected variant carries one; else the item-level description.
+      description: selectedVariant?.description || template.description || "",
       link: template.link || "",
     }));
-  }, [isImported, template, itemId, item]);
+  }, [isImported, template, itemId, item, selectedVariant]);
 
   // Recalc display weight when unit or item changes
   useEffect(() => {
@@ -562,9 +580,13 @@ export default function GlobalItemEditModal({
     if (viewMode !== "imported") return null;
     const attrs = template?.attributes;
     if (!attrs) return null;
-    const formatted = formatAttributesForDisplay(attrs, template?.itemType, measurementSystem);
+    // Per-variant attributes (e.g. Material) override the base when selected.
+    const merged = selectedVariant?.attributes
+      ? { ...attrs, ...selectedVariant.attributes }
+      : attrs;
+    const formatted = formatAttributesForDisplay(merged, template?.itemType, measurementSystem);
     return formatted.length ? formatted : null;
-  }, [viewMode, template?.attributes, template?.itemType, measurementSystem]);
+  }, [viewMode, template?.attributes, template?.itemType, measurementSystem, selectedVariant]);
 
   // PreviewModal-style full-screen spinner conditions
   const showFullscreenSpinner =
@@ -765,7 +787,7 @@ export default function GlobalItemEditModal({
                       <Spinner />
                     ) : (
                       <ImageCarousel
-                        images={safeCatalogImages.slice(0, 1)}
+                        images={displayCatalogImages.slice(0, 1)}
                         alt={`${form.brand ? form.brand + " " : ""}${form.name || ""}`}
                         loading={false}
                       />
@@ -861,7 +883,7 @@ export default function GlobalItemEditModal({
                           <Spinner />
                         ) : (
                           <ImageCarousel
-                            images={safeCatalogImages.slice(0, 1)}
+                            images={displayCatalogImages.slice(0, 1)}
                             alt={`${form.brand ? form.brand + " " : ""}${form.name || ""}`}
                             loading={false}
                           />
@@ -933,9 +955,11 @@ export default function GlobalItemEditModal({
                 </button>
               )}
 
-              {!isCustom && primaryOffer?.deepLink && (
-                <ButtonLink href={primaryOffer.deepLink}>
-                  {primaryOffer.merchantName || t("globalItemEditModal.buttons.productPage")}
+              {!isCustom && (selectedVariant?.deepLink || primaryOffer?.deepLink) && (
+                <ButtonLink href={selectedVariant?.deepLink || primaryOffer.deepLink}>
+                  {(selectedVariant?.deepLink && merchantFromUrl(selectedVariant.deepLink)) ||
+                    primaryOffer.merchantName ||
+                    t("globalItemEditModal.buttons.productPage")}
                 </ButtonLink>
               )}
             </div>

@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { FiX } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import ImageCarousel from "./ImageCarousel";
+import { merchantFromUrl } from "../utils/merchantFromUrl";
 import VariantSelector from "./VariantSelector";
 import ButtonLink from "./ui/ButtonLink";
 import { useUnit } from "../hooks/useUnit";
@@ -70,18 +71,24 @@ export default function CatalogItemPreviewModal({
   };
 
   const catalogImages = useMemo(() => {
-    const urls = Array.isArray(item?.imageUrls) ? item.imageUrls : [];
+    // Prefer the selected variant's own images (variants can look physically
+    // different, e.g. a 1P vs 3P tent); fall back to the item-level images.
+    const variantUrls = Array.isArray(selectedVariant?.imageUrls)
+      ? selectedVariant.imageUrls
+      : [];
+    const baseUrls = Array.isArray(item?.imageUrls) ? item.imageUrls : [];
+    const urls = variantUrls.length ? variantUrls : baseUrls;
     return urls
       .filter((u) => typeof u === "string" && u.trim())
       .filter((u) => /^https?:\/\//i.test(u.trim()));
-  }, [item?._id, item?.imageUrls]);
+  }, [item?._id, item?.imageUrls, selectedVariant]);
 
   const hasImages = catalogImages.length > 0;
 
   useEffect(() => {
     if (!isOpen) return;
     setImageFailed(false);
-  }, [isOpen, item?._id]);
+  }, [isOpen, item?._id, selectedVariant?.key]);
 
   // When item changes, assume images need to load again (if any exist)
   useEffect(() => {
@@ -132,13 +139,17 @@ export default function CatalogItemPreviewModal({
   // Now using the utility to get human-readable labels
   const importedSpecs = useMemo(() => {
     if (!item?.attributes) return null;
+    // Per-variant attributes (e.g. Material) override the base when selected.
+    const merged = selectedVariant?.attributes
+      ? { ...item.attributes, ...selectedVariant.attributes }
+      : item.attributes;
     const formatted = formatAttributesForDisplay(
-      item.attributes,
+      merged,
       item.itemType,
       measurementSystem,
     );
     return formatted.length ? formatted : null;
-  }, [item?.attributes, item?.itemType, measurementSystem]);
+  }, [item?.attributes, item?.itemType, measurementSystem, selectedVariant]);
 
   // Weight follows the selected variant when present; otherwise the base weight.
   const effectiveWeightGrams =
@@ -327,7 +338,7 @@ export default function CatalogItemPreviewModal({
                 {t("globalItemModal.labels.description")}
               </label>
               <div className="text-primary/90 whitespace-pre-line leading-6 min-h-[60px] pr-2">
-                {item.description || "—"}
+                {selectedVariant?.description || item.description || "—"}
               </div>
             </div>
           </>
@@ -338,8 +349,16 @@ export default function CatalogItemPreviewModal({
         <div className="mt-3 flex justify-between flex-shrink-0">
           <div className="flex space-x-2">
             {(() => {
-              const buyLink = primaryOffer?.deepLink || item?.affiliate?.deepLink || item?.link;
-              const buyLabel = primaryOffer?.merchantName || item?.affiliate?.merchantName || null;
+              const buyLink =
+                selectedVariant?.deepLink ||
+                primaryOffer?.deepLink ||
+                item?.affiliate?.deepLink ||
+                item?.link;
+              const buyLabel =
+                (selectedVariant?.deepLink && merchantFromUrl(selectedVariant.deepLink)) ||
+                primaryOffer?.merchantName ||
+                item?.affiliate?.merchantName ||
+                null;
               return buyLink ? (
                 <ButtonLink href={buyLink}>
                   {buyLabel ?? t("globalItemEditModal.buttons.productPage")}

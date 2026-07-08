@@ -11,7 +11,7 @@ import React from "react";
 // parentheticals like a temperature's "(-7C)" on the pill.
 const FIT_PARENS = /\s*\((?:[^)]*(?:fits|up to)[^)]*)\)/i;
 
-function shortLabel(value) {
+export function shortLabel(value) {
   const s = String(value ?? "");
   return s.replace(FIT_PARENS, "").trim() || s;
 }
@@ -52,7 +52,7 @@ export default function VariantSelector({
                       onClick={() => onChange?.(axis.name, val)}
                       title={val}
                       aria-pressed={isSel}
-                      className={`px-2 py-0.5 rounded-full text-xs border transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                      className={`px-2 py-0.5 rounded-full !text-xs border transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                         isSel
                           ? "bg-secondary text-white border-secondary"
                           : "border-primary/25 text-primary/70 hover:border-secondary/50 hover:text-primary"

@@ -68,9 +68,16 @@ export default function MyGearListItem({
               style={{ fontSize: 14 }}
               className="truncate text-primary flex-1 min-w-0 text-left"
             >
-              {item.brand && <span className="mr-1">{item.brand}</span>}
+              {item.brand && (
+                <span className="text-primary/50 mr-1">{item.brand}</span>
+              )}
               {item.name}
             </span>
+            {item.variantKey && (
+              <span className="flex-shrink-0 text-[11px] leading-none px-1.5 py-0.5 rounded-full bg-primary/5 text-primary/70 font-medium">
+                {item.variantKey}
+              </span>
+            )}
           </div>
 
           {!selectionMode && (
@@ -169,11 +176,18 @@ export default function MyGearListItem({
                 onViewEdit();
               }}
               style={{ fontSize: 14 }}
-              className="truncate text-primary text-left hover:text-primary/80"
+              className="truncate text-primary text-left hover:text-primary/80 min-w-0"
             >
-              {item.brand && <span className="mr-1">{item.brand}</span>}
+              {item.brand && (
+                <span className="text-primary/50 mr-1">{item.brand}</span>
+              )}
               {item.name}
             </button>
+            {item.variantKey && (
+              <span className="flex-shrink-0 text-[11px] leading-none px-1.5 py-0.5 rounded-full bg-primary/5 text-primary/70 font-medium">
+                {item.variantKey}
+              </span>
+            )}
             {item.importedFromShare && (
               <span className="flex-shrink-0 text-[10px] px-1.5 py-0.5 rounded bg-amber-100 border border-amber-200 text-amber-700">
                 {t("myGear.badge.fromSharedList", "Shared list")}

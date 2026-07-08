@@ -32,7 +32,9 @@ const COMMIT = args.includes("--commit");
 const GROUP = flag("--group", null);
 const BRAND = (flag("--brand", null) || "").toLowerCase() || null;
 const LIMIT = parseInt(flag("--limit", "0"), 10) || 0;
-const BATCH = parseInt(flag("--batch", "20"), 10);
+// keep <=14 — structured-output schema allows max 16 union-typed params, and a
+// batch of N makes N union-typed keys (the old default of 20 now 400s).
+const BATCH = parseInt(flag("--batch", "14"), 10);
 
 const DB = flag("--db", null) || process.env.MONGO_DB_NAME;
 const LOCAL_DBS = new Set(["treklist_local"]);
