@@ -236,7 +236,7 @@ TOAKS 51 re-set from feed with `<style>`-content stripped (CSS count now 0), Nit
 - Committed to git this round.
 
 ## STILL OPEN (user decisions / future passes)
-1. **Simond kids' climbing harnesses ×3** (Rock Junior, First Klimb Junior, Spider Kid) — keep or archive? (awaiting user)
+1. ~~Simond kids' climbing harnesses ×3~~ — **archived (user, 2026-07-11)**; catalog now has zero kids' items.
 2. **Zenbivy Overland remainder** — the ZipBed twins are archived, but the rest of the Overland (car-camping) family is still active: Overland Double Quilt 25°/30°, Overland Double Sheet, Overland Double, Overland Double Bed Bundle, Overland ZipBed Bundle. Same cull? (awaiting user)
 3. Hiking-Shoes-named-"Boots" (folds into the pending Decathlon decision).
 2. Decathlon footwear pair-vs-single: confirm on the next store-photo batch (values ≥400g assumed pair).
