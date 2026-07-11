@@ -732,7 +732,9 @@
       "reading": "Productpagina lezen…",
       "identifying": "Item identificeren…",
       "matching": "Vergelijken met de catalogus…"
-    }
+    },
+    "chooseVariant": "Varianten",
+    "multipleVariants": "Meerdere varianten"
   },
   "photoScanModal": {
     "title": "Uitrusting scannen",
@@ -852,8 +854,26 @@
     "itemTypes": {
       "Backpack": "Rugzak",
       "Backpacking Pot": "Campingpan",
-      "Backpacking Stove (Canister)": "Gasbrander (bus)",
+      "Stove (Canister)": "Gasbrander (bus)",
+      "Stove (Alcohol)": "Spiritusbrander",
+      "Stove (Wood)": "Houtbrander",
+      "Stove (Liquid Fuel)": "Benzinebrander",
       "Backpacking Tent": "Trekkingtent",
+      "Ice Axe": "IJsbijl",
+      "Crampon": "Stijgijzers",
+      "Air Pump": "Luchtpomp",
+      "Bivy Sack": "Bivakzak",
+      "Camp Shoes": "Kampschoenen",
+      "Traction Device": "Antisliphulpmiddel",
+      "Insect Repellent": "Insectenwerend middel",
+      "Hammock": "Hangmat",
+      "Camp Chair": "Kampeerstoel",
+      "Trowel": "Schepje",
+      "Pack Accessory": "Rugzakaccessoire",
+      "Sit Pad": "Zitmatje",
+      "Climbing Helmet": "Klimhelm",
+      "Climbing Harness": "Klimgordel",
+      "Via Ferrata Set": "Via ferrata-set",
       "Blister Prevention": "Blarenpreventie",
       "Base Layer Bottom": "Basislaag broek",
       "Base Layer Top": "Basislaag shirt",
@@ -866,6 +886,7 @@
       "Hat/Headwear": "Muts/Hoofddeksel",
       "Headlamp": "Hoofdlamp",
       "Hiking Boots": "Wandelschoenen",
+      "Hiking Shoes": "Lage wandelschoenen",
       "Hiking Shirt": "Wandelshirt",
       "Camp Lantern": "Kampeerlantaarn",
       "Convertible Pants": "Afritsbroek",
@@ -903,7 +924,10 @@
       "Utensil": "Bestek",
       "Wallet": "Portemonnee",
       "Water Bottle": "Drinkfles",
-      "Water Filter": "Waterfilter"
+      "Water Filter": "Waterfilter",
+      "Gaiters": "Beenkappen",
+      "Neck Gaiter": "Nekwarmer",
+      "Softshell Jacket": "Softshell jack"
     },
     "subcategories": {
       "Accessories": "Accessoires",
@@ -975,7 +999,8 @@
       "Water Treatment": "Waterbehandeling",
       "Wearables & GPS": "Wearables & GPS",
       "Women's Footwear": "Damesschoenen",
-      "Women's Personal Care": "Damestoiletartikelen"
+      "Women's Personal Care": "Damestoiletartikelen",
+      "Gaiters": "Beenkappen"
     }
   },
   "affiliateProductPicker": {

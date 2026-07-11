@@ -732,7 +732,9 @@
       "reading": "Produktseite wird gelesen…",
       "identifying": "Artikel wird identifiziert…",
       "matching": "Abgleich mit dem Katalog…"
-    }
+    },
+    "chooseVariant": "Varianten",
+    "multipleVariants": "Mehrere Varianten"
   },
   "photoScanModal": {
     "title": "Ausrüstung scannen",
@@ -852,8 +854,26 @@
     "itemTypes": {
       "Backpack": "Rucksack",
       "Backpacking Pot": "Campingtopf",
-      "Backpacking Stove (Canister)": "Gaskocher (Kartusche)",
+      "Stove (Canister)": "Gaskocher (Kartusche)",
+      "Stove (Alcohol)": "Spirituskocher",
+      "Stove (Wood)": "Holzkocher",
+      "Stove (Liquid Fuel)": "Benzinkocher",
       "Backpacking Tent": "Trekkingzelt",
+      "Ice Axe": "Eispickel",
+      "Crampon": "Steigeisen",
+      "Air Pump": "Luftpumpe",
+      "Bivy Sack": "Biwaksack",
+      "Camp Shoes": "Campschuhe",
+      "Traction Device": "Spikes",
+      "Insect Repellent": "Insektenschutz",
+      "Hammock": "Hängematte",
+      "Camp Chair": "Campingstuhl",
+      "Trowel": "Grabschaufel",
+      "Pack Accessory": "Rucksackzubehör",
+      "Sit Pad": "Sitzkissen",
+      "Climbing Helmet": "Kletterhelm",
+      "Climbing Harness": "Klettergurt",
+      "Via Ferrata Set": "Klettersteigset",
       "Blister Prevention": "Blasenprävention",
       "Camp Lantern": "Campinglaterne",
       "Base Layer Bottom": "Baselayer-Hose",
@@ -867,6 +887,7 @@
       "Hat/Headwear": "Mütze/Kopfbedeckung",
       "Headlamp": "Stirnlampe",
       "Hiking Boots": "Wanderstiefel",
+      "Hiking Shoes": "Wanderschuhe",
       "Hiking Shirt": "Wanderhemd",
       "Convertible Pants": "Zip-Off-Hose",
       "Hiking Shorts": "Wandershorts",
@@ -903,7 +924,10 @@
       "Utensil": "Besteck",
       "Wallet": "Geldbörse",
       "Water Bottle": "Trinkflasche",
-      "Water Filter": "Wasserfilter"
+      "Water Filter": "Wasserfilter",
+      "Gaiters": "Gamaschen",
+      "Neck Gaiter": "Schlauchschal",
+      "Softshell Jacket": "Softshelljacke"
     },
     "subcategories": {
       "Accessories": "Zubehör",
@@ -975,7 +999,8 @@
       "Water Treatment": "Wasseraufbereitung",
       "Wearables & GPS": "Wearables & GPS",
       "Women's Footwear": "Damenschuhe",
-      "Women's Personal Care": "Damenpflege"
+      "Women's Personal Care": "Damenpflege",
+      "Gaiters": "Gamaschen"
     }
   },
   "affiliateProductPicker": {

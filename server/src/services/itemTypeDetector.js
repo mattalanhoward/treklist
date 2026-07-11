@@ -22,7 +22,10 @@ const KEYWORD_MAP = [
 
   // --- Kitchen & Cooking ---
   { keywords: ["backpacking pot", "cook pot", "titanium pot", "camping pot", "cooking pot"], category: "Kitchen & Cooking", itemType: "Backpacking Pot" },
-  { keywords: ["backpacking stove", "canister stove", "camp stove", "camping stove", "pocket stove"], category: "Kitchen & Cooking", itemType: "Backpacking Stove (Canister)" },
+  { keywords: ["alcohol stove", "spirit stove", "spirit burner"], category: "Kitchen & Cooking", itemType: "Stove (Alcohol)" },
+  { keywords: ["wood stove", "wood burning stove", "twig stove", "hobo stove"], category: "Kitchen & Cooking", itemType: "Stove (Wood)" },
+  { keywords: ["liquid fuel stove", "multi-fuel stove", "white gas stove"], category: "Kitchen & Cooking", itemType: "Stove (Liquid Fuel)" },
+  { keywords: ["backpacking stove", "canister stove", "camp stove", "camping stove", "pocket stove"], category: "Kitchen & Cooking", itemType: "Stove (Canister)" },
   { keywords: ["coffee mug", "camp mug", "titanium mug", "camping mug", "camp cup"], category: "Kitchen & Cooking", itemType: "Coffee Mug" },
   { keywords: ["spork", "titanium spork", "camping utensil", "hiking utensil"], category: "Kitchen & Cooking", itemType: "Utensil" },
   { keywords: ["fuel canister", "stove fuel", "isobutane", "butane fuel", "gas canister"], category: "Kitchen & Cooking", itemType: "Stove Fuel" },

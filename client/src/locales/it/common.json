@@ -732,7 +732,9 @@
       "reading": "Lettura della pagina prodotto…",
       "identifying": "Identificazione dell'articolo…",
       "matching": "Confronto con il catalogo…"
-    }
+    },
+    "chooseVariant": "Varianti",
+    "multipleVariants": "Più varianti"
   },
   "photoScanModal": {
     "title": "Scansiona attrezzatura",
@@ -852,8 +854,26 @@
     "itemTypes": {
       "Backpack": "Zaino",
       "Backpacking Pot": "Pentola da campeggio",
-      "Backpacking Stove (Canister)": "Fornello a cartuccia",
+      "Stove (Canister)": "Fornello a cartuccia",
+      "Stove (Alcohol)": "Fornello ad alcol",
+      "Stove (Wood)": "Fornello a legna",
+      "Stove (Liquid Fuel)": "Fornello a benzina",
       "Backpacking Tent": "Tenda da trekking",
+      "Ice Axe": "Piccozza",
+      "Crampon": "Ramponi",
+      "Air Pump": "Pompa ad aria",
+      "Bivy Sack": "Sacco da bivacco",
+      "Camp Shoes": "Scarpe da campo",
+      "Traction Device": "Ramponcini",
+      "Insect Repellent": "Repellente per insetti",
+      "Hammock": "Amaca",
+      "Camp Chair": "Sedia da campeggio",
+      "Trowel": "Paletta",
+      "Pack Accessory": "Accessorio per zaino",
+      "Sit Pad": "Cuscino da seduta",
+      "Climbing Helmet": "Casco da arrampicata",
+      "Climbing Harness": "Imbragatura da arrampicata",
+      "Via Ferrata Set": "Kit da via ferrata",
       "Blister Prevention": "Prevenzione vesciche",
       "Base Layer Bottom": "Strato base inferiore",
       "Base Layer Top": "Strato base superiore",
@@ -866,6 +886,7 @@
       "Hat/Headwear": "Cappello/Copricapo",
       "Headlamp": "Lampada frontale",
       "Hiking Boots": "Scarponi da trekking",
+      "Hiking Shoes": "Scarpe da trekking",
       "Hiking Shirt": "Camicia da escursionismo",
       "Camp Lantern": "Lanterna da campeggio",
       "Convertible Pants": "Pantaloni convertibili",
@@ -903,7 +924,10 @@
       "Utensil": "Posata",
       "Wallet": "Portafoglio",
       "Water Bottle": "Borraccia",
-      "Water Filter": "Filtro per l'acqua"
+      "Water Filter": "Filtro per l'acqua",
+      "Gaiters": "Ghette",
+      "Neck Gaiter": "Scaldacollo",
+      "Softshell Jacket": "Giacca softshell"
     },
     "subcategories": {
       "Accessories": "Accessori",
@@ -975,7 +999,8 @@
       "Water Treatment": "Trattamento acqua",
       "Wearables & GPS": "Dispositivi GPS",
       "Women's Footwear": "Calzature donna",
-      "Women's Personal Care": "Igiene personale donna"
+      "Women's Personal Care": "Igiene personale donna",
+      "Gaiters": "Ghette"
     }
   },
   "affiliateProductPicker": {

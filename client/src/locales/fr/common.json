@@ -739,7 +739,9 @@
       "reading": "Lecture de la page produit…",
       "identifying": "Identification de l'article…",
       "matching": "Comparaison avec le catalogue…"
-    }
+    },
+    "chooseVariant": "Variantes",
+    "multipleVariants": "Plusieurs variantes"
   },
   "photoScanModal": {
     "title": "Scanner l'équipement",
@@ -859,8 +861,26 @@
     "itemTypes": {
       "Backpack": "Sac à dos",
       "Backpacking Pot": "Casserole de camping",
-      "Backpacking Stove (Canister)": "Réchaud à cartouche",
+      "Stove (Canister)": "Réchaud à cartouche",
+      "Stove (Alcohol)": "Réchaud à alcool",
+      "Stove (Wood)": "Réchaud à bois",
+      "Stove (Liquid Fuel)": "Réchaud à essence",
       "Backpacking Tent": "Tente de randonnée",
+      "Ice Axe": "Piolet",
+      "Crampon": "Crampons",
+      "Air Pump": "Pompe à air",
+      "Bivy Sack": "Sac de bivouac",
+      "Camp Shoes": "Chaussures de camp",
+      "Traction Device": "Crampons à neige",
+      "Insect Repellent": "Anti-insectes",
+      "Hammock": "Hamac",
+      "Camp Chair": "Chaise de camping",
+      "Trowel": "Pelle",
+      "Pack Accessory": "Accessoire de sac",
+      "Sit Pad": "Tapis d'assise",
+      "Climbing Helmet": "Casque d'escalade",
+      "Climbing Harness": "Baudrier d'escalade",
+      "Via Ferrata Set": "Kit de via ferrata",
       "Blister Prevention": "Prévention des ampoules",
       "Camp Lantern": "Lanterne de camping",
       "Base Layer Bottom": "Sous-couche bas",
@@ -874,6 +894,7 @@
       "Hat/Headwear": "Bonnet/Couvre-chef",
       "Headlamp": "Lampe frontale",
       "Hiking Boots": "Chaussures de randonnée",
+      "Hiking Shoes": "Chaussures de randonnée basses",
       "Hiking Shirt": "Chemise de randonnée",
       "Convertible Pants": "Pantalon convertible",
       "Hiking Shorts": "Short de randonnée",
@@ -910,7 +931,10 @@
       "Utensil": "Ustensile",
       "Wallet": "Portefeuille",
       "Water Bottle": "Gourde",
-      "Water Filter": "Filtre à eau"
+      "Water Filter": "Filtre à eau",
+      "Gaiters": "Guêtres",
+      "Neck Gaiter": "Tour de cou",
+      "Softshell Jacket": "Veste softshell"
     },
     "subcategories": {
       "Accessories": "Accessoires",
@@ -982,7 +1006,8 @@
       "Water Treatment": "Traitement de l'eau",
       "Wearables & GPS": "Objets connectés & GPS",
       "Women's Footwear": "Chaussures femmes",
-      "Women's Personal Care": "Soins personnels femmes"
+      "Women's Personal Care": "Soins personnels femmes",
+      "Gaiters": "Guêtres"
     }
   },
   "affiliateProductPicker": {

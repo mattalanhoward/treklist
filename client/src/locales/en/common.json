@@ -739,7 +739,9 @@
       "reading": "Reading product page…",
       "identifying": "Identifying the item…",
       "matching": "Matching against the catalog…"
-    }
+    },
+    "chooseVariant": "Variants",
+    "multipleVariants": "Multiple variants"
   },
   "photoScanModal": {
     "title": "Scan Gear",
@@ -860,8 +862,26 @@
       "Backpack": "Backpack",
       "Backpacking Pot": "Backpacking Pot",
       "Blister Prevention": "Blister Prevention",
-      "Backpacking Stove (Canister)": "Backpacking Stove (Canister)",
+      "Stove (Canister)": "Stove (Canister)",
+      "Stove (Alcohol)": "Stove (Alcohol)",
+      "Stove (Wood)": "Stove (Wood)",
+      "Stove (Liquid Fuel)": "Stove (Liquid Fuel)",
       "Backpacking Tent": "Backpacking Tent",
+      "Ice Axe": "Ice Axe",
+      "Crampon": "Crampon",
+      "Air Pump": "Air Pump",
+      "Bivy Sack": "Bivy Sack",
+      "Camp Shoes": "Camp Shoes",
+      "Traction Device": "Traction Device",
+      "Insect Repellent": "Insect Repellent",
+      "Hammock": "Hammock",
+      "Camp Chair": "Camp Chair",
+      "Trowel": "Trowel",
+      "Pack Accessory": "Pack Accessory",
+      "Sit Pad": "Sit Pad",
+      "Climbing Helmet": "Climbing Helmet",
+      "Climbing Harness": "Climbing Harness",
+      "Via Ferrata Set": "Via Ferrata Set",
       "Camp Lantern": "Camp Lantern",
       "Base Layer Bottom": "Base Layer Bottom",
       "Base Layer Top": "Base Layer Top",
@@ -874,6 +894,7 @@
       "Hat/Headwear": "Hat/Headwear",
       "Headlamp": "Headlamp",
       "Hiking Boots": "Hiking Boots",
+      "Hiking Shoes": "Hiking Shoes",
       "Hiking Shirt": "Hiking Shirt",
       "Convertible Pants": "Convertible Pants",
       "Hiking Shorts": "Hiking Shorts",
@@ -910,7 +931,10 @@
       "Utensil": "Utensil",
       "Wallet": "Wallet",
       "Water Bottle": "Water Bottle",
-      "Water Filter": "Water Filter"
+      "Water Filter": "Water Filter",
+      "Gaiters": "Gaiters",
+      "Neck Gaiter": "Neck Gaiter",
+      "Softshell Jacket": "Softshell Jacket"
     },
     "subcategories": {
       "Accessories": "Accessories",
@@ -982,7 +1006,8 @@
       "Water Treatment": "Water Treatment",
       "Wearables & GPS": "Wearables & GPS",
       "Women's Footwear": "Women's Footwear",
-      "Women's Personal Care": "Women's Personal Care"
+      "Women's Personal Care": "Women's Personal Care",
+      "Gaiters": "Gaiters"
     }
   },
   "affiliateProductPicker": {

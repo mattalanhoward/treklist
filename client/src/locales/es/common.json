@@ -732,7 +732,9 @@
       "reading": "Leyendo la página del producto…",
       "identifying": "Identificando el artículo…",
       "matching": "Comparando con el catálogo…"
-    }
+    },
+    "chooseVariant": "Variantes",
+    "multipleVariants": "Múltiples variantes"
   },
   "photoScanModal": {
     "title": "Escanear equipo",
@@ -852,8 +854,26 @@
     "itemTypes": {
       "Backpack": "Mochila",
       "Backpacking Pot": "Olla de camping",
-      "Backpacking Stove (Canister)": "Hornillo de cartucho",
+      "Stove (Canister)": "Hornillo de cartucho",
+      "Stove (Alcohol)": "Hornillo de alcohol",
+      "Stove (Wood)": "Hornillo de leña",
+      "Stove (Liquid Fuel)": "Hornillo de gasolina",
       "Backpacking Tent": "Tienda de campaña",
+      "Ice Axe": "Piolet",
+      "Crampon": "Crampones",
+      "Air Pump": "Bomba de aire",
+      "Bivy Sack": "Saco de vivac",
+      "Camp Shoes": "Zapatillas de campamento",
+      "Traction Device": "Tacos de tracción",
+      "Insect Repellent": "Repelente de insectos",
+      "Hammock": "Hamaca",
+      "Camp Chair": "Silla de campamento",
+      "Trowel": "Paleta",
+      "Pack Accessory": "Accesorio de mochila",
+      "Sit Pad": "Asiento aislante",
+      "Climbing Helmet": "Casco de escalada",
+      "Climbing Harness": "Arnés de escalada",
+      "Via Ferrata Set": "Kit de vía ferrata",
       "Blister Prevention": "Prevención de ampollas",
       "Camp Lantern": "Linterna de camping",
       "Base Layer Bottom": "Capa base inferior",
@@ -867,6 +887,7 @@
       "Hat/Headwear": "Gorro/Sombrero",
       "Headlamp": "Linterna frontal",
       "Hiking Boots": "Botas de senderismo",
+      "Hiking Shoes": "Zapatillas de senderismo",
       "Hiking Shirt": "Camiseta de senderismo",
       "Convertible Pants": "Pantalones convertibles",
       "Hiking Shorts": "Pantalones cortos de senderismo",
@@ -903,7 +924,10 @@
       "Utensil": "Utensilio",
       "Wallet": "Billetera",
       "Water Bottle": "Botella de agua",
-      "Water Filter": "Filtro de agua"
+      "Water Filter": "Filtro de agua",
+      "Gaiters": "Polainas",
+      "Neck Gaiter": "Braga de cuello",
+      "Softshell Jacket": "Chaqueta softshell"
     },
     "subcategories": {
       "Accessories": "Accesorios",
@@ -975,7 +999,8 @@
       "Water Treatment": "Tratamiento de agua",
       "Wearables & GPS": "Dispositivos GPS",
       "Women's Footwear": "Calzado mujer",
-      "Women's Personal Care": "Higiene personal mujer"
+      "Women's Personal Care": "Higiene personal mujer",
+      "Gaiters": "Polainas"
     }
   },
   "affiliateProductPicker": {

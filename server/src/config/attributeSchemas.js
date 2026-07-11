@@ -769,7 +769,7 @@ const SCHEMAS = {
     },
   },
 
-  "Backpacking Stove (Canister)": {
+  "Stove (Canister)": {
     fields: {
       boilTime: {
         type: "number",
@@ -816,6 +816,107 @@ const SCHEMAS = {
         type: "boolean",
         required: false,
         label: "Pressure Regulator",
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  "Stove (Alcohol)": {
+    fields: {
+      boilTime: {
+        type: "number",
+        required: false,
+        label: "Boil Time (0.5L)",
+        unit: "min",
+        min: 3,
+        max: 20,
+      },
+      material: {
+        type: "enum",
+        required: false,
+        label: "Material",
+        options: ["Titanium", "Aluminum", "Brass", "Stainless Steel"],
+      },
+      fuelCapacityMl: {
+        type: "number",
+        required: false,
+        label: "Fuel Capacity",
+        unit: "ml",
+        min: 10,
+        max: 200,
+      },
+      potSupport: {
+        type: "enum",
+        required: false,
+        label: "Pot Support",
+        options: ["Integrated", "Folding Arms", "Separate Stand"],
+      },
+      windscreen: {
+        type: "enum",
+        required: false,
+        label: "Windscreen",
+        options: ["Integrated", "Included Separate", "Not Included"],
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  "Stove (Wood)": {
+    fields: {
+      material: {
+        type: "enum",
+        required: false,
+        label: "Material",
+        options: ["Titanium", "Stainless Steel"],
+      },
+      packsFlat: {
+        type: "boolean",
+        required: false,
+        label: "Packs Flat",
+      },
+      potSupport: {
+        type: "enum",
+        required: false,
+        label: "Pot Support",
+        options: ["Integrated", "Folding Arms", "Separate Stand"],
+      },
+      multiFuel: {
+        type: "boolean",
+        required: false,
+        label: "Also Burns Alcohol/Tablets",
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  "Stove (Liquid Fuel)": {
+    fields: {
+      boilTime: {
+        type: "number",
+        required: false,
+        label: "Boil Time (1L)",
+        unit: "min",
+        min: 1,
+        max: 15,
+      },
+      outputBtu: {
+        type: "number",
+        required: false,
+        label: "Output",
+        unit: "BTU",
+        min: 5000,
+        max: 20000,
+      },
+      fuelCompatibility: {
+        type: "enum",
+        required: false,
+        label: "Fuel Compatibility",
+        options: ["White Gas", "White Gas / Kerosene", "Multi-Fuel (incl. Canister)"],
+      },
+      pumpIncluded: {
+        type: "boolean",
+        required: false,
+        label: "Pump Included",
       },
     },
     derive: (attrs) => attrs,
@@ -1019,6 +1120,307 @@ const SCHEMAS = {
         label: "Tip Type",
         options: ["Carbide", "Rubber", "Interchangeable"],
       },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  // ===========================================================================
+  // CLIMBING & MOUNTAINEERING
+  // ===========================================================================
+
+  "Ice Axe": {
+    fields: {
+      axeType: {
+        type: "enum",
+        required: false,
+        label: "Axe Type",
+        options: ["Mountaineering/Walking", "Technical/Ice", "Ski Mountaineering"],
+      },
+      headType: {
+        type: "enum",
+        required: false,
+        label: "Head Type",
+        options: ["Adze", "Hammer", "Modular", "None"],
+      },
+      certification: {
+        type: "enum",
+        required: false,
+        label: "Certification",
+        options: ["EN 13089 (Basic)", "EN 13089 (Technical)", "CE"],
+      },
+      shaftMaterial: {
+        type: "enum",
+        required: false,
+        label: "Shaft Material",
+        options: ["Aluminum", "Steel", "Carbon"],
+      },
+      lengthCm: {
+        type: "number",
+        required: false,
+        label: "Length",
+        unit: "cm",
+        min: 30,
+        max: 90,
+      },
+      leashIncluded: {
+        type: "boolean",
+        required: false,
+        label: "Leash Included",
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  "Crampon": {
+    fields: {
+      points: {
+        type: "number",
+        required: false,
+        label: "Number of Points",
+        min: 4,
+        max: 14,
+      },
+      bindingType: {
+        type: "enum",
+        required: false,
+        label: "Binding Type",
+        options: [
+          "Step-in/Automatic",
+          "Semi-automatic/Hybrid",
+          "Strap-on/Universal",
+          "Micro (Hiking)",
+        ],
+      },
+      material: {
+        type: "enum",
+        required: false,
+        label: "Material",
+        options: ["Steel", "Stainless Steel", "Aluminum"],
+      },
+      certification: {
+        type: "enum",
+        required: false,
+        label: "Certification",
+        options: ["EN 893", "CE"],
+      },
+      frontPoints: {
+        type: "enum",
+        required: false,
+        label: "Front Points",
+        options: ["Horizontal", "Vertical", "Mono", "Dual/Modular"],
+      },
+      antiBalling: {
+        type: "boolean",
+        required: false,
+        label: "Anti-balling Plates",
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  "Climbing Helmet": {
+    fields: {
+      gender: {
+        type: "enum",
+        required: false,
+        label: "Gender/Fit",
+        options: ["Mens", "Womens", "Unisex", "Kids"],
+      },
+      construction: {
+        type: "enum",
+        required: false,
+        label: "Construction",
+        options: ["Hardshell (ABS)", "Foam (In-mold)", "Hybrid", "Suspension"],
+      },
+      certification: {
+        type: "enum",
+        required: false,
+        label: "Certification",
+        options: ["EN 12492", "UIAA 106", "CE", "Dual (Climb + Ski)"],
+      },
+      headlampClips: {
+        type: "boolean",
+        required: false,
+        label: "Headlamp Clips",
+      },
+      ventCount: {
+        type: "number",
+        required: false,
+        label: "Ventilation Holes",
+        min: 0,
+        max: 40,
+      },
+      adjustment: {
+        type: "enum",
+        required: false,
+        label: "Size Adjustment",
+        options: ["Dial/Wheel", "Slider", "One-size"],
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  "Climbing Harness": {
+    fields: {
+      gender: {
+        type: "enum",
+        required: false,
+        label: "Gender/Fit",
+        options: ["Mens", "Womens", "Unisex", "Kids"],
+      },
+      harnessType: {
+        type: "enum",
+        required: false,
+        label: "Harness Type",
+        options: [
+          "Sport",
+          "Trad/All-round",
+          "Alpine/Mountaineering",
+          "Gym/Indoor",
+          "Full-body",
+          "Canyoning",
+        ],
+      },
+      certification: {
+        type: "enum",
+        required: false,
+        label: "Certification",
+        options: ["EN 12277", "UIAA 105", "CE"],
+      },
+      gearLoops: {
+        type: "number",
+        required: false,
+        label: "Gear Loops",
+        min: 0,
+        max: 8,
+      },
+      adjustableLegLoops: {
+        type: "boolean",
+        required: false,
+        label: "Adjustable Leg Loops",
+      },
+      iceClipperSlots: {
+        type: "number",
+        required: false,
+        label: "Ice Clipper Slots",
+        min: 0,
+        max: 4,
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  "Via Ferrata Set": {
+    fields: {
+      certification: {
+        type: "enum",
+        required: false,
+        label: "Certification",
+        options: ["EN 958", "UIAA 128", "CE"],
+      },
+      absorberType: {
+        type: "enum",
+        required: false,
+        label: "Energy Absorber",
+        options: ["Tearing Webbing", "Rope Brake", "Elastic Lanyard", "None"],
+      },
+      carabiners: {
+        type: "enum",
+        required: false,
+        label: "Carabiners",
+        options: [
+          "Auto-locking",
+          "Screwgate",
+          "Wire-gate",
+          "None (lanyard only)",
+        ],
+      },
+      elasticArms: {
+        type: "boolean",
+        required: false,
+        label: "Elastic Arms",
+      },
+      swivel: {
+        type: "boolean",
+        required: false,
+        label: "Swivel Connector",
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  // ===========================================================================
+  // GEAR / MISC (added 2026-07-10 to reclassify the "Other" bucket)
+  // ===========================================================================
+
+  "Air Pump": {
+    fields: {
+      powerSource: { type: "enum", required: false, label: "Power Source", options: ["Rechargeable (USB)", "Manual/Bag", "Battery", "Dynamo"] },
+      integratedLight: { type: "boolean", required: false, label: "Integrated Light" },
+    },
+    derive: (attrs) => attrs,
+  },
+  "Bivy Sack": {
+    fields: {
+      waterproof: { type: "boolean", required: false, label: "Waterproof" },
+      material: { type: "string", required: false, label: "Fabric" },
+      capacity: { type: "enum", required: false, label: "Capacity", options: ["1-Person", "2-Person"] },
+    },
+    derive: (attrs) => attrs,
+  },
+  "Camp Shoes": {
+    fields: {
+      gender: { type: "enum", required: false, label: "Gender/Fit", options: ["Mens", "Womens", "Unisex"] },
+      insulation: { type: "enum", required: false, label: "Insulation", options: ["Down", "Synthetic", "None"] },
+    },
+    derive: (attrs) => attrs,
+  },
+  "Traction Device": {
+    fields: {
+      bestUse: { type: "enum", required: false, label: "Best Use", options: ["Ice/Trail", "Snow", "Mixed", "Mountaineering"] },
+      spikeCount: { type: "number", required: false, label: "Number of Spikes", min: 0, max: 40 },
+      material: { type: "enum", required: false, label: "Material", options: ["Stainless Steel", "Steel", "Aluminum", "Carbide"] },
+    },
+    derive: (attrs) => attrs,
+  },
+  "Insect Repellent": {
+    fields: {
+      form: { type: "enum", required: false, label: "Form", options: ["Spray/Lotion", "Rechargeable Device", "Mat/Refill", "Head Net"] },
+    },
+    derive: (attrs) => attrs,
+  },
+  "Hammock": {
+    fields: {
+      capacity: { type: "enum", required: false, label: "Capacity", options: ["1-Person", "2-Person"] },
+      insulated: { type: "boolean", required: false, label: "Insulated" },
+      strapsIncluded: { type: "boolean", required: false, label: "Suspension Included" },
+    },
+    derive: (attrs) => attrs,
+  },
+  "Camp Chair": {
+    fields: {
+      type: { type: "enum", required: false, label: "Type", options: ["Chair", "Stool", "Ground Chair"] },
+      maxLoadKg: { type: "number", required: false, label: "Max Load", unit: "kg", min: 0, max: 200 },
+    },
+    derive: (attrs) => attrs,
+  },
+  "Trowel": {
+    fields: {
+      material: { type: "enum", required: false, label: "Material", options: ["Aluminum", "Titanium", "Plastic", "Steel"] },
+    },
+    derive: (attrs) => attrs,
+  },
+  "Pack Accessory": {
+    fields: {
+      accessoryType: { type: "enum", required: false, label: "Type", options: ["Hip Belt Pocket", "Shoulder Pouch", "Pole Holder", "Bottle Holder", "Pack Cover", "Other"] },
+      mount: { type: "enum", required: false, label: "Mounts To", options: ["Hip Belt", "Shoulder Strap", "External", "Internal"] },
+    },
+    derive: (attrs) => attrs,
+  },
+  "Sit Pad": {
+    fields: {
+      material: { type: "enum", required: false, label: "Material", options: ["Closed-Cell Foam", "Inflatable", "Aluminized Foam"] },
+      foldable: { type: "boolean", required: false, label: "Foldable" },
     },
     derive: (attrs) => attrs,
   },
@@ -2363,6 +2765,71 @@ const SCHEMAS = {
     derive: (attrs) => attrs,
   },
 
+  "Hiking Shoes": {
+    fields: {
+      gender: {
+        type: "enum",
+        required: true,
+        label: "Gender/Fit",
+        options: ["Mens", "Womens", "Unisex"],
+      },
+      waterproof: {
+        type: "boolean",
+        required: true,
+        label: "Waterproof",
+      },
+      waterproofMembrane: {
+        type: "enum",
+        required: false,
+        label: "Waterproof Membrane",
+        options: ["GORE-TEX", "eVent", "Proprietary", "None"],
+      },
+      upperMaterial: {
+        type: "enum",
+        required: false,
+        label: "Upper Material",
+        options: [
+          "Full Grain Leather",
+          "Nubuck Leather",
+          "Split Leather",
+          "Synthetic",
+          "Mesh/Synthetic Mix",
+        ],
+      },
+      soleMaterial: {
+        type: "enum",
+        required: false,
+        label: "Sole Material",
+        options: ["Vibram", "Continental", "Proprietary Rubber", "Other"],
+      },
+      midsoleType: {
+        type: "enum",
+        required: false,
+        label: "Midsole Type",
+        options: ["EVA", "PU (Polyurethane)", "Dual-Density", "TPU"],
+      },
+      cushioning: {
+        type: "enum",
+        required: false,
+        label: "Cushioning",
+        options: ["Minimal Cushion", "Moderate Cushion", "Maximum Cushion"],
+      },
+      weightCategory: {
+        type: "enum",
+        required: false,
+        label: "Weight Category",
+        options: ["Lightweight", "Midweight", "Heavyweight"],
+      },
+      useType: {
+        type: "enum",
+        required: false,
+        label: "Intended Use",
+        options: ["Day Hiking", "Fast Hiking", "Backpacking", "Approach"],
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
   "Trail Running Shoes": {
     fields: {
       gender: {
@@ -2720,6 +3187,146 @@ const SCHEMAS = {
         type: "boolean",
         required: false,
         label: "Windproof",
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  // ===========================================================================
+  // CLOTHING - GAITERS (leg/shoe) & NECK GAITERS
+  // Split out of Hat/Headwear (2026-07-08): a leg gaiter and a neck warmer are
+  // very different garments and were both being crammed into Hat/Headwear.
+  // ===========================================================================
+
+  Gaiters: {
+    fields: {
+      gender: {
+        type: "enum",
+        required: false,
+        label: "Gender",
+        options: ["Mens", "Womens", "Unisex"],
+      },
+      height: {
+        type: "enum",
+        required: false,
+        label: "Height",
+        options: ["Low/Ankle", "Mid-Calf", "High/Knee"],
+      },
+      bestUse: {
+        type: "enum",
+        required: false,
+        label: "Best Use",
+        options: ["Trail Running", "Hiking", "Mountaineering", "Snow"],
+      },
+      material: {
+        type: "string",
+        required: false,
+        label: "Material",
+      },
+      waterproof: {
+        type: "boolean",
+        required: false,
+        label: "Waterproof",
+      },
+      instepStrap: {
+        type: "boolean",
+        required: false,
+        label: "Instep Strap",
+      },
+      closure: {
+        type: "enum",
+        required: false,
+        label: "Closure",
+        options: ["Front Zip", "Rear Zip", "Hook-and-Loop", "Strapless"],
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  "Neck Gaiter": {
+    fields: {
+      gender: {
+        type: "enum",
+        required: false,
+        label: "Gender",
+        options: ["Mens", "Womens", "Unisex"],
+      },
+      material: {
+        type: "enum",
+        required: false,
+        label: "Material",
+        options: ["Merino Wool", "Synthetic", "Fleece", "Cotton", "Blend"],
+      },
+      insulated: {
+        type: "boolean",
+        required: false,
+        label: "Insulated",
+      },
+      reversible: {
+        type: "boolean",
+        required: false,
+        label: "Reversible",
+      },
+      uvRating: {
+        type: "string",
+        required: false,
+        label: "UV Rating",
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  // ===========================================================================
+  // CLOTHING - SOFTSHELL JACKET
+  // Added 2026-07-08: non-waterproof stretch/wind shells (e.g. BD Alpine Start,
+  // Distance Wind Shell) that aren't rain jackets and aren't fleece/insulation.
+  // ===========================================================================
+
+  "Softshell Jacket": {
+    fields: {
+      gender: {
+        type: "enum",
+        required: false,
+        label: "Gender",
+        options: ["Mens", "Womens", "Unisex"],
+      },
+      material: {
+        type: "string",
+        required: false,
+        label: "Material",
+      },
+      windResistant: {
+        type: "boolean",
+        required: false,
+        label: "Wind Resistant",
+      },
+      waterResistant: {
+        type: "boolean",
+        required: false,
+        label: "Water Resistant",
+      },
+      hoodType: {
+        type: "enum",
+        required: false,
+        label: "Hood",
+        options: ["Fixed Hood", "Adjustable Hood", "No Hood"],
+      },
+      pockets: {
+        type: "number",
+        required: false,
+        label: "Number of Pockets",
+        min: 0,
+        max: 8,
+      },
+      stretchFabric: {
+        type: "boolean",
+        required: false,
+        label: "Stretch Fabric",
+      },
+      packable: {
+        type: "boolean",
+        required: false,
+        label: "Packable",
       },
     },
     derive: (attrs) => attrs,

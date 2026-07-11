@@ -1,0 +1,251 @@
+{
+  "_README": "Weights + specs transcribed from Decathlon in-store comparison spec boards (photographed by user, batch 1 = 13 photos, 2026-07-07). Decathlon supplies NO weights via Awin and 403s all scraping, so these store boards are the weight source. KEY = Decathlon 8-digit article/model code (joins to the Awin feed's model/product code). `skus` lists every code shown for that model (color/size variants share a model but may differ by code). weightGrams = the board's stated weight; for size-variant products (pads L/XL, bags 'in size L') see weightBySize + weightRefNote. Third-party brands sold at Decathlon (Petzl/Black Diamond/Komperdell/Deuter/Sea to Summit) are marked thirdParty:true — capture the weight but the Decathlon/Awin offer is a RESOLD offer (brand != retailer), same pattern as the FF-resold Arc/Pat items. NO-WEIGHT items (lanterns, flashlights, Arpenaz daypacks, car-camping air beds) are listed under _noWeightAvailable for scope reference only.",
+  "_batch": 2,
+  "_photoBatchesExpected": "user will make one more store trip to fill gaps (see _gapsToPhotograph)",
+  "_joinMechanics": {
+    "feed": "AWIN advertiser feed fid/65881 (.env AWIN_DECATHLON_FEED_URL), UK/English, ~57.6k rows. Download: curl -sL $URL | gunzip. NOT the 5,368-row category feed (that one is mostly apparel; tents/bags/pads/headlamps absent).",
+    "joinKey": "The 8-digit store article code = the PREFIX of `merchant_product_id` (e.g. '8858233-5133809' -> '8858233'). NOT `model_number` (that is a different internal id like '310893'). Join store-specs skus[] to feed rows via merchant_product_id.split('-')[0].",
+    "multiRow": "One article code appears in MULTIPLE feed rows — one per merchant_category it's merchandised in. Collect all rows for a code; pick the most descriptive merchant_category (drop promo buckets: Summer Sale, Womens Sale, Hiking Sale, New Collection, Sportswear Accessories, Festival Bags). parent_product_id is EMPTY (no variant grouping from feed).",
+    "offer": "aw_deep_link is the awin1.com pclick affiliate URL -> use as MerchantOffer.deepLink (network 'awin', merchantId 26895, merchantName 'Decathlon'). Image from merchant_image_url / aw_image_url (+ alternate_image*). Price from search_price. Filter in_stock=1.",
+    "brandAuthority": "Use the feed's brand_name, NOT the brand guessed in this file. The MT500/MT900 trekking TENTS and PACKS come through as brand=SIMOND in the feed (Decathlon shifted the MT trekking line to Simond). Reconcile at build time.",
+    "attributeSource": "For PHOTOGRAPHED items use the specs in THIS file (capacity/comfortTempC/rValue/capacityLiters/fill etc.) — richer + exact. merchant_category parsing is only a fallback for non-photographed breadth items (encodes capacity '3 Man Tents', volume '20L to 30L Backpacks', etc.)."
+  },
+  "_notInUKFeed": [
+    "8919559 Simond HL500 (all 3 skus absent)",
+    "8811135 Petzl Actik Core 550 (third-party)",
+    "9012843 Petzl Swift RL (third-party)",
+    "9012845 Petzl Swift LT (third-party)",
+    "8951198 Sea to Summit Ultralight Insulated (third-party; already have S2S brand imported)",
+    "8969228 Simond MT500 Cork poles",
+    "8580850 Simond MT500 Antishock poles",
+    "8827589 Komperdell Ridge Hiker (third-party)",
+    "8919090 Black Diamond Vista FLZ (third-party; already have BD imported)",
+    "9017579 Komperdell Carbon Zero Pro (third-party)",
+    "8735043 Quechua MT100 50L pack",
+    "8978315 Simond MT900 UL 50L pack",
+    "9008928 Deuter Trekking Plus (third-party, M+W)",
+    "8786727 Quechua MH100 35L pack",
+    "8916232 Quechua MH500 25L pack"
+  ],
+  "_feedMatch": "76/92 photographed items matched a live feed row (2026-07-09, batch-1 count). Misses = third-party brands (Petzl/Komperdell/BD/Deuter/S2S) or house-brand items currently out of the UK feed (restock/discontinued); the latter can go in weightless later.",
+  "_itemTypeMap": {
+    "_note": "Authoritative SCHEMAS itemType per category (attributeSchemas.js). The per-entry `itemType` in batch-1 arrays is ADVISORY and in some cases NOT a valid SCHEMAS key — build with THIS map instead.",
+    "headlamps": "Torch Light (no dedicated Headlamp type; Torch Light covers head/hand torches)",
+    "tents": "Backpacking Tent; the Tarp MT900 entries -> Tarp Shelter",
+    "sleepingPads": "padType 'Closed-Cell Foam' -> Foam Sleeping Pad; else (Inflatable / Self-Inflating) -> Inflatable Sleeping Pad",
+    "sleepingBags": "Sleeping Bag; the Quilt Sprint entry -> Sleeping Bag (no Quilt type)",
+    "trekkingPoles": "Trekking Poles",
+    "backpacksTrekking/backpacksHiking/backpacksTravel": "Backpack (used by existing scripts; no attribute schema, carry attrs leniently). Small daypacks -> Daypack.",
+    "stoves": "Stove (Canister)",
+    "trekkingBoots/walkingShoes": "Mid-cut / leather / stiff trekking -> Hiking Boots. LOW-cut hiking shoes (NH50/NH100/NH500 Low, MT100, Arpenaz Revival) have NO matching schema — SCHEMAS only has 'Hiking Boots' + 'Trail Running Shoes'. DECISION NEEDED: add a 'Hiking Shoes' itemType (recommended) or lump lows into Hiking Boots."
+  },
+
+  "headlamps": [
+    { "skus": ["8788378"], "brand": "Quechua", "model": "HL 50 LM", "itemType": "Headlamp", "weightGrams": 60, "specs": { "lumens": 50, "beamMeters": 20, "runtimeHours": 20, "power": "2x AAA" } },
+    { "skus": ["8384991"], "brand": "Quechua", "model": "Onnight 100 (80 LM)", "itemType": "Headlamp", "weightGrams": 80, "specs": { "lumens": 80, "beamMeters": 25, "power": "3x AAA" } },
+    { "skus": ["8505682", "8577504", "8505683"], "brand": "Quechua", "model": "HL100 USB", "itemType": "Headlamp", "weightGrams": 72, "specs": { "lumens": 120, "beamMeters": 25, "runtimeHours": 17, "power": "Micro-USB rechargeable" } },
+    { "skus": ["8919559", "8919557", "8919558"], "brand": "Simond", "model": "HL500", "itemType": "Headlamp", "weightGrams": 90, "specs": { "lumens": 500, "beamMeters": 65, "runtimeHours": 35, "power": "USB-C" } },
+    { "skus": ["8978236", "8978235", "8978234"], "brand": "Simond", "model": "HL900", "itemType": "Headlamp", "weightGrams": 105, "specs": { "lumens": 900, "beamMeters": 120, "runtimeHours": 50, "power": "Batteries + USB-C" } },
+    { "skus": ["8978237"], "brand": "Simond", "model": "ML 200", "itemType": "Headlamp", "weightGrams": 74, "specs": { "lumens": 200, "beamMeters": 30, "power": "USB-C" } },
+    { "skus": ["8787357", "8787355", "8853307"], "brand": "Simond", "model": "UL 200", "itemType": "Headlamp", "weightGrams": 42, "specs": { "lumens": 200, "beamMeters": 70, "power": "USB-C" } },
+    { "skus": ["8858763"], "brand": "Simond", "model": "Sprint 400", "itemType": "Headlamp", "weightGrams": 105, "specs": { "lumens": 400, "beamMeters": 85, "power": "USB-C" } },
+    { "skus": ["8513317"], "brand": "Simond", "model": "Sprint 900", "itemType": "Headlamp", "weightGrams": 139, "specs": { "lumens": 900, "beamMeters": 150, "power": "Micro-USB" } },
+    { "skus": ["8811135"], "brand": "Petzl", "model": "Actik Core 550", "itemType": "Headlamp", "weightGrams": 88, "thirdParty": true, "specs": { "lumens": 625, "beamMeters": 115, "power": "USB-C" } },
+    { "skus": ["9012843"], "brand": "Petzl", "model": "Swift RL", "itemType": "Headlamp", "weightGrams": 102, "thirdParty": true, "specs": { "lumens": 1100, "beamMeters": 155, "power": "USB-C" } },
+    { "skus": ["9012845"], "brand": "Petzl", "model": "Swift LT", "itemType": "Headlamp", "weightGrams": 43, "thirdParty": true, "specs": { "lumens": 380, "beamMeters": 30, "power": "USB-C" } }
+  ],
+
+  "tents": [
+    { "skus": ["8786418"], "brand": "Forclaz", "model": "MT500 Mesh 2P", "itemType": "Backpacking Tent", "weightGrams": 2600, "specs": { "capacity": "2-Person", "innerLengthCm": 210, "innerWidthCm": 120, "peakHeightCm": 108, "hydrostaticHeadFlyMm": 2000, "hydrostaticHeadFloorMm": 5000 } },
+    { "skus": ["8858233"], "brand": "Forclaz", "model": "MT500 2P", "itemType": "Backpacking Tent", "weightGrams": 2850, "specs": { "capacity": "2-Person", "innerLengthCm": 210, "innerWidthCm": 120, "peakHeightCm": 108, "hydrostaticHeadFlyMm": 2000, "hydrostaticHeadFloorMm": 5000 } },
+    { "skus": ["8858234"], "brand": "Forclaz", "model": "MT500 3P", "itemType": "Backpacking Tent", "weightGrams": 3650, "specs": { "capacity": "3-Person", "innerLengthCm": 220, "innerWidthCm": 180, "peakHeightCm": 119, "hydrostaticHeadFlyMm": 2000, "hydrostaticHeadFloorMm": 5000 } },
+    { "skus": ["8882673"], "brand": "Forclaz", "model": "MT900 1P", "itemType": "Backpacking Tent", "weightGrams": 1300, "specs": { "capacity": "1-Person", "innerLengthCm": 210, "peakHeightCm": 95, "hydrostaticHeadFlyMm": 2000, "hydrostaticHeadFloorMm": 3000 } },
+    { "skus": ["8882674", "8975216"], "brand": "Forclaz", "model": "MT900 2P", "itemType": "Backpacking Tent", "weightGrams": 1950, "specs": { "capacity": "2-Person", "innerLengthCm": 205, "peakHeightCm": 105, "hydrostaticHeadFlyMm": 2000, "hydrostaticHeadFloorMm": 3000 } },
+    { "skus": ["8882675"], "brand": "Forclaz", "model": "MT900 3P", "itemType": "Backpacking Tent", "weightGrams": 2700, "specs": { "capacity": "3-Person", "innerLengthCm": 205, "peakHeightCm": 119, "hydrostaticHeadFlyMm": 2000, "hydrostaticHeadFloorMm": 3000 } },
+    { "skus": ["8586318"], "brand": "Forclaz", "model": "MT900 UL Tunnel 2P", "itemType": "Backpacking Tent", "weightGrams": 1650, "specs": { "capacity": "2-Person", "tentType": "Non-Freestanding", "innerLengthCm": 210, "peakHeightCm": 95, "hydrostaticHeadFlyMm": 2000, "hydrostaticHeadFloorMm": 3000 } },
+    { "skus": ["8882677"], "brand": "Forclaz", "model": "MT900 Tunnel 2P", "itemType": "Backpacking Tent", "weightGrams": 2080, "specs": { "capacity": "2-Person", "tentType": "Non-Freestanding", "innerLengthCm": 210, "peakHeightCm": 93, "hydrostaticHeadFlyMm": 2000, "hydrostaticHeadFloorMm": 3000 } },
+    { "skus": ["8882697"], "brand": "Forclaz", "model": "MT900 Tunnel 3P", "itemType": "Backpacking Tent", "weightGrams": 3080, "specs": { "capacity": "3-Person", "tentType": "Non-Freestanding", "innerLengthCm": 210, "peakHeightCm": 110, "hydrostaticHeadFlyMm": 2000, "hydrostaticHeadFloorMm": 3000 } },
+    { "skus": ["8968612"], "brand": "Forclaz", "model": "Tarp MT900 1P", "itemType": "Tarp", "weightGrams": 920, "specs": { "capacity": "1-Person", "coverageLengthCm": 225 } },
+    { "skus": ["8968614"], "brand": "Forclaz", "model": "Tarp MT900 2P", "itemType": "Tarp", "weightGrams": 1300, "specs": { "capacity": "2-Person", "coverageLengthCm": 225 } }
+  ],
+
+  "sleepingPads": [
+    { "skus": ["5591048"], "brand": "Simond", "model": "MT100 Foam", "itemType": "Sleeping Pad", "weightGrams": 210, "specs": { "rValue": 1, "padType": "Closed-Cell Foam", "dimsCm": "180x50x0.7" } },
+    { "skus": ["8492712"], "brand": "Simond", "model": "MT500 Foam", "itemType": "Sleeping Pad", "weightGrams": 370, "specs": { "rValue": 2.1, "padType": "Closed-Cell Foam", "dimsCm": "180x55x2" } },
+    { "skus": ["8901525"], "brand": "Simond", "model": "MT100 Foam Insulated", "itemType": "Sleeping Pad", "weightGrams": 480, "specs": { "rValue": 2.2, "padType": "Closed-Cell Foam", "dimsCm": "195x55x2" } },
+    { "skus": ["8612278", "8612279"], "brand": "Simond", "model": "MT100 Self-Inflating", "itemType": "Sleeping Pad", "weightGrams": 920, "weightBySize": { "L": 920, "XL": 1020 }, "weightRefNote": "L (180x52x2.5); XL 1020g (193x60x2.5)", "specs": { "rValue": 2.7, "padType": "Self-Inflating" } },
+    { "skus": ["8799965", "8799966"], "brand": "Simond", "model": "MT500 Air", "itemType": "Sleeping Pad", "weightGrams": 510, "weightBySize": { "L": 510, "XL": 600 }, "weightRefNote": "L (180x52x5); XL 600g (195x60x5)", "specs": { "rValue": 1.5, "padType": "Inflatable" } },
+    { "skus": ["8853280", "8853281"], "brand": "Simond", "model": "MT500 Air Insulated", "itemType": "Sleeping Pad", "weightGrams": 670, "weightBySize": { "L": 670, "XL": 800 }, "weightRefNote": "L (180x52x5); XL 800g (195x60x5)", "specs": { "rValue": 3.3, "padType": "Inflatable" } },
+    { "skus": ["8975036", "8975038"], "brand": "Simond", "model": "MT900 Air", "itemType": "Sleeping Pad", "weightGrams": 520, "weightBySize": { "L": 520, "XL": 620 }, "weightRefNote": "L (183x54x8.5); XL 620g (195x63x8.5)", "specs": { "rValue": 1.5, "padType": "Inflatable" } },
+    { "skus": ["8975202", "8975212"], "brand": "Simond", "model": "MT900 Air Insulated", "itemType": "Sleeping Pad", "weightGrams": 615, "weightBySize": { "L": 615, "XL": 730 }, "weightRefNote": "L (183x54x9); XL 730g (195x63x9)", "specs": { "rValue": 5.4, "padType": "Inflatable" } },
+    { "skus": ["8951198"], "brand": "Sea to Summit", "model": "Ultralight Insulated", "itemType": "Sleeping Pad", "weightGrams": 480, "thirdParty": true, "weightBySize": { "L": 480, "XL": 595 }, "weightRefNote": "L (183x55x5); XL 595g (198x64x5)", "specs": { "rValue": 3.1, "padType": "Inflatable" } }
+  ],
+
+  "sleepingBags": [
+    { "skus": ["8799895"], "brand": "Simond", "model": "MT500 15°C", "itemType": "Sleeping Bag", "weightGrams": 660, "weightRefNote": "weight in size L, with stuff sack", "specs": { "comfortTempC": 15, "fill": "Synthetic", "sizes": "M to XL", "isoStandard": "ISO 23537-1" } },
+    { "skus": ["8799897"], "brand": "Simond", "model": "MT500 10°C", "itemType": "Sleeping Bag", "weightGrams": 900, "weightRefNote": "weight in size L, with stuff sack", "specs": { "comfortTempC": 10, "fill": "Synthetic", "sizes": "M to XL", "isoStandard": "ISO 23537-1" } },
+    { "skus": ["8799899"], "brand": "Simond", "model": "MT500 5°C", "itemType": "Sleeping Bag", "weightGrams": 1050, "weightRefNote": "weight in size L, with stuff sack", "specs": { "comfortTempC": 5, "fill": "Synthetic", "sizes": "M to XL", "isoStandard": "ISO 23537-1" } },
+    { "skus": ["8799901"], "brand": "Simond", "model": "MT500 0°C", "itemType": "Sleeping Bag", "weightGrams": 1450, "weightRefNote": "weight in size L, with stuff sack", "specs": { "comfortTempC": 0, "fill": "Synthetic", "sizes": "M to XL", "isoStandard": "ISO 23537-1" } },
+    { "skus": ["8799902"], "brand": "Simond", "model": "MT500 -5°C", "itemType": "Sleeping Bag", "weightGrams": 1650, "weightRefNote": "weight in size L, with stuff sack", "specs": { "comfortTempC": -5, "fill": "Synthetic", "sizes": "M to XL", "isoStandard": "ISO 23537-1" } },
+    { "skus": ["8882705"], "brand": "Simond", "model": "MT900 10°C Down", "itemType": "Sleeping Bag", "weightGrams": 630, "weightRefNote": "weight in size L, with stuff sack", "specs": { "comfortTempC": 10, "fill": "Down", "fillDetail": "100% recycled duck down 700 cuin", "sizes": "S to XL", "isoStandard": "ISO 23537-1" } },
+    { "skus": ["8975213"], "brand": "Simond", "model": "MT900 5°C Down", "itemType": "Sleeping Bag", "weightGrams": 830, "weightRefNote": "weight in size L, with stuff sack", "specs": { "comfortTempC": 5, "fill": "Down", "fillDetail": "duck down 700 cuin", "sizes": "S to XL", "isoStandard": "ISO 23537-1" } },
+    { "skus": ["8882708"], "brand": "Simond", "model": "MT900 0°C Down", "itemType": "Sleeping Bag", "weightGrams": 930, "weightRefNote": "weight in size L, with stuff sack", "specs": { "comfortTempC": 0, "fill": "Down", "fillDetail": "duck down", "sizes": "S to XL", "isoStandard": "ISO 23537-1" } },
+    { "skus": ["8968608"], "brand": "Simond", "model": "MT1200 UL 0°C Down", "itemType": "Sleeping Bag", "weightGrams": 755, "weightRefNote": "weight in size L, with stuff sack", "specs": { "comfortTempC": 0, "fill": "Down", "fillDetail": "goose down RDS 900 cuin", "sizes": "M to XL", "isoStandard": "ISO 23537-1" } },
+    { "skus": ["8968606"], "brand": "Simond", "model": "Quilt Sprint 0°C Down", "itemType": "Quilt", "weightGrams": 695, "weightRefNote": "weight in size L, with stuff sack", "specs": { "comfortTempC": 0, "fill": "Down", "fillDetail": "goose down RDS 900 cuin", "sizes": "L and XL", "isoStandard": "ISO 23537-1" } },
+    { "skus": ["8495189"], "brand": "Simond", "model": "Makalu I -5°C", "itemType": "Sleeping Bag", "weightGrams": 1160, "weightRefNote": "weight in size L, with stuff sack", "specs": { "comfortTempC": -5, "fill": "Down", "fillDetail": "duck down RDS 800 cuin", "sizes": "M to XL", "isoStandard": "ISO 23537-1" } },
+    { "skus": ["8495191"], "brand": "Simond", "model": "Makalu II -9°C", "itemType": "Sleeping Bag", "weightGrams": 1471, "weightRefNote": "weight in size L, with stuff sack", "specs": { "comfortTempC": -9, "fill": "Down", "fillDetail": "duck down RDS 800 cuin", "sizes": "L and XL", "isoStandard": "ISO 23537-1" } },
+    { "skus": ["8495193"], "brand": "Simond", "model": "Makalu III -12°C", "itemType": "Sleeping Bag", "weightGrams": 1840, "weightRefNote": "weight in size L, with stuff sack", "specs": { "comfortTempC": -12, "fill": "Down", "fillDetail": "duck down RDS 800 cuin", "sizes": "L", "isoStandard": "ISO 23537-1" } }
+  ],
+
+  "trekkingPoles": [
+    { "skus": ["8807204"], "brand": "Quechua", "model": "MT100", "itemType": "Trekking Poles", "weightGrams": 200, "weightRefNote": "per pole", "specs": { "lengthCm": "105-120", "packedCm": 55, "grip": "Foam" } },
+    { "skus": ["8959597"], "brand": "Quechua", "model": "MT100 Comfort", "itemType": "Trekking Poles", "weightGrams": 230, "weightRefNote": "per pole", "specs": { "lengthCm": "110-130", "packedCm": 57, "grip": "2D foam" } },
+    { "skus": ["8807205"], "brand": "Quechua", "model": "MT100 Ergonomic", "itemType": "Trekking Poles", "weightGrams": 240, "weightRefNote": "per pole", "specs": { "lengthCm": "90-110", "packedCm": 58 } },
+    { "skus": ["8970985"], "brand": "Quechua", "model": "MT500 Ergonomic", "itemType": "Trekking Poles", "weightGrams": 240, "weightRefNote": "per pole", "specs": { "lengthCm": "90-110", "packedCm": 58 } },
+    { "skus": ["8640551"], "brand": "Simond", "model": "MT500", "itemType": "Trekking Poles", "weightGrams": 240, "weightRefNote": "per pole", "specs": { "lengthCm": "100-130", "packedCm": 56, "grip": "3D foam" } },
+    { "skus": ["8916614"], "brand": "Simond", "model": "MT500 All Season", "itemType": "Trekking Poles", "weightGrams": 260, "weightRefNote": "per pole", "specs": { "lengthCm": "105-135", "packedCm": 77 } },
+    { "skus": ["8969228"], "brand": "Simond", "model": "MT500 Cork", "itemType": "Trekking Poles", "weightGrams": 236, "weightRefNote": "per pole", "specs": { "lengthCm": "100-130", "packedCm": 56, "grip": "Cork 3D" } },
+    { "skus": ["8580850"], "brand": "Simond", "model": "MT500 Antishock", "itemType": "Trekking Poles", "weightGrams": 245, "weightRefNote": "per pole", "specs": { "lengthCm": "105-130", "packedCm": 58, "grip": "3D foam" } },
+    { "skus": ["8810536"], "brand": "Simond", "model": "MT900", "itemType": "Trekking Poles", "weightGrams": 275, "weightRefNote": "per pole", "specs": { "lengthCm": "110-130", "packedCm": 36, "grip": "3D foam", "foldable": true } },
+    { "skus": ["8796365"], "brand": "Simond", "model": "Sprint", "itemType": "Trekking Poles", "weightGrams": 184, "weightRefNote": "per pole", "specs": { "lengthCm": "110-130", "packedCm": 36.5, "grip": "3D foam", "foldable": true, "material": "Carbon" } },
+    { "skus": ["8827589"], "brand": "Komperdell", "model": "Ridge Hiker", "itemType": "Trekking Poles", "weightGrams": 280, "weightRefNote": "per pole", "thirdParty": true, "specs": { "lengthCm": "105-140", "packedCm": 64, "grip": "Cork" } },
+    { "skus": ["8919090"], "brand": "Black Diamond", "model": "Vista FLZ", "itemType": "Trekking Poles", "weightGrams": 254, "weightRefNote": "per pole", "thirdParty": true, "specs": { "lengthCm": "110-125", "packedCm": 37, "grip": "Cork/EVA" } },
+    { "skus": ["9017579"], "brand": "Komperdell", "model": "Carbon Zero Pro", "itemType": "Trekking Poles", "weightGrams": 218, "weightRefNote": "per pole", "thirdParty": true, "specs": { "lengthCm": "105-140", "packedCm": 64, "material": "Carbon" } }
+  ],
+
+  "backpacksTrekking": [
+    { "skus": ["8735043"], "brand": "Quechua", "model": "MT100 50L", "itemType": "Backpack", "weightGrams": 1400, "specs": { "capacityLiters": 50, "maxLoadKg": 15, "gender": "Unisex" } },
+    { "skus": ["8559690", "8731062"], "brand": "Simond", "model": "MT100 Easyfit 50L (Men's)", "itemType": "Backpack", "weightGrams": 1600, "specs": { "capacityLiters": 50, "maxLoadKg": 15, "gender": "Mens" } },
+    { "skus": ["8559690", "8731062"], "brand": "Simond", "model": "MT100 Easyfit 70L (Men's)", "itemType": "Backpack", "weightGrams": 1900, "specs": { "capacityLiters": 70, "maxLoadKg": 15, "gender": "Mens" } },
+    { "skus": ["8559690", "8731062"], "brand": "Simond", "model": "MT100 Easyfit 50L (Women's)", "itemType": "Backpack", "weightGrams": 1600, "specs": { "capacityLiters": 50, "maxLoadKg": 15, "gender": "Womens" } },
+    { "skus": ["8559690", "8731062"], "brand": "Simond", "model": "MT100 Easyfit 60L (Women's)", "itemType": "Backpack", "weightGrams": 1700, "specs": { "capacityLiters": 60, "maxLoadKg": 15, "gender": "Womens" } },
+    { "skus": ["8978310", "8998272"], "brand": "Simond", "model": "MT500 Air 50+10L (Men's)", "itemType": "Backpack", "weightGrams": 1700, "specs": { "capacityLiters": 60, "capacityLabel": "50+10", "maxLoadKg": 15, "gender": "Mens" } },
+    { "skus": ["8978310", "8998272"], "brand": "Simond", "model": "MT500 Air 60+10L (Men's)", "itemType": "Backpack", "weightGrams": 1750, "specs": { "capacityLiters": 70, "capacityLabel": "60+10", "maxLoadKg": 15, "gender": "Mens" } },
+    { "skus": ["8978310", "8998272"], "brand": "Simond", "model": "MT500 Air 45+10L (Women's)", "itemType": "Backpack", "weightGrams": 1600, "specs": { "capacityLiters": 55, "capacityLabel": "45+10", "maxLoadKg": 15, "gender": "Womens" } },
+    { "skus": ["8978310", "8998272"], "brand": "Simond", "model": "MT500 Air 55+10L (Women's)", "itemType": "Backpack", "weightGrams": 1730, "specs": { "capacityLiters": 65, "capacityLabel": "55+10", "maxLoadKg": 15, "gender": "Womens" } },
+    { "skus": ["8642599", "8642604"], "brand": "Simond", "model": "MT900 Light 50+10L (Men's)", "itemType": "Backpack", "weightGrams": 1300, "specs": { "capacityLiters": 60, "capacityLabel": "50+10", "maxLoadKg": 12, "gender": "Mens" } },
+    { "skus": ["8642599", "8642604"], "brand": "Simond", "model": "MT900 Light 45+10L (Women's)", "itemType": "Backpack", "weightGrams": 1300, "specs": { "capacityLiters": 55, "capacityLabel": "45+10", "maxLoadKg": 12, "gender": "Womens" } },
+    { "skus": ["8751963", "8752034"], "brand": "Simond", "model": "MT900 Symbium 50+10L (Men's)", "itemType": "Backpack", "weightGrams": 2400, "specs": { "capacityLiters": 60, "capacityLabel": "50+10", "maxLoadKg": 20, "gender": "Mens" } },
+    { "skus": ["8751963", "8752034"], "brand": "Simond", "model": "MT900 Symbium 70+10L (Men's)", "itemType": "Backpack", "weightGrams": 2700, "specs": { "capacityLiters": 80, "capacityLabel": "70+10", "maxLoadKg": 20, "gender": "Mens" } },
+    { "skus": ["8751963", "8752034"], "brand": "Simond", "model": "MT900 Symbium 90+10L (Men's)", "itemType": "Backpack", "weightGrams": 2800, "specs": { "capacityLiters": 100, "capacityLabel": "90+10", "maxLoadKg": 20, "gender": "Mens" } },
+    { "skus": ["8751963", "8752034"], "brand": "Simond", "model": "MT900 Symbium 50+10L (Women's)", "itemType": "Backpack", "weightGrams": 2400, "specs": { "capacityLiters": 60, "capacityLabel": "50+10", "maxLoadKg": 20, "gender": "Womens" } },
+    { "skus": ["8751963", "8752034"], "brand": "Simond", "model": "MT900 Symbium 60+10L (Women's)", "itemType": "Backpack", "weightGrams": 2500, "specs": { "capacityLiters": 70, "capacityLabel": "60+10", "maxLoadKg": 20, "gender": "Womens" } },
+    { "skus": ["8978315"], "brand": "Simond", "model": "MT900 UL 50L", "itemType": "Backpack", "weightGrams": 880, "specs": { "capacityLiters": 50, "maxLoadKg": 10, "gender": "Unisex" } },
+    { "skus": ["9008928", "9008950"], "brand": "Deuter", "model": "Trekking Plus 55+10L (Men's)", "itemType": "Backpack", "weightGrams": 1740, "thirdParty": true, "specs": { "capacityLiters": 65, "capacityLabel": "55+10", "gender": "Mens" } },
+    { "skus": ["9008928", "9008950"], "brand": "Deuter", "model": "Trekking Plus 45+10L (Women's)", "itemType": "Backpack", "weightGrams": 1690, "thirdParty": true, "specs": { "capacityLiters": 55, "capacityLabel": "45+10", "gender": "Womens" } }
+  ],
+
+  "backpacksHiking": [
+    { "skus": ["8649476"], "brand": "Quechua", "model": "MH100 20L", "itemType": "Backpack", "weightGrams": 760, "specs": { "capacityLiters": 20, "dimsCm": "48x23x17.5" } },
+    { "skus": ["8786727"], "brand": "Quechua", "model": "MH100 35L", "itemType": "Backpack", "weightGrams": 940, "specs": { "capacityLiters": 35, "dimsCm": "62x23x22" } },
+    { "skus": ["8916232"], "brand": "Quechua", "model": "MH500 25L", "itemType": "Backpack", "weightGrams": 975, "specs": { "capacityLiters": 25, "dimsCm": "54x30x23" } },
+    { "skus": ["8920386"], "brand": "Quechua", "model": "MH500 38L", "itemType": "Backpack", "weightGrams": 1134, "specs": { "capacityLiters": 38, "dimsCm": "62x30x31" } },
+    { "skus": ["8976356"], "brand": "Quechua", "model": "MH500 Light 15L", "itemType": "Backpack", "weightGrams": 650, "specs": { "capacityLiters": 15, "dimsCm": "49x26x21" } },
+    { "skus": ["8826304"], "brand": "Quechua", "model": "MH500 Light 22L", "itemType": "Backpack", "weightGrams": 780, "specs": { "capacityLiters": 22, "dimsCm": "49x26x21" } },
+    { "skus": ["8586020"], "brand": "Quechua", "model": "FH500 17L", "itemType": "Backpack", "weightGrams": 400, "specs": { "capacityLiters": 17, "dimsCm": "48x34x21", "bestUse": "Fast Hiking" } },
+    { "skus": ["8851898"], "brand": "Quechua", "model": "MH900 25L", "itemType": "Backpack", "weightGrams": 1080, "specs": { "capacityLiters": 25, "dimsCm": "59x27x20" } },
+    { "skus": ["8966538"], "brand": "Quechua", "model": "MH900 38L", "itemType": "Backpack", "weightGrams": 1165, "specs": { "capacityLiters": 38, "dimsCm": "60x28x23" } }
+  ],
+
+  "backpacksTravel": [
+    { "skus": ["8990285"], "brand": "Forclaz", "model": "Travel 500 Organizer 30L", "itemType": "Backpack", "weightGrams": 1400, "specs": { "capacityLiters": 30, "dimsCm": "50x30x22", "bestUse": "Travel" } },
+    { "skus": ["8787845"], "brand": "Forclaz", "model": "Travel 500 Organizer 40L", "itemType": "Backpack", "weightGrams": 1460, "specs": { "capacityLiters": 40, "dimsCm": "55x35x30", "bestUse": "Travel" } },
+    { "skus": ["8580006"], "brand": "Forclaz", "model": "Travel 900 Easy-Fit 50L (Men's)", "itemType": "Backpack", "weightGrams": 2160, "specs": { "capacityLiters": 50, "dimsCm": "65x32x30", "gender": "Mens", "bestUse": "Travel" } },
+    { "skus": ["8616394"], "brand": "Forclaz", "model": "Travel 900 Easy-Fit 50L (Women's)", "itemType": "Backpack", "weightGrams": 2160, "specs": { "capacityLiters": 50, "dimsCm": "65x32x30", "gender": "Womens", "bestUse": "Travel" } },
+    { "skus": ["8580014"], "brand": "Forclaz", "model": "Travel 900 Easy-Fit 70L (Men's)", "itemType": "Backpack", "weightGrams": 2250, "specs": { "capacityLiters": 70, "dimsCm": "75x35x30", "gender": "Mens", "bestUse": "Travel" } },
+    { "skus": ["8580010"], "brand": "Forclaz", "model": "Travel 900 Easy-Fit 60L (Women's)", "itemType": "Backpack", "weightGrams": 2350, "specs": { "capacityLiters": 60, "dimsCm": "70x35x30", "gender": "Womens", "bestUse": "Travel" } }
+  ],
+
+  "trekkingBoots": [
+    { "skus": ["8807088"], "brand": "Forclaz", "model": "MT100 (Mid)", "itemType": "Hiking Boots", "weightGrams": 560, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Mid", "waterproof": true, "waterproofDetail": "waterproof membrane", "hooks": 4, "lugMm": 4 } },
+    { "skus": ["8558047"], "brand": "Forclaz", "model": "MT100 Leather Wide", "itemType": "Hiking Boots", "weightGrams": 627, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Mid", "waterproof": true, "waterproofDetail": "waterproof membrane", "material": "Leather", "hooks": 6, "lugMm": 5 } },
+    { "skus": ["8786455"], "brand": "Forclaz", "model": "MT500 Leather", "itemType": "Hiking Boots", "weightGrams": 552, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Mid", "waterproof": true, "waterproofDetail": "waterproof membrane", "material": "Leather", "outsole": "Vibram XS Trek", "hooks": 6, "lugMm": 5 } },
+    { "skus": ["9004921"], "brand": "Tecnica", "model": "Starcross", "itemType": "Hiking Boots", "weightGrams": 500, "thirdParty": true, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Mid", "waterproof": true, "waterproofDetail": "Gore-Tex Extended Comfort", "outsole": "Vibram XS Trek", "hooks": 6, "lugMm": 4.5 } },
+    { "skus": ["9004508"], "brand": "Tecnica", "model": "Fuse", "itemType": "Hiking Boots", "weightGrams": 560, "thirdParty": true, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Mid", "waterproof": true, "waterproofDetail": "Gore-Tex Extended Comfort", "outsole": "Vibram XS Trek Evo", "hooks": 6, "lugMm": 4.7 } },
+    { "skus": ["9004412"], "brand": "Lowa", "model": "Renegade GTX Mid", "itemType": "Hiking Boots", "weightGrams": 590, "thirdParty": true, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Mid", "waterproof": true, "waterproofDetail": "Gore-Tex", "outsole": "Lowa Trac (Vibram)", "hooks": 6, "lugMm": 4 } },
+    { "skus": ["9003971"], "brand": "Salomon", "model": "Quest 4", "itemType": "Hiking Boots", "weightGrams": 585, "thirdParty": true, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Mid", "waterproof": true, "waterproofDetail": "Gore-Tex", "hooks": 6, "lugMm": 5 } },
+    { "skus": ["9004416"], "brand": "Salewa", "model": "Alp Trainer Mid", "itemType": "Hiking Boots", "weightGrams": 552, "thirdParty": true, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Mid", "waterproof": true, "waterproofDetail": "Gore-Tex Extended Comfort", "hooks": 4, "lugMm": 4 } }
+  ],
+
+  "walkingShoesMen": [
+    { "skus": ["8844095"], "brand": "Quechua", "model": "NH50 Low", "itemType": "Hiking Shoes", "weightGrams": 351, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Low", "waterproof": false } },
+    { "skus": ["8756701"], "brand": "Quechua", "model": "NH100 Mid", "itemType": "Hiking Boots", "weightGrams": 371, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Mid", "waterproof": false } },
+    { "skus": ["8871780"], "brand": "Quechua", "model": "NH100 Low WP", "itemType": "Hiking Shoes", "weightGrams": 325, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Low", "waterproof": true } },
+    { "skus": ["8554571"], "brand": "Quechua", "model": "NH100 Mid WP", "itemType": "Hiking Boots", "weightGrams": 365, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Mid", "waterproof": true } },
+    { "skus": ["8931385"], "brand": "Quechua", "model": "NH500 Low", "itemType": "Hiking Shoes", "weightGrams": 325, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Low", "waterproof": false } },
+    { "skus": ["8940970"], "brand": "Quechua", "model": "Arpenaz Revival", "itemType": "Hiking Shoes", "weightGrams": 285, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Low", "waterproof": false } },
+    { "skus": ["8930404"], "brand": "Quechua", "model": "NH500 Low WP", "itemType": "Hiking Shoes", "weightGrams": 375, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Low", "waterproof": true } },
+    { "skus": ["8955718"], "brand": "Quechua", "model": "NH500 Mid Leather WP", "itemType": "Hiking Boots", "weightGrams": 403, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Mid", "waterproof": true, "material": "Leather" } },
+    { "skus": ["8860913"], "brand": "Quechua", "model": "NH500 Mid Leather", "itemType": "Hiking Boots", "weightGrams": 425, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Mid", "waterproof": true, "material": "Leather" } }
+  ],
+
+  "walkingShoesWomen": [
+    { "skus": ["8553549"], "brand": "Quechua", "model": "NH50 Low", "itemType": "Hiking Shoes", "weightGrams": 270, "weightRefNote": "per single shoe, women's size 38; a pair ~2x", "specs": { "gender": "Womens", "cut": "Low", "waterproof": false } },
+    { "skus": ["8930406"], "brand": "Quechua", "model": "NH100 Mid", "itemType": "Hiking Boots", "weightGrams": 312, "weightRefNote": "per single shoe, women's size 38; a pair ~2x", "specs": { "gender": "Womens", "cut": "Mid", "waterproof": false } },
+    { "skus": ["8871776"], "brand": "Quechua", "model": "NH100 Low WP", "itemType": "Hiking Shoes", "weightGrams": 300, "weightRefNote": "per single shoe, women's size 38; a pair ~2x", "specs": { "gender": "Womens", "cut": "Low", "waterproof": true } },
+    { "skus": ["8871765"], "brand": "Quechua", "model": "NH100 Mid WP", "itemType": "Hiking Boots", "weightGrams": 310, "weightRefNote": "per single shoe, women's size 38; a pair ~2x", "specs": { "gender": "Womens", "cut": "Mid", "waterproof": true } },
+    { "skus": ["8974965"], "brand": "Quechua", "model": "NH500 Low", "itemType": "Hiking Shoes", "weightGrams": 240, "weightRefNote": "per single shoe, women's size 38; a pair ~2x", "specs": { "gender": "Womens", "cut": "Low", "waterproof": false } },
+    { "skus": ["8989434"], "brand": "Quechua", "model": "NH500 Low WP", "itemType": "Hiking Shoes", "weightGrams": 300, "weightRefNote": "per single shoe, women's size 38; a pair ~2x", "specs": { "gender": "Womens", "cut": "Low", "waterproof": true } },
+    { "skus": ["8871375"], "brand": "Quechua", "model": "NH500 Low Leather WP", "itemType": "Hiking Shoes", "weightGrams": 300, "weightRefNote": "per single shoe, women's size 38; a pair ~2x", "specs": { "gender": "Womens", "cut": "Low", "waterproof": true, "material": "Leather" } },
+    { "skus": ["8851466"], "brand": "Quechua", "model": "NH500 Mid Leather WP", "itemType": "Hiking Boots", "weightGrams": 325, "weightRefNote": "per single shoe, women's size 38; a pair ~2x", "specs": { "gender": "Womens", "cut": "Mid", "waterproof": true, "material": "Leather" } }
+  ],
+
+  "stoves": [
+    { "skus": ["8582112"], "brand": "Forclaz", "model": "MT100", "itemType": "Stove (Canister)", "weightGrams": 184, "specs": { "powerWatts": 2200, "boilTime1L": "3 min 50 s", "cartridge": "Screw-on (EN417)" } },
+    { "skus": ["8559534"], "brand": "Forclaz", "model": "MT500 Light", "itemType": "Stove (Canister)", "weightGrams": 85, "specs": { "powerWatts": 2750, "boilTime1L": "3 min 5 s", "cartridge": "Screw-on (EN417)" } },
+    { "skus": ["8559535"], "brand": "Forclaz", "model": "MT500 Remote", "itemType": "Stove (Canister)", "weightGrams": 170, "specs": { "powerWatts": 2500, "boilTime1L": "3 min 25 s", "cartridge": "Screw-on (EN417), remote canister" } },
+    { "skus": ["8975262"], "brand": "Forclaz", "model": "MT900", "itemType": "Stove (Canister)", "weightGrams": 50, "specs": { "powerWatts": 2300, "boilTime1L": "3 min 30 s", "cartridge": "Screw-on (EN417)" } },
+    { "skus": ["8999039"], "brand": "Campingaz", "model": "Bleuet Compact Connect", "itemType": "Stove (Canister)", "weightGrams": 193, "thirdParty": true, "specs": { "powerWatts": 1250, "boilTime1L": "5 min 30 s", "cartridge": "Valve cartridge (CV300+/CV470+)" } },
+    { "skus": ["9030015"], "brand": "Jetboil", "model": "Zip 2.0", "itemType": "Stove (Canister)", "weightGrams": 324, "thirdParty": true, "specs": { "powerWatts": 900, "boilTime0.5L": "2 min", "cartridge": "Screw-on (EN417)", "integrated": true } }
+  ],
+
+  "_gapsToPhotograph": {
+    "_note": "After batch 1+2 (2026-07-09): comparison boards are the only weight source and are organized by our categories. These in-scope Quechua/Forclaz/Simond families are in the UK feed IN STOCK but still weightless — target boards for the next store trip. Codes may drift NL<->UK (join handles it). Skip out-of-scope: ski/snow/kids boots, climbing shoes, car-camping/rooftop tents, camp furniture, pumps/valves, flasks/mugs/food storage.",
+    "footwear_BIGGEST_GAP": "Only the trekking(men) + walking(men/women) boards were shot. ~70 more adult models: MH100/MH500 mountain-hiking boots & shoes (men+women, waterproof, low+mid), MT100/MT500 leather trekking boots (women's + high-cut), NH500/NH900 leather boots, Approach shoes (Rock), MH500 Light, fast-hiking shoes. Find the 'bergwandelschoenen' (mountain) and any women's trekking boards.",
+    "cooking_cookware": "Stove board only had burners. Missing the cookware/cookset board: MT500 cookset 1P/2P, pots, cups, sporks (the ones with real weights).",
+    "tents_extra": "MT900 4P tunnel (8666970), MT900 UL 3P tunnel (feed 8586319), Makalu mountaineering tents (T2/T3 + Alpine Makalu 2P). MH100 camping tents only if car-camping in scope.",
+    "water": "Water filtration / filter-bottles (MT900 water filter bottle) + hydration — no board captured yet.",
+    "backpacks_extra": "MT100 Easyfit 70L men / 60L women, MT900 Symbium 70+10 & 90+10 & women's 60+10, Makalu mountaineering 45/70, Arpenaz insulated 25L (several were on boards but under drifted codes)."
+  },
+  "_noWeightAvailable": {
+    "_note": "These appeared on boards WITHOUT a weight column (dimensions / R-value / lumens only). Listed for scope + attribute reference; import weightless if in scope.",
+    "lanternsFlashlights": [
+      { "sku": "8615283/8797565", "brand": "Quechua", "model": "BL 40 lm battery", "lumens": 40 },
+      { "sku": "8492468", "brand": "Quechua", "model": "BL 100 lm battery", "lumens": 100 },
+      { "sku": "8755548/8852812", "brand": "Quechua", "model": "BL 60 lm rechargeable", "lumens": 60 },
+      { "sku": "8670110", "brand": "Quechua", "model": "BL 100 lm", "lumens": 100 },
+      { "sku": "8881742/8927540", "brand": "Quechua", "model": "BL 120 lm", "lumens": 120 },
+      { "sku": "8852787/8852786", "brand": "Quechua", "model": "BL 200 lm", "lumens": 200 },
+      { "sku": "8492469", "brand": "Quechua", "model": "BL 230 lm", "lumens": 230 },
+      { "sku": "8492085", "brand": "Quechua", "model": "BL 400 lm", "lumens": 400 },
+      { "sku": "8649378", "brand": "Quechua", "model": "Lichtsnoer 200 lm (string light)", "lumens": 200 },
+      { "sku": "8948415/8948414/8978082", "brand": "Quechua", "model": "TL 100 flashlight", "lumens": 100 },
+      { "sku": "8501304", "brand": "Quechua", "model": "Flashlight 500 zoom", "lumens": 500 },
+      { "sku": "8665145/8665146", "brand": "Quechua", "model": "Dynamo flashlight 100", "lumens": 15 },
+      { "sku": "8665147", "brand": "Quechua", "model": "Dynamo flashlight 500", "lumens": 150 },
+      { "sku": "8665150", "brand": "Quechua", "model": "Dynamo flashlight 900 PWB", "lumens": 210 },
+      { "sku": "8501305", "brand": "Quechua", "model": "Flashlight 900 lumen", "lumens": 900 }
+    ],
+    "arpenazDaypacks": [
+      { "sku": "8502149", "brand": "Quechua", "model": "Arpenaz 50 10L", "capacityLiters": 10, "dimsCm": "39x21x12" },
+      { "sku": "8971381", "brand": "Quechua", "model": "Arpenaz 100 10L", "capacityLiters": 10, "dimsCm": "40x22x15" },
+      { "sku": "8955893", "brand": "Quechua", "model": "Arpenaz 100 20L", "capacityLiters": 20, "dimsCm": "47x25x14" },
+      { "sku": "8999005", "brand": "Quechua", "model": "Arpenaz 100 27L", "capacityLiters": 27, "dimsCm": "50x26x20" },
+      { "sku": "8971390", "brand": "Quechua", "model": "Arpenaz 500 20L", "capacityLiters": 20, "dimsCm": "46x27x14" },
+      { "sku": "8971391", "brand": "Quechua", "model": "Arpenaz 500 30L", "capacityLiters": 30, "dimsCm": "48x27x18" },
+      { "sku": "8844400", "brand": "Quechua", "model": "Arpenaz 500 Cooler 20L", "capacityLiters": 20, "dimsCm": "45x25x20" },
+      { "sku": "8844404", "brand": "Quechua", "model": "Arpenaz 500 Cooler 30L", "capacityLiters": 30, "dimsCm": "50x28x23" },
+      { "sku": "8774498", "brand": "Quechua", "model": "NH Arpenaz 900 25L", "capacityLiters": 25, "dimsCm": "55x30x25" },
+      { "sku": "8941280", "brand": "Quechua", "model": "NH Explorer 900 Focus 25L", "capacityLiters": 25, "dimsCm": "50x28x23" }
+    ],
+    "carCampingAirBeds": [
+      { "sku": "8575620", "brand": "Quechua", "model": "Air Seconds AG basic", "rValue": 3.5, "dimsCm": "60x185x3", "note": "self-inflating; no weight on board" },
+      { "sku": "8601381", "brand": "Quechua", "model": "AG comfort", "rValue": 5.2, "dimsCm": "65x190x4.5" },
+      { "sku": "8733136", "brand": "Quechua", "model": "AG comfort double", "rValue": 5.2, "dimsCm": "132x200x4.5" },
+      { "sku": "8914320", "brand": "Quechua", "model": "AG ultim comfort", "rValue": 8.6, "dimsCm": "70x200x8" },
+      { "sku": "8938397", "brand": "Quechua", "model": "AG ultim comfort double", "rValue": 8.6, "dimsCm": "136x200x8" },
+      { "sku": "8901691", "brand": "Quechua", "model": "AG ultim comfort car", "rValue": 8.6, "dimsCm": "132x190x8" },
+      { "sku": "8841743", "brand": "Quechua", "model": "AG ultim comfort van", "rValue": 8.6, "dimsCm": "115x200x8" }
+    ]
+  }
+}
