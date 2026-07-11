@@ -1,6 +1,7 @@
 {
   "_README": "Weights + specs transcribed from Decathlon in-store comparison spec boards (photographed by user, batch 1 = 13 photos, 2026-07-07). Decathlon supplies NO weights via Awin and 403s all scraping, so these store boards are the weight source. KEY = Decathlon 8-digit article/model code (joins to the Awin feed's model/product code). `skus` lists every code shown for that model (color/size variants share a model but may differ by code). weightGrams = the board's stated weight; for size-variant products (pads L/XL, bags 'in size L') see weightBySize + weightRefNote. Third-party brands sold at Decathlon (Petzl/Black Diamond/Komperdell/Deuter/Sea to Summit) are marked thirdParty:true — capture the weight but the Decathlon/Awin offer is a RESOLD offer (brand != retailer), same pattern as the FF-resold Arc/Pat items. NO-WEIGHT items (lanterns, flashlights, Arpenaz daypacks, car-camping air beds) are listed under _noWeightAvailable for scope reference only.",
-  "_batch": 2,
+  "_batch": 3,
+  "_batch3Note": "Batch 3 = NL store trip 2026-07-11 (22 photos, arriving in sub-batches). Photos 1-2 (Simond bags + pads boards) were exact repeats of batch 1 — already captured above. NEW: women's trekking boots (weights, size 38/shoe), women's light-hiking (weights), men's+women's NH walking shoes (weights, size 42/38 per shoe), men's+women's MH mountain-hiking boards (NO weight row on those boards), Quechua/Simond sock board (no weights). FOOTWEAR CONVENTION: boards give PER-SHOE weight; catalog stores PAIR = 2x (user decision 2026-07-10).",
   "_photoBatchesExpected": "user will make one more store trip to fill gaps (see _gapsToPhotograph)",
   "_joinMechanics": {
     "feed": "AWIN advertiser feed fid/65881 (.env AWIN_DECATHLON_FEED_URL), UK/English, ~57.6k rows. Download: curl -sL $URL | gunzip. NOT the 5,368-row category feed (that one is mostly apparel; tents/bags/pads/headlamps absent).",
@@ -66,7 +67,11 @@
     { "skus": ["8882677"], "brand": "Forclaz", "model": "MT900 Tunnel 2P", "itemType": "Backpacking Tent", "weightGrams": 2080, "specs": { "capacity": "2-Person", "tentType": "Non-Freestanding", "innerLengthCm": 210, "peakHeightCm": 93, "hydrostaticHeadFlyMm": 2000, "hydrostaticHeadFloorMm": 3000 } },
     { "skus": ["8882697"], "brand": "Forclaz", "model": "MT900 Tunnel 3P", "itemType": "Backpacking Tent", "weightGrams": 3080, "specs": { "capacity": "3-Person", "tentType": "Non-Freestanding", "innerLengthCm": 210, "peakHeightCm": 110, "hydrostaticHeadFlyMm": 2000, "hydrostaticHeadFloorMm": 3000 } },
     { "skus": ["8968612"], "brand": "Forclaz", "model": "Tarp MT900 1P", "itemType": "Tarp", "weightGrams": 920, "specs": { "capacity": "1-Person", "coverageLengthCm": 225 } },
-    { "skus": ["8968614"], "brand": "Forclaz", "model": "Tarp MT900 2P", "itemType": "Tarp", "weightGrams": 1300, "specs": { "capacity": "2-Person", "coverageLengthCm": 225 } }
+    { "skus": ["8968614"], "brand": "Forclaz", "model": "Tarp MT900 2P", "itemType": "Tarp", "weightGrams": 1300, "specs": { "capacity": "2-Person", "coverageLengthCm": 225 } },
+    { "skus": ["8666970", "8967403"], "brand": "Forclaz", "model": "MT900 Tunnel 4P", "itemType": "Backpacking Tent", "weightGrams": 3540, "specs": { "capacity": "4-Person", "tentType": "Non-Freestanding", "hydrostaticHeadFlyMm": 2000, "hydrostaticHeadFloorMm": 3000 } },
+    { "skus": ["8389540", "8976907"], "brand": "Simond", "model": "Makalu Assault", "itemType": "Backpacking Tent", "weightGrams": 1000, "specs": { "capacity": "1-Person", "note": "mountaineering; siliconised fly so water/snow slides off" } },
+    { "skus": ["8641816"], "brand": "Simond", "model": "Makalu T2", "itemType": "Backpacking Tent", "weightGrams": 3100, "specs": { "capacity": "2-Person", "note": "mountaineering", "hydrostaticHeadFlyMm": 2000, "hydrostaticHeadFloorMm": 5000 } },
+    { "skus": ["8641822"], "brand": "Simond", "model": "Makalu T3", "itemType": "Backpacking Tent", "weightGrams": 4900, "specs": { "capacity": "3-Person", "note": "mountaineering", "hydrostaticHeadFlyMm": 2000, "hydrostaticHeadFloorMm": 5000 } }
   ],
 
   "sleepingPads": [
@@ -157,10 +162,10 @@
   ],
 
   "trekkingBoots": [
-    { "skus": ["8807088"], "brand": "Forclaz", "model": "MT100 (Mid)", "itemType": "Hiking Boots", "weightGrams": 560, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Mid", "waterproof": true, "waterproofDetail": "waterproof membrane", "hooks": 4, "lugMm": 4 } },
-    { "skus": ["8558047"], "brand": "Forclaz", "model": "MT100 Leather Wide", "itemType": "Hiking Boots", "weightGrams": 627, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Mid", "waterproof": true, "waterproofDetail": "waterproof membrane", "material": "Leather", "hooks": 6, "lugMm": 5 } },
-    { "skus": ["8786455"], "brand": "Forclaz", "model": "MT500 Leather", "itemType": "Hiking Boots", "weightGrams": 552, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Mid", "waterproof": true, "waterproofDetail": "waterproof membrane", "material": "Leather", "outsole": "Vibram XS Trek", "hooks": 6, "lugMm": 5 } },
-    { "skus": ["9004921"], "brand": "Tecnica", "model": "Starcross", "itemType": "Hiking Boots", "weightGrams": 500, "thirdParty": true, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Mid", "waterproof": true, "waterproofDetail": "Gore-Tex Extended Comfort", "outsole": "Vibram XS Trek", "hooks": 6, "lugMm": 4.5 } },
+    { "skus": ["8807088", "8801288"], "brand": "Forclaz", "model": "MT100 (Mid)", "itemType": "Hiking Boots", "weightGrams": 560, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Mid", "waterproof": true, "waterproofDetail": "waterproof membrane", "hooks": 4, "lugMm": 4 } },
+    { "skus": ["8558047", "8550247"], "brand": "Forclaz", "model": "MT100 Leather Wide", "itemType": "Hiking Boots", "weightGrams": 627, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Mid", "waterproof": true, "waterproofDetail": "waterproof membrane", "material": "Leather", "hooks": 6, "lugMm": 5 } },
+    { "skus": ["8786455", "8786155"], "brand": "Forclaz", "model": "MT500 Leather", "itemType": "Hiking Boots", "weightGrams": 552, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Mid", "waterproof": true, "waterproofDetail": "waterproof membrane", "material": "Leather", "outsole": "Vibram XS Trek", "hooks": 6, "lugMm": 5 } },
+    { "skus": ["9004921", "9004121"], "brand": "Tecnica", "model": "Starcross", "itemType": "Hiking Boots", "weightGrams": 500, "thirdParty": true, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Mid", "waterproof": true, "waterproofDetail": "Gore-Tex Extended Comfort", "outsole": "Vibram XS Trek", "hooks": 6, "lugMm": 4.5 } },
     { "skus": ["9004508"], "brand": "Tecnica", "model": "Fuse", "itemType": "Hiking Boots", "weightGrams": 560, "thirdParty": true, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Mid", "waterproof": true, "waterproofDetail": "Gore-Tex Extended Comfort", "outsole": "Vibram XS Trek Evo", "hooks": 6, "lugMm": 4.7 } },
     { "skus": ["9004412"], "brand": "Lowa", "model": "Renegade GTX Mid", "itemType": "Hiking Boots", "weightGrams": 590, "thirdParty": true, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Mid", "waterproof": true, "waterproofDetail": "Gore-Tex", "outsole": "Lowa Trac (Vibram)", "hooks": 6, "lugMm": 4 } },
     { "skus": ["9003971"], "brand": "Salomon", "model": "Quest 4", "itemType": "Hiking Boots", "weightGrams": 585, "thirdParty": true, "weightRefNote": "per single shoe, men's size 42; a pair ~2x", "specs": { "gender": "Mens", "cut": "Mid", "waterproof": true, "waterproofDetail": "Gore-Tex", "hooks": 6, "lugMm": 5 } },
@@ -247,5 +252,158 @@
       { "sku": "8901691", "brand": "Quechua", "model": "AG ultim comfort car", "rValue": 8.6, "dimsCm": "132x190x8" },
       { "sku": "8841743", "brand": "Quechua", "model": "AG ultim comfort van", "rValue": 8.6, "dimsCm": "115x200x8" }
     ]
-  }
+  },
+
+  "trekkingBootsWomens": [
+    { "skus": ["8826612"], "brand": "Forclaz", "model": "MT100 (Mid, Women's)", "itemType": "Hiking Boots", "weightGrams": 485, "weightRefNote": "per single shoe, women's size 38; catalog stores PAIR = 2x", "specs": { "gender": "Womens", "lugDepthMm": 4, "waterproof": "membrane" } },
+    { "skus": ["8559702"], "brand": "Forclaz", "model": "MT100 Leather Wide (Women's)", "itemType": "Hiking Boots", "weightGrams": 500, "weightRefNote": "per single shoe, women's size 38; PAIR = 2x", "specs": { "gender": "Womens", "lugDepthMm": 5, "waterproof": "membrane" } },
+    { "skus": ["9004425"], "brand": "Tecnica", "model": "Starcross (Women's)", "itemType": "Hiking Boots", "weightGrams": 420, "weightRefNote": "per single shoe, size 38; PAIR = 2x", "thirdParty": true, "specs": { "gender": "Womens", "lugDepthMm": 4.5, "sole": "Vibram XS Trek", "waterproof": "GORE-TEX Extended Comfort" } },
+    { "skus": ["8786160"], "brand": "Forclaz", "model": "MT500 Leather (Women's)", "itemType": "Hiking Boots", "weightGrams": 530, "weightRefNote": "per single shoe, size 38; PAIR = 2x", "specs": { "gender": "Womens", "lugDepthMm": 5, "sole": "Vibram XS Trek", "waterproof": "membrane" } },
+    { "skus": ["9004442"], "brand": "Tecnica", "model": "Fuse (Women's)", "itemType": "Hiking Boots", "weightGrams": 480, "weightRefNote": "per single shoe, size 38; PAIR = 2x", "thirdParty": true, "specs": { "gender": "Womens", "lugDepthMm": 4.7, "sole": "Vibram XS Trek EVO", "waterproof": "GORE-TEX Extended Comfort" } },
+    { "skus": ["9004516"], "brand": "Lowa", "model": "Renetrek GTX Mid DC Ws", "itemType": "Hiking Boots", "weightGrams": 465, "weightRefNote": "per single shoe, size 38; PAIR = 2x; board spells 'Renetrek' (Renegade family)", "thirdParty": true, "specs": { "gender": "Womens", "lugDepthMm": 3.5, "waterproof": "GORE-TEX" } },
+    { "skus": ["9004512"], "brand": "Salomon", "model": "Quest 4 (Women's)", "itemType": "Hiking Boots", "weightGrams": 511, "weightRefNote": "per single shoe, size 38; PAIR = 2x", "thirdParty": true, "specs": { "gender": "Womens", "lugDepthMm": 5, "sole": "Contagrip", "waterproof": "GORE-TEX" } },
+    { "skus": ["8826624"], "brand": "Forclaz", "model": "MT900 (Women's)", "itemType": "Hiking Boots", "weightGrams": 500, "weightRefNote": "per single shoe, size 38; PAIR = 2x", "specs": { "gender": "Womens", "lugDepthMm": 5, "sole": "Vibram XS Trek EVO + Springlug", "waterproof": "HDry membrane" } },
+    { "skus": ["9004534"], "brand": "Salewa", "model": "Alp Trainer Mid (Women's)", "itemType": "Hiking Boots", "weightGrams": 482, "weightRefNote": "per single shoe, size 38; PAIR = 2x", "thirdParty": true, "specs": { "gender": "Womens", "lugDepthMm": 4, "sole": "Vibram Alpine hiking", "waterproof": "GORE-TEX Extended Comfort" } }
+  ],
+
+  "lightHikingShoesWomens": [
+    { "skus": ["8991982", "8991910", "8970478"], "brand": "Quechua", "model": "MH500 Faster (Women's)", "itemType": "Hiking Shoes", "weightGrams": 275, "weightRefNote": "per single shoe, size 38; PAIR = 2x", "specs": { "gender": "Womens", "lugDepthMm": 5, "waterproof": false } },
+    { "skus": ["8989676", "8989677"], "brand": "Quechua", "model": "MH500 Light WP (Women's)", "itemType": "Hiking Shoes", "weightGrams": 319, "weightRefNote": "per single shoe, size 38; PAIR = 2x", "specs": { "gender": "Womens", "lugDepthMm": 5, "waterproof": "PFC-free membrane" } },
+    { "skus": ["8982079", "8982078"], "brand": "Quechua", "model": "MH900 Light (Women's)", "itemType": "Hiking Shoes", "weightGrams": 300, "weightRefNote": "per single shoe, size 38; PAIR = 2x", "specs": { "gender": "Womens", "lugDepthMm": 6, "sole": "Vibram XS Trek EVO", "waterproof": false } },
+    { "skus": ["8853701"], "brand": "Quechua", "model": "MH900 Waterproof (Women's)", "itemType": "Hiking Shoes", "weightGrams": 336, "weightRefNote": "per single shoe, size 38; PAIR = 2x", "specs": { "gender": "Womens", "lugDepthMm": 6, "sole": "Vibram XS Trek EVO", "waterproof": "laminated PFC-free membrane" } },
+    { "skus": ["8950045"], "brand": "Salomon", "model": "Saliba WP (Women's)", "itemType": "Hiking Shoes", "weightGrams": 282, "weightRefNote": "per single shoe, size 38; PAIR = 2x", "thirdParty": true, "specs": { "gender": "Womens", "lugDepthMm": 4, "sole": "Contagrip", "waterproof": "Clima Salomon Waterproof" } },
+    { "skus": ["9017211"], "brand": "Merrell", "model": "Speed Strike (Women's)", "itemType": "Hiking Shoes", "weightGrams": 717, "weightRefNote": "board says 717 g per shoe (size 38) — SUSPICIOUS for this shoe class, likely a board misprint; verify before trusting", "thirdParty": true, "specs": { "gender": "Womens", "lugDepthMm": 4, "waterproof": "membrane" } },
+    { "skus": ["9012615"], "brand": "Columbia", "model": "Peakfreak (Women's)", "itemType": "Hiking Shoes", "weightGrams": 309, "weightRefNote": "per single shoe, size 38; PAIR = 2x", "thirdParty": true, "specs": { "gender": "Womens", "lugDepthMm": 5, "sole": "Adapt Trax", "waterproof": "Outdry DWR" } },
+    { "skus": ["9012622"], "brand": "Columbia", "model": "Tellurix (Women's)", "itemType": "Hiking Shoes", "weightGrams": 326, "weightRefNote": "per single shoe, size 38; PAIR = 2x", "thirdParty": true, "specs": { "gender": "Womens", "lugDepthMm": 4.5, "sole": "Vibram Mega Grip", "waterproof": "Outdry DWR" } },
+    { "skus": ["9012780"], "brand": "Salomon", "model": "X Ultra Pioneer Low (Women's)", "itemType": "Hiking Shoes", "weightGrams": 380, "weightRefNote": "per single shoe, size 38; PAIR = 2x", "thirdParty": true, "specs": { "gender": "Womens", "lugDepthMm": 5, "sole": "Contagrip", "waterproof": "GORE-TEX" } },
+    { "skus": ["9012777"], "brand": "Salomon", "model": "X Ultra Pioneer Mid (Women's)", "itemType": "Hiking Boots", "weightGrams": 383, "weightRefNote": "per single shoe, size 38; PAIR = 2x", "thirdParty": true, "specs": { "gender": "Womens", "lugDepthMm": 5, "sole": "Contagrip", "waterproof": "GORE-TEX" } },
+    { "skus": ["9012738"], "brand": "Merrell", "model": "Speed Remix (Women's)", "itemType": "Hiking Shoes", "weightGrams": 300, "weightRefNote": "per single shoe, size 38; PAIR = 2x", "thirdParty": true, "specs": { "gender": "Womens", "lugDepthMm": 4, "sole": "Vibram TC5+ Traction Lug", "waterproof": "GORE-TEX membrane" } },
+    { "skus": ["9017224"], "brand": "Lowa", "model": "Innox Pro GTX Lo DC Ws", "itemType": "Hiking Shoes", "weightGrams": 325, "weightRefNote": "per single shoe, size 38; PAIR = 2x", "thirdParty": true, "specs": { "gender": "Womens", "lugDepthMm": 4.5, "sole": "Lowa Trac DynaPU", "waterproof": "GORE-TEX membrane" } }
+  ],
+
+  "walkingShoesWomens": [
+    { "skus": ["8553549"], "brand": "Quechua", "model": "NH50 Low (Women's)", "itemType": "Hiking Shoes", "weightGrams": 270, "weightRefNote": "per single shoe, size 38; PAIR = 2x", "specs": { "gender": "Womens", "waterproof": false } },
+    { "skus": ["8930406"], "brand": "Quechua", "model": "NH100 Mid (Women's)", "itemType": "Hiking Boots", "weightGrams": 312, "weightRefNote": "per single shoe, size 38; PAIR = 2x", "specs": { "gender": "Womens", "waterproof": false } },
+    { "skus": ["8871776"], "brand": "Quechua", "model": "NH100 Low WTP (Women's)", "itemType": "Hiking Shoes", "weightGrams": 300, "weightRefNote": "per single shoe, size 38; PAIR = 2x", "specs": { "gender": "Womens", "waterproof": true } },
+    { "skus": ["8871765"], "brand": "Quechua", "model": "NH100 Mid WTP (Women's)", "itemType": "Hiking Boots", "weightGrams": 310, "weightRefNote": "per single shoe, size 38; PAIR = 2x", "specs": { "gender": "Womens", "waterproof": true } },
+    { "skus": ["8974965"], "brand": "Quechua", "model": "NH500 Low (Women's)", "itemType": "Hiking Shoes", "weightGrams": 240, "weightRefNote": "per single shoe, size 38; PAIR = 2x", "specs": { "gender": "Womens", "waterproof": false } },
+    { "skus": ["8989434"], "brand": "Quechua", "model": "NH500 Low WP (Women's)", "itemType": "Hiking Shoes", "weightGrams": 300, "weightRefNote": "per single shoe, size 38; PAIR = 2x", "specs": { "gender": "Womens", "waterproof": true } },
+    { "skus": ["8871375"], "brand": "Quechua", "model": "NH500 Low Leather WP (Women's)", "itemType": "Hiking Shoes", "weightGrams": 300, "weightRefNote": "per single shoe, size 38; PAIR = 2x", "specs": { "gender": "Womens", "waterproof": true } },
+    { "skus": ["8851466"], "brand": "Quechua", "model": "NH500 Mid Leather WP (Women's)", "itemType": "Hiking Boots", "weightGrams": 325, "weightRefNote": "per single shoe, size 38; PAIR = 2x", "specs": { "gender": "Womens", "waterproof": true } }
+  ],
+
+  "walkingShoesMens": [
+    { "skus": ["8844095"], "brand": "Quechua", "model": "NH50 Low (Men's)", "itemType": "Hiking Shoes", "weightGrams": 351, "weightRefNote": "per single shoe, size 42; PAIR = 2x", "specs": { "gender": "Mens", "waterproof": false } },
+    { "skus": ["8756701"], "brand": "Quechua", "model": "NH100 Mid (Men's)", "itemType": "Hiking Boots", "weightGrams": 371, "weightRefNote": "per single shoe, size 42; PAIR = 2x", "specs": { "gender": "Mens", "waterproof": false } },
+    { "skus": ["8871760"], "brand": "Quechua", "model": "NH100 Low WTP (Men's)", "itemType": "Hiking Shoes", "weightGrams": 325, "weightRefNote": "per single shoe, size 42; PAIR = 2x", "specs": { "gender": "Mens", "waterproof": true } },
+    { "skus": ["8554571"], "brand": "Quechua", "model": "NH100 Mid WTP (Men's)", "itemType": "Hiking Boots", "weightGrams": 365, "weightRefNote": "per single shoe, size 42; PAIR = 2x", "specs": { "gender": "Mens", "waterproof": true } },
+    { "skus": ["8931365"], "brand": "Quechua", "model": "NH500 Low (Men's)", "itemType": "Hiking Shoes", "weightGrams": 325, "weightRefNote": "per single shoe, size 42; PAIR = 2x; sku digit uncertain (8931365/8931355)", "specs": { "gender": "Mens", "waterproof": false } },
+    { "skus": ["8940970"], "brand": "Quechua", "model": "Arpenaz Revival (Men's)", "itemType": "Hiking Shoes", "weightGrams": 285, "weightRefNote": "per single shoe, size 42; PAIR = 2x", "specs": { "gender": "Mens", "waterproof": false } },
+    { "skus": ["8930404"], "brand": "Quechua", "model": "NH500 Low WP (Men's)", "itemType": "Hiking Shoes", "weightGrams": 375, "weightRefNote": "per single shoe, size 42; PAIR = 2x", "specs": { "gender": "Mens", "waterproof": true } },
+    { "skus": ["8955718"], "brand": "Quechua", "model": "NH500 Mid Leather WP (Men's)", "itemType": "Hiking Boots", "weightGrams": 403, "weightRefNote": "per single shoe, size 42; PAIR = 2x", "specs": { "gender": "Mens", "waterproof": true } },
+    { "skus": ["8668913"], "brand": "Quechua", "model": "NH500 Mid Leather (Men's)", "itemType": "Hiking Boots", "weightGrams": 425, "weightRefNote": "per single shoe, size 42; PAIR = 2x; board printed '88668913' — sku normalized to 8668913, verify on join", "specs": { "gender": "Mens", "waterproof": true } }
+  ],
+
+  "mountainHikingShoesWomens_noWeightBoard": [
+    { "skus": ["8612193"], "brand": "Quechua", "model": "MH100 (Women's)", "itemType": "Hiking Shoes", "weightGrams": null, "specs": { "gender": "Womens", "lugDepthMm": 5, "waterproof": false } },
+    { "skus": ["8916447"], "brand": "Quechua", "model": "MH100 WP (Women's)", "itemType": "Hiking Shoes", "weightGrams": null, "specs": { "gender": "Womens", "lugDepthMm": 5, "waterproof": "PFC-free membrane" } },
+    { "skus": ["8851131", "8668406"], "brand": "Quechua", "model": "MH100 Mid WP (Women's)", "itemType": "Hiking Boots", "weightGrams": null, "specs": { "gender": "Womens", "lugDepthMm": 5, "waterproof": "PFC-free membrane" } },
+    { "skus": ["8928616", "8928613"], "brand": "Quechua", "model": "MH500 WP (Women's)", "itemType": "Hiking Shoes", "weightGrams": null, "specs": { "gender": "Womens", "lugDepthMm": 5, "waterproof": "PFC-free membrane" } },
+    { "skus": ["8928624"], "brand": "Quechua", "model": "MH500 Mid WP (Women's)", "itemType": "Hiking Boots", "weightGrams": null, "specs": { "gender": "Womens", "lugDepthMm": 5, "waterproof": "PFC-free membrane" } },
+    { "skus": ["8947080"], "brand": "Merrell", "model": "Crosslander (Women's)", "itemType": "Hiking Shoes", "weightGrams": null, "thirdParty": true, "specs": { "gender": "Womens", "lugDepthMm": 4 } },
+    { "skus": ["8959280"], "brand": "Columbia", "model": "Redmond WP (Women's)", "itemType": "Hiking Shoes", "weightGrams": null, "thirdParty": true, "specs": { "gender": "Womens", "lugDepthMm": 3, "waterproof": "Outdry DWR" } },
+    { "skus": ["8808041"], "brand": "Merrell", "model": "Crosslander Mid (Women's)", "itemType": "Hiking Boots", "weightGrams": null, "thirdParty": true, "specs": { "gender": "Womens", "lugDepthMm": 4 } },
+    { "skus": ["9012619"], "brand": "Columbia", "model": "Redmond Mid (Women's)", "itemType": "Hiking Boots", "weightGrams": null, "thirdParty": true, "specs": { "gender": "Womens", "lugDepthMm": 3, "waterproof": "Outdry DWR" } },
+    { "skus": ["9017223"], "brand": "Lowa", "model": "Sirkos Evo GTX Lo DC Ws", "itemType": "Hiking Shoes", "weightGrams": null, "thirdParty": true, "specs": { "gender": "Womens", "lugDepthMm": 4.5, "waterproof": "GORE-TEX" } },
+    { "skus": ["9017232"], "brand": "Salewa", "model": "Alp Trainer (Women's)", "itemType": "Hiking Shoes", "weightGrams": null, "thirdParty": true, "specs": { "gender": "Womens", "lugDepthMm": 4, "sole": "Vibram Alpine hiking", "waterproof": "GORE-TEX Extended Comfort" } }
+  ],
+
+  "mountainHikingShoesMens_noWeightBoard": [
+    { "skus": ["8555093"], "brand": "Quechua", "model": "MH100 (Men's)", "itemType": "Hiking Shoes", "weightGrams": null, "specs": { "gender": "Mens", "lugDepthMm": 5, "waterproof": false } },
+    { "skus": ["8796235"], "brand": "Quechua", "model": "MH100 WP (Men's)", "itemType": "Hiking Shoes", "weightGrams": null, "specs": { "gender": "Mens", "lugDepthMm": 5, "waterproof": "PFC-free membrane" } },
+    { "skus": ["8795990", "8795992"], "brand": "Quechua", "model": "MH100 Mid WP (Men's)", "itemType": "Hiking Boots", "weightGrams": null, "specs": { "gender": "Mens", "lugDepthMm": 5, "waterproof": "PFC-free membrane" } },
+    { "skus": ["8928608", "8928611"], "brand": "Quechua", "model": "MH500 WP (Men's)", "itemType": "Hiking Shoes", "weightGrams": null, "specs": { "gender": "Mens", "lugDepthMm": 5, "waterproof": "PFC-free membrane" } },
+    { "skus": ["8928618", "8928619"], "brand": "Quechua", "model": "MH500 Mid WP (Men's)", "itemType": "Hiking Boots", "weightGrams": null, "specs": { "gender": "Mens", "lugDepthMm": 5, "waterproof": "PFC-free membrane" } },
+    { "skus": ["8931385"], "brand": "Merrell", "model": "Crosslander (Men's)", "itemType": "Hiking Shoes", "weightGrams": null, "thirdParty": true, "specs": { "gender": "Mens", "lugDepthMm": 4 } },
+    { "skus": ["8959279"], "brand": "Columbia", "model": "Redmond (Men's)", "itemType": "Hiking Shoes", "weightGrams": null, "thirdParty": true, "specs": { "gender": "Mens", "lugDepthMm": 3, "waterproof": "Outdry DWR" } },
+    { "skus": ["8808043"], "brand": "Merrell", "model": "Crosslander Mid (Men's)", "itemType": "Hiking Boots", "weightGrams": null, "thirdParty": true, "specs": { "gender": "Mens", "lugDepthMm": 4 } },
+    { "skus": ["9012580"], "brand": "Columbia", "model": "Redmond Mid (Men's)", "itemType": "Hiking Boots", "weightGrams": null, "thirdParty": true, "specs": { "gender": "Mens", "lugDepthMm": 3, "waterproof": "Outdry DWR" } },
+    { "skus": ["9012650"], "brand": "Merrell", "model": "Moab Mid (Men's)", "itemType": "Hiking Boots", "weightGrams": null, "thirdParty": true, "specs": { "gender": "Mens", "lugDepthMm": 5, "sole": "Vibram TC5+", "waterproof": "Merrell membrane" } },
+    { "skus": ["9017216"], "brand": "Lowa", "model": "Sirkos Evo GTX Lo DC (Men's)", "itemType": "Hiking Shoes", "weightGrams": null, "thirdParty": true, "specs": { "gender": "Mens", "lugDepthMm": 5, "waterproof": "GORE-TEX" } },
+    { "skus": ["9017228"], "brand": "Salewa", "model": "Alp Trainer (Men's)", "itemType": "Hiking Shoes", "weightGrams": null, "thirdParty": true, "specs": { "gender": "Mens", "lugDepthMm": 4, "sole": "Vibram Alpine hiking", "waterproof": "GORE-TEX Extended Comfort" } }
+  ],
+
+  "socks_noWeightBoard": [
+    { "skus": ["8649534"], "brand": "Quechua", "model": "Hike 50 Mid", "itemType": "Hiking Socks", "weightGrams": null, "specs": { "material": "Cotton", "pairsPerSet": 2 } },
+    { "skus": ["8649539"], "brand": "Quechua", "model": "Hike 50 High", "itemType": "Hiking Socks", "weightGrams": null, "specs": { "material": "Cotton", "pairsPerSet": 2 } },
+    { "skus": ["8649546"], "brand": "Quechua", "model": "Hike 100 Low", "itemType": "Hiking Socks", "weightGrams": null, "specs": { "material": "Flax/cotton bouclé", "pairsPerSet": 2 } },
+    { "skus": ["8665857"], "brand": "Quechua", "model": "Hike 100 High", "itemType": "Hiking Socks", "weightGrams": null, "specs": { "material": "Flax/cotton bouclé", "pairsPerSet": 2 } },
+    { "skus": ["8616568"], "brand": "Quechua", "model": "Hike 500 Mid", "itemType": "Hiking Socks", "weightGrams": null, "specs": { "material": "Anti-friction synthetic", "pairsPerSet": 2 } },
+    { "skus": ["8965699"], "brand": "Quechua", "model": "Hike 500 High", "itemType": "Hiking Socks", "weightGrams": null, "specs": { "material": "Anti-friction synthetic", "pairsPerSet": 2 } },
+    { "skus": ["8786380"], "brand": "Quechua", "model": "Hike 520 Double", "itemType": "Hiking Socks", "weightGrams": null, "specs": { "material": "Anti-friction, double-layer", "pairsPerSet": 2 } },
+    { "skus": ["8917569"], "brand": "Quechua", "model": "Hike 900 Mid", "itemType": "Hiking Socks", "weightGrams": null, "specs": { "material": "Merino/synthetic mix", "pairsPerSet": 2 } },
+    { "skus": ["8647192"], "brand": "Quechua", "model": "Hike 900 High", "itemType": "Hiking Socks", "weightGrams": null, "specs": { "material": "Merino/synthetic mix", "pairsPerSet": 2 } },
+    { "skus": ["8786246"], "brand": "Quechua", "model": "Hike 900 Trek", "itemType": "Hiking Socks", "weightGrams": null, "specs": { "material": "Merino/Tencel mix", "pairsPerSet": 1 } },
+    { "skus": ["8316476"], "brand": "Simond", "model": "Alpinism High", "itemType": "Hiking Socks", "weightGrams": null, "specs": { "material": "Merino/synthetic mix, semi-thick, reinforced shin+instep", "pairsPerSet": 1 } }
+  ],
+
+  "rainJacketsWomens": [
+    { "skus": ["8911566"], "brand": "Quechua", "model": "MH100 Jacket (Women's)", "itemType": "Rain Jacket", "weightGrams": 275, "weightRefNote": "size M (women's board)", "specs": { "gender": "Womens", "hydrostaticHeadMm": 15000, "layers": "2-layer membrane", "breathabilityG24h": 15000 } },
+    { "skus": ["8891762"], "brand": "Quechua", "model": "MH100 Long Jacket (Women's)", "itemType": "Rain Jacket", "weightGrams": 394, "weightRefNote": "size M", "specs": { "gender": "Womens", "hydrostaticHeadMm": 15000, "layers": "2-layer membrane", "breathabilityG24h": 15000, "note": "ventilated back" } },
+    { "skus": ["8911403"], "brand": "Quechua", "model": "MH500 Jacket (Women's)", "itemType": "Rain Jacket", "weightGrams": 440, "weightRefNote": "size M", "specs": { "gender": "Womens", "hydrostaticHeadMm": 20000, "layers": "3-layer membrane", "breathabilityG24h": 15000, "pitZipsCm": 29 } },
+    { "skus": ["8916796"], "brand": "Quechua", "model": "MH900 Jacket (Women's)", "itemType": "Rain Jacket", "weightGrams": 420, "weightRefNote": "size M", "specs": { "gender": "Womens", "hydrostaticHeadMm": 25000, "layers": "3-layer membrane", "breathabilityG24h": 15000, "pitZipsCm": 40 } },
+    { "skus": ["8903382"], "brand": "Forclaz", "model": "MT900 Trekking Jacket (Women's)", "itemType": "Rain Jacket", "weightGrams": 530, "weightRefNote": "size M per women's board; ⚠ SAME sku 8903382 appears on the men's board at 430 g size L — code shared across boards, verify gender/weight on join", "specs": { "gender": "Womens", "hydrostaticHeadMm": 25000, "layers": "3-layer membrane", "breathabilityG24h": 15000, "pitZipsCm": 42 } },
+    { "skus": ["8510093"], "brand": "Simond", "model": "Alpi Light Jacket (Women's)", "itemType": "Rain Jacket", "weightGrams": 420, "weightRefNote": "size M", "specs": { "gender": "Womens", "hydrostaticHeadMm": 20000, "layers": "3-layer membrane", "breathabilityG24h": 18000, "note": "helmet-compatible hood, two-way zip for harness" } },
+    { "skus": ["8602226"], "brand": "Simond", "model": "Ice Jacket (Women's)", "itemType": "Rain Jacket", "weightGrams": 650, "weightRefNote": "size M", "specs": { "gender": "Womens", "hydrostaticHeadMm": 25000, "layers": "3-layer membrane", "breathabilityG24h": 15000, "note": "helmet-compatible hood, two-way zip for harness" } }
+  ],
+
+  "rainJacketsMens": [
+    { "skus": ["8678198"], "brand": "Quechua", "model": "MH100 Jacket (Men's)", "itemType": "Rain Jacket", "weightGrams": 490, "weightRefNote": "size L (men's board w/ SKUs); a second no-SKU men's board lists MH100 at 504 g", "specs": { "gender": "Mens", "hydrostaticHeadMm": 15000, "layers": "2-layer membrane", "breathabilityG24h": 15000 } },
+    { "skus": ["8973711"], "brand": "Quechua", "model": "MH500 Light Jacket (Men's)", "itemType": "Rain Jacket", "weightGrams": 365, "weightRefNote": "size L", "specs": { "gender": "Mens", "hydrostaticHeadMm": 20000, "layers": "3-layer membrane", "breathabilityG24h": 15000, "note": "back ventilation" } },
+    { "skus": ["8911398"], "brand": "Quechua", "model": "MH500 Jacket (Men's)", "itemType": "Rain Jacket", "weightGrams": 560, "weightRefNote": "size L; this board prints 15.000 Schmerber (women's MH500 board says 20.000)", "specs": { "gender": "Mens", "hydrostaticHeadMm": 15000, "layers": "3-layer membrane", "breathabilityG24h": 15000, "pitZipsCm": 29 } },
+    { "skus": ["8883257"], "brand": "Quechua", "model": "MH900 Jacket (Men's)", "itemType": "Rain Jacket", "weightGrams": 470, "weightRefNote": "size L; no-SKU board variant lists 464 g", "specs": { "gender": "Mens", "hydrostaticHeadMm": 25000, "layers": "3-layer membrane", "breathabilityG24h": 15000, "pitZipsCm": 42 } },
+    { "skus": ["8903382"], "brand": "Forclaz", "model": "MT900 Trekking Jacket (Men's)", "itemType": "Rain Jacket", "weightGrams": 430, "weightRefNote": "size L; ⚠ same sku on the women's board at 530 g size M — shared code, resolve on join", "specs": { "gender": "Mens", "hydrostaticHeadMm": 25000, "layers": "3-layer membrane", "breathabilityG24h": 15000, "pitZipsCm": 42 } },
+    { "skus": ["8544950"], "brand": "Simond", "model": "Alpi Light Jacket (Men's)", "itemType": "Rain Jacket", "weightGrams": 360, "weightRefNote": "size L", "specs": { "gender": "Mens", "hydrostaticHeadMm": 20000, "layers": "3-layer membrane", "breathabilityG24h": 18000, "note": "helmet-compatible hood, two-way zip for harness" } },
+    { "skus": ["8602223"], "brand": "Simond", "model": "Ice Jacket (Men's)", "itemType": "Rain Jacket", "weightGrams": 570, "weightRefNote": "size L", "specs": { "gender": "Mens", "hydrostaticHeadMm": 25000, "layers": "3-layer membrane", "breathabilityG24h": 15000, "note": "helmet-compatible hood, two-way zip for harness" } },
+    { "skus": [], "brand": "Simond", "model": "Windshell Alpi (Men's)", "itemType": "Softshell Jacket", "weightGrams": 285, "weightRefNote": "size L; from the no-SKU hanging board only — NO article code captured, join by name or skip", "specs": { "gender": "Mens", "note": "water-repellent windshell, not waterproof" } }
+  ],
+
+  "baseLayerTeesSimond_noWeightBoard": [
+    { "skus": ["8976784"], "brand": "Simond", "model": "TS Fresh Short Sleeve (Men's)", "itemType": "Hiking Shirt", "weightGrams": null, "specs": { "gender": "Mens", "material": "70% merino / 30% acrylic", "fabricGsm": 155 } },
+    { "skus": ["8976797"], "brand": "Simond", "model": "TS Resist Short Sleeve (Men's)", "itemType": "Hiking Shirt", "weightGrams": null, "specs": { "gender": "Mens", "material": "89% merino / 11% polyamide", "fabricGsm": 160 } },
+    { "skus": ["8976792"], "brand": "Simond", "model": "TS 100% Merino Short Sleeve (Men's)", "itemType": "Hiking Shirt", "weightGrams": null, "specs": { "gender": "Mens", "material": "100% merino", "fabricGsm": 160 } },
+    { "skus": ["8976954"], "brand": "Simond", "model": "TS Seamless Short Sleeve (Men's)", "itemType": "Hiking Shirt", "weightGrams": null, "specs": { "gender": "Mens", "material": "65% merino / 6% elastane / 29% polyamide", "fabricGsm": 175 } },
+    { "skus": ["8977572"], "brand": "Simond", "model": "TS Fresh Long Sleeve (Men's)", "itemType": "Base Layer Top", "weightGrams": null, "specs": { "gender": "Mens", "material": "70% merino / 30% acrylic", "fabricGsm": 155 } },
+    { "skus": ["8901502"], "brand": "Simond", "model": "TS Resist Long Sleeve (Men's)", "itemType": "Base Layer Top", "weightGrams": null, "specs": { "gender": "Mens", "material": "86% merino / 14% polyamide", "fabricGsm": 190 } },
+    { "skus": ["8977583"], "brand": "Simond", "model": "TS Resist Long Sleeve 1/2 Zip (Men's)", "itemType": "Base Layer Top", "weightGrams": null, "specs": { "gender": "Mens", "material": "86% merino / 14% polyamide", "fabricGsm": 190 } },
+    { "skus": ["8977580"], "brand": "Simond", "model": "TS 100% Merino Long Sleeve (Men's)", "itemType": "Base Layer Top", "weightGrams": null, "specs": { "gender": "Mens", "material": "100% merino", "fabricGsm": 190 } },
+    { "skus": ["8987896"], "brand": "Simond", "model": "TS Seamless Long Sleeve (Men's)", "itemType": "Base Layer Top", "weightGrams": null, "specs": { "gender": "Mens", "material": "38% merino / 49% polyamide / 13% polypropylene", "fabricGsm": 138 } },
+    { "skus": ["8853036"], "brand": "Simond", "model": "TS Fresh Short Sleeve (Women's)", "itemType": "Hiking Shirt", "weightGrams": null, "specs": { "gender": "Womens", "material": "70% merino / 30% acrylic", "fabricGsm": 155 } },
+    { "skus": ["8942653"], "brand": "Simond", "model": "TS Resist Short Sleeve (Women's)", "itemType": "Hiking Shirt", "weightGrams": null, "specs": { "gender": "Womens", "material": "89% merino / 11% polyamide", "fabricGsm": 160 } },
+    { "skus": ["8977865"], "brand": "Simond", "model": "TS 100% Merino Short Sleeve (Women's)", "itemType": "Hiking Shirt", "weightGrams": null, "specs": { "gender": "Womens", "material": "100% merino", "fabricGsm": 160 } },
+    { "skus": ["8978091"], "brand": "Simond", "model": "TS Seamless Short Sleeve (Women's)", "itemType": "Hiking Shirt", "weightGrams": null, "specs": { "gender": "Womens", "material": "65% merino / 6% elastane / 29% polyamide", "fabricGsm": 175 } },
+    { "skus": ["8977870"], "brand": "Simond", "model": "TS Fresh Long Sleeve (Women's)", "itemType": "Base Layer Top", "weightGrams": null, "specs": { "gender": "Womens", "material": "70% merino / 30% acrylic", "fabricGsm": 155 } },
+    { "skus": ["8977882"], "brand": "Simond", "model": "TS Resist Long Sleeve (Women's)", "itemType": "Base Layer Top", "weightGrams": null, "specs": { "gender": "Womens", "material": "86% merino / 14% polyamide", "fabricGsm": 190 } },
+    { "skus": ["8977891"], "brand": "Simond", "model": "TS Resist Long Sleeve 1/2 Zip (Women's)", "itemType": "Base Layer Top", "weightGrams": null, "specs": { "gender": "Womens", "material": "86% merino / 14% polyamide", "fabricGsm": 190 } },
+    { "skus": ["8977888"], "brand": "Simond", "model": "TS 100% Merino Long Sleeve (Women's)", "itemType": "Base Layer Top", "weightGrams": null, "specs": { "gender": "Womens", "material": "100% merino", "fabricGsm": 190 } },
+    { "skus": ["8977889"], "brand": "Simond", "model": "TS Seamless Long Sleeve (Women's)", "itemType": "Base Layer Top", "weightGrams": null, "specs": { "gender": "Womens", "material": "38% merino / 49% polyamide / 13% polypropylene", "fabricGsm": 138 } }
+  ],
+
+  "pantsMens": [
+    { "skus": ["8767072"], "brand": "Quechua", "model": "MH100 Hiking Pants (Men's)", "itemType": "Hiking Pants", "weightGrams": 230, "weightRefNote": "size L", "specs": { "gender": "Mens" } },
+    { "skus": ["8917639"], "brand": "Quechua", "model": "MH500 Hiking Pants (Men's)", "itemType": "Hiking Pants", "weightGrams": 300, "weightRefNote": "size L", "specs": { "gender": "Mens", "note": "15% elastane, integrated belt, 4 zip pockets" } },
+    { "skus": ["8977518"], "brand": "Quechua", "model": "MH500 Light Hiking Pants (Men's)", "itemType": "Hiking Pants", "weightGrams": 300, "weightRefNote": "size L", "specs": { "gender": "Mens", "note": "14% elastane, elastic waistband" } },
+    { "skus": ["8853735"], "brand": "Forclaz", "model": "MT500 Trekking Pants (Men's)", "itemType": "Hiking Pants", "weightGrams": 380, "weightRefNote": "~380 g size 44 (L)", "specs": { "gender": "Mens", "note": "reinforced water-repellent panels" } },
+    { "skus": ["8852944"], "brand": "Forclaz", "model": "MT900 Trekking Pants (Men's)", "itemType": "Hiking Pants", "weightGrams": 510, "weightRefNote": "~510 g size 44", "specs": { "gender": "Mens", "note": "2-way stretch, side vents" } },
+    { "skus": ["8648882"], "brand": "Simond", "model": "Alpi Light Mountaineering Pants (Men's)", "itemType": "Hiking Pants", "weightGrams": 450, "weightRefNote": "size 44", "specs": { "gender": "Mens", "note": "side vents, reinforced seat/knees/hems" } },
+    { "skus": ["8927934"], "brand": "Simond", "model": "Alpi Warm Mountaineering Pants (Men's)", "itemType": "Hiking Pants", "weightGrams": 450, "weightRefNote": "size 44", "specs": { "gender": "Mens", "note": "crampon-resistant hems, RECCO, mesh vents, ski-boot compatible" } }
+  ],
+
+  "convertiblePantsMens": [
+    { "skus": ["8652204"], "brand": "Quechua", "model": "MH100 Zip-Off Pants (Men's)", "itemType": "Convertible Pants", "weightGrams": 270, "weightRefNote": "size L", "specs": { "gender": "Mens" } },
+    { "skus": ["8666242"], "brand": "Forclaz", "model": "MT100 Zip-Off Pants (Men's)", "itemType": "Convertible Pants", "weightGrams": 350, "weightRefNote": "size L", "specs": { "gender": "Mens", "note": "reinforced knees/seat" } },
+    { "skus": ["8926332"], "brand": "Quechua", "model": "MH500 Zip-Off Pants (Men's)", "itemType": "Convertible Pants", "weightGrams": 406, "weightRefNote": "size L", "specs": { "gender": "Mens", "note": "15% elastane; zip-off without removing shoes" } },
+    { "skus": ["8853742", "8853743"], "brand": "Forclaz", "model": "MT500 Zip-Off Trekking Pants (Men's)", "itemType": "Convertible Pants", "weightGrams": 480, "weightRefNote": "size 44 (L)", "specs": { "gender": "Mens", "note": "reinforced panels, Coats thread" } },
+    { "skus": ["8930747"], "brand": "Forclaz", "model": "MT900 Zip-Off Trekking Pants (Men's)", "itemType": "Convertible Pants", "weightGrams": 493, "weightRefNote": "size 44 (L)", "specs": { "gender": "Mens", "note": "4-way stretch, ripstop" } }
+  ]
 }
