@@ -62,10 +62,13 @@ function ItemRow({
   priceLabel,
   variantAxis,
   selectedVariantValue,
+  hasVariantSelection,
+  hasMultiAxisVariants,
   variantExpanded,
   onToggleVariantExpand,
   onPickVariant,
 }) {
+  const { t } = useTranslation("common");
   const id = String(item._id);
   const rowRef = useRef(null);
 
@@ -109,14 +112,16 @@ function ItemRow({
         />
       </button>
       <div className="flex-1 min-w-0">
-        <div
-          className={`flex-1 min-w-0 ${onViewDetails && !disabled ? "cursor-pointer" : ""}`}
-          onClick={() => onViewDetails && !disabled && onViewDetails(item)}
-        >
+        <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <div className={`flex-1 min-w-0 text-sm font-medium text-primary truncate ${onViewDetails && !disabled ? "hover:underline" : ""}`}>
-              {item.brand && <span className="mr-1">{item.brand}</span>}
-              {item.name}
+            <div className="flex-1 min-w-0">
+              <span
+                className={`inline-block max-w-full truncate text-sm font-medium text-primary ${onViewDetails && !disabled ? "cursor-pointer hover:underline" : ""}`}
+                onClick={() => onViewDetails && !disabled && onViewDetails(item)}
+              >
+                {item.brand && <span className="mr-1">{item.brand}</span>}
+                {item.name}
+              </span>
             </div>
             {priceLabel && (
               <span className="text-xs text-secondary flex-shrink-0 font-medium">{priceLabel}</span>
@@ -125,7 +130,7 @@ function ItemRow({
               <span className="text-xs text-primary/40 flex-shrink-0">{badge}</span>
             )}
           </div>
-          {(subLabel || variantLabel || variantAxis) && (
+          {(subLabel || variantLabel || variantAxis || hasMultiAxisVariants) && (
             <div className="flex items-center gap-2 text-xs text-primary/50">
               {subLabel && <span className="flex-shrink-0">{subLabel}</span>}
               {variantLabel && (
@@ -138,53 +143,90 @@ function ItemRow({
                   </span>
                 </div>
               )}
-              {variantAxis && !variantExpanded && (
+              {hasMultiAxisVariants && (
                 <div className="flex-1 min-w-0 flex justify-end">
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      onToggleVariantExpand(id);
+                      onViewDetails && !disabled && onViewDetails(item);
                     }}
-                    className="max-w-full truncate rounded-full bg-secondary/10 text-secondary px-2 py-0.5 !text-[11px] font-medium hover:bg-secondary/20 transition-colors"
-                    title={selectedVariantValue}
+                    className="max-w-full truncate rounded-full border border-secondary/30 px-2 py-0.5 !text-[11px] font-medium text-secondary hover:bg-secondary/10 transition-colors"
+                    title={t("smartItemSearch.multipleVariants", "Multiple variants")}
                   >
-                    {shortLabel(selectedVariantValue)}
+                    {t("smartItemSearch.multipleVariants", "Multiple variants")}
                   </button>
+                </div>
+              )}
+              {variantAxis && (
+                <div className="flex-1 min-w-0 flex justify-end items-center gap-1">
+                  {!variantExpanded && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onToggleVariantExpand(id);
+                      }}
+                      className={`max-w-full truncate rounded-full px-2 py-0.5 !text-[11px] font-medium transition-colors ${
+                        hasVariantSelection
+                          ? "bg-secondary/10 text-secondary hover:bg-secondary/20"
+                          : "border border-secondary/30 text-secondary hover:bg-secondary/10"
+                      }`}
+                      title={
+                        hasVariantSelection
+                          ? selectedVariantValue
+                          : t("smartItemSearch.chooseVariant", "Variants")
+                      }
+                    >
+                      {hasVariantSelection
+                        ? shortLabel(selectedVariantValue)
+                        : t("smartItemSearch.chooseVariant", "Variants")}
+                    </button>
+                  )}
+                  {/* Always mounted (width toggles via grid-cols) so the expand/collapse
+                      actually transitions instead of popping in at full width. */}
+                  <div
+                    className={`grid min-w-0 transition-[grid-template-columns] duration-200 ease-in-out ${
+                      variantExpanded ? "grid-cols-[1fr]" : "grid-cols-[0fr]"
+                    }`}
+                  >
+                    <div className="overflow-hidden min-w-0">
+                      <div
+                        className={`flex items-center gap-1 overflow-x-auto transition-opacity duration-150 ease-in-out ${
+                          variantExpanded ? "opacity-100 delay-100" : "opacity-0"
+                        }`}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {variantAxis.values.map((val) => {
+                          const isSel = val === selectedVariantValue;
+                          return (
+                            <button
+                              key={val}
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onPickVariant(id, val);
+                              }}
+                              title={val}
+                              aria-pressed={isSel}
+                              className={`flex-shrink-0 whitespace-nowrap rounded-full px-2 py-0.5 !text-[11px] font-medium border transition-colors ${
+                                isSel
+                                  ? "bg-secondary text-white border-secondary"
+                                  : "border-secondary/30 text-secondary hover:bg-secondary/10"
+                              }`}
+                            >
+                              {shortLabel(val)}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
           )}
         </div>
-        {variantAxis && variantExpanded && (
-          <div
-            className="mt-1 flex items-center gap-1 overflow-x-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {variantAxis.values.map((val) => {
-              const isSel = val === selectedVariantValue;
-              return (
-                <button
-                  key={val}
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onPickVariant(id, val);
-                  }}
-                  title={val}
-                  aria-pressed={isSel}
-                  className={`flex-shrink-0 whitespace-nowrap rounded-full px-2 py-0.5 !text-[11px] font-medium border transition-colors ${
-                    isSel
-                      ? "bg-secondary text-white border-secondary"
-                      : "border-secondary/30 text-secondary hover:bg-secondary/10"
-                  }`}
-                >
-                  {shortLabel(val)}
-                </button>
-              );
-            })}
-          </div>
-        )}
       </div>
     </li>
   );
@@ -259,6 +301,11 @@ function ResultSection({ title, items, type, myGearSelected, catalogSelected, on
               !disabled && item.variantAxes?.length === 1 && item.variantAxes[0].values?.length > 1
                 ? item.variantAxes[0]
                 : null;
+            // Items with 2+ axes (e.g. Fabric × Torso) don't get the inline
+            // quick-pick (see comment above) — flag them so the row can at
+            // least show that variants exist, rather than nothing at all.
+            const hasMultiAxisVariants = !disabled && !axis && (item.variantAxes?.length || 0) > 1;
+            const hasVariantSelection = Boolean(axis && catalogVariantSelections?.[id]);
             const selectedVariantValue = axis
               ? catalogVariantSelections?.[id] || item.defaultVariantKey || axis.values[0]
               : null;
@@ -268,7 +315,12 @@ function ResultSection({ title, items, type, myGearSelected, catalogSelected, on
                 item={item}
                 selected={catalogSelected.has(id)}
                 onToggle={onToggleCatalog}
-                onViewDetails={onViewCatalogDetails}
+                onViewDetails={(it) =>
+                  onViewCatalogDetails(
+                    it,
+                    hasVariantSelection ? { [axis.name]: selectedVariantValue } : null,
+                  )
+                }
                 multiSelect={multiSelect}
                 disabled={disabled}
                 badge={disabled ? t("smartItemSearch.added", "Added") : null}
@@ -276,6 +328,8 @@ function ResultSection({ title, items, type, myGearSelected, catalogSelected, on
                 priceLabel={priceLabel}
                 variantAxis={axis}
                 selectedVariantValue={selectedVariantValue}
+                hasVariantSelection={hasVariantSelection}
+                hasMultiAxisVariants={hasMultiAxisVariants}
                 variantExpanded={expandedVariantRowId === id}
                 onToggleVariantExpand={onToggleVariantExpand}
                 onPickVariant={onPickVariant}
@@ -594,6 +648,7 @@ export default function SmartItemSearch({
 
   // Catalog item preview
   const [previewItem, setPreviewItem] = useState(null);
+  const [previewInitialOptions, setPreviewInitialOptions] = useState(null);
   const [previewLoading, setPreviewLoading] = useState(false);
   const [previewError, setPreviewError] = useState(null);
   const [previewImporting, setPreviewImporting] = useState(false);
@@ -639,8 +694,9 @@ export default function SmartItemSearch({
     }
   };
 
-  const handleViewCatalogDetails = async (item) => {
+  const handleViewCatalogDetails = async (item, initialOptions = null) => {
     setPreviewItem(item);
+    setPreviewInitialOptions(initialOptions);
     setPreviewLoading(true);
     setPreviewError(null);
     try {
@@ -709,10 +765,13 @@ export default function SmartItemSearch({
     return () => clearTimeout(timer);
   }, [query]);
 
-  // Reset dependent filters when category changes
+  // Subcategory options are keyed by category (CATALOG_SUBCATEGORIES[categoryFilter]),
+  // so a stale subcategory value can reference something that doesn't exist under the
+  // new category — reset it. Brand is an independent facet (the same brand can span
+  // many categories) and combines with category as an AND server-side, so it's left
+  // alone: switching category shouldn't silently clear an already-chosen brand.
   useEffect(() => {
     setSubcategoryFilter(null);
-    setBrandFilter(null);
   }, [categoryFilter]);
 
   // Fetch brand options for tabLayout dropdowns
@@ -1230,7 +1289,11 @@ export default function SmartItemSearch({
                     className="flex-1 min-w-0 border border-primary/20 rounded-lg px-2 py-1.5 text-xs text-primary bg-base-100 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     <option value="">{t("smartItemSearch.allBrands", "All Brands")}</option>
-                    {brandOptions.map((b) => (
+                    {/* Keep the current selection in the list even if the category-scoped
+                        refetch no longer includes it (e.g. that brand has 0 items in the
+                        newly picked category) — otherwise the select renders blank, which
+                        looks like the filter silently reset. */}
+                    {Array.from(new Set(brandFilter ? [brandFilter, ...brandOptions] : brandOptions)).map((b) => (
                       <option key={b} value={b}>{b}</option>
                     ))}
                   </select>
@@ -1516,8 +1579,12 @@ export default function SmartItemSearch({
       {/* Catalog item preview modal */}
       <CatalogItemPreviewModal
         isOpen={!!previewItem}
-        onClose={() => setPreviewItem(null)}
+        onClose={() => {
+          setPreviewItem(null);
+          setPreviewInitialOptions(null);
+        }}
         item={previewItem}
+        initialSelectedOptions={previewInitialOptions}
         loading={previewLoading}
         error={previewError}
         onImport={handlePreviewImport}

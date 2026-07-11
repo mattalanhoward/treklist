@@ -22,6 +22,7 @@ export default function CatalogItemPreviewModal({
   onImport,
   importing = false,
   importLabel,
+  initialSelectedOptions = null,
 }) {
   const { t } = useTranslation("common");
 
@@ -44,16 +45,38 @@ export default function CatalogItemPreviewModal({
   const hasVariants = variantAxes.length > 0 && variants.length > 0;
   const [selectedOptions, setSelectedOptions] = useState({});
 
-  // Initialize the dropdowns from the catalog default (else first variant).
+  // Initialize the dropdowns: prefer a caller-supplied selection (e.g. carried
+  // over from a search-result quick-pick) if it actually matches a real
+  // variant, else fall back to the catalog default (else first variant).
   useEffect(() => {
     if (!hasVariants) {
       setSelectedOptions({});
       return;
     }
+    if (initialSelectedOptions) {
+      const matches = variants.some((v) =>
+        variantAxes.every(
+          (a) =>
+            (v.options?.[a.name] ?? "") ===
+            (initialSelectedOptions?.[a.name] ?? ""),
+        ),
+      );
+      if (matches) {
+        setSelectedOptions(initialSelectedOptions);
+        return;
+      }
+    }
     const pick =
       variants.find((v) => v.key === item?.defaultVariantKey) || variants[0];
     setSelectedOptions(pick ? { ...pick.options } : {});
-  }, [hasVariants, variants, item?._id, item?.defaultVariantKey]);
+  }, [
+    hasVariants,
+    variants,
+    variantAxes,
+    item?._id,
+    item?.defaultVariantKey,
+    initialSelectedOptions,
+  ]);
 
   const selectedVariant = useMemo(() => {
     if (!hasVariants) return null;
@@ -302,7 +325,7 @@ export default function CatalogItemPreviewModal({
                           "grid grid-cols-[140px_1fr] gap-3 items-start px-3 py-1 "
                         }
                       >
-                        <div className="text-primary font-semibold truncate">
+                        <div className="text-primary font-semibold break-words">
                           {label}:
                         </div>
                         <div className="text-primary break-words">{value}</div>
