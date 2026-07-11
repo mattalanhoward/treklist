@@ -51,6 +51,10 @@ if (COMMIT && process.env.MONGO_DB_NAME !== "treklist_local") { console.error("l
   const kids = await C.find({ brand: "Simond", isActive: true, name: /kid['’]?s .*(harness|climbing)/i }).select("name brand").lean();
   for (const it of kids) await archive(it, "kids");
 
+  // 1b. entire Zenbivy Overland series (user 2026-07-11: car-camping line, archive all)
+  const ov = await C.find({ brand: "Zenbivy", isActive: true, name: /overland/i }).select("name brand").lean();
+  for (const it of ov) await archive(it, "zenbivy-overland");
+
   console.log(`\n${COMMIT ? "APPLIED" : "DRY-RUN"}: ${archived} archived`);
   await mongoose.disconnect();
 })();
