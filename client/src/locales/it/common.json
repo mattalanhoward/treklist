@@ -8,7 +8,8 @@
     "cancel": "Annulla",
     "delete": "Elimina",
     "close": "Chiudi",
-    "saving": "Salvataggio…"
+    "saving": "Salvataggio…",
+    "undo": "Annulla"
   },
   "validation": {
     "nameRequired": "Il nome è obbligatorio.",
@@ -609,7 +610,8 @@
       "manufacturerSpec": "Specifica del produttore",
       "flatAcrossSizes": "uguale per tutte le taglie",
       "verified": "verificato {{date}}"
-    }
+    },
+    "inList": "Nella lista"
   },
   "globalItemEditModal": {
     "titleGlobal": "Dettagli articolo",
@@ -715,7 +717,8 @@
       "invalidWeight": "Peso non valido",
       "previewLoadFailed": "Impossibile caricare i dettagli dell'articolo.",
       "catalogMatch": "Trovato nel catalogo",
-      "catalogMatches": "Trovate possibili corrispondenze — scegli la tua qui sotto"
+      "catalogMatches": "Trovate possibili corrispondenze — scegli la tua qui sotto",
+      "addedToList": "Aggiunto alla lista"
     },
     "tabSearchHint": "Scrivi e premi Invio · Incolla un link · Scatta una foto",
     "browseToggle": "Sfoglia le categorie",
@@ -742,7 +745,9 @@
     },
     "featured": "In evidenza",
     "browseRange": "Esplora la gamma →",
-    "facetCount": "{{shown}} di {{total}} articoli"
+    "facetCount": "{{shown}} di {{total}} articoli",
+    "inListCheck": "✓ Nella lista",
+    "addToDest": "Aggiungi a {{dest}}"
   },
   "photoScanModal": {
     "title": "Scansiona attrezzatura",
@@ -790,8 +795,12 @@
       "selectAtLeastOne": "Seleziona almeno un articolo.",
       "alreadyInList": "Alcuni articoli sono già in questa lista.",
       "addSuccess": "Articoli aggiunti con successo.",
-      "addFailed": "Impossibile aggiungere uno o più articoli."
-    }
+      "addFailed": "Impossibile aggiungere uno o più articoli.",
+      "addedN": "Aggiunti {{count}} a {{dest}}",
+      "undone": "Rimosso",
+      "undoFailed": "Impossibile annullare"
+    },
+    "destFallback": "lista"
   },
   "gearListDetailsModal": {
     "title": "Dettagli lista",

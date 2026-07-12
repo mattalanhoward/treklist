@@ -8,7 +8,8 @@
     "cancel": "Annuler",
     "delete": "Supprimer",
     "close": "Fermer",
-    "saving": "Enregistrement…"
+    "saving": "Enregistrement…",
+    "undo": "Annuler"
   },
   "validation": {
     "nameRequired": "Le nom est obligatoire.",
@@ -616,7 +617,8 @@
       "manufacturerSpec": "Spéc. fabricant",
       "flatAcrossSizes": "identique selon les tailles",
       "verified": "vérifié {{date}}"
-    }
+    },
+    "inList": "Dans la liste"
   },
   "globalItemEditModal": {
     "titleGlobal": "Détails de l’article",
@@ -722,7 +724,8 @@
       "invalidWeight": "Poids invalide",
       "previewLoadFailed": "Impossible de charger les détails de l'article.",
       "catalogMatch": "Trouvé dans le catalogue",
-      "catalogMatches": "Correspondances possibles trouvées — choisissez la vôtre ci-dessous"
+      "catalogMatches": "Correspondances possibles trouvées — choisissez la vôtre ci-dessous",
+      "addedToList": "Ajouté à la liste"
     },
     "tabSearchHint": "Tapez un nom puis Entrée · Collez un lien · Prenez une photo",
     "browseToggle": "Parcourir les catégories",
@@ -749,7 +752,9 @@
     },
     "featured": "En vedette",
     "browseRange": "Parcourir la gamme →",
-    "facetCount": "{{shown}} sur {{total}} articles"
+    "facetCount": "{{shown}} sur {{total}} articles",
+    "inListCheck": "✓ Dans la liste",
+    "addToDest": "Ajouter à {{dest}}"
   },
   "photoScanModal": {
     "title": "Scanner l'équipement",
@@ -797,8 +802,12 @@
       "selectAtLeastOne": "Veuillez sélectionner au moins un article.",
       "alreadyInList": "Certains articles sont déjà dans cette liste.",
       "addSuccess": "Articles ajoutés avec succès.",
-      "addFailed": "Échec de l’ajout d’un ou plusieurs articles."
-    }
+      "addFailed": "Échec de l’ajout d’un ou plusieurs articles.",
+      "addedN": "{{count}} ajouté(s) à {{dest}}",
+      "undone": "Supprimé",
+      "undoFailed": "Impossible d'annuler"
+    },
+    "destFallback": "liste"
   },
   "gearListDetailsModal": {
     "title": "Détails de la liste",

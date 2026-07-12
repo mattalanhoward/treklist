@@ -8,7 +8,8 @@
     "cancel": "Abbrechen",
     "delete": "Löschen",
     "close": "Schließen",
-    "saving": "Speichern…"
+    "saving": "Speichern…",
+    "undo": "Rückgängig"
   },
   "validation": {
     "nameRequired": "Name ist erforderlich.",
@@ -609,7 +610,8 @@
       "manufacturerSpec": "Herstellerangabe",
       "flatAcrossSizes": "einheitlich über alle Größen",
       "verified": "geprüft {{date}}"
-    }
+    },
+    "inList": "In Liste"
   },
   "globalItemEditModal": {
     "titleGlobal": "Item-Details",
@@ -715,7 +717,8 @@
       "invalidWeight": "Ungültiges Gewicht",
       "previewLoadFailed": "Artikeldetails konnten nicht geladen werden.",
       "catalogMatch": "Im Katalog gefunden",
-      "catalogMatches": "Mögliche Treffer gefunden – wähle deinen aus"
+      "catalogMatches": "Mögliche Treffer gefunden – wähle deinen aus",
+      "addedToList": "Zur Liste hinzugefügt"
     },
     "tabSearchHint": "Name eingeben & Enter · Link einfügen · Foto aufnehmen",
     "browseToggle": "Kategorien durchstöbern",
@@ -742,7 +745,9 @@
     },
     "featured": "Empfohlen",
     "browseRange": "Sortiment durchsuchen →",
-    "facetCount": "{{shown}} von {{total}} Artikeln"
+    "facetCount": "{{shown}} von {{total}} Artikeln",
+    "inListCheck": "✓ In Liste",
+    "addToDest": "Zu {{dest}} hinzufügen"
   },
   "photoScanModal": {
     "title": "Ausrüstung scannen",
@@ -790,8 +795,12 @@
       "selectAtLeastOne": "Bitte wähle mindestens ein Item aus.",
       "alreadyInList": "Einige Items sind bereits in dieser Liste.",
       "addSuccess": "Items erfolgreich hinzugefügt.",
-      "addFailed": "Ein oder mehrere Items konnten nicht hinzugefügt werden."
-    }
+      "addFailed": "Ein oder mehrere Items konnten nicht hinzugefügt werden.",
+      "addedN": "{{count}} zu {{dest}} hinzugefügt",
+      "undone": "Entfernt",
+      "undoFailed": "Rückgängig fehlgeschlagen"
+    },
+    "destFallback": "Liste"
   },
   "gearListDetailsModal": {
     "title": "Packlisten-Details",

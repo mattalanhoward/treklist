@@ -8,7 +8,8 @@
     "cancel": "Cancelar",
     "delete": "Eliminar",
     "close": "Cerrar",
-    "saving": "Guardando…"
+    "saving": "Guardando…",
+    "undo": "Deshacer"
   },
   "validation": {
     "nameRequired": "El nombre es obligatorio.",
@@ -609,7 +610,8 @@
       "manufacturerSpec": "Especificación del fabricante",
       "flatAcrossSizes": "igual en todas las tallas",
       "verified": "verificado {{date}}"
-    }
+    },
+    "inList": "En la lista"
   },
   "globalItemEditModal": {
     "titleGlobal": "Detalles del artículo",
@@ -715,7 +717,8 @@
       "invalidWeight": "Peso no válido",
       "previewLoadFailed": "No se pudieron cargar los detalles del artículo.",
       "catalogMatch": "Encontrado en el catálogo",
-      "catalogMatches": "Posibles coincidencias encontradas: elige la tuya abajo"
+      "catalogMatches": "Posibles coincidencias encontradas: elige la tuya abajo",
+      "addedToList": "Añadido a la lista"
     },
     "tabSearchHint": "Escribe y pulsa Enter · Pega un enlace · Haz una foto",
     "browseToggle": "Explorar categorías",
@@ -742,7 +745,9 @@
     },
     "featured": "Destacado",
     "browseRange": "Ver la gama →",
-    "facetCount": "{{shown}} de {{total}} artículos"
+    "facetCount": "{{shown}} de {{total}} artículos",
+    "inListCheck": "✓ En la lista",
+    "addToDest": "Añadir a {{dest}}"
   },
   "photoScanModal": {
     "title": "Escanear equipo",
@@ -790,8 +795,12 @@
       "selectAtLeastOne": "Selecciona al menos un artículo.",
       "alreadyInList": "Algunos artículos ya están en esta lista.",
       "addSuccess": "Artículos añadidos correctamente.",
-      "addFailed": "No se pudo añadir uno o más artículos."
-    }
+      "addFailed": "No se pudo añadir uno o más artículos.",
+      "addedN": "Se añadieron {{count}} a {{dest}}",
+      "undone": "Eliminado",
+      "undoFailed": "No se pudo deshacer"
+    },
+    "destFallback": "lista"
   },
   "gearListDetailsModal": {
     "title": "Detalles de la lista",

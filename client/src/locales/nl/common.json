@@ -8,7 +8,8 @@
     "cancel": "Annuleren",
     "delete": "Verwijderen",
     "close": "Sluiten",
-    "saving": "Bezig met opslaan…"
+    "saving": "Bezig met opslaan…",
+    "undo": "Ongedaan maken"
   },
   "validation": {
     "nameRequired": "Naam is verplicht.",
@@ -609,7 +610,8 @@
       "manufacturerSpec": "Fabrieksspecificatie",
       "flatAcrossSizes": "gelijk voor alle maten",
       "verified": "geverifieerd {{date}}"
-    }
+    },
+    "inList": "In lijst"
   },
   "globalItemEditModal": {
     "titleGlobal": "Globaal item bewerken",
@@ -715,7 +717,8 @@
       "invalidWeight": "Ongeldig gewicht",
       "previewLoadFailed": "Artikeldetails konden niet worden geladen.",
       "catalogMatch": "Gevonden in de catalogus",
-      "catalogMatches": "Mogelijke matches gevonden — kies die van jou hieronder"
+      "catalogMatches": "Mogelijke matches gevonden — kies die van jou hieronder",
+      "addedToList": "Aan lijst toegevoegd"
     },
     "tabSearchHint": "Typ & druk op Enter · Plak een link · Maak een foto",
     "browseToggle": "Categorieën bekijken",
@@ -742,7 +745,9 @@
     },
     "featured": "Uitgelicht",
     "browseRange": "Bekijk het assortiment →",
-    "facetCount": "{{shown}} van {{total}} artikelen"
+    "facetCount": "{{shown}} van {{total}} artikelen",
+    "inListCheck": "✓ In lijst",
+    "addToDest": "Aan {{dest}} toevoegen"
   },
   "photoScanModal": {
     "title": "Uitrusting scannen",
@@ -790,8 +795,12 @@
       "selectAtLeastOne": "Selecteer minimaal één item.",
       "alreadyInList": "Sommige items staan al in deze lijst.",
       "addSuccess": "Items succesvol toegevoegd.",
-      "addFailed": "Een of meer items konden niet worden toegevoegd."
-    }
+      "addFailed": "Een of meer items konden niet worden toegevoegd.",
+      "addedN": "{{count}} aan {{dest}} toegevoegd",
+      "undone": "Verwijderd",
+      "undoFailed": "Ongedaan maken mislukt"
+    },
+    "destFallback": "lijst"
   },
   "gearListDetailsModal": {
     "title": "Lijstgegevens",

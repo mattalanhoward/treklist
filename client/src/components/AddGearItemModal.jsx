@@ -1,33 +1,39 @@
 // src/components/AddGearItemModal.jsx
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import api from "../services/api";
 import { FiX } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import SmartItemSearch from "./SmartItemSearch";
+import useHistoryDismiss from "../hooks/useHistoryDismiss";
 
 export default function AddGearItemModal({ listId, categoryId, categoryName, onClose, onAdded }) {
   const { t } = useTranslation("common");
   const [existingItems, setExistingItems] = useState([]);
 
+  // Back gesture / Android back closes the takeover instead of leaving the app.
+  useHistoryDismiss(true, onClose);
+
   // Fetch all items already in this list for dup-check display
-  useEffect(() => {
-    (async () => {
-      try {
-        const { data: cats } = await api.get(`/dashboard/${listId}/categories`);
-        const arrays = await Promise.all(
-          cats.map((cat) =>
-            api
-              .get(`/dashboard/${listId}/categories/${cat._id}/items`)
-              .then((r) => r.data || []),
-          ),
-        );
-        setExistingItems(arrays.flat());
-      } catch {
-        // non-fatal — dup indicators just won't show
-      }
-    })();
+  const refreshExisting = useCallback(async () => {
+    try {
+      const { data: cats } = await api.get(`/dashboard/${listId}/categories`);
+      const arrays = await Promise.all(
+        cats.map((cat) =>
+          api
+            .get(`/dashboard/${listId}/categories/${cat._id}/items`)
+            .then((r) => r.data || []),
+        ),
+      );
+      setExistingItems(arrays.flat());
+    } catch {
+      // non-fatal — dup indicators just won't show
+    }
   }, [listId]);
+
+  useEffect(() => {
+    refreshExisting();
+  }, [refreshExisting]);
 
   const existingGlobalIds = useMemo(
     () => new Set(existingItems.map((it) => String(it.globalItem || it._id))),
@@ -53,37 +59,82 @@ export default function AddGearItemModal({ listId, categoryId, categoryName, onC
 
   const addGlobalItemsToList = async (globalItems) => {
     const startPos = computeStartPos();
-    await Promise.all(
+    const created = await Promise.all(
       globalItems.map((gi, idx) =>
-        api.post(`/dashboard/${listId}/categories/${categoryId}/items`, {
-          globalItem: gi._id,
-          productId: gi.productId || null,
-          brand: gi.brand,
-          itemType: gi.itemType,
-          name: gi.name,
-          description: gi.description,
-          weight: gi.weight,
-          link: gi.link,
-          imageUrls: gi.imageUrls || [],
-          worn: gi.worn,
-          consumable: gi.consumable,
-          quantity: 1,
-          position: startPos + idx,
-        }),
+        api
+          .post(`/dashboard/${listId}/categories/${categoryId}/items`, {
+            globalItem: gi._id,
+            productId: gi.productId || null,
+            brand: gi.brand,
+            itemType: gi.itemType,
+            name: gi.name,
+            description: gi.description,
+            weight: gi.weight,
+            link: gi.link,
+            imageUrls: gi.imageUrls || [],
+            worn: gi.worn,
+            consumable: gi.consumable,
+            quantity: 1,
+            position: startPos + idx,
+          })
+          .then((r) => r.data),
       ),
+    );
+    return created;
+  };
+
+  // Batch commit closes the takeover with a toast + Undo (never a confirm
+  // dialog). Undo deletes the just-created gear items (mobile build contract).
+  const showUndoToast = (createdItems) => {
+    const ids = createdItems.map((it) => it?._id).filter(Boolean);
+    const count = createdItems.length;
+    const dest = categoryName || t("addGearItemModal.destFallback", "list");
+    toast(
+      (tst) => (
+        <span className="flex items-center gap-3">
+          <span>
+            {t("addGearItemModal.toasts.addedN", "Added {{count}} to {{dest}}", { count, dest })}
+          </span>
+          <button
+            type="button"
+            className="font-semibold text-secondary underline underline-offset-2"
+            onClick={async () => {
+              toast.dismiss(tst.id);
+              try {
+                await Promise.all(
+                  ids.map((id) =>
+                    api.delete(`/dashboard/${listId}/categories/${categoryId}/items/${id}`),
+                  ),
+                );
+                onAdded?.();
+                window.dispatchEvent(new CustomEvent("global-items:updated"));
+                toast.success(t("addGearItemModal.toasts.undone", "Removed"));
+              } catch {
+                toast.error(t("addGearItemModal.toasts.undoFailed", "Couldn't undo"));
+              }
+            }}
+          >
+            {t("actions.undo", "Undo")}
+          </button>
+        </span>
+      ),
+      { duration: 6000 },
     );
   };
 
-  const handleConfirm = async (selection) => {
+  // keepOpen (mobile sheet single-add): add the item but stay in the takeover
+  // and refresh dup indicators, no toast/undo. Otherwise it's a batch commit.
+  const handleConfirm = async (selection, { keepOpen = false } = {}) => {
     try {
+      let created = [];
       if (selection.source === "myGear") {
-        await addGlobalItemsToList(selection.globalItems);
+        created = await addGlobalItemsToList(selection.globalItems);
       } else if (selection.source === "catalog") {
         const { data } = await api.post("/global/items/from-catalog/bulk", {
           ids: selection.catalogIds,
           variantSelections: selection.variantSelections,
         });
-        await addGlobalItemsToList(data.items || []);
+        created = await addGlobalItemsToList(data.items || []);
         window.dispatchEvent(new CustomEvent("global-items:updated"));
       } else if (selection.source === "newItem") {
         const f = selection.fields;
@@ -96,11 +147,17 @@ export default function AddGearItemModal({ listId, categoryId, categoryName, onC
         if (f.link) payload.link = f.link;
         if (f.imageUrl) payload.imageUrls = [f.imageUrl];
         const { data: gi } = await api.post("/global/items", payload);
-        await addGlobalItemsToList([gi]);
+        created = await addGlobalItemsToList([gi]);
         window.dispatchEvent(new CustomEvent("global-items:updated"));
       }
       onAdded?.();
-      onClose?.();
+      if (keepOpen) {
+        // Stay open; keep dup indicators + item positions in sync for more adds.
+        refreshExisting();
+      } else {
+        onClose?.();
+        if (created.length) showUndoToast(created);
+      }
     } catch (err) {
       console.error("Error adding items:", err);
       toast.error(t("addGearItemModal.toasts.addFailed", "Failed to add item"));
@@ -110,24 +167,28 @@ export default function AddGearItemModal({ listId, categoryId, categoryName, onC
 
   return (
     <div
-      className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-end sm:items-center justify-center z-50"
+      className="fixed inset-0 z-[70] flex justify-center sm:items-center sm:bg-black/40 sm:backdrop-blur-[1px]"
       onClick={onClose}
     >
+      {/* Mobile: full-screen takeover (100dvh). Desktop: centered card. */}
       <div
-        className="bg-base-100 sm:rounded-xl shadow-2xl w-full sm:w-[92vw] sm:max-w-[960px] sm:mx-4 flex flex-col modal-mobile-h sm:h-[85vh] sm:max-h-[800px]"
+        className="bg-base-100 shadow-2xl w-full h-d-screen flex flex-col sm:rounded-xl sm:w-[92vw] sm:max-w-[960px] sm:mx-4 sm:h-[85vh] sm:max-h-[800px]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex justify-between items-center px-5 pt-4 pb-3 border-b border-primary/10 flex-shrink-0">
+        <div
+          className="flex justify-between items-center px-5 pt-4 pb-3 border-b border-primary/10 flex-shrink-0"
+          style={{ paddingTop: "max(1rem, env(safe-area-inset-top))" }}
+        >
           <h2 className="text-lg font-semibold text-primary">
             {t("addGearItemModal.title", "New gear item")}
           </h2>
           <button
             onClick={onClose}
-            className="text-error hover:text-error/80"
-            aria-label="Close"
+            className="text-error hover:text-error/80 -mr-1 p-1"
+            aria-label={t("actions.close", "Close")}
           >
-            <FiX size={20} />
+            <FiX size={22} />
           </button>
         </div>
 

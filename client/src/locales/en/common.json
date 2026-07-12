@@ -8,7 +8,8 @@
     "cancel": "Cancel",
     "delete": "Delete",
     "close": "Close",
-    "saving": "Saving…"
+    "saving": "Saving…",
+    "undo": "Undo"
   },
   "validation": {
     "nameRequired": "Name is required.",
@@ -616,7 +617,8 @@
       "manufacturerSpec": "Manufacturer spec",
       "flatAcrossSizes": "flat across sizes",
       "verified": "verified {{date}}"
-    }
+    },
+    "inList": "In list"
   },
   "globalItemEditModal": {
     "titleGlobal": "Item Details",
@@ -722,7 +724,8 @@
       "invalidWeight": "Invalid weight",
       "previewLoadFailed": "Failed to load item details.",
       "catalogMatch": "Found in catalog",
-      "catalogMatches": "Found possible matches — pick yours below"
+      "catalogMatches": "Found possible matches — pick yours below",
+      "addedToList": "Added to list"
     },
     "tabSearchHint": "Type & press Enter · Paste a link · Snap a photo",
     "browseToggle": "Browse categories",
@@ -749,7 +752,9 @@
     },
     "featured": "Featured",
     "browseRange": "Browse the range →",
-    "facetCount": "{{shown}} of {{total}} items"
+    "facetCount": "{{shown}} of {{total}} items",
+    "inListCheck": "✓ In list",
+    "addToDest": "Add to {{dest}}"
   },
   "photoScanModal": {
     "title": "Scan Gear",
@@ -797,8 +802,12 @@
       "selectAtLeastOne": "Please select at least one item.",
       "alreadyInList": "Some items are already in this list.",
       "addSuccess": "Items added successfully.",
-      "addFailed": "Failed to add one or more items."
-    }
+      "addFailed": "Failed to add one or more items.",
+      "addedN": "Added {{count}} to {{dest}}",
+      "undone": "Removed",
+      "undoFailed": "Couldn't undo"
+    },
+    "destFallback": "list"
   },
   "gearListDetailsModal": {
     "title": "Gear list details",

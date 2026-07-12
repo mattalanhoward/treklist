@@ -40,6 +40,13 @@ export default function CatalogPreviewPane({
   // True when this item has fit variants but no fit has been explicitly chosen.
   sizeUnset = false,
   selectDisabled = false,
+  // Mobile bottom-sheet layout (shares all the preview content; swaps the
+  // desktop "Select for adding" checkbox for an immediate Add button).
+  sheet = false,
+  onAdd,
+  adding = false,
+  added = false,
+  addLabel,
 }) {
   const { t, i18n } = useTranslation("common");
   const unit = useUnit();
@@ -149,9 +156,13 @@ export default function CatalogPreviewPane({
     return parts.join(" · ");
   }, [t, i18n.language, hasVariants, variants, item?.updatedAt]);
 
+  // Desktop hides an empty pane behind the media query; the sheet is only ever
+  // mounted with an item to show, so it renders these states inline.
+  const stateBase = sheet ? "flex" : "hidden sm:flex";
+
   if (loading) {
     return (
-      <div className="hidden sm:flex flex-1 items-center justify-center min-w-0">
+      <div className={`${stateBase} flex-1 items-center justify-center min-w-0 py-10`}>
         <div className="h-8 w-8 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
       </div>
     );
@@ -159,7 +170,7 @@ export default function CatalogPreviewPane({
 
   if (error) {
     return (
-      <div className="hidden sm:flex flex-1 items-center justify-center min-w-0 px-6">
+      <div className={`${stateBase} flex-1 items-center justify-center min-w-0 px-6 py-10`}>
         <p className="text-sm text-error text-center">{error}</p>
       </div>
     );
@@ -167,7 +178,7 @@ export default function CatalogPreviewPane({
 
   if (!item) {
     return (
-      <div className="hidden sm:flex flex-1 items-center justify-center min-w-0 px-6">
+      <div className={`${stateBase} flex-1 items-center justify-center min-w-0 px-6`}>
         <p className="text-sm text-primary/40 text-center">
           {t("catalogPreview.emptyPane", "Select a result to preview it here.")}
         </p>
@@ -184,7 +195,13 @@ export default function CatalogPreviewPane({
     null;
 
   return (
-    <div className="hidden sm:flex flex-1 min-w-0 flex-col overflow-y-auto px-5 py-4 gap-4">
+    <div
+      className={
+        sheet
+          ? "flex min-w-0 flex-col px-4 pt-1 pb-2 gap-4"
+          : "hidden sm:flex flex-1 min-w-0 flex-col overflow-y-auto px-5 py-4 gap-4"
+      }
+    >
       {/* Top: image + identity */}
       <div className="flex gap-4">
         {hasImages && (
@@ -267,7 +284,29 @@ export default function CatalogPreviewPane({
             {buyLabel ?? t("globalItemEditModal.buttons.productPage", "Product page")}
           </ButtonLink>
         )}
-        {onToggleSelect && (
+        {sheet ? (
+          <button
+            type="button"
+            onClick={() => !added && !adding && onAdd?.(selectedVariant?.key)}
+            disabled={added || adding}
+            className={`ml-auto flex items-center justify-center gap-2 rounded-lg px-4 min-h-[44px] text-sm font-medium transition-colors ${
+              added
+                ? "bg-secondary/10 text-secondary cursor-default"
+                : "bg-secondary text-white hover:bg-secondary/90 disabled:opacity-60"
+            }`}
+          >
+            {added ? (
+              <>
+                <FiCheck size={15} />
+                {t("catalogPreview.inList", "In list")}
+              </>
+            ) : adding ? (
+              t("catalogPreview.buttons.importing", "Adding…")
+            ) : (
+              addLabel ?? t("catalogPreview.buttons.import", "Add")
+            )}
+          </button>
+        ) : onToggleSelect ? (
           <button
             type="button"
             onClick={() => !selectDisabled && onToggleSelect(String(item._id))}
@@ -286,7 +325,7 @@ export default function CatalogPreviewPane({
               ? t("catalogPreview.selectedForAdding", "Selected for adding")
               : t("catalogPreview.selectForAdding", "Select for adding")}
           </button>
-        )}
+        ) : null}
       </div>
     </div>
   );

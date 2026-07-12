@@ -7,6 +7,7 @@
 // that batches. Keyboard: ↑/↓ move the focused row, Space toggles its checkbox,
 // Enter commits the batch.
 import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { FiSearch, FiX, FiPlus, FiLoader, FiCamera } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -22,6 +23,8 @@ import CatalogPreviewPane from "./CatalogPreviewPane";
 import { shortLabel } from "./VariantSelector";
 import PhotoScanModal from "./PhotoScanModal";
 import useStagedMessage from "../hooks/useStagedMessage";
+import useHistoryDismiss from "../hooks/useHistoryDismiss";
+import useKeyboardOpen from "../hooks/useKeyboardOpen";
 
 // key = translation lookup key; value = API filter value (must stay English)
 const CHIPS = [
@@ -97,7 +100,7 @@ function ItemRow({
     <li
       ref={rowRef}
       onClick={() => onActivate(source, item)}
-      className={`flex items-center gap-3 px-3 py-2 rounded border cursor-pointer transition-colors border-l-[3px] ${
+      className={`flex items-center gap-3 px-3 py-2 min-h-[56px] sm:min-h-0 rounded border cursor-pointer transition-colors border-l-[3px] ${
         focused
           ? "border-primary/20 border-l-secondary bg-secondary/5"
           : selected
@@ -111,7 +114,7 @@ function ItemRow({
           e.stopPropagation();
           onToggle(id);
         }}
-        className="flex-shrink-0 flex items-center cursor-pointer"
+        className="flex-shrink-0 flex items-center justify-center cursor-pointer -my-2 -ml-1 py-2 pl-1 pr-1 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 sm:m-0 sm:p-0"
         tabIndex={-1}
         aria-label={t("smartItemSearch.selectRow", "Select {{name}}", { name: item.name })}
       >
@@ -119,12 +122,12 @@ function ItemRow({
           type={multiSelect ? "checkbox" : "radio"}
           checked={selected}
           onChange={() => {}}
-          className="h-4 w-4 text-secondary border-primary rounded pointer-events-none"
+          className="h-[22px] w-[22px] sm:h-4 sm:w-4 text-secondary border-primary rounded pointer-events-none"
         />
       </button>
 
       {/* Thumbnail */}
-      <div className="h-8 w-8 flex-shrink-0 rounded border border-primary/15 bg-white overflow-hidden flex items-center justify-center">
+      <div className="h-11 w-11 sm:h-8 sm:w-8 flex-shrink-0 rounded border border-primary/15 bg-white overflow-hidden flex items-center justify-center">
         {thumb ? (
           <img src={thumb} alt="" className="h-full w-full object-contain" loading="lazy" />
         ) : (
@@ -278,6 +281,8 @@ function ResultSection({
   multiSelect,
   existingGlobalIds,
   existingProductIds,
+  sessionAddedGlobal,
+  sessionAddedCatalog,
   loading,
   fmtWeight,
   catalogVariantSelections,
@@ -305,7 +310,8 @@ function ResultSection({
           const isFocused = focused && focused.source === type && focused.id === id;
           if (type === "myGear") {
             // Added ≠ locked: keep already-in-list items checkable, just badge them.
-            const added = existingGlobalIds?.has(id);
+            const justAdded = sessionAddedGlobal?.has(id);
+            const added = justAdded || existingGlobalIds?.has(id);
             return (
               <ItemRow
                 key={id}
@@ -316,7 +322,13 @@ function ResultSection({
                 onToggle={onToggleMyGear}
                 onActivate={onActivate}
                 multiSelect={multiSelect}
-                addedBadge={added ? t("smartItemSearch.inList", "Added") : null}
+                addedBadge={
+                  justAdded
+                    ? t("smartItemSearch.inListCheck", "✓ In list")
+                    : added
+                      ? t("smartItemSearch.inList", "Added")
+                      : null
+                }
                 specLabel={item.itemType || null}
                 weightLabel={fmtWeight(item.weight ?? item.weightGrams)}
                 variantLabel={item.variantKey || null}
@@ -327,7 +339,8 @@ function ResultSection({
           const priceLabel = offer?.price
             ? `$${offer.price} · ${offer.merchantName || ""}`.replace(/ · $/, "")
             : null;
-          const added = existingProductIds?.has(id);
+          const justAdded = sessionAddedCatalog?.has(id);
+          const added = justAdded || existingProductIds?.has(id);
           const axis =
             item.variantAxes?.length === 1 && item.variantAxes[0].values?.length > 1
               ? item.variantAxes[0]
@@ -349,7 +362,13 @@ function ResultSection({
                 onActivate(src, it, hasVariantSelection ? { [axis.name]: selectedVariantValue } : null)
               }
               multiSelect={multiSelect}
-              addedBadge={added ? t("smartItemSearch.inMyGear", "In my gear") : null}
+              addedBadge={
+                justAdded
+                  ? t("smartItemSearch.inListCheck", "✓ In list")
+                  : added
+                    ? t("smartItemSearch.inMyGear", "In my gear")
+                    : null
+              }
               specLabel={item.itemType || item.subcategory || null}
               weightLabel={fmtWeight(item.weightGrams)}
               priceLabel={priceLabel}
@@ -671,6 +690,101 @@ function FacetRow({ shownCount, totalCount, category, subcategory, onClearCatego
   );
 }
 
+// ── Mobile preview bottom sheet (the mobile counterpart of the desktop pane) ──
+// Slides up over the takeover; swipe-down, scrim tap, or back gesture dismisses.
+// Reuses CatalogPreviewPane's content in sheet mode so the preview stays DRY.
+function CatalogPreviewSheet({
+  open,
+  onClose,
+  item,
+  loading,
+  error,
+  initialSelectedOptions,
+  onExplicitVariantChange,
+  sizeUnset,
+  onAdd,
+  adding,
+  added,
+  addLabel,
+}) {
+  const [dragY, setDragY] = useState(0);
+  const [entered, setEntered] = useState(false);
+  const startY = useRef(null);
+
+  useEffect(() => {
+    if (!open) {
+      setEntered(false);
+      return;
+    }
+    setDragY(0);
+    const id = requestAnimationFrame(() => setEntered(true));
+    return () => cancelAnimationFrame(id);
+  }, [open]);
+
+  if (!open) return null;
+
+  const dragging = startY.current != null;
+  const onTouchStart = (e) => {
+    startY.current = e.touches[0].clientY;
+  };
+  const onTouchMove = (e) => {
+    if (startY.current == null) return;
+    const dy = e.touches[0].clientY - startY.current;
+    if (dy > 0) setDragY(dy);
+  };
+  const onTouchEnd = () => {
+    if (dragY > 90) onClose();
+    else setDragY(0);
+    startY.current = null;
+  };
+
+  return createPortal(
+    <div className="fixed inset-0 z-[80] flex flex-col justify-end sm:hidden">
+      <div
+        className="absolute inset-0 bg-black/40 transition-opacity duration-200"
+        style={{ opacity: entered ? 1 : 0 }}
+        onClick={onClose}
+      />
+      <div
+        className="relative bg-base-100 rounded-t-2xl shadow-2xl max-h-[88dvh] flex flex-col"
+        style={{
+          transform: `translateY(${entered ? dragY : 640}px)`,
+          transition: dragging ? "none" : "transform 260ms cubic-bezier(0.16,1,0.3,1)",
+        }}
+      >
+        {/* Drag handle — swipe down to dismiss */}
+        <div
+          className="flex-shrink-0 pt-2.5 pb-1.5 flex items-center justify-center touch-none"
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        >
+          <span className="h-1.5 w-10 rounded-full bg-primary/20" />
+        </div>
+        <div
+          className="overflow-y-auto min-h-0"
+          style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+        >
+          <CatalogPreviewPane
+            sheet
+            item={item}
+            loading={loading}
+            error={error}
+            initialSelectedOptions={initialSelectedOptions}
+            onExplicitVariantChange={onExplicitVariantChange}
+            sizeUnset={sizeUnset}
+            onAdd={onAdd}
+            adding={adding}
+            added={added}
+            addLabel={addLabel}
+          />
+        </div>
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
 // ── Main component ─────────────────────────────────────────────────────────────
 /**
  * Props:
@@ -754,6 +868,17 @@ export default function SmartItemSearch({
     return () => mq.removeEventListener("change", h);
   }, []);
   const usePane = twoPane && isDesktop;
+  // Mobile counterpart of the two-pane preview: tapping a row opens a bottom
+  // sheet (the mobile preview surface) instead of the stacked modal.
+  const wantsSheet = twoPane && !isDesktop;
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [sheetAdding, setSheetAdding] = useState(false);
+  const keyboardOpen = useKeyboardOpen();
+
+  // Items added during this session (mobile sheet single-adds) — badge their
+  // rows "✓ In list" without ejecting from the takeover (mobile build contract).
+  const [sessionAddedGlobal, setSessionAddedGlobal] = useState(() => new Set());
+  const [sessionAddedCatalog, setSessionAddedCatalog] = useState(() => new Set());
 
   // My Gear
   const [myGearItems, setMyGearItems] = useState([]);
@@ -852,10 +977,56 @@ export default function SmartItemSearch({
       setFocused({ source, id: String(item._id) });
       return;
     }
+    if (wantsSheet) {
+      // Mobile two-pane: preview in a bottom sheet (loaded by the pane effect).
+      setFocused({ source, id: String(item._id) });
+      setSheetOpen(true);
+      return;
+    }
     if (source === "catalog") {
       handleViewCatalogDetails(item, initialOptions);
     } else {
       setMyGearPreview(item);
+    }
+  };
+
+  const closeSheet = useCallback(() => setSheetOpen(false), []);
+  // Back gesture / Android back closes the sheet first, never the app.
+  useHistoryDismiss(sheetOpen, closeSheet);
+
+  // Sheet single-add (mobile): adds this one item, flips its row to "✓ In list",
+  // and keeps the takeover open (no eject). onConfirm is told to keepOpen.
+  const handleSheetAdd = async (variantKey) => {
+    if (!focused || sheetAdding) return;
+    setSheetAdding(true);
+    try {
+      if (focused.source === "myGear") {
+        const gi = myGearItems.find((i) => String(i._id) === focused.id);
+        if (!gi) return;
+        await onConfirm({ source: "myGear", globalItems: [gi] }, { keepOpen: true });
+        setSessionAddedGlobal((prev) => new Set(prev).add(focused.id));
+      } else {
+        const id = focused.id;
+        const key = variantKey || catalogVariantSelections[id];
+        const hasVariants =
+          (paneFull?.variantAxes?.length || 0) > 0 && (paneFull?.variants?.length || 0) > 0;
+        await onConfirm(
+          {
+            source: "catalog",
+            catalogIds: [id],
+            ...(key ? { variantSelections: { [id]: key } } : {}),
+            ...(hasVariants && !key ? { sizeUnset: [id] } : {}),
+          },
+          { keepOpen: true },
+        );
+        setSessionAddedCatalog((prev) => new Set(prev).add(id));
+      }
+      toast.success(t("smartItemSearch.toasts.addedToList", "Added to list"));
+      closeSheet();
+    } catch {
+      // onConfirm surfaces its own error toast; keep the sheet open to retry.
+    } finally {
+      setSheetAdding(false);
     }
   };
 
@@ -1100,10 +1271,11 @@ export default function SmartItemSearch({
     });
   }, [usePane, flatRows]);
 
-  // Load the focused item into the pane.
+  // Load the focused item into the pane (desktop) or the bottom sheet (mobile).
+  const paneActive = usePane || (wantsSheet && sheetOpen);
   const focusKey = focused ? `${focused.source}:${focused.id}` : null;
   useEffect(() => {
-    if (!usePane || !focused) {
+    if (!paneActive || !focused) {
       setPaneFull(null);
       return;
     }
@@ -1133,7 +1305,7 @@ export default function SmartItemSearch({
     return () => {
       cancelled = true;
     };
-  }, [usePane, focusKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [paneActive, focusKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Pane selection wiring for the focused item.
   const focusedSelected = focused
@@ -1156,6 +1328,16 @@ export default function SmartItemSearch({
     const v = paneFull.variants.find((x) => x.key === key);
     return v ? { ...v.options } : null;
   }, [focused, paneHasVariants, catalogVariantSelections, paneFull]);
+
+  // Sheet "Add" button state (mobile): already-in-list or added this session.
+  const sheetItemAdded = focused
+    ? focused.source === "catalog"
+      ? sessionAddedCatalog.has(focused.id) || effectiveProductIds.has(focused.id)
+      : sessionAddedGlobal.has(focused.id) || existingGlobalIds.has(focused.id)
+    : false;
+  const sheetAddLabel = destinationLabel
+    ? t("smartItemSearch.addToDest", "Add to {{dest}}", { dest: destinationLabel })
+    : t("smartItemSearch.add", "Add");
 
   // Keyboard nav on the result list (decision 11).
   const onListKeyDown = (e) => {
@@ -1347,6 +1529,7 @@ export default function SmartItemSearch({
               onActivate={activateRow}
               multiSelect={multiSelect}
               existingGlobalIds={existingGlobalIds}
+              sessionAddedGlobal={sessionAddedGlobal}
               fmtWeight={fmtWeight}
             />
           ) : null}
@@ -1367,6 +1550,8 @@ export default function SmartItemSearch({
           multiSelect={multiSelect}
           existingGlobalIds={existingGlobalIds}
           existingProductIds={effectiveProductIds}
+          sessionAddedGlobal={sessionAddedGlobal}
+          sessionAddedCatalog={sessionAddedCatalog}
           loading={catalogLoading}
           fmtWeight={fmtWeight}
           catalogVariantSelections={catalogVariantSelections}
@@ -1672,8 +1857,13 @@ export default function SmartItemSearch({
         )}
       </div>
 
-      {/* Footer */}
-      <div className="flex items-center justify-end gap-3 px-5 py-3 border-t border-primary/10 flex-shrink-0">
+      {/* Footer — sticky commit bar; hides on mobile while the keyboard is up */}
+      <div
+        className={`items-center justify-end gap-3 px-5 py-3 border-t border-primary/10 flex-shrink-0 ${
+          keyboardOpen ? "hidden sm:flex" : "flex"
+        }`}
+        style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+      >
         {multiSelect && totalSelected > 0 && (
           <span className="text-xs text-primary/50 tabular-nums mr-auto">
             {t("smartItemSearch.nSelected", "{{count}} selected", { count: totalSelected })}
@@ -1725,6 +1915,24 @@ export default function SmartItemSearch({
         alreadyImported={!!myGearPreview && existingGlobalIds.has(String(myGearPreview._id))}
         importLabel={t("catalogPreview.buttons.addToList", "Add to list")}
       />
+
+      {/* Mobile preview bottom sheet (add-gear two-pane on small screens) */}
+      {wantsSheet && (
+        <CatalogPreviewSheet
+          open={sheetOpen}
+          onClose={closeSheet}
+          item={paneFull}
+          loading={paneLoading}
+          error={paneError}
+          initialSelectedOptions={paneInitialOptions}
+          onExplicitVariantChange={recordVariantPick}
+          sizeUnset={paneSizeUnset}
+          onAdd={handleSheetAdd}
+          adding={sheetAdding}
+          added={sheetItemAdded}
+          addLabel={sheetAddLabel}
+        />
+      )}
 
       {/* Photo scan modal */}
       {showScanModal && (
