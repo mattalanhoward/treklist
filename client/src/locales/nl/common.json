@@ -747,7 +747,8 @@
     "browseRange": "Bekijk het assortiment →",
     "facetCount": "{{shown}} van {{total}} artikelen",
     "inListCheck": "✓ In lijst",
-    "addToDest": "Aan {{dest}} toevoegen"
+    "addToDest": "Aan {{dest}} toevoegen",
+    "swapForThis": "Hiervoor omruilen"
   },
   "photoScanModal": {
     "title": "Uitrusting scannen",

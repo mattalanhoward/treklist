@@ -43,6 +43,8 @@ export default function CatalogPreviewPane({
   // Mobile bottom-sheet layout (shares all the preview content; swaps the
   // desktop "Select for adding" checkbox for an immediate Add button).
   sheet = false,
+  // Immediate-action button (mobile sheet add, or desktop swap "Swap for this").
+  // When provided it replaces the batch "Select for adding" checkbox.
   onAdd,
   adding = false,
   added = false,
@@ -284,7 +286,7 @@ export default function CatalogPreviewPane({
             {buyLabel ?? t("globalItemEditModal.buttons.productPage", "Product page")}
           </ButtonLink>
         )}
-        {sheet ? (
+        {onAdd ? (
           <button
             type="button"
             onClick={() => !added && !adding && onAdd?.(selectedVariant?.key)}

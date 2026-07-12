@@ -747,7 +747,8 @@
     "browseRange": "Esplora la gamma →",
     "facetCount": "{{shown}} di {{total}} articoli",
     "inListCheck": "✓ Nella lista",
-    "addToDest": "Aggiungi a {{dest}}"
+    "addToDest": "Aggiungi a {{dest}}",
+    "swapForThis": "Sostituisci con questo"
   },
   "photoScanModal": {
     "title": "Scansiona attrezzatura",

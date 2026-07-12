@@ -10,7 +10,9 @@ export default function AddGearDrawer({ isOpen, onClose, onItemsChanged }) {
 
   if (!isOpen) return null;
 
-  const handleConfirm = async (selection) => {
+  // keepOpen (mobile sheet single-add): add the item but stay open for more
+  // adds (mobile build contract). Otherwise it's a batch commit that closes.
+  const handleConfirm = async (selection, { keepOpen = false } = {}) => {
     try {
       if (selection.source === "catalog") {
         await api.post("/global/items/from-catalog/bulk", {
@@ -31,7 +33,7 @@ export default function AddGearDrawer({ isOpen, onClose, onItemsChanged }) {
       }
       window.dispatchEvent(new CustomEvent("global-items:updated"));
       onItemsChanged?.();
-      onClose?.();
+      if (!keepOpen) onClose?.();
     } catch (err) {
       toast.error(t("globalItemModal.toast.saveFailed", "Failed to save item"));
       throw err;
@@ -60,15 +62,17 @@ export default function AddGearDrawer({ isOpen, onClose, onItemsChanged }) {
             multiSelect
             showMyGear={false}
             tabLayout
+            twoPane
+            destinationLabel={t("smartItemSearch.myGear", "My Gear")}
             onConfirm={handleConfirm}
             onClose={onClose}
           />
         </div>
       </div>
 
-      {/* Desktop: slide-in drawer from right */}
+      {/* Desktop: slide-in drawer from right (wide enough for the two-pane) */}
       <div
-        className={`hidden sm:fixed sm:top-12 sm:bottom-0 sm:right-0 sm:flex sm:flex-col w-[520px] bg-base-100 border-l border-primary/20 shadow-xl transition-transform duration-300 ease-out z-40 ${
+        className={`hidden sm:fixed sm:top-12 sm:bottom-0 sm:right-0 sm:flex sm:flex-col w-[760px] max-w-[92vw] bg-base-100 border-l border-primary/20 shadow-xl transition-transform duration-300 ease-out z-40 ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
@@ -90,6 +94,8 @@ export default function AddGearDrawer({ isOpen, onClose, onItemsChanged }) {
             multiSelect
             showMyGear={false}
             tabLayout
+            twoPane
+            destinationLabel={t("smartItemSearch.myGear", "My Gear")}
             onConfirm={handleConfirm}
             onClose={onClose}
           />

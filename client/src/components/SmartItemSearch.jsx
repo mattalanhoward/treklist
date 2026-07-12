@@ -65,6 +65,7 @@ function ItemRow({
   onToggle,
   onActivate,
   multiSelect,
+  hideCheckbox,
   addedBadge,
   specLabel,
   weightLabel,
@@ -108,23 +109,27 @@ function ItemRow({
             : "border-primary/15 border-l-transparent hover:bg-primary/5"
       }`}
     >
-      <button
-        type="button"
-        onClick={(e) => {
-          e.stopPropagation();
-          onToggle(id);
-        }}
-        className="flex-shrink-0 flex items-center justify-center cursor-pointer -my-2 -ml-1 py-2 pl-1 pr-1 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 sm:m-0 sm:p-0"
-        tabIndex={-1}
-        aria-label={t("smartItemSearch.selectRow", "Select {{name}}", { name: item.name })}
-      >
-        <input
-          type={multiSelect ? "checkbox" : "radio"}
-          checked={selected}
-          onChange={() => {}}
-          className="h-[22px] w-[22px] sm:h-4 sm:w-4 text-secondary border-primary rounded pointer-events-none"
-        />
-      </button>
+      {/* Swap mode hides the checkbox entirely — the row previews and the pane/
+          sheet "Swap for this" button commits (no batch select). */}
+      {!hideCheckbox && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggle(id);
+          }}
+          className="flex-shrink-0 flex items-center justify-center cursor-pointer -my-2 -ml-1 py-2 pl-1 pr-1 min-w-[44px] min-h-[44px] sm:min-w-0 sm:min-h-0 sm:m-0 sm:p-0"
+          tabIndex={-1}
+          aria-label={t("smartItemSearch.selectRow", "Select {{name}}", { name: item.name })}
+        >
+          <input
+            type={multiSelect ? "checkbox" : "radio"}
+            checked={selected}
+            onChange={() => {}}
+            className="h-[22px] w-[22px] sm:h-4 sm:w-4 text-secondary border-primary rounded pointer-events-none"
+          />
+        </button>
+      )}
 
       {/* Thumbnail */}
       <div className="h-11 w-11 sm:h-8 sm:w-8 flex-shrink-0 rounded border border-primary/15 bg-white overflow-hidden flex items-center justify-center">
@@ -279,6 +284,7 @@ function ResultSection({
   onToggleCatalog,
   onActivate,
   multiSelect,
+  hideCheckbox,
   existingGlobalIds,
   existingProductIds,
   sessionAddedGlobal,
@@ -322,6 +328,7 @@ function ResultSection({
                 onToggle={onToggleMyGear}
                 onActivate={onActivate}
                 multiSelect={multiSelect}
+                hideCheckbox={hideCheckbox}
                 addedBadge={
                   justAdded
                     ? t("smartItemSearch.inListCheck", "✓ In list")
@@ -362,6 +369,7 @@ function ResultSection({
                 onActivate(src, it, hasVariantSelection ? { [axis.name]: selectedVariantValue } : null)
               }
               multiSelect={multiSelect}
+              hideCheckbox={hideCheckbox}
               addedBadge={
                 justAdded
                   ? t("smartItemSearch.inListCheck", "✓ In list")
@@ -789,6 +797,9 @@ function CatalogPreviewSheet({
 /**
  * Props:
  *   multiSelect          boolean  — true for add-to-list/library; false for swap
+ *   swapMode             boolean  — single-select swap: hides checkboxes + batch bar,
+ *                                   pane/sheet primary button reads "Swap for this" and
+ *                                   commits immediately (replaces the source gear item)
  *   showMyGear           boolean  — false for library-only contexts (AddGearDrawer, GlobalItemModal)
  *   twoPane              boolean  — desktop master–detail (result list + preview pane)
  *   destinationLabel     string   — echoed in the commit button ("Add 2 to Hiking")
@@ -800,6 +811,7 @@ function CatalogPreviewSheet({
  */
 export default function SmartItemSearch({
   multiSelect = true,
+  swapMode = false,
   showMyGear = true,
   twoPane = false,
   destinationLabel = null,
@@ -1025,6 +1037,33 @@ export default function SmartItemSearch({
       closeSheet();
     } catch {
       // onConfirm surfaces its own error toast; keep the sheet open to retry.
+    } finally {
+      setSheetAdding(false);
+    }
+  };
+
+  // Swap-mode commit (desktop pane + mobile sheet): replaces the source gear
+  // item with the focused result. onConfirm (doSwap) closes the modal on
+  // success; the shared `sheetAdding` flag also drives the pane button spinner.
+  const handleSwap = async (variantKey) => {
+    if (!focused || sheetAdding) return;
+    setSheetAdding(true);
+    try {
+      if (focused.source === "myGear") {
+        const gi = myGearItems.find((i) => String(i._id) === focused.id);
+        if (!gi) return;
+        await onConfirm({ source: "myGear", globalItems: [gi] });
+      } else {
+        const id = focused.id;
+        const key = variantKey || catalogVariantSelections[id];
+        await onConfirm({
+          source: "catalog",
+          catalogIds: [id],
+          ...(key ? { variantSelections: { [id]: key } } : {}),
+        });
+      }
+    } catch {
+      // onConfirm surfaces its own error toast; keep the modal open to retry.
     } finally {
       setSheetAdding(false);
     }
@@ -1338,6 +1377,13 @@ export default function SmartItemSearch({
   const sheetAddLabel = destinationLabel
     ? t("smartItemSearch.addToDest", "Add to {{dest}}", { dest: destinationLabel })
     : t("smartItemSearch.add", "Add");
+  const swapLabel = t("smartItemSearch.swapForThis", "Swap for this");
+
+  // Desktop preview-pane commit affordance: swap mode gets an immediate
+  // "Swap for this" button; add mode keeps the batch "Select for adding" checkbox.
+  const paneCommitProps = swapMode
+    ? { onAdd: handleSwap, adding: sheetAdding, added: false, addLabel: swapLabel }
+    : { selected: focusedSelected, onToggleSelect: toggleFocusedSelect };
 
   // Keyboard nav on the result list (decision 11).
   const onListKeyDown = (e) => {
@@ -1350,11 +1396,16 @@ export default function SmartItemSearch({
       e.preventDefault();
       setFocused(flatRows[Math.max(idx - 1, 0)] || flatRows[0]);
     } else if (e.key === " ") {
+      if (swapMode) return; // no batch selection in swap mode
       e.preventDefault();
       if (focused) toggleFocusedSelect(focused.id);
     } else if (e.key === "Enter") {
       e.preventDefault();
-      if (canConfirm && !confirming) handleConfirm();
+      if (swapMode) {
+        if (focused && !sheetAdding) handleSwap();
+      } else if (canConfirm && !confirming) {
+        handleConfirm();
+      }
     }
   };
 
@@ -1528,6 +1579,7 @@ export default function SmartItemSearch({
               onToggleCatalog={toggleCatalog}
               onActivate={activateRow}
               multiSelect={multiSelect}
+              hideCheckbox={swapMode}
               existingGlobalIds={existingGlobalIds}
               sessionAddedGlobal={sessionAddedGlobal}
               fmtWeight={fmtWeight}
@@ -1548,6 +1600,7 @@ export default function SmartItemSearch({
           onToggleCatalog={toggleCatalog}
           onActivate={activateRow}
           multiSelect={multiSelect}
+          hideCheckbox={swapMode}
           existingGlobalIds={existingGlobalIds}
           existingProductIds={effectiveProductIds}
           sessionAddedGlobal={sessionAddedGlobal}
@@ -1845,11 +1898,10 @@ export default function SmartItemSearch({
               item={paneFull}
               loading={paneLoading}
               error={paneError}
-              selected={focusedSelected}
-              onToggleSelect={toggleFocusedSelect}
               initialSelectedOptions={paneInitialOptions}
               onExplicitVariantChange={recordVariantPick}
-              sizeUnset={paneSizeUnset}
+              sizeUnset={swapMode ? false : paneSizeUnset}
+              {...paneCommitProps}
             />
           </div>
         ) : (
@@ -1857,7 +1909,10 @@ export default function SmartItemSearch({
         )}
       </div>
 
-      {/* Footer — sticky commit bar; hides on mobile while the keyboard is up */}
+      {/* Footer — sticky commit bar; hides on mobile while the keyboard is up.
+          Swap mode has no batch commit bar (the pane/sheet "Swap for this"
+          button commits) — the footer only shows for the custom-create form. */}
+      {(!swapMode || showingCustomForm) && (
       <div
         className={`items-center justify-end gap-3 px-5 py-3 border-t border-primary/10 flex-shrink-0 ${
           keyboardOpen ? "hidden sm:flex" : "flex"
@@ -1889,6 +1944,7 @@ export default function SmartItemSearch({
           {confirmLabel}
         </button>
       </div>
+      )}
 
       {/* Stacked catalog preview modal (mobile / non-two-pane) */}
       <CatalogItemPreviewModal
@@ -1926,11 +1982,11 @@ export default function SmartItemSearch({
           error={paneError}
           initialSelectedOptions={paneInitialOptions}
           onExplicitVariantChange={recordVariantPick}
-          sizeUnset={paneSizeUnset}
-          onAdd={handleSheetAdd}
+          sizeUnset={swapMode ? false : paneSizeUnset}
+          onAdd={swapMode ? handleSwap : handleSheetAdd}
           adding={sheetAdding}
-          added={sheetItemAdded}
-          addLabel={sheetAddLabel}
+          added={swapMode ? false : sheetItemAdded}
+          addLabel={swapMode ? swapLabel : sheetAddLabel}
         />
       )}
 

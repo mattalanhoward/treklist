@@ -747,7 +747,8 @@
     "browseRange": "Sortiment durchsuchen →",
     "facetCount": "{{shown}} von {{total}} Artikeln",
     "inListCheck": "✓ In Liste",
-    "addToDest": "Zu {{dest}} hinzufügen"
+    "addToDest": "Zu {{dest}} hinzufügen",
+    "swapForThis": "Dagegen tauschen"
   },
   "photoScanModal": {
     "title": "Ausrüstung scannen",

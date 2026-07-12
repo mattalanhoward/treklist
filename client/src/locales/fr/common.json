@@ -754,7 +754,8 @@
     "browseRange": "Parcourir la gamme →",
     "facetCount": "{{shown}} sur {{total}} articles",
     "inListCheck": "✓ Dans la liste",
-    "addToDest": "Ajouter à {{dest}}"
+    "addToDest": "Ajouter à {{dest}}",
+    "swapForThis": "Remplacer par celui-ci"
   },
   "photoScanModal": {
     "title": "Scanner l'équipement",

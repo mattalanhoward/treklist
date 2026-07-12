@@ -754,7 +754,8 @@
     "browseRange": "Browse the range →",
     "facetCount": "{{shown}} of {{total}} items",
     "inListCheck": "✓ In list",
-    "addToDest": "Add to {{dest}}"
+    "addToDest": "Add to {{dest}}",
+    "swapForThis": "Swap for this"
   },
   "photoScanModal": {
     "title": "Scan Gear",

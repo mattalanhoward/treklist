@@ -747,7 +747,8 @@
     "browseRange": "Ver la gama →",
     "facetCount": "{{shown}} de {{total}} artículos",
     "inListCheck": "✓ En la lista",
-    "addToDest": "Añadir a {{dest}}"
+    "addToDest": "Añadir a {{dest}}",
+    "swapForThis": "Cambiar por este"
   },
   "photoScanModal": {
     "title": "Escanear equipo",
