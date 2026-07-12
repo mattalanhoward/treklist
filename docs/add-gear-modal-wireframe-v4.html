@@ -1,0 +1,1230 @@
+<title>Add Gear Items — Modal Wireframe</title>
+<style>
+  :root {
+    --page: #F4F5F7;
+    --surface: #FFFFFF;
+    --sunken: #ECEEF1;
+    --ink: #1C2025;
+    --ink-2: #5A616B;
+    --subtle: #8A9099;
+    --line: #C9CDD3;
+    --line-soft: #DFE2E7;
+    --accent: #E8590C;
+    --accent-ink: #FFFFFF;
+    --focus: #2B6CB0;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --page: #14161A;
+      --surface: #1D2025;
+      --sunken: #171A1E;
+      --ink: #E8EAED;
+      --ink-2: #A6ADB6;
+      --subtle: #7E858E;
+      --line: #3A3F46;
+      --line-soft: #2C3036;
+      --accent: #FF7A33;
+      --accent-ink: #1A1005;
+      --focus: #6CA6E0;
+    }
+  }
+  :root[data-theme="light"] {
+    --page: #F4F5F7;
+    --surface: #FFFFFF;
+    --sunken: #ECEEF1;
+    --ink: #1C2025;
+    --ink-2: #5A616B;
+    --subtle: #8A9099;
+    --line: #C9CDD3;
+    --line-soft: #DFE2E7;
+    --accent: #E8590C;
+    --accent-ink: #FFFFFF;
+    --focus: #2B6CB0;
+  }
+  :root[data-theme="dark"] {
+    --page: #14161A;
+    --surface: #1D2025;
+    --sunken: #171A1E;
+    --ink: #E8EAED;
+    --ink-2: #A6ADB6;
+    --subtle: #7E858E;
+    --line: #3A3F46;
+    --line-soft: #2C3036;
+    --accent: #FF7A33;
+    --accent-ink: #1A1005;
+    --focus: #6CA6E0;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--page);
+    color: var(--ink);
+    font-family: var(--sans);
+    margin: 0;
+    padding: 40px 24px 64px;
+    line-height: 1.45;
+  }
+  .wrap { max-width: 1160px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px; }
+
+  /* ---------- spec header ---------- */
+  .spec-head { display: flex; flex-direction: column; gap: 8px; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--subtle);
+  }
+  .spec-head h1 { font-size: 26px; font-weight: 650; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+  .spec-meta { font-family: var(--mono); font-size: 12px; color: var(--ink-2); }
+  .spec-meta b { color: var(--accent); font-weight: 600; }
+
+  /* ---------- frames ---------- */
+  .frame { display: flex; flex-direction: column; gap: 12px; }
+  .frame-cap {
+    font-family: var(--mono); font-size: 12px; color: var(--ink-2);
+    display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap;
+  }
+  .frame-cap .tag {
+    color: var(--ink); border: 1px solid var(--line); padding: 2px 8px;
+    font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .stage {
+    border: 1px dashed var(--line);
+    background:
+      radial-gradient(var(--line-soft) 1px, transparent 1px);
+    background-size: 16px 16px;
+    padding: 36px 28px;
+    overflow-x: auto;
+  }
+  .stage.tight { padding: 24px 14px; }
+  .stage-inner { display: flex; justify-content: center; }
+
+  /* annotation markers */
+  .mk {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 17px; height: 17px; border-radius: 50%;
+    background: var(--accent); color: var(--accent-ink);
+    font-family: var(--mono); font-style: normal; font-size: 10.5px; font-weight: 700;
+    flex: none; vertical-align: middle; margin-left: 6px;
+    cursor: default; user-select: none;
+  }
+
+  /* ---------- the modal ---------- */
+  .modal {
+    width: 940px; min-width: 880px;
+    background: var(--surface);
+    border: 1px solid var(--ink);
+    box-shadow: 6px 6px 0 0 var(--line-soft);
+    display: flex; flex-direction: column;
+    font-size: 13.5px;
+  }
+  .m-head {
+    display: flex; align-items: center; gap: 20px;
+    padding: 14px 18px 0;
+  }
+  .m-head h2 { font-size: 16px; font-weight: 650; margin: 0; flex: none; }
+  .m-tabs { display: flex; gap: 16px; margin-left: 8px; align-self: stretch; align-items: flex-end; }
+  .m-tab {
+    font-size: 13px; color: var(--subtle); padding: 6px 2px 10px; border-bottom: 2px solid transparent;
+  }
+  .m-tab.on { color: var(--ink); border-bottom-color: var(--ink); font-weight: 600; }
+  .m-x {
+    margin-left: auto; width: 26px; height: 26px; border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: var(--ink-2);
+  }
+  .m-search { display: flex; gap: 10px; padding: 12px 18px 0; align-items: center; }
+  .m-input {
+    flex: 1; display: flex; align-items: center; gap: 8px;
+    border: 1.5px solid var(--ink); padding: 9px 12px; color: var(--ink);
+  }
+  .m-input .ph { color: var(--subtle); }
+  .m-cam {
+    width: 40px; height: 40px; border: 1px solid var(--line); flex: none;
+    display: flex; align-items: center; justify-content: center; color: var(--ink-2);
+    font-size: 15px;
+  }
+  .modechips {
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    padding: 8px 18px 0; font-family: var(--mono); font-size: 10.5px; color: var(--subtle);
+  }
+  .modechips .mchip {
+    border: 1px dashed var(--line); border-radius: 999px; padding: 2px 9px; white-space: nowrap;
+    color: var(--ink-2);
+  }
+  .m-facets {
+    display: flex; align-items: center; gap: 8px; padding: 10px 18px;
+    border-bottom: 1px solid var(--line-soft); flex-wrap: wrap;
+  }
+  .m-count { font-family: var(--mono); font-size: 11.5px; color: var(--subtle); margin-right: 4px; }
+  .chip {
+    border: 1px solid var(--line); padding: 3px 10px; font-size: 12px; color: var(--ink-2);
+    border-radius: 999px; white-space: nowrap;
+  }
+  .chip.on { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+  .chip.stub { border-style: dashed; color: var(--subtle); }
+
+  .m-body { display: flex; min-height: 430px; }
+  .m-list {
+    width: 42%; border-right: 1px solid var(--line-soft);
+    display: flex; flex-direction: column; overflow: hidden; outline: none;
+  }
+  .m-list:focus-visible { box-shadow: inset 0 0 0 2px var(--focus); }
+  .group-label {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--subtle); padding: 12px 16px 6px; display: flex; align-items: center;
+  }
+  .row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 14px 9px 16px; cursor: pointer;
+    border-left: 3px solid transparent;
+  }
+  .row:hover { background: var(--sunken); }
+  .row.focused { background: var(--sunken); border-left-color: var(--ink); }
+  .row input[type="checkbox"] {
+    appearance: none; -webkit-appearance: none;
+    width: 16px; height: 16px; border: 1.5px solid var(--ink-2); flex: none;
+    margin: 0; cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+    background: var(--surface);
+  }
+  .row input[type="checkbox"]:checked { background: var(--ink); border-color: var(--ink); }
+  .row input[type="checkbox"]:checked::after {
+    content: "✓"; color: var(--surface); font-size: 11px; line-height: 1;
+  }
+  .row input[type="checkbox"]:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+  .thumb {
+    width: 30px; height: 30px; flex: none; border: 1px dashed var(--line);
+    background:
+      linear-gradient(to top right, transparent calc(50% - 0.5px), var(--line-soft) calc(50% - 0.5px), var(--line-soft) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+      linear-gradient(to bottom right, transparent calc(50% - 0.5px), var(--line-soft) calc(50% - 0.5px), var(--line-soft) calc(50% + 0.5px), transparent calc(50% + 0.5px));
+  }
+  .row-txt { flex: 1; min-width: 0; }
+  .row-brand {
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--subtle);
+  }
+  .row-name { font-size: 13px; font-weight: 550; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .row-spec { font-size: 11.5px; color: var(--ink-2); }
+  .row-wt {
+    font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--ink);
+    font-variant-numeric: tabular-nums; flex: none;
+  }
+  .row-added { font-size: 11px; color: var(--subtle); flex: none; font-style: italic; }
+  .row-create {
+    color: var(--ink-2); font-size: 12.5px; border-top: 1px dashed var(--line-soft);
+  }
+  .row-create .plus { width: 16px; text-align: center; color: var(--accent); font-weight: 700; flex: none; }
+  .m-more {
+    margin-top: auto; padding: 10px 16px; font-family: var(--mono); font-size: 11px;
+    color: var(--subtle); border-top: 1px dashed var(--line-soft); display: flex; align-items: center;
+  }
+
+  /* ---------- preview pane ---------- */
+  .m-pane { flex: 1; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  .p-top { display: flex; gap: 16px; }
+  .p-img {
+    width: 150px; height: 150px; flex: none; border: 1px dashed var(--line);
+    background:
+      linear-gradient(to top right, transparent calc(50% - 0.5px), var(--line) calc(50% - 0.5px), var(--line) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+      linear-gradient(to bottom right, transparent calc(50% - 0.5px), var(--line) calc(50% - 0.5px), var(--line) calc(50% + 0.5px), transparent calc(50% + 0.5px));
+    position: relative;
+  }
+  .p-img::after {
+    content: "IMG"; position: absolute; inset: auto 4px 2px auto;
+    font-family: var(--mono); font-size: 9px; color: var(--subtle);
+  }
+  .p-id { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .p-brand {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--subtle);
+  }
+  .p-name { font-size: 17px; font-weight: 650; line-height: 1.25; text-wrap: balance; }
+  .p-weight {
+    margin-top: 8px; display: flex; align-items: baseline; gap: 8px;
+  }
+  .p-weight .g {
+    font-family: var(--mono); font-size: 30px; font-weight: 700; letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .p-weight .unit { font-family: var(--mono); font-size: 14px; color: var(--ink-2); }
+  .p-disclose { font-size: 11.5px; color: var(--subtle); }
+  .p-specs {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px 20px;
+    border-top: 1px solid var(--line-soft); padding-top: 12px;
+  }
+  .p-spec { display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; }
+  .p-spec .k { color: var(--subtle); }
+  .p-spec .v { font-weight: 550; text-align: right; font-variant-numeric: tabular-nums; }
+  .p-flag { font-size: 11.5px; color: var(--subtle); display: flex; align-items: center; gap: 8px; }
+  .p-flag .p-link { font-size: 11.5px; }
+  .p-flag-hint { font-family: var(--mono); font-size: 10px; }
+
+  /* report popover (frame 6) */
+  .pop {
+    width: 330px; background: var(--surface); border: 1px solid var(--ink);
+    box-shadow: 4px 4px 0 0 var(--line-soft); padding: 14px 16px;
+    display: flex; flex-direction: column; gap: 9px; font-size: 12.5px;
+  }
+  .pop h3 { margin: 0 0 2px; font-size: 13px; font-weight: 650; }
+  .pop .opt { display: flex; gap: 8px; align-items: center; color: var(--ink-2); }
+  .pop .opt .box {
+    width: 14px; height: 14px; border: 1.5px solid var(--ink-2); flex: none;
+    display: inline-flex; align-items: center; justify-content: center; background: var(--surface);
+  }
+  .pop .opt.on { color: var(--ink); }
+  .pop .opt.on .box { background: var(--ink); border-color: var(--ink); }
+  .pop .opt.on .box::after { content: "✓"; color: var(--surface); font-size: 10px; line-height: 1; }
+  .pop .hint { font-size: 11px; color: var(--subtle); font-style: italic; padding-left: 22px; }
+  .pop .note { border: 1px dashed var(--line); padding: 8px 10px; color: var(--subtle); font-size: 12px; }
+  .pop .ctx {
+    font-family: var(--mono); font-size: 10px; color: var(--subtle);
+    border-top: 1px solid var(--line-soft); padding-top: 8px; line-height: 1.7;
+  }
+  .pop .pop-foot { display: flex; justify-content: flex-end; gap: 10px; margin-top: 2px; }
+
+  .p-variants {
+    border: 1px dashed var(--line); padding: 10px 12px;
+    font-size: 12px; color: var(--subtle); display: flex; align-items: center; gap: 8px;
+  }
+  .p-variants .vchip, .vchip {
+    border: 1px solid var(--line); border-radius: 999px; padding: 2px 9px;
+    font-size: 11.5px; color: var(--ink-2); white-space: nowrap;
+  }
+  .vchip.on { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+  .p-actions { display: flex; align-items: center; gap: 12px; margin-top: auto; flex-wrap: wrap; }
+  .btn-ghost {
+    border: 1px solid var(--ink); padding: 7px 14px; font-size: 12.5px; font-weight: 550;
+    background: none; color: var(--ink); cursor: pointer; font-family: var(--sans);
+  }
+  .btn-ghost:focus-visible, .btn-solid:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .p-link { font-size: 12.5px; color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; }
+  .p-select {
+    margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 12.5px;
+    color: var(--ink-2); cursor: pointer; user-select: none;
+  }
+  .p-select .box {
+    width: 16px; height: 16px; border: 1.5px solid var(--ink-2);
+    display: inline-flex; align-items: center; justify-content: center; background: var(--surface);
+  }
+  .p-select.on .box { background: var(--ink); border-color: var(--ink); }
+  .p-select.on .box::after { content: "✓"; color: var(--surface); font-size: 11px; line-height: 1; }
+
+  /* ---------- footer ---------- */
+  .m-foot {
+    display: flex; align-items: center; gap: 14px;
+    border-top: 1px solid var(--line); padding: 12px 18px;
+  }
+  .m-foot .spacer { flex: 1; }
+  .m-foot .sel { font-family: var(--mono); font-size: 12px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .btn-solid {
+    background: var(--ink); color: var(--surface); border: 1px solid var(--ink);
+    padding: 8px 18px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: var(--sans);
+  }
+  .btn-solid[disabled] { opacity: 0.4; cursor: default; }
+
+  /* ---------- legend ---------- */
+  .legend {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px 36px;
+    border: 1px solid var(--line-soft); background: var(--surface); padding: 20px 24px;
+  }
+  .legend li { display: flex; gap: 10px; font-size: 13px; color: var(--ink-2); list-style: none; }
+  .legend li b { color: var(--ink); font-weight: 600; }
+  .legend .mk { margin: 2px 0 0; }
+  .legend ul { display: contents; margin: 0; padding: 0; }
+
+  /* ---------- frame grids ---------- */
+  .frames-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; align-items: start; }
+
+  /* browse state (frame 2) */
+  .modal.sm { width: 680px; min-width: 0; font-size: 12.5px; box-shadow: 4px 4px 0 0 var(--line-soft); }
+  .featured {
+    margin: 14px 18px 0; border: 1px solid var(--line); padding: 10px 12px;
+    display: flex; align-items: center; gap: 12px; cursor: pointer;
+  }
+  .featured:hover { background: var(--sunken); }
+  .featured .f-label {
+    font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--accent); flex: none;
+  }
+  .featured .f-name { font-size: 12.5px; font-weight: 600; }
+  .featured .f-link { margin-left: auto; font-size: 12px; color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+  .cat-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 16px 18px 20px;
+  }
+  .cat-tile {
+    border: 1px solid var(--line); padding: 14px 12px 12px; display: flex; flex-direction: column; gap: 6px;
+    cursor: pointer;
+  }
+  .cat-tile:hover { background: var(--sunken); }
+  .cat-tile .ico { width: 22px; height: 22px; border: 1px dashed var(--line); }
+  .cat-tile .nm { font-size: 12.5px; font-weight: 600; }
+  .cat-tile .ct { font-family: var(--mono); font-size: 10.5px; color: var(--subtle); font-variant-numeric: tabular-nums; }
+  .cat-tile.util { border-style: dashed; justify-content: center; }
+  .cat-tile.util .nm { color: var(--ink-2); font-weight: 550; }
+  .cat-tile.util .ct { font-style: italic; }
+  .browse-hint {
+    padding: 0 18px 16px; font-size: 12px; color: var(--subtle); font-style: italic;
+  }
+
+  /* phones (frames 3–5) */
+  .phone {
+    width: 290px; margin: 0 auto; background: var(--surface); border: 1px solid var(--ink);
+    box-shadow: 4px 4px 0 0 var(--line-soft); position: relative; overflow: hidden;
+    font-size: 12.5px; display: flex; flex-direction: column; height: 540px;
+  }
+  .phone .m-search { padding: 12px 12px 0; }
+  .phone .modechips { padding: 8px 12px 0; }
+  .phone .m-facets { padding: 10px 12px; }
+  .phone .row { padding: 9px 10px 9px 12px; }
+  .phone .cat-grid { grid-template-columns: 1fr 1fr; padding: 12px; gap: 8px; }
+  .phone .browse-hint { padding: 0 12px 12px; }
+  .phone .m-foot { padding: 10px 12px; }
+  .ph-head {
+    display: flex; align-items: center; gap: 10px; padding: 12px 12px 0;
+  }
+  .ph-head b { font-size: 14px; font-weight: 650; }
+  .phone-dim {
+    position: absolute; inset: 0; background: color-mix(in srgb, var(--ink) 22%, transparent);
+  }
+  .sheet {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    background: var(--surface); border-top: 1.5px solid var(--ink);
+    padding: 10px 16px 16px; display: flex; flex-direction: column; gap: 10px;
+  }
+  .sheet .grab { width: 36px; height: 4px; background: var(--line); border-radius: 2px; margin: 0 auto; }
+  .sheet .p-weight .g { font-size: 24px; }
+  .sheet .btn-solid { width: 100%; text-align: center; }
+  .sheet-variants { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--subtle); flex-wrap: wrap; }
+  .commitbar {
+    margin-top: auto; border-top: 1.5px solid var(--ink); padding: 10px 12px;
+    display: flex; align-items: center; gap: 10px; background: var(--surface);
+  }
+  .commitbar .sel { font-family: var(--mono); font-size: 11px; color: var(--ink-2); font-variant-numeric: tabular-nums; flex: none; }
+  .commitbar .btn-solid { flex: 1; text-align: center; padding: 9px 10px; }
+
+  .foot-note {
+    font-family: var(--mono); font-size: 11.5px; color: var(--subtle); line-height: 1.7;
+    border-top: 1px solid var(--line-soft); padding-top: 16px;
+  }
+  .foot-note b { color: var(--ink-2); font-weight: 600; }
+
+  /* ---------- hi-fi phones · TrekList default theme (deliberately fixed light — it mocks the real app) ---------- */
+  .hifi {
+    --tl-primary: #172B4D; --tl-secondary: #44546F; --tl-accent: #0C66E4;
+    --tl-neutral: #F1F2F4; --tl-card: #FFFFFF; --tl-line: #E4E6EA;
+  }
+  .bezel {
+    width: 314px; margin: 0 auto; background: #101319; border-radius: 44px; padding: 10px;
+    box-shadow: 0 14px 34px rgba(0,0,0,.28);
+  }
+  .screen {
+    background: var(--tl-neutral); border-radius: 34px; overflow: hidden; position: relative;
+    display: flex; flex-direction: column; height: 600px;
+    font-family: var(--sans); color: var(--tl-primary); font-size: 13px; line-height: 1.45;
+  }
+  .statusbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 22px 2px; font-size: 11.5px; font-weight: 600; color: var(--tl-primary);
+    background: var(--tl-card); flex: none;
+  }
+  .urlbar {
+    background: var(--tl-card); padding: 4px 14px 2px; flex: none; display: flex; justify-content: center;
+  }
+  .urlbar span {
+    background: var(--tl-neutral); border-radius: 999px; padding: 2px 14px;
+    font-size: 10.5px; color: var(--tl-secondary);
+  }
+  .homebar {
+    position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%);
+    width: 110px; height: 4px; border-radius: 2px; background: rgba(23,43,77,.35); z-index: 6;
+  }
+  .tl-top { background: var(--tl-card); padding: 8px 16px 4px; display: flex; align-items: center; flex: none; }
+  .tl-title { font-size: 15px; font-weight: 650; }
+  .tl-x { margin-left: auto; color: var(--tl-secondary); font-size: 17px; line-height: 1; }
+  .tl-search-wrap { background: var(--tl-card); padding: 8px 14px 10px; display: flex; gap: 8px; flex: none; }
+  .tl-search {
+    flex: 1; display: flex; align-items: center; gap: 8px; min-width: 0;
+    border: 1.5px solid var(--tl-line); border-radius: 10px; padding: 9px 12px;
+    font-size: 16px; color: var(--tl-secondary); background: var(--tl-card);
+  }
+  .tl-search b { color: var(--tl-primary); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tl-cam {
+    width: 44px; border: 1.5px solid var(--tl-line); border-radius: 10px; flex: none;
+    display: flex; align-items: center; justify-content: center; font-size: 16px;
+  }
+  .tl-chips {
+    background: var(--tl-card); display: flex; gap: 6px; align-items: center;
+    padding: 0 14px 12px; border-bottom: 1px solid var(--tl-line); overflow: hidden; flex: none;
+  }
+  .tl-count { font-size: 11px; color: var(--tl-secondary); white-space: nowrap; }
+  .tl-chip {
+    border: 1px solid var(--tl-line); border-radius: 999px; padding: 4px 11px;
+    font-size: 12px; color: var(--tl-secondary); white-space: nowrap; background: var(--tl-card);
+  }
+  .tl-chip.on { background: var(--tl-primary); border-color: var(--tl-primary); color: #fff; }
+  .tl-group {
+    font-size: 10.5px; font-weight: 650; letter-spacing: .07em; text-transform: uppercase;
+    color: rgba(23,43,77,.45); padding: 12px 16px 6px; flex: none;
+  }
+  .tl-rows { flex: 1; overflow: hidden; }
+  .tl-row {
+    display: flex; align-items: center; gap: 10px; background: var(--tl-card);
+    margin: 0 10px 8px; border: 1px solid var(--tl-line); border-radius: 10px;
+    padding: 10px 12px; min-height: 56px;
+  }
+  .tl-cb {
+    width: 22px; height: 22px; border: 2px solid rgba(68,84,111,.45); border-radius: 6px; flex: none;
+    display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700;
+  }
+  .tl-cb.on { background: var(--tl-accent); border-color: var(--tl-accent); color: #fff; }
+  .tl-thumb { width: 40px; height: 40px; border-radius: 8px; background: var(--tl-neutral); flex: none; }
+  .tl-rt { flex: 1; min-width: 0; }
+  .tl-brand { font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--tl-secondary); font-weight: 650; }
+  .tl-name { font-size: 13.5px; font-weight: 550; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tl-spec { font-size: 11.5px; color: rgba(68,84,111,.85); }
+  .tl-wt { font-weight: 650; font-size: 13px; font-variant-numeric: tabular-nums; flex: none; }
+  .tl-pill {
+    font-size: 10.5px; background: rgba(68,84,111,.1); color: var(--tl-secondary);
+    border-radius: 999px; padding: 2px 8px; flex: none; font-weight: 550;
+  }
+  .tl-create {
+    display: flex; align-items: center; gap: 8px; margin: 0 10px 8px; padding: 13px 12px;
+    border: 1.5px dashed rgba(12,102,228,.45); border-radius: 10px;
+    color: var(--tl-accent); font-weight: 550; font-size: 13px; background: rgba(12,102,228,.05);
+  }
+  .tl-commit {
+    margin-top: auto; background: var(--tl-card); border-top: 1px solid var(--tl-line);
+    box-shadow: 0 -6px 16px rgba(23,43,77,.07);
+    padding: 10px 14px 26px; display: flex; align-items: center; gap: 12px; flex: none;
+  }
+  .tl-commit .n { font-size: 12px; color: var(--tl-secondary); white-space: nowrap; }
+  .tl-btn {
+    flex: 1; background: var(--tl-primary); color: #fff; border: 0; border-radius: 10px;
+    padding: 13px 14px; font-size: 14px; font-weight: 600; text-align: center; font-family: var(--sans);
+  }
+  .tl-scrim { position: absolute; inset: 0; background: rgba(23,43,77,.45); z-index: 4; }
+  .tl-sheet {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 5;
+    background: var(--tl-card); border-radius: 18px 18px 0 0;
+    padding: 8px 16px 28px; display: flex; flex-direction: column; gap: 9px;
+  }
+  .tl-grab { width: 36px; height: 5px; border-radius: 3px; background: var(--tl-line); margin: 0 auto 2px; }
+  .tl-sheet-name { font-size: 16px; font-weight: 650; line-height: 1.3; }
+  .tl-hero { display: flex; align-items: baseline; gap: 6px; }
+  .tl-hero .g { font-size: 28px; font-weight: 750; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .tl-hero .u { font-size: 13px; color: var(--tl-secondary); }
+  .tl-disc { font-size: 11.5px; color: rgba(68,84,111,.85); }
+  .tl-sprow { display: flex; justify-content: space-between; font-size: 12.5px; padding: 7px 0; border-top: 1px solid var(--tl-line); }
+  .tl-sprow .k { color: var(--tl-secondary); }
+  .tl-sprow .v { font-weight: 600; }
+  .tl-sizes { display: flex; gap: 8px; align-items: center; font-size: 12px; color: var(--tl-secondary); padding: 2px 0 4px; flex-wrap: wrap; }
+  .tl-size {
+    min-width: 44px; text-align: center; border: 1.5px solid var(--tl-line); border-radius: 999px;
+    padding: 8px 0; font-size: 13px; font-weight: 550; color: var(--tl-primary);
+  }
+  .tl-size.on { background: var(--tl-primary); color: #fff; border-color: var(--tl-primary); }
+  .tl-links { display: flex; justify-content: space-between; font-size: 12.5px; }
+  .tl-link { color: var(--tl-accent); text-decoration: underline; text-underline-offset: 3px; }
+  .tl-link.quiet { color: var(--tl-secondary); }
+  .tl-featured {
+    margin: 12px 10px 0; background: var(--tl-card); border: 1px solid var(--tl-line); border-radius: 10px;
+    padding: 11px 12px; display: flex; gap: 10px; align-items: center; flex: none;
+  }
+  .tl-flabel { font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--tl-accent); font-weight: 700; flex: none; }
+  .tl-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px 10px 4px; flex: none; }
+  .tl-tile {
+    background: var(--tl-card); border: 1px solid var(--tl-line); border-radius: 10px;
+    padding: 12px; display: flex; flex-direction: column; gap: 4px;
+  }
+  .tl-tile .i { width: 22px; height: 22px; border-radius: 6px; background: var(--tl-neutral); }
+  .tl-tile .n { font-size: 12.5px; font-weight: 600; }
+  .tl-tile .c { font-size: 10.5px; color: var(--tl-secondary); font-variant-numeric: tabular-nums; }
+  .tl-hint { padding: 8px 16px; font-size: 11px; color: var(--tl-secondary); font-style: italic; flex: none; }
+  .tl-toast {
+    position: absolute; left: 12px; right: 12px; bottom: 36px; z-index: 5;
+    background: var(--tl-primary); color: #fff; border-radius: 10px; padding: 12px 14px;
+    font-size: 12.5px; display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 8px 20px rgba(23,43,77,.35);
+  }
+  .tl-toast .undo { color: #9CC2FF; font-weight: 650; }
+  .hifi-cap { font-family: var(--mono); font-size: 11px; color: var(--subtle); line-height: 1.7; padding: 0 6px; }
+
+  @media (max-width: 900px) {
+    .frames-3 { grid-template-columns: 1fr; }
+    .legend { grid-template-columns: 1fr; }
+    .modal.sm { width: 100%; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .row, .chip, .cat-tile, .btn-solid, .featured { transition: background-color 120ms ease, opacity 120ms ease; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="spec-head">
+    <div class="eyebrow">TrekList · Wireframe spec · v4.3 · 2026-07-12</div>
+    <h1>Add gear item(s) — two-pane catalog modal + mobile flow</h1>
+    <div class="spec-meta">Frame 1 is <b>interactive</b>: click rows to preview, checkboxes to batch, ↑/↓ + space with the list focused. v4 adds the <b>mobile UX audit</b> (markers 15–17) and <b>hi-fi mobile mockups in the default TrekList theme</b> so the flow can be judged in the app’s real visual language.</div>
+  </header>
+
+  <!-- ============ FRAME 1 : DESKTOP, RESULTS ============ -->
+  <section class="frame">
+    <div class="frame-cap">
+      <span class="tag">Frame 1</span>
+      <span>Desktop · search results · two-pane master–detail (modal ≈ 940px)</span>
+    </div>
+    <div class="stage"><div class="stage-inner">
+      <div class="modal" role="group" aria-label="Add gear items modal wireframe">
+        <div class="m-head">
+          <h2>Add gear item(s)</h2>
+          <div class="m-tabs">
+            <span class="m-tab on">Import</span>
+            <span class="m-tab">Custom</span>
+          </div>
+          <span class="m-x">✕</span>
+        </div>
+        <div class="m-search">
+          <div class="m-input"><span class="ph">🔍</span> Power bank <i class="mk">1</i></div>
+          <div class="m-cam">📷</div>
+        </div>
+        <div class="m-facets">
+          <span class="m-count">51 of 17,400 items</span>
+          <span class="chip on">Electronics &amp; Power ✕</span>
+          <span class="chip">Charging &amp; Power Banks</span>
+          <span class="chip">Batteries</span>
+          <span class="chip">Headlamps</span>
+          <span class="chip stub">Brand ▾</span>
+          <i class="mk">2</i>
+        </div>
+        <div class="m-body">
+          <div class="m-list" id="list" tabindex="0" aria-label="Search results">
+            <div id="rows"></div>
+            <div class="row row-create"><span class="plus">＋</span> Create “power bank” as a custom item <i class="mk">11</i></div>
+            <div class="m-more">↓ 45 more — list virtualizes, scroll to load <i class="mk">7</i></div>
+          </div>
+          <div class="m-pane" id="pane">
+            <div class="p-top">
+              <div class="p-img"></div>
+              <div class="p-id">
+                <span class="p-brand" id="p-brand">Nitecore</span>
+                <span class="p-name" id="p-name">Carbo 10000 Gen2</span>
+                <div class="p-weight">
+                  <span class="g" id="p-weight">150</span><span class="unit">g</span>
+                  <i class="mk">5</i>
+                </div>
+                <span class="p-disclose" id="p-disclose">Manufacturer spec · verified Jul 2026</span>
+              </div>
+            </div>
+            <div class="p-specs" id="p-specs"></div>
+            <div class="p-flag"><span class="p-link">⚑ Report an issue</span> <span class="p-flag-hint">weight · category · name · image</span> <i class="mk">9</i></div>
+            <div class="p-variants">
+              <span>Variant picker — fit variants only (size / length). Synced with row quick-pick. Untouched = default fit, item flagged “size not set”.</span>
+              <span class="vchip">S</span><span class="vchip on">M</span><span class="vchip">L</span>
+              <i class="mk">6</i>
+            </div>
+            <div class="p-actions">
+              <button class="btn-ghost" type="button" id="p-buy">View at Nitecore ↗</button>
+              <span class="p-link">Full details →</span>
+              <i class="mk">4</i>
+              <span class="p-select" id="p-select" role="checkbox" aria-checked="false" tabindex="0">
+                <span class="box"></span> Select for adding
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="m-foot">
+          <span class="spacer"></span>
+          <span class="sel" id="sel-count">2 selected</span>
+          <button class="btn-ghost" type="button">Cancel</button>
+          <button class="btn-solid" type="button" id="add-btn">Add 2 to Hiking</button>
+          <i class="mk">8</i>
+        </div>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- ============ LEGEND (DESKTOP) ============ -->
+  <section class="legend">
+    <ul>
+      <li><i class="mk">1</i><span><b>Search unchanged.</b> Same box, same AI camera scan. Typing filters; clearing it returns to browse (Frame 2), where a mode carousel advertises what the box accepts: product name, store URL, Decathlon item ID, photo scan.</span></li>
+      <li><i class="mk">2</i><span><b>Facet row, designed in for 7× scale.</b> Active category chip + that category’s subcategory chips (locked taxonomy; deepest is 12 subs — the row scrolls). Brand ships here later without re-layout.</span></li>
+      <li><i class="mk">3</i><span><b>Enriched rows carry the decision.</b> Brand once (eyebrow), name, thumbnail, and the hero number — weight — in every row. Most adds should end here without the pane.</span></li>
+      <li><i class="mk">4</i><span><b>Click = preview, checkbox = add.</b> Row click focuses the pane; only the checkbox batches. No stacked modal — “Full details” is a link inside the pane for the rare deep-dive.</span></li>
+      <li><i class="mk">5</i><span><b>Weight is the pane’s hero</b>, with the precision disclosure directly beneath it (flat-across-variants, per-single-unit, verified date). Renders in the user’s global g / oz preference, region-defaulted.</span></li>
+      <li><i class="mk">6</i><span><b>Variants live in both places, and never block the batch.</b> Row quick-pick for “I know my size”; pane holds the full picker; one synced state. Checking without picking adds the default fit and flags the gear item “size not set” — honest, editable later, zero friction now.</span></li>
+      <li><i class="mk">7</i><span><b>Virtualized list.</b> Long result sets render windowed; the footer row signals more without pagination chrome.</span></li>
+      <li><i class="mk">8</i><span><b>Batch commit names its destination.</b> “Add 2 to Hiking” from a list category, “Add 2 to My Gear” from the locker — the count and target are never a leap of faith. Disabled at zero.</span></li>
+      <li><i class="mk">9</i><span><b>Report an issue.</b> Quiet flag under the specs it disputes (also in the mobile sheet). Opens the popover in Frame 6 — never a stacked modal. Reports auto-attach item, variant, and the values shown.</span></li>
+      <li><i class="mk">10</i><span><b>Added ≠ locked.</b> Items already in My Gear or on this list stay checkable — checking adds them to this list (or another copy). The list’s quantity stepper covers same-category duplicates; this covers the “same item, two categories” case that used to be blocked.</span></li>
+      <li><i class="mk">11</i><span><b>Custom is never far.</b> The last row of every result set creates a custom item seeded with the query — zero results makes it the loudest thing on screen. Opens the Custom tab pre-filled. (v2 candidate: merge the tabs into one search-first surface.)</span></li>
+    </ul>
+  </section>
+
+  <!-- ============ FRAME 2 : DESKTOP BROWSE ============ -->
+  <section class="frame">
+    <div class="frame-cap">
+      <span class="tag">Frame 2</span>
+      <span>Desktop · empty search = browse. Categories are the zero state, not a hidden link.</span>
+    </div>
+    <div class="stage"><div class="stage-inner">
+      <div class="modal sm">
+        <div class="m-head">
+          <h2>Add gear item(s)</h2>
+          <div class="m-tabs">
+            <span class="m-tab on">Import</span>
+            <span class="m-tab">Custom</span>
+          </div>
+          <span class="m-x">✕</span>
+        </div>
+        <div class="m-search">
+          <div class="m-input"><span class="ph">🔍</span> <span class="ph">Search 17,400 items…</span></div>
+          <div class="m-cam">📷</div>
+        </div>
+        <div class="modechips">
+          Search by:
+          <span class="mchip">Product name</span>
+          <span class="mchip">Store URL</span>
+          <span class="mchip">Decathlon item ID</span>
+          <span class="mchip">📷 Photo</span>
+        </div>
+        <div class="featured">
+          <span class="f-label">Featured brand</span>
+          <span class="thumb" style="width:26px;height:26px"></span>
+          <span class="f-name">Atom Packs</span>
+          <span class="f-link">Browse the range →</span>
+        </div>
+        <div class="cat-grid">
+          <div class="cat-tile"><span class="ico"></span><span class="nm">Accessories &amp; Tools</span><span class="ct">1,650</span></div>
+          <div class="cat-tile"><span class="ico"></span><span class="nm">Backpacks &amp; Bags</span><span class="ct">1,240</span></div>
+          <div class="cat-tile"><span class="ico"></span><span class="nm">Electronics &amp; Power</span><span class="ct">940</span></div>
+          <div class="cat-tile"><span class="ico"></span><span class="nm">Footwear</span><span class="ct">1,830</span></div>
+          <div class="cat-tile"><span class="ico"></span><span class="nm">Health &amp; Hygiene</span><span class="ct">620</span></div>
+          <div class="cat-tile"><span class="ico"></span><span class="nm">Hydration</span><span class="ct">480</span></div>
+          <div class="cat-tile"><span class="ico"></span><span class="nm">Kitchen &amp; Cooking</span><span class="ct">890</span></div>
+          <div class="cat-tile"><span class="ico"></span><span class="nm">Men's Clothing</span><span class="ct">2,850</span></div>
+          <div class="cat-tile"><span class="ico"></span><span class="nm">Navigation &amp; Planning</span><span class="ct">210</span></div>
+          <div class="cat-tile"><span class="ico"></span><span class="nm">Shelter</span><span class="ct">1,120</span></div>
+          <div class="cat-tile"><span class="ico"></span><span class="nm">Sleep System</span><span class="ct">1,360</span></div>
+          <div class="cat-tile"><span class="ico"></span><span class="nm">Travel</span><span class="ct">340</span></div>
+          <div class="cat-tile"><span class="ico"></span><span class="nm">Unisex Clothing</span><span class="ct">1,270</span></div>
+          <div class="cat-tile"><span class="ico"></span><span class="nm">Women's Clothing</span><span class="ct">2,600</span></div>
+        </div>
+        <div class="browse-hint">All 14 locked categories, taxonomy order — the ragged last row is fine (every store category screen has one); don’t pad it with filler tiles. One line-icon style + name + count — never icon-only. A tile drills straight into Frame 1 scoped to that category, with its subcategories as chips; no second tile layer. The featured-brand slot is admin-curated, <b>optional and config-driven — the row disappears entirely when unset</b>; label it honestly (“Featured”), and it must never displace search relevance (browse zero state only).</div>
+        <div class="m-foot">
+          <span class="spacer"></span>
+          <span class="sel">0 selected</span>
+          <button class="btn-ghost" type="button">Cancel</button>
+          <button class="btn-solid" type="button" disabled>Add</button>
+        </div>
+      </div>
+    </div></div>
+  </section>
+
+  <!-- ============ FRAMES 3–5 : MOBILE FLOW ============ -->
+  <section class="frames-3">
+
+    <section class="frame">
+      <div class="frame-cap">
+        <span class="tag">Frame 3</span>
+        <span>Mobile · zero state. Full-screen takeover, not a centered modal.</span>
+      </div>
+      <div class="stage tight"><div class="stage-inner">
+        <div class="phone" style="height:auto">
+          <div class="ph-head"><b>Add gear item(s)</b><span class="m-x">✕</span><i class="mk">12</i></div>
+          <div class="m-search">
+            <div class="m-input" style="padding:8px 10px"><span class="ph">🔍</span> <span class="ph">Search, paste a link…</span></div>
+            <div class="m-cam" style="width:36px;height:36px">📷</div>
+          </div>
+          <div class="modechips" style="font-style:italic">placeholder rotates: “Search 17,400 items…” → “Paste a store link…” → “Enter a Decathlon item ID…” <i class="mk">16</i></div>
+          <div class="featured" style="margin:12px 12px 0; padding:8px 10px">
+            <span class="f-label">Featured</span>
+            <span class="f-name">Atom Packs</span>
+            <span class="f-link">→</span>
+          </div>
+          <div class="cat-grid">
+            <div class="cat-tile"><span class="ico"></span><span class="nm">Backpacks &amp; Bags</span><span class="ct">1,240</span></div>
+            <div class="cat-tile"><span class="ico"></span><span class="nm">Electronics &amp; Power</span><span class="ct">940</span></div>
+            <div class="cat-tile"><span class="ico"></span><span class="nm">Footwear</span><span class="ct">1,830</span></div>
+            <div class="cat-tile"><span class="ico"></span><span class="nm">Shelter</span><span class="ct">1,120</span></div>
+            <div class="cat-tile"><span class="ico"></span><span class="nm">Sleep System</span><span class="ct">1,360</span></div>
+            <div class="cat-tile"><span class="ico"></span><span class="nm">Women's Clothing</span><span class="ct">2,600</span></div>
+          </div>
+          <div class="browse-hint">…scrolls to all 14 categories</div>
+        </div>
+      </div></div>
+    </section>
+
+    <section class="frame">
+      <div class="frame-cap">
+        <span class="tag">Frame 4</span>
+        <span>Mobile · results + batch. Checkbox = add; sticky commit bar appears with selection.</span>
+      </div>
+      <div class="stage tight"><div class="stage-inner">
+        <div class="phone" style="height:560px">
+          <div class="m-search">
+            <div class="m-input" style="padding:8px 10px"><span class="ph">🔍</span> Power bank <span class="ph" style="margin-left:auto">✕</span></div>
+          </div>
+          <div class="m-facets">
+            <span class="m-count">51 items</span>
+            <span class="chip on">Electronics ✕</span>
+            <span class="chip">Charging…</span>
+          </div>
+          <div class="group-label">My gear</div>
+          <div class="row">
+            <input type="checkbox" disabled>
+            <span class="row-txt">
+              <span class="row-brand">Simond</span>
+              <div class="row-name">10,000 mAh quick-charge battery</div>
+            </span>
+            <span class="row-wt">210 g</span>
+            <span class="row-added">In my gear</span>
+          </div>
+          <div class="group-label">From catalog</div>
+          <div class="row">
+            <input type="checkbox" disabled>
+            <span class="row-txt">
+              <span class="row-brand">Nitecore</span>
+              <div class="row-name">Carbo 10000 Gen2</div>
+              <span class="row-spec">10,000 mAh · 45 W USB-C</span>
+            </span>
+            <span class="row-wt">150 g</span>
+            <i class="mk">15</i>
+          </div>
+          <div class="row">
+            <input type="checkbox" checked disabled>
+            <span class="row-txt">
+              <span class="row-brand">Nitecore</span>
+              <div class="row-name">Carbo 20 Waterproof</div>
+              <span class="row-spec">20,000 mAh · 65 W USB-C</span>
+            </span>
+            <span class="row-wt">294 g</span>
+          </div>
+          <div class="row">
+            <input type="checkbox" checked disabled>
+            <span class="row-txt">
+              <span class="row-brand">Nitecore</span>
+              <div class="row-name">Carbon Battery 6K</div>
+              <span class="row-spec">6,000 mAh · 20 W USB-C</span>
+            </span>
+            <span class="row-wt">86 g</span>
+          </div>
+          <div class="row row-create"><span class="plus">＋</span> Create “power bank” as a custom item</div>
+          <div class="commitbar">
+            <span class="sel">2 selected</span>
+            <button class="btn-solid" type="button">Add 2 to Hiking</button>
+            <i class="mk">13</i>
+          </div>
+        </div>
+      </div></div>
+    </section>
+
+    <section class="frame">
+      <div class="frame-cap">
+        <span class="tag">Frame 5</span>
+        <span>Mobile · tap row → bottom sheet = the preview pane. Never a stacked modal.</span>
+      </div>
+      <div class="stage tight"><div class="stage-inner">
+        <div class="phone">
+          <div class="m-search">
+            <div class="m-input" style="padding:8px 10px"><span class="ph">🔍</span> Power bank</div>
+          </div>
+          <div class="m-facets">
+            <span class="m-count">51 items</span>
+            <span class="chip on">Electronics ✕</span>
+          </div>
+          <div class="row focused">
+            <input type="checkbox" disabled>
+            <span class="row-txt">
+              <span class="row-brand">Nitecore</span>
+              <div class="row-name">Carbo 10000 Gen2</div>
+            </span>
+            <span class="row-wt">150 g</span>
+          </div>
+          <div class="row">
+            <input type="checkbox" disabled>
+            <span class="row-txt">
+              <span class="row-brand">Nitecore</span>
+              <div class="row-name">Carbo 10000 Lightweight QC</div>
+            </span>
+            <span class="row-wt">149 g</span>
+          </div>
+          <div class="row">
+            <input type="checkbox" checked disabled>
+            <span class="row-txt">
+              <span class="row-brand">Nitecore</span>
+              <div class="row-name">Carbo 20 Waterproof</div>
+            </span>
+            <span class="row-wt">294 g</span>
+          </div>
+          <div class="phone-dim"></div>
+          <div class="sheet">
+            <div class="grab"></div>
+            <div class="p-id">
+              <span class="p-brand">Nitecore</span>
+              <span class="p-name" style="font-size:15px">Carbo 10000 Gen2</span>
+              <div class="p-weight"><span class="g">150</span><span class="unit">g</span></div>
+              <span class="p-disclose">Manufacturer spec · verified Jul 2026</span>
+            </div>
+            <div class="p-spec"><span class="k">Capacity</span><span class="v">10,000 mAh</span></div>
+            <div class="p-spec"><span class="k">Max output</span><span class="v">45 W USB-C PD</span></div>
+            <div class="sheet-variants">
+              Size
+              <span class="vchip">S</span><span class="vchip on">M</span><span class="vchip">L</span>
+              <i class="mk">14</i>
+            </div>
+            <button class="btn-solid" type="button">Add to Hiking</button>
+            <div style="display:flex; justify-content:space-between">
+              <span class="p-link">Full details →</span>
+              <span class="p-link">⚑ Report an issue</span>
+            </div>
+          </div>
+        </div>
+      </div></div>
+    </section>
+
+  </section>
+
+  <!-- ============ LEGEND (MOBILE) ============ -->
+  <section class="legend">
+    <ul>
+      <li><i class="mk">12</i><span><b>Full-screen takeover on mobile — and a history entry.</b> Same contracts as desktop, laid vertically. Opening it pushes state, opening the sheet pushes again: Android back / iOS swipe-back closes the sheet first, then the takeover — never the whole app. This is the #1 mobile-browser trust signal.</span></li>
+      <li><i class="mk">13</i><span><b>Sticky commit bar replaces the desktop footer.</b> Appears with the first checkbox, always names count + destination, stays put while the list scrolls under it. Sits above <code>env(safe-area-inset-bottom)</code>; container is <code>100dvh</code> (never <code>100vh</code>); the bar hides while the keyboard is open so it can’t float mid-screen.</span></li>
+      <li><i class="mk">14</i><span><b>The sheet is mobile’s preview pane.</b> Weight hero + precision disclosure, two key specs, fit-variant chips, destination-named add. Tap row text = sheet; checkbox = batch without the sheet, using the default-fit / “size not set” rule (marker 6). Dismiss by swipe-down, scrim tap, or back gesture.</span></li>
+      <li><i class="mk">15</i><span><b>Tap-target contract.</b> Rows ≥ 56 px tall; the checkbox draws at 22 px but the whole leading zone is a 44×44 hit area; size chips ≥ 40 px wide. Search input font-size is <b>16 px</b> — anything smaller makes iOS Safari auto-zoom on focus, the single most common “feels broken in the mobile browser” bug.</span></li>
+      <li><i class="mk">16</i><span><b>Rotating placeholder, not mode chips, on mobile.</b> The “name / store URL / Decathlon ID” hint cycles inside the empty search field (Amazon/Airbnb pattern). Chips under the box read as filters and would collide visually with the facet chips; desktop keeps the labelled “Search by:” row because it has room to label it.</span></li>
+      <li><i class="mk">17</i><span><b>After the add, don’t eject the user.</b> Sheet-add keeps them in the list — sheet closes, row flips to “In list ✓”, quiet toast. Batch commit closes the takeover with an <b>“Added 2 to Hiking — Undo”</b> toast. Undo beats a confirm dialog for both newbies and power users.</span></li>
+    </ul>
+  </section>
+
+  <!-- ============ HI-FI MOBILE : TREKLIST DEFAULT THEME ============ -->
+  <section class="frames-3 hifi">
+
+    <section class="frame">
+      <div class="frame-cap">
+        <span class="tag">Hi-fi A</span>
+        <span>Zero state — browse. Default TrekList theme.</span>
+      </div>
+      <div class="stage tight"><div class="stage-inner">
+        <div class="bezel"><div class="screen">
+          <div class="statusbar"><span>9:41</span><span>🔋</span></div>
+          <div class="urlbar"><span>app.treklist.co</span></div>
+          <div class="tl-top"><span class="tl-title">Add gear item(s)</span><span class="tl-x">✕</span></div>
+          <div class="tl-search-wrap">
+            <div class="tl-search">🔍 <span>Paste a store link…</span></div>
+            <div class="tl-cam">📷</div>
+          </div>
+          <div class="tl-featured">
+            <span class="tl-flabel">Featured</span>
+            <span class="tl-thumb" style="width:30px;height:30px"></span>
+            <span style="font-weight:600; font-size:13px">Atom Packs</span>
+            <span class="tl-link" style="margin-left:auto; font-size:12px">Browse →</span>
+          </div>
+          <div class="tl-tiles">
+            <div class="tl-tile"><span class="i"></span><span class="n">Backpacks &amp; Bags</span><span class="c">1,240 items</span></div>
+            <div class="tl-tile"><span class="i"></span><span class="n">Electronics &amp; Power</span><span class="c">940 items</span></div>
+            <div class="tl-tile"><span class="i"></span><span class="n">Shelter</span><span class="c">1,120 items</span></div>
+            <div class="tl-tile"><span class="i"></span><span class="n">Sleep System</span><span class="c">1,360 items</span></div>
+            <div class="tl-tile"><span class="i"></span><span class="n">Women's Clothing</span><span class="c">2,600 items</span></div>
+            <div class="tl-tile"><span class="i"></span><span class="n">Footwear</span><span class="c">1,830 items</span></div>
+          </div>
+          <div class="tl-hint">scrolls to all 14 categories</div>
+          <div class="homebar"></div>
+        </div></div>
+      </div></div>
+      <div class="hifi-cap">placeholder rotates through the search modes · featured slot admin-curated, hidden when unset · tiles ≥ 64px tall</div>
+    </section>
+
+    <section class="frame">
+      <div class="frame-cap">
+        <span class="tag">Hi-fi B</span>
+        <span>Results + batch. Checkbox = electric blue; commit bar names its destination.</span>
+      </div>
+      <div class="stage tight"><div class="stage-inner">
+        <div class="bezel"><div class="screen">
+          <div class="statusbar"><span>9:41</span><span>🔋</span></div>
+          <div class="urlbar"><span>app.treklist.co</span></div>
+          <div class="tl-search-wrap">
+            <div class="tl-search">🔍 <b>Power bank</b> <span style="margin-left:auto">✕</span></div>
+          </div>
+          <div class="tl-chips">
+            <span class="tl-count">51 items</span>
+            <span class="tl-chip on">Electronics ✕</span>
+            <span class="tl-chip">Charging &amp; Po…</span>
+          </div>
+          <div class="tl-rows">
+            <div class="tl-group">My gear</div>
+            <div class="tl-row">
+              <span class="tl-cb"></span>
+              <span class="tl-thumb"></span>
+              <span class="tl-rt">
+                <span class="tl-brand">Simond</span>
+                <div class="tl-name">10,000 mAh quick-charge battery</div>
+              </span>
+              <span class="tl-wt">210 g</span>
+              <span class="tl-pill">In my gear</span>
+            </div>
+            <div class="tl-group">From catalog</div>
+            <div class="tl-row">
+              <span class="tl-cb"></span>
+              <span class="tl-thumb"></span>
+              <span class="tl-rt">
+                <span class="tl-brand">Nitecore</span>
+                <div class="tl-name">Carbo 10000 Gen2</div>
+                <span class="tl-spec">10,000 mAh · 45 W USB-C</span>
+              </span>
+              <span class="tl-wt">150 g</span>
+            </div>
+            <div class="tl-row">
+              <span class="tl-cb on">✓</span>
+              <span class="tl-thumb"></span>
+              <span class="tl-rt">
+                <span class="tl-brand">Nitecore</span>
+                <div class="tl-name">Carbo 20 Waterproof</div>
+                <span class="tl-spec">20,000 mAh · 65 W USB-C</span>
+              </span>
+              <span class="tl-wt">294 g</span>
+            </div>
+            <div class="tl-row">
+              <span class="tl-cb on">✓</span>
+              <span class="tl-thumb"></span>
+              <span class="tl-rt">
+                <span class="tl-brand">Nitecore</span>
+                <div class="tl-name">Carbon Battery 6K</div>
+                <span class="tl-spec">6,000 mAh · 20 W USB-C</span>
+              </span>
+              <span class="tl-wt">86 g</span>
+            </div>
+            <div class="tl-create">＋ Create “power bank” as a custom item</div>
+          </div>
+          <div class="tl-commit">
+            <span class="n">2 selected</span>
+            <button class="tl-btn" type="button">Add 2 to Hiking</button>
+          </div>
+          <div class="homebar"></div>
+        </div></div>
+      </div></div>
+      <div class="hifi-cap">rows 56px+ · checkbox 22px visual / 44px hit zone · search input 16px (no iOS zoom) · commit bar above safe-area, hidden while keyboard is open</div>
+    </section>
+
+    <section class="frame">
+      <div class="frame-cap">
+        <span class="tag">Hi-fi C</span>
+        <span>Bottom sheet — a fit-variant product, showing the flat-weight disclosure.</span>
+      </div>
+      <div class="stage tight"><div class="stage-inner">
+        <div class="bezel"><div class="screen">
+          <div class="statusbar"><span>9:41</span><span>🔋</span></div>
+          <div class="urlbar"><span>app.treklist.co</span></div>
+          <div class="tl-search-wrap">
+            <div class="tl-search">🔍 <b>merino base layer</b></div>
+          </div>
+          <div class="tl-rows">
+            <div class="tl-row">
+              <span class="tl-cb"></span>
+              <span class="tl-thumb"></span>
+              <span class="tl-rt">
+                <span class="tl-brand">Icebreaker</span>
+                <div class="tl-name">200 Oasis LS Crewe</div>
+                <span class="tl-spec">100% merino · 200 g/m²</span>
+              </span>
+              <span class="tl-wt">240 g</span>
+            </div>
+            <div class="tl-row">
+              <span class="tl-cb"></span>
+              <span class="tl-thumb"></span>
+              <span class="tl-rt">
+                <span class="tl-brand">Smartwool</span>
+                <div class="tl-name">Classic Thermal Merino Crew</div>
+                <span class="tl-spec">100% merino · 250 g/m²</span>
+              </span>
+              <span class="tl-wt">285 g</span>
+            </div>
+          </div>
+          <div class="tl-scrim"></div>
+          <div class="tl-sheet">
+            <div class="tl-grab"></div>
+            <span class="tl-brand">Icebreaker</span>
+            <div class="tl-sheet-name">200 Oasis Long Sleeve Crewe</div>
+            <div class="tl-hero"><span class="g">240</span><span class="u">g</span></div>
+            <div class="tl-disc">Manufacturer spec · flat across sizes · verified Jul 2026</div>
+            <div class="tl-sprow"><span class="k">Fabric</span><span class="v">100% merino, 200 g/m²</span></div>
+            <div class="tl-sprow"><span class="k">Fit</span><span class="v">Men's</span></div>
+            <div class="tl-sizes">
+              Size
+              <span class="tl-size">S</span><span class="tl-size on">M</span><span class="tl-size">L</span><span class="tl-size">XL</span>
+            </div>
+            <button class="tl-btn" type="button" style="flex:none">Add to Hiking</button>
+            <div class="tl-links">
+              <span class="tl-link">Full details →</span>
+              <span class="tl-link quiet">⚑ Report an issue</span>
+            </div>
+          </div>
+          <div class="homebar"></div>
+        </div></div>
+      </div></div>
+      <div class="hifi-cap">size chips ≥ 44px wide · swipe-down / scrim tap / back gesture dismisses · after add: toast “Added to Hiking — Undo”, list stays open</div>
+    </section>
+
+  </section>
+
+  <!-- ============ FRAME 6 : REPORT POPOVER ============ -->
+  <section class="frame">
+    <div class="frame-cap">
+      <span class="tag">Frame 6</span>
+      <span>Report-an-issue popover · anchors to the ⚑ flag in the pane / sheet · popover, never a modal</span>
+    </div>
+    <div class="stage"><div class="stage-inner">
+      <div class="pop">
+        <h3>Report an issue — Carbo 10000 Gen2</h3>
+        <div class="opt on"><span class="box"></span> Weight is incorrect</div>
+        <div class="hint">Shows the precision disclosure first (“manufacturer spec, flat across sizes”) — deflects false reports before they’re filed.</div>
+        <div class="opt"><span class="box"></span> Wrong category or item type</div>
+        <div class="opt"><span class="box"></span> Name or brand is wrong</div>
+        <div class="opt"><span class="box"></span> Image or buy link is broken</div>
+        <div class="opt"><span class="box"></span> Something else</div>
+        <div class="note">Tell us more (optional) — e.g. “my scale says 162 g”</div>
+        <div class="ctx">auto-attached: itemId 66f…c31 · variant — · shown: 150 g / Electronics &amp; Power / Charging &amp; Power Banks · 2026-07-10</div>
+        <div class="pop-foot">
+          <button class="btn-ghost" type="button">Cancel</button>
+          <button class="btn-solid" type="button">Send report</button>
+        </div>
+      </div>
+    </div></div>
+    <div class="frame-cap" style="font-size:11.5px">Server side: dedupe by item + field with a counter → queue in the admin catalog view. Crowd-sourced QA for the 7× expansion.</div>
+  </section>
+
+  <footer class="foot-note">
+    <b>Entry points — one component, two modes</b>: category “Add item” · sidebar add · My Gear add (all = <b>add mode</b>, batch, destination-echo commit) · <b>Swap item</b> = the same surface in <b>single-select mode</b>: checkboxes hidden, row tap previews as usual, pane/sheet button reads “Swap for this” and replaces the source item (keeps category, quantity, worn/consumable flags where compatible). Never a separate build.<br>
+    <b>Item Details modal stays separate</b> (edit-my-instance job: weight override, variant, delete; read-only on public lists) — but adopts this spec’s weight hero + precision disclosure and gains the ⚑ report flag.<br>
+    <b>Variant-on-batch — CONFIRMED 2026-07-12</b>: checking a variant row without picking adds the default fit and flags the gear item “size not set”; never blocks the batch.<br>
+    <b>“Request a gear item” — CUT (2026-07-12)</b>: the inline custom-create row covers the user need with zero curation burden. Replacement demand signal: zero-result searches are silently logged (query · count · last seen) to a table in the admin view — catalog-gap intel without a fulfillment promise.<br>
+    <b>Locked decisions</b> (expensive to change later): click = preview / checkbox = add · row data contract = weight + one key spec + thumb · facet row present from day one · virtualized list · Added never locks a row · variant default = fit default + “size not set” flag · commit button names count + destination.<br>
+    <b>Cheap to adjust later</b>: modal width vs full-height drawer · hover-preview enhancement · chip styling · pane content arrangement · featured-brand slot contents · merging Import/Custom tabs (v2 candidate).<br>
+    <b>Mobile build contract</b> (the “better in the browser than competitors” claims live or die here): 16px input font (kills iOS focus-zoom) · 100dvh + env(safe-area-inset-bottom) · takeover + sheet are history entries (back gesture never exits the app) · commit bar hides under keyboard · toast + Undo after every add, never a confirm dialog · virtualized rows on mobile too.
+  </footer>
+
+</div>
+
+<script>
+  const ITEMS = [
+    { id: "g1", owned: true, brand: "Simond", name: "10,000 mAh quick-charge battery", wt: 210, spec: "10,000 mAh · 22.5 W",
+      buy: "View at Decathlon ↗", disclose: "In-store verified · Jul 2026",
+      details: [["Capacity", "10,000 mAh"], ["Max output", "22.5 W"], ["Ports", "1× USB-C, 1× USB-A"], ["Rating", "—"]] },
+    { id: "c1", brand: "Nitecore", name: "Carbo 10000 Gen2", wt: 150, spec: "10,000 mAh · 45 W USB-C",
+      buy: "View at Nitecore ↗", disclose: "Manufacturer spec · verified Jul 2026",
+      details: [["Capacity", "10,000 mAh"], ["Max output", "45 W USB-C PD"], ["Ports", "1× USB-C"], ["Rating", "IPX5"]] },
+    { id: "c2", brand: "Nitecore", name: "Carbo 10000 Lightweight QC", wt: 149, spec: "10,000 mAh · 18 W QC",
+      buy: "View at Nitecore ↗", disclose: "Manufacturer spec · verified Jul 2026",
+      details: [["Capacity", "10,000 mAh"], ["Max output", "18 W QC 3.0"], ["Ports", "1× USB-C, 1× USB-A"], ["Rating", "IPX5"]] },
+    { id: "c3", brand: "Nitecore", name: "Carbo 20 Waterproof", wt: 294, spec: "20,000 mAh · 65 W USB-C",
+      buy: "View at Nitecore ↗", disclose: "Manufacturer spec · verified Jul 2026",
+      details: [["Capacity", "20,000 mAh"], ["Max output", "65 W USB-C PD"], ["Ports", "2× USB-C"], ["Rating", "IP68 waterproof"]] },
+    { id: "c4", brand: "Nitecore", name: "Carbo 20000 Lightweight QC", wt: 296, spec: "20,000 mAh · 18 W QC",
+      buy: "View at Nitecore ↗", disclose: "Manufacturer spec · verified Jul 2026",
+      details: [["Capacity", "20,000 mAh"], ["Max output", "18 W QC 3.0"], ["Ports", "1× USB-C, 1× USB-A"], ["Rating", "IPX5"]] },
+    { id: "c5", brand: "Nitecore", name: "Carbon Battery 6K", wt: 86, spec: "6,000 mAh · 20 W USB-C",
+      buy: "View at Nitecore ↗", disclose: "Manufacturer spec · verified Jul 2026",
+      details: [["Capacity", "6,000 mAh"], ["Max output", "20 W USB-C PD"], ["Ports", "1× USB-C"], ["Rating", "IPX5"]] },
+    { id: "c6", brand: "Simond", name: "20,000 mAh USB-C power bank", wt: 345, spec: "20,000 mAh · 45 W USB-C",
+      buy: "View at Decathlon ↗", disclose: "In-store verified · Jul 2026",
+      details: [["Capacity", "20,000 mAh"], ["Max output", "45 W USB-C PD"], ["Ports", "2× USB-C"], ["Rating", "—"]] }
+  ];
+
+  const state = { focused: "c1", selected: new Set(["c3", "c5"]) };
+  const rowsEl = document.getElementById("rows");
+
+  function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
+
+  function rowHtml(it) {
+    return '<div class="row' + (state.focused === it.id ? " focused" : "") + '" data-id="' + it.id + '">' +
+      '<input type="checkbox" data-id="' + it.id + '"' + (state.selected.has(it.id) ? " checked" : "") + ' aria-label="Select ' + esc(it.name) + '">' +
+      '<span class="thumb"></span>' +
+      '<span class="row-txt">' +
+        '<span class="row-brand">' + esc(it.brand) + '</span>' +
+        '<div class="row-name">' + esc(it.name) + '</div>' +
+        '<span class="row-spec">' + esc(it.spec) + '</span>' +
+      '</span>' +
+      '<span class="row-wt">' + it.wt + ' g</span>' +
+      (it.owned ? '<span class="row-added">In my gear</span> <i class="mk">10</i>' : '') +
+    '</div>';
+  }
+
+  function renderRows() {
+    const owned = ITEMS.filter(function (it) { return it.owned; });
+    const cat = ITEMS.filter(function (it) { return !it.owned; });
+    rowsEl.innerHTML =
+      '<div class="group-label">My gear</div>' +
+      owned.map(rowHtml).join("") +
+      '<div class="group-label">From catalog <i class="mk">3</i></div>' +
+      cat.map(rowHtml).join("");
+  }
+
+  function renderPane() {
+    const it = ITEMS.find(function (x) { return x.id === state.focused; });
+    document.getElementById("p-brand").textContent = it.brand;
+    document.getElementById("p-name").textContent = it.name;
+    document.getElementById("p-weight").textContent = it.wt;
+    document.getElementById("p-disclose").textContent = it.disclose;
+    document.getElementById("p-buy").textContent = it.buy;
+    document.getElementById("p-specs").innerHTML = it.details.map(function (d) {
+      return '<div class="p-spec"><span class="k">' + esc(d[0]) + '</span><span class="v">' + esc(d[1]) + '</span></div>';
+    }).join("");
+    const ps = document.getElementById("p-select");
+    ps.classList.toggle("on", state.selected.has(it.id));
+    ps.setAttribute("aria-checked", state.selected.has(it.id) ? "true" : "false");
+  }
+
+  function renderFooter() {
+    const n = state.selected.size;
+    document.getElementById("sel-count").textContent = n + " selected";
+    const btn = document.getElementById("add-btn");
+    btn.textContent = n > 0 ? "Add " + n + " to Hiking" : "Add";
+    btn.disabled = n === 0;
+  }
+
+  function renderAll() { renderRows(); renderPane(); renderFooter(); }
+
+  rowsEl.addEventListener("click", function (e) {
+    const cb = e.target.closest("input[type=checkbox]");
+    const row = e.target.closest(".row");
+    if (!row) return;
+    const id = row.dataset.id;
+    if (cb) {
+      // checkbox = add to batch (owned rows included — Added never locks)
+      if (state.selected.has(id)) state.selected.delete(id); else state.selected.add(id);
+    } else {
+      // row click = preview only
+      state.focused = id;
+    }
+    renderAll();
+  });
+
+  function toggleFocused() {
+    if (state.selected.has(state.focused)) state.selected.delete(state.focused);
+    else state.selected.add(state.focused);
+    renderAll();
+  }
+
+  document.getElementById("p-select").addEventListener("click", toggleFocused);
+  document.getElementById("p-select").addEventListener("keydown", function (e) {
+    if (e.key === " " || e.key === "Enter") { e.preventDefault(); toggleFocused(); }
+  });
+
+  document.getElementById("list").addEventListener("keydown", function (e) {
+    const idx = ITEMS.findIndex(function (x) { return x.id === state.focused; });
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      state.focused = ITEMS[Math.min(idx + 1, ITEMS.length - 1)].id;
+      renderAll();
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      state.focused = ITEMS[Math.max(idx - 1, 0)].id;
+      renderAll();
+    } else if (e.key === " ") {
+      e.preventDefault();
+      toggleFocused();
+    }
+  });
+
+  renderAll();
+</script>
