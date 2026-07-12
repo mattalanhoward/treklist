@@ -732,7 +732,17 @@
     "nSelected_other": "{{count}} seleccionados",
     "addNToDest": "Añadir {{count}} a {{dest}}",
     "selectRow": "Seleccionar {{name}}",
-    "resultsLabel": "Resultados de búsqueda"
+    "resultsLabel": "Resultados de búsqueda",
+    "searchBy": "Buscar por:",
+    "searchModes": {
+      "productName": "Nombre del producto",
+      "storeUrl": "URL de la tienda",
+      "decathlonId": "ID de artículo Decathlon",
+      "photo": "Foto"
+    },
+    "featured": "Destacado",
+    "browseRange": "Ver la gama →",
+    "facetCount": "{{shown}} de {{total}} artículos"
   },
   "photoScanModal": {
     "title": "Escanear equipo",

@@ -12,6 +12,7 @@ import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import api from "../services/api";
 import { CATALOG_CATEGORIES, CATALOG_SUBCATEGORIES, tCategory } from "../config/catalogTaxonomy";
+import { FEATURED_BRAND } from "../config/featuredBrand";
 import { useUnit } from "../hooks/useUnit";
 import { useWeightInput } from "../hooks/useWeightInput";
 import Spinner from "./ui/Spinner";
@@ -533,6 +534,143 @@ function CustomForm({ form, onChange, unitLabel }) {
   );
 }
 
+// ── Browse zero state: "Search by" mode chips (desktop) ───────────────────────
+// Advertises what the box accepts (decision 8). Static labels; the Photo chip
+// opens the camera scan. Mobile uses a rotating placeholder instead (Phase 3).
+function SearchModeChips({ onPhoto }) {
+  const { t } = useTranslation("common");
+  const modes = [
+    t("smartItemSearch.searchModes.productName", "Product name"),
+    t("smartItemSearch.searchModes.storeUrl", "Store URL"),
+    t("smartItemSearch.searchModes.decathlonId", "Decathlon item ID"),
+  ];
+  return (
+    <div className="hidden sm:flex items-center gap-2 pt-2 flex-wrap text-xs">
+      <span className="text-primary/40">{t("smartItemSearch.searchBy", "Search by:")}</span>
+      {modes.map((m) => (
+        <span
+          key={m}
+          className="rounded-full border border-dashed border-primary/25 px-2.5 py-0.5 text-primary/55 whitespace-nowrap"
+        >
+          {m}
+        </span>
+      ))}
+      <button
+        type="button"
+        onClick={onPhoto}
+        className="rounded-full border border-dashed border-primary/25 px-2.5 py-0.5 text-primary/55 hover:text-secondary hover:border-secondary/40 transition-colors whitespace-nowrap"
+      >
+        📷 {t("smartItemSearch.searchModes.photo", "Photo")}
+      </button>
+    </div>
+  );
+}
+
+// ── Browse zero state: optional featured-brand slot (config-driven) ───────────
+// Hidden entirely when FEATURED_BRAND is unset (decision 6). Browse zero state
+// only — never influences search relevance.
+function FeaturedBrand({ brand, onOpen }) {
+  const { t } = useTranslation("common");
+  if (!brand) return null;
+  return (
+    <button
+      type="button"
+      onClick={() => onOpen(brand)}
+      className="mx-5 mt-3 flex items-center gap-3 rounded-lg border border-primary/15 px-3 py-2 text-left hover:bg-primary/5 transition-colors"
+    >
+      <span className="text-[9.5px] font-semibold uppercase tracking-wider text-accent flex-none">
+        {t("smartItemSearch.featured", "Featured")}
+      </span>
+      {brand.imageUrl && (
+        <img src={brand.imageUrl} alt="" className="h-6 w-6 rounded object-contain flex-none" />
+      )}
+      <span className="text-sm font-semibold text-primary truncate">{brand.name}</span>
+      <span className="ml-auto text-xs text-primary/50 underline underline-offset-2 whitespace-nowrap">
+        {t("smartItemSearch.browseRange", "Browse the range →")}
+      </span>
+    </button>
+  );
+}
+
+// ── Browse zero state: 14 locked category tiles (decision 6 / 15) ─────────────
+// Name + count, never icon-only; taxonomy order; ragged last row accepted (no
+// filler tiles). A tile drills into results scoped to that category.
+function CategoryTileGrid({ counts, onPick }) {
+  const { t, i18n } = useTranslation("common");
+  const fmt = (n) => Number(n).toLocaleString(i18n.language || undefined);
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 px-5 py-4">
+      {CATALOG_CATEGORIES.map((cat) => (
+        <button
+          key={cat}
+          type="button"
+          onClick={() => onPick(cat)}
+          className="flex flex-col gap-1.5 rounded-lg border border-primary/15 px-3 py-3 text-left hover:bg-primary/5 transition-colors"
+        >
+          <span className="h-5 w-5 rounded border border-dashed border-primary/25 flex-none" />
+          <span className="text-[13px] font-semibold text-primary leading-tight">{tCategory(t, cat)}</span>
+          <span className="text-[10.5px] text-primary/40 tabular-nums">
+            {counts?.[cat] != null ? fmt(counts[cat]) : "—"}
+          </span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ── Facet row: count + active category chip + subcategory chips (decision 7) ──
+// Horizontal scroll; Brand chip is a later drop-in.
+function FacetRow({ shownCount, totalCount, category, subcategory, onClearCategory, onPickSub }) {
+  const { t, i18n } = useTranslation("common");
+  const fmt = (n) => Number(n).toLocaleString(i18n.language || undefined);
+  const subs = category ? CATALOG_SUBCATEGORIES[category] || [] : [];
+  const countLabel =
+    shownCount != null && totalCount != null
+      ? t("smartItemSearch.facetCount", "{{shown}} of {{total}} items", {
+          shown: fmt(shownCount),
+          total: fmt(totalCount),
+        })
+      : shownCount != null
+        ? t("smartItemSearch.catalogResultCount", "{{count}} items in catalog", { count: shownCount })
+        : "";
+  return (
+    <div
+      className="flex items-center gap-2 px-5 py-2 border-b border-primary/10 overflow-x-auto flex-shrink-0"
+      style={{ scrollbarWidth: "none" }}
+    >
+      {countLabel && (
+        <span className="text-[11.5px] text-primary/45 tabular-nums whitespace-nowrap flex-none">
+          {countLabel}
+        </span>
+      )}
+      {category && (
+        <button
+          type="button"
+          onClick={onClearCategory}
+          className="flex-none flex items-center gap-1 rounded-full bg-secondary text-white px-2.5 py-0.5 text-xs whitespace-nowrap"
+        >
+          {tCategory(t, category)}
+          <FiX size={11} />
+        </button>
+      )}
+      {subs.map((sub) => (
+        <button
+          key={sub}
+          type="button"
+          onClick={() => onPickSub(subcategory === sub ? null : sub)}
+          className={`flex-none rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap border transition-colors ${
+            subcategory === sub
+              ? "bg-secondary text-white border-secondary"
+              : "border-primary/20 text-primary/60 hover:border-secondary/50 hover:text-primary"
+          }`}
+        >
+          {sub}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 // ── Main component ─────────────────────────────────────────────────────────────
 /**
  * Props:
@@ -586,7 +724,6 @@ export default function SmartItemSearch({
   const [categoryFilter, setCategoryFilter] = useState(null);
   const [subcategoryFilter, setSubcategoryFilter] = useState(null);
   const [brandFilter, setBrandFilter] = useState(null);
-  const [brandOptions, setBrandOptions] = useState([]);
   const searchRef = useRef(null);
   const lastAiFillRef = useRef(null); // { query, data } from the last AI fill
 
@@ -627,6 +764,7 @@ export default function SmartItemSearch({
   const [catalogLoading, setCatalogLoading] = useState(false);
   const [catalogTotal, setCatalogTotal] = useState(null);
   const [catalogAllTotal, setCatalogAllTotal] = useState(null);
+  const [categoryCounts, setCategoryCounts] = useState(null); // { [category]: count } for browse tiles
 
   // Selection
   const [myGearSelected, setMyGearSelected] = useState(new Set());
@@ -656,7 +794,6 @@ export default function SmartItemSearch({
   // Photo scan modal
   const [showScanModal, setShowScanModal] = useState(false);
   const [scanFile, setScanFile] = useState(null);
-  const [showFilters, setShowFilters] = useState(false);
 
   const closeScanModal = () => {
     setShowScanModal(false);
@@ -787,6 +924,15 @@ export default function SmartItemSearch({
       .catch(() => {});
   }, []);
 
+  // Per-category counts for the browse zero-state tiles (tabLayout only).
+  useEffect(() => {
+    if (!tabLayout) return;
+    api
+      .get("/catalog/category-counts")
+      .then(({ data }) => setCategoryCounts(data || {}))
+      .catch(() => {});
+  }, [tabLayout]);
+
   // Debounce
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedQuery(query), 400);
@@ -797,17 +943,6 @@ export default function SmartItemSearch({
     setSubcategoryFilter(null);
   }, [categoryFilter]);
 
-  // Fetch brand options for tabLayout dropdowns
-  useEffect(() => {
-    if (!tabLayout) return;
-    const params = {};
-    if (categoryFilter) params.category = categoryFilter;
-    if (subcategoryFilter) params.subcategory = subcategoryFilter;
-    api
-      .get("/catalog/brands", { params })
-      .then(({ data }) => setBrandOptions(data || []))
-      .catch(() => setBrandOptions([]));
-  }, [categoryFilter, subcategoryFilter, tabLayout]);
 
   // Catalog search — skipped for URL queries (they never match catalog text fields)
   useEffect(() => {
@@ -1396,74 +1531,23 @@ export default function SmartItemSearch({
             </p>
           )}
 
-          {tabLayout && (
-            <div className="mt-1.5 flex items-center justify-between gap-2">
-              <p className="text-xs text-primary/35 truncate">
-                {catalogCountForDisplay != null
-                  ? t("smartItemSearch.catalogResultCount", "{{count}} items in catalog", { count: catalogCountForDisplay })
-                  : !query
-                    ? t("smartItemSearch.tabSearchHint", "Type & press Enter · Paste a link · Snap a photo")
-                    : " "}
-              </p>
-              <button
-                type="button"
-                onClick={() => setShowFilters((v) => !v)}
-                className="text-xs text-primary/50 hover:text-primary/80 underline underline-offset-2 flex-shrink-0"
-              >
-                {t("smartItemSearch.browseToggle", "Browse categories")}
-              </button>
-            </div>
-          )}
-
-          {tabLayout && (
-            <div
-              className={`grid transition-[grid-template-rows] duration-200 ease-in-out ${
-                showFilters || categoryFilter || subcategoryFilter || brandFilter ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-              }`}
-            >
-              <div
-                className={`overflow-hidden transition-opacity duration-150 ease-in-out ${
-                  showFilters || categoryFilter || subcategoryFilter || brandFilter ? "opacity-100" : "opacity-0"
-                }`}
-              >
-                <div className="mt-2 flex gap-1.5">
-                  <select
-                    value={categoryFilter || ""}
-                    onChange={(e) => setCategoryFilter(e.target.value || null)}
-                    className="flex-1 min-w-0 border border-primary/20 rounded-lg px-2 py-1.5 text-xs text-primary bg-base-100 cursor-pointer"
-                  >
-                    <option value="">{t("smartItemSearch.allCategories", "All Categories")}</option>
-                    {CATALOG_CATEGORIES.map((cat) => (
-                      <option key={cat} value={cat}>{tCategory(t, cat)}</option>
-                    ))}
-                  </select>
-                  <select
-                    value={subcategoryFilter || ""}
-                    onChange={(e) => setSubcategoryFilter(e.target.value || null)}
-                    disabled={!categoryFilter || !(CATALOG_SUBCATEGORIES[categoryFilter]?.length)}
-                    className="flex-1 min-w-0 border border-primary/20 rounded-lg px-2 py-1.5 text-xs text-primary bg-base-100 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-                  >
-                    <option value="">{t("smartItemSearch.allTypes", "All Types")}</option>
-                    {(CATALOG_SUBCATEGORIES[categoryFilter] || []).map((sub) => (
-                      <option key={sub} value={sub}>{sub}</option>
-                    ))}
-                  </select>
-                  <select
-                    value={brandFilter || ""}
-                    onChange={(e) => setBrandFilter(e.target.value || null)}
-                    disabled={brandOptions.length === 0}
-                    className="flex-1 min-w-0 border border-primary/20 rounded-lg px-2 py-1.5 text-xs text-primary bg-base-100 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-                  >
-                    <option value="">{t("smartItemSearch.allBrands", "All Brands")}</option>
-                    {Array.from(new Set(brandFilter ? [brandFilter, ...brandOptions] : brandOptions)).map((b) => (
-                      <option key={b} value={b}>{b}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </div>
+          {/* Browse zero state advertises what the box accepts (decision 8) */}
+          {tabLayout && !hasSearchIntent && (
+            <SearchModeChips onPhoto={() => setShowScanModal(true)} />
           )}
         </div>
+      )}
+
+      {/* ── Facet row (tabLayout, search intent) — count + category + subs ──── */}
+      {tabLayout && hasSearchIntent && !showingCustomForm && !aiLoading && (
+        <FacetRow
+          shownCount={catalogTotal}
+          totalCount={catalogAllTotal}
+          category={categoryFilter}
+          subcategory={subcategoryFilter}
+          onClearCategory={() => setCategoryFilter(null)}
+          onPickSub={setSubcategoryFilter}
+        />
       )}
 
       {/* ── Mobile category chips (non-tabLayout only) ────────────────────── */}
@@ -1543,6 +1627,18 @@ export default function SmartItemSearch({
         ) : aiLoading ? (
           <div className="flex-1 overflow-y-auto min-h-0 px-5">
             <AiSearchProgress urlQuery={isUrl(query)} />
+          </div>
+        ) : tabLayout && !hasSearchIntent ? (
+          // Browse zero state (decision 6): featured slot + 14 category tiles
+          <div className="flex-1 overflow-y-auto min-h-0">
+            <FeaturedBrand
+              brand={FEATURED_BRAND}
+              onOpen={(b) => {
+                if (b?.category) setCategoryFilter(b.category);
+                setBrandFilter(b?.brand || b?.name || null);
+              }}
+            />
+            <CategoryTileGrid counts={categoryCounts} onPick={(cat) => setCategoryFilter(cat)} />
           </div>
         ) : hasNoResults ? (
           <div className="flex-1 overflow-y-auto min-h-0 px-5">

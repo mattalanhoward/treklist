@@ -107,6 +107,25 @@ router.get("/brands", auth, async (req, res) => {
   }
 });
 
+// GET /api/catalog/category-counts
+// Active-item counts per top-level category, for the add-gear browse zero state.
+// Returns a { [category]: count } map.
+router.get("/category-counts", auth, async (req, res) => {
+  try {
+    const rows = await CatalogItem.aggregate([
+      { $match: { isActive: true } },
+      { $group: { _id: "$category", count: { $sum: 1 } } },
+    ]);
+    const counts = {};
+    rows.forEach((r) => {
+      if (r._id) counts[r._id] = r.count;
+    });
+    res.json(counts);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch category counts" });
+  }
+});
+
 // GET /api/catalog/items
 // Public read-only list of active catalog items
 router.get("/items", auth, async (req, res) => {

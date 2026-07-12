@@ -732,7 +732,17 @@
     "nSelected_other": "{{count}} geselecteerd",
     "addNToDest": "{{count}} toevoegen aan {{dest}}",
     "selectRow": "{{name}} selecteren",
-    "resultsLabel": "Zoekresultaten"
+    "resultsLabel": "Zoekresultaten",
+    "searchBy": "Zoeken op:",
+    "searchModes": {
+      "productName": "Productnaam",
+      "storeUrl": "Winkel-URL",
+      "decathlonId": "Decathlon-artikelnummer",
+      "photo": "Foto"
+    },
+    "featured": "Uitgelicht",
+    "browseRange": "Bekijk het assortiment →",
+    "facetCount": "{{shown}} van {{total}} artikelen"
   },
   "photoScanModal": {
     "title": "Uitrusting scannen",

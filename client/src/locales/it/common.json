@@ -732,7 +732,17 @@
     "nSelected_other": "{{count}} selezionati",
     "addNToDest": "Aggiungi {{count}} a {{dest}}",
     "selectRow": "Seleziona {{name}}",
-    "resultsLabel": "Risultati della ricerca"
+    "resultsLabel": "Risultati della ricerca",
+    "searchBy": "Cerca per:",
+    "searchModes": {
+      "productName": "Nome del prodotto",
+      "storeUrl": "URL del negozio",
+      "decathlonId": "ID articolo Decathlon",
+      "photo": "Foto"
+    },
+    "featured": "In evidenza",
+    "browseRange": "Esplora la gamma →",
+    "facetCount": "{{shown}} di {{total}} articoli"
   },
   "photoScanModal": {
     "title": "Scansiona attrezzatura",

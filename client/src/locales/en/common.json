@@ -739,7 +739,17 @@
     "nSelected_other": "{{count}} selected",
     "addNToDest": "Add {{count}} to {{dest}}",
     "selectRow": "Select {{name}}",
-    "resultsLabel": "Search results"
+    "resultsLabel": "Search results",
+    "searchBy": "Search by:",
+    "searchModes": {
+      "productName": "Product name",
+      "storeUrl": "Store URL",
+      "decathlonId": "Decathlon item ID",
+      "photo": "Photo"
+    },
+    "featured": "Featured",
+    "browseRange": "Browse the range →",
+    "facetCount": "{{shown}} of {{total}} items"
   },
   "photoScanModal": {
     "title": "Scan Gear",
