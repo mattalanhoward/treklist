@@ -800,7 +800,7 @@ function CatalogPreviewSheet({
  *   swapMode             boolean  — single-select swap: hides checkboxes + batch bar,
  *                                   pane/sheet primary button reads "Swap for this" and
  *                                   commits immediately (replaces the source gear item)
- *   showMyGear           boolean  — false for library-only contexts (AddGearDrawer, GlobalItemModal)
+ *   showMyGear           boolean  — false for library-only contexts (GlobalItemModal)
  *   twoPane              boolean  — desktop master–detail (result list + preview pane)
  *   destinationLabel     string   — echoed in the commit button ("Add 2 to Hiking")
  *   excludeGlobalItemId  string   — for swap: exclude this globalItem from My Gear results
@@ -1189,6 +1189,21 @@ export default function SmartItemSearch({
       })
       .finally(() => setCatalogLoading(false));
   }, [debouncedQuery, categoryFilter, subcategoryFilter, brandFilter]);
+
+  // Zero-result search log (handoff CUT section → demand signal). Fires
+  // fire-and-forget once per settled text query that returns nothing — a
+  // catalog-gap signal that feeds the admin backlog. Debounced by using the
+  // already-debounced query; deduped per session so one query logs once.
+  const loggedZeroQueries = useRef(new Set());
+  useEffect(() => {
+    const q = debouncedQuery.trim();
+    if (!q || isUrl(q) || catalogLoading) return;
+    if (catalogResults.length > 0) return;
+    const key = q.toLowerCase();
+    if (loggedZeroQueries.current.has(key)) return;
+    loggedZeroQueries.current.add(key);
+    api.post("/catalog/search-log", { query: q }).catch(() => {});
+  }, [debouncedQuery, catalogLoading, catalogResults]);
 
   useEffect(() => {
     if (tabLayout) return;

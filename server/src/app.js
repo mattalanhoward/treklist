@@ -136,6 +136,7 @@ app.use("/api/posts/:postId/comments", commentsRoutes);
 app.use("/api/comments", commentsRoutes);
 app.use("/api/notifications", authMiddleware, notificationsRoutes);
 app.use("/api/admin/community", authMiddleware, requireAdmin, require("./routes/adminCommunity"));
+app.use("/api/admin/reports", authMiddleware, requireAdmin, require("./routes/adminReports"));
 app.use("/api/translate", translateRoutes);
 
 app.use("/sitemap.xml", require("./routes/sitemap"));

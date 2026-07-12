@@ -1,5 +1,5 @@
 // src/components/GlobalItemEditModal.jsx
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import api from "../services/api";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -8,18 +8,20 @@ import ConfirmDialog from "./ConfirmDialog";
 import { useUnit } from "../hooks/useUnit";
 import { useWeightInput } from "../hooks/useWeightInput";
 import { useUserSettings } from "../contexts/UserSettings";
-import { FiX } from "react-icons/fi";
+import { FiX, FiFlag } from "react-icons/fi";
 import { tItemType, tCategory, CATALOG_CATEGORIES } from "../config/catalogTaxonomy";
 import ImageCarousel from "./ImageCarousel";
 import { merchantFromUrl } from "../utils/merchantFromUrl";
 import VariantSelector from "./VariantSelector";
 import ButtonLink from "./ui/ButtonLink";
+import ReportIssuePopover from "./ReportIssuePopover";
 import Spinner from "../components/ui/Spinner";
 import {
   fetchGlobalItemCached,
   invalidateGlobalItemCache,
 } from "../services/globalItemCache";
 import { formatAttributesForDisplay } from "../utils/attributeLabels";
+import { buildWeightDisclosure } from "../utils/weightDisclosure";
 import { resizedImageUrl } from "../utils/imageCdn";
 
 export default function GlobalItemEditModal({
@@ -30,8 +32,10 @@ export default function GlobalItemEditModal({
   listId,
   catId,
   context = "global", // "global" | "list"
+  // Hide the ⚑ report flag on the public read-only variant (handoff).
+  readOnly = false,
 }) {
-  const { t } = useTranslation("common");
+  const { t, i18n } = useTranslation("common");
 
   const [form, setForm] = useState({
     catalogCategory: "",
@@ -63,6 +67,12 @@ export default function GlobalItemEditModal({
   const [catalogImages, setCatalogImages] = useState([]);
   const [loadingImages, setLoadingImages] = useState(false);
   const [primaryOffer, setPrimaryOffer] = useState(null);
+  // Manufacturer-spec base weight (for the weight hero / disclosure), distinct
+  // from the user's editable measured override.
+  const [catalogWeightGrams, setCatalogWeightGrams] = useState(null);
+  const [catalogUpdatedAt, setCatalogUpdatedAt] = useState(null);
+  const reportFlagRef = useRef(null);
+  const [reportOpen, setReportOpen] = useState(false);
 
   // Variant selection (catalog items that ship in Temperature × Size etc.)
   const [variantAxes, setVariantAxes] = useState([]);
@@ -189,6 +199,8 @@ export default function GlobalItemEditModal({
         setVariantAxes([]);
         setVariants([]);
         setDefaultVariantKey(null);
+        setCatalogWeightGrams(null);
+        setCatalogUpdatedAt(null);
         setLoadingImages(false);
         return;
       }
@@ -199,6 +211,8 @@ export default function GlobalItemEditModal({
         setVariantAxes([]);
         setVariants([]);
         setDefaultVariantKey(null);
+        setCatalogWeightGrams(null);
+        setCatalogUpdatedAt(null);
         setLoadingImages(false);
         return;
       }
@@ -233,6 +247,10 @@ export default function GlobalItemEditModal({
           setVariantAxes(Array.isArray(data.variantAxes) ? data.variantAxes : []);
           setVariants(Array.isArray(data.variants) ? data.variants : []);
           setDefaultVariantKey(data.defaultVariantKey || null);
+          setCatalogWeightGrams(
+            typeof data.weightGrams === "number" ? data.weightGrams : null,
+          );
+          setCatalogUpdatedAt(data.updatedAt || null);
         }
       } catch {
         if (!cancelled) {
@@ -241,6 +259,8 @@ export default function GlobalItemEditModal({
           setVariantAxes([]);
           setVariants([]);
           setDefaultVariantKey(null);
+          setCatalogWeightGrams(null);
+          setCatalogUpdatedAt(null);
         }
       } finally {
         if (!cancelled) setLoadingImages(false);
@@ -526,6 +546,13 @@ export default function GlobalItemEditModal({
 
       const listPayload = { ...basePayload };
 
+      // Editing an item that was flagged "size not set": once the user has a
+      // variant selected and saves, the size is considered chosen — clear it
+      // (add-gear decision 14: visible + editable on the gear item).
+      if (isListContext && item?.sizeUnset && hasVariants && selectedVariant) {
+        listPayload.sizeUnset = false;
+      }
+
       let updatedSomething = false;
       let touchedGlobal = false;
 
@@ -587,6 +614,35 @@ export default function GlobalItemEditModal({
     const formatted = formatAttributesForDisplay(merged, template?.itemType, measurementSystem);
     return formatted.length ? formatted : null;
   }, [viewMode, template?.attributes, template?.itemType, measurementSystem, selectedVariant]);
+
+  // Manufacturer-spec weight hero (imported items): the selected variant's
+  // weight, else the catalog base weight. Distinct from the editable override.
+  const heroWeightGrams =
+    selectedVariant && typeof selectedVariant.weightGrams === "number"
+      ? selectedVariant.weightGrams
+      : typeof catalogWeightGrams === "number"
+        ? catalogWeightGrams
+        : null;
+  const heroWeightDisplay =
+    typeof heroWeightGrams === "number" ? formatInput(heroWeightGrams) : "";
+  const weightDisclosure = useMemo(
+    () =>
+      buildWeightDisclosure({
+        t,
+        locale: i18n.language,
+        hasVariants,
+        variants,
+        updatedAt: catalogUpdatedAt || template?.updatedAt,
+      }),
+    [t, i18n.language, hasVariants, variants, catalogUpdatedAt, template?.updatedAt],
+  );
+
+  // Close the report popover when the underlying product changes.
+  useEffect(() => {
+    setReportOpen(false);
+  }, [resolvedProductId]);
+
+  const showReportFlag = isImported && Boolean(resolvedProductId) && !readOnly;
 
   // PreviewModal-style full-screen spinner conditions
   const showFullscreenSpinner =
@@ -802,6 +858,23 @@ export default function GlobalItemEditModal({
               >
                 <div className="sm:flex-1">
                   <div className="rounded overflow-hidden">
+                    {/* Weight hero + precision disclosure (aligns with the
+                        add-gear preview pane). The editable override lives in
+                        the weight row below. */}
+                    {heroWeightDisplay && (
+                      <div className="px-3 pt-1 pb-2 mb-1 border-b border-primary/10">
+                        <div className="flex items-baseline gap-1.5">
+                          <span className="text-3xl font-bold text-primary tabular-nums tracking-tight">
+                            {heroWeightDisplay}
+                          </span>
+                          <span className="text-sm text-primary/60">{unitLabel}</span>
+                        </div>
+                        <span className="text-[11.5px] text-primary/45">
+                          {weightDisclosure}
+                        </span>
+                      </div>
+                    )}
+
                     <div className="grid grid-cols-[140px_1fr] gap-3 items-center px-3 py-1">
                       <div className="text-primary font-semibold">
                         {t("globalItemModal.labels.itemType")}:
@@ -894,7 +967,7 @@ export default function GlobalItemEditModal({
                 )}
               </div>
 
-              <div className="mt-4 mb-6 px-3">
+              <div className="mt-4 mb-4 px-3">
                 <label className="block font-semibold text-primary mb-1">
                   {t("globalItemModal.labels.description")}
                 </label>
@@ -902,6 +975,43 @@ export default function GlobalItemEditModal({
                   {form.description || "—"}
                 </div>
               </div>
+
+              {/* Report an issue — owners notice bad catalog data most
+                  (add-gear decision 12). Hidden on the public read-only view. */}
+              {showReportFlag && (
+                <div className="px-3 mb-4">
+                  <button
+                    ref={reportFlagRef}
+                    type="button"
+                    onClick={() => setReportOpen((v) => !v)}
+                    className="flex items-center gap-1.5 text-[11.5px] text-primary/45 hover:text-primary/70 transition-colors"
+                  >
+                    <FiFlag size={12} />
+                    {t("reportIssue.flag", "Report an issue")}
+                  </button>
+                  {reportOpen && (
+                    <ReportIssuePopover
+                      anchorRef={reportFlagRef}
+                      item={{
+                        _id: resolvedProductId,
+                        name: form.name,
+                        category: template?.catalogCategory || item?.catalogCategory,
+                        itemType: form.itemType,
+                      }}
+                      variantKey={selectedVariant?.key || null}
+                      shownWeight={heroWeightDisplay ? `${heroWeightDisplay} ${unitLabel}` : ""}
+                      shownCategory={
+                        tCategory(t, template?.catalogCategory) ||
+                        template?.catalogCategory ||
+                        ""
+                      }
+                      shownItemType={tItemType(t, form.itemType) || form.itemType || ""}
+                      disclosure={weightDisclosure}
+                      onClose={() => setReportOpen(false)}
+                    />
+                  )}
+                </div>
+              )}
             </>
           )}
           </div>

@@ -417,7 +417,9 @@
       "toggleWorn": "Alternar llevado",
       "openProductPageTitle": "Abrir página del producto",
       "openProductPageAria": "Abrir página del producto (enlace pagado)",
-      "itemOptionsA11y": "Opciones del artículo"
+      "itemOptionsA11y": "Opciones del artículo",
+      "sizeNotSet": "Talla sin definir",
+      "sizeNotSetHint": "No se eligió talla — toca para definirla"
     },
     "actions": {
       "swap": "Intercambiar artículo"
@@ -1630,6 +1632,29 @@
     },
     "whw": {
       "name": "WHW"
+    }
+  },
+  "reportIssue": {
+    "flag": "Informar de un problema",
+    "flagHint": "peso · categoría · nombre · imagen",
+    "title": "Informar de un problema",
+    "titleFor": "Informar de un problema — {{name}}",
+    "fields": {
+      "weight": "El peso es incorrecto",
+      "category": "Categoría o tipo de artículo incorrecto",
+      "name": "El nombre o la marca es incorrecto",
+      "image": "Imagen o enlace de compra roto",
+      "other": "Otra cosa"
+    },
+    "notePlaceholder": "Cuéntanos más (opcional) — p. ej. «mi báscula marca 162 g»",
+    "autoAttached": "adjuntado automáticamente",
+    "buttons": {
+      "send": "Enviar informe",
+      "sending": "Enviando…"
+    },
+    "toasts": {
+      "sent": "Gracias, informe enviado",
+      "failed": "No se pudo enviar el informe"
     }
   }
 }

@@ -57,7 +57,9 @@ export default function AddGearItemModal({ listId, categoryId, categoryName, onC
     return max + 1;
   };
 
-  const addGlobalItemsToList = async (globalItems) => {
+  // sizeUnsetProductIds: catalog ids batch-added without a chosen fit — the
+  // resulting gear rows are flagged "size not set" (add-gear decision 14).
+  const addGlobalItemsToList = async (globalItems, sizeUnsetProductIds = null) => {
     const startPos = computeStartPos();
     const created = await Promise.all(
       globalItems.map((gi, idx) =>
@@ -76,6 +78,7 @@ export default function AddGearItemModal({ listId, categoryId, categoryName, onC
             consumable: gi.consumable,
             quantity: 1,
             position: startPos + idx,
+            sizeUnset: Boolean(sizeUnsetProductIds?.has(String(gi.productId))),
           })
           .then((r) => r.data),
       ),
@@ -134,7 +137,10 @@ export default function AddGearItemModal({ listId, categoryId, categoryName, onC
           ids: selection.catalogIds,
           variantSelections: selection.variantSelections,
         });
-        created = await addGlobalItemsToList(data.items || []);
+        const sizeUnsetProductIds = new Set(
+          (selection.sizeUnset || []).map(String),
+        );
+        created = await addGlobalItemsToList(data.items || [], sizeUnsetProductIds);
         window.dispatchEvent(new CustomEvent("global-items:updated"));
       } else if (selection.source === "newItem") {
         const f = selection.fields;

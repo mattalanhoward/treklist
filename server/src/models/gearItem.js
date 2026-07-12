@@ -120,6 +120,14 @@ const GearItemSchema = new mongoose.Schema(
       default: 1,
     },
 
+    // True when this row was batch-added from a fit-variant catalog item
+    // without the user picking a size — the default fit was used and the row
+    // is flagged so the user can set the size later (add-gear decision 14).
+    sizeUnset: {
+      type: Boolean,
+      default: false,
+    },
+
     // Position of this item within its category/column for drag-and-drop
     // ordering. This is the primary sort key in the UI.
     position: {

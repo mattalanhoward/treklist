@@ -40,10 +40,20 @@ import { resizedImageUrl } from "../utils/imageCdn";
 const TABS = [
   { id: "gearCatalog", label: "Gear catalog" },
   { id: "gearCreate", label: "Add catalog item" },
+  { id: "qa", label: "QA / Reports" },
   { id: "users", label: "Users" },
   { id: "lists", label: "Public lists" },
   { id: "community", label: "Community" },
 ];
+
+// Field labels for the catalog report queue (mirror the report popover).
+const REPORT_FIELD_LABELS = {
+  weight: "Weight incorrect",
+  category: "Wrong category / type",
+  name: "Name / brand wrong",
+  image: "Image / link broken",
+  other: "Something else",
+};
 
 const NETWORK_OPTIONS = [
   { value: "", label: "Select…" },
@@ -6177,6 +6187,230 @@ function CommunityModerationSection() {
   );
 }
 
+// ── QA / Reports: crowd-sourced catalog report queue + zero-result search log ──
+// Feeds the catalog curation workflow (add-gear Phase 5). Both tables sort by
+// demand (count desc) so the hottest problems / gaps surface first.
+function ReportsQaSection() {
+  const [reports, setReports] = useState([]);
+  const [queries, setQueries] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [status, setStatus] = useState("open"); // open | resolved | all
+  const [updatingId, setUpdatingId] = useState(null);
+
+  const load = async (statusOverride) => {
+    const nextStatus = statusOverride ?? status;
+    setLoading(true);
+    setError("");
+    try {
+      const [rep, log] = await Promise.all([
+        api.get("/admin/reports", { params: { status: nextStatus } }),
+        api.get("/admin/reports/search-log"),
+      ]);
+      setReports(rep.data.reports || []);
+      setQueries(log.data.queries || []);
+    } catch (err) {
+      setError(err?.response?.data?.error || "Failed to load QA data.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    load("open");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const setReportStatus = async (report, nextStatus) => {
+    setUpdatingId(report._id);
+    try {
+      await api.patch(`/admin/reports/${report._id}`, { status: nextStatus });
+      // Drop it from the current view if it no longer matches the filter.
+      if (status !== "all" && status !== nextStatus) {
+        setReports((prev) => prev.filter((r) => r._id !== report._id));
+      } else {
+        setReports((prev) =>
+          prev.map((r) => (r._id === report._id ? { ...r, status: nextStatus } : r)),
+        );
+      }
+    } catch {
+      toast.error("Failed to update report");
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const fmtDate = (d) => (d ? new Date(d).toLocaleDateString() : "—");
+
+  return (
+    <div className="flex flex-col gap-6 pb-8">
+      {error && <div className="text-error text-sm">{error}</div>}
+
+      {/* Catalog report queue */}
+      <section>
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-base font-semibold text-primary">
+            Catalog reports {loading ? "" : `(${reports.length})`}
+          </h2>
+          <div className="flex items-center gap-2 text-sm">
+            <select
+              value={status}
+              onChange={(e) => {
+                setStatus(e.target.value);
+                load(e.target.value);
+              }}
+              className="border border-primary/30 rounded px-2 py-1 bg-base-100 text-primary"
+            >
+              <option value="open">Open</option>
+              <option value="resolved">Resolved</option>
+              <option value="all">All</option>
+            </select>
+            <button
+              type="button"
+              onClick={() => load()}
+              className="px-2 py-1 rounded bg-secondary/10 text-secondary hover:bg-secondary/20"
+            >
+              Refresh
+            </button>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto border border-base-300 rounded bg-base-100">
+          <table className="min-w-full text-sm">
+            <thead className="bg-neutral/30 text-primary/70 text-left">
+              <tr>
+                <th className="px-3 py-2 font-medium">Item</th>
+                <th className="px-3 py-2 font-medium">Issue</th>
+                <th className="px-3 py-2 font-medium text-right">Count</th>
+                <th className="px-3 py-2 font-medium">Last note</th>
+                <th className="px-3 py-2 font-medium">Shown</th>
+                <th className="px-3 py-2 font-medium">Last</th>
+                <th className="px-3 py-2 font-medium">Status</th>
+                <th className="px-3 py-2" />
+              </tr>
+            </thead>
+            <tbody>
+              {!loading && reports.length === 0 && (
+                <tr>
+                  <td colSpan={8} className="px-3 py-6 text-center text-primary/50">
+                    No reports.
+                  </td>
+                </tr>
+              )}
+              {reports.map((r) => (
+                <tr key={r._id} className="border-t border-base-200 align-top">
+                  <td className="px-3 py-2">
+                    <div className="font-medium text-primary">
+                      {r.catalogItem
+                        ? `${r.catalogItem.brand ? r.catalogItem.brand + " " : ""}${r.catalogItem.name || ""}`
+                        : "(deleted item)"}
+                    </div>
+                    <div className="text-[11px] text-primary/50">
+                      {r.catalogItem?.category || "—"}
+                      {r.variantKey ? ` · ${r.variantKey}` : ""}
+                    </div>
+                  </td>
+                  <td className="px-3 py-2 whitespace-nowrap">
+                    {REPORT_FIELD_LABELS[r.field] || r.field}
+                  </td>
+                  <td className="px-3 py-2 text-right tabular-nums font-semibold">
+                    {r.count}
+                  </td>
+                  <td className="px-3 py-2 max-w-[220px] text-primary/80 break-words">
+                    {r.lastNote || "—"}
+                  </td>
+                  <td className="px-3 py-2 text-[11px] text-primary/60 max-w-[180px] break-words">
+                    {r.shownValues
+                      ? [r.shownValues.weight, r.shownValues.category, r.shownValues.itemType]
+                          .filter(Boolean)
+                          .join(" / ") || "—"
+                      : "—"}
+                  </td>
+                  <td className="px-3 py-2 whitespace-nowrap text-primary/60">
+                    {fmtDate(r.lastReportedAt)}
+                  </td>
+                  <td className="px-3 py-2">
+                    <span
+                      className={
+                        r.status === "resolved"
+                          ? "text-primary/50"
+                          : "text-accent font-medium"
+                      }
+                    >
+                      {r.status}
+                    </span>
+                  </td>
+                  <td className="px-3 py-2 whitespace-nowrap">
+                    {r.status === "open" ? (
+                      <button
+                        type="button"
+                        disabled={updatingId === r._id}
+                        onClick={() => setReportStatus(r, "resolved")}
+                        className="px-2 py-1 rounded bg-secondary text-white hover:bg-secondary/80 disabled:opacity-50"
+                      >
+                        Resolve
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        disabled={updatingId === r._id}
+                        onClick={() => setReportStatus(r, "open")}
+                        className="px-2 py-1 rounded bg-neutralAlt text-primary hover:bg-neutralAlt/80 disabled:opacity-50"
+                      >
+                        Reopen
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* Zero-result search log */}
+      <section>
+        <h2 className="text-base font-semibold text-primary mb-2">
+          Zero-result searches {loading ? "" : `(${queries.length})`}
+        </h2>
+        <div className="overflow-x-auto border border-base-300 rounded bg-base-100">
+          <table className="min-w-full text-sm">
+            <thead className="bg-neutral/30 text-primary/70 text-left">
+              <tr>
+                <th className="px-3 py-2 font-medium">Query</th>
+                <th className="px-3 py-2 font-medium text-right">Count</th>
+                <th className="px-3 py-2 font-medium">Last seen</th>
+              </tr>
+            </thead>
+            <tbody>
+              {!loading && queries.length === 0 && (
+                <tr>
+                  <td colSpan={3} className="px-3 py-6 text-center text-primary/50">
+                    No zero-result searches logged.
+                  </td>
+                </tr>
+              )}
+              {queries.map((q) => (
+                <tr key={q._id} className="border-t border-base-200">
+                  <td className="px-3 py-2 text-primary break-words max-w-[420px]">
+                    {q.query}
+                  </td>
+                  <td className="px-3 py-2 text-right tabular-nums font-semibold">
+                    {q.count}
+                  </td>
+                  <td className="px-3 py-2 whitespace-nowrap text-primary/60">
+                    {fmtDate(q.lastSeenAt)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 function AdminView() {
   const [activeTab, setActiveTab] = useState("gearCatalog");
   const [duplicateSeed, setDuplicateSeed] = useState(null);
@@ -6239,6 +6473,7 @@ function AdminView() {
             onSeedConsumed={() => setDuplicateSeed(null)}
           />
         )}
+        {activeTab === "qa" && <ReportsQaSection />}
         {activeTab === "users" && <UsersSection />}
         {activeTab === "lists" && <PublicListsSection />}
         {activeTab === "community" && <CommunityModerationSection />}

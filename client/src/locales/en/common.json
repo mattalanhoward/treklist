@@ -424,7 +424,9 @@
       "toggleWorn": "Toggle worn",
       "openProductPageTitle": "Open product page",
       "openProductPageAria": "Open product page (paid link)",
-      "itemOptionsA11y": "Item options"
+      "itemOptionsA11y": "Item options",
+      "sizeNotSet": "Size not set",
+      "sizeNotSetHint": "No size chosen — tap to set it"
     },
     "actions": {
       "swap": "Swap item"
@@ -1630,6 +1632,29 @@
     },
     "whw": {
       "name": "WHW"
+    }
+  },
+  "reportIssue": {
+    "flag": "Report an issue",
+    "flagHint": "weight · category · name · image",
+    "title": "Report an issue",
+    "titleFor": "Report an issue — {{name}}",
+    "fields": {
+      "weight": "Weight is incorrect",
+      "category": "Wrong category or item type",
+      "name": "Name or brand is wrong",
+      "image": "Image or buy link is broken",
+      "other": "Something else"
+    },
+    "notePlaceholder": "Tell us more (optional) — e.g. “my scale says 162 g”",
+    "autoAttached": "auto-attached",
+    "buttons": {
+      "send": "Send report",
+      "sending": "Sending…"
+    },
+    "toasts": {
+      "sent": "Thanks — report sent",
+      "failed": "Couldn't send report"
     }
   }
 }

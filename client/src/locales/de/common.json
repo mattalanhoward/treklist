@@ -417,7 +417,9 @@
       "toggleWorn": "Getragen umschalten",
       "openProductPageTitle": "Produktseite öffnen",
       "openProductPageAria": "Produktseite öffnen (bezahlter Link)",
-      "itemOptionsA11y": "Item-Optionen"
+      "itemOptionsA11y": "Item-Optionen",
+      "sizeNotSet": "Größe nicht festgelegt",
+      "sizeNotSetHint": "Keine Größe gewählt – zum Festlegen tippen"
     },
     "actions": {
       "swap": "Artikel tauschen"
@@ -1630,6 +1632,29 @@
     },
     "whw": {
       "name": "WHW"
+    }
+  },
+  "reportIssue": {
+    "flag": "Problem melden",
+    "flagHint": "Gewicht · Kategorie · Name · Bild",
+    "title": "Problem melden",
+    "titleFor": "Problem melden — {{name}}",
+    "fields": {
+      "weight": "Gewicht ist falsch",
+      "category": "Falsche Kategorie oder Artikeltyp",
+      "name": "Name oder Marke ist falsch",
+      "image": "Bild oder Kauflink ist defekt",
+      "other": "Etwas anderes"
+    },
+    "notePlaceholder": "Mehr erzählen (optional) – z. B. „meine Waage zeigt 162 g“",
+    "autoAttached": "automatisch angehängt",
+    "buttons": {
+      "send": "Meldung senden",
+      "sending": "Senden…"
+    },
+    "toasts": {
+      "sent": "Danke – Meldung gesendet",
+      "failed": "Meldung konnte nicht gesendet werden"
     }
   }
 }

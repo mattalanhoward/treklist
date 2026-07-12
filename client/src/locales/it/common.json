@@ -417,7 +417,9 @@
       "toggleWorn": "Attiva/disattiva indossato",
       "openProductPageTitle": "Apri pagina prodotto",
       "openProductPageAria": "Apri pagina prodotto (link a pagamento)",
-      "itemOptionsA11y": "Opzioni articolo"
+      "itemOptionsA11y": "Opzioni articolo",
+      "sizeNotSet": "Taglia non impostata",
+      "sizeNotSetHint": "Nessuna taglia scelta — tocca per impostarla"
     },
     "actions": {
       "swap": "Sostituisci articolo"
@@ -1630,6 +1632,29 @@
     },
     "whw": {
       "name": "WHW"
+    }
+  },
+  "reportIssue": {
+    "flag": "Segnala un problema",
+    "flagHint": "peso · categoria · nome · immagine",
+    "title": "Segnala un problema",
+    "titleFor": "Segnala un problema — {{name}}",
+    "fields": {
+      "weight": "Il peso è errato",
+      "category": "Categoria o tipo di articolo errato",
+      "name": "Nome o marca errati",
+      "image": "Immagine o link di acquisto non funzionante",
+      "other": "Qualcos'altro"
+    },
+    "notePlaceholder": "Dicci di più (facoltativo) — es. «la mia bilancia segna 162 g»",
+    "autoAttached": "allegato automaticamente",
+    "buttons": {
+      "send": "Invia segnalazione",
+      "sending": "Invio…"
+    },
+    "toasts": {
+      "sent": "Grazie — segnalazione inviata",
+      "failed": "Impossibile inviare la segnalazione"
     }
   }
 }

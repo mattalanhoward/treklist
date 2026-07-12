@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 const { isValidObjectId } = mongoose;
 const CatalogItem = require("../models/catalogItem");
 const MerchantOffer = require("../models/merchantOffer");
+const CatalogReport = require("../models/catalogReport");
+const SearchLog = require("../models/searchLog");
 
 const auth = require("../middleware/auth");
 const User = require("../models/user");
@@ -123,6 +125,83 @@ router.get("/category-counts", auth, async (req, res) => {
     res.json(counts);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch category counts" });
+  }
+});
+
+// POST /api/catalog/report
+// File a crowd-sourced "report an issue" against a catalog item. Deduped by
+// (catalogItem, field) with a counter (decision 12). One request can dispute
+// several fields at once; each becomes/updates its own queue row.
+router.post("/report", auth, async (req, res) => {
+  try {
+    const { catalogItemId, note, variantKey, shownValues } = req.body || {};
+    if (!isValidObjectId(catalogItemId)) {
+      return res.status(400).json({ error: "Invalid catalog item id" });
+    }
+    const requested = Array.isArray(req.body?.fields)
+      ? req.body.fields
+      : req.body?.field
+        ? [req.body.field]
+        : [];
+    const fields = [...new Set(requested)].filter((f) =>
+      CatalogReport.FIELDS.includes(f),
+    );
+    if (!fields.length) {
+      return res.status(400).json({ error: "No valid report field selected" });
+    }
+
+    const exists = await CatalogItem.exists({ _id: catalogItemId });
+    if (!exists) return res.status(404).json({ error: "Catalog item not found" });
+
+    const trimmedNote = typeof note === "string" ? note.trim().slice(0, 1000) : "";
+    const now = new Date();
+
+    await Promise.all(
+      fields.map((field) =>
+        CatalogReport.updateOne(
+          { catalogItem: catalogItemId, field },
+          {
+            $inc: { count: 1 },
+            $set: {
+              status: "open",
+              variantKey: variantKey || null,
+              lastNote: trimmedNote,
+              shownValues: shownValues || null,
+              lastReporter: req.userId,
+              lastReportedAt: now,
+            },
+          },
+          { upsert: true },
+        ),
+      ),
+    );
+
+    res.json({ ok: true, fields });
+  } catch (err) {
+    console.error("POST /catalog/report error:", err);
+    res.status(500).json({ error: "Failed to file report" });
+  }
+});
+
+// POST /api/catalog/search-log
+// Fire-and-forget log of a settled zero-result catalog search. Upserts the
+// normalized query with a counter (handoff CUT section → demand signal).
+router.post("/search-log", auth, async (req, res) => {
+  try {
+    const raw = typeof req.body?.query === "string" ? req.body.query.trim() : "";
+    const query = raw.toLowerCase();
+    // Ignore empties and absurdly long strings (pasted URLs, junk).
+    if (!query || query.length > 120) return res.json({ ok: true });
+
+    await SearchLog.updateOne(
+      { query },
+      { $inc: { count: 1 }, $set: { lastSeenAt: new Date() } },
+      { upsert: true },
+    );
+    res.json({ ok: true });
+  } catch (err) {
+    // Non-fatal: this is fire-and-forget telemetry.
+    res.json({ ok: true });
   }
 });
 

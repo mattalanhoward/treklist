@@ -417,7 +417,9 @@
       "toggleWorn": "Gedragen aan/uit",
       "openProductPageTitle": "Productpagina openen",
       "openProductPageAria": "Productpagina openen (betaalde link)",
-      "itemOptionsA11y": "Itemopties"
+      "itemOptionsA11y": "Itemopties",
+      "sizeNotSet": "Maat niet ingesteld",
+      "sizeNotSetHint": "Geen maat gekozen — tik om in te stellen"
     },
     "actions": {
       "swap": "Artikel wisselen"
@@ -1630,6 +1632,29 @@
     },
     "whw": {
       "name": "WHW"
+    }
+  },
+  "reportIssue": {
+    "flag": "Probleem melden",
+    "flagHint": "gewicht · categorie · naam · afbeelding",
+    "title": "Probleem melden",
+    "titleFor": "Probleem melden — {{name}}",
+    "fields": {
+      "weight": "Gewicht is onjuist",
+      "category": "Verkeerde categorie of itemtype",
+      "name": "Naam of merk is onjuist",
+      "image": "Afbeelding of kooplink is kapot",
+      "other": "Iets anders"
+    },
+    "notePlaceholder": "Vertel ons meer (optioneel) — bijv. “mijn weegschaal zegt 162 g”",
+    "autoAttached": "automatisch toegevoegd",
+    "buttons": {
+      "send": "Melding versturen",
+      "sending": "Versturen…"
+    },
+    "toasts": {
+      "sent": "Bedankt — melding verzonden",
+      "failed": "Kon melding niet versturen"
     }
   }
 }

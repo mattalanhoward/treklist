@@ -155,6 +155,7 @@ router.post("/", async (req, res) => {
     consumable,
     quantity,
     position,
+    sizeUnset,
   } = req.body;
 
   // basic required validation
@@ -197,6 +198,7 @@ router.post("/", async (req, res) => {
       consumable,
       quantity,
       position,
+      sizeUnset: Boolean(sizeUnset),
     });
 
     // 4) Add hasOffer flag before returning
@@ -219,7 +221,7 @@ router.patch("/:itemId", async (req, res) => {
 
   // Build update object from allowed fields
   const updates = {};
-  for (const field of ["consumable", "worn", "quantity", "position"]) {
+  for (const field of ["consumable", "worn", "quantity", "position", "sizeUnset"]) {
     if (req.body[field] !== undefined) {
       updates[field] = req.body[field];
     }

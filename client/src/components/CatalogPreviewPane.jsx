@@ -3,29 +3,20 @@
 // Folds the old CatalogItemPreviewModal content into an inline, non-stacked
 // surface: image, brand eyebrow, name, weight hero + precision disclosure,
 // key specs, fit-variant picker, description, buy link, and a select checkbox.
-import React, { useEffect, useMemo, useState } from "react";
-import { FiCheck } from "react-icons/fi";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { FiCheck, FiFlag } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import ImageCarousel from "./ImageCarousel";
 import VariantSelector from "./VariantSelector";
 import ButtonLink from "./ui/ButtonLink";
+import ReportIssuePopover from "./ReportIssuePopover";
 import { merchantFromUrl } from "../utils/merchantFromUrl";
 import { useUnit } from "../hooks/useUnit";
 import { useWeightInput } from "../hooks/useWeightInput";
 import { useUserSettings } from "../contexts/UserSettings";
 import { formatAttributesForDisplay } from "../utils/attributeLabels";
-import { tItemType } from "../config/catalogTaxonomy";
-
-// Month-year "verified" stamp for the precision disclosure line.
-function verifiedStamp(dateish, locale) {
-  const d = dateish ? new Date(dateish) : null;
-  if (!d || Number.isNaN(d.getTime())) return null;
-  try {
-    return d.toLocaleDateString(locale || undefined, { month: "short", year: "numeric" });
-  } catch {
-    return d.toLocaleDateString(undefined, { month: "short", year: "numeric" });
-  }
-}
+import { tItemType, tCategory } from "../config/catalogTaxonomy";
+import { buildWeightDisclosure } from "../utils/weightDisclosure";
 
 export default function CatalogPreviewPane({
   item,
@@ -54,6 +45,8 @@ export default function CatalogPreviewPane({
   const unit = useUnit();
   const { unitLabel, formatInput } = useWeightInput(unit);
   const { measurementSystem } = useUserSettings();
+  const reportFlagRef = useRef(null);
+  const [reportOpen, setReportOpen] = useState(false);
 
   const variantAxes = useMemo(
     () => (Array.isArray(item?.variantAxes) ? item.variantAxes : []),
@@ -143,20 +136,24 @@ export default function CatalogPreviewPane({
     [effectiveWeightGrams, formatInput],
   );
 
-  // Precision disclosure — honest about what the number is.
-  // "flat across sizes": variants carry no distinct per-variant weight.
-  const disclosure = useMemo(() => {
-    const parts = [t("catalogPreview.disclosure.manufacturerSpec", "Manufacturer spec")];
-    if (hasVariants) {
-      const vw = variants.map((v) => v.weightGrams).filter((n) => typeof n === "number");
-      if (vw.length === 0 || new Set(vw).size <= 1) {
-        parts.push(t("catalogPreview.disclosure.flatAcrossSizes", "flat across sizes"));
-      }
-    }
-    const stamp = verifiedStamp(item?.updatedAt, i18n.language);
-    if (stamp) parts.push(t("catalogPreview.disclosure.verified", "verified {{date}}", { date: stamp }));
-    return parts.join(" · ");
-  }, [t, i18n.language, hasVariants, variants, item?.updatedAt]);
+  // Precision disclosure — honest about what the number is (shared with the
+  // Item Details modal via buildWeightDisclosure).
+  const disclosure = useMemo(
+    () =>
+      buildWeightDisclosure({
+        t,
+        locale: i18n.language,
+        hasVariants,
+        variants,
+        updatedAt: item?.updatedAt,
+      }),
+    [t, i18n.language, hasVariants, variants, item?.updatedAt],
+  );
+
+  // Close the report popover whenever the previewed item changes.
+  useEffect(() => {
+    setReportOpen(false);
+  }, [item?._id]);
 
   // Desktop hides an empty pane behind the media query; the sheet is only ever
   // mounted with an item to show, so it renders these states inline.
@@ -277,6 +274,34 @@ export default function CatalogPreviewPane({
             {selectedVariant?.description || item.description}
           </div>
         </div>
+      )}
+
+      {/* Report an issue — quiet flag anchoring the popover (decision 12) */}
+      <div className="border-t border-primary/10 pt-3">
+        <button
+          ref={reportFlagRef}
+          type="button"
+          onClick={() => setReportOpen((v) => !v)}
+          className="flex items-center gap-1.5 text-[11.5px] text-primary/45 hover:text-primary/70 transition-colors"
+        >
+          <FiFlag size={12} />
+          {t("reportIssue.flag", "Report an issue")}
+          <span className="font-mono text-[10px] text-primary/30">
+            {t("reportIssue.flagHint", "weight · category · name · image")}
+          </span>
+        </button>
+      </div>
+      {reportOpen && (
+        <ReportIssuePopover
+          anchorRef={reportFlagRef}
+          item={item}
+          variantKey={selectedVariant?.key || null}
+          shownWeight={displayWeight ? `${displayWeight} ${unitLabel}` : ""}
+          shownCategory={tCategory(t, item.category) || item.category || ""}
+          shownItemType={tItemType(t, item.itemType) || item.itemType || ""}
+          disclosure={disclosure}
+          onClose={() => setReportOpen(false)}
+        />
       )}
 
       {/* Actions */}

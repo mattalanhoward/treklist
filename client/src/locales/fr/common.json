@@ -424,7 +424,9 @@
       "toggleWorn": "Basculer « porté »",
       "openProductPageTitle": "Ouvrir la page produit",
       "openProductPageAria": "Ouvrir la page produit (lien rémunéré)",
-      "itemOptionsA11y": "Options de l’article"
+      "itemOptionsA11y": "Options de l’article",
+      "sizeNotSet": "Taille non définie",
+      "sizeNotSetHint": "Aucune taille choisie — touchez pour la définir"
     },
     "actions": {
       "swap": "Échanger l'article"
@@ -1630,6 +1632,29 @@
     },
     "whw": {
       "name": "WHW"
+    }
+  },
+  "reportIssue": {
+    "flag": "Signaler un problème",
+    "flagHint": "poids · catégorie · nom · image",
+    "title": "Signaler un problème",
+    "titleFor": "Signaler un problème — {{name}}",
+    "fields": {
+      "weight": "Le poids est incorrect",
+      "category": "Catégorie ou type d'article incorrect",
+      "name": "Le nom ou la marque est incorrect",
+      "image": "Image ou lien d'achat cassé",
+      "other": "Autre chose"
+    },
+    "notePlaceholder": "Dites-nous en plus (facultatif) — ex. « ma balance indique 162 g »",
+    "autoAttached": "joint automatiquement",
+    "buttons": {
+      "send": "Envoyer le signalement",
+      "sending": "Envoi…"
+    },
+    "toasts": {
+      "sent": "Merci — signalement envoyé",
+      "failed": "Impossible d'envoyer le signalement"
     }
   }
 }

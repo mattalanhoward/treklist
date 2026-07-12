@@ -348,6 +348,16 @@ export default function SortableItem({
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
             <span className="tabular-nums text-primary">{weightText}</span>
+            {item.sizeUnset && (
+              <button
+                type="button"
+                onClick={() => setDetailsOpen(true)}
+                title={t("gearList.items.sizeNotSetHint", "No size chosen — tap to set it")}
+                className="flex-shrink-0 rounded-full bg-accent/15 px-1.5 py-0.5 text-[10px] font-medium text-accent hover:bg-accent/25"
+              >
+                {t("gearList.items.sizeNotSet", "Size not set")}
+              </button>
+            )}
           </div>
 
           {/* Right group (mobile): 🍴 | 👕 | qty | 🛒 | ⭐ */}
