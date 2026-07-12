@@ -600,6 +600,15 @@
     },
     "messages": {
       "alreadyAdded": "Dit item staat al in My Gear."
+    },
+    "emptyPane": "Selecteer een resultaat om het hier te bekijken.",
+    "selectForAdding": "Selecteren om toe te voegen",
+    "selectedForAdding": "Geselecteerd om toe te voegen",
+    "sizeNotSetHint": "Geen maat gekozen — de standaardmaat wordt toegevoegd en gemarkeerd als ‘maat niet ingesteld’, later te bewerken.",
+    "disclosure": {
+      "manufacturerSpec": "Fabrieksspecificatie",
+      "flatAcrossSizes": "gelijk voor alle maten",
+      "verified": "geverifieerd {{date}}"
     }
   },
   "globalItemEditModal": {
@@ -708,24 +717,6 @@
       "catalogMatch": "Gevonden in de catalogus",
       "catalogMatches": "Mogelijke matches gevonden — kies die van jou hieronder"
     },
-    "gearRequest": {
-      "title": "Uitrusting aanvragen",
-      "description": "Niet gevonden wat je zoekt? Laat het ons weten en we kijken of we het kunnen toevoegen.",
-      "labels": {
-        "itemName": "Artikelnaam",
-        "brand": "Merk",
-        "link": "Link (optioneel)"
-      },
-      "buttons": {
-        "openForm": "Uitrusting aanvragen",
-        "send": "Verzoek verzenden",
-        "sending": "Verzenden…"
-      },
-      "toasts": {
-        "success": "Verzoek verzonden! We kijken of we het kunnen toevoegen.",
-        "failed": "Verzoek verzenden mislukt. Probeer het opnieuw."
-      }
-    },
     "tabSearchHint": "Typ & druk op Enter · Plak een link · Maak een foto",
     "browseToggle": "Categorieën bekijken",
     "aiProgress": {
@@ -734,7 +725,14 @@
       "matching": "Vergelijken met de catalogus…"
     },
     "chooseVariant": "Varianten",
-    "multipleVariants": "Meerdere varianten"
+    "multipleVariants": "Meerdere varianten",
+    "inList": "Toegevoegd",
+    "inMyGear": "In mijn uitrusting",
+    "nSelected_one": "{{count}} geselecteerd",
+    "nSelected_other": "{{count}} geselecteerd",
+    "addNToDest": "{{count}} toevoegen aan {{dest}}",
+    "selectRow": "{{name}} selecteren",
+    "resultsLabel": "Zoekresultaten"
   },
   "photoScanModal": {
     "title": "Uitrusting scannen",

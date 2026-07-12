@@ -1,8 +1,12 @@
 // src/components/SmartItemSearch.jsx
 // Unified item search: My Gear + Catalog + AI fill-in fallback.
 // Drop this inside any modal/drawer shell — it manages its own search state.
-import React, { useState, useEffect, useMemo, useRef } from "react";
-import { createPortal } from "react-dom";
+//
+// Desktop two-pane (twoPane): result list on the left, live preview pane on the
+// right. Click a row = preview (pane follows); the checkbox is the only thing
+// that batches. Keyboard: ↑/↓ move the focused row, Space toggles its checkbox,
+// Enter commits the batch.
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { FiSearch, FiX, FiPlus, FiLoader, FiCamera } from "react-icons/fi";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -13,6 +17,7 @@ import { useWeightInput } from "../hooks/useWeightInput";
 import Spinner from "./ui/Spinner";
 import LinkInput from "./LinkInput";
 import CatalogItemPreviewModal from "./CatalogItemPreviewModal";
+import CatalogPreviewPane from "./CatalogPreviewPane";
 import { shortLabel } from "./VariantSelector";
 import PhotoScanModal from "./PhotoScanModal";
 import useStagedMessage from "../hooks/useStagedMessage";
@@ -39,25 +44,26 @@ function isUrl(s) {
   return /^https?:\/\//i.test((s || "").trim());
 }
 
-
 function normalize(str = "") {
   return String(str)
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[̀-ͯ]/g, "")
     .trim();
 }
 
-// ── Item row ──────────────────────────────────────────────────────────────────
+// ── Item row (two-pane contract: brand eyebrow · name · one spec · weight hero) ──
 function ItemRow({
   item,
+  source,
   selected,
+  focused,
   onToggle,
-  onViewDetails,
+  onActivate,
   multiSelect,
-  disabled,
-  badge,
-  subLabel,
+  addedBadge,
+  specLabel,
+  weightLabel,
   variantLabel,
   priceLabel,
   variantAxis,
@@ -71,8 +77,9 @@ function ItemRow({
   const { t } = useTranslation("common");
   const id = String(item._id);
   const rowRef = useRef(null);
+  const thumb = Array.isArray(item.imageUrls) ? item.imageUrls[0] : null;
 
-  // Click outside the row while the variant strip is open (without picking a
+  // Clicking outside the row while the variant strip is open (without picking a
   // value) collapses it back to the summary pill.
   useEffect(() => {
     if (!variantExpanded) return;
@@ -88,145 +95,147 @@ function ItemRow({
   return (
     <li
       ref={rowRef}
-      className={`flex items-center px-3 py-2 rounded border transition-colors ${
-        disabled
-          ? "border-primary/10 opacity-50"
+      onClick={() => onActivate(source, item)}
+      className={`flex items-center gap-3 px-3 py-2 rounded border cursor-pointer transition-colors border-l-[3px] ${
+        focused
+          ? "border-primary/20 border-l-secondary bg-secondary/5"
           : selected
-            ? "border-secondary/40 bg-secondary/10"
-            : "border-primary/20 hover:bg-primary/5"
+            ? "border-secondary/40 border-l-transparent bg-secondary/10"
+            : "border-primary/15 border-l-transparent hover:bg-primary/5"
       }`}
     >
       <button
         type="button"
-        onClick={() => !disabled && onToggle(id)}
-        disabled={disabled}
-        className="mr-3 flex-shrink-0 flex items-center cursor-pointer"
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggle(id);
+        }}
+        className="flex-shrink-0 flex items-center cursor-pointer"
         tabIndex={-1}
+        aria-label={t("smartItemSearch.selectRow", "Select {{name}}", { name: item.name })}
       >
         <input
           type={multiSelect ? "checkbox" : "radio"}
           checked={selected}
           onChange={() => {}}
-          disabled={disabled}
           className="h-4 w-4 text-secondary border-primary rounded pointer-events-none"
         />
       </button>
+
+      {/* Thumbnail */}
+      <div className="h-8 w-8 flex-shrink-0 rounded border border-primary/15 bg-white overflow-hidden flex items-center justify-center">
+        {thumb ? (
+          <img src={thumb} alt="" className="h-full w-full object-contain" loading="lazy" />
+        ) : (
+          <span className="text-primary/20 text-[10px]">—</span>
+        )}
+      </div>
+
+      {/* Identity */}
       <div className="flex-1 min-w-0">
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <div className="flex-1 min-w-0">
-              <span
-                className={`inline-block max-w-full truncate text-sm font-medium text-primary ${onViewDetails && !disabled ? "cursor-pointer hover:underline" : ""}`}
-                onClick={() => onViewDetails && !disabled && onViewDetails(item)}
-              >
-                {item.brand && <span className="mr-1">{item.brand}</span>}
-                {item.name}
-              </span>
-            </div>
-            {priceLabel && (
-              <span className="text-xs text-secondary flex-shrink-0 font-medium">{priceLabel}</span>
-            )}
-            {badge && (
-              <span className="text-xs text-primary/40 flex-shrink-0">{badge}</span>
-            )}
+        {item.brand && (
+          <div className="text-[9.5px] font-semibold uppercase tracking-wider text-primary/45 leading-tight truncate">
+            {item.brand}
           </div>
-          {(subLabel || variantLabel || variantAxis || hasMultiAxisVariants) && (
-            <div className="flex items-center gap-2 text-xs text-primary/50">
-              {subLabel && <span className="flex-shrink-0">{subLabel}</span>}
-              {variantLabel && (
-                <div className="flex-1 min-w-0 flex justify-end">
-                  <span
-                    className="max-w-full truncate rounded-full bg-secondary/10 text-secondary px-2 py-0.5 text-[11px] font-medium"
-                    title={variantLabel}
-                  >
-                    {variantLabel}
-                  </span>
-                </div>
-              )}
-              {hasMultiAxisVariants && (
-                <div className="flex-1 min-w-0 flex justify-end">
+        )}
+        <div className="text-sm font-medium text-primary truncate">{item.name}</div>
+        {(specLabel || variantLabel || variantAxis || hasMultiAxisVariants) && (
+          <div className="flex items-center gap-2 text-xs text-primary/50 mt-0.5">
+            {specLabel && <span className="truncate">{specLabel}</span>}
+            {variantLabel && (
+              <span
+                className="ml-auto max-w-full truncate rounded-full bg-secondary/10 text-secondary px-2 py-0.5 text-[11px] font-medium"
+                title={variantLabel}
+              >
+                {variantLabel}
+              </span>
+            )}
+            {hasMultiAxisVariants && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onActivate(source, item);
+                }}
+                className="ml-auto max-w-full truncate rounded-full border border-secondary/30 px-2 py-0.5 !text-[11px] font-medium text-secondary hover:bg-secondary/10 transition-colors"
+                title={t("smartItemSearch.multipleVariants", "Multiple variants")}
+              >
+                {t("smartItemSearch.multipleVariants", "Multiple variants")}
+              </button>
+            )}
+            {variantAxis && (
+              <div className="ml-auto flex min-w-0 items-center gap-1">
+                {!variantExpanded && (
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      onViewDetails && !disabled && onViewDetails(item);
+                      onToggleVariantExpand(id);
                     }}
-                    className="max-w-full truncate rounded-full border border-secondary/30 px-2 py-0.5 !text-[11px] font-medium text-secondary hover:bg-secondary/10 transition-colors"
-                    title={t("smartItemSearch.multipleVariants", "Multiple variants")}
-                  >
-                    {t("smartItemSearch.multipleVariants", "Multiple variants")}
-                  </button>
-                </div>
-              )}
-              {variantAxis && (
-                <div className="flex-1 min-w-0 flex justify-end items-center gap-1">
-                  {!variantExpanded && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onToggleVariantExpand(id);
-                      }}
-                      className={`max-w-full truncate rounded-full px-2 py-0.5 !text-[11px] font-medium transition-colors ${
-                        hasVariantSelection
-                          ? "bg-secondary/10 text-secondary hover:bg-secondary/20"
-                          : "border border-secondary/30 text-secondary hover:bg-secondary/10"
-                      }`}
-                      title={
-                        hasVariantSelection
-                          ? selectedVariantValue
-                          : t("smartItemSearch.chooseVariant", "Variants")
-                      }
-                    >
-                      {hasVariantSelection
-                        ? shortLabel(selectedVariantValue)
-                        : t("smartItemSearch.chooseVariant", "Variants")}
-                    </button>
-                  )}
-                  {/* Always mounted (width toggles via grid-cols) so the expand/collapse
-                      actually transitions instead of popping in at full width. */}
-                  <div
-                    className={`grid min-w-0 transition-[grid-template-columns] duration-200 ease-in-out ${
-                      variantExpanded ? "grid-cols-[1fr]" : "grid-cols-[0fr]"
+                    className={`max-w-full truncate rounded-full px-2 py-0.5 !text-[11px] font-medium transition-colors ${
+                      hasVariantSelection
+                        ? "bg-secondary/10 text-secondary hover:bg-secondary/20"
+                        : "border border-secondary/30 text-secondary hover:bg-secondary/10"
                     }`}
+                    title={hasVariantSelection ? selectedVariantValue : t("smartItemSearch.chooseVariant", "Variants")}
                   >
-                    <div className="overflow-hidden min-w-0">
-                      <div
-                        className={`flex items-center gap-1 overflow-x-auto transition-opacity duration-150 ease-in-out ${
-                          variantExpanded ? "opacity-100 delay-100" : "opacity-0"
-                        }`}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        {variantAxis.values.map((val) => {
-                          const isSel = val === selectedVariantValue;
-                          return (
-                            <button
-                              key={val}
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onPickVariant(id, val);
-                              }}
-                              title={val}
-                              aria-pressed={isSel}
-                              className={`flex-shrink-0 whitespace-nowrap rounded-full px-2 py-0.5 !text-[11px] font-medium border transition-colors ${
-                                isSel
-                                  ? "bg-secondary text-white border-secondary"
-                                  : "border-secondary/30 text-secondary hover:bg-secondary/10"
-                              }`}
-                            >
-                              {shortLabel(val)}
-                            </button>
-                          );
-                        })}
-                      </div>
+                    {hasVariantSelection ? shortLabel(selectedVariantValue) : t("smartItemSearch.chooseVariant", "Variants")}
+                  </button>
+                )}
+                <div
+                  className={`grid min-w-0 transition-[grid-template-columns] duration-200 ease-in-out ${
+                    variantExpanded ? "grid-cols-[1fr]" : "grid-cols-[0fr]"
+                  }`}
+                >
+                  <div className="overflow-hidden min-w-0">
+                    <div
+                      className={`flex items-center gap-1 overflow-x-auto transition-opacity duration-150 ease-in-out ${
+                        variantExpanded ? "opacity-100 delay-100" : "opacity-0"
+                      }`}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {variantAxis.values.map((val) => {
+                        const isSel = val === selectedVariantValue;
+                        return (
+                          <button
+                            key={val}
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onPickVariant(id, val);
+                            }}
+                            title={val}
+                            aria-pressed={isSel}
+                            className={`flex-shrink-0 whitespace-nowrap rounded-full px-2 py-0.5 !text-[11px] font-medium border transition-colors ${
+                              isSel
+                                ? "bg-secondary text-white border-secondary"
+                                : "border-secondary/30 text-secondary hover:bg-secondary/10"
+                            }`}
+                          >
+                            {shortLabel(val)}
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
-              )}
-            </div>
-          )}
-        </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Weight hero + badge/price */}
+      <div className="flex-shrink-0 flex flex-col items-end gap-0.5">
+        {weightLabel && (
+          <span className="text-sm font-semibold text-primary tabular-nums whitespace-nowrap">
+            {weightLabel}
+          </span>
+        )}
+        {priceLabel && <span className="text-[11px] text-secondary font-medium">{priceLabel}</span>}
+        {addedBadge && (
+          <span className="text-[10.5px] text-primary/45 italic whitespace-nowrap">{addedBadge}</span>
+        )}
       </div>
     </li>
   );
@@ -255,7 +264,26 @@ function AiSearchProgress({ urlQuery }) {
 }
 
 // ── Section (My Gear or Catalog) ──────────────────────────────────────────────
-function ResultSection({ title, items, type, myGearSelected, catalogSelected, onToggleMyGear, onToggleCatalog, onViewCatalogDetails, onViewMyGearDetails, multiSelect, existingGlobalIds, existingProductIds, loading, catalogVariantSelections, expandedVariantRowId, onToggleVariantExpand, onPickVariant }) {
+function ResultSection({
+  title,
+  items,
+  type,
+  myGearSelected,
+  catalogSelected,
+  focused,
+  onToggleMyGear,
+  onToggleCatalog,
+  onActivate,
+  multiSelect,
+  existingGlobalIds,
+  existingProductIds,
+  loading,
+  fmtWeight,
+  catalogVariantSelections,
+  expandedVariantRowId,
+  onToggleVariantExpand,
+  onPickVariant,
+}) {
   const { t } = useTranslation("common");
   if (loading) {
     return (
@@ -273,69 +301,66 @@ function ResultSection({ title, items, type, myGearSelected, catalogSelected, on
       <ul className="space-y-1">
         {items.map((item) => {
           const id = String(item._id);
+          const isFocused = focused && focused.source === type && focused.id === id;
           if (type === "myGear") {
-            const disabled = existingGlobalIds?.has(id);
+            // Added ≠ locked: keep already-in-list items checkable, just badge them.
+            const added = existingGlobalIds?.has(id);
             return (
               <ItemRow
                 key={id}
                 item={item}
+                source="myGear"
                 selected={myGearSelected.has(id)}
+                focused={isFocused}
                 onToggle={onToggleMyGear}
-                onViewDetails={onViewMyGearDetails}
+                onActivate={onActivate}
                 multiSelect={multiSelect}
-                disabled={disabled}
-                badge={disabled ? t("smartItemSearch.added", "Added") : null}
-                subLabel={item.itemType || null}
+                addedBadge={added ? t("smartItemSearch.inList", "Added") : null}
+                specLabel={item.itemType || null}
+                weightLabel={fmtWeight(item.weight ?? item.weightGrams)}
                 variantLabel={item.variantKey || null}
               />
             );
-          } else {
-            const offer = item.offers?.[0];
-            const priceLabel =
-              offer?.price ? `$${offer.price} · ${offer.merchantName || ""}`.replace(/ · $/, "") : null;
-            const disabled = existingProductIds?.has(id);
-            // Only offer the inline quick-pick for single-axis variants (the vast
-            // majority — sizes, volumes, lengths). Multi-axis items (e.g. Size ×
-            // Color) fall back to the full preview modal's VariantSelector.
-            const axis =
-              !disabled && item.variantAxes?.length === 1 && item.variantAxes[0].values?.length > 1
-                ? item.variantAxes[0]
-                : null;
-            // Items with 2+ axes (e.g. Fabric × Torso) don't get the inline
-            // quick-pick (see comment above) — flag them so the row can at
-            // least show that variants exist, rather than nothing at all.
-            const hasMultiAxisVariants = !disabled && !axis && (item.variantAxes?.length || 0) > 1;
-            const hasVariantSelection = Boolean(axis && catalogVariantSelections?.[id]);
-            const selectedVariantValue = axis
-              ? catalogVariantSelections?.[id] || item.defaultVariantKey || axis.values[0]
-              : null;
-            return (
-              <ItemRow
-                key={id}
-                item={item}
-                selected={catalogSelected.has(id)}
-                onToggle={onToggleCatalog}
-                onViewDetails={(it) =>
-                  onViewCatalogDetails(
-                    it,
-                    hasVariantSelection ? { [axis.name]: selectedVariantValue } : null,
-                  )
-                }
-                multiSelect={multiSelect}
-                disabled={disabled}
-                badge={disabled ? t("smartItemSearch.added", "Added") : null}
-                subLabel={item.itemType || item.subcategory || null}
-                priceLabel={priceLabel}
-                variantAxis={axis}
-                selectedVariantValue={selectedVariantValue}
-                hasVariantSelection={hasVariantSelection}
-                hasMultiAxisVariants={hasMultiAxisVariants}
-                variantExpanded={expandedVariantRowId === id}
-                onToggleVariantExpand={onToggleVariantExpand}
-                onPickVariant={onPickVariant}
-              />
-            );
           }
+          const offer = item.offers?.[0];
+          const priceLabel = offer?.price
+            ? `$${offer.price} · ${offer.merchantName || ""}`.replace(/ · $/, "")
+            : null;
+          const added = existingProductIds?.has(id);
+          const axis =
+            item.variantAxes?.length === 1 && item.variantAxes[0].values?.length > 1
+              ? item.variantAxes[0]
+              : null;
+          const hasMultiAxisVariants = !axis && (item.variantAxes?.length || 0) > 1;
+          const hasVariantSelection = Boolean(axis && catalogVariantSelections?.[id]);
+          const selectedVariantValue = axis
+            ? catalogVariantSelections?.[id] || item.defaultVariantKey || axis.values[0]
+            : null;
+          return (
+            <ItemRow
+              key={id}
+              item={item}
+              source="catalog"
+              selected={catalogSelected.has(id)}
+              focused={isFocused}
+              onToggle={onToggleCatalog}
+              onActivate={(src, it) =>
+                onActivate(src, it, hasVariantSelection ? { [axis.name]: selectedVariantValue } : null)
+              }
+              multiSelect={multiSelect}
+              addedBadge={added ? t("smartItemSearch.inMyGear", "In my gear") : null}
+              specLabel={item.itemType || item.subcategory || null}
+              weightLabel={fmtWeight(item.weightGrams)}
+              priceLabel={priceLabel}
+              variantAxis={axis}
+              selectedVariantValue={selectedVariantValue}
+              hasVariantSelection={hasVariantSelection}
+              hasMultiAxisVariants={hasMultiAxisVariants}
+              variantExpanded={expandedVariantRowId === id}
+              onToggleVariantExpand={onToggleVariantExpand}
+              onPickVariant={onPickVariant}
+            />
+          );
         })}
       </ul>
     </div>
@@ -387,14 +412,8 @@ function CreateRow({ query, onCreate, onManual, aiLoading }) {
         className="flex items-center gap-1 text-sm text-secondary/70 hover:text-secondary disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         title={!query ? t("smartItemSearch.aiTypeFirst", "Type a name first to use AI fill") : undefined}
       >
-        {aiLoading ? (
-          <FiLoader size={12} className="animate-spin" />
-        ) : (
-          <span className="text-xs">✨</span>
-        )}
-        {aiLoading
-          ? t("smartItemSearch.aiSearchingShort", "Searching…")
-          : t("smartItemSearch.aiFill", "Fill with AI")}
+        {aiLoading ? <FiLoader size={12} className="animate-spin" /> : <span className="text-xs">✨</span>}
+        {aiLoading ? t("smartItemSearch.aiSearchingShort", "Searching…") : t("smartItemSearch.aiFill", "Fill with AI")}
       </button>
     </div>
   );
@@ -519,15 +538,19 @@ function CustomForm({ form, onChange, unitLabel }) {
  * Props:
  *   multiSelect          boolean  — true for add-to-list/library; false for swap
  *   showMyGear           boolean  — false for library-only contexts (AddGearDrawer, GlobalItemModal)
+ *   twoPane              boolean  — desktop master–detail (result list + preview pane)
+ *   destinationLabel     string   — echoed in the commit button ("Add 2 to Hiking")
  *   excludeGlobalItemId  string   — for swap: exclude this globalItem from My Gear results
- *   existingGlobalIds    Set      — items already in list (shown as disabled/Added)
- *   onConfirm            async fn — called with { source, globalItems?, catalogIds?, fields? }
+ *   existingGlobalIds    Set      — items already in list (badged, still checkable)
+ *   onConfirm            async fn — called with { source, globalItems?, catalogIds?, fields?, variantSelections?, sizeUnset? }
  *   onClose              fn
  *   tabLayout            boolean  — use tabbed Import/Custom layout (AddGearItemModal)
  */
 export default function SmartItemSearch({
   multiSelect = true,
   showMyGear = true,
+  twoPane = false,
+  destinationLabel = null,
   excludeGlobalItemId = null,
   existingGlobalIds = new Set(),
   existingProductIds,
@@ -540,6 +563,11 @@ export default function SmartItemSearch({
   const unit = useUnit();
   const { parseInput, formatInput, unitLabel } = useWeightInput(unit);
 
+  const fmtWeight = useCallback(
+    (grams) => (typeof grams === "number" ? `${formatInput(grams)} ${unitLabel}` : null),
+    [formatInput, unitLabel],
+  );
+
   const searchPlaceholders = useMemo(() => [
     "Osprey Exos 48",
     "https://atompacks.co.uk/collections/the-atom/products/the-atom-re30-black",
@@ -551,26 +579,6 @@ export default function SmartItemSearch({
     "https://gossamergear.com/products/mariposa-60",
     "Decathlon 8858286",
   ], [t]);
-  // Item request form
-  const [showRequestForm, setShowRequestForm] = useState(false);
-  const [requestForm, setRequestForm] = useState({ name: "", brand: "", link: "" });
-  const [requestSending, setRequestSending] = useState(false);
-
-  async function handleSubmitRequest(e) {
-    e.preventDefault();
-    if (!requestForm.name.trim() || !requestForm.brand.trim()) return;
-    setRequestSending(true);
-    try {
-      await api.post("/support/catalog-item-requests", requestForm);
-      toast.success(t("smartItemSearch.gearRequest.toasts.success"));
-      setShowRequestForm(false);
-      setRequestForm({ name: "", brand: "", link: "" });
-    } catch {
-      toast.error(t("smartItemSearch.gearRequest.toasts.failed"));
-    } finally {
-      setRequestSending(false);
-    }
-  }
 
   // Search
   const [query, setQuery] = useState("");
@@ -598,6 +606,18 @@ export default function SmartItemSearch({
     return () => clearInterval(id);
   }, [query]);
 
+  // Desktop vs mobile (drives two-pane vs stacked preview modal)
+  const [isDesktop, setIsDesktop] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(min-width: 640px)").matches,
+  );
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 640px)");
+    const h = (e) => setIsDesktop(e.matches);
+    mq.addEventListener("change", h);
+    return () => mq.removeEventListener("change", h);
+  }, []);
+  const usePane = twoPane && isDesktop;
+
   // My Gear
   const [myGearItems, setMyGearItems] = useState([]);
   const [myGearLoading, setMyGearLoading] = useState(showMyGear);
@@ -605,8 +625,6 @@ export default function SmartItemSearch({
   // Catalog
   const [catalogResults, setCatalogResults] = useState([]);
   const [catalogLoading, setCatalogLoading] = useState(false);
-  // Result counts — catalogTotal reflects the current filter/search; catalogAllTotal
-  // is the whole-catalog size (fetched once) shown before any search narrows it.
   const [catalogTotal, setCatalogTotal] = useState(null);
   const [catalogAllTotal, setCatalogAllTotal] = useState(null);
 
@@ -614,9 +632,15 @@ export default function SmartItemSearch({
   const [myGearSelected, setMyGearSelected] = useState(new Set());
   const [catalogSelected, setCatalogSelected] = useState(new Set());
 
-  // Quick variant pick for single-axis catalog items — { [catalogItemId]: value }
+  // Explicit variant picks (row quick-pick or pane) — { [catalogItemId]: value }
   const [catalogVariantSelections, setCatalogVariantSelections] = useState({});
   const [expandedVariantRowId, setExpandedVariantRowId] = useState(null);
+
+  // Focused row for the preview pane — { source: 'myGear'|'catalog', id }
+  const [focused, setFocused] = useState(null);
+  const [paneFull, setPaneFull] = useState(null);
+  const [paneLoading, setPaneLoading] = useState(false);
+  const [paneError, setPaneError] = useState(null);
 
   // AI state
   const [aiLoading, setAiLoading] = useState(false);
@@ -627,54 +651,45 @@ export default function SmartItemSearch({
     name: "", brand: "", catalogCategory: "", itemType: "", weight: "", description: "", link: "", imageUrl: "",
   });
 
-  // Submitting state for confirm button
   const [confirming, setConfirming] = useState(false);
 
   // Photo scan modal
   const [showScanModal, setShowScanModal] = useState(false);
-  const [scanFile, setScanFile] = useState(null); // pasted/dropped image to scan
+  const [scanFile, setScanFile] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
 
   const closeScanModal = () => {
     setShowScanModal(false);
     setScanFile(null);
   };
-
   const openScanWithFile = (file) => {
     if (!file) return;
     setScanFile(file);
     setShowScanModal(true);
   };
 
-  // Catalog item preview
+  // Stacked catalog preview modal (mobile / non-two-pane row activation)
   const [previewItem, setPreviewItem] = useState(null);
   const [previewInitialOptions, setPreviewInitialOptions] = useState(null);
   const [previewLoading, setPreviewLoading] = useState(false);
   const [previewError, setPreviewError] = useState(null);
   const [previewImporting, setPreviewImporting] = useState(false);
 
-  // My Gear item preview
+  // My Gear item preview (mobile / non-two-pane)
   const [myGearPreview, setMyGearPreview] = useState(null);
   const [myGearPreviewAdding, setMyGearPreviewAdding] = useState(false);
 
   const [activeTab, setActiveTab] = useState("import");
+  const setAndPersistTab = (tab) => setActiveTab(tab);
 
-  const setAndPersistTab = (tab) => {
-    setActiveTab(tab);
-  };
-
-  // Whether the custom form is currently shown
   const showingCustomForm = tabLayout ? activeTab === "custom" : !!customMode;
 
-  // Switch to Custom tab, optionally pre-filling the name from the search query
   const switchToCustom = (prefillName = "") => {
     setAndPersistTab("custom");
     if (!customMode) {
       setCustomMode("manual");
       const ai = lastAiFillRef.current;
       if (ai && ai.query === prefillName) {
-        // Re-use the last AI extraction for this query instead of dumping
-        // the raw query (often a URL) into the name field
         setCustomForm((f) => ({
           name: f.name || ai.data.name || "",
           brand: f.brand || ai.data.brand || "",
@@ -686,11 +701,24 @@ export default function SmartItemSearch({
           imageUrl: f.imageUrl || ai.data.imageUrl || "",
         }));
       } else if (isUrl(prefillName)) {
-        // A URL is never a name — put it in the link field
         setCustomForm((f) => ({ ...f, link: f.link || prefillName }));
       } else {
         setCustomForm((f) => ({ ...f, name: prefillName || f.name }));
       }
+    }
+  };
+
+  // Row activation: desktop two-pane previews in the pane; elsewhere opens the
+  // stacked preview modal (mobile, and the narrow single-column contexts).
+  const activateRow = (source, item, initialOptions = null) => {
+    if (usePane) {
+      setFocused({ source, id: String(item._id) });
+      return;
+    }
+    if (source === "catalog") {
+      handleViewCatalogDetails(item, initialOptions);
+    } else {
+      setMyGearPreview(item);
     }
   };
 
@@ -751,7 +779,7 @@ export default function SmartItemSearch({
       .finally(() => setMyGearLoading(false));
   }, [showMyGear]);
 
-  // Whole-catalog size, fetched once — the baseline shown before any search/filter narrows it
+  // Whole-catalog size, fetched once
   useEffect(() => {
     api
       .get("/catalog/items", { params: { limit: 1 } })
@@ -765,11 +793,6 @@ export default function SmartItemSearch({
     return () => clearTimeout(timer);
   }, [query]);
 
-  // Subcategory options are keyed by category (CATALOG_SUBCATEGORIES[categoryFilter]),
-  // so a stale subcategory value can reference something that doesn't exist under the
-  // new category — reset it. Brand is an independent facet (the same brand can span
-  // many categories) and combines with category as an AND server-side, so it's left
-  // alone: switching category shouldn't silently clear an already-chosen brand.
   useEffect(() => {
     setSubcategoryFilter(null);
   }, [categoryFilter]);
@@ -803,7 +826,6 @@ export default function SmartItemSearch({
     setCatalogLoading(true);
     const params = {};
     if (debouncedQuery.trim()) {
-      // "Brand 1234567" → search just the number so e.g. "Decathlon 8858286" works
       const brandNumberMatch = debouncedQuery.trim().match(/^\S+\s+(\d{5,})$/);
       params.q = brandNumberMatch ? brandNumberMatch[1] : debouncedQuery.trim();
     }
@@ -823,7 +845,6 @@ export default function SmartItemSearch({
       .finally(() => setCatalogLoading(false));
   }, [debouncedQuery, categoryFilter, subcategoryFilter, brandFilter]);
 
-  // Reset AI/custom state when query changes (non-tabLayout only)
   useEffect(() => {
     if (tabLayout) return;
     if (customMode !== "manual") setCustomMode(null);
@@ -842,21 +863,15 @@ export default function SmartItemSearch({
     let items = excludeGlobalItemId
       ? myGearItems.filter((i) => String(i._id) !== String(excludeGlobalItemId))
       : myGearItems;
-    if (categoryFilter) {
-      items = items.filter((i) => i.catalogCategory === categoryFilter);
-    }
+    if (categoryFilter) items = items.filter((i) => i.catalogCategory === categoryFilter);
     if (subcategoryFilter) {
       items = items.filter((i) => i.subcategory === subcategoryFilter || i.itemType === subcategoryFilter);
     }
-    if (brandFilter) {
-      items = items.filter((i) => i.brand === brandFilter);
-    }
+    if (brandFilter) items = items.filter((i) => i.brand === brandFilter);
     if (!debouncedQuery) return items;
     const tokens = normalize(debouncedQuery).split(/\s+/).filter(Boolean);
     return items.filter((item) => {
-      const hay = normalize(
-        [item.name, item.brand, item.itemType, item.description].filter(Boolean).join(" "),
-      );
+      const hay = normalize([item.name, item.brand, item.itemType, item.description].filter(Boolean).join(" "));
       return tokens.every((tok) => hay.includes(tok));
     });
   }, [myGearItems, debouncedQuery, excludeGlobalItemId, showMyGear, categoryFilter, subcategoryFilter, brandFilter]);
@@ -892,38 +907,34 @@ export default function SmartItemSearch({
     setExpandedVariantRowId((prev) => (prev === id ? null : id));
   };
 
-  // Picking a variant pill both records the choice and selects the row (if not
-  // already selected), so a single tap is enough to queue it for Add.
+  // Picking a variant pill records the choice and selects the row.
   const pickCatalogVariant = (id, value) => {
     setCatalogVariantSelections((prev) => ({ ...prev, [id]: value }));
     setExpandedVariantRowId(null);
     if (!catalogSelected.has(id)) toggleCatalog(id);
   };
 
-  // Collapse any open variant picker when the result set changes underneath it.
+  // Pane variant pick — record the choice; leave selection alone (the pane has
+  // its own select checkbox).
+  const recordVariantPick = (id, value) => {
+    setCatalogVariantSelections((prev) => ({ ...prev, [id]: value }));
+  };
+
   useEffect(() => {
     setExpandedVariantRowId(null);
   }, [catalogResults]);
 
-  // "Already added" detection for catalog rows: list contexts pass the list's
-  // productIds explicitly; everywhere else fall back to My Gear ownership
   const effectiveProductIds = useMemo(
-    () =>
-      existingProductIds ??
-      new Set(myGearItems.map((i) => i.productId).filter(Boolean).map(String)),
+    () => existingProductIds ?? new Set(myGearItems.map((i) => i.productId).filter(Boolean).map(String)),
     [existingProductIds, myGearItems],
   );
 
-  // Inject catalog items into the results (optionally selecting one),
-  // restoring the invariants the normal search flow maintains: exclusive
-  // selection, no custom form, and the Import tab active.
   const showCatalogMatches = (items, { select } = {}) => {
     setCatalogResults((prev) => {
       const ids = new Set(prev.map((i) => String(i._id)));
       const added = items.filter((m) => !ids.has(String(m._id)));
       return added.length ? [...added, ...prev] : prev;
     });
-    // Never auto-select an item that's already in the list (row renders disabled)
     const selectable = select && !effectiveProductIds.has(String(select._id));
     setCatalogSelected(selectable ? new Set([String(select._id)]) : new Set());
     setMyGearSelected(new Set());
@@ -933,32 +944,120 @@ export default function SmartItemSearch({
 
   const selectCatalogItem = (item) => showCatalogMatches([item], { select: item });
 
+  // Flat, in-display-order list of focusable rows for keyboard nav + auto-focus.
+  const flatRows = useMemo(() => {
+    const rows = [];
+    if (showMyGear) filteredMyGear.forEach((it) => rows.push({ source: "myGear", id: String(it._id) }));
+    catalogResults.forEach((it) => rows.push({ source: "catalog", id: String(it._id) }));
+    return rows;
+  }, [showMyGear, filteredMyGear, catalogResults]);
+
+  // Auto-focus the top result so the pane is never empty (decision 9).
+  useEffect(() => {
+    if (!usePane) return;
+    if (!flatRows.length) {
+      setFocused(null);
+      return;
+    }
+    setFocused((prev) => {
+      const stillThere = prev && flatRows.some((r) => r.source === prev.source && r.id === prev.id);
+      return stillThere ? prev : flatRows[0];
+    });
+  }, [usePane, flatRows]);
+
+  // Load the focused item into the pane.
+  const focusKey = focused ? `${focused.source}:${focused.id}` : null;
+  useEffect(() => {
+    if (!usePane || !focused) {
+      setPaneFull(null);
+      return;
+    }
+    if (focused.source === "myGear") {
+      const gi = myGearItems.find((i) => String(i._id) === focused.id);
+      setPaneFull(gi ? { ...gi, weightGrams: gi.weight ?? gi.weightGrams } : null);
+      setPaneLoading(false);
+      setPaneError(null);
+      return;
+    }
+    const listItem = catalogResults.find((i) => String(i._id) === focused.id);
+    setPaneFull(listItem || null);
+    setPaneLoading(true);
+    setPaneError(null);
+    let cancelled = false;
+    api
+      .get(`/catalog/items/${focused.id}`)
+      .then(({ data }) => {
+        if (!cancelled) setPaneFull(data);
+      })
+      .catch(() => {
+        if (!cancelled) setPaneError(t("smartItemSearch.toasts.previewLoadFailed", "Failed to load item details."));
+      })
+      .finally(() => {
+        if (!cancelled) setPaneLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [usePane, focusKey]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Pane selection wiring for the focused item.
+  const focusedSelected = focused
+    ? focused.source === "myGear"
+      ? myGearSelected.has(focused.id)
+      : catalogSelected.has(focused.id)
+    : false;
+  const toggleFocusedSelect = (id) => {
+    if (!focused) return;
+    focused.source === "myGear" ? toggleMyGear(id) : toggleCatalog(id);
+  };
+  const paneHasVariants =
+    (paneFull?.variantAxes?.length || 0) > 0 && (paneFull?.variants?.length || 0) > 0;
+  const paneSizeUnset =
+    focused?.source === "catalog" && paneHasVariants && !catalogVariantSelections[focused.id];
+  const paneInitialOptions = useMemo(() => {
+    if (focused?.source !== "catalog" || !paneHasVariants) return null;
+    const key = catalogVariantSelections[focused.id];
+    if (!key) return null;
+    const v = paneFull.variants.find((x) => x.key === key);
+    return v ? { ...v.options } : null;
+  }, [focused, paneHasVariants, catalogVariantSelections, paneFull]);
+
+  // Keyboard nav on the result list (decision 11).
+  const onListKeyDown = (e) => {
+    if (!flatRows.length) return;
+    const idx = focused ? flatRows.findIndex((r) => r.source === focused.source && r.id === focused.id) : -1;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setFocused(flatRows[Math.min(idx + 1, flatRows.length - 1)] || flatRows[0]);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setFocused(flatRows[Math.max(idx - 1, 0)] || flatRows[0]);
+    } else if (e.key === " ") {
+      e.preventDefault();
+      if (focused) toggleFocusedSelect(focused.id);
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (canConfirm && !confirming) handleConfirm();
+    }
+  };
+
   // Create action — runs AI fill, then either shows a catalog match or pre-fills the custom form
   const handleCreateAction = async (queryOverride) => {
-    // Button handlers pass the click event — only honor string overrides
     const inputQuery = (typeof queryOverride === "string" ? queryOverride : query).trim();
     if (!inputQuery || aiLoading) return;
-    const inputIsUrl = isUrl(inputQuery);
     setAiLoading(true);
     try {
       const { data } = await api.post("/ai/fill-item", { query: inputQuery });
       lastAiFillRef.current = { query: inputQuery, data };
-
-      // The server matches the AI extraction against the catalog (with
-      // progressive fallback) and returns candidates on the response.
-      // Do NOT update query here: changing it would re-trigger the debounced catalog
-      // search, causing a loading spinner that wipes the result before the new fetch completes.
       const matches = data.catalogMatches || [];
 
       if (matches.length === 1) {
         selectCatalogItem(matches[0]);
         toast.success(t("smartItemSearch.toasts.catalogMatch", "Found in catalog"));
       } else if (matches.length > 1) {
-        // Several plausible matches — let the user pick instead of guessing
         showCatalogMatches(matches);
         toast(t("smartItemSearch.toasts.catalogMatches", "Found possible matches — pick yours below"));
       } else {
-        // No catalog match — switch to Custom tab, only fill empty fields
         setCustomMode("ai");
         setCustomForm((prev) => ({
           name:            prev.name            || data.name        || "",
@@ -1029,15 +1128,22 @@ export default function SmartItemSearch({
     } else if (catalogSelected.size > 0) {
       setConfirming(true);
       const variantSelections = Object.fromEntries(
-        [...catalogSelected]
-          .filter((id) => catalogVariantSelections[id])
-          .map((id) => [id, catalogVariantSelections[id]]),
+        [...catalogSelected].filter((id) => catalogVariantSelections[id]).map((id) => [id, catalogVariantSelections[id]]),
+      );
+      // Decision 14: a selected variant item with no explicit fit pick is added
+      // at its default fit and flagged "size not set" (never blocks the batch).
+      const hasVariantsById = new Map(
+        catalogResults.map((c) => [String(c._id), (c.variantAxes?.length || 0) > 0]),
+      );
+      const sizeUnset = [...catalogSelected].filter(
+        (id) => hasVariantsById.get(id) && !catalogVariantSelections[id],
       );
       try {
         await onConfirm({
           source: "catalog",
           catalogIds: [...catalogSelected],
           ...(Object.keys(variantSelections).length ? { variantSelections } : {}),
+          ...(sizeUnset.length ? { sizeUnset } : {}),
         });
       } finally {
         setConfirming(false);
@@ -1046,27 +1152,31 @@ export default function SmartItemSearch({
   };
 
   const totalSelected = myGearSelected.size + catalogSelected.size;
-  const canConfirm = showingCustomForm
-    ? customForm.name.trim().length > 0
-    : totalSelected > 0;
+  const canConfirm = showingCustomForm ? customForm.name.trim().length > 0 : totalSelected > 0;
 
   const labelAdd    = confirmLabels.add    ?? t("smartItemSearch.add",    "Add");
   const labelImport = confirmLabels.import ?? t("smartItemSearch.import", "Import");
   const labelCreate = confirmLabels.create ?? t("smartItemSearch.create", "Create");
 
+  // Commit label — echoes count + destination in batch add mode (decision 8).
   const confirmLabel = confirming
     ? t("smartItemSearch.saving", "Saving...")
     : showingCustomForm
       ? labelCreate
-      : myGearSelected.size > 0
-        ? multiSelect && myGearSelected.size > 1
-          ? `${labelAdd} (${myGearSelected.size})`
-          : labelAdd
-        : catalogSelected.size > 0
-          ? multiSelect && catalogSelected.size > 1
-            ? `${labelImport} (${catalogSelected.size})`
-            : labelImport
-          : labelAdd;
+      : multiSelect && destinationLabel && totalSelected > 0
+        ? t("smartItemSearch.addNToDest", "Add {{count}} to {{dest}}", {
+            count: totalSelected,
+            dest: destinationLabel,
+          })
+        : myGearSelected.size > 0
+          ? multiSelect && myGearSelected.size > 1
+            ? `${labelAdd} (${myGearSelected.size})`
+            : labelAdd
+          : catalogSelected.size > 0
+            ? multiSelect && catalogSelected.size > 1
+              ? `${labelImport} (${catalogSelected.size})`
+              : labelImport
+            : labelAdd;
 
   const hasSearchIntent = debouncedQuery.trim() || categoryFilter || subcategoryFilter || brandFilter;
   const catalogCountForDisplay = hasSearchIntent ? catalogTotal : catalogAllTotal;
@@ -1078,32 +1188,102 @@ export default function SmartItemSearch({
     catalogResults.length === 0 &&
     !showingCustomForm;
 
+  // The result list (shared between single-column and the two-pane left column).
+  const renderResults = () => (
+    <>
+      {showMyGear && (
+        <>
+          {!hasSearchIntent && myGearLoading ? (
+            <div className="py-4"><Spinner centered /></div>
+          ) : !hasSearchIntent && filteredMyGear.length === 0 ? (
+            <p className="text-sm text-primary/40 text-center py-8">
+              {t("smartItemSearch.noGearYet", "No gear yet. Search the catalog or describe an item above.")}
+            </p>
+          ) : filteredMyGear.length > 0 ? (
+            <ResultSection
+              title={t("smartItemSearch.myGear", "My Gear")}
+              items={filteredMyGear}
+              type="myGear"
+              myGearSelected={myGearSelected}
+              catalogSelected={catalogSelected}
+              focused={focused}
+              onToggleMyGear={toggleMyGear}
+              onToggleCatalog={toggleCatalog}
+              onActivate={activateRow}
+              multiSelect={multiSelect}
+              existingGlobalIds={existingGlobalIds}
+              fmtWeight={fmtWeight}
+            />
+          ) : null}
+        </>
+      )}
+
+      {(hasSearchIntent || catalogResults.length > 0) && (
+        <ResultSection
+          title={t("smartItemSearch.fromCatalog", "From Catalog")}
+          items={catalogResults}
+          type="catalog"
+          myGearSelected={myGearSelected}
+          catalogSelected={catalogSelected}
+          focused={focused}
+          onToggleMyGear={toggleMyGear}
+          onToggleCatalog={toggleCatalog}
+          onActivate={activateRow}
+          multiSelect={multiSelect}
+          existingGlobalIds={existingGlobalIds}
+          existingProductIds={effectiveProductIds}
+          loading={catalogLoading}
+          fmtWeight={fmtWeight}
+          catalogVariantSelections={catalogVariantSelections}
+          expandedVariantRowId={expandedVariantRowId}
+          onToggleVariantExpand={toggleVariantExpand}
+          onPickVariant={pickCatalogVariant}
+        />
+      )}
+
+      {!showMyGear && !hasSearchIntent && (
+        <p className="text-sm text-primary/40 text-center py-8">
+          {t("smartItemSearch.browseHint", "Search the catalog above, or tap a category to browse.")}
+        </p>
+      )}
+
+      {/* Inline custom-create row (decision 5) */}
+      {tabLayout && debouncedQuery.trim() && !isUrl(debouncedQuery) && (
+        <div className="border-t border-primary/8 mt-2 pt-2 pb-1">
+          <button
+            type="button"
+            onClick={() => switchToCustom(debouncedQuery.trim())}
+            className="flex items-center gap-1.5 text-sm text-secondary/80 hover:text-secondary transition-colors py-1"
+          >
+            <FiPlus size={13} className="flex-shrink-0" />
+            {t("smartItemSearch.createCustomItem", 'Create "{query}" as a custom item').replace(
+              "{query}",
+              debouncedQuery.trim().length > 50 ? debouncedQuery.trim().slice(0, 50) + "…" : debouncedQuery.trim(),
+            )}
+          </button>
+        </div>
+      )}
+    </>
+  );
+
   return (
     <div
       className="flex flex-col h-full"
       onDragOver={(e) => {
         const types = e.dataTransfer?.types || [];
-        if (["Files", "text/uri-list", "text/plain"].some((t) => types.includes(t))) {
+        if (["Files", "text/uri-list", "text/plain"].some((tt) => types.includes(tt))) {
           e.preventDefault();
         }
       }}
       onDrop={(e) => {
-        // Dropped image → photo scan
-        const file = [...(e.dataTransfer?.files || [])].find((f) =>
-          f.type.startsWith("image/"),
-        );
+        const file = [...(e.dataTransfer?.files || [])].find((f) => f.type.startsWith("image/"));
         if (file) {
           e.preventDefault();
           openScanWithFile(file);
           return;
         }
-        // Dropped link → same flow as pasting a URL
-        const raw =
-          e.dataTransfer?.getData("text/uri-list") || e.dataTransfer?.getData("text") || "";
-        const url = raw
-          .split("\n")
-          .map((l) => l.trim())
-          .find((l) => l && !l.startsWith("#"));
+        const raw = e.dataTransfer?.getData("text/uri-list") || e.dataTransfer?.getData("text") || "";
+        const url = raw.split("\n").map((l) => l.trim()).find((l) => l && !l.startsWith("#"));
         if (isUrl(url)) {
           e.preventDefault();
           setQuery(url);
@@ -1111,7 +1291,6 @@ export default function SmartItemSearch({
         }
       }}
     >
-
       {/* ── Tab row (tabLayout only) ───────────────────────────────────────── */}
       {tabLayout && (
         <div className="flex items-center border-b border-primary/10 flex-shrink-0 px-5">
@@ -1162,26 +1341,21 @@ export default function SmartItemSearch({
                   }
                 }}
                 onPaste={(e) => {
-                  // Screenshot paste (Cmd+V) → photo scan flow
-                  const imageItem = [...(e.clipboardData?.items || [])].find((i) =>
-                    i.type.startsWith("image/"),
-                  );
+                  const imageItem = [...(e.clipboardData?.items || [])].find((i) => i.type.startsWith("image/"));
                   if (imageItem) {
                     e.preventDefault();
                     openScanWithFile(imageItem.getAsFile());
                     return;
                   }
                   const pasted = (e.clipboardData?.getData("text") || "").trim();
-                  if (isUrl(pasted)) {
-                    handleCreateAction(pasted);
-                  }
+                  if (isUrl(pasted)) handleCreateAction(pasted);
                 }}
                 placeholder=""
-                className="w-full pl-9 pr-8 py-2 border border-primary/30 rounded-lg text-primary bg-base-100 text-sm"
+                className="w-full pl-9 pr-8 py-2 border border-primary/30 rounded-lg text-primary bg-base-100 text-base sm:text-sm"
               />
               {!query && (
                 <span
-                  className="absolute left-9 right-9 top-1/2 text-primary/40 text-sm pointer-events-none select-none truncate"
+                  className="absolute left-9 right-9 top-1/2 text-primary/40 text-base sm:text-sm pointer-events-none select-none truncate"
                   style={{
                     transform: `translateY(${phVisible ? "-50%" : "calc(-50% - 5px)"})`,
                     opacity: phVisible ? 1 : 0,
@@ -1222,7 +1396,6 @@ export default function SmartItemSearch({
             </p>
           )}
 
-          {/* Result count + browse toggle — tabLayout Import tab only */}
           {tabLayout && (
             <div className="mt-1.5 flex items-center justify-between gap-2">
               <p className="text-xs text-primary/35 truncate">
@@ -1230,7 +1403,7 @@ export default function SmartItemSearch({
                   ? t("smartItemSearch.catalogResultCount", "{{count}} items in catalog", { count: catalogCountForDisplay })
                   : !query
                     ? t("smartItemSearch.tabSearchHint", "Type & press Enter · Paste a link · Snap a photo")
-                    : " "}
+                    : " "}
               </p>
               <button
                 type="button"
@@ -1242,20 +1415,15 @@ export default function SmartItemSearch({
             </div>
           )}
 
-          {/* Category / Subcategory / Brand dropdowns — collapsed until Browse (or an active filter) */}
           {tabLayout && (
             <div
               className={`grid transition-[grid-template-rows] duration-200 ease-in-out ${
-                showFilters || categoryFilter || subcategoryFilter || brandFilter
-                  ? "grid-rows-[1fr]"
-                  : "grid-rows-[0fr]"
+                showFilters || categoryFilter || subcategoryFilter || brandFilter ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
               }`}
             >
               <div
                 className={`overflow-hidden transition-opacity duration-150 ease-in-out ${
-                  showFilters || categoryFilter || subcategoryFilter || brandFilter
-                    ? "opacity-100"
-                    : "opacity-0"
+                  showFilters || categoryFilter || subcategoryFilter || brandFilter ? "opacity-100" : "opacity-0"
                 }`}
               >
                 <div className="mt-2 flex gap-1.5">
@@ -1266,9 +1434,7 @@ export default function SmartItemSearch({
                   >
                     <option value="">{t("smartItemSearch.allCategories", "All Categories")}</option>
                     {CATALOG_CATEGORIES.map((cat) => (
-                      <option key={cat} value={cat}>
-                        {tCategory(t, cat)}
-                      </option>
+                      <option key={cat} value={cat}>{tCategory(t, cat)}</option>
                     ))}
                   </select>
                   <select
@@ -1289,10 +1455,6 @@ export default function SmartItemSearch({
                     className="flex-1 min-w-0 border border-primary/20 rounded-lg px-2 py-1.5 text-xs text-primary bg-base-100 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     <option value="">{t("smartItemSearch.allBrands", "All Brands")}</option>
-                    {/* Keep the current selection in the list even if the category-scoped
-                        refetch no longer includes it (e.g. that brand has 0 items in the
-                        newly picked category) — otherwise the select renders blank, which
-                        looks like the filter silently reset. */}
                     {Array.from(new Set(brandFilter ? [brandFilter, ...brandOptions] : brandOptions)).map((b) => (
                       <option key={b} value={b}>{b}</option>
                     ))}
@@ -1311,9 +1473,7 @@ export default function SmartItemSearch({
             {CHIPS.map((chip) => (
               <button
                 key={chip.value}
-                onClick={() =>
-                  setCategoryFilter(categoryFilter === chip.value ? null : chip.value)
-                }
+                onClick={() => setCategoryFilter(categoryFilter === chip.value ? null : chip.value)}
                 className={`px-2.5 py-0.5 rounded-full text-xs whitespace-nowrap border transition-colors flex-shrink-0 ${
                   categoryFilter === chip.value
                     ? "bg-secondary text-white border-secondary"
@@ -1343,7 +1503,7 @@ export default function SmartItemSearch({
         />
       )}
 
-      {/* ── Body: sidebar + results ──────────────────────────────────────── */}
+      {/* ── Body: results (single column) or two-pane master–detail ──────── */}
       <div className="flex-1 flex min-h-0">
         {/* Left sidebar — desktop only, non-tabLayout */}
         {!tabLayout && (
@@ -1363,9 +1523,7 @@ export default function SmartItemSearch({
               <button
                 key={chip.value}
                 type="button"
-                onClick={() =>
-                  setCategoryFilter(categoryFilter === chip.value ? null : chip.value)
-                }
+                onClick={() => setCategoryFilter(categoryFilter === chip.value ? null : chip.value)}
                 className={`text-left px-4 py-1.5 text-sm transition-colors border-l-2 ${
                   categoryFilter === chip.value
                     ? "border-secondary bg-secondary/10 text-secondary font-medium"
@@ -1378,205 +1536,75 @@ export default function SmartItemSearch({
           </div>
         )}
 
-        {/* Results area */}
-        <div className="flex-1 overflow-y-auto min-h-0 px-5">
-          {showingCustomForm ? (
-            <CustomForm
-              form={customForm}
-              onChange={setCustomForm}
-              unitLabel={unitLabel}
-            />
-          ) : aiLoading ? (
+        {showingCustomForm ? (
+          <div className="flex-1 overflow-y-auto min-h-0 px-5">
+            <CustomForm form={customForm} onChange={setCustomForm} unitLabel={unitLabel} />
+          </div>
+        ) : aiLoading ? (
+          <div className="flex-1 overflow-y-auto min-h-0 px-5">
             <AiSearchProgress urlQuery={isUrl(query)} />
-          ) : hasNoResults ? (
-            <NoResults
-              query={debouncedQuery}
-              onCreate={handleCreateAction}
-              aiLoading={aiLoading}
+          </div>
+        ) : hasNoResults ? (
+          <div className="flex-1 overflow-y-auto min-h-0 px-5">
+            <NoResults query={debouncedQuery} onCreate={handleCreateAction} aiLoading={aiLoading} />
+          </div>
+        ) : usePane ? (
+          // Two-pane master–detail
+          <div className="flex-1 flex min-h-0">
+            <div
+              className="w-[42%] min-w-[280px] max-w-[420px] border-r border-primary/10 overflow-y-auto px-4 py-2 outline-none focus-visible:ring-2 focus-visible:ring-secondary/40 focus-visible:ring-inset"
+              tabIndex={0}
+              role="listbox"
+              aria-label={t("smartItemSearch.resultsLabel", "Search results")}
+              onKeyDown={onListKeyDown}
+            >
+              {renderResults()}
+            </div>
+            <CatalogPreviewPane
+              item={paneFull}
+              loading={paneLoading}
+              error={paneError}
+              selected={focusedSelected}
+              onToggleSelect={toggleFocusedSelect}
+              initialSelectedOptions={paneInitialOptions}
+              onExplicitVariantChange={recordVariantPick}
+              sizeUnset={paneSizeUnset}
             />
-          ) : (
-            <>
-              {/* My Gear — shown in empty state (full list) or during search */}
-              {showMyGear && (
-                <>
-                  {!hasSearchIntent && myGearLoading ? (
-                    <div className="py-4"><Spinner centered /></div>
-                  ) : !hasSearchIntent && filteredMyGear.length === 0 ? (
-                    <p className="text-sm text-primary/40 text-center py-8">
-                      {t("smartItemSearch.noGearYet", "No gear yet. Search the catalog or describe an item above.")}
-                    </p>
-                  ) : filteredMyGear.length > 0 ? (
-                    <ResultSection
-                      title={t("smartItemSearch.myGear", "My Gear")}
-                      items={filteredMyGear}
-                      type="myGear"
-                      myGearSelected={myGearSelected}
-                      catalogSelected={catalogSelected}
-                      onToggleMyGear={toggleMyGear}
-                      onToggleCatalog={toggleCatalog}
-                      onViewMyGearDetails={(item) => setMyGearPreview(item)}
-                      multiSelect={multiSelect}
-                      existingGlobalIds={existingGlobalIds}
-                    />
-                  ) : null}
-                </>
-              )}
-
-              {/* Catalog — shown when searching, filtering, or holding an injected scan match */}
-              {(hasSearchIntent || catalogResults.length > 0) && (
-                <ResultSection
-                  title={t("smartItemSearch.fromCatalog", "From Catalog")}
-                  items={catalogResults}
-                  type="catalog"
-                  myGearSelected={myGearSelected}
-                  catalogSelected={catalogSelected}
-                  onToggleMyGear={toggleMyGear}
-                  onToggleCatalog={toggleCatalog}
-                  onViewCatalogDetails={handleViewCatalogDetails}
-                  multiSelect={multiSelect}
-                  existingGlobalIds={existingGlobalIds}
-                  existingProductIds={effectiveProductIds}
-                  loading={catalogLoading}
-                  catalogVariantSelections={catalogVariantSelections}
-                  expandedVariantRowId={expandedVariantRowId}
-                  onToggleVariantExpand={toggleVariantExpand}
-                  onPickVariant={pickCatalogVariant}
-                />
-              )}
-
-              {/* Empty state for library mode (no My Gear shown) */}
-              {!showMyGear && !hasSearchIntent && (
-                <p className="text-sm text-primary/40 text-center py-8">
-                  {t("smartItemSearch.browseHint", "Search the catalog above, or tap a category to browse.")}
-                </p>
-              )}
-
-              {/* Persistent custom item escape hatch — hidden when empty or when a URL is in the field */}
-              {tabLayout && debouncedQuery.trim() && !isUrl(debouncedQuery) && (
-                <div className="border-t border-primary/8 mt-2 pt-2 pb-1">
-                  <button
-                    type="button"
-                    onClick={() => switchToCustom(debouncedQuery.trim())}
-                    className="flex items-center gap-1.5 text-sm text-primary/40 hover:text-primary/70 transition-colors py-1"
-                  >
-                    <FiPlus size={13} className="flex-shrink-0" />
-                    {t("smartItemSearch.createCustomItem", 'Create "{query}" as a custom item').replace(
-                      "{query}",
-                      debouncedQuery.trim().length > 50
-                        ? debouncedQuery.trim().slice(0, 50) + "…"
-                        : debouncedQuery.trim()
-                    )}
-                  </button>
-                </div>
-              )}
-            </>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className="flex-1 overflow-y-auto min-h-0 px-5">{renderResults()}</div>
+        )}
       </div>
-
-      {/* Request a Gear Item modal */}
-      {showRequestForm && createPortal(
-        <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-end sm:items-center justify-center z-[70]">
-          <form
-            onSubmit={handleSubmitRequest}
-            className="bg-white sm:rounded-lg shadow-2xl w-full sm:mx-4 sm:max-w-md px-6 py-6 flex flex-col gap-4"
-          >
-            <h3 className="text-base font-semibold text-primary">{t("smartItemSearch.gearRequest.title")}</h3>
-            <p className="text-sm text-primary/60 -mt-2">
-              {t("smartItemSearch.gearRequest.description")}
-            </p>
-            <div className="flex gap-3">
-              <div className="flex-1">
-                <label className="block text-xs font-medium text-primary/70 mb-1">{t("smartItemSearch.gearRequest.labels.itemName")} *</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Nemo Tensor"
-                  value={requestForm.name}
-                  onChange={e => setRequestForm(p => ({ ...p, name: e.target.value }))}
-                  className="w-full border border-primary/20 rounded px-3 py-1.5 text-sm text-primary"
-                  required
-                  autoFocus
-                />
-              </div>
-              <div className="flex-1">
-                <label className="block text-xs font-medium text-primary/70 mb-1">{t("smartItemSearch.gearRequest.labels.brand")} *</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Nemo"
-                  value={requestForm.brand}
-                  onChange={e => setRequestForm(p => ({ ...p, brand: e.target.value }))}
-                  className="w-full border border-primary/20 rounded px-3 py-1.5 text-sm text-primary"
-                  required
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-primary/70 mb-1">{t("smartItemSearch.gearRequest.labels.link")}</label>
-              <input
-                type="url"
-                placeholder="https://..."
-                value={requestForm.link}
-                onChange={e => setRequestForm(p => ({ ...p, link: e.target.value }))}
-                className="w-full border border-primary/20 rounded px-3 py-1.5 text-sm text-primary"
-              />
-            </div>
-            <div className="flex justify-end gap-2 pt-1">
-              <button
-                type="button"
-                onClick={() => { setShowRequestForm(false); setRequestForm({ name: "", brand: "", link: "" }); }}
-                className="px-3 py-1.5 rounded bg-neutralAlt hover:bg-neutralAlt/90 text-primary text-sm"
-              >
-                {t("actions.cancel")}
-              </button>
-              <button
-                type="submit"
-                disabled={requestSending || !requestForm.name.trim() || !requestForm.brand.trim()}
-                className="px-3 py-1.5 rounded bg-secondary text-white text-sm disabled:opacity-50 flex items-center gap-1.5"
-              >
-                {requestSending && <FiLoader size={12} className="animate-spin" />}
-                {t("smartItemSearch.gearRequest.buttons.send")}
-              </button>
-            </div>
-          </form>
-        </div>,
-        document.body
-      )}
 
       {/* Footer */}
-      <div className="flex items-center justify-between gap-2 px-5 py-3 border-t border-primary/10 flex-shrink-0">
+      <div className="flex items-center justify-end gap-3 px-5 py-3 border-t border-primary/10 flex-shrink-0">
+        {multiSelect && totalSelected > 0 && (
+          <span className="text-xs text-primary/50 tabular-nums mr-auto">
+            {t("smartItemSearch.nSelected", "{{count}} selected", { count: totalSelected })}
+          </span>
+        )}
         <button
           type="button"
-          onClick={() => setShowRequestForm(v => !v)}
-          className="text-xs text-primary/50 hover:text-primary/80 underline underline-offset-2"
+          onClick={onClose}
+          disabled={confirming}
+          className="px-3 py-1.5 rounded bg-neutralAlt hover:bg-neutralAlt/90 text-primary text-sm"
         >
-          {t("smartItemSearch.gearRequest.buttons.openForm")}
+          {t("common.cancel", "Cancel")}
         </button>
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={confirming}
-            className="px-3 py-1.5 rounded bg-neutralAlt hover:bg-neutralAlt/90 text-primary text-sm"
-          >
-            {t("common.cancel", "Cancel")}
-          </button>
-          <button
-            type="button"
-            onClick={handleConfirm}
-            disabled={!canConfirm || confirming}
-            className={`px-3 py-1.5 rounded bg-secondary text-white text-sm flex items-center gap-1.5 ${
-              !canConfirm || confirming
-                ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-secondary/80"
-            }`}
-          >
-            {confirming && <FiLoader size={12} className="animate-spin" />}
-            {confirmLabel}
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={handleConfirm}
+          disabled={!canConfirm || confirming}
+          className={`px-3 py-1.5 rounded bg-secondary text-white text-sm flex items-center gap-1.5 ${
+            !canConfirm || confirming ? "opacity-50 cursor-not-allowed" : "hover:bg-secondary/80"
+          }`}
+        >
+          {confirming && <FiLoader size={12} className="animate-spin" />}
+          {confirmLabel}
+        </button>
       </div>
 
-      {/* Catalog item preview modal */}
+      {/* Stacked catalog preview modal (mobile / non-two-pane) */}
       <CatalogItemPreviewModal
         isOpen={!!previewItem}
         onClose={() => {
@@ -1591,7 +1619,7 @@ export default function SmartItemSearch({
         importing={previewImporting}
       />
 
-      {/* My Gear item preview */}
+      {/* My Gear item preview (mobile / non-two-pane) */}
       <CatalogItemPreviewModal
         isOpen={!!myGearPreview}
         onClose={() => setMyGearPreview(null)}
@@ -1625,9 +1653,7 @@ export default function SmartItemSearch({
           onCatalogSelect={(item) => {
             closeScanModal();
             selectCatalogItem(item);
-            // Show full details with an Import button — tapping a match should
-            // confirm, not just silently select in the background list
-            handleViewCatalogDetails(item);
+            activateRow("catalog", item);
           }}
         />
       )}

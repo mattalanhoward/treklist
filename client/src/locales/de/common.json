@@ -600,6 +600,15 @@
     },
     "messages": {
       "alreadyAdded": "Dieses Item ist bereits in Meine Ausrüstung."
+    },
+    "emptyPane": "Wähle ein Ergebnis, um es hier anzuzeigen.",
+    "selectForAdding": "Zum Hinzufügen auswählen",
+    "selectedForAdding": "Zum Hinzufügen ausgewählt",
+    "sizeNotSetHint": "Keine Größe gewählt – die Standardgröße wird hinzugefügt und als „Größe nicht festgelegt“ markiert, später änderbar.",
+    "disclosure": {
+      "manufacturerSpec": "Herstellerangabe",
+      "flatAcrossSizes": "einheitlich über alle Größen",
+      "verified": "geprüft {{date}}"
     }
   },
   "globalItemEditModal": {
@@ -708,24 +717,6 @@
       "catalogMatch": "Im Katalog gefunden",
       "catalogMatches": "Mögliche Treffer gefunden – wähle deinen aus"
     },
-    "gearRequest": {
-      "title": "Ausrüstungsartikel anfragen",
-      "description": "Nicht gefunden, was Sie suchen? Lassen Sie es uns wissen, und wir schauen, ob wir es hinzufügen können.",
-      "labels": {
-        "itemName": "Artikelname",
-        "brand": "Marke",
-        "link": "Link (optional)"
-      },
-      "buttons": {
-        "openForm": "Ausrüstungsartikel anfragen",
-        "send": "Anfrage senden",
-        "sending": "Wird gesendet…"
-      },
-      "toasts": {
-        "success": "Anfrage gesendet! Wir schauen, ob wir es hinzufügen können.",
-        "failed": "Anfrage konnte nicht gesendet werden. Bitte erneut versuchen."
-      }
-    },
     "tabSearchHint": "Name eingeben & Enter · Link einfügen · Foto aufnehmen",
     "browseToggle": "Kategorien durchstöbern",
     "aiProgress": {
@@ -734,7 +725,14 @@
       "matching": "Abgleich mit dem Katalog…"
     },
     "chooseVariant": "Varianten",
-    "multipleVariants": "Mehrere Varianten"
+    "multipleVariants": "Mehrere Varianten",
+    "inList": "Hinzugefügt",
+    "inMyGear": "In meiner Ausrüstung",
+    "nSelected_one": "{{count}} ausgewählt",
+    "nSelected_other": "{{count}} ausgewählt",
+    "addNToDest": "{{count}} zu {{dest}} hinzufügen",
+    "selectRow": "{{name}} auswählen",
+    "resultsLabel": "Suchergebnisse"
   },
   "photoScanModal": {
     "title": "Ausrüstung scannen",

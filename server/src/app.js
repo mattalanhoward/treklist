@@ -22,7 +22,6 @@ const adminAwinImport = require("./routes/adminAwinImport");
 const adminUsersRouter = require("./routes/adminUsers");
 const adminPublicListsRouter = require("./routes/adminPublicLists");
 const { publicShareLimiter } = require("./middleware/rateLimiters");
-const supportRoutes = require("./routes/support");
 const passport = require("./config/passport");
 const myGearRoutes = require("./routes/myGear");
 const wishlistRoutes = require("./routes/wishlist");
@@ -129,7 +128,6 @@ app.use(
 
 app.use("/api/catalog", require("./routes/catalog"));
 app.use("/api/uploads", require("./routes/uploads"));
-app.use("/api/support", supportRoutes);
 app.use("/api/ai", authMiddleware, aiRoutes);
 app.use("/api/community", communityRoutes);
 app.use("/api/community", postsRoutes);

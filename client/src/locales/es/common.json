@@ -600,6 +600,15 @@
     },
     "messages": {
       "alreadyAdded": "Este artículo ya está en Mi equipo."
+    },
+    "emptyPane": "Selecciona un resultado para verlo aquí.",
+    "selectForAdding": "Seleccionar para añadir",
+    "selectedForAdding": "Seleccionado para añadir",
+    "sizeNotSetHint": "Sin talla elegida: se añade la talla predeterminada y se marca como «talla sin definir», editable después.",
+    "disclosure": {
+      "manufacturerSpec": "Especificación del fabricante",
+      "flatAcrossSizes": "igual en todas las tallas",
+      "verified": "verificado {{date}}"
     }
   },
   "globalItemEditModal": {
@@ -708,24 +717,6 @@
       "catalogMatch": "Encontrado en el catálogo",
       "catalogMatches": "Posibles coincidencias encontradas: elige la tuya abajo"
     },
-    "gearRequest": {
-      "title": "Solicitar un artículo de equipo",
-      "description": "¿No encuentras lo que buscas? Dínoslo y veremos si podemos añadirlo.",
-      "labels": {
-        "itemName": "Nombre del artículo",
-        "brand": "Marca",
-        "link": "Enlace (opcional)"
-      },
-      "buttons": {
-        "openForm": "Solicitar un artículo de equipo",
-        "send": "Enviar solicitud",
-        "sending": "Enviando…"
-      },
-      "toasts": {
-        "success": "¡Solicitud enviada! Veremos si podemos añadirlo.",
-        "failed": "No se pudo enviar la solicitud. Por favor, inténtalo de nuevo."
-      }
-    },
     "tabSearchHint": "Escribe y pulsa Enter · Pega un enlace · Haz una foto",
     "browseToggle": "Explorar categorías",
     "aiProgress": {
@@ -734,7 +725,14 @@
       "matching": "Comparando con el catálogo…"
     },
     "chooseVariant": "Variantes",
-    "multipleVariants": "Múltiples variantes"
+    "multipleVariants": "Múltiples variantes",
+    "inList": "Añadido",
+    "inMyGear": "En mi equipo",
+    "nSelected_one": "{{count}} seleccionado",
+    "nSelected_other": "{{count}} seleccionados",
+    "addNToDest": "Añadir {{count}} a {{dest}}",
+    "selectRow": "Seleccionar {{name}}",
+    "resultsLabel": "Resultados de búsqueda"
   },
   "photoScanModal": {
     "title": "Escanear equipo",

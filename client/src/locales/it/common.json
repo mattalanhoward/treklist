@@ -600,6 +600,15 @@
     },
     "messages": {
       "alreadyAdded": "Questo articolo è già in La mia attrezzatura."
+    },
+    "emptyPane": "Seleziona un risultato per vederlo qui.",
+    "selectForAdding": "Seleziona per aggiungere",
+    "selectedForAdding": "Selezionato per aggiungere",
+    "sizeNotSetHint": "Nessuna taglia scelta: viene aggiunta la taglia predefinita e contrassegnata come «taglia non impostata», modificabile in seguito.",
+    "disclosure": {
+      "manufacturerSpec": "Specifica del produttore",
+      "flatAcrossSizes": "uguale per tutte le taglie",
+      "verified": "verificato {{date}}"
     }
   },
   "globalItemEditModal": {
@@ -708,24 +717,6 @@
       "catalogMatch": "Trovato nel catalogo",
       "catalogMatches": "Trovate possibili corrispondenze — scegli la tua qui sotto"
     },
-    "gearRequest": {
-      "title": "Richiedi un articolo",
-      "description": "Non trovi quello che cerchi? Faccelo sapere e verificheremo se possiamo aggiungerlo.",
-      "labels": {
-        "itemName": "Nome articolo",
-        "brand": "Marca",
-        "link": "Link (opzionale)"
-      },
-      "buttons": {
-        "openForm": "Richiedi un articolo",
-        "send": "Invia richiesta",
-        "sending": "Invio in corso…"
-      },
-      "toasts": {
-        "success": "Richiesta inviata! Verificheremo se possiamo aggiungerlo.",
-        "failed": "Impossibile inviare la richiesta. Riprova."
-      }
-    },
     "tabSearchHint": "Scrivi e premi Invio · Incolla un link · Scatta una foto",
     "browseToggle": "Sfoglia le categorie",
     "aiProgress": {
@@ -734,7 +725,14 @@
       "matching": "Confronto con il catalogo…"
     },
     "chooseVariant": "Varianti",
-    "multipleVariants": "Più varianti"
+    "multipleVariants": "Più varianti",
+    "inList": "Aggiunto",
+    "inMyGear": "Nella mia attrezzatura",
+    "nSelected_one": "{{count}} selezionato",
+    "nSelected_other": "{{count}} selezionati",
+    "addNToDest": "Aggiungi {{count}} a {{dest}}",
+    "selectRow": "Seleziona {{name}}",
+    "resultsLabel": "Risultati della ricerca"
   },
   "photoScanModal": {
     "title": "Scansiona attrezzatura",

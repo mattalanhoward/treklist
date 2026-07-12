@@ -607,6 +607,15 @@
     },
     "messages": {
       "alreadyAdded": "Cet article est déjà dans Mon équipement."
+    },
+    "emptyPane": "Sélectionnez un résultat pour l’aperçu ici.",
+    "selectForAdding": "Sélectionner pour ajouter",
+    "selectedForAdding": "Sélectionné pour ajouter",
+    "sizeNotSetHint": "Aucune taille choisie – la taille par défaut est ajoutée et signalée « taille non définie », modifiable plus tard.",
+    "disclosure": {
+      "manufacturerSpec": "Spéc. fabricant",
+      "flatAcrossSizes": "identique selon les tailles",
+      "verified": "vérifié {{date}}"
     }
   },
   "globalItemEditModal": {
@@ -715,24 +724,6 @@
       "catalogMatch": "Trouvé dans le catalogue",
       "catalogMatches": "Correspondances possibles trouvées — choisissez la vôtre ci-dessous"
     },
-    "gearRequest": {
-      "title": "Demander un article d'équipement",
-      "description": "Vous ne trouvez pas ce que vous cherchez ? Dites-le nous et nous verrons si nous pouvons l'ajouter.",
-      "labels": {
-        "itemName": "Nom de l'article",
-        "brand": "Marque",
-        "link": "Lien (facultatif)"
-      },
-      "buttons": {
-        "openForm": "Demander un article d'équipement",
-        "send": "Envoyer la demande",
-        "sending": "Envoi…"
-      },
-      "toasts": {
-        "success": "Demande envoyée ! Nous allons voir si nous pouvons l'ajouter.",
-        "failed": "Impossible d'envoyer la demande. Veuillez réessayer."
-      }
-    },
     "tabSearchHint": "Tapez un nom puis Entrée · Collez un lien · Prenez une photo",
     "browseToggle": "Parcourir les catégories",
     "aiProgress": {
@@ -741,7 +732,14 @@
       "matching": "Comparaison avec le catalogue…"
     },
     "chooseVariant": "Variantes",
-    "multipleVariants": "Plusieurs variantes"
+    "multipleVariants": "Plusieurs variantes",
+    "inList": "Ajouté",
+    "inMyGear": "Dans mon matériel",
+    "nSelected_one": "{{count}} sélectionné",
+    "nSelected_other": "{{count}} sélectionnés",
+    "addNToDest": "Ajouter {{count}} à {{dest}}",
+    "selectRow": "Sélectionner {{name}}",
+    "resultsLabel": "Résultats de recherche"
   },
   "photoScanModal": {
     "title": "Scanner l'équipement",

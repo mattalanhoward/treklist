@@ -6,7 +6,7 @@ import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import SmartItemSearch from "./SmartItemSearch";
 
-export default function AddGearItemModal({ listId, categoryId, onClose, onAdded }) {
+export default function AddGearItemModal({ listId, categoryId, categoryName, onClose, onAdded }) {
   const { t } = useTranslation("common");
   const [existingItems, setExistingItems] = useState([]);
 
@@ -114,7 +114,7 @@ export default function AddGearItemModal({ listId, categoryId, onClose, onAdded 
       onClick={onClose}
     >
       <div
-        className="bg-base-100 sm:rounded-xl shadow-2xl w-full sm:w-[90vw] sm:max-w-[720px] sm:mx-4 flex flex-col modal-mobile-h sm:h-[85vh] sm:max-h-[800px]"
+        className="bg-base-100 sm:rounded-xl shadow-2xl w-full sm:w-[92vw] sm:max-w-[960px] sm:mx-4 flex flex-col modal-mobile-h sm:h-[85vh] sm:max-h-[800px]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -137,6 +137,8 @@ export default function AddGearItemModal({ listId, categoryId, onClose, onAdded 
             multiSelect
             showMyGear
             tabLayout
+            twoPane
+            destinationLabel={categoryName}
             existingGlobalIds={existingGlobalIds}
             existingProductIds={existingProductIds}
             onConfirm={handleConfirm}

@@ -160,6 +160,7 @@ export default function SortableColumn({
         <AddGearItemModal
           listId={listId}
           categoryId={catId}
+          categoryName={category.title}
           onClose={() => setShowAddModalCat(null)}
           onAdded={() => fetchItems(catId)}
         />

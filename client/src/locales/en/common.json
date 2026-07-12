@@ -607,6 +607,15 @@
     },
     "messages": {
       "alreadyAdded": "This item is already in My Gear."
+    },
+    "emptyPane": "Select a result to preview it here.",
+    "selectForAdding": "Select for adding",
+    "selectedForAdding": "Selected for adding",
+    "sizeNotSetHint": "No size chosen — the default fit is added and flagged “size not set”, editable later.",
+    "disclosure": {
+      "manufacturerSpec": "Manufacturer spec",
+      "flatAcrossSizes": "flat across sizes",
+      "verified": "verified {{date}}"
     }
   },
   "globalItemEditModal": {
@@ -715,24 +724,6 @@
       "catalogMatch": "Found in catalog",
       "catalogMatches": "Found possible matches — pick yours below"
     },
-    "gearRequest": {
-      "title": "Request a Gear Item",
-      "description": "Can't find what you're looking for? Let us know and we'll look into adding it.",
-      "labels": {
-        "itemName": "Item Name",
-        "brand": "Brand",
-        "link": "Link (optional)"
-      },
-      "buttons": {
-        "openForm": "Request a Gear Item",
-        "send": "Send Request",
-        "sending": "Sending…"
-      },
-      "toasts": {
-        "success": "Request sent! We'll look into adding it.",
-        "failed": "Failed to send request. Please try again."
-      }
-    },
     "tabSearchHint": "Type & press Enter · Paste a link · Snap a photo",
     "browseToggle": "Browse categories",
     "aiProgress": {
@@ -741,7 +732,14 @@
       "matching": "Matching against the catalog…"
     },
     "chooseVariant": "Variants",
-    "multipleVariants": "Multiple variants"
+    "multipleVariants": "Multiple variants",
+    "inList": "Added",
+    "inMyGear": "In my gear",
+    "nSelected_one": "{{count}} selected",
+    "nSelected_other": "{{count}} selected",
+    "addNToDest": "Add {{count}} to {{dest}}",
+    "selectRow": "Select {{name}}",
+    "resultsLabel": "Search results"
   },
   "photoScanModal": {
     "title": "Scan Gear",
