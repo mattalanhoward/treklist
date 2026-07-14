@@ -642,7 +642,8 @@
       "deleteTitle": "Eliminare questo articolo?",
       "deleteMessage": "Questo lo rimuoverà dai tuoi articoli e da tutte le tue liste.",
       "deleteConfirm": "Elimina articolo"
-    }
+    },
+    "weightYourValue": "Il tuo peso"
   },
   "smartItemSearch": {
     "searchPlaceholder": "es. Osprey Talon 33 zaino uomo",
@@ -750,7 +751,9 @@
     "facetCount": "{{shown}} di {{total}} articoli",
     "inListCheck": "✓ Nella lista",
     "addToDest": "Aggiungi a {{dest}}",
-    "swapForThis": "Sostituisci con questo"
+    "swapForThis": "Sostituisci con questo",
+    "showMore": "Mostra altri ({{n}} rimanenti)",
+    "loadingMore": "Caricamento…"
   },
   "photoScanModal": {
     "title": "Scansiona attrezzatura",

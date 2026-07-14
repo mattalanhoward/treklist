@@ -642,7 +642,8 @@
       "deleteTitle": "Dieses Ausrüstungs-Item löschen?",
       "deleteMessage": "Dadurch wird es aus deiner Ausrüstung und aus allen Packlisten entfernt.",
       "deleteConfirm": "Item löschen"
-    }
+    },
+    "weightYourValue": "Dein Gewicht"
   },
   "smartItemSearch": {
     "searchPlaceholder": "z.B. Osprey Talon 33 Herren-Rucksack",
@@ -750,7 +751,9 @@
     "facetCount": "{{shown}} von {{total}} Artikeln",
     "inListCheck": "✓ In Liste",
     "addToDest": "Zu {{dest}} hinzufügen",
-    "swapForThis": "Dagegen tauschen"
+    "swapForThis": "Dagegen tauschen",
+    "showMore": "Mehr anzeigen (noch {{n}})",
+    "loadingMore": "Wird geladen…"
   },
   "photoScanModal": {
     "title": "Ausrüstung scannen",

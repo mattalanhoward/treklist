@@ -649,7 +649,8 @@
       "deleteTitle": "Supprimer cet article d’équipement ?",
       "deleteMessage": "Cela le supprimera de vos articles et de toutes vos listes d’équipement.",
       "deleteConfirm": "Supprimer l’article"
-    }
+    },
+    "weightYourValue": "Votre poids"
   },
   "smartItemSearch": {
     "searchPlaceholder": "ex. Osprey Talon 33 sac à dos homme",
@@ -757,7 +758,9 @@
     "facetCount": "{{shown}} sur {{total}} articles",
     "inListCheck": "✓ Dans la liste",
     "addToDest": "Ajouter à {{dest}}",
-    "swapForThis": "Remplacer par celui-ci"
+    "swapForThis": "Remplacer par celui-ci",
+    "showMore": "Afficher plus ({{n}} restants)",
+    "loadingMore": "Chargement…"
   },
   "photoScanModal": {
     "title": "Scanner l'équipement",

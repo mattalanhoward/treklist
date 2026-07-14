@@ -649,7 +649,8 @@
       "deleteTitle": "Delete this gear item?",
       "deleteMessage": "This will remove it from your gear items and all of your gear lists.",
       "deleteConfirm": "Delete item"
-    }
+    },
+    "weightYourValue": "Your weight"
   },
   "smartItemSearch": {
     "searchPlaceholder": "e.g. Osprey Talon 33 Men's Backpack",
@@ -757,7 +758,9 @@
     "facetCount": "{{shown}} of {{total}} items",
     "inListCheck": "✓ In list",
     "addToDest": "Add to {{dest}}",
-    "swapForThis": "Swap for this"
+    "swapForThis": "Swap for this",
+    "showMore": "Show more ({{n}} left)",
+    "loadingMore": "Loading…"
   },
   "photoScanModal": {
     "title": "Scan Gear",

@@ -642,7 +642,8 @@
       "deleteTitle": "Dit uitrustingsitem verwijderen?",
       "deleteMessage": "Dit verwijdert het uit je uitrustingsitems en al je gearlists.",
       "deleteConfirm": "Item verwijderen"
-    }
+    },
+    "weightYourValue": "Jouw gewicht"
   },
   "smartItemSearch": {
     "searchPlaceholder": "bijv. Osprey Talon 33 heren rugzak",
@@ -750,7 +751,9 @@
     "facetCount": "{{shown}} van {{total}} artikelen",
     "inListCheck": "✓ In lijst",
     "addToDest": "Aan {{dest}} toevoegen",
-    "swapForThis": "Hiervoor omruilen"
+    "swapForThis": "Hiervoor omruilen",
+    "showMore": "Meer tonen (nog {{n}})",
+    "loadingMore": "Laden…"
   },
   "photoScanModal": {
     "title": "Uitrusting scannen",

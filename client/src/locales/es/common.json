@@ -642,7 +642,8 @@
       "deleteTitle": "¿Eliminar este artículo de equipo?",
       "deleteMessage": "Esto lo eliminará de tus artículos de equipo y de todas tus listas.",
       "deleteConfirm": "Eliminar artículo"
-    }
+    },
+    "weightYourValue": "Tu peso"
   },
   "smartItemSearch": {
     "searchPlaceholder": "ej. Osprey Talon 33 mochila hombre",
@@ -750,7 +751,9 @@
     "facetCount": "{{shown}} de {{total}} artículos",
     "inListCheck": "✓ En la lista",
     "addToDest": "Añadir a {{dest}}",
-    "swapForThis": "Cambiar por este"
+    "swapForThis": "Cambiar por este",
+    "showMore": "Mostrar más ({{n}} restantes)",
+    "loadingMore": "Cargando…"
   },
   "photoScanModal": {
     "title": "Escanear equipo",

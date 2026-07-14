@@ -41,7 +41,7 @@ export default function CatalogPreviewPane({
   added = false,
   addLabel,
 }) {
-  const { t, i18n } = useTranslation("common");
+  const { t } = useTranslation("common");
   const unit = useUnit();
   const { unitLabel, formatInput } = useWeightInput(unit);
   const { measurementSystem } = useUserSettings();
@@ -139,15 +139,8 @@ export default function CatalogPreviewPane({
   // Precision disclosure — honest about what the number is (shared with the
   // Item Details modal via buildWeightDisclosure).
   const disclosure = useMemo(
-    () =>
-      buildWeightDisclosure({
-        t,
-        locale: i18n.language,
-        hasVariants,
-        variants,
-        updatedAt: item?.updatedAt,
-      }),
-    [t, i18n.language, hasVariants, variants, item?.updatedAt],
+    () => buildWeightDisclosure({ t, hasVariants, variants }),
+    [t, hasVariants, variants],
   );
 
   // Close the report popover whenever the previewed item changes.
@@ -204,7 +197,7 @@ export default function CatalogPreviewPane({
       {/* Top: image + identity */}
       <div className="flex gap-4">
         {hasImages && (
-          <div className="w-[130px] h-[130px] flex-shrink-0 flex items-center justify-center rounded border border-primary/15 bg-white overflow-hidden">
+          <div className="w-[150px] h-[150px] sm:w-[190px] sm:h-[190px] flex-shrink-0 flex items-center justify-center rounded border border-primary/15 bg-white overflow-hidden">
             <ImageCarousel
               images={catalogImages}
               alt={`${item.brand ? item.brand + " " : ""}${item.name || ""}`}
@@ -286,9 +279,6 @@ export default function CatalogPreviewPane({
         >
           <FiFlag size={12} />
           {t("reportIssue.flag", "Report an issue")}
-          <span className="font-mono text-[10px] text-primary/30">
-            {t("reportIssue.flagHint", "weight · category · name · image")}
-          </span>
         </button>
       </div>
       {reportOpen && (

@@ -9,6 +9,10 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { FiSearch, FiX, FiPlus, FiLoader, FiCamera } from "react-icons/fi";
+import {
+  LuMoon, LuTent, LuBackpack, LuShirt, LuFootprints, LuCookingPot,
+  LuDroplet, LuBatteryCharging, LuWrench, LuHeartPulse, LuCompass, LuLuggage,
+} from "react-icons/lu";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import api from "../services/api";
@@ -43,6 +47,25 @@ const CHIPS = [
   { key: "navigation",     value: "Navigation & Planning" },
   { key: "travel",         value: "Travel" },
 ];
+
+// Icon per top-level catalog category (browse zero-state tiles). Keyed by the
+// English category value so it survives translation.
+const CATEGORY_ICONS = {
+  "Sleep System": LuMoon,
+  "Shelter": LuTent,
+  "Backpacks & Bags": LuBackpack,
+  "Men's Clothing": LuShirt,
+  "Women's Clothing": LuShirt,
+  "Unisex Clothing": LuShirt,
+  "Footwear": LuFootprints,
+  "Kitchen & Cooking": LuCookingPot,
+  "Hydration": LuDroplet,
+  "Electronics & Power": LuBatteryCharging,
+  "Accessories & Tools": LuWrench,
+  "Health & Hygiene": LuHeartPulse,
+  "Navigation & Planning": LuCompass,
+  "Travel": LuLuggage,
+};
 
 function isUrl(s) {
   return /^https?:\/\//i.test((s || "").trim());
@@ -561,38 +584,6 @@ function CustomForm({ form, onChange, unitLabel }) {
   );
 }
 
-// ── Browse zero state: "Search by" mode chips (desktop) ───────────────────────
-// Advertises what the box accepts (decision 8). Static labels; the Photo chip
-// opens the camera scan. Mobile uses a rotating placeholder instead (Phase 3).
-function SearchModeChips({ onPhoto }) {
-  const { t } = useTranslation("common");
-  const modes = [
-    t("smartItemSearch.searchModes.productName", "Product name"),
-    t("smartItemSearch.searchModes.storeUrl", "Store URL"),
-    t("smartItemSearch.searchModes.decathlonId", "Decathlon item ID"),
-  ];
-  return (
-    <div className="hidden sm:flex items-center gap-2 pt-2 flex-wrap text-xs">
-      <span className="text-primary/40">{t("smartItemSearch.searchBy", "Search by:")}</span>
-      {modes.map((m) => (
-        <span
-          key={m}
-          className="rounded-full border border-dashed border-primary/25 px-2.5 py-0.5 text-primary/55 whitespace-nowrap"
-        >
-          {m}
-        </span>
-      ))}
-      <button
-        type="button"
-        onClick={onPhoto}
-        className="rounded-full border border-dashed border-primary/25 px-2.5 py-0.5 text-primary/55 hover:text-secondary hover:border-secondary/40 transition-colors whitespace-nowrap"
-      >
-        📷 {t("smartItemSearch.searchModes.photo", "Photo")}
-      </button>
-    </div>
-  );
-}
-
 // ── Browse zero state: optional featured-brand slot (config-driven) ───────────
 // Hidden entirely when FEATURED_BRAND is unset (decision 6). Browse zero state
 // only — never influences search relevance.
@@ -626,28 +617,40 @@ function CategoryTileGrid({ counts, onPick }) {
   const { t, i18n } = useTranslation("common");
   const fmt = (n) => Number(n).toLocaleString(i18n.language || undefined);
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 px-5 py-4">
-      {CATALOG_CATEGORIES.map((cat) => (
-        <button
-          key={cat}
-          type="button"
-          onClick={() => onPick(cat)}
-          className="flex flex-col gap-1.5 rounded-lg border border-primary/15 px-3 py-3 text-left hover:bg-primary/5 transition-colors"
-        >
-          <span className="h-5 w-5 rounded border border-dashed border-primary/25 flex-none" />
-          <span className="text-[13px] font-semibold text-primary leading-tight">{tCategory(t, cat)}</span>
-          <span className="text-[10.5px] text-primary/40 tabular-nums">
-            {counts?.[cat] != null ? fmt(counts[cat]) : "—"}
-          </span>
-        </button>
-      ))}
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 px-5 py-3">
+      {CATALOG_CATEGORIES.map((cat) => {
+        const Icon = CATEGORY_ICONS[cat];
+        return (
+          <button
+            key={cat}
+            type="button"
+            onClick={() => onPick(cat)}
+            className="flex items-center gap-2.5 rounded-lg border border-primary/15 px-3 py-2 text-left hover:bg-primary/5 hover:border-secondary/40 transition-colors"
+          >
+            <span className="flex h-8 w-8 flex-none items-center justify-center rounded-md bg-secondary/10 text-secondary">
+              {Icon ? <Icon size={16} /> : null}
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-[13px] font-semibold text-primary leading-tight">
+                {tCategory(t, cat)}
+              </span>
+              <span className="block text-[10.5px] text-primary/40 tabular-nums">
+                {counts?.[cat] != null ? fmt(counts[cat]) : "—"}
+              </span>
+            </span>
+          </button>
+        );
+      })}
     </div>
   );
 }
 
 // ── Facet row: count + active category chip + subcategory chips (decision 7) ──
 // Horizontal scroll; Brand chip is a later drop-in.
-function FacetRow({ shownCount, totalCount, category, subcategory, onClearCategory, onPickSub }) {
+function FacetRow({
+  shownCount, totalCount, category, subcategory, onClearCategory, onPickSub,
+  brands, brand, onPickBrand,
+}) {
   const { t, i18n } = useTranslation("common");
   const fmt = (n) => Number(n).toLocaleString(i18n.language || undefined);
   const subs = category ? CATALOG_SUBCATEGORIES[category] || [] : [];
@@ -679,6 +682,25 @@ function FacetRow({ shownCount, totalCount, category, subcategory, onClearCatego
           {tCategory(t, category)}
           <FiX size={11} />
         </button>
+      )}
+      {brands?.length > 0 && (
+        <div className="relative flex-none">
+          <select
+            value={brand || ""}
+            onChange={(e) => onPickBrand(e.target.value || null)}
+            className={`appearance-none rounded-full border pl-2.5 pr-6 py-0.5 text-xs whitespace-nowrap transition-colors cursor-pointer ${
+              brand
+                ? "bg-secondary text-white border-secondary"
+                : "border-primary/20 text-primary/60 hover:border-secondary/50 bg-base-100"
+            }`}
+          >
+            <option value="">{t("smartItemSearch.allBrands", "All brands")}</option>
+            {brands.map((b) => (
+              <option key={b} value={b}>{b}</option>
+            ))}
+          </select>
+          <span className={`pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[9px] ${brand ? "text-white" : "text-primary/40"}`}>▾</span>
+        </div>
       )}
       {subs.map((sub) => (
         <button
@@ -902,6 +924,8 @@ export default function SmartItemSearch({
   const [catalogTotal, setCatalogTotal] = useState(null);
   const [catalogAllTotal, setCatalogAllTotal] = useState(null);
   const [categoryCounts, setCategoryCounts] = useState(null); // { [category]: count } for browse tiles
+  const [catalogBrands, setCatalogBrands] = useState([]); // brand facet options (scoped to category)
+  const [loadingMore, setLoadingMore] = useState(false); // "Show more" pagination
 
   // Selection
   const [myGearSelected, setMyGearSelected] = useState(new Set());
@@ -1143,6 +1167,18 @@ export default function SmartItemSearch({
       .catch(() => {});
   }, [tabLayout]);
 
+  // Brand facet options, scoped to the active category (tabLayout only). Lets
+  // the user filter results by brand from the facet row.
+  useEffect(() => {
+    if (!tabLayout) return;
+    const params = {};
+    if (categoryFilter) params.category = categoryFilter;
+    api
+      .get("/catalog/brands", { params })
+      .then(({ data }) => setCatalogBrands(Array.isArray(data) ? data : []))
+      .catch(() => setCatalogBrands([]));
+  }, [tabLayout, categoryFilter]);
+
   // Debounce
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedQuery(query), 400);
@@ -1151,6 +1187,7 @@ export default function SmartItemSearch({
 
   useEffect(() => {
     setSubcategoryFilter(null);
+    setBrandFilter(null);
   }, [categoryFilter]);
 
 
@@ -1189,6 +1226,35 @@ export default function SmartItemSearch({
       })
       .finally(() => setCatalogLoading(false));
   }, [debouncedQuery, categoryFilter, subcategoryFilter, brandFilter]);
+
+  // "Show more": append the next page of catalog results (skip = current count).
+  // Browsing a large category (e.g. Shelter) exceeds one page, so paginate
+  // instead of silently truncating at the first 100.
+  const loadMoreCatalog = useCallback(async () => {
+    if (loadingMore) return;
+    if (catalogTotal != null && catalogResults.length >= catalogTotal) return;
+    setLoadingMore(true);
+    const params = { skip: catalogResults.length, limit: 100 };
+    if (debouncedQuery.trim()) {
+      const brandNumberMatch = debouncedQuery.trim().match(/^\S+\s+(\d{5,})$/);
+      params.q = brandNumberMatch ? brandNumberMatch[1] : debouncedQuery.trim();
+    }
+    if (categoryFilter) params.category = categoryFilter;
+    if (subcategoryFilter) params.subcategory = subcategoryFilter;
+    if (brandFilter) params.brand = brandFilter;
+    try {
+      const { data } = await api.get("/catalog/items", { params });
+      const page = data?.items || [];
+      setCatalogResults((prev) => {
+        const seen = new Set(prev.map((i) => String(i._id)));
+        return [...prev, ...page.filter((i) => !seen.has(String(i._id)))];
+      });
+    } catch {
+      // non-fatal — leave the current page in place
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [loadingMore, catalogTotal, catalogResults, debouncedQuery, categoryFilter, subcategoryFilter, brandFilter]);
 
   // Zero-result search log (handoff CUT section → demand signal). Fires
   // fire-and-forget once per settled text query that returns nothing — a
@@ -1361,12 +1427,7 @@ export default function SmartItemSearch({
     };
   }, [paneActive, focusKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Pane selection wiring for the focused item.
-  const focusedSelected = focused
-    ? focused.source === "myGear"
-      ? myGearSelected.has(focused.id)
-      : catalogSelected.has(focused.id)
-    : false;
+  // Pane selection wiring for the focused item (Space toggles the row checkbox).
   const toggleFocusedSelect = (id) => {
     if (!focused) return;
     focused.source === "myGear" ? toggleMyGear(id) : toggleCatalog(id);
@@ -1394,11 +1455,13 @@ export default function SmartItemSearch({
     : t("smartItemSearch.add", "Add");
   const swapLabel = t("smartItemSearch.swapForThis", "Swap for this");
 
-  // Desktop preview-pane commit affordance: swap mode gets an immediate
-  // "Swap for this" button; add mode keeps the batch "Select for adding" checkbox.
+  // Desktop preview-pane commit affordance: an immediate action button in both
+  // modes. Swap mode → "Swap for this"; add mode → "Add to {dest}" adds the
+  // previewed item directly (no separate select-then-add step). Batch multi-add
+  // still lives on the result-list checkboxes + footer.
   const paneCommitProps = swapMode
     ? { onAdd: handleSwap, adding: sheetAdding, added: false, addLabel: swapLabel }
-    : { selected: focusedSelected, onToggleSelect: toggleFocusedSelect };
+    : { onAdd: handleSheetAdd, adding: sheetAdding, added: sheetItemAdded, addLabel: sheetAddLabel };
 
   // Keyboard nav on the result list (decision 11).
   const onListKeyDown = (e) => {
@@ -1629,6 +1692,25 @@ export default function SmartItemSearch({
         />
       )}
 
+      {/* Pagination — reveal the rest of a large category/result set */}
+      {!catalogLoading && catalogTotal != null && catalogResults.length < catalogTotal && (
+        <div className="flex justify-center py-2">
+          <button
+            type="button"
+            onClick={loadMoreCatalog}
+            disabled={loadingMore}
+            className="flex items-center gap-1.5 rounded-lg border border-primary/20 px-4 py-1.5 text-sm text-primary/70 hover:bg-primary/5 disabled:opacity-50 transition-colors"
+          >
+            {loadingMore && <FiLoader size={13} className="animate-spin" />}
+            {loadingMore
+              ? t("smartItemSearch.loadingMore", "Loading…")
+              : t("smartItemSearch.showMore", "Show more ({{n}} left)", {
+                  n: catalogTotal - catalogResults.length,
+                })}
+          </button>
+        </div>
+      )}
+
       {!showMyGear && !hasSearchIntent && (
         <p className="text-sm text-primary/40 text-center py-8">
           {t("smartItemSearch.browseHint", "Search the catalog above, or tap a category to browse.")}
@@ -1783,11 +1865,6 @@ export default function SmartItemSearch({
                   : " "}
             </p>
           )}
-
-          {/* Browse zero state advertises what the box accepts (decision 8) */}
-          {tabLayout && !hasSearchIntent && (
-            <SearchModeChips onPhoto={() => setShowScanModal(true)} />
-          )}
         </div>
       )}
 
@@ -1800,6 +1877,9 @@ export default function SmartItemSearch({
           subcategory={subcategoryFilter}
           onClearCategory={() => setCategoryFilter(null)}
           onPickSub={setSubcategoryFilter}
+          brands={catalogBrands}
+          brand={brandFilter}
+          onPickBrand={setBrandFilter}
         />
       )}
 
@@ -1881,7 +1961,7 @@ export default function SmartItemSearch({
           <div className="flex-1 overflow-y-auto min-h-0 px-5">
             <AiSearchProgress urlQuery={isUrl(query)} />
           </div>
-        ) : tabLayout && !hasSearchIntent ? (
+        ) : tabLayout && !hasSearchIntent && catalogResults.length === 0 ? (
           // Browse zero state (decision 6): featured slot + 14 category tiles
           <div className="flex-1 overflow-y-auto min-h-0">
             <FeaturedBrand

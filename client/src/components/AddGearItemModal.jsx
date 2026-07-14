@@ -183,7 +183,7 @@ export default function AddGearItemModal({ listId, categoryId, categoryName, onC
       >
         {/* Header */}
         <div
-          className="flex justify-between items-center px-5 pt-4 pb-3 border-b border-primary/10 flex-shrink-0"
+          className="flex justify-between items-center px-5 pt-4 pb-2 flex-shrink-0"
           style={{ paddingTop: "max(1rem, env(safe-area-inset-top))" }}
         >
           <h2 className="text-lg font-semibold text-primary">
