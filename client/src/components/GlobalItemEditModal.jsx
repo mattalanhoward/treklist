@@ -8,7 +8,7 @@ import ConfirmDialog from "./ConfirmDialog";
 import { useUnit } from "../hooks/useUnit";
 import { useWeightInput } from "../hooks/useWeightInput";
 import { useUserSettings } from "../contexts/UserSettings";
-import { FiX, FiFlag } from "react-icons/fi";
+import { FiX, FiFlag, FiTrash2, FiShoppingCart } from "react-icons/fi";
 import { tItemType, tCategory, CATALOG_CATEGORIES } from "../config/catalogTaxonomy";
 import ImageCarousel from "./ImageCarousel";
 import { merchantFromUrl } from "../utils/merchantFromUrl";
@@ -35,7 +35,7 @@ export default function GlobalItemEditModal({
   // Hide the ⚑ report flag on the public read-only variant (handoff).
   readOnly = false,
 }) {
-  const { t, i18n } = useTranslation("common");
+  const { t } = useTranslation("common");
 
   const [form, setForm] = useState({
     catalogCategory: "",
@@ -52,6 +52,9 @@ export default function GlobalItemEditModal({
   const { measurementSystem } = useUserSettings();
 
   const [displayWeight, setDisplayWeight] = useState("");
+  // True once the user has typed their own weight — protects a measured value
+  // from being clobbered when they switch variants (add-gear feedback).
+  const weightDirtyRef = useRef(false);
   const [worn, setWorn] = useState(false);
   const [consumable, setConsumable] = useState(false);
   const [quantity, setQuantity] = useState(1);
@@ -70,7 +73,6 @@ export default function GlobalItemEditModal({
   // Manufacturer-spec base weight (for the weight hero / disclosure), distinct
   // from the user's editable measured override.
   const [catalogWeightGrams, setCatalogWeightGrams] = useState(null);
-  const [catalogUpdatedAt, setCatalogUpdatedAt] = useState(null);
   const reportFlagRef = useRef(null);
   const [reportOpen, setReportOpen] = useState(false);
 
@@ -200,7 +202,6 @@ export default function GlobalItemEditModal({
         setVariants([]);
         setDefaultVariantKey(null);
         setCatalogWeightGrams(null);
-        setCatalogUpdatedAt(null);
         setLoadingImages(false);
         return;
       }
@@ -212,7 +213,6 @@ export default function GlobalItemEditModal({
         setVariants([]);
         setDefaultVariantKey(null);
         setCatalogWeightGrams(null);
-        setCatalogUpdatedAt(null);
         setLoadingImages(false);
         return;
       }
@@ -250,7 +250,6 @@ export default function GlobalItemEditModal({
           setCatalogWeightGrams(
             typeof data.weightGrams === "number" ? data.weightGrams : null,
           );
-          setCatalogUpdatedAt(data.updatedAt || null);
         }
       } catch {
         if (!cancelled) {
@@ -260,7 +259,6 @@ export default function GlobalItemEditModal({
           setVariants([]);
           setDefaultVariantKey(null);
           setCatalogWeightGrams(null);
-          setCatalogUpdatedAt(null);
         }
       } finally {
         if (!cancelled) setLoadingImages(false);
@@ -386,7 +384,9 @@ export default function GlobalItemEditModal({
         (a) => (v.options?.[a.name] ?? "") === (nextOptions?.[a.name] ?? ""),
       ),
     );
-    if (match && typeof match.weightGrams === "number") {
+    // Only drive the weight from the variant spec when the user hasn't entered
+    // their own — never overwrite a measured weight on a size change.
+    if (match && typeof match.weightGrams === "number" && !weightDirtyRef.current) {
       setDisplayWeight(formatInput(match.weightGrams));
     }
   };
@@ -459,6 +459,7 @@ export default function GlobalItemEditModal({
     if (!item) return;
     const initialGrams = item.weight ?? "";
     setDisplayWeight(initialGrams !== "" ? formatInput(initialGrams) : "");
+    weightDirtyRef.current = false;
   }, [itemId, unit, formatInput, item]);
 
   const validate = () => {
@@ -615,26 +616,33 @@ export default function GlobalItemEditModal({
     return formatted.length ? formatted : null;
   }, [viewMode, template?.attributes, template?.itemType, measurementSystem, selectedVariant]);
 
-  // Manufacturer-spec weight hero (imported items): the selected variant's
-  // weight, else the catalog base weight. Distinct from the editable override.
-  const heroWeightGrams =
+  // Manufacturer-spec weight (imported items): the selected variant's weight,
+  // else the catalog base weight. This is the reference, not what's shown.
+  const manufacturerWeightGrams =
     selectedVariant && typeof selectedVariant.weightGrams === "number"
       ? selectedVariant.weightGrams
       : typeof catalogWeightGrams === "number"
         ? catalogWeightGrams
         : null;
-  const heroWeightDisplay =
-    typeof heroWeightGrams === "number" ? formatInput(heroWeightGrams) : "";
+  const manufacturerWeightDisplay =
+    typeof manufacturerWeightGrams === "number" ? formatInput(manufacturerWeightGrams) : "";
+
+  // The weight hero reflects the user's own weight (the editable field) so an
+  // edit is visible immediately; it falls back to the manufacturer spec. When
+  // the user has entered a value that differs from the spec, we no longer claim
+  // it's the manufacturer number (add-gear feedback).
+  const trimmedDisplayWeight = String(displayWeight ?? "").trim();
+  const heroWeightDisplay = trimmedDisplayWeight !== "" ? trimmedDisplayWeight : manufacturerWeightDisplay;
+  const weightIsUserValue =
+    trimmedDisplayWeight !== "" && trimmedDisplayWeight !== manufacturerWeightDisplay;
   const weightDisclosure = useMemo(
     () =>
       buildWeightDisclosure({
         t,
-        locale: i18n.language,
         hasVariants,
         variants,
-        updatedAt: catalogUpdatedAt || template?.updatedAt,
       }),
-    [t, i18n.language, hasVariants, variants, catalogUpdatedAt, template?.updatedAt],
+    [t, hasVariants, variants],
   );
 
   // Close the report popover when the underlying product changes.
@@ -657,7 +665,7 @@ export default function GlobalItemEditModal({
     showImageBlock || showCustomImageBlock ? "max-w-4xl" : "max-w-2xl";
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-end sm:items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-end sm:items-center justify-center z-[70]">
       {showFullscreenSpinner ? (
         <Spinner tone="white" />
       ) : (
@@ -769,7 +777,7 @@ export default function GlobalItemEditModal({
                       type="text"
                       inputMode="decimal"
                       value={displayWeight}
-                      onChange={(e) => setDisplayWeight(e.target.value)}
+                      onChange={(e) => { weightDirtyRef.current = true; setDisplayWeight(e.target.value); }}
                       disabled={disableEdits}
                       className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100"
                     />
@@ -870,7 +878,9 @@ export default function GlobalItemEditModal({
                           <span className="text-sm text-primary/60">{unitLabel}</span>
                         </div>
                         <span className="text-[11.5px] text-primary/45">
-                          {weightDisclosure}
+                          {weightIsUserValue
+                            ? t("globalItemEditModal.weightYourValue", "Your weight")
+                            : weightDisclosure}
                         </span>
                       </div>
                     )}
@@ -914,7 +924,7 @@ export default function GlobalItemEditModal({
                           type="text"
                           inputMode="decimal"
                           value={displayWeight}
-                          onChange={(e) => setDisplayWeight(e.target.value)}
+                          onChange={(e) => { weightDirtyRef.current = true; setDisplayWeight(e.target.value); }}
                           className="w-full max-w-[220px] text-primary bg-base-100 border border-primary/30 rounded px-2 py-1"
                         />
                       </div>
@@ -1016,70 +1026,74 @@ export default function GlobalItemEditModal({
           )}
           </div>
 
-          {/* Actions - fixed at bottom */}
-          <div className="mt-3 flex justify-between flex-shrink-0">
-            <div className="flex space-x-2">
-              {allowDelete && (
-                <button
-                  type="button"
-                  onClick={() => setDeleteConfirmOpen(true)}
-                  disabled={saving || isResolvingMode}
-                  className="px-2 py-1 bg-error text-neutral font-semibold rounded-md shadow hover:bg-error/80 focus:outline-none focus:ring-2 focus:ring-error transition"
-                >
-                  {t("globalItemEditModal.buttons.delete")}
-                </button>
-              )}
+          {/* Actions - fixed at bottom. Delete is a quiet icon (not a big red
+              block); the buy link carries a cart icon; Save/Cancel lead. */}
+          <div className="mt-3 flex items-center gap-2 flex-shrink-0">
+            {allowDelete && (
+              <button
+                type="button"
+                onClick={() => setDeleteConfirmOpen(true)}
+                disabled={saving || isResolvingMode}
+                aria-label={t("globalItemEditModal.buttons.delete")}
+                title={t("globalItemEditModal.buttons.delete")}
+                className="flex-none flex items-center justify-center h-9 w-9 rounded-md text-primary/50 hover:text-error hover:bg-error/10 disabled:opacity-40 transition-colors"
+              >
+                <FiTrash2 size={18} />
+              </button>
+            )}
 
-              {template?.importedFromShare && globalId && (
-                <button
-                  type="button"
-                  disabled={saving}
-                  onClick={async () => {
-                    try {
-                      await api.patch(`/global/items/${globalId}/claim`);
-                      invalidateGlobalItemCache(globalId);
-                      setGlobalTemplate((prev) =>
-                        prev ? { ...prev, importedFromShare: false } : prev,
-                      );
-                      toast.success(
-                        t("globalItemEditModal.toast.claimed", "Added to My Gear"),
-                      );
-                      window.dispatchEvent(
-                        new CustomEvent("global-items:updated"),
-                      );
-                      onSaved?.();
-                      onClose?.();
-                    } catch (err) {
-                      toast.error(
-                        err?.response?.data?.message ||
-                          t(
-                            "globalItemEditModal.toast.claimFailed",
-                            "Failed to add to My Gear",
-                          ),
-                      );
-                    }
-                  }}
-                  className="px-2 py-1 bg-secondary/10 text-secondary rounded hover:bg-secondary/20 text-sm"
-                >
-                  {t("globalItemEditModal.buttons.claim", "Add to My Gear")}
-                </button>
-              )}
+            {template?.importedFromShare && globalId && (
+              <button
+                type="button"
+                disabled={saving}
+                onClick={async () => {
+                  try {
+                    await api.patch(`/global/items/${globalId}/claim`);
+                    invalidateGlobalItemCache(globalId);
+                    setGlobalTemplate((prev) =>
+                      prev ? { ...prev, importedFromShare: false } : prev,
+                    );
+                    toast.success(
+                      t("globalItemEditModal.toast.claimed", "Added to My Gear"),
+                    );
+                    window.dispatchEvent(
+                      new CustomEvent("global-items:updated"),
+                    );
+                    onSaved?.();
+                    onClose?.();
+                  } catch (err) {
+                    toast.error(
+                      err?.response?.data?.message ||
+                        t(
+                          "globalItemEditModal.toast.claimFailed",
+                          "Failed to add to My Gear",
+                        ),
+                    );
+                  }
+                }}
+                className="px-2 py-1 bg-secondary/10 text-secondary rounded hover:bg-secondary/20 text-sm"
+              >
+                {t("globalItemEditModal.buttons.claim", "Add to My Gear")}
+              </button>
+            )}
 
-              {!isCustom && (selectedVariant?.deepLink || primaryOffer?.deepLink) && (
-                <ButtonLink href={selectedVariant?.deepLink || primaryOffer.deepLink}>
+            {!isCustom && (selectedVariant?.deepLink || primaryOffer?.deepLink) && (
+              <ButtonLink href={selectedVariant?.deepLink || primaryOffer.deepLink}>
+                <span className="flex items-center gap-1.5">
+                  <FiShoppingCart size={14} />
                   {(selectedVariant?.deepLink && merchantFromUrl(selectedVariant.deepLink)) ||
                     primaryOffer.merchantName ||
                     t("globalItemEditModal.buttons.productPage")}
-                </ButtonLink>
-              )}
-            </div>
+                </span>
+              </ButtonLink>
+            )}
 
-            <div className="flex space-x-2">
+            <div className="ml-auto flex space-x-2">
               <button
                 type="button"
                 onClick={onClose}
                 disabled={saving}
-                className="px-2 py-1 bg-neutralAlt rounded hover:bg-neutralAlt/90 text-primary sm:text-base"
+                className="px-3 py-1.5 rounded bg-neutralAlt hover:bg-neutralAlt/90 text-primary text-sm"
               >
                 {t("actions.cancel")}
               </button>
@@ -1087,7 +1101,7 @@ export default function GlobalItemEditModal({
               <button
                 type="submit"
                 disabled={saving || isResolvingMode}
-                className={`px-2 py-1 rounded bg-secondary text-white hover:bg-secondary/80 ${
+                className={`px-3 py-1.5 rounded bg-secondary text-white text-sm hover:bg-secondary/80 ${
                   saving || isResolvingMode
                     ? "opacity-50 cursor-not-allowed"
                     : ""
