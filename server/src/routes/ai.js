@@ -387,6 +387,7 @@ DESCRIPTION — be specific, never generic:
 • Footwear: waterproofing, boot height
 • Cooking: fuel type, boil time
 Only state specs you are confident about — omit a spec entirely rather than guess (e.g. never claim a tent is freestanding or name pole materials unless certain).
+Never invent components, parts, or included accessories the product may not have (e.g. a built-in pillow, headrest, pockets, or a stuff sack) — describe only features you are certain belong to the specific named product. When unsure, keep the description short and general rather than adding fabricated details.
 Never write sentences like "designed for outdoor adventures" or "perfect for hiking".${descLangInstruction}`;
 
   const trimmedQuery = query.trim();
@@ -521,6 +522,7 @@ DESCRIPTION rules:
 • Backpacks: volume in liters, frame type
 • Tents/shelters: capacity, pole material, freestanding or not
 • Stoves: fuel type, boil time if known
+• Never invent components or included accessories the product may not have (e.g. a built-in pillow, headrest, pockets, or stuff sack) — describe only what you are certain belongs to the item shown
 • Never write generic phrases like "designed for outdoor adventures"${descLangInstruction}
 
 If you cannot identify the item at all, set name to null.`;

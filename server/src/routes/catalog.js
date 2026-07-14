@@ -12,8 +12,43 @@ const User = require("../models/user");
 const AffiliateProduct = require("../models/affiliateProduct");
 
 const { tokenRegex } = require("../utils/tokenRegex");
+const { sendSupportEmail } = require("../utils/mailer");
 
 const router = express.Router();
+
+// Best-effort admin notification when a catalog issue is reported. No-ops when
+// SMTP (or a destination address) isn't configured — never blocks the request.
+async function notifyCatalogReport({ item, fields, note, variantKey, shownValues, reporterId }) {
+  const to =
+    process.env.CATALOG_REPORT_EMAIL ||
+    process.env.ADMIN_EMAIL ||
+    process.env.SUPPORT_EMAIL ||
+    process.env.SMTP_FROM ||
+    process.env.SMTP_USER;
+  if (!to) return;
+  const name = `${item?.brand ? item.brand + " " : ""}${item?.name || item?._id || ""}`.trim();
+  const lines = [
+    `A catalog issue was reported.`,
+    ``,
+    `Item: ${name}`,
+    `Item ID: ${item?._id}`,
+    variantKey ? `Variant: ${variantKey}` : null,
+    `Fields: ${fields.join(", ")}`,
+    note ? `Note: ${note}` : null,
+    shownValues ? `Shown values: ${JSON.stringify(shownValues)}` : null,
+    reporterId ? `Reporter: ${reporterId}` : null,
+    `When: ${new Date().toISOString()}`,
+  ].filter(Boolean);
+  try {
+    await sendSupportEmail({
+      to,
+      subject: `[TrekList] Catalog report — ${name} (${fields.join(", ")})`,
+      text: lines.join("\n"),
+    });
+  } catch (err) {
+    console.warn("[catalog/report] notification email failed:", err.message);
+  }
+}
 
 // Small normalization helper (server-side)
 function normalizeRegion(region) {
@@ -150,8 +185,10 @@ router.post("/report", auth, async (req, res) => {
       return res.status(400).json({ error: "No valid report field selected" });
     }
 
-    const exists = await CatalogItem.exists({ _id: catalogItemId });
-    if (!exists) return res.status(404).json({ error: "Catalog item not found" });
+    const reportedItem = await CatalogItem.findById(catalogItemId)
+      .select("name brand")
+      .lean();
+    if (!reportedItem) return res.status(404).json({ error: "Catalog item not found" });
 
     const trimmedNote = typeof note === "string" ? note.trim().slice(0, 1000) : "";
     const now = new Date();
@@ -175,6 +212,16 @@ router.post("/report", auth, async (req, res) => {
         ),
       ),
     );
+
+    // Fire-and-forget admin notification (no-ops without SMTP config).
+    notifyCatalogReport({
+      item: reportedItem,
+      fields,
+      note: trimmedNote,
+      variantKey,
+      shownValues,
+      reporterId: req.userId,
+    });
 
     res.json({ ok: true, fields });
   } catch (err) {
