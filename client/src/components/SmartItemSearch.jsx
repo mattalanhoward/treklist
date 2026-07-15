@@ -1248,17 +1248,28 @@ export default function SmartItemSearch({
     if (categoryFilter) params.category = categoryFilter;
     if (subcategoryFilter) params.subcategory = subcategoryFilter;
     if (brandFilter) params.brand = brandFilter;
+    // Guard against a stale in-flight response clobbering a newer state (e.g.
+    // clearing a category while a brand fetch is still resolving would otherwise
+    // repopulate results with no facet row to clear them — a dead end).
+    let cancelled = false;
     api
       .get("/catalog/items", { params })
       .then(({ data }) => {
+        if (cancelled) return;
         setCatalogResults(data?.items || []);
         setCatalogTotal(data?.total ?? null);
       })
       .catch(() => {
+        if (cancelled) return;
         setCatalogResults([]);
         setCatalogTotal(null);
       })
-      .finally(() => setCatalogLoading(false));
+      .finally(() => {
+        if (!cancelled) setCatalogLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [debouncedQuery, categoryFilter, subcategoryFilter, brandFilter, tabLayout, activeTab]);
 
   // "Show more": append the next page of catalog results (skip = current count).
