@@ -526,7 +526,8 @@
       "link": "Link",
       "weight": "Gewicht ({{unit}})",
       "description": "Omschrijving",
-      "imageUrl": "Afbeeldings-URL"
+      "imageUrl": "Afbeeldings-URL",
+      "category": "Categorie"
     },
     "placeholders": {
       "itemType": "Tent",
@@ -544,7 +545,8 @@
     },
     "toast": {
       "created": "Globaal item aangemaakt!",
-      "createFailed": "Item kon niet worden aangemaakt."
+      "createFailed": "Item kon niet worden aangemaakt.",
+      "saveFailed": "Item opslaan mislukt."
     },
     "importTab": {
       "searchPlaceholder": "Zoek in catalogus…",
@@ -755,11 +757,16 @@
     "showMore": "Meer tonen (nog {{n}})",
     "loadingMore": "Laden…",
     "tabs": {
-      "myGear": "Mijn uitrusting"
+      "myGear": "Mijn uitrusting",
+      "custom": "Eigen item",
+      "import": "Importeren"
     },
     "searchYourGear": "Zoek in je uitrusting",
     "noGearMatch": "Geen uitrusting in je bibliotheek komt overeen.",
-    "libraryEmpty": "Je bibliotheek is leeg. Importeer uit de catalogus of maak een aangepast item en het verschijnt hier."
+    "libraryEmpty": "Je bibliotheek is leeg. Importeer uit de catalogus of maak een aangepast item en het verschijnt hier.",
+    "catalogResultCount": "{{count}} items in catalogus",
+    "createCustomItem": "\"{query}\" als eigen item maken",
+    "nSelected": "{{count}} geselecteerd"
   },
   "photoScanModal": {
     "title": "Uitrusting scannen",
@@ -1431,7 +1438,8 @@
     "selected": "{{count}} geselecteerd",
     "selectItems": "Selecteer items",
     "filter": {
-      "allCategories": "Alle categorieën"
+      "allCategories": "Alle categorieën",
+      "uncategorized": "Zonder categorie"
     },
     "sort": {
       "nameAsc": "Naam A-Z",
@@ -1667,5 +1675,8 @@
       "sent": "Bedankt — melding verzonden",
       "failed": "Kon melding niet versturen"
     }
+  },
+  "common": {
+    "cancel": "Annuleren"
   }
 }

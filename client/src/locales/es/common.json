@@ -526,7 +526,8 @@
       "link": "Enlace",
       "weight": "Peso ({{unit}})",
       "description": "Descripción",
-      "imageUrl": "URL de imagen"
+      "imageUrl": "URL de imagen",
+      "category": "Categoría"
     },
     "placeholders": {
       "itemType": "Tienda",
@@ -544,7 +545,8 @@
     },
     "toast": {
       "created": "¡Artículo global creado!",
-      "createFailed": "No se pudo crear el artículo."
+      "createFailed": "No se pudo crear el artículo.",
+      "saveFailed": "No se pudo guardar el artículo."
     },
     "importTab": {
       "searchPlaceholder": "Buscar en el catálogo…",
@@ -755,11 +757,16 @@
     "showMore": "Mostrar más ({{n}} restantes)",
     "loadingMore": "Cargando…",
     "tabs": {
-      "myGear": "Mi equipo"
+      "myGear": "Mi equipo",
+      "custom": "Personalizado",
+      "import": "Importar"
     },
     "searchYourGear": "Busca en tu equipo",
     "noGearMatch": "Ningún artículo de tu biblioteca coincide.",
-    "libraryEmpty": "Tu biblioteca está vacía. Importa del catálogo o crea un artículo personalizado y aparecerá aquí."
+    "libraryEmpty": "Tu biblioteca está vacía. Importa del catálogo o crea un artículo personalizado y aparecerá aquí.",
+    "catalogResultCount": "{{count}} artículos en el catálogo",
+    "createCustomItem": "Crear \"{query}\" como elemento personalizado",
+    "nSelected": "{{count}} seleccionados"
   },
   "photoScanModal": {
     "title": "Escanear equipo",
@@ -1431,7 +1438,8 @@
     "selected": "{{count}} seleccionado(s)",
     "selectItems": "Seleccionar artículos",
     "filter": {
-      "allCategories": "Todas las categorías"
+      "allCategories": "Todas las categorías",
+      "uncategorized": "Sin categoría"
     },
     "sort": {
       "nameAsc": "Nombre A-Z",
@@ -1667,5 +1675,8 @@
       "sent": "Gracias, informe enviado",
       "failed": "No se pudo enviar el informe"
     }
+  },
+  "common": {
+    "cancel": "Cancelar"
   }
 }

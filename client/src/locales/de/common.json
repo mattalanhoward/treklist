@@ -526,7 +526,8 @@
       "link": "Link",
       "weight": "Gewicht ({{unit}})",
       "description": "Beschreibung",
-      "imageUrl": "Bild-URL"
+      "imageUrl": "Bild-URL",
+      "category": "Kategorie"
     },
     "placeholders": {
       "itemType": "Zelt",
@@ -544,7 +545,8 @@
     },
     "toast": {
       "created": "Globales Item erstellt!",
-      "createFailed": "Item konnte nicht erstellt werden."
+      "createFailed": "Item konnte nicht erstellt werden.",
+      "saveFailed": "Artikel konnte nicht gespeichert werden."
     },
     "importTab": {
       "searchPlaceholder": "Katalog durchsuchen…",
@@ -755,11 +757,16 @@
     "showMore": "Mehr anzeigen (noch {{n}})",
     "loadingMore": "Wird geladen…",
     "tabs": {
-      "myGear": "Meine Ausrüstung"
+      "myGear": "Meine Ausrüstung",
+      "custom": "Eigenes",
+      "import": "Importieren"
     },
     "searchYourGear": "Deine Ausrüstung durchsuchen",
     "noGearMatch": "Keine Ausrüstung in deiner Bibliothek passt dazu.",
-    "libraryEmpty": "Deine Bibliothek ist leer. Importiere aus dem Katalog oder erstelle einen eigenen Artikel, dann erscheint er hier."
+    "libraryEmpty": "Deine Bibliothek ist leer. Importiere aus dem Katalog oder erstelle einen eigenen Artikel, dann erscheint er hier.",
+    "catalogResultCount": "{{count}} Artikel im Katalog",
+    "createCustomItem": "„{query}“ als eigenes Element erstellen",
+    "nSelected": "{{count}} ausgewählt"
   },
   "photoScanModal": {
     "title": "Ausrüstung scannen",
@@ -1431,7 +1438,8 @@
     "selected": "{{count}} ausgewählt",
     "selectItems": "Artikel auswählen",
     "filter": {
-      "allCategories": "Alle Kategorien"
+      "allCategories": "Alle Kategorien",
+      "uncategorized": "Ohne Kategorie"
     },
     "sort": {
       "nameAsc": "Name A-Z",
@@ -1667,5 +1675,8 @@
       "sent": "Danke – Meldung gesendet",
       "failed": "Meldung konnte nicht gesendet werden"
     }
+  },
+  "common": {
+    "cancel": "Abbrechen"
   }
 }

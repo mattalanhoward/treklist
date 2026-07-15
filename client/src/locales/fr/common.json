@@ -533,7 +533,8 @@
       "link": "Lien",
       "weight": "Poids ({{unit}})",
       "description": "Description",
-      "imageUrl": "URL de l’image"
+      "imageUrl": "URL de l’image",
+      "category": "Catégorie"
     },
     "placeholders": {
       "itemType": "Tente",
@@ -551,7 +552,8 @@
     },
     "toast": {
       "created": "Article global créé !",
-      "createFailed": "Échec de la création de l’article."
+      "createFailed": "Échec de la création de l’article.",
+      "saveFailed": "Échec de l’enregistrement de l’article."
     },
     "importTab": {
       "searchPlaceholder": "Rechercher dans le catalogue…",
@@ -762,11 +764,16 @@
     "showMore": "Afficher plus ({{n}} restants)",
     "loadingMore": "Chargement…",
     "tabs": {
-      "myGear": "Mon matériel"
+      "myGear": "Mon matériel",
+      "custom": "Personnalisé",
+      "import": "Importer"
     },
     "searchYourGear": "Rechercher dans votre matériel",
     "noGearMatch": "Aucun matériel de votre bibliothèque ne correspond.",
-    "libraryEmpty": "Votre bibliothèque est vide. Importez depuis le catalogue ou créez un article personnalisé et il apparaîtra ici."
+    "libraryEmpty": "Votre bibliothèque est vide. Importez depuis le catalogue ou créez un article personnalisé et il apparaîtra ici.",
+    "catalogResultCount": "{{count}} articles dans le catalogue",
+    "createCustomItem": "Créer « {query} » comme élément personnalisé",
+    "nSelected": "{{count}} sélectionnés"
   },
   "photoScanModal": {
     "title": "Scanner l'équipement",
@@ -1438,7 +1445,8 @@
     "selected": "{{count}} sélectionné(s)",
     "selectItems": "Sélectionner des articles",
     "filter": {
-      "allCategories": "Toutes les catégories"
+      "allCategories": "Toutes les catégories",
+      "uncategorized": "Non catégorisé"
     },
     "sort": {
       "nameAsc": "Nom A-Z",
@@ -1667,5 +1675,8 @@
       "sent": "Merci — signalement envoyé",
       "failed": "Impossible d'envoyer le signalement"
     }
+  },
+  "common": {
+    "cancel": "Annuler"
   }
 }

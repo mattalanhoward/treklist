@@ -526,7 +526,8 @@
       "link": "Link",
       "weight": "Peso ({{unit}})",
       "description": "Descrizione",
-      "imageUrl": "URL immagine"
+      "imageUrl": "URL immagine",
+      "category": "Categoria"
     },
     "placeholders": {
       "itemType": "Tenda",
@@ -544,7 +545,8 @@
     },
     "toast": {
       "created": "Articolo creato!",
-      "createFailed": "Impossibile creare l'articolo."
+      "createFailed": "Impossibile creare l'articolo.",
+      "saveFailed": "Impossibile salvare l’articolo."
     },
     "importTab": {
       "searchPlaceholder": "Cerca nel catalogo…",
@@ -755,11 +757,16 @@
     "showMore": "Mostra altri ({{n}} rimanenti)",
     "loadingMore": "Caricamento…",
     "tabs": {
-      "myGear": "La mia attrezzatura"
+      "myGear": "La mia attrezzatura",
+      "custom": "Personalizzato",
+      "import": "Importa"
     },
     "searchYourGear": "Cerca nella tua attrezzatura",
     "noGearMatch": "Nessun articolo della tua libreria corrisponde.",
-    "libraryEmpty": "La tua libreria è vuota. Importa dal catalogo o crea un articolo personalizzato e apparirà qui."
+    "libraryEmpty": "La tua libreria è vuota. Importa dal catalogo o crea un articolo personalizzato e apparirà qui.",
+    "catalogResultCount": "{{count}} articoli nel catalogo",
+    "createCustomItem": "Crea \"{query}\" come elemento personalizzato",
+    "nSelected": "{{count}} selezionati"
   },
   "photoScanModal": {
     "title": "Scansiona attrezzatura",
@@ -1431,7 +1438,8 @@
     "selected": "{{count}} selezionato/i",
     "selectItems": "Seleziona articoli",
     "filter": {
-      "allCategories": "Tutte le categorie"
+      "allCategories": "Tutte le categorie",
+      "uncategorized": "Non categorizzato"
     },
     "sort": {
       "nameAsc": "Nome A-Z",
@@ -1667,5 +1675,8 @@
       "sent": "Grazie — segnalazione inviata",
       "failed": "Impossibile inviare la segnalazione"
     }
+  },
+  "common": {
+    "cancel": "Annulla"
   }
 }

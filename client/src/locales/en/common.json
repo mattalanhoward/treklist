@@ -533,7 +533,8 @@
       "link": "Link",
       "weight": "Weight ({{unit}})",
       "description": "Description",
-      "imageUrl": "Image URL"
+      "imageUrl": "Image URL",
+      "category": "Category"
     },
     "placeholders": {
       "itemType": "Tent",
@@ -551,7 +552,8 @@
     },
     "toast": {
       "created": "Global item created!",
-      "createFailed": "Failed to create item."
+      "createFailed": "Failed to create item.",
+      "saveFailed": "Failed to save item"
     },
     "importTab": {
       "searchPlaceholder": "Search catalog…",
@@ -762,11 +764,16 @@
     "showMore": "Show more ({{n}} left)",
     "loadingMore": "Loading…",
     "tabs": {
-      "myGear": "My Gear"
+      "myGear": "My Gear",
+      "custom": "Custom",
+      "import": "Import"
     },
     "searchYourGear": "Search your gear",
     "noGearMatch": "No gear in your library matches that.",
-    "libraryEmpty": "Your library is empty. Import from the catalog or create a custom item and it’ll show up here."
+    "libraryEmpty": "Your library is empty. Import from the catalog or create a custom item and it’ll show up here.",
+    "catalogResultCount": "{{count}} items in catalog",
+    "createCustomItem": "Create \"{query}\" as a custom item",
+    "nSelected": "{{count}} selected"
   },
   "photoScanModal": {
     "title": "Scan Gear",
@@ -1438,7 +1445,8 @@
     "selected": "{{count}} selected",
     "selectItems": "Select items",
     "filter": {
-      "allCategories": "All Categories"
+      "allCategories": "All Categories",
+      "uncategorized": "Uncategorized"
     },
     "sort": {
       "nameAsc": "Name A-Z",
@@ -1667,5 +1675,8 @@
       "sent": "Thanks — report sent",
       "failed": "Couldn't send report"
     }
+  },
+  "common": {
+    "cancel": "Cancel"
   }
 }
