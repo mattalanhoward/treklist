@@ -2142,7 +2142,7 @@ export default function SmartItemSearch({
           disabled={confirming}
           className="px-3 py-1.5 rounded bg-neutralAlt hover:bg-neutralAlt/90 text-primary text-sm"
         >
-          {t("common.cancel", "Cancel")}
+          {t("actions.close", "Close")}
         </button>
         {/* The footer commit only appears when it has a distinct job: the custom
             form, or a multi-select batch. Single-item quick-add lives on the
