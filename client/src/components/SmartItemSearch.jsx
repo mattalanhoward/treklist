@@ -617,7 +617,7 @@ function CategoryTileGrid({ counts, onPick }) {
   const { t, i18n } = useTranslation("common");
   const fmt = (n) => Number(n).toLocaleString(i18n.language || undefined);
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 px-5 py-3">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 px-5 py-3 sm:flex-1 sm:auto-rows-fr sm:content-stretch">
       {CATALOG_CATEGORIES.map((cat) => {
         const Icon = CATEGORY_ICONS[cat];
         return (
@@ -625,7 +625,7 @@ function CategoryTileGrid({ counts, onPick }) {
             key={cat}
             type="button"
             onClick={() => onPick(cat)}
-            className="flex items-center gap-2.5 rounded-lg border border-primary/15 px-3 py-2 text-left hover:bg-primary/5 hover:border-secondary/40 transition-colors"
+            className="flex items-center gap-2.5 rounded-lg border border-primary/15 px-3 py-2 sm:py-3 text-left hover:bg-primary/5 hover:border-secondary/40 transition-colors"
           >
             <span className="flex h-8 w-8 flex-none items-center justify-center rounded-md bg-secondary/10 text-secondary">
               {Icon ? <Icon size={16} /> : null}
@@ -1963,7 +1963,7 @@ export default function SmartItemSearch({
           </div>
         ) : tabLayout && !hasSearchIntent && catalogResults.length === 0 ? (
           // Browse zero state (decision 6): featured slot + 14 category tiles
-          <div className="flex-1 overflow-y-auto min-h-0">
+          <div className="flex-1 overflow-y-auto min-h-0 flex flex-col">
             <FeaturedBrand
               brand={FEATURED_BRAND}
               onOpen={(b) => {

@@ -1036,9 +1036,10 @@ export default function GlobalItemEditModal({
                 disabled={saving || isResolvingMode}
                 aria-label={t("globalItemEditModal.buttons.delete")}
                 title={t("globalItemEditModal.buttons.delete")}
-                className="flex-none flex items-center justify-center h-9 w-9 rounded-md text-primary/50 hover:text-error hover:bg-error/10 disabled:opacity-40 transition-colors"
+                className="flex-none flex items-center justify-center gap-1.5 h-9 px-2.5 rounded-md border border-error/30 text-error/80 hover:text-error hover:bg-error/10 hover:border-error/50 disabled:opacity-40 transition-colors"
               >
-                <FiTrash2 size={18} />
+                <FiTrash2 size={17} />
+                <span className="hidden sm:inline text-sm">{t("globalItemEditModal.buttons.delete")}</span>
               </button>
             )}
 
