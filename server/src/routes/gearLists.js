@@ -555,7 +555,7 @@ router.post("/sample-list", async (req, res) => {
       },
       {
         categoryTitle: "Hiking",
-        catalogItemId: "695820670ae7ad8d1ba15a04", // Sea to Summit Lightweight Dry Bag
+        catalogItemId: "6a44e5625c9b0d2ba089e53a", // Sea to Summit Lightweight Dry Bag
         worn: false,
         consumable: false,
         quantity: 1,
@@ -576,7 +576,7 @@ router.post("/sample-list", async (req, res) => {
       },
       {
         categoryTitle: "Hiking",
-        catalogItemId: "696bab841d02c9b950131501", // Black Diamond Distance Z poles
+        catalogItemId: "6a4e8af5edc2021c7f1ab3f1", // Black Diamond Distance Carbon Z FKT Poles
         worn: false,
         consumable: false,
         quantity: 1,
