@@ -1212,8 +1212,10 @@ export default function SmartItemSearch({
     if (window.innerWidth >= 640) searchRef.current?.focus();
   }, []);
 
-  // Load My Gear
-  useEffect(() => {
+  // Load My Gear. Refetch on `global-items:updated` so a catalog import or
+  // custom create made from this modal shows up in the My Gear tab immediately
+  // (same event the sidebar / dashboard / My Gear page already listen for).
+  const loadMyGear = useCallback(() => {
     if (!showMyGear) return;
     api
       .get("/my-gear/items")
@@ -1221,6 +1223,13 @@ export default function SmartItemSearch({
       .catch(() => {})
       .finally(() => setMyGearLoading(false));
   }, [showMyGear]);
+
+  useEffect(() => {
+    if (!showMyGear) return;
+    loadMyGear();
+    window.addEventListener("global-items:updated", loadMyGear);
+    return () => window.removeEventListener("global-items:updated", loadMyGear);
+  }, [showMyGear, loadMyGear]);
 
   // Whole-catalog size, fetched once
   useEffect(() => {
