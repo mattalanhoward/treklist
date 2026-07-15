@@ -760,7 +760,13 @@
     "addToDest": "Ajouter à {{dest}}",
     "swapForThis": "Remplacer par celui-ci",
     "showMore": "Afficher plus ({{n}} restants)",
-    "loadingMore": "Chargement…"
+    "loadingMore": "Chargement…",
+    "tabs": {
+      "myGear": "Mon matériel"
+    },
+    "searchYourGear": "Rechercher dans votre matériel",
+    "noGearMatch": "Aucun matériel de votre bibliothèque ne correspond.",
+    "libraryEmpty": "Votre bibliothèque est vide. Importez depuis le catalogue ou créez un article personnalisé et il apparaîtra ici."
   },
   "photoScanModal": {
     "title": "Scanner l'équipement",

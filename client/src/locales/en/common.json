@@ -760,7 +760,13 @@
     "addToDest": "Add to {{dest}}",
     "swapForThis": "Swap for this",
     "showMore": "Show more ({{n}} left)",
-    "loadingMore": "Loading…"
+    "loadingMore": "Loading…",
+    "tabs": {
+      "myGear": "My Gear"
+    },
+    "searchYourGear": "Search your gear",
+    "noGearMatch": "No gear in your library matches that.",
+    "libraryEmpty": "Your library is empty. Import from the catalog or create a custom item and it’ll show up here."
   },
   "photoScanModal": {
     "title": "Scan Gear",

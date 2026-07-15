@@ -753,7 +753,13 @@
     "addToDest": "Aggiungi a {{dest}}",
     "swapForThis": "Sostituisci con questo",
     "showMore": "Mostra altri ({{n}} rimanenti)",
-    "loadingMore": "Caricamento…"
+    "loadingMore": "Caricamento…",
+    "tabs": {
+      "myGear": "La mia attrezzatura"
+    },
+    "searchYourGear": "Cerca nella tua attrezzatura",
+    "noGearMatch": "Nessun articolo della tua libreria corrisponde.",
+    "libraryEmpty": "La tua libreria è vuota. Importa dal catalogo o crea un articolo personalizzato e apparirà qui."
   },
   "photoScanModal": {
     "title": "Scansiona attrezzatura",

@@ -753,7 +753,13 @@
     "addToDest": "Aan {{dest}} toevoegen",
     "swapForThis": "Hiervoor omruilen",
     "showMore": "Meer tonen (nog {{n}})",
-    "loadingMore": "Laden…"
+    "loadingMore": "Laden…",
+    "tabs": {
+      "myGear": "Mijn uitrusting"
+    },
+    "searchYourGear": "Zoek in je uitrusting",
+    "noGearMatch": "Geen uitrusting in je bibliotheek komt overeen.",
+    "libraryEmpty": "Je bibliotheek is leeg. Importeer uit de catalogus of maak een aangepast item en het verschijnt hier."
   },
   "photoScanModal": {
     "title": "Uitrusting scannen",

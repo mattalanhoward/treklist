@@ -753,7 +753,13 @@
     "addToDest": "Añadir a {{dest}}",
     "swapForThis": "Cambiar por este",
     "showMore": "Mostrar más ({{n}} restantes)",
-    "loadingMore": "Cargando…"
+    "loadingMore": "Cargando…",
+    "tabs": {
+      "myGear": "Mi equipo"
+    },
+    "searchYourGear": "Busca en tu equipo",
+    "noGearMatch": "Ningún artículo de tu biblioteca coincide.",
+    "libraryEmpty": "Tu biblioteca está vacía. Importa del catálogo o crea un artículo personalizado y aparecerá aquí."
   },
   "photoScanModal": {
     "title": "Escanear equipo",

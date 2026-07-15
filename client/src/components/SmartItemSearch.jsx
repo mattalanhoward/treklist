@@ -1193,6 +1193,14 @@ export default function SmartItemSearch({
 
   // Catalog search — skipped for URL queries (they never match catalog text fields)
   useEffect(() => {
+    // The My Gear tab browses the user's library only — never hit the catalog
+    // (and drop any results carried over from the Import tab).
+    if (tabLayout && activeTab === "myGear") {
+      setCatalogResults([]);
+      setCatalogLoading(false);
+      setCatalogTotal(null);
+      return;
+    }
     if (!debouncedQuery && !categoryFilter && !subcategoryFilter && !brandFilter) {
       setCatalogResults([]);
       setCatalogLoading(false);
@@ -1225,7 +1233,7 @@ export default function SmartItemSearch({
         setCatalogTotal(null);
       })
       .finally(() => setCatalogLoading(false));
-  }, [debouncedQuery, categoryFilter, subcategoryFilter, brandFilter]);
+  }, [debouncedQuery, categoryFilter, subcategoryFilter, brandFilter, tabLayout, activeTab]);
 
   // "Show more": append the next page of catalog results (skip = current count).
   // Browsing a large category (e.g. Shelter) exceeds one page, so paginate
@@ -1626,8 +1634,14 @@ export default function SmartItemSearch({
 
   const hasSearchIntent = debouncedQuery.trim() || categoryFilter || subcategoryFilter || brandFilter;
   const catalogCountForDisplay = hasSearchIntent ? catalogTotal : catalogAllTotal;
+
+  // My Gear tab: browse the user's own library directly — no search or category
+  // needed (add-gear feedback: you shouldn't have to remember the item's name).
+  const browseMyGear = tabLayout && showMyGear && activeTab === "myGear";
+
   const hasNoResults =
     hasSearchIntent &&
+    !browseMyGear &&
     !catalogLoading &&
     !aiLoading &&
     filteredMyGear.length === 0 &&
@@ -1635,16 +1649,13 @@ export default function SmartItemSearch({
     !showingCustomForm;
 
   // The result list (shared between single-column and the two-pane left column).
-  const renderResults = () => (
+  // onlyMyGear = the My Gear tab: show just the user's library, no catalog.
+  const renderResults = (onlyMyGear = false) => (
     <>
       {showMyGear && (
         <>
-          {!hasSearchIntent && myGearLoading ? (
+          {myGearLoading && filteredMyGear.length === 0 ? (
             <div className="py-4"><Spinner centered /></div>
-          ) : !hasSearchIntent && filteredMyGear.length === 0 ? (
-            <p className="text-sm text-primary/40 text-center py-8">
-              {t("smartItemSearch.noGearYet", "No gear yet. Search the catalog or describe an item above.")}
-            </p>
           ) : filteredMyGear.length > 0 ? (
             <ResultSection
               title={t("smartItemSearch.myGear", "My Gear")}
@@ -1662,11 +1673,24 @@ export default function SmartItemSearch({
               sessionAddedGlobal={sessionAddedGlobal}
               fmtWeight={fmtWeight}
             />
+          ) : onlyMyGear ? (
+            <p className="text-sm text-primary/40 text-center py-8 px-4">
+              {hasSearchIntent
+                ? t("smartItemSearch.noGearMatch", "No gear in your library matches that.")
+                : t(
+                    "smartItemSearch.libraryEmpty",
+                    "Your library is empty. Import from the catalog or create a custom item and it’ll show up here.",
+                  )}
+            </p>
+          ) : !hasSearchIntent ? (
+            <p className="text-sm text-primary/40 text-center py-8">
+              {t("smartItemSearch.noGearYet", "No gear yet. Search the catalog or describe an item above.")}
+            </p>
           ) : null}
         </>
       )}
 
-      {(hasSearchIntent || catalogResults.length > 0) && (
+      {!onlyMyGear && (hasSearchIntent || catalogResults.length > 0) && (
         <ResultSection
           title={t("smartItemSearch.fromCatalog", "From Catalog")}
           items={catalogResults}
@@ -1693,7 +1717,7 @@ export default function SmartItemSearch({
       )}
 
       {/* Pagination — reveal the rest of a large category/result set */}
-      {!catalogLoading && catalogTotal != null && catalogResults.length < catalogTotal && (
+      {!onlyMyGear && !catalogLoading && catalogTotal != null && catalogResults.length < catalogTotal && (
         <div className="flex justify-center py-2">
           <button
             type="button"
@@ -1718,7 +1742,7 @@ export default function SmartItemSearch({
       )}
 
       {/* Inline custom-create row (decision 5) */}
-      {tabLayout && debouncedQuery.trim() && !isUrl(debouncedQuery) && (
+      {!onlyMyGear && tabLayout && debouncedQuery.trim() && !isUrl(debouncedQuery) && (
         <div className="border-t border-primary/8 mt-2 pt-2 pb-1">
           <button
             type="button"
@@ -1775,6 +1799,26 @@ export default function SmartItemSearch({
           >
             {t("smartItemSearch.tabs.import", "Import")}
           </button>
+          {showMyGear && (
+            <button
+              type="button"
+              onClick={() => {
+                // Enter the library cleanly — drop any leftover catalog search.
+                setQuery("");
+                setCategoryFilter(null);
+                setSubcategoryFilter(null);
+                setBrandFilter(null);
+                setAndPersistTab("myGear");
+              }}
+              className={`py-3 px-1 mr-5 text-sm font-medium border-b-2 -mb-px transition-colors ${
+                activeTab === "myGear"
+                  ? "border-secondary text-secondary"
+                  : "border-transparent text-primary/60 hover:text-primary"
+              }`}
+            >
+              {t("smartItemSearch.tabs.myGear", "My Gear")}
+            </button>
+          )}
           <button
             type="button"
             onClick={() => switchToCustom(debouncedQuery.trim())}
@@ -1790,7 +1834,7 @@ export default function SmartItemSearch({
       )}
 
       {/* ── Search input (hidden in tabLayout Custom tab) ─────────────────── */}
-      {(!tabLayout || activeTab === "import") && (
+      {(!tabLayout || activeTab !== "custom") && (
         <div className="px-5 pt-3 pb-2 flex-shrink-0">
           <div className="flex items-center gap-2">
             <div className="relative flex-1">
@@ -1805,12 +1849,14 @@ export default function SmartItemSearch({
                   if (!tabLayout) setCustomMode(null);
                 }}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" && query.trim() && !aiLoading) {
+                  // My Gear tab filters live — Enter must not fire an AI catalog lookup.
+                  if (e.key === "Enter" && query.trim() && !aiLoading && !browseMyGear) {
                     e.preventDefault();
                     handleCreateAction(query.trim());
                   }
                 }}
                 onPaste={(e) => {
+                  if (browseMyGear) return; // library search only, no scan/URL import
                   const imageItem = [...(e.clipboardData?.items || [])].find((i) => i.type.startsWith("image/"));
                   if (imageItem) {
                     e.preventDefault();
@@ -1823,7 +1869,12 @@ export default function SmartItemSearch({
                 placeholder=""
                 className="w-full pl-9 pr-8 py-2 border border-primary/30 rounded-lg text-primary bg-base-100 text-base sm:text-sm"
               />
-              {!query && (
+              {!query && browseMyGear && (
+                <span className="absolute left-9 right-9 top-1/2 -translate-y-1/2 text-primary/40 text-base sm:text-sm pointer-events-none select-none truncate">
+                  {t("smartItemSearch.searchYourGear", "Search your gear")}
+                </span>
+              )}
+              {!query && !browseMyGear && (
                 <span
                   className="absolute left-9 right-9 top-1/2 text-primary/40 text-base sm:text-sm pointer-events-none select-none truncate"
                   style={{
@@ -1847,14 +1898,16 @@ export default function SmartItemSearch({
                 </button>
               )}
             </div>
-            <button
-              type="button"
-              onClick={() => setShowScanModal(true)}
-              title={t("smartItemSearch.scanItem", "Scan item with camera")}
-              className="flex-shrink-0 p-2 border border-primary/30 rounded-lg text-primary/50 hover:text-secondary hover:border-secondary/50 transition-colors"
-            >
-              <FiCamera size={16} />
-            </button>
+            {!browseMyGear && (
+              <button
+                type="button"
+                onClick={() => setShowScanModal(true)}
+                title={t("smartItemSearch.scanItem", "Scan item with camera")}
+                className="flex-shrink-0 p-2 border border-primary/30 rounded-lg text-primary/50 hover:text-secondary hover:border-secondary/50 transition-colors"
+              >
+                <FiCamera size={16} />
+              </button>
+            )}
           </div>
           {!tabLayout && (
             <p className="text-xs text-primary/35 mt-1.5 px-1">
@@ -1869,7 +1922,7 @@ export default function SmartItemSearch({
       )}
 
       {/* ── Facet row (tabLayout, search intent) — count + category + subs ──── */}
-      {tabLayout && hasSearchIntent && !showingCustomForm && !aiLoading && (
+      {tabLayout && !browseMyGear && hasSearchIntent && !showingCustomForm && !aiLoading && (
         <FacetRow
           shownCount={catalogTotal}
           totalCount={catalogAllTotal}
@@ -1961,7 +2014,7 @@ export default function SmartItemSearch({
           <div className="flex-1 overflow-y-auto min-h-0 px-5">
             <AiSearchProgress urlQuery={isUrl(query)} />
           </div>
-        ) : tabLayout && !hasSearchIntent && catalogResults.length === 0 ? (
+        ) : tabLayout && activeTab === "import" && !hasSearchIntent && catalogResults.length === 0 ? (
           // Browse zero state (decision 6): featured slot + 14 category tiles
           <div className="flex-1 overflow-y-auto min-h-0 flex flex-col">
             <FeaturedBrand
@@ -1987,7 +2040,7 @@ export default function SmartItemSearch({
               aria-label={t("smartItemSearch.resultsLabel", "Search results")}
               onKeyDown={onListKeyDown}
             >
-              {renderResults()}
+              {renderResults(browseMyGear)}
             </div>
             <CatalogPreviewPane
               item={paneFull}
@@ -2000,7 +2053,7 @@ export default function SmartItemSearch({
             />
           </div>
         ) : (
-          <div className="flex-1 overflow-y-auto min-h-0 px-5">{renderResults()}</div>
+          <div className="flex-1 overflow-y-auto min-h-0 px-5">{renderResults(browseMyGear)}</div>
         )}
       </div>
 
