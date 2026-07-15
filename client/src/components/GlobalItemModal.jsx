@@ -60,9 +60,9 @@ export default function GlobalItemModal({ onClose, onCreated }) {
         className="bg-base-100 shadow-2xl w-full h-d-screen flex flex-col sm:rounded-xl sm:w-[92vw] sm:max-w-[960px] sm:mx-4 sm:h-[85vh] sm:max-h-[800px]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
+        {/* Header (mobile only — on desktop the title moves into the tab row) */}
         <div
-          className="flex justify-between items-center px-5 pt-4 pb-2 flex-shrink-0"
+          className="flex sm:hidden justify-between items-center px-5 pt-4 pb-2 flex-shrink-0"
           style={{ paddingTop: "max(1rem, env(safe-area-inset-top))" }}
         >
           <h2 className="text-lg font-semibold text-primary">
@@ -85,6 +85,7 @@ export default function GlobalItemModal({ onClose, onCreated }) {
             showMyGear={false}
             tabLayout
             twoPane
+            title={t("globalItemModal.title", "Add Gear")}
             destinationLabel={t("smartItemSearch.myGear", "My Gear")}
             onConfirm={handleConfirm}
             onClose={onClose}

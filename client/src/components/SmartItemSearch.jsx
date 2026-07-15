@@ -666,59 +666,97 @@ function FacetRow({
       : shownCount != null
         ? t("smartItemSearch.catalogResultCount", "{{count}} items in catalog", { count: shownCount })
         : "";
+
+  // Edge-fade affordance: the row scrolls horizontally with a hidden scrollbar,
+  // so on mobile there's no hint the chips continue off-screen. Track scroll
+  // position and fade whichever edge has more content beyond it.
+  const scrollRef = useRef(null);
+  const [edges, setEdges] = useState({ left: false, right: false });
+  const updateEdges = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const { scrollLeft, scrollWidth, clientWidth } = el;
+    setEdges({
+      left: scrollLeft > 1,
+      right: scrollLeft + clientWidth < scrollWidth - 1,
+    });
+  }, []);
+  useEffect(() => {
+    updateEdges();
+    window.addEventListener("resize", updateEdges);
+    return () => window.removeEventListener("resize", updateEdges);
+  }, [updateEdges, category, subcategory, brand, brands, shownCount]);
+
   return (
-    <div
-      className="flex items-center gap-2 px-5 py-2 border-b border-primary/10 overflow-x-auto flex-shrink-0"
-      style={{ scrollbarWidth: "none" }}
-    >
-      {countLabel && (
-        <span className="text-[11.5px] text-primary/45 tabular-nums whitespace-nowrap flex-none">
-          {countLabel}
-        </span>
-      )}
-      {category && (
-        <button
-          type="button"
-          onClick={onClearCategory}
-          className="flex-none flex items-center gap-1 rounded-full bg-secondary text-white px-2.5 py-0.5 text-xs whitespace-nowrap"
-        >
-          {tCategory(t, category)}
-          <FiX size={11} />
-        </button>
-      )}
-      {brands?.length > 0 && (
-        <div className="relative flex-none">
-          <select
-            value={brand || ""}
-            onChange={(e) => onPickBrand(e.target.value || null)}
-            className={`appearance-none rounded-full border pl-2.5 pr-6 py-0.5 text-xs whitespace-nowrap transition-colors cursor-pointer ${
-              brand
+    <div className="relative flex-shrink-0">
+      <div
+        ref={scrollRef}
+        onScroll={updateEdges}
+        className="flex items-center gap-2 px-5 py-2 border-b border-primary/10 overflow-x-auto"
+        style={{ scrollbarWidth: "none" }}
+      >
+        {countLabel && (
+          <span className="text-[11.5px] text-primary/45 tabular-nums whitespace-nowrap flex-none">
+            {countLabel}
+          </span>
+        )}
+        {category && (
+          <button
+            type="button"
+            onClick={onClearCategory}
+            className="flex-none flex items-center gap-1 rounded-full bg-secondary text-white px-2.5 py-0.5 text-xs whitespace-nowrap"
+          >
+            {tCategory(t, category)}
+            <FiX size={11} />
+          </button>
+        )}
+        {brands?.length > 0 && (
+          <div className="relative flex-none">
+            <select
+              value={brand || ""}
+              onChange={(e) => onPickBrand(e.target.value || null)}
+              /* max-w caps the native select, which otherwise auto-sizes to its
+                 widest option (a long brand name balloons the whole row). */
+              className={`appearance-none rounded-full border pl-2.5 pr-6 py-0.5 text-xs whitespace-nowrap overflow-hidden text-ellipsis max-w-[128px] transition-colors cursor-pointer ${
+                brand
+                  ? "bg-secondary text-white border-secondary"
+                  : "border-primary/20 text-primary/60 hover:border-secondary/50 bg-base-100"
+              }`}
+            >
+              <option value="">{t("smartItemSearch.allBrands", "All brands")}</option>
+              {brands.map((b) => (
+                <option key={b} value={b}>{b}</option>
+              ))}
+            </select>
+            <span className={`pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[9px] ${brand ? "text-white" : "text-primary/40"}`}>▾</span>
+          </div>
+        )}
+        {subs.map((sub) => (
+          <button
+            key={sub}
+            type="button"
+            onClick={() => onPickSub(subcategory === sub ? null : sub)}
+            className={`flex-none rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap border transition-colors ${
+              subcategory === sub
                 ? "bg-secondary text-white border-secondary"
-                : "border-primary/20 text-primary/60 hover:border-secondary/50 bg-base-100"
+                : "border-primary/20 text-primary/60 hover:border-secondary/50 hover:text-primary"
             }`}
           >
-            <option value="">{t("smartItemSearch.allBrands", "All brands")}</option>
-            {brands.map((b) => (
-              <option key={b} value={b}>{b}</option>
-            ))}
-          </select>
-          <span className={`pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[9px] ${brand ? "text-white" : "text-primary/40"}`}>▾</span>
-        </div>
-      )}
-      {subs.map((sub) => (
-        <button
-          key={sub}
-          type="button"
-          onClick={() => onPickSub(subcategory === sub ? null : sub)}
-          className={`flex-none rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap border transition-colors ${
-            subcategory === sub
-              ? "bg-secondary text-white border-secondary"
-              : "border-primary/20 text-primary/60 hover:border-secondary/50 hover:text-primary"
-          }`}
-        >
-          {sub}
-        </button>
-      ))}
+            {sub}
+          </button>
+        ))}
+      </div>
+      {/* Scrollability hint (mobile) — fade the edge that has more chips beyond it. */}
+      <div
+        className={`sm:hidden pointer-events-none absolute left-0 top-0 bottom-px w-6 bg-gradient-to-r from-base-100 to-transparent transition-opacity ${
+          edges.left ? "opacity-100" : "opacity-0"
+        }`}
+      />
+      <div
+        className={`sm:hidden pointer-events-none absolute right-0 top-0 bottom-px w-8 bg-gradient-to-l from-base-100 to-transparent transition-opacity ${
+          edges.right ? "opacity-100" : "opacity-0"
+        }`}
+      />
     </div>
   );
 }
@@ -833,6 +871,9 @@ function CatalogPreviewSheet({
  *   onConfirm            async fn — called with { source, globalItems?, catalogIds?, fields?, variantSelections?, sizeUnset? }
  *   onClose              fn
  *   tabLayout            boolean  — use tabbed Import/Custom layout (AddGearItemModal)
+ *   title                string   — desktop-only: rendered inline in the tab row (left),
+ *                                   with the close button pushed to the right. The host
+ *                                   modal keeps its own mobile-only header. tabLayout only.
  */
 export default function SmartItemSearch({
   multiSelect = true,
@@ -846,6 +887,7 @@ export default function SmartItemSearch({
   onConfirm,
   onClose,
   tabLayout = false,
+  title = null,
   confirmLabels = {},
 }) {
   const { t } = useTranslation("common");
@@ -1847,8 +1889,15 @@ export default function SmartItemSearch({
       }}
     >
       {/* ── Tab row (tabLayout only) ───────────────────────────────────────── */}
+      {/* Desktop: the modal's title sits inline on the left and the close button
+          on the right (mobile keeps them in the host modal's own header). */}
       {tabLayout && (
-        <div className="flex items-center border-b border-primary/10 flex-shrink-0 px-5">
+        <div className="flex items-center border-b border-primary/10 flex-shrink-0 px-5 sm:pt-1">
+          {title && (
+            <h2 className="hidden sm:block text-lg font-semibold text-primary mr-6 whitespace-nowrap">
+              {title}
+            </h2>
+          )}
           <button
             type="button"
             onClick={() => chooseTab("import")}
@@ -1894,6 +1943,16 @@ export default function SmartItemSearch({
           >
             {t("smartItemSearch.tabs.custom", "Custom")}
           </button>
+          {title && onClose && (
+            <button
+              type="button"
+              onClick={onClose}
+              className="hidden sm:block ml-auto -mr-1 p-1 text-error hover:text-error/80"
+              aria-label={t("actions.close", "Close")}
+            >
+              <FiX size={22} />
+            </button>
+          )}
         </div>
       )}
 
