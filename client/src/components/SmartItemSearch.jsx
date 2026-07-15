@@ -67,6 +67,9 @@ const CATEGORY_ICONS = {
   "Travel": LuLuggage,
 };
 
+// Remembers the tab the user last opened (Import / My Gear / Custom).
+const TAB_STORAGE_KEY = "treklist.addGear.lastTab";
+
 function isUrl(s) {
   return /^https?:\/\//i.test((s || "").trim());
 }
@@ -977,8 +980,31 @@ export default function SmartItemSearch({
   const [myGearPreview, setMyGearPreview] = useState(null);
   const [myGearPreviewAdding, setMyGearPreviewAdding] = useState(false);
 
-  const [activeTab, setActiveTab] = useState("import");
+  // Restore the tab the user last explicitly chose (add-gear feedback). Only
+  // the three tab buttons persist; programmatic switches (e.g. an AI-no-match
+  // jump to Custom) don't, so it reflects a deliberate choice. A stored
+  // "myGear" is ignored where the library tab doesn't exist.
+  const [activeTab, setActiveTab] = useState(() => {
+    if (!tabLayout) return "import";
+    let stored = null;
+    try {
+      stored = localStorage.getItem(TAB_STORAGE_KEY);
+    } catch {
+      /* localStorage unavailable */
+    }
+    if (stored === "custom") return "custom";
+    if (stored === "myGear") return showMyGear ? "myGear" : "import";
+    return "import";
+  });
   const setAndPersistTab = (tab) => setActiveTab(tab);
+  const chooseTab = (tab) => {
+    try {
+      localStorage.setItem(TAB_STORAGE_KEY, tab);
+    } catch {
+      /* localStorage unavailable */
+    }
+    setActiveTab(tab);
+  };
 
   const showingCustomForm = tabLayout ? activeTab === "custom" : !!customMode;
 
@@ -1790,7 +1816,7 @@ export default function SmartItemSearch({
         <div className="flex items-center border-b border-primary/10 flex-shrink-0 px-5">
           <button
             type="button"
-            onClick={() => setAndPersistTab("import")}
+            onClick={() => chooseTab("import")}
             className={`py-3 px-1 mr-5 text-sm font-medium border-b-2 -mb-px transition-colors ${
               activeTab === "import"
                 ? "border-secondary text-secondary"
@@ -1808,7 +1834,7 @@ export default function SmartItemSearch({
                 setCategoryFilter(null);
                 setSubcategoryFilter(null);
                 setBrandFilter(null);
-                setAndPersistTab("myGear");
+                chooseTab("myGear");
               }}
               className={`py-3 px-1 mr-5 text-sm font-medium border-b-2 -mb-px transition-colors ${
                 activeTab === "myGear"
@@ -1821,7 +1847,10 @@ export default function SmartItemSearch({
           )}
           <button
             type="button"
-            onClick={() => switchToCustom(debouncedQuery.trim())}
+            onClick={() => {
+              chooseTab("custom");
+              switchToCustom(debouncedQuery.trim());
+            }}
             className={`py-3 px-1 text-sm font-medium border-b-2 -mb-px transition-colors ${
               activeTab === "custom"
                 ? "border-secondary text-secondary"
