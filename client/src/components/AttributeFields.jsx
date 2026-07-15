@@ -520,7 +520,7 @@ const SCHEMAS = {
     },
   },
 
-  "Backpacking Stove (Canister)": {
+  "Stove (Canister)": {
     fields: {
       boilTime: {
         type: "number",
@@ -567,6 +567,104 @@ const SCHEMAS = {
         type: "boolean",
         required: false,
         label: "Pressure Regulator",
+      },
+    },
+  },
+
+  "Stove (Alcohol)": {
+    fields: {
+      boilTime: {
+        type: "number",
+        required: false,
+        label: "Boil Time (0.5L)",
+        unit: "min",
+        min: 3,
+        max: 20,
+      },
+      material: {
+        type: "enum",
+        required: false,
+        label: "Material",
+        options: ["Titanium", "Aluminum", "Brass", "Stainless Steel"],
+      },
+      fuelCapacityMl: {
+        type: "number",
+        required: false,
+        label: "Fuel Capacity",
+        unit: "ml",
+        min: 10,
+        max: 200,
+      },
+      potSupport: {
+        type: "enum",
+        required: false,
+        label: "Pot Support",
+        options: ["Integrated", "Folding Arms", "Separate Stand"],
+      },
+      windscreen: {
+        type: "enum",
+        required: false,
+        label: "Windscreen",
+        options: ["Integrated", "Included Separate", "Not Included"],
+      },
+    },
+  },
+
+  "Stove (Wood)": {
+    fields: {
+      material: {
+        type: "enum",
+        required: false,
+        label: "Material",
+        options: ["Titanium", "Stainless Steel"],
+      },
+      packsFlat: {
+        type: "boolean",
+        required: false,
+        label: "Packs Flat",
+      },
+      potSupport: {
+        type: "enum",
+        required: false,
+        label: "Pot Support",
+        options: ["Integrated", "Folding Arms", "Separate Stand"],
+      },
+      multiFuel: {
+        type: "boolean",
+        required: false,
+        label: "Also Burns Alcohol/Tablets",
+      },
+    },
+  },
+
+  "Stove (Liquid Fuel)": {
+    fields: {
+      boilTime: {
+        type: "number",
+        required: false,
+        label: "Boil Time (1L)",
+        unit: "min",
+        min: 1,
+        max: 15,
+      },
+      outputBtu: {
+        type: "number",
+        required: false,
+        label: "Output",
+        unit: "BTU",
+        min: 5000,
+        max: 20000,
+      },
+      fuelCompatibility: {
+        type: "enum",
+        required: false,
+        label: "Fuel Compatibility",
+        options: ["White Gas", "White Gas / Kerosene", "Multi-Fuel (incl. Canister)"],
+      },
+      pumpIncluded: {
+        type: "boolean",
+        required: false,
+        label: "Pump Included",
       },
     },
   },
@@ -1243,6 +1341,31 @@ const SCHEMAS = {
         type: "boolean",
         required: false,
         label: "Filter Compatible",
+      },
+    },
+  },
+
+  Flask: {
+    fields: {
+      capacityMl: {
+        type: "number",
+        required: false,
+        label: "Capacity",
+        unit: "ml",
+        min: 30,
+        max: 1000,
+      },
+      material: {
+        type: "enum",
+        required: false,
+        label: "Material",
+        options: ["Titanium", "Stainless Steel", "Aluminum", "Glass", "Pewter"],
+      },
+      type: {
+        type: "enum",
+        required: false,
+        label: "Type",
+        options: ["Hip Flask", "Wine Flask", "Funnel Flask"],
       },
     },
   },
@@ -3004,7 +3127,7 @@ export const CATEGORY_ITEM_TYPE_MAPPING = {
     "Pillow",
   ],
   "Backpacks & Bags": ["Backpack", "Daypack", "Hip Pack"],
-  "Kitchen & Cooking": ["Backpacking Pot", "Backpacking Stove (Canister)", "Coffee Mug", "Utensil", "Stove Fuel"],
+  "Kitchen & Cooking": ["Backpacking Pot", "Stove (Canister)", "Stove (Alcohol)", "Stove (Wood)", "Stove (Liquid Fuel)", "Coffee Mug", "Flask", "Utensil", "Stove Fuel"],
   Shelter: ["Backpacking Tent", "Tarp Shelter", "Tent Stakes", "Ground Sheet"],
   "Electronics & Power": ["Headlamp", "Torch Light", "Camp Lantern", "Power Bank", "Travel Charger"],
   Hydration: ["Water Filter", "Water Bottle", "Hydration Reservoir"],

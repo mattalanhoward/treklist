@@ -8,7 +8,8 @@
     "cancel": "Abbrechen",
     "delete": "Löschen",
     "close": "Schließen",
-    "saving": "Speichern…"
+    "saving": "Speichern…",
+    "undo": "Rückgängig"
   },
   "validation": {
     "nameRequired": "Name ist erforderlich.",
@@ -416,7 +417,9 @@
       "toggleWorn": "Getragen umschalten",
       "openProductPageTitle": "Produktseite öffnen",
       "openProductPageAria": "Produktseite öffnen (bezahlter Link)",
-      "itemOptionsA11y": "Item-Optionen"
+      "itemOptionsA11y": "Item-Optionen",
+      "sizeNotSet": "Größe nicht festgelegt",
+      "sizeNotSetHint": "Keine Größe gewählt – zum Festlegen tippen"
     },
     "actions": {
       "swap": "Artikel tauschen"
@@ -523,7 +526,8 @@
       "link": "Link",
       "weight": "Gewicht ({{unit}})",
       "description": "Beschreibung",
-      "imageUrl": "Bild-URL"
+      "imageUrl": "Bild-URL",
+      "category": "Kategorie"
     },
     "placeholders": {
       "itemType": "Zelt",
@@ -541,7 +545,8 @@
     },
     "toast": {
       "created": "Globales Item erstellt!",
-      "createFailed": "Item konnte nicht erstellt werden."
+      "createFailed": "Item konnte nicht erstellt werden.",
+      "saveFailed": "Artikel konnte nicht gespeichert werden."
     },
     "importTab": {
       "searchPlaceholder": "Katalog durchsuchen…",
@@ -600,7 +605,17 @@
     },
     "messages": {
       "alreadyAdded": "Dieses Item ist bereits in Meine Ausrüstung."
-    }
+    },
+    "emptyPane": "Wähle ein Ergebnis, um es hier anzuzeigen.",
+    "selectForAdding": "Zum Hinzufügen auswählen",
+    "selectedForAdding": "Zum Hinzufügen ausgewählt",
+    "sizeNotSetHint": "Keine Größe gewählt – die Standardgröße wird hinzugefügt und als „Größe nicht festgelegt“ markiert, später änderbar.",
+    "disclosure": {
+      "manufacturerSpec": "Herstellerangabe",
+      "flatAcrossSizes": "einheitlich über alle Größen",
+      "verified": "geprüft {{date}}"
+    },
+    "inList": "In Liste"
   },
   "globalItemEditModal": {
     "titleGlobal": "Item-Details",
@@ -629,7 +644,8 @@
       "deleteTitle": "Dieses Ausrüstungs-Item löschen?",
       "deleteMessage": "Dadurch wird es aus deiner Ausrüstung und aus allen Packlisten entfernt.",
       "deleteConfirm": "Item löschen"
-    }
+    },
+    "weightYourValue": "Dein Gewicht"
   },
   "smartItemSearch": {
     "searchPlaceholder": "z.B. Osprey Talon 33 Herren-Rucksack",
@@ -706,25 +722,8 @@
       "invalidWeight": "Ungültiges Gewicht",
       "previewLoadFailed": "Artikeldetails konnten nicht geladen werden.",
       "catalogMatch": "Im Katalog gefunden",
-      "catalogMatches": "Mögliche Treffer gefunden – wähle deinen aus"
-    },
-    "gearRequest": {
-      "title": "Ausrüstungsartikel anfragen",
-      "description": "Nicht gefunden, was Sie suchen? Lassen Sie es uns wissen, und wir schauen, ob wir es hinzufügen können.",
-      "labels": {
-        "itemName": "Artikelname",
-        "brand": "Marke",
-        "link": "Link (optional)"
-      },
-      "buttons": {
-        "openForm": "Ausrüstungsartikel anfragen",
-        "send": "Anfrage senden",
-        "sending": "Wird gesendet…"
-      },
-      "toasts": {
-        "success": "Anfrage gesendet! Wir schauen, ob wir es hinzufügen können.",
-        "failed": "Anfrage konnte nicht gesendet werden. Bitte erneut versuchen."
-      }
+      "catalogMatches": "Mögliche Treffer gefunden – wähle deinen aus",
+      "addedToList": "Zur Liste hinzugefügt"
     },
     "tabSearchHint": "Name eingeben & Enter · Link einfügen · Foto aufnehmen",
     "browseToggle": "Kategorien durchstöbern",
@@ -732,7 +731,42 @@
       "reading": "Produktseite wird gelesen…",
       "identifying": "Artikel wird identifiziert…",
       "matching": "Abgleich mit dem Katalog…"
-    }
+    },
+    "chooseVariant": "Varianten",
+    "multipleVariants": "Mehrere Varianten",
+    "inList": "Hinzugefügt",
+    "inMyGear": "In meiner Ausrüstung",
+    "nSelected_one": "{{count}} ausgewählt",
+    "nSelected_other": "{{count}} ausgewählt",
+    "addNToDest": "{{count}} zu {{dest}} hinzufügen",
+    "selectRow": "{{name}} auswählen",
+    "resultsLabel": "Suchergebnisse",
+    "searchBy": "Suchen nach:",
+    "searchModes": {
+      "productName": "Produktname",
+      "storeUrl": "Shop-URL",
+      "decathlonId": "Decathlon-Artikelnummer",
+      "photo": "Foto"
+    },
+    "featured": "Empfohlen",
+    "browseRange": "Sortiment durchsuchen →",
+    "facetCount": "{{shown}} von {{total}} Artikeln",
+    "inListCheck": "✓ In Liste",
+    "addToDest": "Zu {{dest}} hinzufügen",
+    "swapForThis": "Dagegen tauschen",
+    "showMore": "Mehr anzeigen (noch {{n}})",
+    "loadingMore": "Wird geladen…",
+    "tabs": {
+      "myGear": "Meine Ausrüstung",
+      "custom": "Eigenes",
+      "import": "Importieren"
+    },
+    "searchYourGear": "Deine Ausrüstung durchsuchen",
+    "noGearMatch": "Keine Ausrüstung in deiner Bibliothek passt dazu.",
+    "libraryEmpty": "Deine Bibliothek ist leer. Importiere aus dem Katalog oder erstelle einen eigenen Artikel, dann erscheint er hier.",
+    "catalogResultCount": "{{count}} Artikel im Katalog",
+    "createCustomItem": "„{query}“ als eigenes Element erstellen",
+    "nSelected": "{{count}} ausgewählt"
   },
   "photoScanModal": {
     "title": "Ausrüstung scannen",
@@ -780,8 +814,12 @@
       "selectAtLeastOne": "Bitte wähle mindestens ein Item aus.",
       "alreadyInList": "Einige Items sind bereits in dieser Liste.",
       "addSuccess": "Items erfolgreich hinzugefügt.",
-      "addFailed": "Ein oder mehrere Items konnten nicht hinzugefügt werden."
-    }
+      "addFailed": "Ein oder mehrere Items konnten nicht hinzugefügt werden.",
+      "addedN": "{{count}} zu {{dest}} hinzugefügt",
+      "undone": "Entfernt",
+      "undoFailed": "Rückgängig fehlgeschlagen"
+    },
+    "destFallback": "Liste"
   },
   "gearListDetailsModal": {
     "title": "Packlisten-Details",
@@ -852,8 +890,26 @@
     "itemTypes": {
       "Backpack": "Rucksack",
       "Backpacking Pot": "Campingtopf",
-      "Backpacking Stove (Canister)": "Gaskocher (Kartusche)",
+      "Stove (Canister)": "Gaskocher (Kartusche)",
+      "Stove (Alcohol)": "Spirituskocher",
+      "Stove (Wood)": "Holzkocher",
+      "Stove (Liquid Fuel)": "Benzinkocher",
       "Backpacking Tent": "Trekkingzelt",
+      "Ice Axe": "Eispickel",
+      "Crampon": "Steigeisen",
+      "Air Pump": "Luftpumpe",
+      "Bivy Sack": "Biwaksack",
+      "Camp Shoes": "Campschuhe",
+      "Traction Device": "Spikes",
+      "Insect Repellent": "Insektenschutz",
+      "Hammock": "Hängematte",
+      "Camp Chair": "Campingstuhl",
+      "Trowel": "Grabschaufel",
+      "Pack Accessory": "Rucksackzubehör",
+      "Sit Pad": "Sitzkissen",
+      "Climbing Helmet": "Kletterhelm",
+      "Climbing Harness": "Klettergurt",
+      "Via Ferrata Set": "Klettersteigset",
       "Blister Prevention": "Blasenprävention",
       "Camp Lantern": "Campinglaterne",
       "Base Layer Bottom": "Baselayer-Hose",
@@ -867,6 +923,7 @@
       "Hat/Headwear": "Mütze/Kopfbedeckung",
       "Headlamp": "Stirnlampe",
       "Hiking Boots": "Wanderstiefel",
+      "Hiking Shoes": "Wanderschuhe",
       "Hiking Shirt": "Wanderhemd",
       "Convertible Pants": "Zip-Off-Hose",
       "Hiking Shorts": "Wandershorts",
@@ -903,7 +960,11 @@
       "Utensil": "Besteck",
       "Wallet": "Geldbörse",
       "Water Bottle": "Trinkflasche",
-      "Water Filter": "Wasserfilter"
+      "Water Filter": "Wasserfilter",
+      "Gaiters": "Gamaschen",
+      "Neck Gaiter": "Schlauchschal",
+      "Softshell Jacket": "Softshelljacke",
+      "Flask": "Flachmann"
     },
     "subcategories": {
       "Accessories": "Zubehör",
@@ -975,7 +1036,9 @@
       "Water Treatment": "Wasseraufbereitung",
       "Wearables & GPS": "Wearables & GPS",
       "Women's Footwear": "Damenschuhe",
-      "Women's Personal Care": "Damenpflege"
+      "Women's Personal Care": "Damenpflege",
+      "Gaiters": "Gamaschen",
+      "Flasks": "Flachmänner"
     }
   },
   "affiliateProductPicker": {
@@ -1375,7 +1438,8 @@
     "selected": "{{count}} ausgewählt",
     "selectItems": "Artikel auswählen",
     "filter": {
-      "allCategories": "Alle Kategorien"
+      "allCategories": "Alle Kategorien",
+      "uncategorized": "Ohne Kategorie"
     },
     "sort": {
       "nameAsc": "Name A-Z",
@@ -1588,5 +1652,31 @@
     "whw": {
       "name": "WHW"
     }
+  },
+  "reportIssue": {
+    "flag": "Problem melden",
+    "flagHint": "Gewicht · Kategorie · Name · Bild",
+    "title": "Problem melden",
+    "titleFor": "Problem melden — {{name}}",
+    "fields": {
+      "weight": "Gewicht ist falsch",
+      "category": "Falsche Kategorie oder Artikeltyp",
+      "name": "Name oder Marke ist falsch",
+      "image": "Bild oder Kauflink ist defekt",
+      "other": "Etwas anderes"
+    },
+    "notePlaceholder": "Mehr erzählen (optional) – z. B. „meine Waage zeigt 162 g“",
+    "autoAttached": "automatisch angehängt",
+    "buttons": {
+      "send": "Meldung senden",
+      "sending": "Senden…"
+    },
+    "toasts": {
+      "sent": "Danke – Meldung gesendet",
+      "failed": "Meldung konnte nicht gesendet werden"
+    }
+  },
+  "common": {
+    "cancel": "Abbrechen"
   }
 }

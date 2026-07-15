@@ -8,7 +8,8 @@
     "cancel": "Cancelar",
     "delete": "Eliminar",
     "close": "Cerrar",
-    "saving": "Guardando…"
+    "saving": "Guardando…",
+    "undo": "Deshacer"
   },
   "validation": {
     "nameRequired": "El nombre es obligatorio.",
@@ -416,7 +417,9 @@
       "toggleWorn": "Alternar llevado",
       "openProductPageTitle": "Abrir página del producto",
       "openProductPageAria": "Abrir página del producto (enlace pagado)",
-      "itemOptionsA11y": "Opciones del artículo"
+      "itemOptionsA11y": "Opciones del artículo",
+      "sizeNotSet": "Talla sin definir",
+      "sizeNotSetHint": "No se eligió talla — toca para definirla"
     },
     "actions": {
       "swap": "Intercambiar artículo"
@@ -523,7 +526,8 @@
       "link": "Enlace",
       "weight": "Peso ({{unit}})",
       "description": "Descripción",
-      "imageUrl": "URL de imagen"
+      "imageUrl": "URL de imagen",
+      "category": "Categoría"
     },
     "placeholders": {
       "itemType": "Tienda",
@@ -541,7 +545,8 @@
     },
     "toast": {
       "created": "¡Artículo global creado!",
-      "createFailed": "No se pudo crear el artículo."
+      "createFailed": "No se pudo crear el artículo.",
+      "saveFailed": "No se pudo guardar el artículo."
     },
     "importTab": {
       "searchPlaceholder": "Buscar en el catálogo…",
@@ -600,7 +605,17 @@
     },
     "messages": {
       "alreadyAdded": "Este artículo ya está en Mi equipo."
-    }
+    },
+    "emptyPane": "Selecciona un resultado para verlo aquí.",
+    "selectForAdding": "Seleccionar para añadir",
+    "selectedForAdding": "Seleccionado para añadir",
+    "sizeNotSetHint": "Sin talla elegida: se añade la talla predeterminada y se marca como «talla sin definir», editable después.",
+    "disclosure": {
+      "manufacturerSpec": "Especificación del fabricante",
+      "flatAcrossSizes": "igual en todas las tallas",
+      "verified": "verificado {{date}}"
+    },
+    "inList": "En la lista"
   },
   "globalItemEditModal": {
     "titleGlobal": "Detalles del artículo",
@@ -629,7 +644,8 @@
       "deleteTitle": "¿Eliminar este artículo de equipo?",
       "deleteMessage": "Esto lo eliminará de tus artículos de equipo y de todas tus listas.",
       "deleteConfirm": "Eliminar artículo"
-    }
+    },
+    "weightYourValue": "Tu peso"
   },
   "smartItemSearch": {
     "searchPlaceholder": "ej. Osprey Talon 33 mochila hombre",
@@ -706,25 +722,8 @@
       "invalidWeight": "Peso no válido",
       "previewLoadFailed": "No se pudieron cargar los detalles del artículo.",
       "catalogMatch": "Encontrado en el catálogo",
-      "catalogMatches": "Posibles coincidencias encontradas: elige la tuya abajo"
-    },
-    "gearRequest": {
-      "title": "Solicitar un artículo de equipo",
-      "description": "¿No encuentras lo que buscas? Dínoslo y veremos si podemos añadirlo.",
-      "labels": {
-        "itemName": "Nombre del artículo",
-        "brand": "Marca",
-        "link": "Enlace (opcional)"
-      },
-      "buttons": {
-        "openForm": "Solicitar un artículo de equipo",
-        "send": "Enviar solicitud",
-        "sending": "Enviando…"
-      },
-      "toasts": {
-        "success": "¡Solicitud enviada! Veremos si podemos añadirlo.",
-        "failed": "No se pudo enviar la solicitud. Por favor, inténtalo de nuevo."
-      }
+      "catalogMatches": "Posibles coincidencias encontradas: elige la tuya abajo",
+      "addedToList": "Añadido a la lista"
     },
     "tabSearchHint": "Escribe y pulsa Enter · Pega un enlace · Haz una foto",
     "browseToggle": "Explorar categorías",
@@ -732,7 +731,42 @@
       "reading": "Leyendo la página del producto…",
       "identifying": "Identificando el artículo…",
       "matching": "Comparando con el catálogo…"
-    }
+    },
+    "chooseVariant": "Variantes",
+    "multipleVariants": "Múltiples variantes",
+    "inList": "Añadido",
+    "inMyGear": "En mi equipo",
+    "nSelected_one": "{{count}} seleccionado",
+    "nSelected_other": "{{count}} seleccionados",
+    "addNToDest": "Añadir {{count}} a {{dest}}",
+    "selectRow": "Seleccionar {{name}}",
+    "resultsLabel": "Resultados de búsqueda",
+    "searchBy": "Buscar por:",
+    "searchModes": {
+      "productName": "Nombre del producto",
+      "storeUrl": "URL de la tienda",
+      "decathlonId": "ID de artículo Decathlon",
+      "photo": "Foto"
+    },
+    "featured": "Destacado",
+    "browseRange": "Ver la gama →",
+    "facetCount": "{{shown}} de {{total}} artículos",
+    "inListCheck": "✓ En la lista",
+    "addToDest": "Añadir a {{dest}}",
+    "swapForThis": "Cambiar por este",
+    "showMore": "Mostrar más ({{n}} restantes)",
+    "loadingMore": "Cargando…",
+    "tabs": {
+      "myGear": "Mi equipo",
+      "custom": "Personalizado",
+      "import": "Importar"
+    },
+    "searchYourGear": "Busca en tu equipo",
+    "noGearMatch": "Ningún artículo de tu biblioteca coincide.",
+    "libraryEmpty": "Tu biblioteca está vacía. Importa del catálogo o crea un artículo personalizado y aparecerá aquí.",
+    "catalogResultCount": "{{count}} artículos en el catálogo",
+    "createCustomItem": "Crear \"{query}\" como elemento personalizado",
+    "nSelected": "{{count}} seleccionados"
   },
   "photoScanModal": {
     "title": "Escanear equipo",
@@ -780,8 +814,12 @@
       "selectAtLeastOne": "Selecciona al menos un artículo.",
       "alreadyInList": "Algunos artículos ya están en esta lista.",
       "addSuccess": "Artículos añadidos correctamente.",
-      "addFailed": "No se pudo añadir uno o más artículos."
-    }
+      "addFailed": "No se pudo añadir uno o más artículos.",
+      "addedN": "Se añadieron {{count}} a {{dest}}",
+      "undone": "Eliminado",
+      "undoFailed": "No se pudo deshacer"
+    },
+    "destFallback": "lista"
   },
   "gearListDetailsModal": {
     "title": "Detalles de la lista",
@@ -852,8 +890,26 @@
     "itemTypes": {
       "Backpack": "Mochila",
       "Backpacking Pot": "Olla de camping",
-      "Backpacking Stove (Canister)": "Hornillo de cartucho",
+      "Stove (Canister)": "Hornillo de cartucho",
+      "Stove (Alcohol)": "Hornillo de alcohol",
+      "Stove (Wood)": "Hornillo de leña",
+      "Stove (Liquid Fuel)": "Hornillo de gasolina",
       "Backpacking Tent": "Tienda de campaña",
+      "Ice Axe": "Piolet",
+      "Crampon": "Crampones",
+      "Air Pump": "Bomba de aire",
+      "Bivy Sack": "Saco de vivac",
+      "Camp Shoes": "Zapatillas de campamento",
+      "Traction Device": "Tacos de tracción",
+      "Insect Repellent": "Repelente de insectos",
+      "Hammock": "Hamaca",
+      "Camp Chair": "Silla de campamento",
+      "Trowel": "Paleta",
+      "Pack Accessory": "Accesorio de mochila",
+      "Sit Pad": "Asiento aislante",
+      "Climbing Helmet": "Casco de escalada",
+      "Climbing Harness": "Arnés de escalada",
+      "Via Ferrata Set": "Kit de vía ferrata",
       "Blister Prevention": "Prevención de ampollas",
       "Camp Lantern": "Linterna de camping",
       "Base Layer Bottom": "Capa base inferior",
@@ -867,6 +923,7 @@
       "Hat/Headwear": "Gorro/Sombrero",
       "Headlamp": "Linterna frontal",
       "Hiking Boots": "Botas de senderismo",
+      "Hiking Shoes": "Zapatillas de senderismo",
       "Hiking Shirt": "Camiseta de senderismo",
       "Convertible Pants": "Pantalones convertibles",
       "Hiking Shorts": "Pantalones cortos de senderismo",
@@ -903,7 +960,11 @@
       "Utensil": "Utensilio",
       "Wallet": "Billetera",
       "Water Bottle": "Botella de agua",
-      "Water Filter": "Filtro de agua"
+      "Water Filter": "Filtro de agua",
+      "Gaiters": "Polainas",
+      "Neck Gaiter": "Braga de cuello",
+      "Softshell Jacket": "Chaqueta softshell",
+      "Flask": "Petaca"
     },
     "subcategories": {
       "Accessories": "Accesorios",
@@ -975,7 +1036,9 @@
       "Water Treatment": "Tratamiento de agua",
       "Wearables & GPS": "Dispositivos GPS",
       "Women's Footwear": "Calzado mujer",
-      "Women's Personal Care": "Higiene personal mujer"
+      "Women's Personal Care": "Higiene personal mujer",
+      "Gaiters": "Polainas",
+      "Flasks": "Petacas"
     }
   },
   "affiliateProductPicker": {
@@ -1375,7 +1438,8 @@
     "selected": "{{count}} seleccionado(s)",
     "selectItems": "Seleccionar artículos",
     "filter": {
-      "allCategories": "Todas las categorías"
+      "allCategories": "Todas las categorías",
+      "uncategorized": "Sin categoría"
     },
     "sort": {
       "nameAsc": "Nombre A-Z",
@@ -1588,5 +1652,31 @@
     "whw": {
       "name": "WHW"
     }
+  },
+  "reportIssue": {
+    "flag": "Informar de un problema",
+    "flagHint": "peso · categoría · nombre · imagen",
+    "title": "Informar de un problema",
+    "titleFor": "Informar de un problema — {{name}}",
+    "fields": {
+      "weight": "El peso es incorrecto",
+      "category": "Categoría o tipo de artículo incorrecto",
+      "name": "El nombre o la marca es incorrecto",
+      "image": "Imagen o enlace de compra roto",
+      "other": "Otra cosa"
+    },
+    "notePlaceholder": "Cuéntanos más (opcional) — p. ej. «mi báscula marca 162 g»",
+    "autoAttached": "adjuntado automáticamente",
+    "buttons": {
+      "send": "Enviar informe",
+      "sending": "Enviando…"
+    },
+    "toasts": {
+      "sent": "Gracias, informe enviado",
+      "failed": "No se pudo enviar el informe"
+    }
+  },
+  "common": {
+    "cancel": "Cancelar"
   }
 }

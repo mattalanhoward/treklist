@@ -8,7 +8,8 @@
     "cancel": "Cancel",
     "delete": "Delete",
     "close": "Close",
-    "saving": "Saving…"
+    "saving": "Saving…",
+    "undo": "Undo"
   },
   "validation": {
     "nameRequired": "Name is required.",
@@ -423,7 +424,9 @@
       "toggleWorn": "Toggle worn",
       "openProductPageTitle": "Open product page",
       "openProductPageAria": "Open product page (paid link)",
-      "itemOptionsA11y": "Item options"
+      "itemOptionsA11y": "Item options",
+      "sizeNotSet": "Size not set",
+      "sizeNotSetHint": "No size chosen — tap to set it"
     },
     "actions": {
       "swap": "Swap item"
@@ -530,7 +533,8 @@
       "link": "Link",
       "weight": "Weight ({{unit}})",
       "description": "Description",
-      "imageUrl": "Image URL"
+      "imageUrl": "Image URL",
+      "category": "Category"
     },
     "placeholders": {
       "itemType": "Tent",
@@ -548,7 +552,8 @@
     },
     "toast": {
       "created": "Global item created!",
-      "createFailed": "Failed to create item."
+      "createFailed": "Failed to create item.",
+      "saveFailed": "Failed to save item"
     },
     "importTab": {
       "searchPlaceholder": "Search catalog…",
@@ -607,7 +612,17 @@
     },
     "messages": {
       "alreadyAdded": "This item is already in My Gear."
-    }
+    },
+    "emptyPane": "Select a result to preview it here.",
+    "selectForAdding": "Select for adding",
+    "selectedForAdding": "Selected for adding",
+    "sizeNotSetHint": "No size chosen — the default fit is added and flagged “size not set”, editable later.",
+    "disclosure": {
+      "manufacturerSpec": "Manufacturer spec",
+      "flatAcrossSizes": "flat across sizes",
+      "verified": "verified {{date}}"
+    },
+    "inList": "In list"
   },
   "globalItemEditModal": {
     "titleGlobal": "Item Details",
@@ -636,7 +651,8 @@
       "deleteTitle": "Delete this gear item?",
       "deleteMessage": "This will remove it from your gear items and all of your gear lists.",
       "deleteConfirm": "Delete item"
-    }
+    },
+    "weightYourValue": "Your weight"
   },
   "smartItemSearch": {
     "searchPlaceholder": "e.g. Osprey Talon 33 Men's Backpack",
@@ -713,25 +729,8 @@
       "invalidWeight": "Invalid weight",
       "previewLoadFailed": "Failed to load item details.",
       "catalogMatch": "Found in catalog",
-      "catalogMatches": "Found possible matches — pick yours below"
-    },
-    "gearRequest": {
-      "title": "Request a Gear Item",
-      "description": "Can't find what you're looking for? Let us know and we'll look into adding it.",
-      "labels": {
-        "itemName": "Item Name",
-        "brand": "Brand",
-        "link": "Link (optional)"
-      },
-      "buttons": {
-        "openForm": "Request a Gear Item",
-        "send": "Send Request",
-        "sending": "Sending…"
-      },
-      "toasts": {
-        "success": "Request sent! We'll look into adding it.",
-        "failed": "Failed to send request. Please try again."
-      }
+      "catalogMatches": "Found possible matches — pick yours below",
+      "addedToList": "Added to list"
     },
     "tabSearchHint": "Type & press Enter · Paste a link · Snap a photo",
     "browseToggle": "Browse categories",
@@ -739,7 +738,42 @@
       "reading": "Reading product page…",
       "identifying": "Identifying the item…",
       "matching": "Matching against the catalog…"
-    }
+    },
+    "chooseVariant": "Variants",
+    "multipleVariants": "Multiple variants",
+    "inList": "Added",
+    "inMyGear": "In my gear",
+    "nSelected_one": "{{count}} selected",
+    "nSelected_other": "{{count}} selected",
+    "addNToDest": "Add {{count}} to {{dest}}",
+    "selectRow": "Select {{name}}",
+    "resultsLabel": "Search results",
+    "searchBy": "Search by:",
+    "searchModes": {
+      "productName": "Product name",
+      "storeUrl": "Store URL",
+      "decathlonId": "Decathlon item ID",
+      "photo": "Photo"
+    },
+    "featured": "Featured",
+    "browseRange": "Browse the range →",
+    "facetCount": "{{shown}} of {{total}} items",
+    "inListCheck": "✓ In list",
+    "addToDest": "Add to {{dest}}",
+    "swapForThis": "Swap for this",
+    "showMore": "Show more ({{n}} left)",
+    "loadingMore": "Loading…",
+    "tabs": {
+      "myGear": "My Gear",
+      "custom": "Custom",
+      "import": "Import"
+    },
+    "searchYourGear": "Search your gear",
+    "noGearMatch": "No gear in your library matches that.",
+    "libraryEmpty": "Your library is empty. Import from the catalog or create a custom item and it’ll show up here.",
+    "catalogResultCount": "{{count}} items in catalog",
+    "createCustomItem": "Create \"{query}\" as a custom item",
+    "nSelected": "{{count}} selected"
   },
   "photoScanModal": {
     "title": "Scan Gear",
@@ -787,8 +821,12 @@
       "selectAtLeastOne": "Please select at least one item.",
       "alreadyInList": "Some items are already in this list.",
       "addSuccess": "Items added successfully.",
-      "addFailed": "Failed to add one or more items."
-    }
+      "addFailed": "Failed to add one or more items.",
+      "addedN": "Added {{count}} to {{dest}}",
+      "undone": "Removed",
+      "undoFailed": "Couldn't undo"
+    },
+    "destFallback": "list"
   },
   "gearListDetailsModal": {
     "title": "Gear list details",
@@ -860,8 +898,26 @@
       "Backpack": "Backpack",
       "Backpacking Pot": "Backpacking Pot",
       "Blister Prevention": "Blister Prevention",
-      "Backpacking Stove (Canister)": "Backpacking Stove (Canister)",
+      "Stove (Canister)": "Stove (Canister)",
+      "Stove (Alcohol)": "Stove (Alcohol)",
+      "Stove (Wood)": "Stove (Wood)",
+      "Stove (Liquid Fuel)": "Stove (Liquid Fuel)",
       "Backpacking Tent": "Backpacking Tent",
+      "Ice Axe": "Ice Axe",
+      "Crampon": "Crampon",
+      "Air Pump": "Air Pump",
+      "Bivy Sack": "Bivy Sack",
+      "Camp Shoes": "Camp Shoes",
+      "Traction Device": "Traction Device",
+      "Insect Repellent": "Insect Repellent",
+      "Hammock": "Hammock",
+      "Camp Chair": "Camp Chair",
+      "Trowel": "Trowel",
+      "Pack Accessory": "Pack Accessory",
+      "Sit Pad": "Sit Pad",
+      "Climbing Helmet": "Climbing Helmet",
+      "Climbing Harness": "Climbing Harness",
+      "Via Ferrata Set": "Via Ferrata Set",
       "Camp Lantern": "Camp Lantern",
       "Base Layer Bottom": "Base Layer Bottom",
       "Base Layer Top": "Base Layer Top",
@@ -874,6 +930,7 @@
       "Hat/Headwear": "Hat/Headwear",
       "Headlamp": "Headlamp",
       "Hiking Boots": "Hiking Boots",
+      "Hiking Shoes": "Hiking Shoes",
       "Hiking Shirt": "Hiking Shirt",
       "Convertible Pants": "Convertible Pants",
       "Hiking Shorts": "Hiking Shorts",
@@ -910,7 +967,11 @@
       "Utensil": "Utensil",
       "Wallet": "Wallet",
       "Water Bottle": "Water Bottle",
-      "Water Filter": "Water Filter"
+      "Water Filter": "Water Filter",
+      "Gaiters": "Gaiters",
+      "Neck Gaiter": "Neck Gaiter",
+      "Softshell Jacket": "Softshell Jacket",
+      "Flask": "Flask"
     },
     "subcategories": {
       "Accessories": "Accessories",
@@ -982,7 +1043,9 @@
       "Water Treatment": "Water Treatment",
       "Wearables & GPS": "Wearables & GPS",
       "Women's Footwear": "Women's Footwear",
-      "Women's Personal Care": "Women's Personal Care"
+      "Women's Personal Care": "Women's Personal Care",
+      "Gaiters": "Gaiters",
+      "Flasks": "Flasks"
     }
   },
   "affiliateProductPicker": {
@@ -1382,7 +1445,8 @@
     "selected": "{{count}} selected",
     "selectItems": "Select items",
     "filter": {
-      "allCategories": "All Categories"
+      "allCategories": "All Categories",
+      "uncategorized": "Uncategorized"
     },
     "sort": {
       "nameAsc": "Name A-Z",
@@ -1588,5 +1652,31 @@
     "whw": {
       "name": "WHW"
     }
+  },
+  "reportIssue": {
+    "flag": "Report an issue",
+    "flagHint": "weight · category · name · image",
+    "title": "Report an issue",
+    "titleFor": "Report an issue — {{name}}",
+    "fields": {
+      "weight": "Weight is incorrect",
+      "category": "Wrong category or item type",
+      "name": "Name or brand is wrong",
+      "image": "Image or buy link is broken",
+      "other": "Something else"
+    },
+    "notePlaceholder": "Tell us more (optional) — e.g. “my scale says 162 g”",
+    "autoAttached": "auto-attached",
+    "buttons": {
+      "send": "Send report",
+      "sending": "Sending…"
+    },
+    "toasts": {
+      "sent": "Thanks — report sent",
+      "failed": "Couldn't send report"
+    }
+  },
+  "common": {
+    "cancel": "Cancel"
   }
 }

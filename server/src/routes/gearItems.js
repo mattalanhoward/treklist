@@ -155,6 +155,7 @@ router.post("/", async (req, res) => {
     consumable,
     quantity,
     position,
+    sizeUnset,
   } = req.body;
 
   // basic required validation
@@ -197,6 +198,7 @@ router.post("/", async (req, res) => {
       consumable,
       quantity,
       position,
+      sizeUnset: Boolean(sizeUnset),
     });
 
     // 4) Add hasOffer flag before returning
@@ -219,9 +221,11 @@ router.patch("/:itemId", async (req, res) => {
 
   // Build update object from allowed fields
   const updates = {};
-  for (const field of ["consumable", "worn", "quantity", "position"]) {
+  for (const field of ["consumable", "worn", "quantity", "position", "sizeUnset"]) {
     if (req.body[field] !== undefined) {
-      updates[field] = req.body[field];
+      // Coerce sizeUnset to a real boolean (matches the create route) so a
+      // stray non-castable value can't throw a CastError → 500.
+      updates[field] = field === "sizeUnset" ? Boolean(req.body[field]) : req.body[field];
     }
   }
   if (req.body.category) {
@@ -313,6 +317,9 @@ router.patch("/:itemId/swap", async (req, res) => {
       link: newGlobal.link || null,
       imageUrls: newGlobal.imageUrls || [],
       description: newGlobal.description || "",
+      // The swapped-in item was chosen deliberately, so it never inherits the
+      // previous item's "size not set" flag (which may not even apply here).
+      sizeUnset: false,
     };
 
     const updated = await GearItem.findOneAndUpdate(

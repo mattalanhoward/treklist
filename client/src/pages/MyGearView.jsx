@@ -7,7 +7,6 @@ import { useTranslation } from "react-i18next";
 import { FiSearch, FiGrid, FiList, FiPlus, FiChevronDown, FiCheckSquare, FiTrash2, FiX } from "react-icons/fi";
 import ConfirmDialog from "../components/ConfirmDialog";
 import GlobalItemEditModal from "../components/GlobalItemEditModal";
-import AddGearDrawer from "../components/AddGearDrawer";
 import GlobalItemModal from "../components/GlobalItemModal";
 import MyGearTileCard from "../components/MyGearTileCard";
 import MyGearListItem from "../components/MyGearListItem";
@@ -36,13 +35,11 @@ export default function MyGearView({ collapsed }) {
   const [wishlistItems, setWishlistItems] = useState([]);
   const [wishlistLoading, setWishlistLoading] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
-  // Drawer kept but disabled for now — the add-gear modal is the single add flow
-  const [showDrawer, setShowDrawer] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
 
-  // Close drawer when sidebar expands on mobile
+  // Close add modal when sidebar expands on mobile
   useEffect(() => {
-    const handler = () => { if (window.innerWidth < 1024) setShowDrawer(false); };
+    const handler = () => { if (window.innerWidth < 1024) setShowAddModal(false); };
     window.addEventListener("sidebar:expanded", handler);
     return () => window.removeEventListener("sidebar:expanded", handler);
   }, []);
@@ -333,9 +330,7 @@ export default function MyGearView({ collapsed }) {
   }, []);
 
   return (
-    <div className={`h-full flex flex-col overflow-hidden bg-neutral/10 transition-all duration-300 ${
-      showDrawer ? "sm:w-[calc(100%-420px)]" : "w-full"
-    }`}>
+    <div className="h-full flex flex-col overflow-hidden bg-neutral/10 transition-all duration-300 w-full">
       {/* Header - single row on desktop, stacked on mobile */}
       <div data-tour="mygear-header" className="flex-shrink-0 px-4 py-2 border-b border-primary/10 bg-base-100">
         {/* Desktop: single row */}
@@ -673,13 +668,6 @@ export default function MyGearView({ collapsed }) {
         </div>
       </div>
 
-      {/* Add Gear Drawer — disabled for now, modal below is the add flow */}
-      <AddGearDrawer
-        isOpen={showDrawer}
-        onClose={() => setShowDrawer(false)}
-        onItemsChanged={fetchItems}
-      />
-
       {/* Add gear modal (refreshes via the global-items:updated event) */}
       {showAddModal && <GlobalItemModal onClose={() => setShowAddModal(false)} />}
 
@@ -738,7 +726,7 @@ export default function MyGearView({ collapsed }) {
                 {groupedItems.length > 1 && (
                   <div className="text-sm font-semibold text-primary/50 uppercase tracking-wider px-1 mb-2">{category}</div>
                 )}
-                <div className={`grid gap-3 ${showDrawer ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6" : "grid-cols-1 sm:grid-cols-4 lg:grid-cols-6 2xl:grid-cols-8"}`}>
+                <div className="grid gap-3 grid-cols-1 sm:grid-cols-4 lg:grid-cols-6 2xl:grid-cols-8">
                   {groupItems.map((item) => (
                     <MyGearTileCard
                       key={item._id}

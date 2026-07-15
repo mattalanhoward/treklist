@@ -51,11 +51,17 @@ const RULES = [
   [/water filter|water purif|filtration|purification/i, "Water Filter"],
   [/water treatment|purification tablet|treatment drops|chlorine dioxide/i, "Water Filter"],
   [/hydration|reservoir|water bladder/i, "Hydration Reservoir"],
+  // rigid drink flasks (titanium/hip/wine/funnel) -> Kitchen; soft/collapsible water
+  // flasks fall through to Water Bottle (hydration).
+  [/hip flask|wine flask|whisk(e)?y flask|spirit flask|funnel flask|flat flask|titanium.*flask/i, "Flask"],
   [/water bottle|\bflask\b/i, "Water Bottle"],
 
   // --- cooking ---
   [/\bfuel\b|gas cartridge|gas canister/i, "Stove Fuel"],
-  [/stove/i, "Backpacking Stove (Canister)"],
+  [/alcohol stove|spirit (stove|burner)|meths stove/i, "Stove (Alcohol)"],
+  [/wood[- ]?burning stove|wood stove|twig stove|hobo stove/i, "Stove (Wood)"],
+  [/whisperlite|dragonfly|\bxgk\b|liquid fuel stove|multi-?fuel stove/i, "Stove (Liquid Fuel)"],
+  [/stove/i, "Stove (Canister)"],
   [/cook\s?set|cookware|\bpot\b|\bpan\b/i, "Backpacking Pot"],
   [/\bmug\b/i, "Coffee Mug"],
   [/spork|cutlery|utensil|\bspoon\b|\bfork\b/i, "Utensil"],
@@ -72,6 +78,7 @@ const RULES = [
   [/rain jacket|waterproof jacket|hard\s?shell/i, "Rain Jacket"],
   [/poncho/i, "Rain Poncho"],
   [/umbrella/i, "Umbrella"],
+  [/soft\s?shell|wind\s?shell|windshirt|wind shirt|alpine start/i, "Softshell Jacket"],
   [/down jacket|insulated jacket|puffer|padded jacket|wadded jacket/i, "Insulated Jacket"],
   [/fleece/i, "Fleece Jacket"],
 
@@ -82,11 +89,12 @@ const RULES = [
   // --- accessories / headwear ---
   [/\bbra\b/i, "Bra"],
   [/\bsock(s)?\b/i, "Hiking Socks"],
-  [/beanie|\bbuff\b|neck gaiter|neck warmer|bandana|head\s?band|neck\s?band|\bcap\b|sun hat|bucket hat|\bhat\b/i, "Hat/Headwear"],
+  [/neck gaiter|neck warmer|neck\s?band|neck tube|\bbuff\b|\bbandana\b/i, "Neck Gaiter"],
+  [/beanie|head\s?band|\bcap\b|sun hat|bucket hat|balaclava|\bhat\b/i, "Hat/Headwear"],
   [/underwear|boxer|\bbrief(s)?\b|knicker/i, "Underwear"],
   [/mosquito (net|head)|head net/i, "Mosquito Head Net"],
   [/sunglass|sun glasses/i, "Sunglasses"],
-  [/\bgaiter\b/i, "Hat/Headwear"], // neck gaiter already caught above; bare "gaiter" fallback
+  [/\bgaiter(s)?\b/i, "Gaiters"], // neck gaiters caught above; bare "gaiter" = leg/shoe gaiter
 
   // --- bottoms / shirts ---
   [/convertible (pant|trouser)|zip-?off/i, "Convertible Pants"],
@@ -98,7 +106,27 @@ const RULES = [
   // --- footwear ---
   [/trail running shoe|trail shoe|running shoe/i, "Trail Running Shoes"],
   [/sandal/i, "Sandals"],
-  [/\bboot(s)?\b|hiking shoe|walking shoe/i, "Hiking Boots"],
+  [/\bboot(s)?\b/i, "Hiking Boots"], // mid/high-cut
+  [/hiking shoe|walking shoe|approach shoe|low.?cut/i, "Hiking Shoes"], // low-cut
+
+  // --- climbing & mountaineering ---
+  [/via[\s-]?ferrata/i, "Via Ferrata Set"],
+  [/\bice ?axe\b|\bpiolet\b|ice tool/i, "Ice Axe"],
+  [/\bcrampon(s)?\b/i, "Crampon"],
+  [/climbing helmet|mountaineering helmet|climbing and mountaineering helmet/i, "Climbing Helmet"],
+  [/climbing harness|mountaineering harness|climbing and mountaineering harness/i, "Climbing Harness"],
+
+  // --- gear / misc ---
+  [/air pump|\binflator\b|pump ?bag|schnozzel|pumpbag/i, "Air Pump"],
+  [/\bbivy\b|\bbivvy\b|bivy ?sack|survival bag/i, "Bivy Sack"],
+  [/down bootie|down sock|camp bootie|camp boot(?!s? )|camp slipper|down slipper|camp shoe/i, "Camp Shoes"],
+  [/micro ?spike|traction device|ice cleat|\bcleats?\b/i, "Traction Device"],
+  [/repeller|repellent|insect repellent|mosquito coil/i, "Insect Repellent"],
+  [/\bhammock\b/i, "Hammock"],
+  [/camp chair|camp stool|backpacking chair|\bstool\b/i, "Camp Chair"],
+  [/\btrowel\b|deuce of spades|poop shovel|potty trowel/i, "Trowel"],
+  [/sit pad|seat pad|sitting pad|foam seat/i, "Sit Pad"],
+  [/hip.?belt pocket|hipbelt pocket|shoulder pouch|pole holster|bottle (sleeve|holster)|pack accessory/i, "Pack Accessory"],
 
   // --- misc gear ---
   [/bear canister|bear ?vault|food canister/i, "Bear Canister"],
@@ -192,8 +220,12 @@ const CATEGORY_BY_ITEM_TYPE = {
   "Ground Sheet": ["Shelter", "Ground Sheet"],
   // ---- Kitchen & Cooking ----
   "Backpacking Pot": ["Kitchen & Cooking", "Cookware"],
-  "Backpacking Stove (Canister)": ["Kitchen & Cooking", "Stoves"],
+  "Stove (Canister)": ["Kitchen & Cooking", "Stoves"],
+  "Stove (Alcohol)": ["Kitchen & Cooking", "Stoves"],
+  "Stove (Wood)": ["Kitchen & Cooking", "Stoves"],
+  "Stove (Liquid Fuel)": ["Kitchen & Cooking", "Stoves"],
   "Coffee Mug": ["Kitchen & Cooking", "Coffee"],
+  Flask: ["Kitchen & Cooking", "Flasks"],
   Utensil: ["Kitchen & Cooking", "Utensils"],
   "Stove Fuel": ["Kitchen & Cooking", "Fuel - Isobutane"],
   // ---- Hydration ----
@@ -212,6 +244,21 @@ const CATEGORY_BY_ITEM_TYPE = {
   Smartwatch: ["Electronics & Power", "Wearables & GPS"],
   // ---- Accessories & Tools ----
   "Trekking Poles": ["Accessories & Tools", "Trekking Poles"],
+  "Ice Axe": ["Accessories & Tools", "Climbing Gear"],
+  "Crampon": ["Accessories & Tools", "Climbing Gear"],
+  "Climbing Helmet": ["Accessories & Tools", "Climbing Gear"],
+  "Climbing Harness": ["Accessories & Tools", "Climbing Gear"],
+  "Via Ferrata Set": ["Accessories & Tools", "Climbing Gear"],
+  "Air Pump": ["Sleep System", "Sleeping Pad Accessories"],
+  "Bivy Sack": ["Shelter", "Tents"],
+  "Camp Shoes": ["Footwear", null, { footwear: true }],
+  "Traction Device": ["Accessories & Tools", "Micro Spikes"],
+  "Insect Repellent": ["Accessories & Tools", "Insect Protection"],
+  "Hammock": ["Shelter", "Tents"],
+  "Camp Chair": ["Accessories & Tools", "Tools"],
+  "Trowel": ["Accessories & Tools", "Tools"],
+  "Pack Accessory": ["Backpacks & Bags", "Day Packs & Accessories"],
+  "Sit Pad": ["Sleep System", "Sleeping Pad Accessories"],
   "Dry Bag / Stuff Sack": ["Accessories & Tools", "Dry Bags"],
   "Pack Liner": ["Accessories & Tools", "Dry Bags"],
   "Bear Canister": ["Accessories & Tools", "Food Storage"],
@@ -231,6 +278,7 @@ const CATEGORY_BY_ITEM_TYPE = {
   Wallet: ["Travel", "Wallet"],
   // ---- Footwear (gender-resolved subcategory) ----
   "Hiking Boots": ["Footwear", null, { footwear: true }],
+  "Hiking Shoes": ["Footwear", null, { footwear: true }],
   "Trail Running Shoes": ["Footwear", null, { footwear: true }],
   Sandals: ["Footwear", null, { footwear: true }],
   // ---- Always-Unisex clothing ----
@@ -252,6 +300,9 @@ const CATEGORY_BY_ITEM_TYPE = {
   "Fleece Jacket": [null, "Jackets", { gendered: true }],
   "Rain Jacket": [null, "Rain Gear", { gendered: true }],
   "Rain Pants": [null, "Rain Gear", { gendered: true }],
+  "Softshell Jacket": [null, "Jackets", { gendered: true }],
+  Gaiters: [null, "Gaiters", { gendered: true }],
+  "Neck Gaiter": [null, "Neck Gaiter", { gendered: true }],
   // "Other" intentionally absent -> leaves category/subcategory unset.
 };
 

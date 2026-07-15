@@ -4,14 +4,51 @@ const mongoose = require("mongoose");
 const { isValidObjectId } = mongoose;
 const CatalogItem = require("../models/catalogItem");
 const MerchantOffer = require("../models/merchantOffer");
+const CatalogReport = require("../models/catalogReport");
+const SearchLog = require("../models/searchLog");
 
 const auth = require("../middleware/auth");
 const User = require("../models/user");
 const AffiliateProduct = require("../models/affiliateProduct");
 
 const { tokenRegex } = require("../utils/tokenRegex");
+const { sendSupportEmail } = require("../utils/mailer");
 
 const router = express.Router();
+
+// Best-effort admin notification when a catalog issue is reported. No-ops when
+// SMTP (or a destination address) isn't configured — never blocks the request.
+async function notifyCatalogReport({ item, fields, note, variantKey, shownValues, reporterId }) {
+  const to =
+    process.env.CATALOG_REPORT_EMAIL ||
+    process.env.ADMIN_EMAIL ||
+    process.env.SUPPORT_EMAIL ||
+    process.env.SMTP_FROM ||
+    process.env.SMTP_USER;
+  if (!to) return;
+  const name = `${item?.brand ? item.brand + " " : ""}${item?.name || item?._id || ""}`.trim();
+  const lines = [
+    `A catalog issue was reported.`,
+    ``,
+    `Item: ${name}`,
+    `Item ID: ${item?._id}`,
+    variantKey ? `Variant: ${variantKey}` : null,
+    `Fields: ${fields.join(", ")}`,
+    note ? `Note: ${note}` : null,
+    shownValues ? `Shown values: ${JSON.stringify(shownValues)}` : null,
+    reporterId ? `Reporter: ${reporterId}` : null,
+    `When: ${new Date().toISOString()}`,
+  ].filter(Boolean);
+  try {
+    await sendSupportEmail({
+      to,
+      subject: `[TrekList] Catalog report — ${name} (${fields.join(", ")})`,
+      text: lines.join("\n"),
+    });
+  } catch (err) {
+    console.warn("[catalog/report] notification email failed:", err.message);
+  }
+}
 
 // Small normalization helper (server-side)
 function normalizeRegion(region) {
@@ -104,6 +141,119 @@ router.get("/brands", auth, async (req, res) => {
     res.json(brands.filter(Boolean));
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch brands" });
+  }
+});
+
+// GET /api/catalog/category-counts
+// Active-item counts per top-level category, for the add-gear browse zero state.
+// Returns a { [category]: count } map.
+router.get("/category-counts", auth, async (req, res) => {
+  try {
+    const rows = await CatalogItem.aggregate([
+      { $match: { isActive: true } },
+      { $group: { _id: "$category", count: { $sum: 1 } } },
+    ]);
+    const counts = {};
+    rows.forEach((r) => {
+      if (r._id) counts[r._id] = r.count;
+    });
+    res.json(counts);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch category counts" });
+  }
+});
+
+// POST /api/catalog/report
+// File a crowd-sourced "report an issue" against a catalog item. Deduped by
+// (catalogItem, field) with a counter (decision 12). One request can dispute
+// several fields at once; each becomes/updates its own queue row.
+router.post("/report", auth, async (req, res) => {
+  try {
+    const { catalogItemId, note, variantKey, shownValues } = req.body || {};
+    if (!isValidObjectId(catalogItemId)) {
+      return res.status(400).json({ error: "Invalid catalog item id" });
+    }
+    const requested = Array.isArray(req.body?.fields)
+      ? req.body.fields
+      : req.body?.field
+        ? [req.body.field]
+        : [];
+    const fields = [...new Set(requested)].filter((f) =>
+      CatalogReport.FIELDS.includes(f),
+    );
+    if (!fields.length) {
+      return res.status(400).json({ error: "No valid report field selected" });
+    }
+
+    const reportedItem = await CatalogItem.findById(catalogItemId)
+      .select("name brand")
+      .lean();
+    if (!reportedItem) return res.status(404).json({ error: "Catalog item not found" });
+
+    const trimmedNote = typeof note === "string" ? note.trim().slice(0, 1000) : "";
+    const now = new Date();
+
+    await Promise.all(
+      fields.map((field) => {
+        const filter = { catalogItem: catalogItemId, field };
+        const update = {
+          $inc: { count: 1 },
+          $set: {
+            status: "open",
+            variantKey: variantKey || null,
+            lastNote: trimmedNote,
+            shownValues: shownValues || null,
+            lastReporter: req.userId,
+            lastReportedAt: now,
+          },
+        };
+        return CatalogReport.updateOne(filter, update, { upsert: true }).catch((e) => {
+          // Two concurrent first-time reports race the unique index; the loser
+          // gets E11000. The row now exists, so a plain update applies the $inc.
+          if (e?.code === 11000) return CatalogReport.updateOne(filter, update);
+          throw e;
+        });
+      }),
+    );
+
+    // Fire-and-forget admin notification (no-ops without SMTP config).
+    notifyCatalogReport({
+      item: reportedItem,
+      fields,
+      note: trimmedNote,
+      variantKey,
+      shownValues,
+      reporterId: req.userId,
+    });
+
+    res.json({ ok: true, fields });
+  } catch (err) {
+    console.error("POST /catalog/report error:", err);
+    res.status(500).json({ error: "Failed to file report" });
+  }
+});
+
+// POST /api/catalog/search-log
+// Fire-and-forget log of a settled zero-result catalog search. Upserts the
+// normalized query with a counter (handoff CUT section → demand signal).
+router.post("/search-log", auth, async (req, res) => {
+  try {
+    const raw = typeof req.body?.query === "string" ? req.body.query.trim() : "";
+    const query = raw.toLowerCase();
+    // Ignore empties and absurdly long strings (pasted URLs, junk).
+    if (!query || query.length > 120) return res.json({ ok: true });
+
+    const update = { $inc: { count: 1 }, $set: { lastSeenAt: new Date() } };
+    await SearchLog.updateOne({ query }, update, { upsert: true }).catch((e) => {
+      // Concurrent first-time logs race the unique index; on E11000 the row
+      // now exists, so re-apply the increment instead of dropping the signal.
+      if (e?.code === 11000) return SearchLog.updateOne({ query }, update);
+      throw e;
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    // Non-fatal: this is fire-and-forget telemetry.
+    res.json({ ok: true });
   }
 });
 

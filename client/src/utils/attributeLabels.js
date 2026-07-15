@@ -87,6 +87,11 @@ const ATTRIBUTE_LABELS = {
   potSupport: "Pot Support",
   windscreen: "Windscreen",
   regulatorValve: "Pressure Regulator",
+  fuelCapacityMl: "Fuel Capacity (ml)",
+  packsFlat: "Packs Flat",
+  multiFuel: "Also Burns Alcohol/Tablets",
+  fuelCompatibility: "Fuel Compatibility",
+  pumpIncluded: "Pump Included",
 
   // Trekking Poles
   soldAs: "Sold As",
@@ -273,6 +278,10 @@ const ATTRIBUTE_LABELS = {
   uvRating: "UV Protection Rating",
   brimSize: "Brim Size",
   windproof: "Windproof",
+
+  // Clothing - Gaiters (leg/shoe) & Neck Gaiters
+  instepStrap: "Instep Strap",
+  closure: "Closure",
 
   // Clothing - Convertible Pants
   shortsInseamCm: "Shorts Inseam (cm)",

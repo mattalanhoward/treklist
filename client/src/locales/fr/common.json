@@ -8,7 +8,8 @@
     "cancel": "Annuler",
     "delete": "Supprimer",
     "close": "Fermer",
-    "saving": "Enregistrement…"
+    "saving": "Enregistrement…",
+    "undo": "Annuler"
   },
   "validation": {
     "nameRequired": "Le nom est obligatoire.",
@@ -423,7 +424,9 @@
       "toggleWorn": "Basculer « porté »",
       "openProductPageTitle": "Ouvrir la page produit",
       "openProductPageAria": "Ouvrir la page produit (lien rémunéré)",
-      "itemOptionsA11y": "Options de l’article"
+      "itemOptionsA11y": "Options de l’article",
+      "sizeNotSet": "Taille non définie",
+      "sizeNotSetHint": "Aucune taille choisie — touchez pour la définir"
     },
     "actions": {
       "swap": "Échanger l'article"
@@ -530,7 +533,8 @@
       "link": "Lien",
       "weight": "Poids ({{unit}})",
       "description": "Description",
-      "imageUrl": "URL de l’image"
+      "imageUrl": "URL de l’image",
+      "category": "Catégorie"
     },
     "placeholders": {
       "itemType": "Tente",
@@ -548,7 +552,8 @@
     },
     "toast": {
       "created": "Article global créé !",
-      "createFailed": "Échec de la création de l’article."
+      "createFailed": "Échec de la création de l’article.",
+      "saveFailed": "Échec de l’enregistrement de l’article."
     },
     "importTab": {
       "searchPlaceholder": "Rechercher dans le catalogue…",
@@ -607,7 +612,17 @@
     },
     "messages": {
       "alreadyAdded": "Cet article est déjà dans Mon équipement."
-    }
+    },
+    "emptyPane": "Sélectionnez un résultat pour l’aperçu ici.",
+    "selectForAdding": "Sélectionner pour ajouter",
+    "selectedForAdding": "Sélectionné pour ajouter",
+    "sizeNotSetHint": "Aucune taille choisie – la taille par défaut est ajoutée et signalée « taille non définie », modifiable plus tard.",
+    "disclosure": {
+      "manufacturerSpec": "Spéc. fabricant",
+      "flatAcrossSizes": "identique selon les tailles",
+      "verified": "vérifié {{date}}"
+    },
+    "inList": "Dans la liste"
   },
   "globalItemEditModal": {
     "titleGlobal": "Détails de l’article",
@@ -636,7 +651,8 @@
       "deleteTitle": "Supprimer cet article d’équipement ?",
       "deleteMessage": "Cela le supprimera de vos articles et de toutes vos listes d’équipement.",
       "deleteConfirm": "Supprimer l’article"
-    }
+    },
+    "weightYourValue": "Votre poids"
   },
   "smartItemSearch": {
     "searchPlaceholder": "ex. Osprey Talon 33 sac à dos homme",
@@ -713,25 +729,8 @@
       "invalidWeight": "Poids invalide",
       "previewLoadFailed": "Impossible de charger les détails de l'article.",
       "catalogMatch": "Trouvé dans le catalogue",
-      "catalogMatches": "Correspondances possibles trouvées — choisissez la vôtre ci-dessous"
-    },
-    "gearRequest": {
-      "title": "Demander un article d'équipement",
-      "description": "Vous ne trouvez pas ce que vous cherchez ? Dites-le nous et nous verrons si nous pouvons l'ajouter.",
-      "labels": {
-        "itemName": "Nom de l'article",
-        "brand": "Marque",
-        "link": "Lien (facultatif)"
-      },
-      "buttons": {
-        "openForm": "Demander un article d'équipement",
-        "send": "Envoyer la demande",
-        "sending": "Envoi…"
-      },
-      "toasts": {
-        "success": "Demande envoyée ! Nous allons voir si nous pouvons l'ajouter.",
-        "failed": "Impossible d'envoyer la demande. Veuillez réessayer."
-      }
+      "catalogMatches": "Correspondances possibles trouvées — choisissez la vôtre ci-dessous",
+      "addedToList": "Ajouté à la liste"
     },
     "tabSearchHint": "Tapez un nom puis Entrée · Collez un lien · Prenez une photo",
     "browseToggle": "Parcourir les catégories",
@@ -739,7 +738,42 @@
       "reading": "Lecture de la page produit…",
       "identifying": "Identification de l'article…",
       "matching": "Comparaison avec le catalogue…"
-    }
+    },
+    "chooseVariant": "Variantes",
+    "multipleVariants": "Plusieurs variantes",
+    "inList": "Ajouté",
+    "inMyGear": "Dans mon matériel",
+    "nSelected_one": "{{count}} sélectionné",
+    "nSelected_other": "{{count}} sélectionnés",
+    "addNToDest": "Ajouter {{count}} à {{dest}}",
+    "selectRow": "Sélectionner {{name}}",
+    "resultsLabel": "Résultats de recherche",
+    "searchBy": "Rechercher par :",
+    "searchModes": {
+      "productName": "Nom du produit",
+      "storeUrl": "URL du magasin",
+      "decathlonId": "Référence Decathlon",
+      "photo": "Photo"
+    },
+    "featured": "En vedette",
+    "browseRange": "Parcourir la gamme →",
+    "facetCount": "{{shown}} sur {{total}} articles",
+    "inListCheck": "✓ Dans la liste",
+    "addToDest": "Ajouter à {{dest}}",
+    "swapForThis": "Remplacer par celui-ci",
+    "showMore": "Afficher plus ({{n}} restants)",
+    "loadingMore": "Chargement…",
+    "tabs": {
+      "myGear": "Mon matériel",
+      "custom": "Personnalisé",
+      "import": "Importer"
+    },
+    "searchYourGear": "Rechercher dans votre matériel",
+    "noGearMatch": "Aucun matériel de votre bibliothèque ne correspond.",
+    "libraryEmpty": "Votre bibliothèque est vide. Importez depuis le catalogue ou créez un article personnalisé et il apparaîtra ici.",
+    "catalogResultCount": "{{count}} articles dans le catalogue",
+    "createCustomItem": "Créer « {query} » comme élément personnalisé",
+    "nSelected": "{{count}} sélectionnés"
   },
   "photoScanModal": {
     "title": "Scanner l'équipement",
@@ -787,8 +821,12 @@
       "selectAtLeastOne": "Veuillez sélectionner au moins un article.",
       "alreadyInList": "Certains articles sont déjà dans cette liste.",
       "addSuccess": "Articles ajoutés avec succès.",
-      "addFailed": "Échec de l’ajout d’un ou plusieurs articles."
-    }
+      "addFailed": "Échec de l’ajout d’un ou plusieurs articles.",
+      "addedN": "{{count}} ajouté(s) à {{dest}}",
+      "undone": "Supprimé",
+      "undoFailed": "Impossible d'annuler"
+    },
+    "destFallback": "liste"
   },
   "gearListDetailsModal": {
     "title": "Détails de la liste",
@@ -859,8 +897,26 @@
     "itemTypes": {
       "Backpack": "Sac à dos",
       "Backpacking Pot": "Casserole de camping",
-      "Backpacking Stove (Canister)": "Réchaud à cartouche",
+      "Stove (Canister)": "Réchaud à cartouche",
+      "Stove (Alcohol)": "Réchaud à alcool",
+      "Stove (Wood)": "Réchaud à bois",
+      "Stove (Liquid Fuel)": "Réchaud à essence",
       "Backpacking Tent": "Tente de randonnée",
+      "Ice Axe": "Piolet",
+      "Crampon": "Crampons",
+      "Air Pump": "Pompe à air",
+      "Bivy Sack": "Sac de bivouac",
+      "Camp Shoes": "Chaussures de camp",
+      "Traction Device": "Crampons à neige",
+      "Insect Repellent": "Anti-insectes",
+      "Hammock": "Hamac",
+      "Camp Chair": "Chaise de camping",
+      "Trowel": "Pelle",
+      "Pack Accessory": "Accessoire de sac",
+      "Sit Pad": "Tapis d'assise",
+      "Climbing Helmet": "Casque d'escalade",
+      "Climbing Harness": "Baudrier d'escalade",
+      "Via Ferrata Set": "Kit de via ferrata",
       "Blister Prevention": "Prévention des ampoules",
       "Camp Lantern": "Lanterne de camping",
       "Base Layer Bottom": "Sous-couche bas",
@@ -874,6 +930,7 @@
       "Hat/Headwear": "Bonnet/Couvre-chef",
       "Headlamp": "Lampe frontale",
       "Hiking Boots": "Chaussures de randonnée",
+      "Hiking Shoes": "Chaussures de randonnée basses",
       "Hiking Shirt": "Chemise de randonnée",
       "Convertible Pants": "Pantalon convertible",
       "Hiking Shorts": "Short de randonnée",
@@ -910,7 +967,11 @@
       "Utensil": "Ustensile",
       "Wallet": "Portefeuille",
       "Water Bottle": "Gourde",
-      "Water Filter": "Filtre à eau"
+      "Water Filter": "Filtre à eau",
+      "Gaiters": "Guêtres",
+      "Neck Gaiter": "Tour de cou",
+      "Softshell Jacket": "Veste softshell",
+      "Flask": "Flasque"
     },
     "subcategories": {
       "Accessories": "Accessoires",
@@ -982,7 +1043,9 @@
       "Water Treatment": "Traitement de l'eau",
       "Wearables & GPS": "Objets connectés & GPS",
       "Women's Footwear": "Chaussures femmes",
-      "Women's Personal Care": "Soins personnels femmes"
+      "Women's Personal Care": "Soins personnels femmes",
+      "Gaiters": "Guêtres",
+      "Flasks": "Flasques"
     }
   },
   "affiliateProductPicker": {
@@ -1382,7 +1445,8 @@
     "selected": "{{count}} sélectionné(s)",
     "selectItems": "Sélectionner des articles",
     "filter": {
-      "allCategories": "Toutes les catégories"
+      "allCategories": "Toutes les catégories",
+      "uncategorized": "Non catégorisé"
     },
     "sort": {
       "nameAsc": "Nom A-Z",
@@ -1588,5 +1652,31 @@
     "whw": {
       "name": "WHW"
     }
+  },
+  "reportIssue": {
+    "flag": "Signaler un problème",
+    "flagHint": "poids · catégorie · nom · image",
+    "title": "Signaler un problème",
+    "titleFor": "Signaler un problème — {{name}}",
+    "fields": {
+      "weight": "Le poids est incorrect",
+      "category": "Catégorie ou type d'article incorrect",
+      "name": "Le nom ou la marque est incorrect",
+      "image": "Image ou lien d'achat cassé",
+      "other": "Autre chose"
+    },
+    "notePlaceholder": "Dites-nous en plus (facultatif) — ex. « ma balance indique 162 g »",
+    "autoAttached": "joint automatiquement",
+    "buttons": {
+      "send": "Envoyer le signalement",
+      "sending": "Envoi…"
+    },
+    "toasts": {
+      "sent": "Merci — signalement envoyé",
+      "failed": "Impossible d'envoyer le signalement"
+    }
+  },
+  "common": {
+    "cancel": "Annuler"
   }
 }

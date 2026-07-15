@@ -52,6 +52,8 @@ const ITEMTYPE_MAP = {
   "Ultralight Down Quilt": "Quilt",
   "Sleeping Bag (Down)": "Sleeping Bag",
   // ---- Cooking ----
+  // 2026-07-10 stove-type rework: run this map on PROD at catalog-migration time
+  "Backpacking Stove (Canister)": "Stove (Canister)",
   "Backpacking Pot (Titanium)": "Backpacking Pot",
   "Spoon (Long Handle, Titanium)": "Utensil",
   // ---- Power / charging ----

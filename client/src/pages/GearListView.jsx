@@ -318,7 +318,11 @@ export default function GearListView({
         );
         await fetchItems(catId);
       } catch (err) {
-        toast.error(err.message || t("gearList.toasts.quantityUpdateFailed"));
+        toast.error(
+          err.response?.data?.message ||
+            err.message ||
+            t("gearList.toasts.quantityUpdateFailed"),
+        );
         fetchItems(catId);
       }
     },
@@ -395,7 +399,11 @@ export default function GearListView({
 
       // toast.success(t("gearList.toasts.categoryAdded"));
     } catch (err) {
-      toast.error(err.message || t("gearList.toasts.categoryAddFailed"));
+      toast.error(
+        err.response?.data?.message ||
+          err.message ||
+          t("gearList.toasts.categoryAddFailed"),
+      );
     }
   };
 
@@ -760,7 +768,11 @@ export default function GearListView({
           );
         }
       } catch (err) {
-        toast.error(err.message || t("gearList.toasts.moveItemFailed"));
+        toast.error(
+          err.response?.data?.message ||
+            err.message ||
+            t("gearList.toasts.moveItemFailed"),
+        );
         fetchItems(fromCatId);
       }
 
@@ -822,7 +834,11 @@ export default function GearListView({
         );
       }
     } catch (err) {
-      toast.error(err.message || "Failed to move item");
+      toast.error(
+        err.response?.data?.message ||
+          err.message ||
+          t("gearList.toasts.moveItemFailed"),
+      );
       fetchItems(fromCatId);
       if (toCatId !== fromCatId) fetchItems(toCatId);
     }
@@ -842,7 +858,11 @@ export default function GearListView({
       onRefresh();
       fetchLists();
     } catch (err) {
-      toast.error(err.message || t("gearList.toasts.listRenameFailed"));
+      toast.error(
+        err.response?.data?.message ||
+          err.message ||
+          t("gearList.toasts.listRenameFailed"),
+      );
       setTitleText(list.title);
     } finally {
       setIsEditingTitle(false);
@@ -985,7 +1005,11 @@ export default function GearListView({
       };
       setBgColor(prevColor);
       setBgImage(prevImage);
-      toast.error(err.message || t("gearList.toasts.backgroundUpdateFailed"));
+      toast.error(
+        err.response?.data?.message ||
+          err.message ||
+          t("gearList.toasts.backgroundUpdateFailed"),
+      );
     }
   };
 
@@ -1020,7 +1044,11 @@ export default function GearListView({
       };
       setBgImage(previousImage);
       setBgColor(previousColor);
-      toast.error(error.message || t("gearList.toasts.backgroundUpdateFailed"));
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          t("gearList.toasts.backgroundUpdateFailed"),
+      );
     }
   };
 

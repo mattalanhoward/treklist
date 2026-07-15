@@ -1,5 +1,5 @@
 // src/components/GlobalItemEditModal.jsx
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import api from "../services/api";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -8,18 +8,20 @@ import ConfirmDialog from "./ConfirmDialog";
 import { useUnit } from "../hooks/useUnit";
 import { useWeightInput } from "../hooks/useWeightInput";
 import { useUserSettings } from "../contexts/UserSettings";
-import { FiX } from "react-icons/fi";
+import { FiX, FiFlag, FiTrash2, FiShoppingCart } from "react-icons/fi";
 import { tItemType, tCategory, CATALOG_CATEGORIES } from "../config/catalogTaxonomy";
 import ImageCarousel from "./ImageCarousel";
 import { merchantFromUrl } from "../utils/merchantFromUrl";
 import VariantSelector from "./VariantSelector";
 import ButtonLink from "./ui/ButtonLink";
+import ReportIssuePopover from "./ReportIssuePopover";
 import Spinner from "../components/ui/Spinner";
 import {
   fetchGlobalItemCached,
   invalidateGlobalItemCache,
 } from "../services/globalItemCache";
 import { formatAttributesForDisplay } from "../utils/attributeLabels";
+import { buildWeightDisclosure } from "../utils/weightDisclosure";
 import { resizedImageUrl } from "../utils/imageCdn";
 
 export default function GlobalItemEditModal({
@@ -30,6 +32,8 @@ export default function GlobalItemEditModal({
   listId,
   catId,
   context = "global", // "global" | "list"
+  // Hide the ⚑ report flag on the public read-only variant (handoff).
+  readOnly = false,
 }) {
   const { t } = useTranslation("common");
 
@@ -48,6 +52,9 @@ export default function GlobalItemEditModal({
   const { measurementSystem } = useUserSettings();
 
   const [displayWeight, setDisplayWeight] = useState("");
+  // True once the user has typed their own weight — protects a measured value
+  // from being clobbered when they switch variants (add-gear feedback).
+  const weightDirtyRef = useRef(false);
   const [worn, setWorn] = useState(false);
   const [consumable, setConsumable] = useState(false);
   const [quantity, setQuantity] = useState(1);
@@ -63,6 +70,11 @@ export default function GlobalItemEditModal({
   const [catalogImages, setCatalogImages] = useState([]);
   const [loadingImages, setLoadingImages] = useState(false);
   const [primaryOffer, setPrimaryOffer] = useState(null);
+  // Manufacturer-spec base weight (for the weight hero / disclosure), distinct
+  // from the user's editable measured override.
+  const [catalogWeightGrams, setCatalogWeightGrams] = useState(null);
+  const reportFlagRef = useRef(null);
+  const [reportOpen, setReportOpen] = useState(false);
 
   // Variant selection (catalog items that ship in Temperature × Size etc.)
   const [variantAxes, setVariantAxes] = useState([]);
@@ -189,6 +201,7 @@ export default function GlobalItemEditModal({
         setVariantAxes([]);
         setVariants([]);
         setDefaultVariantKey(null);
+        setCatalogWeightGrams(null);
         setLoadingImages(false);
         return;
       }
@@ -199,6 +212,7 @@ export default function GlobalItemEditModal({
         setVariantAxes([]);
         setVariants([]);
         setDefaultVariantKey(null);
+        setCatalogWeightGrams(null);
         setLoadingImages(false);
         return;
       }
@@ -233,6 +247,9 @@ export default function GlobalItemEditModal({
           setVariantAxes(Array.isArray(data.variantAxes) ? data.variantAxes : []);
           setVariants(Array.isArray(data.variants) ? data.variants : []);
           setDefaultVariantKey(data.defaultVariantKey || null);
+          setCatalogWeightGrams(
+            typeof data.weightGrams === "number" ? data.weightGrams : null,
+          );
         }
       } catch {
         if (!cancelled) {
@@ -241,6 +258,7 @@ export default function GlobalItemEditModal({
           setVariantAxes([]);
           setVariants([]);
           setDefaultVariantKey(null);
+          setCatalogWeightGrams(null);
         }
       } finally {
         if (!cancelled) setLoadingImages(false);
@@ -366,7 +384,9 @@ export default function GlobalItemEditModal({
         (a) => (v.options?.[a.name] ?? "") === (nextOptions?.[a.name] ?? ""),
       ),
     );
-    if (match && typeof match.weightGrams === "number") {
+    // Only drive the weight from the variant spec when the user hasn't entered
+    // their own — never overwrite a measured weight on a size change.
+    if (match && typeof match.weightGrams === "number" && !weightDirtyRef.current) {
       setDisplayWeight(formatInput(match.weightGrams));
     }
   };
@@ -439,6 +459,7 @@ export default function GlobalItemEditModal({
     if (!item) return;
     const initialGrams = item.weight ?? "";
     setDisplayWeight(initialGrams !== "" ? formatInput(initialGrams) : "");
+    weightDirtyRef.current = false;
   }, [itemId, unit, formatInput, item]);
 
   const validate = () => {
@@ -526,6 +547,13 @@ export default function GlobalItemEditModal({
 
       const listPayload = { ...basePayload };
 
+      // Editing an item that was flagged "size not set": once the user has a
+      // variant selected and saves, the size is considered chosen — clear it
+      // (add-gear decision 14: visible + editable on the gear item).
+      if (isListContext && item?.sizeUnset && hasVariants && selectedVariant) {
+        listPayload.sizeUnset = false;
+      }
+
       let updatedSomething = false;
       let touchedGlobal = false;
 
@@ -588,6 +616,42 @@ export default function GlobalItemEditModal({
     return formatted.length ? formatted : null;
   }, [viewMode, template?.attributes, template?.itemType, measurementSystem, selectedVariant]);
 
+  // Manufacturer-spec weight (imported items): the selected variant's weight,
+  // else the catalog base weight. This is the reference, not what's shown.
+  const manufacturerWeightGrams =
+    selectedVariant && typeof selectedVariant.weightGrams === "number"
+      ? selectedVariant.weightGrams
+      : typeof catalogWeightGrams === "number"
+        ? catalogWeightGrams
+        : null;
+  const manufacturerWeightDisplay =
+    typeof manufacturerWeightGrams === "number" ? formatInput(manufacturerWeightGrams) : "";
+
+  // The weight hero reflects the user's own weight (the editable field) so an
+  // edit is visible immediately; it falls back to the manufacturer spec. When
+  // the user has entered a value that differs from the spec, we no longer claim
+  // it's the manufacturer number (add-gear feedback).
+  const trimmedDisplayWeight = String(displayWeight ?? "").trim();
+  const heroWeightDisplay = trimmedDisplayWeight !== "" ? trimmedDisplayWeight : manufacturerWeightDisplay;
+  const weightIsUserValue =
+    trimmedDisplayWeight !== "" && trimmedDisplayWeight !== manufacturerWeightDisplay;
+  const weightDisclosure = useMemo(
+    () =>
+      buildWeightDisclosure({
+        t,
+        hasVariants,
+        variants,
+      }),
+    [t, hasVariants, variants],
+  );
+
+  // Close the report popover when the underlying product changes.
+  useEffect(() => {
+    setReportOpen(false);
+  }, [resolvedProductId]);
+
+  const showReportFlag = isImported && Boolean(resolvedProductId) && !readOnly;
+
   // PreviewModal-style full-screen spinner conditions
   const showFullscreenSpinner =
     !item ||
@@ -601,7 +665,7 @@ export default function GlobalItemEditModal({
     showImageBlock || showCustomImageBlock ? "max-w-4xl" : "max-w-2xl";
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-end sm:items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-end sm:items-center justify-center z-[70]">
       {showFullscreenSpinner ? (
         <Spinner tone="white" />
       ) : (
@@ -713,7 +777,7 @@ export default function GlobalItemEditModal({
                       type="text"
                       inputMode="decimal"
                       value={displayWeight}
-                      onChange={(e) => setDisplayWeight(e.target.value)}
+                      onChange={(e) => { weightDirtyRef.current = true; setDisplayWeight(e.target.value); }}
                       disabled={disableEdits}
                       className="mt-0.5 block w-full border border-primary/30 rounded px-2 py-1 text-primary bg-base-100"
                     />
@@ -802,6 +866,25 @@ export default function GlobalItemEditModal({
               >
                 <div className="sm:flex-1">
                   <div className="rounded overflow-hidden">
+                    {/* Weight hero + precision disclosure (aligns with the
+                        add-gear preview pane). The editable override lives in
+                        the weight row below. */}
+                    {heroWeightDisplay && (
+                      <div className="px-3 pt-1 pb-2 mb-1 border-b border-primary/10">
+                        <div className="flex items-baseline gap-1.5">
+                          <span className="text-3xl font-bold text-primary tabular-nums tracking-tight">
+                            {heroWeightDisplay}
+                          </span>
+                          <span className="text-sm text-primary/60">{unitLabel}</span>
+                        </div>
+                        <span className="text-[11.5px] text-primary/45">
+                          {weightIsUserValue
+                            ? t("globalItemEditModal.weightYourValue", "Your weight")
+                            : weightDisclosure}
+                        </span>
+                      </div>
+                    )}
+
                     <div className="grid grid-cols-[140px_1fr] gap-3 items-center px-3 py-1">
                       <div className="text-primary font-semibold">
                         {t("globalItemModal.labels.itemType")}:
@@ -841,7 +924,7 @@ export default function GlobalItemEditModal({
                           type="text"
                           inputMode="decimal"
                           value={displayWeight}
-                          onChange={(e) => setDisplayWeight(e.target.value)}
+                          onChange={(e) => { weightDirtyRef.current = true; setDisplayWeight(e.target.value); }}
                           className="w-full max-w-[220px] text-primary bg-base-100 border border-primary/30 rounded px-2 py-1"
                         />
                       </div>
@@ -894,7 +977,7 @@ export default function GlobalItemEditModal({
                 )}
               </div>
 
-              <div className="mt-4 mb-6 px-3">
+              <div className="mt-4 mb-4 px-3">
                 <label className="block font-semibold text-primary mb-1">
                   {t("globalItemModal.labels.description")}
                 </label>
@@ -902,74 +985,116 @@ export default function GlobalItemEditModal({
                   {form.description || "—"}
                 </div>
               </div>
+
+              {/* Report an issue — owners notice bad catalog data most
+                  (add-gear decision 12). Hidden on the public read-only view. */}
+              {showReportFlag && (
+                <div className="px-3 mb-4">
+                  <button
+                    ref={reportFlagRef}
+                    type="button"
+                    onClick={() => setReportOpen((v) => !v)}
+                    className="flex items-center gap-1.5 text-[11.5px] text-primary/45 hover:text-primary/70 transition-colors"
+                  >
+                    <FiFlag size={12} />
+                    {t("reportIssue.flag", "Report an issue")}
+                  </button>
+                  {reportOpen && (
+                    <ReportIssuePopover
+                      anchorRef={reportFlagRef}
+                      item={{
+                        _id: resolvedProductId,
+                        name: form.name,
+                        category: template?.catalogCategory || item?.catalogCategory,
+                        itemType: form.itemType,
+                      }}
+                      variantKey={selectedVariant?.key || null}
+                      shownWeight={heroWeightDisplay ? `${heroWeightDisplay} ${unitLabel}` : ""}
+                      shownCategory={
+                        tCategory(t, template?.catalogCategory) ||
+                        template?.catalogCategory ||
+                        ""
+                      }
+                      shownItemType={tItemType(t, form.itemType) || form.itemType || ""}
+                      disclosure={weightDisclosure}
+                      onClose={() => setReportOpen(false)}
+                    />
+                  )}
+                </div>
+              )}
             </>
           )}
           </div>
 
-          {/* Actions - fixed at bottom */}
-          <div className="mt-3 flex justify-between flex-shrink-0">
-            <div className="flex space-x-2">
-              {allowDelete && (
-                <button
-                  type="button"
-                  onClick={() => setDeleteConfirmOpen(true)}
-                  disabled={saving || isResolvingMode}
-                  className="px-2 py-1 bg-error text-neutral font-semibold rounded-md shadow hover:bg-error/80 focus:outline-none focus:ring-2 focus:ring-error transition"
-                >
-                  {t("globalItemEditModal.buttons.delete")}
-                </button>
-              )}
+          {/* Actions - fixed at bottom. Delete is a quiet icon (not a big red
+              block); the buy link carries a cart icon; Save/Cancel lead. */}
+          <div className="mt-3 flex items-center gap-2 flex-shrink-0">
+            {allowDelete && (
+              <button
+                type="button"
+                onClick={() => setDeleteConfirmOpen(true)}
+                disabled={saving || isResolvingMode}
+                aria-label={t("globalItemEditModal.buttons.delete")}
+                title={t("globalItemEditModal.buttons.delete")}
+                className="flex-none flex items-center justify-center gap-1.5 h-9 px-2.5 rounded-md border border-error/30 text-error/80 hover:text-error hover:bg-error/10 hover:border-error/50 disabled:opacity-40 transition-colors"
+              >
+                <FiTrash2 size={17} />
+                <span className="hidden sm:inline text-sm">{t("globalItemEditModal.buttons.delete")}</span>
+              </button>
+            )}
 
-              {template?.importedFromShare && globalId && (
-                <button
-                  type="button"
-                  disabled={saving}
-                  onClick={async () => {
-                    try {
-                      await api.patch(`/global/items/${globalId}/claim`);
-                      invalidateGlobalItemCache(globalId);
-                      setGlobalTemplate((prev) =>
-                        prev ? { ...prev, importedFromShare: false } : prev,
-                      );
-                      toast.success(
-                        t("globalItemEditModal.toast.claimed", "Added to My Gear"),
-                      );
-                      window.dispatchEvent(
-                        new CustomEvent("global-items:updated"),
-                      );
-                      onSaved?.();
-                      onClose?.();
-                    } catch (err) {
-                      toast.error(
-                        err?.response?.data?.message ||
-                          t(
-                            "globalItemEditModal.toast.claimFailed",
-                            "Failed to add to My Gear",
-                          ),
-                      );
-                    }
-                  }}
-                  className="px-2 py-1 bg-secondary/10 text-secondary rounded hover:bg-secondary/20 text-sm"
-                >
-                  {t("globalItemEditModal.buttons.claim", "Add to My Gear")}
-                </button>
-              )}
+            {template?.importedFromShare && globalId && (
+              <button
+                type="button"
+                disabled={saving}
+                onClick={async () => {
+                  try {
+                    await api.patch(`/global/items/${globalId}/claim`);
+                    invalidateGlobalItemCache(globalId);
+                    setGlobalTemplate((prev) =>
+                      prev ? { ...prev, importedFromShare: false } : prev,
+                    );
+                    toast.success(
+                      t("globalItemEditModal.toast.claimed", "Added to My Gear"),
+                    );
+                    window.dispatchEvent(
+                      new CustomEvent("global-items:updated"),
+                    );
+                    onSaved?.();
+                    onClose?.();
+                  } catch (err) {
+                    toast.error(
+                      err?.response?.data?.message ||
+                        t(
+                          "globalItemEditModal.toast.claimFailed",
+                          "Failed to add to My Gear",
+                        ),
+                    );
+                  }
+                }}
+                className="px-2 py-1 bg-secondary/10 text-secondary rounded hover:bg-secondary/20 text-sm"
+              >
+                {t("globalItemEditModal.buttons.claim", "Add to My Gear")}
+              </button>
+            )}
 
-              {!isCustom && (selectedVariant?.deepLink || primaryOffer?.deepLink) && (
-                <ButtonLink href={selectedVariant?.deepLink || primaryOffer.deepLink}>
+            {!isCustom && (selectedVariant?.deepLink || primaryOffer?.deepLink) && (
+              <ButtonLink href={selectedVariant?.deepLink || primaryOffer.deepLink}>
+                <span className="flex items-center gap-1.5">
+                  <FiShoppingCart size={14} />
                   {(selectedVariant?.deepLink && merchantFromUrl(selectedVariant.deepLink)) ||
                     primaryOffer.merchantName ||
                     t("globalItemEditModal.buttons.productPage")}
-                </ButtonLink>
-              )}
-            </div>
+                </span>
+              </ButtonLink>
+            )}
 
-            <div className="flex space-x-2">
+            <div className="ml-auto flex space-x-2">
               <button
                 type="button"
                 onClick={onClose}
                 disabled={saving}
-                className="px-2 py-1 bg-neutralAlt rounded hover:bg-neutralAlt/90 text-primary sm:text-base"
+                className="px-3 py-1.5 rounded bg-neutralAlt hover:bg-neutralAlt/90 text-primary text-sm"
               >
                 {t("actions.cancel")}
               </button>
@@ -977,7 +1102,7 @@ export default function GlobalItemEditModal({
               <button
                 type="submit"
                 disabled={saving || isResolvingMode}
-                className={`px-2 py-1 rounded bg-secondary text-white hover:bg-secondary/80 ${
+                className={`px-3 py-1.5 rounded bg-secondary text-white text-sm hover:bg-secondary/80 ${
                   saving || isResolvingMode
                     ? "opacity-50 cursor-not-allowed"
                     : ""

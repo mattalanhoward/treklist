@@ -77,15 +77,18 @@ export const CATALOG_SUBCATEGORIES = {
   "Kitchen & Cooking": [
     "Coffee",
     "Cookware",
+    "Flasks",
     "Fuel - Isobutane",
     "Stoves",
     "Utensils",
   ],
   "Men's Clothing": [
     "Base Layers",
+    "Gaiters",
     "Hands",
     "Jackets",
     "Long-Sleeved T-Shirt",
+    "Neck Gaiter",
     "Pants",
     "Rain Gear",
     "Shirts",
@@ -108,6 +111,7 @@ export const CATALOG_SUBCATEGORIES = {
   "Unisex Clothing": [
     "Accessories",
     "Base Layers",
+    "Gaiters",
     "Hands",
     "Headwear",
     "Jackets",
@@ -122,9 +126,11 @@ export const CATALOG_SUBCATEGORIES = {
   ],
   "Women's Clothing": [
     "Base Layers",
+    "Gaiters",
     "Hands",
     "Jackets",
     "Long-Sleeved T-Shirt",
+    "Neck Gaiter",
     "Pants",
     "Rain Gear",
     "Shirts",

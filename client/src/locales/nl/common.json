@@ -8,7 +8,8 @@
     "cancel": "Annuleren",
     "delete": "Verwijderen",
     "close": "Sluiten",
-    "saving": "Bezig met opslaan…"
+    "saving": "Bezig met opslaan…",
+    "undo": "Ongedaan maken"
   },
   "validation": {
     "nameRequired": "Naam is verplicht.",
@@ -416,7 +417,9 @@
       "toggleWorn": "Gedragen aan/uit",
       "openProductPageTitle": "Productpagina openen",
       "openProductPageAria": "Productpagina openen (betaalde link)",
-      "itemOptionsA11y": "Itemopties"
+      "itemOptionsA11y": "Itemopties",
+      "sizeNotSet": "Maat niet ingesteld",
+      "sizeNotSetHint": "Geen maat gekozen — tik om in te stellen"
     },
     "actions": {
       "swap": "Artikel wisselen"
@@ -523,7 +526,8 @@
       "link": "Link",
       "weight": "Gewicht ({{unit}})",
       "description": "Omschrijving",
-      "imageUrl": "Afbeeldings-URL"
+      "imageUrl": "Afbeeldings-URL",
+      "category": "Categorie"
     },
     "placeholders": {
       "itemType": "Tent",
@@ -541,7 +545,8 @@
     },
     "toast": {
       "created": "Globaal item aangemaakt!",
-      "createFailed": "Item kon niet worden aangemaakt."
+      "createFailed": "Item kon niet worden aangemaakt.",
+      "saveFailed": "Item opslaan mislukt."
     },
     "importTab": {
       "searchPlaceholder": "Zoek in catalogus…",
@@ -600,7 +605,17 @@
     },
     "messages": {
       "alreadyAdded": "Dit item staat al in My Gear."
-    }
+    },
+    "emptyPane": "Selecteer een resultaat om het hier te bekijken.",
+    "selectForAdding": "Selecteren om toe te voegen",
+    "selectedForAdding": "Geselecteerd om toe te voegen",
+    "sizeNotSetHint": "Geen maat gekozen — de standaardmaat wordt toegevoegd en gemarkeerd als ‘maat niet ingesteld’, later te bewerken.",
+    "disclosure": {
+      "manufacturerSpec": "Fabrieksspecificatie",
+      "flatAcrossSizes": "gelijk voor alle maten",
+      "verified": "geverifieerd {{date}}"
+    },
+    "inList": "In lijst"
   },
   "globalItemEditModal": {
     "titleGlobal": "Globaal item bewerken",
@@ -629,7 +644,8 @@
       "deleteTitle": "Dit uitrustingsitem verwijderen?",
       "deleteMessage": "Dit verwijdert het uit je uitrustingsitems en al je gearlists.",
       "deleteConfirm": "Item verwijderen"
-    }
+    },
+    "weightYourValue": "Jouw gewicht"
   },
   "smartItemSearch": {
     "searchPlaceholder": "bijv. Osprey Talon 33 heren rugzak",
@@ -706,25 +722,8 @@
       "invalidWeight": "Ongeldig gewicht",
       "previewLoadFailed": "Artikeldetails konden niet worden geladen.",
       "catalogMatch": "Gevonden in de catalogus",
-      "catalogMatches": "Mogelijke matches gevonden — kies die van jou hieronder"
-    },
-    "gearRequest": {
-      "title": "Uitrusting aanvragen",
-      "description": "Niet gevonden wat je zoekt? Laat het ons weten en we kijken of we het kunnen toevoegen.",
-      "labels": {
-        "itemName": "Artikelnaam",
-        "brand": "Merk",
-        "link": "Link (optioneel)"
-      },
-      "buttons": {
-        "openForm": "Uitrusting aanvragen",
-        "send": "Verzoek verzenden",
-        "sending": "Verzenden…"
-      },
-      "toasts": {
-        "success": "Verzoek verzonden! We kijken of we het kunnen toevoegen.",
-        "failed": "Verzoek verzenden mislukt. Probeer het opnieuw."
-      }
+      "catalogMatches": "Mogelijke matches gevonden — kies die van jou hieronder",
+      "addedToList": "Aan lijst toegevoegd"
     },
     "tabSearchHint": "Typ & druk op Enter · Plak een link · Maak een foto",
     "browseToggle": "Categorieën bekijken",
@@ -732,7 +731,42 @@
       "reading": "Productpagina lezen…",
       "identifying": "Item identificeren…",
       "matching": "Vergelijken met de catalogus…"
-    }
+    },
+    "chooseVariant": "Varianten",
+    "multipleVariants": "Meerdere varianten",
+    "inList": "Toegevoegd",
+    "inMyGear": "In mijn uitrusting",
+    "nSelected_one": "{{count}} geselecteerd",
+    "nSelected_other": "{{count}} geselecteerd",
+    "addNToDest": "{{count}} toevoegen aan {{dest}}",
+    "selectRow": "{{name}} selecteren",
+    "resultsLabel": "Zoekresultaten",
+    "searchBy": "Zoeken op:",
+    "searchModes": {
+      "productName": "Productnaam",
+      "storeUrl": "Winkel-URL",
+      "decathlonId": "Decathlon-artikelnummer",
+      "photo": "Foto"
+    },
+    "featured": "Uitgelicht",
+    "browseRange": "Bekijk het assortiment →",
+    "facetCount": "{{shown}} van {{total}} artikelen",
+    "inListCheck": "✓ In lijst",
+    "addToDest": "Aan {{dest}} toevoegen",
+    "swapForThis": "Hiervoor omruilen",
+    "showMore": "Meer tonen (nog {{n}})",
+    "loadingMore": "Laden…",
+    "tabs": {
+      "myGear": "Mijn uitrusting",
+      "custom": "Eigen item",
+      "import": "Importeren"
+    },
+    "searchYourGear": "Zoek in je uitrusting",
+    "noGearMatch": "Geen uitrusting in je bibliotheek komt overeen.",
+    "libraryEmpty": "Je bibliotheek is leeg. Importeer uit de catalogus of maak een aangepast item en het verschijnt hier.",
+    "catalogResultCount": "{{count}} items in catalogus",
+    "createCustomItem": "\"{query}\" als eigen item maken",
+    "nSelected": "{{count}} geselecteerd"
   },
   "photoScanModal": {
     "title": "Uitrusting scannen",
@@ -780,8 +814,12 @@
       "selectAtLeastOne": "Selecteer minimaal één item.",
       "alreadyInList": "Sommige items staan al in deze lijst.",
       "addSuccess": "Items succesvol toegevoegd.",
-      "addFailed": "Een of meer items konden niet worden toegevoegd."
-    }
+      "addFailed": "Een of meer items konden niet worden toegevoegd.",
+      "addedN": "{{count}} aan {{dest}} toegevoegd",
+      "undone": "Verwijderd",
+      "undoFailed": "Ongedaan maken mislukt"
+    },
+    "destFallback": "lijst"
   },
   "gearListDetailsModal": {
     "title": "Lijstgegevens",
@@ -852,8 +890,26 @@
     "itemTypes": {
       "Backpack": "Rugzak",
       "Backpacking Pot": "Campingpan",
-      "Backpacking Stove (Canister)": "Gasbrander (bus)",
+      "Stove (Canister)": "Gasbrander (bus)",
+      "Stove (Alcohol)": "Spiritusbrander",
+      "Stove (Wood)": "Houtbrander",
+      "Stove (Liquid Fuel)": "Benzinebrander",
       "Backpacking Tent": "Trekkingtent",
+      "Ice Axe": "IJsbijl",
+      "Crampon": "Stijgijzers",
+      "Air Pump": "Luchtpomp",
+      "Bivy Sack": "Bivakzak",
+      "Camp Shoes": "Kampschoenen",
+      "Traction Device": "Antisliphulpmiddel",
+      "Insect Repellent": "Insectenwerend middel",
+      "Hammock": "Hangmat",
+      "Camp Chair": "Kampeerstoel",
+      "Trowel": "Schepje",
+      "Pack Accessory": "Rugzakaccessoire",
+      "Sit Pad": "Zitmatje",
+      "Climbing Helmet": "Klimhelm",
+      "Climbing Harness": "Klimgordel",
+      "Via Ferrata Set": "Via ferrata-set",
       "Blister Prevention": "Blarenpreventie",
       "Base Layer Bottom": "Basislaag broek",
       "Base Layer Top": "Basislaag shirt",
@@ -866,6 +922,7 @@
       "Hat/Headwear": "Muts/Hoofddeksel",
       "Headlamp": "Hoofdlamp",
       "Hiking Boots": "Wandelschoenen",
+      "Hiking Shoes": "Lage wandelschoenen",
       "Hiking Shirt": "Wandelshirt",
       "Camp Lantern": "Kampeerlantaarn",
       "Convertible Pants": "Afritsbroek",
@@ -903,7 +960,11 @@
       "Utensil": "Bestek",
       "Wallet": "Portemonnee",
       "Water Bottle": "Drinkfles",
-      "Water Filter": "Waterfilter"
+      "Water Filter": "Waterfilter",
+      "Gaiters": "Beenkappen",
+      "Neck Gaiter": "Nekwarmer",
+      "Softshell Jacket": "Softshell jack",
+      "Flask": "Heupfles"
     },
     "subcategories": {
       "Accessories": "Accessoires",
@@ -975,7 +1036,9 @@
       "Water Treatment": "Waterbehandeling",
       "Wearables & GPS": "Wearables & GPS",
       "Women's Footwear": "Damesschoenen",
-      "Women's Personal Care": "Damestoiletartikelen"
+      "Women's Personal Care": "Damestoiletartikelen",
+      "Gaiters": "Beenkappen",
+      "Flasks": "Heupflessen"
     }
   },
   "affiliateProductPicker": {
@@ -1375,7 +1438,8 @@
     "selected": "{{count}} geselecteerd",
     "selectItems": "Selecteer items",
     "filter": {
-      "allCategories": "Alle categorieën"
+      "allCategories": "Alle categorieën",
+      "uncategorized": "Zonder categorie"
     },
     "sort": {
       "nameAsc": "Naam A-Z",
@@ -1588,5 +1652,31 @@
     "whw": {
       "name": "WHW"
     }
+  },
+  "reportIssue": {
+    "flag": "Probleem melden",
+    "flagHint": "gewicht · categorie · naam · afbeelding",
+    "title": "Probleem melden",
+    "titleFor": "Probleem melden — {{name}}",
+    "fields": {
+      "weight": "Gewicht is onjuist",
+      "category": "Verkeerde categorie of itemtype",
+      "name": "Naam of merk is onjuist",
+      "image": "Afbeelding of kooplink is kapot",
+      "other": "Iets anders"
+    },
+    "notePlaceholder": "Vertel ons meer (optioneel) — bijv. “mijn weegschaal zegt 162 g”",
+    "autoAttached": "automatisch toegevoegd",
+    "buttons": {
+      "send": "Melding versturen",
+      "sending": "Versturen…"
+    },
+    "toasts": {
+      "sent": "Bedankt — melding verzonden",
+      "failed": "Kon melding niet versturen"
+    }
+  },
+  "common": {
+    "cancel": "Annuleren"
   }
 }
