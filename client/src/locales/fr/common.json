@@ -963,7 +963,8 @@
       "Water Filter": "Filtre à eau",
       "Gaiters": "Guêtres",
       "Neck Gaiter": "Tour de cou",
-      "Softshell Jacket": "Veste softshell"
+      "Softshell Jacket": "Veste softshell",
+      "Flask": "Flasque"
     },
     "subcategories": {
       "Accessories": "Accessoires",
@@ -1036,7 +1037,8 @@
       "Wearables & GPS": "Objets connectés & GPS",
       "Women's Footwear": "Chaussures femmes",
       "Women's Personal Care": "Soins personnels femmes",
-      "Gaiters": "Guêtres"
+      "Gaiters": "Guêtres",
+      "Flasks": "Flasques"
     }
   },
   "affiliateProductPicker": {

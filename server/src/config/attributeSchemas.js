@@ -2048,6 +2048,32 @@ const SCHEMAS = {
     },
   },
 
+  Flask: {
+    fields: {
+      capacityMl: {
+        type: "number",
+        required: false,
+        label: "Capacity",
+        unit: "ml",
+        min: 30,
+        max: 1000,
+      },
+      material: {
+        type: "enum",
+        required: false,
+        label: "Material",
+        options: ["Titanium", "Stainless Steel", "Aluminum", "Glass", "Pewter"],
+      },
+      type: {
+        type: "enum",
+        required: false,
+        label: "Type",
+        options: ["Hip Flask", "Wine Flask", "Funnel Flask"],
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
   "Hydration Reservoir": {
     fields: {
       capacityL: {

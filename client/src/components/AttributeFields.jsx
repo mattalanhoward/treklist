@@ -1345,6 +1345,31 @@ const SCHEMAS = {
     },
   },
 
+  Flask: {
+    fields: {
+      capacityMl: {
+        type: "number",
+        required: false,
+        label: "Capacity",
+        unit: "ml",
+        min: 30,
+        max: 1000,
+      },
+      material: {
+        type: "enum",
+        required: false,
+        label: "Material",
+        options: ["Titanium", "Stainless Steel", "Aluminum", "Glass", "Pewter"],
+      },
+      type: {
+        type: "enum",
+        required: false,
+        label: "Type",
+        options: ["Hip Flask", "Wine Flask", "Funnel Flask"],
+      },
+    },
+  },
+
   "Hydration Reservoir": {
     fields: {
       capacityL: {
@@ -3102,7 +3127,7 @@ export const CATEGORY_ITEM_TYPE_MAPPING = {
     "Pillow",
   ],
   "Backpacks & Bags": ["Backpack", "Daypack", "Hip Pack"],
-  "Kitchen & Cooking": ["Backpacking Pot", "Stove (Canister)", "Stove (Alcohol)", "Stove (Wood)", "Stove (Liquid Fuel)", "Coffee Mug", "Utensil", "Stove Fuel"],
+  "Kitchen & Cooking": ["Backpacking Pot", "Stove (Canister)", "Stove (Alcohol)", "Stove (Wood)", "Stove (Liquid Fuel)", "Coffee Mug", "Flask", "Utensil", "Stove Fuel"],
   Shelter: ["Backpacking Tent", "Tarp Shelter", "Tent Stakes", "Ground Sheet"],
   "Electronics & Power": ["Headlamp", "Torch Light", "Camp Lantern", "Power Bank", "Travel Charger"],
   Hydration: ["Water Filter", "Water Bottle", "Hydration Reservoir"],

@@ -956,7 +956,8 @@
       "Water Filter": "Filtro per l'acqua",
       "Gaiters": "Ghette",
       "Neck Gaiter": "Scaldacollo",
-      "Softshell Jacket": "Giacca softshell"
+      "Softshell Jacket": "Giacca softshell",
+      "Flask": "Fiaschetta"
     },
     "subcategories": {
       "Accessories": "Accessori",
@@ -1029,7 +1030,8 @@
       "Wearables & GPS": "Dispositivi GPS",
       "Women's Footwear": "Calzature donna",
       "Women's Personal Care": "Igiene personale donna",
-      "Gaiters": "Ghette"
+      "Gaiters": "Ghette",
+      "Flasks": "Fiaschette"
     }
   },
   "affiliateProductPicker": {

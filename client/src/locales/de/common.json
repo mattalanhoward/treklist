@@ -956,7 +956,8 @@
       "Water Filter": "Wasserfilter",
       "Gaiters": "Gamaschen",
       "Neck Gaiter": "Schlauchschal",
-      "Softshell Jacket": "Softshelljacke"
+      "Softshell Jacket": "Softshelljacke",
+      "Flask": "Flachmann"
     },
     "subcategories": {
       "Accessories": "Zubehör",
@@ -1029,7 +1030,8 @@
       "Wearables & GPS": "Wearables & GPS",
       "Women's Footwear": "Damenschuhe",
       "Women's Personal Care": "Damenpflege",
-      "Gaiters": "Gamaschen"
+      "Gaiters": "Gamaschen",
+      "Flasks": "Flachmänner"
     }
   },
   "affiliateProductPicker": {

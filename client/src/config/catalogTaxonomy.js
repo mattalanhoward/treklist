@@ -77,6 +77,7 @@ export const CATALOG_SUBCATEGORIES = {
   "Kitchen & Cooking": [
     "Coffee",
     "Cookware",
+    "Flasks",
     "Fuel - Isobutane",
     "Stoves",
     "Utensils",

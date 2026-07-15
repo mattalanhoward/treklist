@@ -51,6 +51,9 @@ const RULES = [
   [/water filter|water purif|filtration|purification/i, "Water Filter"],
   [/water treatment|purification tablet|treatment drops|chlorine dioxide/i, "Water Filter"],
   [/hydration|reservoir|water bladder/i, "Hydration Reservoir"],
+  // rigid drink flasks (titanium/hip/wine/funnel) -> Kitchen; soft/collapsible water
+  // flasks fall through to Water Bottle (hydration).
+  [/hip flask|wine flask|whisk(e)?y flask|spirit flask|funnel flask|flat flask|titanium.*flask/i, "Flask"],
   [/water bottle|\bflask\b/i, "Water Bottle"],
 
   // --- cooking ---
@@ -222,6 +225,7 @@ const CATEGORY_BY_ITEM_TYPE = {
   "Stove (Wood)": ["Kitchen & Cooking", "Stoves"],
   "Stove (Liquid Fuel)": ["Kitchen & Cooking", "Stoves"],
   "Coffee Mug": ["Kitchen & Cooking", "Coffee"],
+  Flask: ["Kitchen & Cooking", "Flasks"],
   Utensil: ["Kitchen & Cooking", "Utensils"],
   "Stove Fuel": ["Kitchen & Cooking", "Fuel - Isobutane"],
   // ---- Hydration ----

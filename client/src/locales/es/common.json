@@ -956,7 +956,8 @@
       "Water Filter": "Filtro de agua",
       "Gaiters": "Polainas",
       "Neck Gaiter": "Braga de cuello",
-      "Softshell Jacket": "Chaqueta softshell"
+      "Softshell Jacket": "Chaqueta softshell",
+      "Flask": "Petaca"
     },
     "subcategories": {
       "Accessories": "Accesorios",
@@ -1029,7 +1030,8 @@
       "Wearables & GPS": "Dispositivos GPS",
       "Women's Footwear": "Calzado mujer",
       "Women's Personal Care": "Higiene personal mujer",
-      "Gaiters": "Polainas"
+      "Gaiters": "Polainas",
+      "Flasks": "Petacas"
     }
   },
   "affiliateProductPicker": {

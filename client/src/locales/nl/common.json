@@ -956,7 +956,8 @@
       "Water Filter": "Waterfilter",
       "Gaiters": "Beenkappen",
       "Neck Gaiter": "Nekwarmer",
-      "Softshell Jacket": "Softshell jack"
+      "Softshell Jacket": "Softshell jack",
+      "Flask": "Heupfles"
     },
     "subcategories": {
       "Accessories": "Accessoires",
@@ -1029,7 +1030,8 @@
       "Wearables & GPS": "Wearables & GPS",
       "Women's Footwear": "Damesschoenen",
       "Women's Personal Care": "Damestoiletartikelen",
-      "Gaiters": "Beenkappen"
+      "Gaiters": "Beenkappen",
+      "Flasks": "Heupflessen"
     }
   },
   "affiliateProductPicker": {
