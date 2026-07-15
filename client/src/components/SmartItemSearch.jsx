@@ -2120,17 +2120,22 @@ export default function SmartItemSearch({
         >
           {t("common.cancel", "Cancel")}
         </button>
-        <button
-          type="button"
-          onClick={handleConfirm}
-          disabled={!canConfirm || confirming}
-          className={`px-3 py-1.5 rounded bg-secondary text-white text-sm flex items-center gap-1.5 ${
-            !canConfirm || confirming ? "opacity-50 cursor-not-allowed" : "hover:bg-secondary/80"
-          }`}
-        >
-          {confirming && <FiLoader size={12} className="animate-spin" />}
-          {confirmLabel}
-        </button>
+        {/* The footer commit only appears when it has a distinct job: the custom
+            form, or a multi-select batch. Single-item quick-add lives on the
+            preview pane's own button, so there's no duplicate/disabled "Add". */}
+        {(showingCustomForm || totalSelected > 0) && (
+          <button
+            type="button"
+            onClick={handleConfirm}
+            disabled={!canConfirm || confirming}
+            className={`px-3 py-1.5 rounded bg-secondary text-white text-sm flex items-center gap-1.5 ${
+              !canConfirm || confirming ? "opacity-50 cursor-not-allowed" : "hover:bg-secondary/80"
+            }`}
+          >
+            {confirming && <FiLoader size={12} className="animate-spin" />}
+            {confirmLabel}
+          </button>
+        )}
       </div>
       )}
 
