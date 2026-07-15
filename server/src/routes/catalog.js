@@ -194,23 +194,26 @@ router.post("/report", auth, async (req, res) => {
     const now = new Date();
 
     await Promise.all(
-      fields.map((field) =>
-        CatalogReport.updateOne(
-          { catalogItem: catalogItemId, field },
-          {
-            $inc: { count: 1 },
-            $set: {
-              status: "open",
-              variantKey: variantKey || null,
-              lastNote: trimmedNote,
-              shownValues: shownValues || null,
-              lastReporter: req.userId,
-              lastReportedAt: now,
-            },
+      fields.map((field) => {
+        const filter = { catalogItem: catalogItemId, field };
+        const update = {
+          $inc: { count: 1 },
+          $set: {
+            status: "open",
+            variantKey: variantKey || null,
+            lastNote: trimmedNote,
+            shownValues: shownValues || null,
+            lastReporter: req.userId,
+            lastReportedAt: now,
           },
-          { upsert: true },
-        ),
-      ),
+        };
+        return CatalogReport.updateOne(filter, update, { upsert: true }).catch((e) => {
+          // Two concurrent first-time reports race the unique index; the loser
+          // gets E11000. The row now exists, so a plain update applies the $inc.
+          if (e?.code === 11000) return CatalogReport.updateOne(filter, update);
+          throw e;
+        });
+      }),
     );
 
     // Fire-and-forget admin notification (no-ops without SMTP config).
@@ -240,11 +243,13 @@ router.post("/search-log", auth, async (req, res) => {
     // Ignore empties and absurdly long strings (pasted URLs, junk).
     if (!query || query.length > 120) return res.json({ ok: true });
 
-    await SearchLog.updateOne(
-      { query },
-      { $inc: { count: 1 }, $set: { lastSeenAt: new Date() } },
-      { upsert: true },
-    );
+    const update = { $inc: { count: 1 }, $set: { lastSeenAt: new Date() } };
+    await SearchLog.updateOne({ query }, update, { upsert: true }).catch((e) => {
+      // Concurrent first-time logs race the unique index; on E11000 the row
+      // now exists, so re-apply the increment instead of dropping the signal.
+      if (e?.code === 11000) return SearchLog.updateOne({ query }, update);
+      throw e;
+    });
     res.json({ ok: true });
   } catch (err) {
     // Non-fatal: this is fire-and-forget telemetry.

@@ -884,15 +884,19 @@ export default function SmartItemSearch({
 
   useEffect(() => {
     if (query) return;
+    let inner;
     const id = setInterval(() => {
       setPhVisible(false);
-      setTimeout(() => {
+      inner = setTimeout(() => {
         setPhIndex((i) => (i + 1) % searchPlaceholders.length);
         setPhVisible(true);
       }, 350);
     }, 3500);
-    return () => clearInterval(id);
-  }, [query]);
+    return () => {
+      clearInterval(id);
+      clearTimeout(inner);
+    };
+  }, [query, searchPlaceholders.length]);
 
   // Desktop vs mobile (drives two-pane vs stacked preview modal)
   const [isDesktop, setIsDesktop] = useState(
@@ -1272,6 +1276,15 @@ export default function SmartItemSearch({
     };
   }, [debouncedQuery, categoryFilter, subcategoryFilter, brandFilter, tabLayout, activeTab]);
 
+  // Signature of the active catalog search. Any change (query/facet/tab) means
+  // a fresh result set, so an in-flight "Show more" page must be discarded
+  // rather than appended onto the new list.
+  const catalogSearchSig = `${debouncedQuery.trim().toLowerCase()}|${categoryFilter || ""}|${subcategoryFilter || ""}|${brandFilter || ""}|${tabLayout ? activeTab : ""}`;
+  const catalogSearchSigRef = useRef(catalogSearchSig);
+  useEffect(() => {
+    catalogSearchSigRef.current = catalogSearchSig;
+  }, [catalogSearchSig]);
+
   // "Show more": append the next page of catalog results (skip = current count).
   // Browsing a large category (e.g. Shelter) exceeds one page, so paginate
   // instead of silently truncating at the first 100.
@@ -1279,6 +1292,7 @@ export default function SmartItemSearch({
     if (loadingMore) return;
     if (catalogTotal != null && catalogResults.length >= catalogTotal) return;
     setLoadingMore(true);
+    const sig = catalogSearchSig;
     const params = { skip: catalogResults.length, limit: 100 };
     if (debouncedQuery.trim()) {
       const brandNumberMatch = debouncedQuery.trim().match(/^\S+\s+(\d{5,})$/);
@@ -1289,6 +1303,9 @@ export default function SmartItemSearch({
     if (brandFilter) params.brand = brandFilter;
     try {
       const { data } = await api.get("/catalog/items", { params });
+      // The active search changed while this page was in flight — discard it so
+      // stale results never contaminate the new category/query list.
+      if (catalogSearchSigRef.current !== sig) return;
       const page = data?.items || [];
       setCatalogResults((prev) => {
         const seen = new Set(prev.map((i) => String(i._id)));
@@ -1299,7 +1316,7 @@ export default function SmartItemSearch({
     } finally {
       setLoadingMore(false);
     }
-  }, [loadingMore, catalogTotal, catalogResults, debouncedQuery, categoryFilter, subcategoryFilter, brandFilter]);
+  }, [loadingMore, catalogTotal, catalogResults, debouncedQuery, categoryFilter, subcategoryFilter, brandFilter, catalogSearchSig]);
 
   // Zero-result search log (handoff CUT section → demand signal). Fires
   // fire-and-forget once per settled text query that returns nothing — a
@@ -1321,12 +1338,19 @@ export default function SmartItemSearch({
     if (customMode !== "manual") setCustomMode(null);
   }, [debouncedQuery, categoryFilter, subcategoryFilter, brandFilter]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ESC to close
+  // ESC to close — but only when this modal is the topmost surface. A nested
+  // preview sheet or stacked preview modal owns ESC first (the report popover
+  // stops propagation of its own Escape), so we don't eject the whole modal
+  // out from under them.
   useEffect(() => {
-    const h = (e) => e.key === "Escape" && onClose?.();
+    const h = (e) => {
+      if (e.key !== "Escape") return;
+      if (sheetOpen || previewItem) return;
+      onClose?.();
+    };
     window.addEventListener("keydown", h);
     return () => window.removeEventListener("keydown", h);
-  }, [onClose]);
+  }, [onClose, sheetOpen, previewItem]);
 
   // Filtered My Gear (client-side)
   const filteredMyGear = useMemo(() => {

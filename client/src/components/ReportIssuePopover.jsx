@@ -73,7 +73,11 @@ export default function ReportIssuePopover({
       onClose?.();
     };
     const onKey = (e) => {
-      if (e.key === "Escape") onClose?.();
+      if (e.key !== "Escape") return;
+      // Close only the popover — don't let ESC bubble up and close the whole
+      // add-gear modal underneath it.
+      e.stopPropagation();
+      onClose?.();
     };
     document.addEventListener("mousedown", onDown);
     document.addEventListener("keydown", onKey);

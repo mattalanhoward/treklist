@@ -304,7 +304,9 @@ export default function CatalogPreviewPane({
         {onAdd ? (
           <button
             type="button"
-            onClick={() => !added && !adding && onAdd?.(selectedVariant?.key)}
+            onClick={() =>
+              !added && !adding && onAdd?.(sizeUnset ? undefined : selectedVariant?.key)
+            }
             disabled={added || adding}
             className={`ml-auto flex items-center justify-center gap-2 rounded-lg px-4 min-h-[44px] text-sm font-medium transition-colors ${
               added

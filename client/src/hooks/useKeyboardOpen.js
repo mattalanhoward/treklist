@@ -10,11 +10,16 @@ export default function useKeyboardOpen() {
   useEffect(() => {
     const vv = typeof window !== "undefined" ? window.visualViewport : null;
     if (!vv) return;
+    // Track the tallest visual viewport seen (the keyboard-closed baseline).
+    // Comparing vv.height against window.innerHeight misses Android Chrome,
+    // where the layout viewport shrinks with the keyboard too; measuring
+    // vv.height against its own max detects the keyboard on iOS and Android.
+    let maxHeight = vv.height;
     const check = () => {
+      maxHeight = Math.max(maxHeight, vv.height);
       // Keyboard eats a large chunk of the viewport; 25% is a safe threshold
       // that ignores browser chrome collapse/expand.
-      const shrink = window.innerHeight - vv.height;
-      setOpen(shrink > window.innerHeight * 0.25);
+      setOpen(vv.height < maxHeight * 0.75);
     };
     check();
     vv.addEventListener("resize", check);
