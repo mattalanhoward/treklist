@@ -214,6 +214,16 @@ export default function TourModal({
   // Optional: pulse dot via step.showPulse (defaults off)
   const showPulse = Boolean(step?.showPulse);
 
+  // On mobile the card is anchored to a screen edge. If the spotlight sits in the
+  // lower half of the viewport, flip the card to the top so it never covers the
+  // highlight — e.g. the "Add category" button at the end of a long list can't be
+  // scrolled to center (nothing below it), so a bottom-anchored card overlaps it.
+  const viewportH = typeof window !== "undefined" ? window.innerHeight : 0;
+  const cardAtTop =
+    hasSpotlight &&
+    viewportH > 0 &&
+    targetRect.top + targetRect.height / 2 > viewportH / 2;
+
   return (
     <div
       className="fixed inset-0 z-[80]"
@@ -258,16 +268,25 @@ export default function TourModal({
         </>
       )}
 
-      {/* Tooltip card: center on desktop, bottom on mobile */}
-      <div className="absolute inset-0 flex pointer-events-none items-end sm:items-center justify-center p-3 sm:p-0">
+      {/* Tooltip card: center on desktop; bottom on mobile, flipping to top when
+          the spotlight is in the lower half so it never covers the highlight */}
+      <div
+        className={`absolute inset-0 flex pointer-events-none justify-center p-3 sm:p-0 sm:items-center ${
+          cardAtTop ? "items-start" : "items-end"
+        }`}
+      >
         <div
-          className="
+          className={`
       pointer-events-auto
       w-[360px] max-w-[calc(100vw-24px)]
       sm:w-[360px]
-      mb-[calc(env(safe-area-inset-bottom,0px)+34px)]
-      sm:mb-0
-    "
+      sm:mt-0 sm:mb-0
+      ${
+        cardAtTop
+          ? "mt-[calc(env(safe-area-inset-top,0px)+34px)]"
+          : "mb-[calc(env(safe-area-inset-bottom,0px)+34px)]"
+      }
+    `}
         >
           <div className="bg-neutralAlt rounded-xl shadow-lg border border-primary/10 overflow-hidden">
             <div className="px-4 py-3 border-b border-primary/10">
