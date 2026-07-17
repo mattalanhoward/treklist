@@ -67,6 +67,7 @@ export default function SortableSection({
 
   return (
     <section
+      data-tour="gearlist-category"
       ref={setNodeRef}
       style={style}
       className={`bg-neutral rounded-lg p-4 mb-6 transition-shadow ${sidebarDragOver ? "ring-2 ring-secondary" : ""}`}
@@ -152,6 +153,7 @@ export default function SortableSection({
       </SortableContext>
       {!isLocked && (
         <button
+          data-tour="category-add-item"
           onClick={() => setShowAddModalCat(catId)}
           className="p-2 w-full border border-secondary rounded flex items-center justify-center space-x-2 bg-base-100 text-primary hover:bg-base-100/80"
           aria-label={t("gearList.items.addButton")}

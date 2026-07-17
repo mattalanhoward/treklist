@@ -1520,6 +1520,7 @@ opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity
                   />
                 ) : (
                   <button
+                    data-tour="gearlist-add-category"
                     onClick={() => {
                       setNewCatName("");
                       setAddingNewCat(true);
