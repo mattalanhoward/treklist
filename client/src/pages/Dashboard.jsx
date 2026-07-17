@@ -98,6 +98,16 @@ export default function Dashboard() {
   const [isTourOpen, setIsTourOpen] = useState(false);
   const [tourStep, setTourStep] = useState(0);
 
+  const { viewMode, setViewMode } = useUserSettings();
+
+  // The "Add category" button is trivial to find and, on a mobile list view, it
+  // sits at the very bottom of a screen-filling list where the tooltip can't
+  // avoid covering it — so skip that step in that one configuration only.
+  const skipAddCategoryStep =
+    viewMode === "list" &&
+    typeof window !== "undefined" &&
+    window.innerWidth < 640;
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const tourSteps = useMemo(() => [
     {
@@ -126,15 +136,19 @@ export default function Dashboard() {
         if (isMobile) setSidebarCollapsed(true);
       },
     },
-    {
-      title: t("tour.steps.addCategory.title"),
-      body: t("tour.steps.addCategory.body"),
-      target: '[data-tour="gearlist-add-category"]',
-      onEnter: ({ isMobile }) => {
-        setActivePane("gear");
-        if (isMobile) setSidebarCollapsed(true);
-      },
-    },
+    ...(skipAddCategoryStep
+      ? []
+      : [
+          {
+            title: t("tour.steps.addCategory.title"),
+            body: t("tour.steps.addCategory.body"),
+            target: '[data-tour="gearlist-add-category"]',
+            onEnter: ({ isMobile }) => {
+              setActivePane("gear");
+              if (isMobile) setSidebarCollapsed(true);
+            },
+          },
+        ]),
     {
       title: t("tour.steps.addItems.title"),
       body: t("tour.steps.addItems.body"),
@@ -239,9 +253,9 @@ export default function Dashboard() {
         if (isMobile) setSidebarCollapsed(true);
       },
     },
-  // Re-create only when language changes (t), not on every render.
+  // Re-create when language (t) or the skip condition changes, not every render.
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  ], [t]);
+  ], [t, skipAddCategoryStep]);
 
   const markTourSeen = useCallback(async (status) => {
     try {
@@ -483,9 +497,6 @@ export default function Dashboard() {
     );
   }, [activePane, setSearchParams]);
 
-
-  // ─── viewMode persistence ───
-  const { viewMode, setViewMode } = useUserSettings();
 
   // fetch /api/dashboard/:listId/full
   const fetchFullData = useCallback(async () => {
