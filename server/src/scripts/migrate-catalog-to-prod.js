@@ -28,6 +28,24 @@
 //   (data-loss incident 2026-06-29, see memory gotcha_select_save_wipes_fields).
 //   All writes are replaceOne / updateMany / deleteMany / bulkWrite.
 //
+// TWO SYNC MODES:
+//   * FULL SYNC (default): the archive-and-re-add above. Wholesale replacement.
+//   * SCOPED BRAND SYNC (--brand "<Brand>", repeatable): skips Phase A entirely
+//     (no archive-all) and upserts ONLY that brand's catalogitems + their offers,
+//     same replaceOne-by-_id + delete-stale-before-upsert semantics, scoped to the
+//     brand's productIds. This is the routine day-to-day path once a full sync has
+//     seeded prod — it touches nothing outside the named brand(s).
+//
+// CLOBBER GUARD (full syncs only):
+//   Every successful FULL --commit stamps a single meta doc
+//   (`_catalogSyncMeta` in the dest db) with { lastSyncAt }. Before any later FULL
+//   commit, the script checks the dest for catalogitems/merchantoffers edited in
+//   prod (updatedAt > lastSyncAt) that a full sync would overwrite, and ABORTS with
+//   a list unless --force-clobber is passed. This mechanically enforces "local is
+//   the source of truth — prod edits get flagged, not silently reverted." Brand
+//   syncs are intentionally exempt (scoped, deliberate) and do NOT move lastSyncAt,
+//   so the full-sync baseline keeps catching every un-reconciled prod edit.
+//
 // SAFETY:
 //   * DRY RUN BY DEFAULT. Writes only with --commit.
 //   * Source AND dest DB names are REQUIRED, explicit (no defaults) — because the
@@ -36,6 +54,8 @@
 //   * Writing (--commit) to a non-local dest requires --confirm-dest <destDb> to
 //     match, so a prod write can never happen by a stray flag.
 //   * Idempotent: safe to re-run from the top after a partial failure.
+//   * Writes are confined to `catalogitems` + `merchantoffers` (data) plus the
+//     `_catalogSyncMeta` bookkeeping doc on a full commit. Nothing else, ever.
 //
 // USAGE
 //   cd server
@@ -46,6 +66,12 @@
 //   # COMMIT (writes catalogitems + merchantoffers in --dest-db only):
 //   node src/scripts/migrate-catalog-to-prod.js \
 //     --uri "$CLUSTER_URI" --source-db treklist_local --dest-db <PROD_DB> \
+//     --commit --confirm-dest <PROD_DB> [--force-clobber]
+//
+//   # SCOPED BRAND SYNC (upserts only the named brand(s); no archive-all):
+//   node src/scripts/migrate-catalog-to-prod.js \
+//     --uri "$CLUSTER_URI" --source-db treklist_local --dest-db <PROD_DB> \
+//     --brand "Zpacks" --brand "Hyperlite Mountain Gear" \
 //     --commit --confirm-dest <PROD_DB>
 //
 //   # VERIFY (read-only; per-category counts, offer/image spot-checks, list render):
@@ -67,6 +93,14 @@ function argVal(name) {
   const i = process.argv.indexOf(name);
   return i !== -1 && process.argv[i + 1] ? process.argv[i + 1] : null;
 }
+// Repeatable flag: collect every `--name <value>` occurrence (e.g. multiple --brand).
+function argVals(name) {
+  const out = [];
+  process.argv.forEach((a, i) => {
+    if (a === name && process.argv[i + 1]) out.push(process.argv[i + 1]);
+  });
+  return out;
+}
 function hasFlag(name) {
   return process.argv.includes(name);
 }
@@ -74,6 +108,15 @@ function hasFlag(name) {
 const COMMIT = hasFlag("--commit");
 const DRY_RUN = !COMMIT; // --dry-run is the default; --commit is the only way to write
 const VERIFY = hasFlag("--verify");
+
+// Scoped brand sync: one or more --brand "<Brand>" ⇒ skip Phase A, sync only those.
+const BRANDS = argVals("--brand");
+const BRAND_MODE = BRANDS.length > 0;
+// Full-sync clobber-guard override.
+const FORCE_CLOBBER = hasFlag("--force-clobber");
+// Where the clobber-guard baseline lives, in the DEST db.
+const SYNC_META_COLL = "_catalogSyncMeta";
+const SYNC_META_ID = "catalog-sync";
 
 const URI = argVal("--uri") || process.env.MONGO_URI;
 // Separate source/dest URIs are supported for the rehearsal (both DBs restored
@@ -158,22 +201,32 @@ async function categoryCounts(coll) {
   const dstCat = dstDb.collection("catalogitems");
   const dstOff = dstDb.collection("merchantoffers");
 
+  const mode = VERIFY
+    ? "VERIFY — read-only"
+    : BRAND_MODE
+      ? `SCOPED BRAND SYNC${COMMIT ? " — WILL WRITE" : " — DRY RUN"}`
+      : COMMIT
+        ? "FULL COMMIT — WILL WRITE"
+        : "FULL DRY RUN — no writes";
   console.log("=".repeat(74));
-  console.log(
-    `CATALOG MIGRATION  (${
-      VERIFY ? "VERIFY — read-only" : COMMIT ? "COMMIT — WILL WRITE" : "DRY RUN — no writes"
-    })`,
-  );
+  console.log(`CATALOG MIGRATION  (${mode})`);
   console.log(`  source (read) : ${SOURCE_DB}`);
   console.log(`  dest   (write): ${DEST_DB}  ${LOCAL_DBS.has(DEST_DB) ? "(local)" : "(NON-LOCAL)"}`);
-  console.log("  writes ONLY  : catalogitems, merchantoffers  (never gear/global/users/lists)");
+  if (BRAND_MODE) console.log(`  brand scope   : ${BRANDS.map((b) => `"${b}"`).join(", ")}`);
+  console.log(
+    `  writes ONLY  : catalogitems, merchantoffers${
+      BRAND_MODE ? "" : " (+ _catalogSyncMeta baseline)"
+    }  (never gear/global/users/lists)`,
+  );
   console.log("=".repeat(74));
 
   try {
     if (VERIFY) {
       await runVerify({ srcCat, dstCat, dstOff, dstDb });
+    } else if (BRAND_MODE) {
+      await runBrandSync({ srcCat, srcOff, dstCat, dstOff });
     } else {
-      await runMigration({ srcCat, srcOff, dstCat, dstOff });
+      await runMigration({ srcCat, srcOff, dstCat, dstOff, dstDb });
     }
   } finally {
     await srcClient.close();
@@ -187,7 +240,7 @@ async function categoryCounts(coll) {
 // =============================================================================
 // MIGRATION
 // =============================================================================
-async function runMigration({ srcCat, srcOff, dstCat, dstOff }) {
+async function runMigration({ srcCat, srcOff, dstCat, dstOff, dstDb }) {
   const srcCatCount = await srcCat.countDocuments({});
   const srcCatActive = await srcCat.countDocuments({ isActive: true });
   const dstCatCount = await dstCat.countDocuments({});
@@ -202,6 +255,77 @@ async function runMigration({ srcCat, srcOff, dstCat, dstOff }) {
   const localCatIdSet = new Set(localCatIds.map(idStr));
   const localOfferIds = await loadIds(srcOff);
   const localOfferIdSet = new Set(localOfferIds.map(idStr));
+
+  // -------------------------------------------------------------------------
+  // CLOBBER GUARD — before any writes, flag prod-side edits a full sync would
+  // revert. Baseline = _catalogSyncMeta.lastSyncAt (stamped by the last full
+  // commit). Any dest catalogitem re-added here (_id ∈ source set) or offer for a
+  // re-added item that was edited in prod AFTER that baseline would be overwritten
+  // by Phase B/C. "Local is the source of truth" ⇒ ABORT and make the operator
+  // reconcile into local, unless --force-clobber. Read-only; runs in dry run too.
+  // -------------------------------------------------------------------------
+  const metaColl = dstDb.collection(SYNC_META_COLL);
+  const meta = await metaColl.findOne({ _id: SYNC_META_ID });
+  const lastSyncAt = meta && meta.lastSyncAt;
+  console.log(`\n[GUARD] full-sync clobber guard`);
+  if (!lastSyncAt) {
+    console.log(`    no prior full-sync baseline (_catalogSyncMeta) — nothing to guard.`);
+  } else {
+    console.log(`    last full sync baseline: ${new Date(lastSyncAt).toISOString()}`);
+    const clobberCat = [];
+    for (const c of chunk(localCatIds, 1000)) {
+      const rows = await dstCat
+        .find(
+          { _id: { $in: c }, updatedAt: { $gt: lastSyncAt } },
+          { projection: { brand: 1, name: 1, updatedAt: 1 } },
+        )
+        .toArray();
+      clobberCat.push(...rows);
+    }
+    // Offers for re-added items get delete-before-upsert'd in Phase C, so a prod
+    // edit to any of them would be reverted too.
+    const clobberOff = [];
+    for (const c of chunk(localCatIds, 1000)) {
+      const rows = await dstOff
+        .find(
+          { productId: { $in: c }, updatedAt: { $gt: lastSyncAt } },
+          { projection: { productId: 1, merchantName: 1, updatedAt: 1 } },
+        )
+        .toArray();
+      clobberOff.push(...rows);
+    }
+    const total = clobberCat.length + clobberOff.length;
+    if (!total) {
+      console.log(`    no prod-side edits since baseline — safe to overwrite.`);
+    } else {
+      console.log(
+        `    ⚠ ${total} dest doc(s) edited in prod SINCE the baseline would be overwritten:`,
+      );
+      for (const d of clobberCat) {
+        console.log(
+          `      catalog  ${(d.brand || "—")} · ${d.name} · ${new Date(d.updatedAt).toISOString()}`,
+        );
+      }
+      for (const d of clobberOff) {
+        console.log(
+          `      offer    product ${idStr(d.productId)} · ${d.merchantName || "?"} · ${new Date(
+            d.updatedAt,
+          ).toISOString()}`,
+        );
+      }
+      if (COMMIT && !FORCE_CLOBBER) {
+        die(
+          `Refusing to overwrite ${total} prod-edited doc(s) (local is the source of truth).\n` +
+            `  Reconcile these edits INTO local first, then re-run —\n` +
+            `  or pass --force-clobber to overwrite them anyway.`,
+        );
+      } else if (COMMIT) {
+        console.log(`    --force-clobber set: proceeding despite ${total} prod edit(s).`);
+      } else {
+        console.log(`    (DRY RUN: a --commit here without --force-clobber would ABORT.)`);
+      }
+    }
+  }
 
   // -------------------------------------------------------------------------
   // PHASE A — archive every existing prod catalog item (isActive:false)
@@ -309,6 +433,21 @@ async function runMigration({ srcCat, srcOff, dstCat, dstOff }) {
   }
 
   // -------------------------------------------------------------------------
+  // BASELINE — stamp the clobber-guard meta doc AFTER a successful full commit.
+  // Only full syncs move this baseline; brand syncs intentionally do not, so the
+  // guard keeps catching every un-reconciled prod edit until the next full sync.
+  // -------------------------------------------------------------------------
+  if (COMMIT) {
+    const now = new Date();
+    await metaColl.updateOne(
+      { _id: SYNC_META_ID },
+      { $set: { lastSyncAt: now, mode: "full", updatedAt: now } },
+      { upsert: true },
+    );
+    console.log(`\n[BASELINE] _catalogSyncMeta.lastSyncAt = ${now.toISOString()}`);
+  }
+
+  // -------------------------------------------------------------------------
   // SUMMARY / next step
   // -------------------------------------------------------------------------
   console.log("\n" + "-".repeat(74));
@@ -322,6 +461,113 @@ async function runMigration({ srcCat, srcOff, dstCat, dstOff }) {
       `    node src/scripts/normalize-itemtypes.js --db ${DEST_DB} --commit --confirm ${DEST_DB}`,
     );
     console.log("  THEN: re-run this script with --verify.");
+  } else {
+    console.log("DRY RUN complete — nothing written. Re-run with --commit to apply.");
+  }
+}
+
+// =============================================================================
+// SCOPED BRAND SYNC
+// =============================================================================
+// Routine day-to-day path once a full sync has seeded prod. Skips Phase A (no
+// archive-all) and, for each --brand, upserts ONLY that brand's catalogitems and
+// their offers using the SAME replaceOne-by-_id + delete-stale-before-upsert
+// semantics as the full sync, scoped to the brand's productIds. It does NOT move
+// the clobber-guard baseline (a full sync owns that). Nothing outside the named
+// brand(s) is touched — untouched brands, archived items, and unrelated offers all
+// stay exactly as they are in prod.
+async function runBrandSync({ srcCat, srcOff, dstCat, dstOff }) {
+  console.log(`\nPhase A (archive-all) is SKIPPED in brand mode.`);
+  let grandCat = 0;
+  let grandOff = 0;
+  let grandDel = 0;
+
+  for (const brand of BRANDS) {
+    console.log("\n" + "-".repeat(74));
+    console.log(`BRAND: "${brand}"`);
+
+    // Brand's curated catalog items (exact match on `brand`).
+    const brandCatIds = await loadIds(srcCat, { brand });
+    if (!brandCatIds.length) {
+      console.log(`    ⚠ no source catalogitems with brand exactly "${brand}" — skipping.`);
+      continue;
+    }
+
+    // Plan: overlap (replace in place) vs new inserts.
+    let overlap = 0;
+    for (const c of chunk(brandCatIds, 1000)) {
+      overlap += await dstCat.countDocuments({ _id: { $in: c } });
+    }
+    const inserts = brandCatIds.length - overlap;
+    console.log(`[B] catalog items: ${brandCatIds.length}`);
+    console.log(`    _id overlap with dest (replace in place): ${overlap}`);
+    console.log(`    new inserts: ${inserts}`);
+
+    // Brand's curated offers = source offers whose productId is one of this brand's
+    // items. Scope the stale-offer delete to exactly these productIds.
+    const brandOffers = [];
+    for (const c of chunk(brandCatIds, 1000)) {
+      const offs = await srcOff.find({ productId: { $in: c } }).toArray();
+      brandOffers.push(...offs);
+    }
+    const brandOfferIdSet = new Set(brandOffers.map((o) => idStr(o._id)));
+
+    const toDelete = [];
+    for (const c of chunk(brandCatIds, 1000)) {
+      const destOffers = await dstOff
+        .find({ productId: { $in: c } }, { projection: { _id: 1 } })
+        .toArray();
+      for (const o of destOffers) {
+        if (!brandOfferIdSet.has(idStr(o._id))) toDelete.push(o._id);
+      }
+    }
+    console.log(`[C] offers: ${brandOffers.length}`);
+    console.log(`    stale dest offers to delete (this brand's productIds only): ${toDelete.length}`);
+
+    grandCat += brandCatIds.length;
+    grandOff += brandOffers.length;
+    grandDel += toDelete.length;
+
+    if (!COMMIT) continue;
+
+    // ---- write: replaceOne-upsert catalog items by _id ----
+    const catDocs = await srcCat.find({ brand }).toArray();
+    for (const c of chunk(catDocs, BATCH)) {
+      await dstCat.bulkWrite(
+        c.map((doc) => ({
+          replaceOne: { filter: { _id: doc._id }, replacement: doc, upsert: true },
+        })),
+        { ordered: false },
+      );
+    }
+    console.log(`    upserted catalog items: ${catDocs.length}`);
+
+    // ---- write: delete stale offers, then upsert this brand's offers by _id ----
+    let del = 0;
+    for (const c of chunk(toDelete, 1000)) {
+      const r = await dstOff.deleteMany({ _id: { $in: c } });
+      del += r.deletedCount;
+    }
+    for (const c of chunk(brandOffers, BATCH)) {
+      await dstOff.bulkWrite(
+        c.map((doc) => ({
+          replaceOne: { filter: { _id: doc._id }, replacement: doc, upsert: true },
+        })),
+        { ordered: false },
+      );
+    }
+    console.log(`    deleted stale offers: ${del}, upserted offers: ${brandOffers.length}`);
+  }
+
+  console.log("\n" + "-".repeat(74));
+  console.log(
+    `Brand(s): ${BRANDS.length}   planned catalog upserts: ${grandCat}   ` +
+      `offer upserts: ${grandOff}   stale-offer deletes: ${grandDel}`,
+  );
+  if (COMMIT) {
+    console.log("✓ Brand sync COMMITTED (catalogitems + merchantoffers, scoped).");
+    console.log("  (Full-sync baseline _catalogSyncMeta.lastSyncAt intentionally NOT moved.)");
+    console.log("  THEN: re-run with --verify to confirm counts/refs.");
   } else {
     console.log("DRY RUN complete — nothing written. Re-run with --commit to apply.");
   }
