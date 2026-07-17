@@ -59,7 +59,7 @@ export function SettingsProvider({ children }) {
     return "us";
   });
   const [viewMode, setViewMode] = useState(
-    () => localStorage.getItem("viewMode") || "column"
+    () => localStorage.getItem("viewMode") || "list"
   );
   // Note: we still render instantly, then hydrate from /settings when logged in.
   const [sidebarCollapsed, setSidebarCollapsed] = useState(
@@ -175,7 +175,7 @@ export function SettingsProvider({ children }) {
       setLanguage(resolvedLang);
       const serverRegion = (s.region || "").toLowerCase();
       setRegion(/^[a-z]{2}$/.test(serverRegion) ? serverRegion : "us");
-      setViewMode(s.viewMode || "column");
+      setViewMode(s.viewMode || "list");
       setSidebarCollapsed(Boolean(s.sidebarCollapsed));
       setSidebarGearListsCollapsed(Boolean(s.sidebarGearListsCollapsed));
       setSidebarMyGearCollapsed(Boolean(s.sidebarMyGearCollapsed));
