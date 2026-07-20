@@ -246,6 +246,55 @@ ITEMS.push({ id: "6036-037", name: "MEC Uplink Aluminum 3 Part Cork Grip Poles",
   img: CDN("62027/images/459532/6036037_BLU36_TRANSPARENT__81635.1781639314.1280.1280.png"),
   description: "3-section 7075-T6 aluminum trekking poles with natural cork grips and Powerlock 3.0 lever locks. Adjust 105-140 cm, collapse to 65 cm; carbide tips + trekking baskets. 555 g per pair." });
 
+// ---- ROUND 2: DAYPACKS + POLES (user backlog, 2026-07-20) ----
+ITEMS.push({ id: "6026-801", name: "MEC x SERRATUS Pace UL 40 Pack - Unisex", itemType: "Backpack", weightGrams: 930,
+  attributes: { volumeLiters: 40, gender: "Unisex", frameType: "Removable Frame", backPanelType: "Mesh", hipBeltType: "Padded", hydrationCompatible: true, rainCoverIncluded: false, waterResistance: "DWR Coated", mainFabric: "70D ripstop nylon (PFC-free PU)" },
+  img: CDN("55069/images/442594/6026801_BK000_TRANSPARENT__27834.1781638962.1280.1280.png"),
+  description: "Ultralight 40 L fastpacking pack (MEC x Serratus) with a removable frame sheet, ventilated air-mesh back + straps, dual bottle pockets and hydration sleeve. 930 g (with frame)." });
+ITEMS.push({ id: "6026-800", name: "MEC x SERRATUS Pace UL 25 Daypack - Unisex", itemType: "Daypack", weightGrams: 470,
+  attributes: { volumeLiters: 25, gender: "Unisex", frameType: "Frameless", hipBeltType: "Webbing Only", hydrationCompatible: true, rainCoverIncluded: false, waterResistance: "DWR Coated", mainFabric: "70D Robic Extreema (PU coated)" },
+  img: CDN("56674/images/491424/6026800_BK000_TRANSPARENT__28081.1783703686.1280.1280.png"),
+  description: "Ultralight 25 L daypack (MEC x Serratus) with air-mesh straps, ventilated back panel, soft-flask chest pockets, side bungees and a Recco reflector. 470 g." });
+ITEMS.push({ id: "6036-254", name: "MEC Vista 20L Pack - Unisex", itemType: "Daypack",
+  attributes: { volumeLiters: 20, gender: "Unisex", frameType: "Foam Back", hipBeltType: "Padded", hydrationCompatible: true, rainCoverIncluded: false, waterResistance: "DWR Coated", mainFabric: "300D nylon w/ 420D base" },
+  img: CDN("63840/images/465338/6036254_ZEN03_TRANSPARENT__46910.1783108791.1280.1280.png"),
+  description: "20 L hiking daypack with clamshell zip access, air-mesh back panel, padded hip belt with pocket, shoulder-strap pocket, stretch side pockets and pole/axe loops." });
+ITEMS.push({ id: "6036-640", name: "MEC Vista 28L Pack - Unisex", itemType: "Daypack",
+  attributes: { volumeLiters: 28, gender: "Unisex", frameType: "Foam Back", hipBeltType: "Padded", hydrationCompatible: true, rainCoverIncluded: false, waterResistance: "DWR Coated", mainFabric: "300D nylon w/ 420D base" },
+  img: CDN("63835/images/491417/6036640_ZEN03_TRANSPARENT__68385.1783703686.1280.1280.png"),
+  description: "28 L hiking daypack with clamshell zip access, air-mesh back panel, padded hip belt, hydration sleeve with hose routing, daisy chains and gear loops." });
+ITEMS.push({ id: "6036-261", name: "MEC Trail 16 Cinch Pack - Unisex", itemType: "Daypack", weightGrams: 330,
+  attributes: { volumeLiters: 16, gender: "Unisex", frameType: "Foam Back", hipBeltType: "None", hydrationCompatible: true, rainCoverIncluded: false, waterResistance: "DWR Coated", mainFabric: "210D ripstop nylon w/ 420D base" },
+  img: CDN("63831/images/465299/6036261_BK000_TRANSPARENT__30454.1781639430.1280.1280.png"),
+  description: "16 L cinch-top daypack with a breathable mesh back panel, front zip pocket, hydration port, back sleeve pocket and pole loops. 330 g." });
+ITEMS.push({ id: "6036-262", name: "MEC Trail 18 Pack - Unisex", itemType: "Daypack", weightGrams: 415,
+  attributes: { volumeLiters: 18, gender: "Unisex", frameType: "Foam Back", hipBeltType: "Webbing Only", hipBeltRemovable: true, hydrationCompatible: true, rainCoverIncluded: false, waterResistance: "DWR Coated", mainFabric: "210D ripstop nylon w/ 420D base" },
+  img: CDN("63839/images/465333/6036262_BK000_TRANSPARENT__66336.1781639431.1280.1280.png"),
+  description: "18 L daypack with glove-friendly clamshell zip, padded mesh-backed straps, removable waistbelt, stretch side pocket and hydration sleeve. 415 g." });
+ITEMS.push({ id: "6031-517", name: "MEC Odyssey 25 Dry Pack", itemType: "Daypack",
+  attributes: { volumeLiters: 25, gender: "Unisex", frameType: "Foam Back", hipBeltType: "Webbing Only", hipBeltRemovable: true, hydrationCompatible: true, rainCoverIncluded: false, waterResistance: "Waterproof", mainFabric: "420D TPU-coated recycled ripstop nylon" },
+  img: CDN("59725/images/452051/6031517_HAR00_TRANSPARENT__28803.1781639164.1280.1280.png"),
+  description: "Weatherproof 25 L roll-top dry daypack for paddling, cycling and hiking. TPU-coated recycled ripstop, removable waistbelt, side compression straps and internal hydration sleeve." });
+
+const pole = (id, name, weightGrams, attrs, img, desc) =>
+  ITEMS.push({ id, name, itemType: "Trekking Poles", ...(weightGrams != null ? { weightGrams } : {}), attributes: { material: "Aluminum", soldAs: "Pair", adjustmentType: "Telescoping", ...attrs }, img, description: desc });
+pole("6036-035", "MEC Gromlin Aluminum 2 Part Poles - Unisex", null,
+  { lockingMechanism: "Twist Lock", sections: 2, minLengthCm: 80, maxLengthCm: 105, collapsedLengthCm: 64, tipType: "Carbide" },
+  CDN("65824/images/473332/6036035_GN081_TRANSPARENT__97987.1280.1280.png"),
+  "Compact 2-section 7075-T6 aluminum trekking poles with twist-lock adjustment over a short 80–105 cm range (suits smaller/younger hikers), carbide tips. Collapse to 64 cm. (MEC does not publish a weight.)");
+pole("6036-034", "MEC Downlink Aluminum 3 Part Poles - Unisex", 505,
+  { lockingMechanism: "Twist Lock", sections: 3, minLengthCm: 105, maxLengthCm: 140, collapsedLengthCm: 63, gripMaterial: "Rubber", basketsIncluded: true },
+  CDN("62026/images/459531/6036034_PP400_TRANSPARENT__33765.1784205054.1280.1280.png"),
+  "Economical 3-section aluminum trekking poles with twist-lock adjustment (105–140 cm), rubber grips, steel tips and mid-sized baskets. 505 g/pair; collapse to 62.5 cm.");
+pole("6036-036", "MEC Ridgelink Aluminum 3 Part Cork Grip Antishock Poles - Unisex", 520,
+  { lockingMechanism: "Twist Lock", sections: 3, minLengthCm: 105, maxLengthCm: 140, collapsedLengthCm: 66, gripMaterial: "Cork", tipType: "Carbide", basketsIncluded: true },
+  CDN("62954/images/462974/6036036_WIW25_TRANSPARENT__64277.1781639382.1280.1280.png"),
+  "3-section 7075-T6 aluminum trekking poles with an antishock system, cork grips and carbide tips. Adjust 105–140 cm, collapse to 66 cm. 520 g/pair.");
+pole("6036-038", "MEC Tour 3 Pro 4-Season Poles - Unisex", 430,
+  { lockingMechanism: "Lever Lock", sections: 3, gripMaterial: "EVA Foam", tipType: "Carbide", basketsIncluded: true },
+  CDN("65274/images/471420/6036038_BEG25_TRANSPARENT__94999.1781639555.1280.1280.png"),
+  "3-section 7075-T6 aluminum 4-season poles with Powerlock 3.0 lever locks, extended EVA-foam grips, carbide tips and interchangeable summer/snow Vario baskets. 430 g/pair.");
+
 // ---- CAMP CHAIRS ----
 ITEMS.push({ id: "6034-174", name: "MEC Ultra Lite Chair", itemType: "Camp Chair", weightGrams: 990,
   attributes: { type: "Chair", maxLoadKg: 113 },
