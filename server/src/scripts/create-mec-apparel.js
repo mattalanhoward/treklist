@@ -58,7 +58,7 @@ const ITEMS = [
   ["6028-742","MEC T1 Merino Base Layer Long Sleeve Top - Men's","Base Layer Top","Mens",null,"products/57854/images/447421/6028742_BK000_TRANSPARENT__87506.1781639063.1280.1280.png",{tier:"Lightweight",fabric:"Merino Wool",sleeve:"Long Sleeve"}],
   ["6028-792","MEC T1 Merino Base Layer Long Sleeve Top - Women's","Base Layer Top","Womens",null,"products/57832/images/447366/6028792_NVY13_TRANSPARENT__88199.1783703640.1280.1280.png",{tier:"Lightweight",fabric:"Merino Wool",sleeve:"Long Sleeve",gsm:130}],
   ["6023-136","MEC T2 Merino Base Layer 1/4 Zip Long Sleeve Top - Women's","Base Layer Top","Womens",null,"products/52322/images/439306/6023136_BK000_TRANSPARENT__30340.1781638889.1280.1280.png",{tier:"Midweight",fabric:"Merino Wool",sleeve:"Long Sleeve",neck:"Quarter-Zip"}],
-  ["6017-383","MEC T2 Base Layer Long Sleeve Top - Women's","Base Layer Top","Womens",null,"products/49185/images/434128/6017383_BK000_TRANSPARENT__08201.1280.1280.png",{tier:"Midweight",fabric:"Synthetic",sleeve:"Long Sleeve"}],
+  ["6017-383","MEC T2 Base Layer Long Sleeve Top - Women's","Base Layer Top","Womens",null,"products/49185/images/434128/6017383_BK000_TRANSPARENT__08201.1781638774.1280.1280.png",{tier:"Midweight",fabric:"Synthetic",sleeve:"Long Sleeve"}],
 
   // ---- HIKING PANTS ----
   ["6031-432","MEC Mochilero Stretch Pants - Men's","Hiking Pants","Mens",370,"products/59150/images/449384/6031432_BK000_TRANSPARENT__63811.1781639106.1280.1280.png",{material:"96% nylon / 4% spandex"}],
@@ -71,26 +71,26 @@ const ITEMS = [
   ["6026-396","MEC Ridgewalk Pants - Women's","Hiking Pants","Womens",null,"products/54647/images/441684/6026396_BK000_TRANSPARENT__88206.1781638942.1280.1280.png",{material:"nylon / spandex"}],
   ["6031-514","MEC Ridgewalk Capri - Women's","Hiking Pants","Womens",null,"products/59325/images/449782/6031514_BK000_TRANSPARENT__50472.1781639115.1280.1280.png",{material:"84% nylon / 16% spandex"}],
   ["6000-527","MEC Mochilero Cargo Pants - Men's","Hiking Pants","Mens",null,"products/7804/images/419542/6000527_IRN11_TRANSPARENT__29601.1781638456.1280.1280.png",{material:"96% nylon / 4% spandex"}],
-  ["6031-504","MEC Anywear Pants - Women's","Hiking Pants","Womens",null,"products/59408/images/449984/6031504_ROS51_ALT_DETAIL_TRANSPARENT__82766.1280.1280.png",{material:"100% polyester, UPF 50+"}],
+  ["6031-504","MEC Anywear Pants - Women's","Hiking Pants","Womens",null,"products/59408/images/449979/6031504_BK000_TRANSPARENT__74216.1781639120.1280.1280.png",{material:"100% polyester, UPF 50+"}],
   ["6033-927","MEC Classic Modern Rad Pants - Men's","Hiking Pants","Mens",null,"products/62689/images/461931/6033927_BK000_TRANSPARENT__81662.1781639361.1280.1280.png",{material:"96% recycled nylon / 4% spandex, PFAS-free DWR"}],
-  ["6033-930","MEC Classic Modern Rad Pants - Women's","Hiking Pants","Womens",370,"products/61986/images/459391/6033930_ROS51_ALT_CUFF_TRANSPARENT__15421.1781639311.1280.1280.png",{material:"96% recycled nylon / 4% spandex"}],
+  ["6033-930","MEC Classic Modern Rad Pants - Women's","Hiking Pants","Womens",370,"products/61986/images/459381/6033930_AGT00_TRANSPARENT__01655.1781639310.1280.1280.png",{material:"96% recycled nylon / 4% spandex"}],
   ["6028-955","MEC Mica Joggers - Men's","Hiking Pants","Mens",310,"products/56064/images/413625/6028955_BK000_TRANSPARENT__70647.1781093172.1280.1280.png",{material:"61% recycled nylon / 33% nylon / 6% spandex, DWR"}],
 
   // ---- HIKING SHORTS ----
-  ["6031-428","MEC Mochilero 12\" Shorts - Men's","Hiking Shorts","Mens",null,"products/59329/images/449791/6031428_BK000_TRANSPARENT__57601.1781639116.1280.1280.png",{material:"96% nylon / 4% spandex, UPF 40-50+",inseam:12}],
+  ["6031-428","MEC Mochilero 12\" Shorts - Men's","Hiking Shorts","Mens",null,"products/59329/images/449791/6031428_BK000_TRANSPARENT__57601.1781639116.1280.1280.png",{material:"96% nylon / 4% spandex, UPF 40-50+"}],
   ["6026-395","MEC Gorp Shorts - Women's","Hiking Shorts","Womens",118,"products/54610/images/441631/6026395_OFC40_TRANSPARENT__86105.1781638941.1280.1280.png",{material:"100% recycled nylon"}],
   ["6000-434","MEC Terrena Stretch 5\" Shorts - Women's","Hiking Shorts","Womens",null,"products/7905/images/408217/6000434_BK000_TRANSPARENT__79465.1780589157.1280.1280.png",{material:"96% nylon / 4% spandex, DWR, UPF 50+",inseam:5}],
-  ["6000-433","MEC Terrena Stretch 12\" Shorts - Women's","Hiking Shorts","Womens",null,"products/7903/images/419605/6000433_BK000_TRANSPARENT__36865.1781638458.1280.1280.png",{material:"nylon / spandex",inseam:12}],
+  ["6000-433","MEC Terrena Stretch 12\" Shorts - Women's","Hiking Shorts","Womens",null,"products/7903/images/419605/6000433_BK000_TRANSPARENT__36865.1781638458.1280.1280.png",{material:"nylon / spandex"}],
   ["6020-355","MEC Ridgewalk Shorts - Men's","Hiking Shorts","Mens",null,"products/50783/images/436404/6020355_BK000_TRANSPARENT__52497.1781638826.1280.1280.png",{material:"nylon / spandex"}],
   ["6031-515","MEC Ridgewalk Shorts - Women's","Hiking Shorts","Womens",null,"products/59670/images/451622/6031515_BK000_TRANSPARENT__95456.1781639155.1280.1280.png",{material:"nylon / spandex"}],
   ["6020-532","MEC Tech Trail Short 4\" - Women's","Hiking Shorts","Womens",null,"products/50835/images/436482/6020532_BK000_TRANSPARENT__65055.1781638828.1280.1280.png",{material:"nylon / spandex",inseam:4}],
-  ["6038-541","MEC Tech Trail 6 in Shorts - Men's","Hiking Shorts","Mens",null,"products/65577/images/472702/6038541_BK000_TRANSPARENT__98291.1280.1280.png",{material:"94% nylon / 6% spandex, PFAS-free DWR, UPF 50+",inseam:6}],
+  ["6038-541","MEC Tech Trail 6 in Shorts - Men's","Hiking Shorts","Mens",null,"products/65577/images/472702/6038541_BK000_TRANSPARENT__98291.1781639581.1280.1280.png",{material:"94% nylon / 6% spandex, PFAS-free DWR, UPF 50+",inseam:6}],
   ["6026-401","MEC Wanderwall Shorts - Women's","Hiking Shorts","Womens",null,"products/55027/images/442240/6026401_BK000_TRANSPARENT__90593.1781638954.1280.1280.png",{material:"61% recycled nylon / 33% nylon / 6% spandex"}],
 
   // ---- RAIN JACKETS / PANTS ----
   ["6028-812","MEC x AQUANATOR Rain Jacket - Women's","Rain Jacket","Womens",null,"products/56211/images/445065/6028812_BK000_TRANSPARENT__50671.1781639013.1280.1280.png",{layer:"2.5-Layer",wp:20000,pitZips:false,pockets:2,packable:true,pfasFree:true}],
   ["6028-759","MEC x AQUANATOR Rain Jacket - Men's","Rain Jacket","Mens",354,"products/56214/images/445085/6028759_BK000_TRANSPARENT__08154.1781639014.1280.1280.png",{layer:"2.5-Layer",wp:20000,pitZips:false,pockets:2,packable:true,pfasFree:true}],
-  ["6028-758","MEC x AQUANATOR Long Rain Jacket - Women's","Rain Jacket","Womens",null,"products/56206/images/445059/6028758_NVY13_ALT_BACK_TRANSPARENT__32741.1781639013.1280.1280.png",{layer:"2.5-Layer",wp:20000,pitZips:false,pockets:2,packable:true,pfasFree:true}],
+  ["6028-758","MEC x AQUANATOR Long Rain Jacket - Women's","Rain Jacket","Womens",null,"products/56206/images/445057/6028758_BK000_TRANSPARENT__84439.1781639013.1280.1280.png",{layer:"2.5-Layer",wp:20000,pitZips:false,pockets:2,packable:true,pfasFree:true}],
   ["6033-851","MEC Aquacycle Rain Jacket - Women's","Rain Jacket","Womens",null,"products/64902/images/469793/6033851_BK000_TRANSPARENT__10653.1781639522.1280.1280.png",{layer:"2.5-Layer",wp:20000,pitZips:false,pockets:2,packable:true}],
   ["6033-849","MEC Aquacycle Rain Jacket - Men's","Rain Jacket","Mens",102,"products/64901/images/469799/6033849_BK000_TRANSPARENT__83906.1781639522.1280.1280.png",{layer:"2.5-Layer",wp:20000,pitZips:false,pockets:2,packable:true}],
   ["6028-816","MEC x AQUANATOR Rain Pants - Women's","Rain Pants","Womens",180,"products/56204/images/414177/6028816_BK000_TRANSPARENT__10548.1781093430.1280.1280.png",{layer:"2.5-Layer",wp:20000,packable:true,pfasFree:true}],

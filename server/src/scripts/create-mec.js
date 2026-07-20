@@ -125,7 +125,7 @@ function bag(id, name, gender, ins, tempC, extra, variantOrWeight, img, desc) {
 const dn = { fillPower: 650, rdsDown: true };
 bag("6031-099", "MEC Draco 0C Down Sleeping Bag", "Unisex", "Down", 0, dn,
   bagLen([["Regular", 888], ["Long", 944]]),
-  CDN("59400/images/449940/6031099_NDN24_TRANSPARENT__24066.1280.1280.png"),
+  CDN("59400/images/449940/6031099_NDN24_TRANSPARENT__24066.1781639119.1280.1280.png"),
   "Value-focused 650-fill-power RDS down mummy bag with vertical torso baffles. EN comfort ~3 C. Regular 888 g / Long 944 g; packs to ~4 L. Recycled PFAS-free shell; includes compression + storage sacks.");
 bag("6031-100", "MEC Draco -9C Down Sleeping Bag", "Unisex", "Down", -9, dn,
   bagLen([["Regular", 1200], ["Long", 1320]]),
@@ -162,11 +162,11 @@ bag("6005-009", "MEC Talon -17C Down Sleeping Bag", "Unisex", "Down", -17,
   "800-fill-power RDS down winter mummy bag for ski touring and alpine climbing. Comfort -9 C / limit -20 C. Regular 1520 g; packs to 28 x 56 cm. Fits to 6'0\".");
 bag("6005-010", "MEC Talon Windstopper -30C Down Expedition Sleeping Bag", "Unisex", "Down", -30,
   { fillPower: 800, rdsDown: true }, sized("Length", [["Regular", 1990], ["Long", 2200]]),
-  CDN("45476/images/430723/6005010_COA00_TRANSPARENT__90553.1280.1280.png"),
+  CDN("45476/images/430723/6005010_COA00_TRANSPARENT__90553.1781638703.1280.1280.png"),
   "Expedition-grade 800-fill-power RDS down mummy bag with a GORE-TEX INFINIUM WINDSTOPPER shell. Comfort -30 C. Regular 1990 g / Long 2200 g; packs to 13 L.");
 bag("6022-629", "MEC Talon 0C Ultralight Hybrid Sleeping Bag", "Unisex", "Down", 0,
   { fillPower: 800, rdsDown: true }, 635,
-  CDN("50938/images/436556/6022629_NEG00_TRANSPARENT__11890.1280.1280.png"),
+  CDN("50938/images/436556/6022629_NEG00_TRANSPARENT__11890.1784149664.1280.1280.png"),
   "Ultralight 800-fill-power RDS down hybrid bag/quilt with an enclosed footbox plus pad-attachment straps (backless quilt-style). Comfort 5 C / limit 0 C. 635 g. Fits to 6'4\".");
 
 // synthetic
@@ -182,7 +182,7 @@ bag("6031-091", "MEC Centaurus -9C Sleeping Bag", "Unisex", "Synthetic", -9,
   "Recycled synthetic (HyperLoft) mummy bag with Thermolite fleece lining. Comfort -2 C / limit -9 C. Packs to 48 x 24 cm. * Per-size weights are approximate — MEC publishes a 1.4–1.63 kg range across Small/Regular/Long.");
 bag("6031-092", "MEC Centaurus -18C Sleeping Bag", "Unisex", "Synthetic", -18,
   { syntheticInsulationType: "EcoSoft (recycled)" }, 2570,
-  CDN("62984/images/463004/6031092_CIM11_TRANSPARENT__02497.1280.1280.png"),
+  CDN("62984/images/463004/6031092_CIM11_TRANSPARENT__02497.1781639383.1280.1280.png"),
   "Recycled synthetic (EcoSoft) winter mummy bag. Comfort -9 C / limit -18 C. * Listed 2570 g is a representative weight — MEC does not publish separate per-size weights (Small/Regular/Long).");
 
 // ---- SLEEPING PADS ----
@@ -202,7 +202,7 @@ infPad("6036-660", "MEC VectAir SL Xtreme 6 Sleeping Pad", null,
 infPad("6037-391", "MEC VectAir Ultralight 4 Sleeping Pad", 495,
   { rValue: 4.0, thicknessCm: 10, shape: "Mummy", inflationMethod: "Pump Sack", seasonRating: "3-Season" },
   {},
-  CDN("61519/images/511205/6037391_ZEN03_TRANSPARENT__33798.1280.1280.png"),
+  CDN("61519/images/511205/6037391_ZEN03_TRANSPARENT__33798.1784148944.1280.1280.png"),
   "Ultralight inflatable mummy pad with Mylar reflective insulation and welded dot-weld baffles. R-value 4.0, 10 cm thick, 183 x 55 cm, 495 g. Includes pump sack + repair kit.");
 
 ITEMS.push({ id: "6040-302", name: "MEC Waffle Z-Foam Sleeping Pad", itemType: "Foam Sleeping Pad",
@@ -280,7 +280,7 @@ const pole = (id, name, weightGrams, attrs, img, desc) =>
   ITEMS.push({ id, name, itemType: "Trekking Poles", ...(weightGrams != null ? { weightGrams } : {}), attributes: { material: "Aluminum", soldAs: "Pair", adjustmentType: "Telescoping", ...attrs }, img, description: desc });
 pole("6036-035", "MEC Gromlin Aluminum 2 Part Poles - Unisex", null,
   { lockingMechanism: "Twist Lock", sections: 2, minLengthCm: 80, maxLengthCm: 105, collapsedLengthCm: 64, tipType: "Carbide" },
-  CDN("65824/images/473332/6036035_GN081_TRANSPARENT__97987.1280.1280.png"),
+  CDN("65824/images/473332/6036035_GN081_TRANSPARENT__97987.1781639594.1280.1280.png"),
   "Compact 2-section 7075-T6 aluminum trekking poles with twist-lock adjustment over a short 80–105 cm range (suits smaller/younger hikers), carbide tips. Collapse to 64 cm. (MEC does not publish a weight.)");
 pole("6036-034", "MEC Downlink Aluminum 3 Part Poles - Unisex", 505,
   { lockingMechanism: "Twist Lock", sections: 3, minLengthCm: 105, maxLengthCm: 140, collapsedLengthCm: 63, gripMaterial: "Rubber", basketsIncluded: true },
