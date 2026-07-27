@@ -1079,11 +1079,11 @@ export default function GlobalItemEditModal({
             )}
 
             {!isCustom && (selectedVariant?.deepLink || primaryOffer?.deepLink) && (
-              <ButtonLink href={selectedVariant?.deepLink || primaryOffer.deepLink}>
+              <ButtonLink href={selectedVariant?.deepLink || primaryOffer?.deepLink}>
                 <span className="flex items-center gap-1.5">
                   <FiShoppingCart size={14} />
                   {(selectedVariant?.deepLink && merchantFromUrl(selectedVariant.deepLink)) ||
-                    primaryOffer.merchantName ||
+                    primaryOffer?.merchantName ||
                     t("globalItemEditModal.buttons.productPage")}
                 </span>
               </ButtonLink>
