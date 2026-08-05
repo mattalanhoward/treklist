@@ -156,6 +156,9 @@ const ITEMS = [
   ["6019-625","MEC Boundary Light Down Vest - Women's","Insulated Jacket","Womens",256,"products/49971/images/435584/6019625_BK000_TRANSPARENT__73462.1781638808.1280.1280.png",{insulation:"Down",fillPower:700,fillWeightG:70,rds:true,hood:"No Hood",pockets:3,packable:true,vest:true}],
   ["6033-854","MEC Fall-Line Insulated Jacket - Women's","Insulated Jacket","Womens",885,"products/63394/images/414798/6033854_BK000_TRANSPARENT__41126.1781214639.1280.1280.png",{insulation:"Synthetic",gsm:100,hood:"Helmet-Compatible Hood",pockets:4}],
   ["6019-621","MEC Tremblant Jacket - Women's","Insulated Jacket","Womens",null,"products/50348/images/436044/6019621_BK000_TRANSPARENT__62864.1781638818.1280.1280.png",{insulation:"Down",fillPower:700,hood:"Helmet-Compatible Hood",pockets:3}],
+  // Round-3 held items resolved 2026-08-05 (front images obtained)
+  ["6028-727","MEC Fireside Fleece Snap Pullover - Women's","Fleece Jacket","Womens",null,"products/54881/images/441946/6028727_NVY13_TRANSPARENT__21148.1781638948.1280.1280.png",{fleeceType:"Classic Fleece",closure:"Snap-T/Snap",hood:"No Hood",material:"100% recycled polyester (290 gsm)"}],
+  ["6016-866","MEC Guides Down Parka - Women's","Insulated Jacket","Womens",null,"products/50514/images/436198/6016866_BK000_TRANSPARENT__31876.1781638821.1280.1280.png",{insulation:"Down",fillPower:650,fillWeightG:377,rds:true,hood:"Insulated Hood",pockets:4}],
 ];
 
 // map raw fabric text -> the itemType's material enum
