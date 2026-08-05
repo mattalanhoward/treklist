@@ -172,9 +172,9 @@ bag("6022-629", "MEC Talon 0C Ultralight Hybrid Sleeping Bag", "Unisex", "Down",
 // synthetic
 bag("6031-089", "MEC Centaurus 0C Sleeping Bag", "Unisex", "Synthetic", 0,
   { syntheticInsulationType: "Polyester HyperLoft (recycled)" },
-  sized("Length", [["Small", 975], ["Regular", 1080], ["Long", 1120]]),
+  sized("Length", [["Small", 970], ["Regular", 1080], ["Long", 1120]]),
   CDN("59839/images/452426/6031089_DNN78_TRANSPARENT__40323.1781639171.1280.1280.png"),
-  "Quick-drying recycled synthetic (HyperLoft) mummy bag; reliable value for damp conditions. EN comfort 3 C / limit -3 C. Small 975 g / Regular 1080 g / Long 1120 g; packs to 20 x 40 cm.");
+  "Quick-drying recycled synthetic (HyperLoft) mummy bag; reliable value for damp conditions. EN comfort 3 C / limit -3 C. Small 970 g / Regular 1080 g / Long 1120 g; packs to 20 x 40 cm (loft 5 cm).");
 bag("6031-091", "MEC Centaurus -9C Sleeping Bag", "Unisex", "Synthetic", -9,
   { syntheticInsulationType: "HyperLoft (recycled)" },
   sized("Length", [["Small", 1400], ["Regular", 1540], ["Long", 1630]]),
