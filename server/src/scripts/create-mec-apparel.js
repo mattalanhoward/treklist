@@ -159,6 +159,15 @@ const ITEMS = [
   // Round-3 held items resolved 2026-08-05 (front images obtained)
   ["6028-727","MEC Fireside Fleece Snap Pullover - Women's","Fleece Jacket","Womens",null,"products/54881/images/441946/6028727_NVY13_TRANSPARENT__21148.1781638948.1280.1280.png",{fleeceType:"Classic Fleece",closure:"Snap-T/Snap",hood:"No Hood",material:"100% recycled polyester (290 gsm)"}],
   ["6016-866","MEC Guides Down Parka - Women's","Insulated Jacket","Womens",null,"products/50514/images/436198/6016866_BK000_TRANSPARENT__31876.1781638821.1280.1280.png",{insulation:"Down",fillPower:650,fillWeightG:377,rds:true,hood:"Insulated Hood",pockets:4}],
+
+  // ---- ROUND 4 (gap 4 — tees / sun-hoody, 2026-08-05) — all Hiking Shirt ----
+  ["6036-429","MEC Pace Short Sleeve Shirt - Men's","Hiking Shirt","Mens",null,"products/64896/images/413627/6036429_BK000_TRANSPARENT__47253.1781093172.1280.1280.png",{sleeve:"Short Sleeve",material:"68% recycled polyester / 32% polyester, UPF 30+, Polygiene"}],
+  ["6036-447","MEC Pace Short Sleeve Shirt - Women's","Hiking Shirt","Womens",null,"products/64899/images/469783/6036447_BK000_TRANSPARENT__53683.1781639522.1280.1280.png",{sleeve:"Short Sleeve",material:"68% recycled polyester / 32% polyester, UPF 30+, Polygiene"}],
+  ["6036-448","MEC Pace Tank - Women's","Hiking Shirt","Womens",null,"products/64900/images/469792/6036448_BK000_TRANSPARENT__02268.1781639522.1280.1280.png",{sleeve:"Sleeveless",material:"68% recycled polyester / 32% polyester, UPF 30+, Polygiene"}],
+  ["6036-412","MEC Mountain Short Sleeve T-Shirt - Men's","Hiking Shirt","Mens",null,"products/61459/images/413344/6036412_BK000_TRANSPARENT__62399.1781092855.1280.1280.png",{sleeve:"Short Sleeve",material:"60% organic cotton / 40% recycled polyester"}],
+  ["6036-406","MEC Mountain Graphic Short Sleeve T-Shirt - Unisex","Hiking Shirt","Unisex",null,"products/61435/images/457872/6036406_DNW21_TRANSPARENT__88391.1781639281.1280.1280.png",{sleeve:"Short Sleeve",material:"60% organic cotton / 40% recycled polyester"}],
+  ["6037-047","MEC M-Eh-C Graphic Short Sleeve T-Shirt - Unisex","Hiking Shirt","Unisex",null,"products/61314/images/457367/6037047_RSC28_TRANSPARENT__81478.1781639270.1280.1280.png",{sleeve:"Short Sleeve",material:"60% organic cotton / 40% recycled polyester (Made in Canada)"}],
+  ["6031-524","MEC Sunburst Hooded UPF - Women's","Hiking Shirt","Womens",85,"products/59328/images/449793/6031524_CLD00_TRANSPARENT__73390.1781639116.1280.1280.png",{sleeve:"Long Sleeve",material:"100% recycled polyester, UPF 50+ (hooded sun shirt)"}],
 ];
 
 // map raw fabric text -> the itemType's material enum
