@@ -1,0 +1,2377 @@
+[
+ {
+  "name": "DreamLite 35°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "DreamLite – Spacious Ultralight Sleeping Bag with TerraLite DNA Light, roomy, and built for summer nights in the backcountry, the DreamLite brings the beloved semi-rectangular design of our TerraLite into a lighter, warm-weather package. Rated to 35°F, it’s the ideal spacious ultralight sleeping bag for thru-hiking, summer backpacking, and fast-paced missions where comfort and weight both matter. Constructed with 850+ fill power goose down and a fully baffled design, the DreamLite offers excellent loft, insulation, and compressibility without sacrificing sleep quality. At just 1 lb 9 oz, it packs down incredibly small—making it a perfect companion for warm nights in the mountains, desert, or anywhere a traditional mummy bag feels too confining or overbuilt. A roomier cut from shoulders to \n\n35°F (2°C), 850FP goose down, 12D ripstop nylon shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2025/06/Dreamlite-35F-2.png",
+  "url": "https://www.westernmountaineering.com/product/dreamlite/",
+  "weightGrams": 723,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'6\"",
+     "6'0\"",
+     "6'6\"",
+     "7'0\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'6\"",
+    "options": {
+     "Length": "5'6\""
+    },
+    "weightGrams": 680
+   },
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 723
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 765
+   },
+   {
+    "key": "7'0\"",
+    "options": {
+     "Length": "7'0\""
+    },
+    "weightGrams": 811
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": 2,
+   "tempRatingF": 35,
+   "fillPower": 850,
+   "fillWeightG": 369,
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "CloudLite 15°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "CloudLite – Ultralight Three Season Sleeping Bag for Shoulder Season Comfort The CloudLite is an ultralight three season sleeping bag designed for hikers and backpackers who demand room to move and reliable warmth below freezing. Based on the best-selling TerraLite, this 15°F-rated sleeping bag features a wide-cut semi-rectangular design that offers extra space from shoulders to feet—ideal for side sleepers or anyone who doesn’t want to feel confined. Weighing just 2 lb 5 oz, the CloudLite blends generous comfort with serious performance. It’s filled with 850+ fill power ethically sourced goose down, held in place by a fully baffled construction that prevents cold spots and maximizes loft. A full down collar and insulated draft tube help retain body heat on frosty nights. Built with our ul\n\n15°F (-9°C), 850FP goose down, 12D ripstop nylon shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2025/06/Cloudlite-vertical-open-grey.png",
+  "url": "https://www.westernmountaineering.com/product/cloudlite/",
+  "weightGrams": 1049,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'6\"",
+     "6'0\"",
+     "6'6\"",
+     "7'0\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'6\"",
+    "options": {
+     "Length": "5'6\""
+    },
+    "weightGrams": 992
+   },
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 1049
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 1134
+   },
+   {
+    "key": "7'0\"",
+    "options": {
+     "Length": "7'0\""
+    },
+    "weightGrams": 1191
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -9,
+   "tempRatingF": 15,
+   "fillPower": 850,
+   "fillWeightG": 652,
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Cypress StormShield -30°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Cypress StormShield Sleeping Bag Built for the world’s harshest environments, the Cypress StormShield™ is Western Mountaineering’s answer to the demands of long-term polar expeditions, remote basecamps, and high-altitude bivouacs . Comfort-rated to -30°F (-34°C) , this winter expedition sleeping bag is designed for those who spend extended periods in deep cold and can’t afford to compromise on warmth, durability, or packability. At the heart of the Cypress is premium 850+ fill power goose down , ethically sourced and hand-filled for maximum loft and thermal performance. The spacious semi-rectangular shape provides extra room to move or layer up without creating cold spots—ideal for extended tent-bound nights or recovery time between summit pushes. Encasing the insulation is our StormShield\n\n-30°F (-34°C), 850FP goose down, StormShield shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2024/12/Cypress-STS-top-closed.png",
+  "url": "https://www.westernmountaineering.com/product/cypress-stormshield-expedition-sleeping-bag/",
+  "weightGrams": 2155,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "6'0\"",
+     "6'6\"",
+     "7'0\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 2155
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 2240
+   },
+   {
+    "key": "7'0\"",
+    "options": {
+     "Length": "7'0\""
+    },
+    "weightGrams": 2353
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -34,
+   "tempRatingF": -30,
+   "fillPower": 850,
+   "fillWeightG": 1417,
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Sequoia StormShield 5°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Sequoia StormShield – Weather-Resistant Winter Sleeping Bag for Maximum Comfort The Sequoia StormShield is a weather-resistant winter sleeping bag built for campers who want dependable warmth without sacrificing space. Rated to 5°F and weighing just 3 lb 7 oz, it’s ideal for basecamps, cold-weather road trips, and mid-winter overnights when comfort and performance both matter. This bag features premium 850+ fill power goose down and a roomy semi-rectangular cut—perfect for larger users or side sleepers who need extra space. The down-filled collar and interlocking draft tubes prevent heat loss on frigid nights, while the secondary footbox zipper opens the bag flat into a down comforter for warmer conditions. Constructed with our StormShield™ shell, the Sequoia blocks wind, resists moisture,\n\n5°F (-15°C), 850FP goose down, StormShield shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2024/12/Sequoia-STS-top-open.png",
+  "url": "https://www.westernmountaineering.com/product/sequoia-stormshield-winter-sleeping-bag/",
+  "weightGrams": 1559,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 1559
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 1616
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -15,
+   "tempRatingF": 5,
+   "fillPower": 850,
+   "fillWeightG": 936,
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Badger StormShield 15°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Badger StormShield – Wide Weather-Resistant Sleeping Bag for Cold-Weather Comfort The Badger StormShield is a wide weather-resistant sleeping bag built for cold nights, rough conditions, and sleepers who need extra space. Rated to 15°F (-10°C) and weighing just 2 lb 8 oz, this semi-rectangular bag combines roomy comfort with proven performance in winter or shoulder-season environments. Designed with a relaxed fit, the Badger offers increased shoulder and hip girth—ideal for side sleepers, larger users, or those layering up for extra warmth. It features 850+ fill power ethically sourced goose down for reliable loft, compressibility, and long-term durability. Whether you’re camping in the Rockies, pushing through Sierra storms, or backpacking in unpredictable weather, the Badger delivers ser\n\n15°F (-9°C), 850FP goose down, StormShield shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2024/12/Badger-STS-Vert-open.png",
+  "url": "https://www.westernmountaineering.com/product/badger-stormshield-all-weather-sleeping-bag/",
+  "weightGrams": 1134,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "6'0\"",
+     "6'6\"",
+     "7'0\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 1134
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 1191
+   },
+   {
+    "key": "7'0\"",
+    "options": {
+     "Length": "7'0\""
+    },
+    "weightGrams": 1247
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -9,
+   "tempRatingF": 15,
+   "fillPower": 850,
+   "fillWeightG": 652,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Apache StormShield 15°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Apache StormShield™ – Ultralight 15°F Weather Proof Sleeping Bag for Alpine and Backcountry Use Engineered for serious mountain pursuits, the Apache StormShield™ blends ultralight performance with durable and protective shell creating an award winning weather proof sleeping bag. Comfort rated to 15°F (-9°C) and weighing in at just 2 lb 2 oz (936 g) , this premium mummy-style sleeping bag is designed for alpine climbers, ski mountaineers, and fast-packers pushing into cold, wet environments. The Apache is filled with 850+ fill power ethically sourced goose down , providing exceptional warmth-to-weight performance and long-lasting loft. Its StormShield™ shell fabric is both windproof and water-resistant , making it ideal for summer mountaineering in the High Sierra, shoulder-season climbs in\n\n15°F (-9°C), 850FP goose down, StormShield shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2024/12/Apache-STS-top-closed.png",
+  "url": "https://www.westernmountaineering.com/product/apache-stormshield-weather-proof-sleeping-bag/",
+  "weightGrams": 964,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'6\"",
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'6\"",
+    "options": {
+     "Length": "5'6\""
+    },
+    "weightGrams": 907
+   },
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 964
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 1021
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -9,
+   "tempRatingF": 15,
+   "fillPower": 850,
+   "fillWeightG": 524,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Antelope StormShield 5°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Antelope StormShield – Weather-Resistant Alpine Sleeping Bag for Cold, Wet, and Windy Conditions The Antelope StormShield is a weather-resistant alpine sleeping bag designed to handle freezing temps, snow, and howling wind without adding unnecessary weight. With a 5°F rating and weighing only 2 lb 9 oz, it’s built for mountaineers, ski tourers, and backpackers facing harsh, unpredictable environments. Filled with 26 ounces of premium 850+ fill power goose down, the Antelope delivers serious warmth without bulk. Its StormShield™ shell fabric—a windproof, water-resistant microfiber—adds critical protection against moisture and spindrift while remaining breathable. Whether you’re bivying above treeline or hunkered down during a storm, this bag keeps insulation dry and lofted. The slightly wid\n\n5°F (-15°C), 850FP goose down, StormShield shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2024/12/Antelope-STS-top-closed.png",
+  "url": "https://www.westernmountaineering.com/product/antelope-stormshield/",
+  "weightGrams": 1191,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'6\"",
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'6\"",
+    "options": {
+     "Length": "5'6\""
+    },
+    "weightGrams": 1134
+   },
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 1191
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 1247
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -15,
+   "tempRatingF": 5,
+   "fillPower": 850,
+   "fillWeightG": 723,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Kodiak StormShield 0°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Kodiak StormShield – Extra-Wide Weather-Resistant Winter Sleeping Bag Built for deep winter conditions and bigger adventures, the Kodiak StormShield is an extra-wide weather-resistant winter sleeping bag designed to keep you warm, dry, and comfortable when the temperature plummets. With a 0°F rating, roomy dimensions, and a StormShield™ shell that blocks wind and sheds moisture, the Kodiak delivers serious protection for cold-weather camping, hunting trips, and extended backcountry travel. Inside, 30 oz of 850+ fill power goose down provides lofty, lightweight insulation, while the water-resistant and breathable StormShield microfiber shell helps preserve loft and warmth even in damp or frosty environments. A full-length draft tube and insulated collar seal out cold air, keeping warmth whe\n\n0°F (-18°C), 850FP goose down, StormShield shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2024/12/Kodiak-STS-top-closed.png",
+  "url": "https://www.westernmountaineering.com/product/kodiak-stormshield/",
+  "weightGrams": 1332,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "6'0\"",
+     "6'6\"",
+     "7'0\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 1332
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 1389
+   },
+   {
+    "key": "7'0\"",
+    "options": {
+     "Length": "7'0\""
+    },
+    "weightGrams": 1446
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -18,
+   "tempRatingF": 0,
+   "fillPower": 850,
+   "fillWeightG": 850,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Lynx StormShield -10°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Lynx StormShield – Weather-Resistant Down Sleeping Bag for Winter When conditions turn severe and temperatures plummet, the Lynx StormShield is your trusted companion. Purpose-built for extreme cold, this weather-resistant down sleeping bag for winter delivers reliable performance for mountaineering, backcountry ski tours, and deep winter camping. Rated to -10°F and protected by our StormShield™ shell, the Lynx offers outstanding warmth and dependable protection from the elements—without excess weight or bulk. The StormShield™ shell is a breathable, windproof, and water-resistant microfiber that helps shield the premium 850+ fill power down from moisture while maintaining loft and comfort. Whether you re camped above treeline or hunkered down in a snowy forest, this shell fabric ensures th\n\n-10°F (-23°C), 850FP goose down, StormShield shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2024/12/Lynx-STS-topopen.png",
+  "url": "https://www.westernmountaineering.com/product/lynx-stormshield/",
+  "weightGrams": 1474,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'6\"",
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'6\"",
+    "options": {
+     "Length": "5'6\""
+    },
+    "weightGrams": 1389
+   },
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 1474
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 1559
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -23,
+   "tempRatingF": -10,
+   "fillPower": 850,
+   "fillWeightG": 907,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Puma StormShield -25°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Puma StormShield – Weather-Resistant Expedition Sleeping Bag Built for the harshest environments on Earth, the Puma StormShield is a weather-resistant expedition sleeping bag designed for high-altitude objectives, deep winter expeditions, and extreme cold where failure is not an option. Rated to -25°F and protected by our StormShield™ shell, the Puma delivers serious warmth and dependable protection in punishing subzero conditions. At the core of the Puma is 36 ounces of 850+ fill power ethically sourced goose down, providing unmatched loft and insulation while maintaining impressive compressibility for its warmth. The StormShield™ fabric is a lightweight, breathable microfiber that is windproof and water-resistant—offering critical protection when condensation, frost, or spindrift threate\n\n-25°F (-32°C), 850FP goose down, StormShield shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2024/12/Puma-STS-LG-top-open.png",
+  "url": "https://www.westernmountaineering.com/product/puma-stormshield/",
+  "weightGrams": 1673,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'6\"",
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'6\"",
+    "options": {
+     "Length": "5'6\""
+    },
+    "weightGrams": 1616
+   },
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 1673
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 1758
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -32,
+   "tempRatingF": -25,
+   "fillPower": 850,
+   "fillWeightG": 1049,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Bison StormShield -40°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Bison StormShield – Weather-Resistant -40°F Expedition Sleeping Bag Whether you re pushing beyond the Arctic Circle or climbing above 8,000 meters, the Bison StormShield is a weather-resistant -40°F expedition sleeping bag built for the most extreme environments on Earth. When survival depends on your gear, this is the bag you want in your pack—or more accurately, your sled. Every feature of the Bison is engineered to maximize warmth and retain loft in brutally cold, wet, and windy conditions. The StormShield™ shell fabric is windproof, water-resistant, and highly breathable, protecting the insulation while allowing moisture to escape. Inside, a massive 42 ounces of 850+ fill power goose down is arranged in patented V-Block side baffles and horizontal cross-baffles, locking in an astonishi\n\n-40°F (-40°C), 850FP goose down, StormShield shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2024/12/BISON-STS-Vert-Open.png",
+  "url": "https://www.westernmountaineering.com/product/bison-stormshield/",
+  "weightGrams": 1956,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 1956
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 2070
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -40,
+   "tempRatingF": -40,
+   "fillPower": 850,
+   "fillWeightG": 1191,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "MonoLite 38°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "MonoLite – Ultralight Efficiency for Fast-Packed Adventures For true minimalists, the MonoLite delivers exactly what you need— nothing more, nothing less . Designed for bikepackers, fastpackers, climbers, and racing enthusiasts , this ultra-efficient sleeping bag is stripped down to the essentials. The microbaffled construction prevents cold spots, while the half-length lightweight #3 coil zipper keeps weight to an absolute minimum. An insulated top collar and draft tube add just enough warmth where it matters most. With its PFC-free DWR-treated 10D nylon shell and a pack size comparable to a Nalgene bottle , the MonoLite is built for those who move fast, sleep light, and demand performance. Made in the USA.\n\n38°F (3°C), 850FP goose down, 10 denier nylon with PFC/PFOA free DWR shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2024/05/Monolite-vertical-openzip.png",
+  "url": "https://www.westernmountaineering.com/product/monolite/",
+  "weightGrams": 369,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "6'0",
+     "6'6"
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "6'0",
+    "options": {
+     "Length": "6'0"
+    },
+    "weightGrams": 369
+   },
+   {
+    "key": "6'6",
+    "options": {
+     "Length": "6'6"
+    },
+    "weightGrams": 404
+   }
+  ],
+  "defaultVariantKey": "6'0",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": 3,
+   "tempRatingF": 38,
+   "fillPower": 850,
+   "fillWeightG": 191,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Sonora Sleep Liner",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag Liner",
+  "description": "Sonora Sleep Liner – Lightweight Sleeping Bag Liner for Travel Camping The Sonora Sleep Liner is a compact, lightweight solution for cleaner, more comfortable sleep wherever your adventures take you. Made from soft, breathable polyester Sonora fabric , this liner is smooth against the skin yet tightly woven to add a layer of protection in less-than-ideal sleeping environments—whether that’s a rustic cabin, a hostel bunk, or a roadside motel. At just a fraction of the size and weight of a standard sheet set, the Sonora Sleep Liner packs small enough to carry on any trip . Slip it inside your sleeping bag to help keep the lining cleaner on extended backcountry outings, or use it on its own as a travel sleep sack. Its smooth finish won’t cling to other fabrics, ensuring tangle-free comfort th",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2020/06/Sonora-Mummy-vertical.png",
+  "url": "https://www.westernmountaineering.com/product/sonora-sleep-liners/",
+  "attributes": {}
+ },
+ {
+  "name": "Flight Vest",
+  "brand": "Western Mountaineering",
+  "itemType": "Insulated Jacket",
+  "description": "Flight Vest – Technical Down Vest for Cold Weather Backpacking The Flight Vest is a premium technical down vest for cold weather backpacking , alpine layering, and ultralight insulation when conditions demand maximum warmth with minimal weight. Designed for serious backcountry use, it offers the warmth of a puffy without the bulk of a full-sleeve jacket — ideal for core warmth during cold starts, summit pushes, or crisp camp mornings. Weighing just 6.5 oz (184g) , the Flight Vest is filled with 850+ fill power ethically sourced goose down and finished with a durable 20-denier ripstop nylon shell . It delivers outstanding warmth-to-weight performance and compresses easily into a small stuff sack or pack lid — the kind of layer you ll always find room for, even on fast-and-light missions. Th\n\n850FP down. Weight is a reference figure; varies by size/gender.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/Flight-Vest-2014-d800e.jpg",
+  "url": "https://www.westernmountaineering.com/product/flight-vest/",
+  "weightGrams": 185,
+  "attributes": {}
+ },
+ {
+  "name": "FlyLite 36°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "FlyLite – Minimalist Summer Sleeping Bag The FlyLite is our lightest sleeping bag ever—a purpose-built Minimalist summer sleeping bag for thru-hikers, fastpackers, and minimalist adventurers shaving every possible ounce. Weighing just 14.3 ounces , it’s designed for moving fast and far when conditions are warm and you want the lowest possible pack weight. This half-zip mummy-style bag uses 10D nylon ExtremeLite™ shell fabric and 850+ fill power goose down to deliver maximum loft with minimal bulk. Rated to 36°F , it excels on true summer missions—low-to-moderate elevation trails, desert nights, and any trip where weight savings are the priority and insulation needs are intentionally modest (not a cold-weather solution). The narrow cut and half-length zipper trim grams everywhere, while the\n\n36°F (2°C), 850FP goose down, 10d nylon (248x248) balanced interlace weave shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2020/06/Flylite-Blutorange-top-open.png",
+  "url": "https://www.westernmountaineering.com/product/flylite-sleeping-bag/",
+  "weightGrams": 404,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'6\"",
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'6\"",
+    "options": {
+     "Length": "5'6\""
+    },
+    "weightGrams": 383
+   },
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 404
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 425
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": 2,
+   "tempRatingF": 36,
+   "fillPower": 850,
+   "fillWeightG": 217,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "AstraLite 26°F Quilt",
+  "brand": "Western Mountaineering",
+  "itemType": "Quilt",
+  "description": "AstraLite – Ultralight Down Backpacking Quilt The AstraLite is an ultralight down backpacking quilt built for fast-paced miles, cool-weather nights, and the kind of freedom only a quilt can offer. Weighing just 16 ounces, it provides premium insulation and versatility for thru-hikers, fast-packers, and minimalist backpackers who want warmth without excess. Filled with high-loft 850+ fill power goose down and built with ultralight 12-denier ripstop nylon, the AstraLite balances warmth, weight, and durability in a streamlined package. The quilt’s closed footbox helps lock in heat where you need it most, while the elastic pad attachment system secures the quilt to your sleeping pad—minimizing drafts and maximizing comfort through the night. With no zippers or hoods to fuss with, the AstraLite\n\n26°F (-3°C), 850FP goose down, 12D ripstop nylon shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2018/05/Astralite-clay-Vertical-bottom-1.png",
+  "url": "https://www.westernmountaineering.com/product/astralite-top-quilt/",
+  "weightGrams": 454,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'8\"",
+     "6'4\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'8\"",
+    "options": {
+     "Length": "5'8\""
+    },
+    "weightGrams": 454
+   },
+   {
+    "key": "6'4\"",
+    "options": {
+     "Length": "6'4\""
+    },
+    "weightGrams": 496
+   }
+  ],
+  "defaultVariantKey": "5'8\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -3,
+   "tempRatingF": 26,
+   "fillPower": 850,
+   "fillWeightG": 298
+  }
+ },
+ {
+  "name": "NanoLite 38°F Quilt",
+  "brand": "Western Mountaineering",
+  "itemType": "Quilt",
+  "description": "NanoLite – Ultralight Quilt for Warm Weather Adventures The NanoLite is an ultralight quilt for warm weather designed for minimalist backpackers, fastpackers, and summer thru-hikers who count every ounce. Weighing just 14 oz, this streamlined sleep system delivers packable insulation without bulk, making it a favorite for warm nights on the trail. Filled with premium 850+ fill power goose down, the NanoLite offers efficient loft and warmth, while the closed footbox helps trap heat where you need it most. Whether you re cowboy camping beneath the stars or paired with a tarp shelter, this quilt provides cozy coverage with unrestricted movement. The 12-denier ripstop nylon shell is breathable and lightweight, striking a balance between durability and minimalism. For maximum warmth and draft p\n\n38°F (3°C), 850FP goose down, 12D ripstop nylon shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2018/03/Nanolite20bottom20vert_preview.jpeg.jpg",
+  "url": "https://www.westernmountaineering.com/product/nanolite-top-quilt/",
+  "weightGrams": 371,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'8\"",
+     "6'4\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'8\"",
+    "options": {
+     "Length": "5'8\""
+    },
+    "weightGrams": 371
+   },
+   {
+    "key": "6'4\"",
+    "options": {
+     "Length": "6'4\""
+    },
+    "weightGrams": 403
+   }
+  ],
+  "defaultVariantKey": "5'8\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": 3,
+   "tempRatingF": 38,
+   "fillPower": 850,
+   "fillWeightG": 184
+  }
+ },
+ {
+  "name": "SlingLite 20°F Underquilt",
+  "brand": "Western Mountaineering",
+  "itemType": "Quilt",
+  "description": "SlingLite – Ultralight Hammock Underquilt The SlingLite is an ultralight hammock underquilt designed to keep you warm, comfortable, and draft-free while sleeping suspended under the stars. Whether you’re deep in the backcountry or chilling out at your favorite music festival, the SlingLite delivers reliable under-body insulation without the fuss of sleeping pads or makeshift solutions. Filled with premium 850+ fill power goose down and wrapped in a breathable 12-denier ripstop nylon shell, the SlingLite combines serious warmth with exceptional packability. The down contours around the underside of your hammock to prevent heat loss from below—eliminating the cold spots that can ruin an otherwise perfect night’s sleep. An adjustable suspension system allows for a snug, customized fit to a wi\n\n20°F (-7°C), 850FP goose down, 15D Sil-treated Nylon taffeta shell.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2017/04/Slinglite-imageB.png",
+  "url": "https://www.westernmountaineering.com/product/slinglite-underquilt/",
+  "weightGrams": 425,
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -7,
+   "tempRatingF": 20,
+   "fillPower": 850,
+   "fillWeightG": 227
+  }
+ },
+ {
+  "name": "HotSac VBL",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag Liner",
+  "description": "HotSac™ VBL – Lightweight Vapor Barrier Liner for Winter Camping The HotSac™ vapor barrier liner for winter camping is an essential tool for staying warm and dry on cold-weather expeditions. Designed for use inside your sleeping bag, this ultralight liner reduces evaporative heat loss and protects your insulation from internal moisture buildup — a key advantage during extended trips or alpine bivouacs. By blocking moisture vapor transfer from your body, the HotSac™ keeps your insulation drier and more effective, especially in bags with laminated shell fabrics . In harsh winter conditions, this can be the difference between staying warm or losing critical loft in your down bag. The HotSac™ does more than standard VBLs. Its reflective gold backing helps retain radiant heat, while the lightwe",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/Navy-Gold-HotSac.jpg",
+  "url": "https://www.westernmountaineering.com/product/hotsac-vbl/",
+  "weightGrams": 128,
+  "attributes": {}
+ },
+ {
+  "name": "Cloudrest Pillow",
+  "brand": "Western Mountaineering",
+  "itemType": "Pillow",
+  "description": "CloudRest Pillow – Ultralight Down Camping Pillow for the Trail The CloudRest Pillow adds soft, supportive comfort to your backcountry sleep system without adding bulk or weight. Weighing just 3.5 oz , it’s filled with 850+ fill power ethically sourced goose down , offering the same premium insulation you expect from our sleeping bags. The pillow’s ultralight 12D ripstop nylon shell compresses easily and packs down to the size of a baseball, making it ideal for thru-hiking, fastpacking, or anyone aiming for minimal sleep gear with maximum comfort. Use it on its own or pair it with extra clothing or a stuff sack for added loft and support. Whether you’re deep in the mountains or bivying under the stars, the CloudRest ultralight down camping pillow helps you sleep better, pack lighter, and r",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2024/02/Cloudrest-Pillow-Sage-copy.png",
+  "url": "https://www.westernmountaineering.com/product/cloudrest-pillows/",
+  "weightGrams": 142,
+  "attributes": {}
+ },
+ {
+  "name": "Tioga Sleep Liner",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag Liner",
+  "description": "Tioga Sleep Liner – Lightweight Silk Sleeping Bag Liner for Travel Camping The Tioga Sleep Liner combines the luxurious feel of silk with ultralight packability, making it an ideal choice for travelers, backpackers, and anyone seeking a clean, comfortable layer between themselves and the night’s bedding. Made from soft, breathable Silk Tioga fabric , this liner is tightly woven to provide an added barrier against questionable sheets in roadside motels, rustic cabins, or mountain huts—while still feeling exceptionally smooth against the skin. Weighing next to nothing and packing down small, the Tioga Sleep Liner fits easily into any corner of your pack or carry-on bag. When used inside a sleeping bag, it helps keep the lining cleaner on extended backcountry trips , extending the life of you",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/Tioga-Mummy-vertical-1.png",
+  "url": "https://www.westernmountaineering.com/product/tioga-sleep-liners/",
+  "attributes": {}
+ },
+ {
+  "name": "Snøjack Parka GWS",
+  "brand": "Western Mountaineering",
+  "itemType": "Insulated Jacket",
+  "description": "SnoJack Parka – Expedition Down Parka with Maximum Warmth and Mobility Most expedition parkas sacrifice movement for insulation, but the SnoJack Parka delivers both—offering uncompromising warmth while preserving the mobility needed for high-stakes adventures. Designed for high-altitude mountaineering, Arctic expeditions, and deep-winter pursuits , this Gore Windstopper™-equipped parka provides serious protection against brutal cold without unnecessary bulk. Its 95% baffled construction ensures maximum loft and heat retention, while strategically placed quilted panels under the arms reduce bulk and increase freedom of movement—so you can climb, belay, or work around camp without restriction. Built with premium 850+ fill power goose down and lightweight, durable shell fabrics , the SnoJack \n\n850FP down. Weight is a reference figure; varies by size/gender.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2024/02/SNOJACK-RED-FR.png",
+  "url": "https://www.westernmountaineering.com/product/snojack-parka-gws/",
+  "weightGrams": 805,
+  "attributes": {}
+ },
+ {
+  "name": "Ion Parka",
+  "brand": "Western Mountaineering",
+  "itemType": "Insulated Jacket",
+  "description": "Ion Parka – Ultralight Expedition Down Parka for Extreme Cold When temperatures plummet and the wind roars across the ridge, the Ion Parka delivers expedition-level warmth without weighing you down. Designed for big mountain pursuits, frigid belays, and extreme alpine conditions , this parka’s unique 3-layer construction combines the insulation of a baffled down parka with reduced weight and minimal exposed seams for superior weather resistance. The Gore Windstopper™ shell provides the perfect balance of wind protection, water resistance, and breathability , shielding you from harsh conditions while maintaining thermal efficiency. A longer cut offers added coverage for maximum warmth during stationary periods, making the Ion Parka a trusted companion for high-altitude ascents and winter ex\n\n850FP down. Weight is a reference figure; varies by size/gender.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/ION-w-GWS-logo.png",
+  "url": "https://www.westernmountaineering.com/product/ion-parka/",
+  "weightGrams": 710,
+  "attributes": {}
+ },
+ {
+  "name": "Meltdown Jacket",
+  "brand": "Western Mountaineering",
+  "itemType": "Insulated Jacket",
+  "description": "Meltdown Parka – Premium Down Parka for Maximum Warmth and Weather Protection Engineered for extreme warmth without excess weight, the Meltdown Parka combines 850+ fill power ethically sourced goose down with a water-resistant 30-denier MicroLite XP™ shell to deliver outstanding protection in cold, harsh conditions. Built to last and designed for serious winter performance, this parka offers one of the best warmth-to-weight ratios available. The two-way YKK® zipper allows for easy temperature regulation, while the StowAway hood packs neatly into the collar for versatility when conditions change. Fully insulated hand pockets keep fingers toasty, and an insulated draft tube behind the zipper helps block wind without adding unnecessary bulk. The elastic drawcord waist provides a customizable \n\n850FP down. Weight is a reference figure; varies by size/gender.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/49_westerntmn-41.jpg",
+  "url": "https://www.westernmountaineering.com/product/meltdown-jacket/",
+  "weightGrams": 480,
+  "attributes": {}
+ },
+ {
+  "name": "Vapor Jacket",
+  "brand": "Western Mountaineering",
+  "itemType": "Insulated Jacket",
+  "description": "Vapor Jacket – Ultralight Protection for Any Adventure Designed for those who demand warmth, weather resistance, and versatility , the Vapor Jacket delivers exceptional performance in a lightweight package . Built with a Gore-Tex Infinium™ shell , it offers superior wind protection and water resistance , keeping you warm and dry whether you re braving an alpine ridge or layering up for a winter approach. Featuring self-sealing cuffs for added heat retention and a sleek, streamlined design, the Vapor Jacket is as stylish as it is functional. At just 16 ounces , it strikes the perfect balance between comfort, performance, and packability , making it a go-to layer for backpacking, ski touring, and everyday cold-weather adventures .\n\n850FP down. Weight is a reference figure; varies by size/gender.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/47_westerntmn-29.jpg",
+  "url": "https://www.westernmountaineering.com/product/vapor-jacket/",
+  "weightGrams": 450,
+  "attributes": {}
+ },
+ {
+  "name": "Flight Jacket",
+  "brand": "Western Mountaineering",
+  "itemType": "Insulated Jacket",
+  "description": "Flight Jacket – Technical Down Jacket for Cold Weather Backpacking The Flight Jacket is a premium technical down jacket for cold weather backpacking , alpine climbing, and ultralight travel where serious warmth is needed without excess weight or bulk. Weighing just 11 oz (312g) , this high-performance insulator delivers exceptional warmth with a minimalist footprint. Insulated with 4.5 oz of 850+ fill power ethically sourced goose down , the Flight Jacket provides an outstanding warmth-to-weight ratio — one of the best in its class. The outer shell is made from a tough yet featherlight 20-denier ripstop nylon , which balances durability, compressibility, and trail-readiness for rugged use. Built for cold-weather adventures, this jacket layers easily under a shell or stands alone as your pr\n\n850FP down. Weight is a reference figure; varies by size/gender.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/48_westerntmn-38.jpg",
+  "url": "https://www.westernmountaineering.com/product/flight-jacket/",
+  "weightGrams": 310,
+  "attributes": {}
+ },
+ {
+  "name": "Flash XR Jacket",
+  "brand": "Western Mountaineering",
+  "itemType": "Insulated Jacket",
+  "description": "If you’re looking for an ultralight water-resistant down jacket with a bit more protection from the elements, the Flash XR Jacket delivers. Designed for climbers, backpackers, and alpine travelers who demand maximum warmth with minimal weight, the Flash XR builds on the proven performance of the original Flash with added weather resistance, enhanced features, and a rugged new fabric. At an average weight of just 11 ounces, the Flash XR uses an exclusive lightweight laminated shell fabric that offers increased protection against moisture while remaining breathable and packable. Whether you re belaying on a windy ledge or hunkering down at a damp alpine bivy, the XR’s shell sheds light precipitation and blocks gusts without adding unnecessary bulk. Zippered hand pockets are insulated on both\n\n850FP down. Weight is a reference figure; varies by size/gender.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/54_westerntmn-75.jpg",
+  "url": "https://www.westernmountaineering.com/product/flash-xr-jacket/",
+  "weightGrams": 312,
+  "attributes": {}
+ },
+ {
+  "name": "Hooded Flash Jacket",
+  "brand": "Western Mountaineering",
+  "itemType": "Insulated Jacket",
+  "description": "Hooded Flash Jacket – Ultralight Down Jacket for Backpacking, Climbing Trekking When weight, warmth, and packability matter most, the Hooded Flash Jacket delivers serious performance in a minimalist package. Designed for backpackers, climbers, and trekkers , this 850+ fill power goose down jacket offers exceptional insulation without unnecessary bulk—making it a go-to layer for high-output adventures in cold conditions. The higher-cut waist ensures seamless compatibility with climbing harnesses. At just over 10 ounces, the Hooded Flash Jacket is light enough to carry on every mission yet warm enough to handle frigid alpine mornings or breezy ridgelines. Its superlight 12-denier ripstop nylon shell maximizes loft while keeping weight low, and the jacket compresses to smaller than a water bo\n\n850FP down. Weight is a reference figure; varies by size/gender.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/hooded.jpg",
+  "url": "https://www.westernmountaineering.com/product/hooded-flash-jacket/",
+  "weightGrams": 291,
+  "attributes": {}
+ },
+ {
+  "name": "Flash Vest",
+  "brand": "Western Mountaineering",
+  "itemType": "Insulated Jacket",
+  "description": "Flash Vest – Ultralight Down Vest The Flash Vest is an ultralight down vest that delivers reliable core warmth without tipping the scale. Weighing just 5 oz (140g) , this minimalist layer is ideal for gram-counters, thru-hikers, alpine climbers, and trail runners looking to extend their comfort window without sacrificing speed. Filled with 850+ fill power ethically sourced goose down , the Flash Vest offers remarkable warmth for its weight. The full-length zipper makes it easy to layer or vent on the go, while reflective trim boosts low-light visibility for early starts or late descents. Its highly compressible design stashes easily into any pack pocket or stuff sack, making it a perfect just-in-case insulation piece for ultralight missions. Despite its featherweight status, the Flash Vest\n\n850FP down. Weight is a reference figure; varies by size/gender.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/51_westerntmn-68.jpg",
+  "url": "https://www.westernmountaineering.com/product/flash-vest/",
+  "weightGrams": 142,
+  "attributes": {}
+ },
+ {
+  "name": "Expedition Booties",
+  "brand": "Western Mountaineering",
+  "itemType": "Camp Shoes",
+  "description": "Expedition Down Booties – Down Booties for Winter Camping and Alpine Expeditions The Expedition Down Booties are built for serious cold. Designed to thrive in extreme winter conditions , they’re the ultimate down booties for winter camping and alpine expeditions , offering exceptional warmth and protection when temperatures drop well below freezing. Insulated with premium 850+ fill power ethically sourced goose down , these booties deliver high-loft warmth in a lightweight and compressible package. A GORE® WINDSTOPPER™ shell extends well above the ankle, providing built-in gaiter-style protection from snow, wind, and cold ground — exactly what you want for high-alpine camps, ski tours, or frigid nights in a tent. The reinforced sole and heel include additional foam insulation for durabilit\n\nDown insulation. Weight per pair.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/EXP-Bootie-red.png",
+  "url": "https://www.westernmountaineering.com/product/expedition-booties/",
+  "weightGrams": 227,
+  "attributes": {}
+ },
+ {
+  "name": "Standard Down Booties",
+  "brand": "Western Mountaineering",
+  "itemType": "Camp Shoes",
+  "description": "Standard Down Booties – Ultralight Down Booties for Cold Weather Camping The Standard Down Booties are the ultimate solution for cold feet in the backcountry. These ultralight down booties for cold weather camping help retain warmth and improve overall comfort during winter trips, hut stays, and chilly alpine evenings. Whether you re recovering in your tent or brewing coffee on a frosty morning, keeping your feet warm helps regulate body temperature and conserve energy. Filled with high-fill power European goose down , these booties offer premium insulation in a lightweight, compressible package. The outer shell is made from tightly woven nylon fabric treated with DWR to resist external moisture, while the durable coated rand adds structure and protection around the base. Inside, an elasti\n\nDown insulation. Weight per pair.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/3-booties.png",
+  "url": "https://www.westernmountaineering.com/product/standard-down-booties/",
+  "weightGrams": 170,
+  "attributes": {}
+ },
+ {
+  "name": "Flash Pants",
+  "brand": "Western Mountaineering",
+  "itemType": "Other",
+  "description": "Flash Down Pants – Ultralight Down Pants for Cold Weather Camping The Flash Down Pants are ultralight down pants for cold weather camping and alpine missions where every ounce counts. Weighing just 180g (6.3 oz) and compressing to the size of half a water bottle, they deliver serious warmth with minimal bulk — perfect for cold camps, winter backpacking, or high-altitude overnights. Insulated with 850+ fill power ethically sourced goose down , the Flash Pants offer warmth that rivals heavy fleece or synthetic layers at a fraction of the weight. The ultralight ripstop nylon shell is both wind-resistant and highly packable, designed to disappear into your pack until needed. Thoughtful features include an adjustable waist belt for dialing in fit, reinforced seat fabric for durability while sit\n\nDown insulation. Weight per pair.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/43_westerntmn-16.jpg",
+  "url": "https://www.westernmountaineering.com/product/flash-pants/",
+  "weightGrams": 180,
+  "attributes": {}
+ },
+ {
+  "name": "QuickFlash Jacket",
+  "brand": "Western Mountaineering",
+  "itemType": "Insulated Jacket",
+  "description": "QuickFlash Jacket – Ultralight Down Jacket for Backpacking The QuickFlash Jacket is the ultimate ultralight down jacket for backpacking , designed for thru-hikers, fastpackers, and minimalist adventurers who need real warmth without the bulk. Weighing in at just 8 oz (227g) , it delivers essential insulation for high-output trips where every gram matters. Filled with premium 850+ fill power ethically sourced goose down , the QuickFlash provides reliable warmth on cold ridgelines, alpine mornings, and windy rest stops. The 12D ripstop nylon shell keeps weight low while maintaining durability and compressibility — it packs down small enough to fit in your pack’s lid or a side pocket. Thoughtfully designed for trail efficiency, the QuickFlash features an insulated collar , down-filled placket\n\n850FP down. Weight is a reference figure; varies by size/gender.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/60_westerntmn-128.jpg",
+  "url": "https://www.westernmountaineering.com/product/quickflash-jacket/",
+  "weightGrams": 225,
+  "attributes": {}
+ },
+ {
+  "name": "Flight Pants",
+  "brand": "Western Mountaineering",
+  "itemType": "Other",
+  "description": "Flight Pants – Premium Down Expedition Pants for Extreme Cold Engineered for mountaineering, alpine expeditions, and harsh winter environments , the Flight Pants deliver serious warmth without unnecessary bulk. Weighing just 12.5 oz (360 g) , these insulated pants are filled with 850+ fill power ethically sourced goose down , offering exceptional heat retention in a lightweight, highly compressible package—small enough to fit in your pack alongside essential gear. For rugged performance in severe weather, the seat and knees are reinforced with Gore Windstopper™ laminated shell fabric , providing extra durability and water resistance in high-wear areas. The rest of the pant features a breathable microfiber shell that keeps weight low while ensuring comfort during active use. Full-length, tw\n\nDown insulation. Weight per pair.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/Flight-Pants-e1707868195514.png",
+  "url": "https://www.westernmountaineering.com/product/flight-pants/",
+  "weightGrams": 354,
+  "attributes": {}
+ },
+ {
+  "name": "Flash Down Booties",
+  "brand": "Western Mountaineering",
+  "itemType": "Camp Shoes",
+  "description": "Flash Down Booties – Ultralight Down Booties for Backpacking and Cold Camps The Flash Down Booties are the gold standard in ultralight down booties for backpacking and cold weather camping . Weighing just 3 oz (85g) per pair in size medium, they deliver exceptional warmth, comfort, and compressibility — all in a package light enough to blow away if you leave them out on a windy day. Whether you re warming up after a long day on the trail or relaxing at an alpine basecamp, keeping your feet warm plays a critical role in regulating your overall body temperature. The Flash Booties feature 850+ fill power ethically sourced goose down , offering reliable insulation even when the temperature drops. The shell is built from 12D ripstop nylon that’s ultralight yet durable, allowing the down to loft\n\nDown insulation. Weight per pair.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/Flash-Booties-Red.png",
+  "url": "https://www.westernmountaineering.com/product/flash-down-booties/",
+  "weightGrams": 85,
+  "attributes": {}
+ },
+ {
+  "name": "Cypress GWS Expedition -30°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Cypress GWS – Gore Infinium™ Extra-Wide -30°F Expedition Sleeping Bag Cypress GWS redefines what an extreme cold-weather sleeping bag can be. Unlike most expedition-grade designs, this is not a mummy bag—it’s extra-wide for unmatched sleeping comfort, yet still delivers full -30°F (-34°C) protection in severe winter conditions. Perfect for polar travel, base camp life, or any expedition where warmth and room to move are both essential. With an average loft of 11 inches and an incredible 50 oz. of premium 850+ fill power goose down , the Cypress GWS completely surrounds you in a thick, luxurious barrier of warmth. The Gore Infinium™ shell provides superior water resistance, windproofing, and breathability, ensuring insulation stays dry and effective even in high-moisture, high-wind environm\n\n-30°F (-34°C), 850FP goose down, Gore Windstopper shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/Cypress-GWS-sideviewclosed.png",
+  "url": "https://www.westernmountaineering.com/product/cypress-gws/",
+  "weightGrams": 2211,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 2211
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 2268
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -34,
+   "tempRatingF": -30,
+   "fillPower": 850,
+   "fillWeightG": 1417,
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Bison GWS Expedition -40°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Bison GWS – Gore Infinium™ Extreme Expedition Sleeping Bag Denali to Aconcagua to the Himalaya, the Bison GWS is built for the most extreme mountaineering conditions on Earth—places where failure is not an option. Trusted by professional climbers and polar explorers, this bag delivers life-saving warmth and protection in the coldest, harshest environments imaginable. With 42 oz. of premium 850+ fill power ethically sourced goose down , the Bison GWS achieves an incredible 10 inches of loft and a -40°F (-40°C) temperature rating . The Gore Infinium™ shell provides outstanding water resistance, windproof protection, and breathability—essential for surviving high-altitude storms and Arctic gales—while remaining lightweight and highly compressible. Its V-Block Side Baffles and horizontal chest\n\n-40°F (-40°C), 850FP goose down, Gore Windstopper shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/Bison-GWS-top-open.jpg",
+  "url": "https://www.westernmountaineering.com/product/bison-gws/",
+  "weightGrams": 2098,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 2098
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 2183
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -40,
+   "tempRatingF": -40,
+   "fillPower": 850,
+   "fillWeightG": 1191,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Puma GWS Expedition -25°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Puma GWS – Gore Infinium™ Expedition Mountaineering Sleeping Bag For serious winter mountaineering , high-altitude expeditions, and Arctic conditions, the Puma GWS delivers the ultimate combination of warmth, weather protection, and durability. Whether you’re climbing frozen waterfalls, chasing untracked powder in remote alpine basins, or braving the Brooks Range in mid-winter, the Puma GWS is built to perform where other bags fail. With 37 oz. of premium 850+ fill power ethically sourced goose down , this bag achieves 9 inches of loft and a -25°F (-32°C) temperature rating —making it one of the warmest mountaineering sleeping bags available. A 64 shoulder girth provides ample room to layer insulated clothing, store essential gear, or accommodate larger body types without compressing loft.\n\n-25°F (-32°C), 850FP goose down, Gore Windstopper shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/pumagws.jpg",
+  "url": "https://www.westernmountaineering.com/product/puma-gws/",
+  "weightGrams": 1701,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'6\"",
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'6\"",
+    "options": {
+     "Length": "5'6\""
+    },
+    "weightGrams": 1616
+   },
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 1701
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 1786
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -32,
+   "tempRatingF": -25,
+   "fillPower": 850,
+   "fillWeightG": 1049,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Lynx GWS -10°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Lynx GWS – Gore Infinium™ -10°F Down Sleeping Bag for Extreme Cold When deep winter adventures demand maximum warmth without excessive weight, the Lynx GWS delivers. Designed for fast, light alpine travel and backcountry winter missions , this bag packs 33 oz. of premium 850+ fill power ethically sourced goose down into an efficient, heat-retaining cut that weighs just 3 lbs 8 oz (1,588 g) . Rated to -10°F (-23°C) , the Lynx GWS features a full 3D down-filled collar and insulated draft tube , both constructed entirely from Gore Infinium™ fabric for superior windproofing, water resistance, and breathability. A built-in stiffening tape ensures the draft tube stays in place for consistent warmth. The V-Block Side Baffle construction keeps down insulation exactly where you need it—preventing c\n\n-10°F (-23°C), 850FP goose down, Gore Windstopper shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/Lynxgws.jpg",
+  "url": "https://www.westernmountaineering.com/product/lynx-gws/",
+  "weightGrams": 1588,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'6\"",
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'6\"",
+    "options": {
+     "Length": "5'6\""
+    },
+    "weightGrams": 1503
+   },
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 1588
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 1673
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -23,
+   "tempRatingF": -10,
+   "fillPower": 850,
+   "fillWeightG": 907,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Antelope GWS 5°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Antelope GWS – Gore Infinium™ 3-Season Alpine Sleeping Bag When your adventures take you high into the Sierra Nevada, Rockies, or other alpine ranges , the Antelope GWS offers maximum protection in a true three-season design. Built for mountaineers, alpine climbers, and serious backpackers , this bag combines lightweight packability with the weather resistance and warmth needed for early spring through late fall expeditions. With 26 oz. of premium 850+ fill power ethically sourced goose down , the Antelope GWS delivers 7 inches of loft and a 5°F (-15°C) temperature rating —keeping you warm when conditions turn cold at altitude. The 62 shoulder girth ensures comfort without sacrificing thermal efficiency, while the 3D down-filled collar , full-length draft tube , and well-shaped hood lock i\n\n5°F (-15°C), 850FP goose down, Gore Windstopper shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/antelopegws.jpg",
+  "url": "https://www.westernmountaineering.com/product/antelope-gws/",
+  "weightGrams": 1276,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'6\"",
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'6\"",
+    "options": {
+     "Length": "5'6\""
+    },
+    "weightGrams": 1191
+   },
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 1276
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 1332
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -15,
+   "tempRatingF": 5,
+   "fillPower": 850,
+   "fillWeightG": 737,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Badger GWS 15°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Badger GWS – Gore Infinium™ Wide-Cut 15°F Down Sleeping Bag The Badger GWS is the answer for those who crave room to move without sacrificing warmth or weather protection. With an expansive 66 shoulder girth and 41 foot girth , it’s perfect for side sleepers, restless campers, or anyone who feels cramped in a traditional mummy bag. Rated to 15°F (-9°C) , it provides reliable three-season warmth with the added benefit of Gore Infinium™ weather resistance for alpine adventures and damp conditions. Inside, 24 oz. of premium 850+ fill power goose down lofts to a full 6 inches , delivering exceptional warmth-to-weight performance. A three-dimensional down-filled collar creates a secure seal against drafts, while the full-length draft tube —reinforced with a Dacron™ stiffener to prevent zipper s\n\n15°F (-9°C), 850FP goose down, Gore Windstopper shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/bagdergws.jpg",
+  "url": "https://www.westernmountaineering.com/product/badger-gws/",
+  "weightGrams": 1191,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "6'0\"",
+     "6'6\"",
+     "7'0\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 1191
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 1276
+   },
+   {
+    "key": "7'0\"",
+    "options": {
+     "Length": "7'0\""
+    },
+    "weightGrams": 1361
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -9,
+   "tempRatingF": 15,
+   "fillPower": 850,
+   "fillWeightG": 652,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Apache GWS 15°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Apache GWS – Premium Gore Infinium™ Down Sleeping Bag for Cold, Demanding Trips The Apache GWS is built to take on serious conditions—pushing the limits of a two-season bag while offering near winter-level protection. With 19 oz. of high-loft 850+ fill power ethically sourced goose down and an efficient mummy cut, it delivers 6 inches of loft for fast heat retention in a lightweight, packable design. A full 3D down-filled collar and insulated draft tube —both capped with Gore Infinium™ —help seal in warmth when the weather turns foul. The Gore Infinium™ shell fabric offers exceptional windproofing, maximum water resistance, and excellent breathability, ensuring reliable performance in damp, windy, or high-exposure environments. Weighing only 2 lbs 6 oz (1,080 g) , the Apache GWS packs like\n\n15°F (-9°C), 850FP goose down, Gore Windstopper shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/Apache-GWS-crimson-vert-closed.jpg",
+  "url": "https://www.westernmountaineering.com/product/apache-gws/",
+  "weightGrams": 1077,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'6\"",
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'6\"",
+    "options": {
+     "Length": "5'6\""
+    },
+    "weightGrams": 1021
+   },
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 1077
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 1134
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -9,
+   "tempRatingF": 15,
+   "fillPower": 850,
+   "fillWeightG": 539,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Puma MF -25°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Puma MF – Winter Expedition Sleeping Bag When conditions turn brutal and temperatures plunge below zero, the Puma MF is the winter expedition sleeping bag you can count on for safety, warmth, and performance. Designed for extreme cold, high-elevation bivies, and multi-day ski tours, this bag delivers expedition-grade protection without excess bulk. With over 2.5 lbs of 850+ fill power goose down, the Puma MF offers massive loft and reliable insulation in sub-zero environments. Its V-Block side baffle construction ensures the down stays where you need it most, preventing cold spots and maximizing thermal efficiency on the coldest nights. The MicroLite XP™ shell is windproof, highly water-resistant, and remarkably breathable—keeping moisture, frost, and spindrift out while allowing perspirat\n\n-25°F (-32°C), 850FP goose down, 20D Microfiber shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/Puma-MF-top-open.png",
+  "url": "https://www.westernmountaineering.com/product/puma-mf/",
+  "weightGrams": 1559,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'6\"",
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'6\"",
+    "options": {
+     "Length": "5'6\""
+    },
+    "weightGrams": 1474
+   },
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 1559
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 1644
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -32,
+   "tempRatingF": -25,
+   "fillPower": 850,
+   "fillWeightG": 1021,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Lynx MF -10°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Lynx MF – Cold-Weather Alpine Sleeping Bag The Lynx MF is a cold-weather alpine sleeping bag built for serious winter conditions and deep backcountry missions. It’s the trusted choice for mountaineers, ski tourers, and winter travelers who need warmth without compromise. This bag thrives in sub-zero temperatures. It’s packed with 850+ fill power goose down for exceptional loft and insulation. V-Block side baffles keep the down evenly distributed. No cold spots. No shifting. Just reliable warmth, night after night. The MicroLite XP™ shell is water-resistant, windproof, and highly breathable. It sheds frost, condensation, and spindrift while protecting the insulation inside. You stay dry. You stay warm. A full down-filled draft collar and draft tube block heat loss. The trim, thermally effic\n\n-10°F (-23°C), 850FP goose down, 20D Microfiber shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/Lynx-MF-top-open.png",
+  "url": "https://www.westernmountaineering.com/product/lynx-mf/",
+  "weightGrams": 1417,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'6\"",
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'6\"",
+    "options": {
+     "Length": "5'6\""
+    },
+    "weightGrams": 1361
+   },
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 1417
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 1503
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -23,
+   "tempRatingF": -10,
+   "fillPower": 850,
+   "fillWeightG": 907,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Bristlecone MF -10°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Bristlecone MF – Expedition Sleeping Bag for Extreme Cold The Bristlecone MF is an expedition sleeping bag for extreme cold , designed for deep-winter comfort in the harshest environments. This bag is built for Arctic expeditions, high-altitude base camps, and late-season hunts where staying warm is mission-critical. Its wide, semi-rectangular shape provides extra space to layer up, shift positions, or simply stretch out. You won’t sacrifice insulation for comfort. With 850+ fill power goose down and massive loft, the Bristlecone offers serious heat retention in sub-zero conditions. The MicroLite XP™ shell resists water and wind while remaining breathable. It sheds frost and spindrift while protecting the insulation inside. A full down-filled collar and insulated draft tube seal in warmth \n\n-10°F (-23°C), 850FP goose down, 20D Microfiber shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/Bristlecone-MF-e1592347834796.png",
+  "url": "https://www.westernmountaineering.com/product/bristlecone-mf/",
+  "weightGrams": 1786,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 1786
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 1899
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -23,
+   "tempRatingF": -10,
+   "fillPower": 850,
+   "fillWeightG": 1191,
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Sequoia MF 5°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Sequoia MF – Roomy Cold-Weather Sleeping Bag The Sequoia MF is a roomy cold-weather sleeping bag built for comfort-focused backcountry missions. It’s a favorite among hunters, overlanders, and side sleepers who need more space than a traditional mummy bag provides. This bag features a semi-rectangular shape that gives you room to shift positions, layer up, or simply stretch out. It maintains thermal efficiency without the claustrophobic feel of a tighter cut. At 3 lbs 4 oz, it offers excellent warmth-to-weight performance for trips where nighttime temps drop below freezing. The Sequoia MF uses 850+ fill power goose down for high-loft warmth and compressibility. Its MicroLite XP™ shell adds water resistance and breathability, helping to protect the insulation from condensation, frost, or da\n\n5°F (-15°C), 850FP goose down, 20D Microfiber shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/Sequoia-MF-e1592347812596.png",
+  "url": "https://www.westernmountaineering.com/product/sequoia-mf/",
+  "weightGrams": 1474,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 1474
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 1559
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -15,
+   "tempRatingF": 5,
+   "fillPower": 850,
+   "fillWeightG": 936,
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Antelope MF 5°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Antelope MF – Lightweight Alpine Sleeping Bag The Antelope MF is a lightweight alpine sleeping bag built for three season mountaineering and high-altitude backcountry objectives. At just 2 lbs 7 oz, it delivers dependable warmth without weighing you down. This bag excels in rugged conditions. The MicroLite XP™ shell provides water resistance and durability. It shields the 850+ fill power goose down from condensation and spindrift while remaining breathable. A full down-filled draft collar and insulated draft tube lock in heat. The efficient mummy shape improves thermal retention without adding bulk. Whether you’re camped on a wind-blasted ridge or inside a snow-lined bivy, the Antelope MF helps you stay warm and sleep well. Designed for climbers, alpinists, and backpackers, this bag balanc\n\n5°F (-15°C), 850FP goose down, 20D Microfiber shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/2015-Antelope-MF-side-open.png",
+  "url": "https://www.westernmountaineering.com/product/antelope-mf/",
+  "weightGrams": 1106,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'6\"",
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'6\"",
+    "options": {
+     "Length": "5'6\""
+    },
+    "weightGrams": 1049
+   },
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 1106
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 1162
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -15,
+   "tempRatingF": 5,
+   "fillPower": 850,
+   "fillWeightG": 737,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Ponderosa MF 15°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Ponderosa MF – Spacious Backcountry Sleeping Bag The Ponderosa MF is a spacious backcountry sleeping bag designed for campers who value room, comfort, and reliable warmth. With a wide semi-rectangular shape, it gives you the freedom to stretch, shift, or sprawl—all without sacrificing insulation. This bag is perfect for car camping, glamping, cabin stays, or backcountry trips where comfort takes priority. It’s filled with premium 850+ fill power goose down, offering high-loft warmth that compresses easily. At just 2 lbs 11 oz, it stays light enough to carry without weighing down your kit. The MicroLite XP™ shell adds durability and water resistance. It protects the down from condensation and damp conditions while maintaining breathability. Whether you re tucked into a tent or sleeping unde\n\n15°F (-9°C), 850FP goose down, 20D Microfiber shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/Ponderosa-MF.png",
+  "url": "https://www.westernmountaineering.com/product/ponderosa-mf/",
+  "weightGrams": 1162,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "6'0\"",
+     "6'6\"",
+     "7'0\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 1162
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 1219
+   },
+   {
+    "key": "7'0\"",
+    "options": {
+     "Length": "7'0\""
+    },
+    "weightGrams": 1304
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -9,
+   "tempRatingF": 15,
+   "fillPower": 850,
+   "fillWeightG": 765,
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Kodiak MF 0°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Kodiak MF – Wide Cold-Weather Sleeping Bag The Kodiak MF is a wide cold-weather sleeping bag built for campers who need more room without losing warmth. It’s ideal for side sleepers, larger users, or anyone who doesn’t want to feel confined in the cold. With its wide-cut mummy shape, this bag offers generous space at the shoulders and hips. You can move freely, change positions, and sleep naturally—even with layers on. It’s packed with 850+ fill power goose down for high-loft warmth and compressibility. The MicroLite XP™ shell adds wind resistance, water protection, and breathability. It shields the insulation from frost, spindrift, and moisture while letting internal condensation escape. A full down-filled collar and draft tube keep body heat in and cold air out. The full-length #5 YKK zi\n\n0°F (-18°C), 850FP goose down, 20D Microfiber shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/Kodiak-MF-side-open.png",
+  "url": "https://www.westernmountaineering.com/product/kodiak-mf/",
+  "weightGrams": 1247,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "6'0\"",
+     "6'6\"",
+     "7'0\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 1247
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 1332
+   },
+   {
+    "key": "7'0\"",
+    "options": {
+     "Length": "7'0\""
+    },
+    "weightGrams": 1389
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -18,
+   "tempRatingF": 0,
+   "fillPower": 850,
+   "fillWeightG": 850,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Badger MF 15°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Badger MF – Wide Three-Season Sleeping Bag The Badger MF is a wide three-season sleeping bag built for backpackers who want more space without giving up warmth. It’s ideal for side sleepers, restless campers, or anyone who prefers extra room in colder conditions. The bag features a wider mummy cut that provides additional space at the shoulders and hips. You can move freely, layer up, and sleep comfortably—without compressing insulation or losing heat. Filled with 850+ fill power goose down, the Badger MF delivers high-loft warmth in a lightweight design. The down lofts easily and traps heat efficiently. At just 2 lbs 8 oz, it packs down small while offering serious comfort on chilly nights. The MicroLite XP™ shell resists moisture and wind while remaining breathable. It protects your insu\n\n15°F (-9°C), 850FP goose down, 20D Microfiber shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/2015-Badger-MF-side-open.png",
+  "url": "https://www.westernmountaineering.com/product/badger-mf/",
+  "weightGrams": 1077,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'6\"",
+     "6'0\"",
+     "6'6\"",
+     "7'0\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'6\"",
+    "options": {
+     "Length": "5'6\""
+    },
+    "weightGrams": 936
+   },
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 1077
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 1134
+   },
+   {
+    "key": "7'0\"",
+    "options": {
+     "Length": "7'0\""
+    },
+    "weightGrams": 1191
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -9,
+   "tempRatingF": 15,
+   "fillPower": 850,
+   "fillWeightG": 652,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Apache MF 15°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Apache MF – Lightweight Cold-Weather Sleeping Bag The Apache MF is a lightweight cold-weather sleeping bag built for alpine missions, shoulder-season trips, and three-season backpacking. At just 2 lbs 1 oz, it delivers impressive warmth in a compact, trail-ready design. This bag is made for backcountry travelers who push into unpredictable weather and colder elevations. It features 850+ fill power goose down for high-loft insulation that compresses easily and performs reliably in freezing conditions. The MicroLite XP™ shell resists wind and water while remaining breathable. It protects the down from moisture, condensation, and spindrift without trapping excess heat or sweat. A trim, thermally efficient cut reduces dead air space. This helps the bag warm up quickly and retain body heat more\n\n15°F (-9°C), 850FP goose down, 20D Microfiber shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/ApacheMF-2011-Top-Closed.jpg",
+  "url": "https://www.westernmountaineering.com/product/apache-mf/",
+  "weightGrams": 907,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'6\"",
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'6\"",
+    "options": {
+     "Length": "5'6\""
+    },
+    "weightGrams": 850
+   },
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 907
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 964
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -9,
+   "tempRatingF": 15,
+   "fillPower": 850,
+   "fillWeightG": 539,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Caribou MF 35°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Caribou MF – Lightweight Summer Backpacking Sleeping Bag The Caribou MF is a lightweight summer backpacking sleeping bag built for long-distance hikes, warm nights, and unpredictable weather. Weighing just 1 lb 5 oz, it offers breathable protection without adding bulk. This bag uses MicroLite XP™ fabric to block wind and resist moisture. The shell is highly breathable and surprisingly durable for its weight. It keeps condensation out while allowing heat and humidity to escape. Inside, 850+ fill power goose down provides excellent warmth-to-weight efficiency. The down lofts easily and compresses small—perfect for ultralight packs and summer trail use. A roomy mummy cut allows for comfort without unnecessary material. It gives you space to move without letting warmth escape. The full-length \n\n35°F (2°C), 850FP goose down, 20D Microfiber shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/1-Caribou-MF.png",
+  "url": "https://www.westernmountaineering.com/product/caribou-mf/",
+  "weightGrams": 595,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'6\"",
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'6\"",
+    "options": {
+     "Length": "5'6\""
+    },
+    "weightGrams": 567
+   },
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 595
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 652
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": 2,
+   "tempRatingF": 35,
+   "fillPower": 850,
+   "fillWeightG": 283,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Sycamore MF 25°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Sycamore MF – Roomy Three-Season Sleeping Bag The Sycamore MF is a roomy three-season sleeping bag built for comfort, versatility, and weather resistance in changing conditions. With a spacious semi-rectangular fit, it’s ideal for side sleepers, restless campers, or anyone who dislikes the squeeze of a mummy bag. At just 2 lbs, the Sycamore MF strikes a perfect balance between weight, warmth, and packability. It’s well-suited for backpacking, hunting trips, car camping, or overland travel. The bag features 850+ fill power goose down, offering high-loft warmth without unnecessary bulk. It compresses easily and lofts quickly when unpacked—keeping you comfortable on chilly nights. A durable MicroLite XP™ shell surrounds the insulation. This shell is wind-resistant, water-resistant, and breath\n\n25°F (-4°C), 850FP goose down, 20D Microfiber shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/Sycamore-Vert-openzip.jpg",
+  "url": "https://www.westernmountaineering.com/product/sycamore-mf/",
+  "weightGrams": 907,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 907
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 964
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -4,
+   "tempRatingF": 25,
+   "fillPower": 850,
+   "fillWeightG": 482,
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "Alder MF 25°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "Alder MF – Roomy Summer Sleeping Bag The Alder MF is a roomy summer sleeping bag made for mild nights, starry skies, and comfort without restriction. Its semi-rectangular shape gives you space to stretch out while still sealing in warmth when the temperature drops before dawn. With a 62-inch shoulder girth and 46 inches at the foot, the Alder MF offers generous space for side sleepers or anyone who moves around while sleeping. It’s perfect for warm-weather backpacking, casual car camping, and minimalist weekend getaways. This bag features 850+ fill power goose down for lightweight insulation and high-loft performance. The MicroLite XP™ shell adds wind resistance and water repellency while staying breathable and durable in summer conditions. Two zippers offer versatile use. One runs along t\n\n25°F (-4°C), 850FP goose down, 20D Microfiber shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/2-Alder-MF.png",
+  "url": "https://www.westernmountaineering.com/product/alder-mf/",
+  "weightGrams": 879,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 879
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 936
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -4,
+   "tempRatingF": 25,
+   "fillPower": 850,
+   "fillWeightG": 454,
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "SummerLite 32°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "SummerLite – Ultralight Summer Sleeping Bag The SummerLite is an ultralight summer sleeping bag designed for fast-moving backpackers, bikepackers, and thru-hikers chasing miles in warm weather. Weighing just 19 ounces, it delivers true ultralight performance without sacrificing comfort or warmth. This fully baffled bag uses 850+ fill power goose down to maximize loft and warmth-to-weight efficiency. It keeps you warm on cool summer nights while staying compact in your pack. The 12-denier ripstop nylon shell is breathable and durable, offering protection without added bulk. A full-length #5 YKK zipper allows for versatile ventilation. Open the bag fully on warmer nights or zip up tight when the temps drop. An insulated draft tube runs the length of the zipper to prevent heat loss and elimin\n\n32°F (0°C), 850FP goose down. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/Summerlite-Top-Open-copy.jpg",
+  "url": "https://www.westernmountaineering.com/product/summerlite/",
+  "weightGrams": 539,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'6\"",
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'6\"",
+    "options": {
+     "Length": "5'6\""
+    },
+    "weightGrams": 510
+   },
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 539
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 595
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": 0,
+   "tempRatingF": 32,
+   "fillPower": 850,
+   "fillWeightG": 255,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "MegaLite 30°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "MegaLite – Ultralight Wide Sleeping Bag The MegaLite is an ultralight wide sleeping bag built for backpackers who need room to move without carrying extra weight. At just 1 lb 8 oz, it delivers exceptional comfort, warmth, and packability for three-season use. This bag features a wider mummy cut, offering more shoulder and hip space than standard ultralight bags. It’s perfect for side sleepers, restless campers, or anyone who dislikes tight quarters in the backcountry. The MegaLite uses 850+ fill power goose down for high-loft insulation that compresses easily and lofts quickly. Full baffle construction allows the down to fully expand, maximizing warmth in cool-to-cold conditions. A full-length #5 YKK zipper adds versatile ventilation. You can unzip the bag completely on warm nights or zip\n\n30°F (-1°C), 850FP goose down, 12D ripstop nylon shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/Megalite-Top-Open.png",
+  "url": "https://www.westernmountaineering.com/product/megalite/",
+  "weightGrams": 680,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'6\"",
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'6\"",
+    "options": {
+     "Length": "5'6\""
+    },
+    "weightGrams": 652
+   },
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 680
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 709
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -1,
+   "tempRatingF": 30,
+   "fillPower": 850,
+   "fillWeightG": 340,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "TerraLite 25°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "TerraLite – Ultralight Sleeping Bag for Side Sleepers The TerraLite is an ultralight sleeping bag for side sleepers who need space to move without sacrificing warmth or weight. At just 1 lb 13 oz, it delivers premium performance for backpackers, overlanders, and comfort-focused campers. This bag features a wide-cut design from shoulders to footbox. It gives side sleepers and restless movers room to shift without compressing insulation or feeling restricted. The 850+ fill power goose down lofts freely inside fully baffled construction, offering exceptional warmth-to-weight efficiency. A breathable 12-denier ripstop nylon shell balances durability and airflow. It keeps moisture out while allowing internal humidity to escape. An insulated draft tube seals in warmth, helping you sleep through \n\n25°F (-4°C), 850FP goose down, 12D ripstop nylon shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/Terralite-vert-open2016.jpg",
+  "url": "https://www.westernmountaineering.com/product/terralite/",
+  "weightGrams": 822,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'6\"",
+     "6'0\"",
+     "6'6\"",
+     "7'0\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'6\"",
+    "options": {
+     "Length": "5'6\""
+    },
+    "weightGrams": 765
+   },
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 822
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 879
+   },
+   {
+    "key": "7'0\"",
+    "options": {
+     "Length": "7'0\""
+    },
+    "weightGrams": 964
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -4,
+   "tempRatingF": 25,
+   "fillPower": 850,
+   "fillWeightG": 510,
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "UltraLite 20°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "UltraLite – Three-Season Ultralight Sleeping Bag The UltraLite is a three-season ultralight sleeping bag built for backpackers who want premium warmth without added weight or volume. Weighing just 1 lb 13 oz, it delivers award-winning performance for everything from weekend trips to thru-hikes. This bag uses 850+ fill power ethically sourced goose down for excellent loft and compressibility. The down insulation provides reliable warmth for cool nights across spring, summer, and fall conditions. The ExtremeLite™ shell fabric is ultralight, breathable, and tightly woven. It helps keep moisture out while allowing internal humidity to escape. It’s one of the lightest, most efficient shell fabrics available today. The efficient mummy shape improves thermal retention while minimizing unnecessary\n\n20°F (-7°C), 850FP goose down, 12D ripstop nylon shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/Ultralite-Top-Closed-zipper.jpg",
+  "url": "https://www.westernmountaineering.com/product/ultralite/",
+  "weightGrams": 822,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'6\"",
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'6\"",
+    "options": {
+     "Length": "5'6\""
+    },
+    "weightGrams": 794
+   },
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 822
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 879
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -7,
+   "tempRatingF": 20,
+   "fillPower": 850,
+   "fillWeightG": 454,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "AlpinLite 20°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "AlpinLite – Wide Three-Season Sleeping Bag The AlpinLite is a wide three-season sleeping bag designed for backpackers who want more room without sacrificing ultralight performance. It delivers the same award-winning warmth and features as the UltraLite, but with a roomier cut for added comfort. At just 1 lb 15 oz, the AlpinLite provides premium warmth with excellent packability. It’s ideal for side sleepers, larger users, or anyone who prefers extra space while sleeping outdoors. The bag is insulated with 850+ fill power ethically sourced goose down. This high-loft insulation offers excellent warmth-to-weight performance across spring, summer, and fall conditions. The ExtremeLite™ shell fabric is lightweight, wind-resistant, and breathable. It protects the down from condensation and drafts\n\n20°F (-7°C), 850FP goose down, 12D nylon ripstop shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/alpinlite.jpg",
+  "url": "https://www.westernmountaineering.com/product/alpinlite/",
+  "weightGrams": 879,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'6\"",
+     "6'0\"",
+     "6'6\"",
+     "7'0\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'6\"",
+    "options": {
+     "Length": "5'6\""
+    },
+    "weightGrams": 822
+   },
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 879
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 936
+   },
+   {
+    "key": "7'0\"",
+    "options": {
+     "Length": "7'0\""
+    },
+    "weightGrams": 1021
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -7,
+   "tempRatingF": 20,
+   "fillPower": 850,
+   "fillWeightG": 539,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "VersaLite 10°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "VersaLite – Ultralight 10-Degree Sleeping Bag The VersaLite is an ultralight 10-degree sleeping bag designed for cold-weather backpacking, shoulder-season missions, and colder sleepers who need extra warmth. At just 2 lbs, it’s one of the lightest 10°F-rated bags on the market. This bag is part of our award-winning ExtremeLite™ series. It features 850+ fill power goose down for excellent loft and warmth-to-weight efficiency. With an average of 20 oz of down fill, the VersaLite traps heat and maintains insulation even in frosty conditions. A full down-filled draft collar and insulated draft tube help prevent heat loss along the zipper and neck area. These features work together to keep cold air out and body heat in, even during long alpine nights. The roomy cut offers comfort without compro\n\n10°F (-12°C), 850FP goose down, 12D ripstop nylon shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/Versalite-top-closed.jpg",
+  "url": "https://www.westernmountaineering.com/product/versalite/",
+  "weightGrams": 907,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'6\"",
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'6\"",
+    "options": {
+     "Length": "5'6\""
+    },
+    "weightGrams": 850
+   },
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 907
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 964
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": -12,
+   "tempRatingF": 10,
+   "fillPower": 850,
+   "fillWeightG": 567,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "EverLite 45°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "EverLite – Ultralight Convertible Sleeping Bag The EverLite is an ultralight convertible sleeping bag designed for warm-weather travel, layering, and adaptable outdoor use. At just 14.5 ounces, it’s one of the lightest and most versatile sleep systems in our lineup, combining premium materials with Western Mountaineering’s trusted USA-made craftsmanship. Use it alone on warm summer nights, or unzip it fully to create a tapered down blanket—ideal for car camping, hut trips, or indoor use. You can drape it over a hammock for full-wrap insulation or pair it with another sleeping bag to add roughly 10°F of warmth in colder conditions. The EverLite is filled with 850+ fill power goose down for ultralight insulation that compresses easily and lofts quickly. It provides efficient warmth while sta\n\n45°F (7°C), 850FP goose down, 12D nylon ripstop shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/Everlite-Top-Open.jpg",
+  "url": "https://www.westernmountaineering.com/product/everlite/",
+  "weightGrams": 411,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 411
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 489
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": 7,
+   "tempRatingF": 45,
+   "fillPower": 850,
+   "fillWeightG": 184,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "HighLite 35°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "HighLite – Ultralight Down Sleeping Bag for Minimalist Missions The HighLite is an ultralight down sleeping bag designed for backpackers who demand warmth without excess. Every detail maximizes efficiency. At just 16 ounces, it’s one of the lightest fully enclosed sleeping bags in its class. We built the HighLite with our 0.9 oz ExtremeLite™ shell—an incredibly lightweight, densely woven fabric that keeps weight low without sacrificing durability. Horizontal seams are sewn-through to eliminate excess material, while vertical seams use short netting baffles to allow the 850+ fill power goose down to fully loft. The trim mummy cut reduces dead air space, helping the bag warm up quickly and retain heat efficiently. It’s built for fastpacking, ultralight summer hikes, or long-distance missions\n\n35°F (2°C), 850FP goose down, 12D ripstop nylon shell. Weight shown per length; Left/Right zip available.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/Highlite-Clay-top-open-copy.png",
+  "url": "https://www.westernmountaineering.com/product/highlite/",
+  "weightGrams": 454,
+  "variantAxes": [
+   {
+    "name": "Length",
+    "values": [
+     "5'6\"",
+     "6'0\"",
+     "6'6\""
+    ]
+   }
+  ],
+  "variants": [
+   {
+    "key": "5'6\"",
+    "options": {
+     "Length": "5'6\""
+    },
+    "weightGrams": 425
+   },
+   {
+    "key": "6'0\"",
+    "options": {
+     "Length": "6'0\""
+    },
+    "weightGrams": 454
+   },
+   {
+    "key": "6'6\"",
+    "options": {
+     "Length": "6'6\""
+    },
+    "weightGrams": 482
+   }
+  ],
+  "defaultVariantKey": "6'0\"",
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": 2,
+   "tempRatingF": 35,
+   "fillPower": 850,
+   "fillWeightG": 227,
+   "shape": "Mummy",
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ },
+ {
+  "name": "MityLite 40°F Sleeping Bag",
+  "brand": "Western Mountaineering",
+  "itemType": "Sleeping Bag",
+  "description": "MityLite – Versatile Lightweight Sleeping Bag for Travel, Van Life, and Adventure The MityLite is a versatile lightweight sleeping bag built for warm-weather camping, road trips, and spontaneous adventures. It weighs just 1 lb 5 oz and features a roomy semi-rectangular cut, giving you the freedom to stretch out and sleep naturally. Filled with premium 850+ fill power goose down, the MityLite provides excellent warmth-to-weight performance without bulk. Whether you re crashing in the back of your truck, car camping on a coastal road trip, or packing light for a summer overnighter, this bag delivers reliable comfort. The full-length zipper runs around the footbox, letting you unzip the bag completely to use it as a down comforter. You can also zip it together with another MityLite to create \n\n40°F (4°C), 850FP goose down, 12D ripstop nylon shell.",
+  "imageUrl": "https://www.westernmountaineering.com/wp-content/uploads/2015/06/Mitylite-Vertical-open-2015.jpg",
+  "url": "https://www.westernmountaineering.com/product/mitylite/",
+  "weightGrams": 595,
+  "attributes": {
+   "insulationType": "Down",
+   "tempRatingC": 4,
+   "tempRatingF": 40,
+   "fillPower": 850,
+   "fillWeightG": 340,
+   "gender": "Unisex",
+   "hoodType": "Insulated Hood"
+  }
+ }
+]
