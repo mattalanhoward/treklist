@@ -172,18 +172,16 @@ bag("6022-629", "MEC Talon 0C Ultralight Hybrid Sleeping Bag", "Unisex", "Down",
 // synthetic
 bag("6031-089", "MEC Centaurus 0C Sleeping Bag", "Unisex", "Synthetic", 0,
   { syntheticInsulationType: "Polyester HyperLoft (recycled)" },
-  sized("Length", [["Small", 975], ["Regular", 1080], ["Long", 1120]]),
+  sized("Length", [["Small", 970], ["Regular", 1080], ["Long", 1120]]),
   CDN("59839/images/452426/6031089_DNN78_TRANSPARENT__40323.1781639171.1280.1280.png"),
-  "Quick-drying recycled synthetic (HyperLoft) mummy bag; reliable value for damp conditions. EN comfort 3 C / limit -3 C. Small 975 g / Regular 1080 g / Long 1120 g; packs to 20 x 40 cm.");
+  "Quick-drying recycled synthetic (HyperLoft) mummy bag; reliable value for damp conditions. EN comfort 3 C / limit -3 C. Small 970 g / Regular 1080 g / Long 1120 g; packs to 20 x 40 cm (loft 5 cm).");
 bag("6031-091", "MEC Centaurus -9C Sleeping Bag", "Unisex", "Synthetic", -9,
   { syntheticInsulationType: "HyperLoft (recycled)" },
-  sized("Length", [["Small", 1400], ["Regular", 1500], ["Long", 1630]]),
+  sized("Length", [["Small", 1400], ["Regular", 1540], ["Long", 1630]]),
   CDN("59358/images/449838/6031091_BLP90_TRANSPARENT__32288.1781639117.1280.1280.png"),
-  "Recycled synthetic (HyperLoft) mummy bag with Thermolite fleece lining. Comfort -2 C / limit -9 C. Packs to 48 x 24 cm. * Per-size weights are approximate — MEC publishes a 1.4–1.63 kg range across Small/Regular/Long.");
-bag("6031-092", "MEC Centaurus -18C Sleeping Bag", "Unisex", "Synthetic", -18,
-  { syntheticInsulationType: "EcoSoft (recycled)" }, 2570,
-  CDN("62984/images/463004/6031092_CIM11_TRANSPARENT__02497.1781639383.1280.1280.png"),
-  "Recycled synthetic (EcoSoft) winter mummy bag. Comfort -9 C / limit -18 C. * Listed 2570 g is a representative weight — MEC does not publish separate per-size weights (Small/Regular/Long).");
+  "Recycled synthetic (HyperLoft) mummy bag with Thermolite fleece lining. EN comfort -2 C. Small 1400 g / Regular 1540 g / Long 1630 g; packs to 48 x 24 cm (9.5–11 L).");
+// NOTE: Centaurus -18C (6031-092) removed 2026-08-05 — DISCONTINUED on mec.ca
+// (only 0C and -9C remain in the Centaurus line). Archived in the DB; do not re-add.
 
 // ---- SLEEPING PADS ----
 const infPad = (id, name, weightGrams, attrs, variantExtra, img, desc) =>

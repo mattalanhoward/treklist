@@ -131,6 +131,43 @@ const ITEMS = [
   ["6018-181","MEC T3 Base Layer Bottoms - Men's","Base Layer Bottom","Mens",null,"products/49264/images/434357/6018181_BK000_TRANSPARENT__38742.1781638781.1280.1280.png",{tier:"Expedition",fabric:"Synthetic",gsm:240}],
   ["6018-014","MEC T3 Base Layer Long Sleeve Top - Women's","Base Layer Top","Womens",null,"products/49219/images/434289/6018014_BK000_TRANSPARENT__12802.1781638779.1280.1280.png",{tier:"Expedition",fabric:"Synthetic",sleeve:"Long Sleeve",gsm:240}],
   ["6019-345","MEC T0 Base Layer Long Sleeve Top - Men's","Base Layer Top","Mens",null,"products/49207/images/434232/6019345_BK000_TRANSPARENT__36378.1781638777.1280.1280.png",{tier:"Lightweight",fabric:"Synthetic",sleeve:"Long Sleeve"}],
+
+  // ---- ROUND 3 (gap-closing, 2026-07-27) — Fleece / Down / Premium rain ----
+  // Fleece / midlayers (Fireside Snap Pullover W 6028-727 held — front image pending)
+  ["6028-749","MEC Fireside Fleece Jacket - Men's","Fleece Jacket","Mens",null,"products/54902/images/442022/6028749_BK000_TRANSPARENT__52733.1781638950.1280.1280.png",{fleeceType:"Classic Fleece",closure:"Full-Zip",hood:"No Hood",material:"100% recycled polyester (290 gsm)"}],
+  ["6028-750","MEC Fireside Fleece Snap Pullover - Men's","Fleece Jacket","Mens",null,"products/54887/images/441976/6028750_NVY13_TRANSPARENT__64222.1783098990.1280.1280.png",{fleeceType:"Classic Fleece",closure:"Snap-T/Snap",hood:"No Hood",material:"100% recycled polyester (290 gsm), recycled-nylon reinforcement"}],
+  ["6031-444","MEC Fireside Fleece Vest - Unisex","Fleece Jacket","Unisex",null,"products/59671/images/451639/6031444_BK000_TRANSPARENT__39727.1781639155.1280.1280.png",{fleeceType:"Classic Fleece",closure:"Full-Zip",hood:"No Hood",material:"100% recycled polyester (290 gsm)",vest:true}],
+  ["6028-753","MEC Rockwall Midlayer - Men's","Fleece Jacket","Mens",null,"products/55770/images/444037/6028753_BK000_TRANSPARENT__17212.1781638991.1280.1280.png",{fleeceType:"Hardface Fleece",closure:"Full-Zip",hood:"Fixed Hood",material:"100% polyester thermal stretch fleece"}],
+  ["6028-724","MEC Rockwall Midlayer - Women's","Fleece Jacket","Womens",null,"products/55801/images/444150/6028724_BK000_TRANSPARENT__94731.1781638994.1280.1280.png",{fleeceType:"Hardface Fleece",closure:"Full-Zip",hood:"Fixed Hood",material:"100% polyester thermal stretch fleece"}],
+  ["6034-548","MEC Classic Berber Fleece Vest - Unisex","Fleece Jacket","Unisex",451,"products/62157/images/460340/6034548_STC27_TRANSPARENT__47459.1783703644.1280.1280.png",{fleeceType:"Sherpa Fleece",closure:"Full-Zip",hood:"No Hood",material:"100% recycled polyester berber, Thermolite-lined",vest:true}],
+
+  // Premium rain / hardshell
+  ["6033-843","MEC Synergy HD Gore-Tex Jacket - Men's","Rain Jacket","Mens",615,"products/62409/images/460843/6033843_BK000_TRANSPARENT__08692.1781639340.1280.1280.png",{layer:"3-Layer",membrane:"GORE-TEX (ePE)",hood:"Helmet-Compatible",pitZips:true,pockets:5}],
+  ["6033-842","MEC Synergy HD Gore-Tex Bib - Men's","Rain Pants","Mens",685,"products/62392/images/414797/6033842_BK000_TRANSPARENT__73848.1781214639.1280.1280.png",{layer:"3-Layer",membrane:"GORE-TEX (ePE)",sideZips:"Full-Length"}],
+  ["6020-755","MEC Synergy Gore-Tex Alpine Pants - Men's","Rain Pants","Mens",null,"products/52325/images/491970/6020755_CQB07_TRANSPARENT__51162.1783703913.1280.1280.png",{layer:"3-Layer",membrane:"GORE-TEX C-Knit",sideZips:"Full-Length"}],
+  ["6020-746","MEC Greycoast Rain Jacket - Women's","Rain Jacket","Womens",null,"products/50972/images/436576/6020746_BK000_TRANSPARENT__71543.1781638831.1280.1280.png",{layer:"2.5-Layer",wp:15000,hood:"Adjustable Hood",pitZips:false,pockets:3}],
+
+  // Down / insulated — rest of the line (Guides Down Parka W 6016-866 held — front image pending)
+  ["6033-831","MEC Bromont Recycled Down Jacket - Men's","Insulated Jacket","Mens",1015,"products/63391/images/414793/6033831_BK000_TRANSPARENT__09519.1781214639.1280.1280.png",{insulation:"Down",fillPower:700,fillWeightG:205,hood:"Helmet-Compatible Hood",pockets:5}],
+  ["6033-852","MEC Bromont Recycled Down Jacket - Women's","Insulated Jacket","Womens",null,"products/63525/images/464428/6033852_BK000_TRANSPARENT__16395.1781639411.1280.1280.png",{insulation:"Down",fillPower:700,fillWeightG:170,hood:"Helmet-Compatible Hood",pockets:4}],
+  ["6033-830","MEC Boundary Light Down Hooded Jacket - Men's","Insulated Jacket","Mens",412,"products/61366/images/457537/6033830_BK000_TRANSPARENT__87364.1781639274.1280.1280.png",{insulation:"Down",fillPower:700,fillWeightG:100,rds:true,hood:"Helmet-Compatible Hood",pockets:3,packable:true}],
+  ["6033-850","MEC Boundary Light Down Hooded Jacket - Women's","Insulated Jacket","Womens",372,"products/61353/images/457533/6033850_ZEN03_TRANSPARENT__89278.1781639274.1280.1280.png",{insulation:"Down",fillPower:700,fillWeightG:100,rds:true,hood:"Helmet-Compatible Hood",pockets:3,packable:true}],
+  ["6019-623","MEC Boundary Light Down Jacket - Women's","Insulated Jacket","Womens",365,"products/49974/images/435599/6019623_BK000_TRANSPARENT__08464.1781638809.1280.1280.png",{insulation:"Down",fillPower:700,rds:true,hood:"No Hood",pockets:3,packable:true}],
+  ["6019-625","MEC Boundary Light Down Vest - Women's","Insulated Jacket","Womens",256,"products/49971/images/435584/6019625_BK000_TRANSPARENT__73462.1781638808.1280.1280.png",{insulation:"Down",fillPower:700,fillWeightG:70,rds:true,hood:"No Hood",pockets:3,packable:true,vest:true}],
+  ["6033-854","MEC Fall-Line Insulated Jacket - Women's","Insulated Jacket","Womens",885,"products/63394/images/414798/6033854_BK000_TRANSPARENT__41126.1781214639.1280.1280.png",{insulation:"Synthetic",gsm:100,hood:"Helmet-Compatible Hood",pockets:4}],
+  ["6019-621","MEC Tremblant Jacket - Women's","Insulated Jacket","Womens",null,"products/50348/images/436044/6019621_BK000_TRANSPARENT__62864.1781638818.1280.1280.png",{insulation:"Down",fillPower:700,hood:"Helmet-Compatible Hood",pockets:3}],
+  // Round-3 held items resolved 2026-08-05 (front images obtained)
+  ["6028-727","MEC Fireside Fleece Snap Pullover - Women's","Fleece Jacket","Womens",null,"products/54881/images/441946/6028727_NVY13_TRANSPARENT__21148.1781638948.1280.1280.png",{fleeceType:"Classic Fleece",closure:"Snap-T/Snap",hood:"No Hood",material:"100% recycled polyester (290 gsm)"}],
+  ["6016-866","MEC Guides Down Parka - Women's","Insulated Jacket","Womens",null,"products/50514/images/436198/6016866_BK000_TRANSPARENT__31876.1781638821.1280.1280.png",{insulation:"Down",fillPower:650,fillWeightG:377,rds:true,hood:"Insulated Hood",pockets:4}],
+
+  // ---- ROUND 4 (gap 4 — tees / sun-hoody, 2026-08-05) — all Hiking Shirt ----
+  ["6036-429","MEC Pace Short Sleeve Shirt - Men's","Hiking Shirt","Mens",null,"products/64896/images/413627/6036429_BK000_TRANSPARENT__47253.1781093172.1280.1280.png",{sleeve:"Short Sleeve",material:"68% recycled polyester / 32% polyester, UPF 30+, Polygiene"}],
+  ["6036-447","MEC Pace Short Sleeve Shirt - Women's","Hiking Shirt","Womens",null,"products/64899/images/469783/6036447_BK000_TRANSPARENT__53683.1781639522.1280.1280.png",{sleeve:"Short Sleeve",material:"68% recycled polyester / 32% polyester, UPF 30+, Polygiene"}],
+  ["6036-448","MEC Pace Tank - Women's","Hiking Shirt","Womens",null,"products/64900/images/469792/6036448_BK000_TRANSPARENT__02268.1781639522.1280.1280.png",{sleeve:"Sleeveless",material:"68% recycled polyester / 32% polyester, UPF 30+, Polygiene"}],
+  ["6036-412","MEC Mountain Short Sleeve T-Shirt - Men's","Hiking Shirt","Mens",null,"products/61459/images/413344/6036412_BK000_TRANSPARENT__62399.1781092855.1280.1280.png",{sleeve:"Short Sleeve",material:"60% organic cotton / 40% recycled polyester"}],
+  ["6036-406","MEC Mountain Graphic Short Sleeve T-Shirt - Unisex","Hiking Shirt","Unisex",null,"products/61435/images/457872/6036406_DNW21_TRANSPARENT__88391.1781639281.1280.1280.png",{sleeve:"Short Sleeve",material:"60% organic cotton / 40% recycled polyester"}],
+  ["6037-047","MEC M-Eh-C Graphic Short Sleeve T-Shirt - Unisex","Hiking Shirt","Unisex",null,"products/61314/images/457367/6037047_RSC28_TRANSPARENT__81478.1781639270.1280.1280.png",{sleeve:"Short Sleeve",material:"60% organic cotton / 40% recycled polyester (Made in Canada)"}],
+  ["6031-524","MEC Sunburst Hooded UPF - Women's","Hiking Shirt","Womens",85,"products/59328/images/449793/6031524_CLD00_TRANSPARENT__73390.1781639116.1280.1280.png",{sleeve:"Long Sleeve",material:"100% recycled polyester, UPF 50+ (hooded sun shirt)"}],
 ];
 
 // map raw fabric text -> the itemType's material enum
@@ -183,6 +220,8 @@ function describe(name, type, gender, weight, x) {
       return `MEC Label ${g.toLowerCase()} ${type === "Rain Pants" ? "rain pants" : "rain jacket"}, ${x.layer}${x.wp ? ` / ${x.wp} mm` : ""}${x.membrane ? ` ${x.membrane}` : ""}${x.packable ? ", packable" : ""}${x.pfasFree ? ", PFAS-free DWR" : ""}.${w}`;
     case "Softshell Jacket":
       return `MEC Label ${g.toLowerCase()} stretch softshell jacket. ${x.material || ""}${x.packable ? " Packable." : ""}${w}`;
+    case "Fleece Jacket":
+      return `MEC Label ${g.toLowerCase()} ${x.vest ? "fleece vest" : "fleece midlayer"} — ${x.fleeceType.toLowerCase()}${x.hood && x.hood !== "No Hood" ? ", hooded" : ""}. ${x.material || ""}${w}`;
     case "Insulated Jacket":
       return `MEC Label ${g.toLowerCase()} ${x.vest ? "insulated vest" : "insulated jacket"} — ${x.insulation}${x.fillPower ? ` ${x.fillPower}-fill-power down` : ""}${x.gsm ? ` (${x.gsm} g/m² fill)` : ""}${x.fillWeightG ? `, ${x.fillWeightG} g fill` : ""}${x.hood === "No Hood" ? ", hoodless" : ""}, stuffs into its own pocket.${w}`;
     default:
@@ -229,10 +268,20 @@ function attrsFor(type, gender, x) {
       const a = { gender, layerConstruction: x.layer };
       if (x.wp) a.waterproofRating = x.wp;
       if (x.membrane) a.membrane = x.membrane;
+      if (x.hood) a.hoodType = x.hood;
       if (x.pitZips != null) a.pitZips = x.pitZips;
+      if (x.sideZips != null) a.sideZips = x.sideZips;
       if (x.pockets != null) a.pockets = x.pockets;
       if (x.packable != null) a.packable = x.packable;
       if (x.pfasFree != null) a.pfasFree = x.pfasFree;
+      return a;
+    }
+    case "Fleece Jacket": {
+      const a = { gender, fleeceType: x.fleeceType };
+      if (x.closure) a.closure = x.closure;
+      if (x.hood) a.hoodType = x.hood;
+      if (x.material) a.material = x.material;
+      if (x.pockets != null) a.pockets = x.pockets;
       return a;
     }
     case "Softshell Jacket": {
@@ -247,7 +296,8 @@ function attrsFor(type, gender, x) {
     case "Insulated Jacket": {
       const a = { insulationType: x.insulation, gender };
       if (x.fillPower) a.fillPower = x.fillPower;
-      if (x.fillWeightG) a.fillWeightG = x.fillWeightG;
+      if (x.rds != null) a.rdsDown = x.rds;
+      if (x.fillWeightG && x.fillWeightG <= 340) a.fillWeightG = x.fillWeightG; // schema max
       if (x.synthName) a.syntheticInsulationType = x.synthName;
       if (x.gsm) a.insulationWeightGsm = x.gsm;
       if (x.hood) a.hoodType = x.hood;

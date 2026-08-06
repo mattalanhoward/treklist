@@ -654,6 +654,8 @@
     "allCategories": "Tutte le categorie",
     "allTypes": "Tutti i tipi",
     "allBrands": "Tutti i marchi",
+    "filterBrands": "Filtra marchi…",
+    "noBrandMatch": "Nessun marchio corrisponde",
     "myGear": "Il mio equipaggiamento",
     "fromCatalog": "Dal catalogo",
     "catalogResultCount_one": "{{count}} articolo nel catalogo",

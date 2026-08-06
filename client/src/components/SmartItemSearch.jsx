@@ -648,115 +648,217 @@ function CategoryTileGrid({ counts, onPick }) {
   );
 }
 
-// ── Facet row: count + active category chip + subcategory chips (decision 7) ──
-// Horizontal scroll; Brand chip is a later drop-in.
+// ── Brand facet: searchable single-select combobox (REI-style) ────────────────
+// The brand list is long (100+), so a flat native <select> is unusable. This is
+// a pill button that opens a portal panel with a "filter brands…" box and a
+// counted, scrollable option list. Portal + fixed positioning avoids the facet
+// row's overflow clipping the panel.
+function BrandCombobox({ brands, counts, value, onChange }) {
+  const { t, i18n } = useTranslation("common");
+  const fmt = (n) => Number(n).toLocaleString(i18n.language || undefined);
+  const [open, setOpen] = useState(false);
+  const [q, setQ] = useState("");
+  const btnRef = useRef(null);
+  const panelRef = useRef(null);
+  const inputRef = useRef(null);
+  const [pos, setPos] = useState(null);
+
+  const openPanel = () => {
+    const r = btnRef.current?.getBoundingClientRect();
+    if (r) {
+      const width = Math.max(200, Math.min(300, window.innerWidth - 16));
+      const left = Math.max(8, Math.min(r.left, window.innerWidth - width - 8));
+      setPos({ top: r.bottom + 4, left, width });
+    }
+    setQ("");
+    setOpen(true);
+  };
+
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e) => {
+      if (
+        panelRef.current && !panelRef.current.contains(e.target) &&
+        btnRef.current && !btnRef.current.contains(e.target)
+      ) {
+        setOpen(false);
+      }
+    };
+    const onResize = () => setOpen(false);
+    document.addEventListener("mousedown", onDown);
+    window.addEventListener("resize", onResize);
+    const id = requestAnimationFrame(() => inputRef.current?.focus());
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      window.removeEventListener("resize", onResize);
+      cancelAnimationFrame(id);
+    };
+  }, [open]);
+
+  const needle = q.trim().toLowerCase();
+  const filtered = needle ? brands.filter((b) => b.toLowerCase().includes(needle)) : brands;
+  const pick = (b) => {
+    onChange(b);
+    setOpen(false);
+  };
+  const optionCls = (active) =>
+    `w-full flex items-center gap-2 px-3 py-1.5 text-xs text-left transition-colors ${
+      active ? "bg-secondary/10 text-secondary font-medium" : "text-primary/70 hover:bg-primary/5"
+    }`;
+
+  return (
+    <div className="relative flex-1 min-w-0 sm:flex-none">
+      <button
+        ref={btnRef}
+        type="button"
+        onClick={() => (open ? setOpen(false) : openPanel())}
+        className={`w-full sm:w-auto sm:min-w-[130px] flex items-center gap-1 rounded-full border pl-2.5 pr-2 py-0.5 text-xs transition-colors ${
+          value
+            ? "bg-secondary text-white border-secondary"
+            : "border-primary/20 text-primary/60 hover:border-secondary/50 bg-base-100"
+        }`}
+      >
+        <span className="truncate">{value || t("smartItemSearch.allBrands", "All brands")}</span>
+        <span className={`ml-auto flex-none text-[9px] ${value ? "text-white" : "text-primary/40"}`}>▾</span>
+      </button>
+      {open && pos && createPortal(
+        <div
+          ref={panelRef}
+          className="fixed z-[90] rounded-lg border border-primary/15 bg-base-100 shadow-xl flex flex-col overflow-hidden"
+          style={{ top: pos.top, left: pos.left, width: pos.width, maxHeight: "min(360px, 60vh)" }}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") {
+              e.stopPropagation();
+              setOpen(false);
+            } else if (e.key === "Enter") {
+              e.preventDefault();
+              if (filtered.length) pick(filtered[0]);
+            }
+          }}
+        >
+          <div className="p-2 border-b border-primary/10 flex-shrink-0">
+            <input
+              ref={inputRef}
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder={t("smartItemSearch.filterBrands", "Filter brands…")}
+              className="w-full border border-base-300 rounded px-2 py-1 text-xs bg-base-100 text-primary placeholder:text-primary/40"
+            />
+          </div>
+          <div className="overflow-y-auto min-h-0">
+            <button type="button" onClick={() => pick(null)} className={optionCls(!value)}>
+              {t("smartItemSearch.allBrands", "All brands")}
+            </button>
+            {filtered.map((b) => (
+              <button key={b} type="button" onClick={() => pick(b)} className={optionCls(b === value)}>
+                <span className="truncate">{b}</span>
+                {counts?.[b] != null && (
+                  <span className="ml-auto flex-none text-primary/40 tabular-nums">{fmt(counts[b])}</span>
+                )}
+              </button>
+            ))}
+            {filtered.length === 0 && (
+              <div className="px-3 py-2 text-xs text-primary/40">
+                {t("smartItemSearch.noBrandMatch", "No brands match")}
+              </div>
+            )}
+          </div>
+        </div>,
+        document.body,
+      )}
+    </div>
+  );
+}
+
+// ── Facet row: brand + category + item-type facets (each counted, REI-style) ──
+// Mobile: brand + category share the row 50/50, item-type drops to its own row.
+// Desktop: one inline row (sm:contents collapses the mobile groupings).
 function FacetRow({
-  shownCount, totalCount, category, subcategory, onClearCategory, onPickSub,
-  brands, brand, onPickBrand,
+  category, subcategory, onPickCategory, onPickSub,
+  brands, brandCounts, brand, onPickBrand, showCategory,
+  categories, categoryCounts, subcategories, subcategoryCounts,
 }) {
   const { t, i18n } = useTranslation("common");
   const fmt = (n) => Number(n).toLocaleString(i18n.language || undefined);
-  const subs = category ? CATALOG_SUBCATEGORIES[category] || [] : [];
-  const countLabel =
-    shownCount != null && totalCount != null
-      ? t("smartItemSearch.facetCount", "{{shown}} of {{total}} items", {
-          shown: fmt(shownCount),
-          total: fmt(totalCount),
-        })
-      : shownCount != null
-        ? t("smartItemSearch.catalogResultCount", "{{count}} items in catalog", { count: shownCount })
-        : "";
+  // "Label (count)" when the count is known, else just the label.
+  const withCount = (label, n) => (n != null ? `${label} (${fmt(n)})` : label);
+  // Subcategory (item-type) options: prefer the live list scoped to the active
+  // category + brand (only types that actually exist), keeping taxonomy order;
+  // fall back to the full taxonomy before that list has loaded.
+  const taxonomySubs = category ? CATALOG_SUBCATEGORIES[category] || [] : [];
+  const available = Array.isArray(subcategories) ? subcategories : null;
+  const scopedSubs = available
+    ? [
+        ...taxonomySubs.filter((s) => available.includes(s)),
+        ...available.filter((s) => !taxonomySubs.includes(s)),
+      ]
+    : taxonomySubs;
+  // Keep an already-selected type displayable even if it's no longer in scope
+  // (e.g. a brand switch removed it) — the list itself still won't offer it.
+  const subs =
+    subcategory && !scopedSubs.includes(subcategory) ? [subcategory, ...scopedSubs] : scopedSubs;
+  // Category options are scoped to the selected brand (only categories that
+  // brand stocks); fall back to the full taxonomy when no brand is picked. Keep
+  // a selected-but-out-of-scope category displayable, same as the type list.
+  const categoryList =
+    Array.isArray(categories) && categories.length ? categories : CATALOG_CATEGORIES;
+  const categoryOptions =
+    category && !categoryList.includes(category) ? [category, ...categoryList] : categoryList;
 
-  // Edge-fade affordance: the row scrolls horizontally with a hidden scrollbar,
-  // so on mobile there's no hint the chips continue off-screen. Track scroll
-  // position and fade whichever edge has more content beyond it.
-  const scrollRef = useRef(null);
-  const [edges, setEdges] = useState({ left: false, right: false });
-  const updateEdges = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const { scrollLeft, scrollWidth, clientWidth } = el;
-    setEdges({
-      left: scrollLeft > 1,
-      right: scrollLeft + clientWidth < scrollWidth - 1,
-    });
-  }, []);
-  useEffect(() => {
-    updateEdges();
-    window.addEventListener("resize", updateEdges);
-    return () => window.removeEventListener("resize", updateEdges);
-  }, [updateEdges, category, subcategory, brand, brands, shownCount]);
+  const dropdownCls = (active) =>
+    `w-full sm:w-auto appearance-none rounded-full border pl-2.5 pr-6 py-0.5 text-xs whitespace-nowrap transition-colors cursor-pointer ${
+      active
+        ? "bg-secondary text-white border-secondary"
+        : "border-primary/20 text-primary/60 hover:border-secondary/50 bg-base-100"
+    }`;
 
   return (
-    <div className="relative flex-shrink-0">
-      <div
-        ref={scrollRef}
-        onScroll={updateEdges}
-        className="flex items-center gap-2 px-5 py-2 border-b border-primary/10 overflow-x-auto"
-        style={{ scrollbarWidth: "none" }}
-      >
-        {countLabel && (
-          <span className="text-[11.5px] text-primary/45 tabular-nums whitespace-nowrap flex-none">
-            {countLabel}
-          </span>
-        )}
-        {category && (
-          <button
-            type="button"
-            onClick={onClearCategory}
-            className="flex-none flex items-center gap-1 rounded-full bg-secondary text-white px-2.5 py-0.5 text-xs whitespace-nowrap"
-          >
-            {tCategory(t, category)}
-            <FiX size={11} />
-          </button>
-        )}
+    <div
+      className="flex flex-col gap-2 px-5 py-2 border-b border-primary/10 flex-shrink-0 sm:flex-row sm:items-center sm:overflow-x-auto"
+      style={{ scrollbarWidth: "none" }}
+    >
+      <div className="flex items-center gap-2 sm:contents">
         {brands?.length > 0 && (
-          <div className="relative flex-none">
+          <BrandCombobox brands={brands} counts={brandCounts} value={brand} onChange={onPickBrand} />
+        )}
+        {/* Category dropdown — only once results are shown (redundant on the
+            browse landing, where the category tiles already do this). */}
+        {showCategory && (
+          <div className="relative flex-1 min-w-0 sm:flex-none">
             <select
-              value={brand || ""}
-              onChange={(e) => onPickBrand(e.target.value || null)}
-              /* max-w caps the native select, which otherwise auto-sizes to its
-                 widest option (a long brand name balloons the whole row). */
-              className={`appearance-none rounded-full border pl-2.5 pr-6 py-0.5 text-xs whitespace-nowrap overflow-hidden text-ellipsis max-w-[128px] transition-colors cursor-pointer ${
-                brand
-                  ? "bg-secondary text-white border-secondary"
-                  : "border-primary/20 text-primary/60 hover:border-secondary/50 bg-base-100"
-              }`}
+              value={category || ""}
+              onChange={(e) => onPickCategory(e.target.value || null)}
+              className={dropdownCls(category)}
             >
-              <option value="">{t("smartItemSearch.allBrands", "All brands")}</option>
-              {brands.map((b) => (
-                <option key={b} value={b}>{b}</option>
+              <option value="">{t("smartItemSearch.allCategories", "All Categories")}</option>
+              {categoryOptions.map((c) => (
+                <option key={c} value={c}>{withCount(tCategory(t, c), categoryCounts?.[c])}</option>
               ))}
             </select>
-            <span className={`pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[9px] ${brand ? "text-white" : "text-primary/40"}`}>▾</span>
+            <span className={`pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[9px] ${category ? "text-white" : "text-primary/40"}`}>▾</span>
           </div>
         )}
-        {subs.map((sub) => (
-          <button
-            key={sub}
-            type="button"
-            onClick={() => onPickSub(subcategory === sub ? null : sub)}
-            className={`flex-none rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap border transition-colors ${
-              subcategory === sub
-                ? "bg-secondary text-white border-secondary"
-                : "border-primary/20 text-primary/60 hover:border-secondary/50 hover:text-primary"
-            }`}
-          >
-            {sub}
-          </button>
-        ))}
       </div>
-      {/* Scrollability hint (mobile) — fade the edge that has more chips beyond it. */}
-      <div
-        className={`sm:hidden pointer-events-none absolute left-0 top-0 bottom-px w-6 bg-gradient-to-r from-base-100 to-transparent transition-opacity ${
-          edges.left ? "opacity-100" : "opacity-0"
-        }`}
-      />
-      <div
-        className={`sm:hidden pointer-events-none absolute right-0 top-0 bottom-px w-8 bg-gradient-to-l from-base-100 to-transparent transition-opacity ${
-          edges.right ? "opacity-100" : "opacity-0"
-        }`}
-      />
+      {/* Item-type (subcategory) dropdown — only when a category with subtypes is
+          picked. On mobile it drops to its own full-width row (three dropdowns
+          across a phone would truncate their labels); inline on desktop. */}
+      {subs.length > 0 && (
+        <div className="flex items-center gap-2 sm:contents">
+          <div className="relative flex-1 min-w-0 sm:flex-none">
+            <select
+              value={subcategory || ""}
+              onChange={(e) => onPickSub(e.target.value || null)}
+              className={dropdownCls(subcategory)}
+            >
+              <option value="">{t("smartItemSearch.allTypes", "All Types")}</option>
+              {subs.map((sub) => (
+                <option key={sub} value={sub}>{withCount(sub, subcategoryCounts?.[sub])}</option>
+              ))}
+            </select>
+            <span className={`pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[9px] ${subcategory ? "text-white" : "text-primary/40"}`}>▾</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -890,7 +992,7 @@ export default function SmartItemSearch({
   title = null,
   confirmLabels = {},
 }) {
-  const { t } = useTranslation("common");
+  const { t, i18n } = useTranslation("common");
   const unit = useUnit();
   const { parseInput, formatInput, unitLabel } = useWeightInput(unit);
 
@@ -973,7 +1075,9 @@ export default function SmartItemSearch({
   const [catalogTotal, setCatalogTotal] = useState(null);
   const [catalogAllTotal, setCatalogAllTotal] = useState(null);
   const [categoryCounts, setCategoryCounts] = useState(null); // { [category]: count } for browse tiles
-  const [catalogBrands, setCatalogBrands] = useState([]); // brand facet options (scoped to category)
+  const [brandCounts, setBrandCounts] = useState({}); // { [brand]: count }, scoped to category
+  const [brandCategoryCounts, setBrandCategoryCounts] = useState(null); // { [category]: count } for the selected brand (null = all)
+  const [subcategoryCounts, setSubcategoryCounts] = useState(null); // { [subcategory]: count } for the active category+brand (null = fall back to taxonomy)
   const [loadingMore, setLoadingMore] = useState(false); // "Show more" pagination
 
   // Selection
@@ -1248,17 +1352,63 @@ export default function SmartItemSearch({
       .catch(() => {});
   }, [tabLayout]);
 
-  // Brand facet options, scoped to the active category (tabLayout only). Lets
-  // the user filter results by brand from the facet row.
+  // Per-brand item counts, scoped to the active category (tabLayout only). Drives
+  // the brand facet — its options and the count shown next to each brand.
   useEffect(() => {
     if (!tabLayout) return;
     const params = {};
     if (categoryFilter) params.category = categoryFilter;
     api
       .get("/catalog/brands", { params })
-      .then(({ data }) => setCatalogBrands(Array.isArray(data) ? data : []))
-      .catch(() => setCatalogBrands([]));
+      .then(({ data }) => setBrandCounts(data && typeof data === "object" ? data : {}))
+      .catch(() => setBrandCounts({}));
   }, [tabLayout, categoryFilter]);
+
+  // Per-category counts for the selected brand — scopes the facet-row category
+  // dropdown so it only lists (and counts) categories that brand actually has.
+  // Null (no brand) means fall back to the whole-catalog counts.
+  useEffect(() => {
+    if (!tabLayout || !brandFilter) {
+      setBrandCategoryCounts(null);
+      return;
+    }
+    let cancelled = false;
+    api
+      .get("/catalog/category-counts", { params: { brand: brandFilter } })
+      .then(({ data }) => {
+        if (!cancelled) setBrandCategoryCounts(data && typeof data === "object" ? data : null);
+      })
+      .catch(() => {
+        if (!cancelled) setBrandCategoryCounts(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [tabLayout, brandFilter]);
+
+  // Per-subcategory counts for the active category + brand, so the facet-row
+  // type dropdown only lists real options (no "Knives" for a brand that has
+  // none) with counts. Null when no category — the dropdown isn't shown then.
+  useEffect(() => {
+    if (!tabLayout || !categoryFilter) {
+      setSubcategoryCounts(null);
+      return;
+    }
+    let cancelled = false;
+    const params = { category: categoryFilter };
+    if (brandFilter) params.brand = brandFilter;
+    api
+      .get("/catalog/subcategories", { params })
+      .then(({ data }) => {
+        if (!cancelled) setSubcategoryCounts(data && typeof data === "object" ? data : null);
+      })
+      .catch(() => {
+        if (!cancelled) setSubcategoryCounts(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [tabLayout, categoryFilter, brandFilter]);
 
   // Debounce
   useEffect(() => {
@@ -1266,9 +1416,11 @@ export default function SmartItemSearch({
     return () => clearTimeout(timer);
   }, [query]);
 
+  // Category change invalidates the subcategory (subs are category-specific),
+  // but the brand filter is kept so brand + category combine — the brand-first
+  // flow (pick a brand, then narrow by category) depends on it.
   useEffect(() => {
     setSubcategoryFilter(null);
-    setBrandFilter(null);
   }, [categoryFilter]);
 
 
@@ -1747,6 +1899,33 @@ export default function SmartItemSearch({
   const hasSearchIntent = debouncedQuery.trim() || categoryFilter || subcategoryFilter || brandFilter;
   const catalogCountForDisplay = hasSearchIntent ? catalogTotal : catalogAllTotal;
 
+  // Sorted brand names for the facet combobox; keep the selected brand listed
+  // even if the category-scoped counts don't include it (avoids it vanishing
+  // from the list while still selected).
+  const brandNameList = useMemo(() => {
+    const names = Object.keys(brandCounts || {}).sort((a, b) => a.localeCompare(b));
+    if (brandFilter && !names.includes(brandFilter)) return [brandFilter, ...names];
+    return names;
+  }, [brandCounts, brandFilter]);
+
+  // Result count for the footer (moved out of the facet row). Shows the filtered
+  // count over the whole-catalog total during a search, else just the total.
+  const catalogCountLabel = useMemo(() => {
+    const shown = catalogTotal;
+    const total = catalogAllTotal;
+    const fmt = (n) => Number(n).toLocaleString(i18n.language || undefined);
+    if (shown != null && total != null) {
+      return t("smartItemSearch.facetCount", "{{shown}} of {{total}} items", {
+        shown: fmt(shown),
+        total: fmt(total),
+      });
+    }
+    const val = shown != null ? shown : total;
+    return val != null
+      ? t("smartItemSearch.catalogResultCount", "{{count}} items in catalog", { count: val })
+      : "";
+  }, [catalogTotal, catalogAllTotal, i18n.language, t]);
+
   // My Gear tab: browse the user's own library directly — no search or category
   // needed (add-gear feedback: you shouldn't have to remember the item's name).
   const browseMyGear = tabLayout && showMyGear && activeTab === "myGear";
@@ -2053,16 +2232,27 @@ export default function SmartItemSearch({
         </div>
       )}
 
-      {/* ── Facet row (tabLayout, search intent) — count + category + subs ──── */}
-      {tabLayout && !browseMyGear && hasSearchIntent && !showingCustomForm && !aiLoading && (
+      {/* ── Facet row (Import tab) — count + category + brand + subs ────────── */}
+      {/* Shown on the browse landing too (no search intent) so the brand
+          dropdown + count line let users filter by brand without first entering
+          a category or typing a query. */}
+      {tabLayout && !browseMyGear && !showingCustomForm && !aiLoading && (
         <FacetRow
-          shownCount={catalogTotal}
-          totalCount={catalogAllTotal}
           category={categoryFilter}
           subcategory={subcategoryFilter}
-          onClearCategory={() => setCategoryFilter(null)}
+          showCategory={hasSearchIntent}
+          categories={
+            brandCategoryCounts
+              ? CATALOG_CATEGORIES.filter((c) => brandCategoryCounts[c] != null)
+              : CATALOG_CATEGORIES
+          }
+          categoryCounts={brandFilter ? brandCategoryCounts : categoryCounts}
+          onPickCategory={setCategoryFilter}
+          subcategories={subcategoryCounts ? Object.keys(subcategoryCounts) : null}
+          subcategoryCounts={subcategoryCounts}
           onPickSub={setSubcategoryFilter}
-          brands={catalogBrands}
+          brands={brandNameList}
+          brandCounts={brandCounts}
           brand={brandFilter}
           onPickBrand={setBrandFilter}
         />
@@ -2199,11 +2389,21 @@ export default function SmartItemSearch({
         }`}
         style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
       >
-        {multiSelect && totalSelected > 0 && (
-          <span className="text-xs text-primary/50 tabular-nums mr-auto">
-            {t("smartItemSearch.nSelected", "{{count}} selected", { count: totalSelected })}
-          </span>
-        )}
+        {/* Left slot (opposite Close): ambient result count + selection count. */}
+        <div className="mr-auto flex items-center gap-1.5 text-xs tabular-nums min-w-0">
+          {tabLayout && !browseMyGear && !showingCustomForm && catalogCountLabel && (
+            <span className="text-primary/40 truncate">{catalogCountLabel}</span>
+          )}
+          {tabLayout && !browseMyGear && !showingCustomForm && catalogCountLabel &&
+            multiSelect && totalSelected > 0 && (
+              <span className="text-primary/25">·</span>
+            )}
+          {multiSelect && totalSelected > 0 && (
+            <span className="text-primary/50 whitespace-nowrap">
+              {t("smartItemSearch.nSelected", "{{count}} selected", { count: totalSelected })}
+            </span>
+          )}
+        </div>
         <button
           type="button"
           onClick={onClose}
