@@ -26,23 +26,26 @@ const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (
 const tLabel = (t) => `${t}°C`;
 const CAT = "Sleep System";
 
-// temp-split models. byTemp: { "<temp>": {Size: grams} | null }. null = weight unpublished.
+// temp-split models. byTemp: { "<temp>": {Size:{w,fill?}} | null }. null = weight unpublished.
 const MODELS = [
   { base: "Bandicoot", handle: "bandicoot-sleeping-bag", itemType: "Sleeping Bag", sub: "Sleeping Bags",
     archive: "Bandicoot Sleeping Bag", sizes: ["Regular", "Long"],
     attrs: { insulationType: "Down", shape: "Mummy", gender: "Unisex" },
-    byTemp: { "-2": null, "-10": null } },
+    byTemp: {
+      "-2": { Regular: { w: 790, fill: 510 }, Long: { w: 895, fill: 585 } },
+      "-10": { Regular: { w: 1090, fill: 800 }, Long: { w: 1240, fill: 920 } },
+    } },
   { base: "Waratah Pro", handle: "waratah-pro-1", itemType: "Quilt", sub: "Quilts",
     archive: "Waratah Pro", sizes: ["Regular", "Long"],
     attrs: { insulationType: "Down" },
-    byTemp: { "0": { Regular: 493, Long: 546 }, "-6": { Regular: 598, Long: 664 } } },
+    byTemp: { "0": { Regular: { w: 493 }, Long: { w: 546 } }, "-6": { Regular: { w: 598 }, Long: { w: 664 } } } },
   { base: "Waratah", handle: "waratah", itemType: "Quilt", sub: "Quilts",
     archive: "Waratah", sizes: ["Short", "Regular", "Long"],
     attrs: { insulationType: "Down", fillPower: 850 },
     byTemp: {
-      "-2": { Short: 563, Regular: 609, Long: 679 },
-      "-6": { Short: 639, Regular: 691, Long: 771 },
-      "-10": { Short: 730, Regular: 789, Long: 882 },
+      "-2": { Short: { w: 563 }, Regular: { w: 609 }, Long: { w: 679 } },
+      "-6": { Short: { w: 639 }, Regular: { w: 691 }, Long: { w: 771 } },
+      "-10": { Short: { w: 730 }, Regular: { w: 789 }, Long: { w: 882 } },
     } },
 ];
 
@@ -56,7 +59,20 @@ const UPDATES = [
   { name: "Wallaroo Pro 55L", axis: "Torso Size", defaultKey: "Medium",
     attrs: { volumeLiters: 55, gender: "Unisex" },
     variants: [{ key: "Medium", w: 825, attrs: { torsoFitRange: "42-50cm" } }, { key: "Large", w: 845, attrs: { torsoFitRange: "45-53cm" } }] },
+  // Barrington Down Hoody Men's — Size axis, per-size total + down-fill weights (950+FP Muscovy, 7D shell)
+  { name: "Barrington Down Hoody Men's", axis: "Size", defaultKey: "Medium",
+    attrs: { insulationType: "Down", gender: "Mens", fillPower: 950, fillWeightG: 90, shellFabric: "7D Ripstop Nylon (19 g/m²)", hoodType: "Insulated Hood", packable: true },
+    variants: [
+      { key: "Small", w: 193, attrs: { fillWeightG: 83 } },
+      { key: "Medium", w: 200, attrs: { fillWeightG: 90 } },
+      { key: "Large", w: 212, attrs: { fillWeightG: 97 } },
+      { key: "X-Large", w: 222, attrs: { fillWeightG: 105 } },
+      { key: "XX-Large", w: 232, attrs: { fillWeightG: 113 } },
+    ] },
 ];
+
+// items to archive (user, 2026-08-06)
+const ARCHIVE = ["Storage Bag"];
 
 async function fetchProducts() {
   for (let t = 0; t < 4; t++) {
@@ -85,13 +101,17 @@ async function fetchProducts() {
     if (parent) { console.log(`ARCHIVE ${m.archive}`); if (COMMIT) await C.collection.updateOne({ _id: parent._id }, { $set: { isActive: false } }); archived++; }
 
     for (const temp of Object.keys(m.byTemp)) {
-      const w = m.byTemp[temp]; // {Size:grams} | null
+      const w = m.byTemp[temp]; // {Size:{w,fill?}} | null
       const name = `${m.base} ${tLabel(temp)}`;
-      const variants = m.sizes.map((s) => ({ key: s, options: { Size: s }, ...(w && w[s] != null ? { weightGrams: w[s] } : {}) }));
-      const dflt = w ? w["Regular"] ?? null : null;
-      const wLine = w ? `Weights: ${m.sizes.map((s) => `${s} ${w[s]}g`).join(", ")}.` : "Neve Gear does not publish a per-size weight for this model.";
+      const variants = m.sizes.map((s) => {
+        const c = w ? w[s] : null;
+        return { key: s, options: { Size: s }, ...(c && c.w != null ? { weightGrams: c.w } : {}), ...(c && c.fill != null ? { attributes: { fillWeightG: c.fill } } : {}) };
+      });
+      const dflt = w ? (w["Regular"] && w["Regular"].w) ?? null : null;
+      const dfltFill = w ? (w["Regular"] && w["Regular"].fill) ?? null : null;
+      const wLine = w ? `Weights: ${m.sizes.map((s) => `${s} ${w[s].w}g`).join(", ")}.` : "Neve Gear does not publish a per-size weight for this model.";
       const desc = `The Neve Gear ${m.base} is a ${m.itemType === "Quilt" ? "down quilt" : "down sleeping bag"} rated to ${tLabel(temp)}, offered in ${m.sizes.join(" / ")} lengths. ${wLine}`;
-      const attributes = { ...m.attrs, tempRatingC: Number(temp) };
+      const attributes = { ...m.attrs, tempRatingC: Number(temp), ...(dfltFill != null ? { fillWeightG: dfltFill } : {}) };
 
       const existing = await C.findOne({ name, brand: /neve/i });
       if (existing) {
@@ -125,6 +145,11 @@ async function fetchProducts() {
     console.log(`  UPDATE ${u.name}  ${u.variants ? u.axis + JSON.stringify(u.variants.map((v) => v.key + ":" + v.w)) : "wt=" + u.weightGrams}`);
     if (COMMIT) await C.collection.updateOne({ _id: it._id }, { $set: set });
     updated++;
+  }
+
+  for (const nm of ARCHIVE) {
+    const it = await C.findOne({ name: nm, brand: /neve/i, isActive: true });
+    if (it) { console.log(`  ARCHIVE ${nm}`); if (COMMIT) await C.collection.updateOne({ _id: it._id }, { $set: { isActive: false } }); archived++; }
   }
 
   console.log(`\n${COMMIT ? "APPLIED" : "DRY-RUN"}: archived ${archived}, created ${created}, updated ${updated}`);
