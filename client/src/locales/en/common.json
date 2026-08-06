@@ -661,6 +661,8 @@
     "allCategories": "All Categories",
     "allTypes": "All Types",
     "allBrands": "All Brands",
+    "filterBrands": "Filter brands…",
+    "noBrandMatch": "No brands match",
     "myGear": "My Gear",
     "fromCatalog": "From Catalog",
     "catalogResultCount_one": "{{count}} item in catalog",

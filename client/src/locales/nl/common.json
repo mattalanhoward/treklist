@@ -654,6 +654,8 @@
     "allCategories": "Alle categorieën",
     "allTypes": "Alle types",
     "allBrands": "Alle merken",
+    "filterBrands": "Merken filteren…",
+    "noBrandMatch": "Geen merken gevonden",
     "myGear": "Mijn uitrusting",
     "fromCatalog": "Uit de catalogus",
     "catalogResultCount_one": "{{count}} artikel in de catalogus",

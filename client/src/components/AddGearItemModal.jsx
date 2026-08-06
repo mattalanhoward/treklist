@@ -178,7 +178,7 @@ export default function AddGearItemModal({ listId, categoryId, categoryName, onC
     >
       {/* Mobile: full-screen takeover (100dvh). Desktop: centered card. */}
       <div
-        className="bg-base-100 shadow-2xl w-full h-d-screen flex flex-col sm:rounded-xl sm:w-[92vw] sm:max-w-[960px] sm:mx-4 sm:h-[85vh] sm:max-h-[800px]"
+        className="bg-base-100 shadow-2xl w-full h-d-screen flex flex-col sm:rounded-xl sm:w-[92vw] sm:max-w-[1040px] sm:mx-4 sm:h-[85vh] sm:max-h-[840px]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}

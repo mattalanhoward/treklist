@@ -129,28 +129,66 @@ router.get("/items/:id", auth, async (req, res) => {
 });
 
 // GET /api/catalog/brands
-// Returns distinct brand names, optionally filtered by category/subcategory
+// Active-item counts per brand, optionally scoped by category/subcategory.
+// Returns a { [brand]: count } map so the facet-row brand picker can show how
+// many items each brand has in the current context.
 router.get("/brands", auth, async (req, res) => {
   try {
     const { category, subcategory } = req.query;
     const match = { isActive: true };
     if (category) match.category = category;
     if (subcategory) match.subcategory = subcategory;
-    const brands = await CatalogItem.distinct("brand", match);
-    brands.sort((a, b) => a.localeCompare(b));
-    res.json(brands.filter(Boolean));
+    const rows = await CatalogItem.aggregate([
+      { $match: match },
+      { $group: { _id: "$brand", count: { $sum: 1 } } },
+    ]);
+    const counts = {};
+    rows.forEach((r) => {
+      if (r._id) counts[r._id] = r.count;
+    });
+    res.json(counts);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch brands" });
   }
 });
 
+// GET /api/catalog/subcategories
+// Active-item counts per subcategory for the given category (+ optional brand).
+// Scopes the facet-row item-type dropdown so it only lists types that exist for
+// the current filters (e.g. no "Knives" for Bonfus), each with its count.
+// Returns a { [subcategory]: count } map.
+router.get("/subcategories", auth, async (req, res) => {
+  try {
+    const { category, brand } = req.query;
+    const match = { isActive: true };
+    if (category) match.category = category;
+    if (brand) match.brand = brand;
+    const rows = await CatalogItem.aggregate([
+      { $match: match },
+      { $group: { _id: "$subcategory", count: { $sum: 1 } } },
+    ]);
+    const counts = {};
+    rows.forEach((r) => {
+      if (r._id) counts[r._id] = r.count;
+    });
+    res.json(counts);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch subcategories" });
+  }
+});
+
 // GET /api/catalog/category-counts
 // Active-item counts per top-level category, for the add-gear browse zero state.
+// Optional ?brand= scopes the counts to one brand (used to limit the facet-row
+// category dropdown to categories that brand actually stocks).
 // Returns a { [category]: count } map.
 router.get("/category-counts", auth, async (req, res) => {
   try {
+    const { brand } = req.query;
+    const match = { isActive: true };
+    if (brand) match.brand = brand;
     const rows = await CatalogItem.aggregate([
-      { $match: { isActive: true } },
+      { $match: match },
       { $group: { _id: "$category", count: { $sum: 1 } } },
     ]);
     const counts = {};
