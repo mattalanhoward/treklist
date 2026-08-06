@@ -7,9 +7,11 @@ Writes ONLY to `catalogitems` and `merchantoffers`. Never touches `gearitems`,
 **Script:** [`server/src/scripts/migrate-catalog-to-prod.js`](server/src/scripts/migrate-catalog-to-prod.js)
 **Companion:** [`server/src/scripts/normalize-itemtypes.js`](server/src/scripts/normalize-itemtypes.js)
 
-> This runbook is a **manual checklist**. Nothing here has been run against prod.
-> Run the **Dress Rehearsal (§4)** — a full migration + rollback against a local
-> copy of prod — before you touch prod in §5.
+> This runbook is a **manual checklist**. The one-time full **archive-and-re-add**
+> (§5) ran successfully against prod (`TrekList`) on **2026-07-15**. Day to day, use the
+> **Routine brand sync (§9)** — `--brand` — to push individual brands; that is now the
+> default path. Only re-run a full sync deliberately, and mind the §9.3 clobber guard.
+> Always run the **Dress Rehearsal (§4)** against a local copy before any prod write.
 
 ---
 
@@ -392,6 +394,77 @@ The migration is **idempotent**, so a partial failure can be handled either way:
 
 ---
 
+## 9. Routine brand sync (THE DEFAULT PATH going forward)
+
+> The full **archive-and-re-add** (§5) is a **one-time seed** — it ran successfully
+> against prod (`TrekList`) on **2026-07-15**. Day to day you should **not** re-run a
+> full sync. When you add or fix a brand locally, push **just that brand** with
+> `--brand`. It skips Phase A entirely (no archive-all) and upserts only that brand's
+> `catalogitems` + their `merchantoffers`, using the same `replaceOne`-by-`_id` and
+> delete-stale-before-upsert semantics as the full sync, scoped to the brand's
+> productIds. Nothing outside the named brand(s) is touched.
+
+```bash
+cd /Users/matthewhoward/Projects/treklist/server
+```
+
+### 9.1 Dry run (per-brand planned counts, writes nothing)
+
+`--brand` is **repeatable** — pass it once per brand. Match the source `brand` field
+**exactly** (a brand with zero source items prints a warning and is skipped).
+
+```bash
+node src/scripts/migrate-catalog-to-prod.js \
+  --uri "$MONGO_URI" --source-db "$SRC_DB" --dest-db "$PROD_DB" \
+  --brand "Zpacks" --brand "Hyperlite Mountain Gear"
+```
+
+Per brand it prints: catalog items (with `_id` overlap = replace-in-place vs new
+inserts), offer count, and stale dest offers to delete. Sanity-check those before committing.
+
+### 9.2 Commit
+
+```bash
+node src/scripts/migrate-catalog-to-prod.js \
+  --uri "$MONGO_URI" --source-db "$SRC_DB" --dest-db "$PROD_DB" \
+  --brand "Zpacks" --brand "Hyperlite Mountain Gear" \
+  --commit --confirm-dest "$PROD_DB"
+```
+
+Brand syncs deliberately **do not** move the full-sync clobber-guard baseline
+(`_catalogSyncMeta.lastSyncAt`), so the guard below keeps flagging any un-reconciled
+prod edit until the next full sync. Follow with `--verify` (§6) to confirm counts/refs.
+
+### 9.3 Clobber guard (full syncs only — "local is the source of truth")
+
+Every successful **full** `--commit` stamps `_catalogSyncMeta.lastSyncAt` in the dest db.
+Before any **later** full commit, the script checks the dest for `catalogitems` /
+`merchantoffers` edited **in prod** (`updatedAt` newer than that baseline) that a full
+sync would overwrite. If any exist it **ABORTS** and lists them (`brand · name · date`),
+unless you pass `--force-clobber`:
+
+```
+[GUARD] full-sync clobber guard
+    last full sync baseline: 2026-07-15T…
+    ⚠ 2 dest doc(s) edited in prod SINCE the baseline would be overwritten:
+      catalog  Darn Tough · Men's Micro Crew Lightweight Cushion · 2026-07-15T…
+      offer    product 6952b1d4… · <merchant> · 2026-07-15T…
+✖ Refusing to overwrite 2 prod-edited doc(s) (local is the source of truth).
+```
+
+This mechanically enforces the rule: **local is authoritative — a prod-side edit gets
+flagged, not silently reverted.** The correct response is to reconcile those edits back
+**into local** (the source of truth), then re-run. Use `--force-clobber` only when you
+have consciously decided local should win and overwrite them. The check is read-only and
+also runs in dry-run (it prints the warning and notes a commit would abort).
+
+> Rehearsed end-to-end on a local restore of the 2026-07-15 prod + source dumps: a
+> one-brand scoped sync (MSR, 3→256 items) leaving the baseline untouched; a full sync
+> with a simulated prod-side catalog + offer edit proving the guard aborts (exit 1, no
+> writes) and `--force-clobber` overrides + advances the baseline.
+
+---
+
 ## Appendix — script reference
 
 ```
@@ -401,6 +474,12 @@ migrate-catalog-to-prod.js
   --dest-db <name>       REQUIRED. Destination (prod). No default.
   --commit               Write. Omit = DRY RUN (default; prints planned counts only).
   --confirm-dest <name>  REQUIRED to --commit to any non-local dest; must equal --dest-db.
+  --brand "<Brand>"      SCOPED BRAND SYNC. Repeatable. Skips Phase A (no archive-all);
+                         upserts ONLY that brand's catalogitems + offers (same
+                         replaceOne-by-_id + delete-stale-before-upsert, scoped to the
+                         brand's productIds). Does NOT move the clobber-guard baseline.
+  --force-clobber        FULL sync only. Override the clobber guard and overwrite prod
+                         docs edited since the last full sync. Use only after reconciling.
   --verify               Read-only checks (V1 category counts, V2 no-offer, V3 spot-check,
                          V4 referential integrity, V5 render a list). Never writes.
   --list <gearListId>    With --verify: render one real user list.
@@ -411,8 +490,13 @@ migrate-catalog-to-prod.js
 Guarantees, all exercised in the rehearsal:
 - Raw `mongodb` driver only for writes (`replaceOne`/`updateMany`/`deleteMany`/`bulkWrite`);
   **no Mongoose `.save()`**, so no pre-save field-wipe.
-- Writes **only** `catalogitems` + `merchantoffers` in `--dest-db`. Reads gear/global
-  only under `--verify`.
+- Writes **only** `catalogitems` + `merchantoffers` in `--dest-db`, plus the
+  `_catalogSyncMeta` baseline doc on a full `--commit`. Reads gear/global only under
+  `--verify`.
 - `--source-db`/`--dest-db` required & must differ; non-local `--commit` needs `--confirm-dest`.
+- `--brand` mode: skips archive-all, touches only the named brand(s), never moves the baseline.
+- Full `--commit` is guarded by `_catalogSyncMeta.lastSyncAt`: any prod-side edit
+  (`updatedAt` newer than the baseline) to a doc a full sync would overwrite ABORTS the
+  run with a list, unless `--force-clobber`.
 - Idempotent: re-runnable from the top after a partial failure.
 ```

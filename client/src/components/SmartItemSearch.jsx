@@ -973,6 +973,9 @@ function CatalogPreviewSheet({
  *   onConfirm            async fn — called with { source, globalItems?, catalogIds?, fields?, variantSelections?, sizeUnset? }
  *   onClose              fn
  *   tabLayout            boolean  — use tabbed Import/Custom layout (AddGearItemModal)
+ *   title                string   — desktop-only: rendered inline in the tab row (left),
+ *                                   with the close button pushed to the right. The host
+ *                                   modal keeps its own mobile-only header. tabLayout only.
  */
 export default function SmartItemSearch({
   multiSelect = true,
@@ -986,6 +989,7 @@ export default function SmartItemSearch({
   onConfirm,
   onClose,
   tabLayout = false,
+  title = null,
   confirmLabels = {},
 }) {
   const { t, i18n } = useTranslation("common");
@@ -1312,8 +1316,10 @@ export default function SmartItemSearch({
     if (window.innerWidth >= 640) searchRef.current?.focus();
   }, []);
 
-  // Load My Gear
-  useEffect(() => {
+  // Load My Gear. Refetch on `global-items:updated` so a catalog import or
+  // custom create made from this modal shows up in the My Gear tab immediately
+  // (same event the sidebar / dashboard / My Gear page already listen for).
+  const loadMyGear = useCallback(() => {
     if (!showMyGear) return;
     api
       .get("/my-gear/items")
@@ -1321,6 +1327,13 @@ export default function SmartItemSearch({
       .catch(() => {})
       .finally(() => setMyGearLoading(false));
   }, [showMyGear]);
+
+  useEffect(() => {
+    if (!showMyGear) return;
+    loadMyGear();
+    window.addEventListener("global-items:updated", loadMyGear);
+    return () => window.removeEventListener("global-items:updated", loadMyGear);
+  }, [showMyGear, loadMyGear]);
 
   // Whole-catalog size, fetched once
   useEffect(() => {
@@ -2064,8 +2077,15 @@ export default function SmartItemSearch({
       }}
     >
       {/* ── Tab row (tabLayout only) ───────────────────────────────────────── */}
+      {/* Desktop: the modal's title sits inline on the left and the close button
+          on the right (mobile keeps them in the host modal's own header). */}
       {tabLayout && (
-        <div className="flex items-center border-b border-primary/10 flex-shrink-0 px-5">
+        <div className="flex items-center border-b border-primary/10 flex-shrink-0 px-5 sm:pt-1">
+          {title && (
+            <h2 className="hidden sm:block text-lg font-semibold text-primary mr-6 whitespace-nowrap">
+              {title}
+            </h2>
+          )}
           <button
             type="button"
             onClick={() => chooseTab("import")}
@@ -2111,6 +2131,16 @@ export default function SmartItemSearch({
           >
             {t("smartItemSearch.tabs.custom", "Custom")}
           </button>
+          {title && onClose && (
+            <button
+              type="button"
+              onClick={onClose}
+              className="hidden sm:block ml-auto -mr-1 p-1 text-error hover:text-error/80"
+              aria-label={t("actions.close", "Close")}
+            >
+              <FiX size={22} />
+            </button>
+          )}
         </div>
       )}
 
