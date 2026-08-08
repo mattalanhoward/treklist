@@ -665,15 +665,16 @@ export default function GlobalItemEditModal({
     showImageBlock || showCustomImageBlock ? "max-w-4xl" : "max-w-2xl";
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-[1px] flex items-end sm:items-center justify-center z-[70]">
+    <div className="fixed inset-0 z-[70] flex justify-center sm:items-center sm:bg-black/40 sm:backdrop-blur-[1px]">
       {showFullscreenSpinner ? (
         <Spinner tone="white" />
       ) : (
         <form
           onSubmit={handleSave}
           className={
-            "bg-base-100 sm:rounded-lg shadow-2xl w-full sm:mx-4 px-4 py-4 sm:px-6 sm:py-6 " +
-            "border border-primary/15 modal-mobile-h sm:h-auto sm:max-h-[90vh] flex flex-col " +
+            "bg-base-100 sm:rounded-lg shadow-2xl w-full sm:mx-4 px-4 sm:px-6 " +
+            "pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] sm:py-6 " +
+            "sm:border sm:border-primary/15 h-d-screen sm:h-auto sm:max-h-[90vh] flex flex-col " +
             modalWidthClass
           }
         >
@@ -854,6 +855,8 @@ export default function GlobalItemEditModal({
                         images={displayCatalogImages.slice(0, 1)}
                         alt={`${form.brand ? form.brand + " " : ""}${form.name || ""}`}
                         loading={false}
+                        className="h-full"
+                        heightClass="h-full"
                       />
                     )}
                   </div>
@@ -969,6 +972,8 @@ export default function GlobalItemEditModal({
                             images={displayCatalogImages.slice(0, 1)}
                             alt={`${form.brand ? form.brand + " " : ""}${form.name || ""}`}
                             loading={false}
+                            className="h-full"
+                            heightClass="h-full"
                           />
                         )}
                       </div>

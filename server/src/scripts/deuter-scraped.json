@@ -1,0 +1,386 @@
+{
+ "ac-lite-22-sl": {
+  "w": 910,
+  "back": "38-48 cm",
+  "img": "https://www.deuter.com/media/71/24/8b/1764625353/ac-lite-22-sl-5-shale-graphite-37746875e93da9d29f9fd3dbb0458ea1.webp",
+  "url": "https://www.deuter.com/us-en/ac-lite-22-sl/3420724"
+ },
+ "ac-lite-24": {
+  "w": 930,
+  "back": "44-54 cm",
+  "img": "https://www.deuter.com/media/77/14/c3/1764625377/ac-lite-24-5-black-3774689f92258b97be211370ee326ce5.webp",
+  "url": "https://www.deuter.com/us-en/ac-lite-24/3420824"
+ },
+ "futura-21-sl": {
+  "w": 1150,
+  "back": "38-48 cm",
+  "img": "https://www.deuter.com/media/65/cd/be/1772728259/futura-21-sl-5-cassis-ashrose-3774687407812b4c65d77db3317c8868.webp",
+  "url": "https://www.deuter.com/us-en/futura-21-sl/3400026"
+ },
+ "futura-23": {
+  "w": 1180,
+  "back": "44-54 cm",
+  "img": "https://www.deuter.com/media/c9/94/0d/1772728489/futura-23-5-black-3774681008924c28534ab916c0c76764.webp",
+  "url": "https://www.deuter.com/us-en/futura-23/3400126"
+ },
+ "futura-25-sl": {
+  "w": 1210,
+  "back": "38-48 cm",
+  "img": "https://www.deuter.com/media/8f/fb/94/1772728756/futura-25-sl-5-polar-bluejay-3774685a75e654ed8668e135b6768a6f.webp",
+  "url": "https://www.deuter.com/us-en/futura-25-sl/3400226"
+ },
+ "futura-27": {
+  "w": 1250,
+  "back": "44-54 cm",
+  "img": "https://www.deuter.com/media/96/17/8c/1772729079/futura-27-5-nightblue-baltic-377468f93e5b11c7f8bd5a7ec5f73881.webp",
+  "url": "https://www.deuter.com/us-en/futura-27/3400326"
+ },
+ "futura-30-sl": {
+  "w": 1420,
+  "back": "38-48 cm",
+  "img": "https://www.deuter.com/media/50/dd/76/1764622996/futura-30-sl-5-graphite-shale-377468626ba015838bb6eb8d466e3b01.webp",
+  "url": "https://www.deuter.com/us-en/futura-30-sl/3400721"
+ },
+ "futura-32": {
+  "w": 1350,
+  "back": "44-54 cm",
+  "img": "https://www.deuter.com/media/b7/10/dd/1772729957/futura-32-5-nightblue-baltic-377468914bccec85d80ba623677a3b13.webp",
+  "url": "https://www.deuter.com/us-en/futura-32/3400826"
+ },
+ "futura-pro-34-sl": {
+  "w": 1530,
+  "back": "35-56 cm",
+  "img": "https://www.deuter.com/media/f5/93/6a/1772730370/futura-pro-34-sl-5-polar-bluejay-3774689e6e8ba2497bfe7606dc0146b9.webp",
+  "url": "https://www.deuter.com/us-en/futura-pro-34-sl/3401226"
+ },
+ "futura-pro-36": {
+  "w": 1590,
+  "back": "42-62 cm",
+  "img": "https://www.deuter.com/media/8e/b4/6b/1772730551/futura-pro-36-5-black-3774684908841be4a481cefe788f0ec5.webp",
+  "url": "https://www.deuter.com/us-en/futura-pro-36/3401326"
+ },
+ "futura-pro-38-sl": {
+  "w": 1550,
+  "back": "35-56 cm",
+  "img": "https://www.deuter.com/media/5a/48/68/1772730560/futura-pro-38-sl-5-cassis-ashrose-3774683b820220d5c30d13381974b2b3.webp",
+  "url": "https://www.deuter.com/us-en/futura-pro-38-sl/3401426"
+ },
+ "futura-pro-40": {
+  "w": 1620,
+  "back": "42-62 cm",
+  "img": "https://www.deuter.com/media/8f/54/b3/1772731241/futura-pro-40-5-nightblue-baltic-37746871fa93a94e102ae47e455abef9.webp",
+  "url": "https://www.deuter.com/us-en/futura-pro-40/3401526"
+ },
+ "futura-pro-42-el": {
+  "w": 1700,
+  "back": "48-58 cm",
+  "img": "https://www.deuter.com/media/a9/d4/3f/1764623090/futura-pro-42-el-6-black-graphite-37746821da5bf5eadf736d3ac3747598.webp",
+  "url": "https://www.deuter.com/us-en/futura-pro-42-el/3401421"
+ },
+ "speed-lite-21": {
+  "w": 470,
+  "back": "44-54 cm",
+  "img": "https://www.deuter.com/media/7d/8f/a1/1772050497/speed-lite-21-0-alu-greystone-3774680cfc0942c9fde78f27bd24ea51.webp",
+  "url": "https://www.deuter.com/us-en/speed-lite-21/3410225"
+ },
+ "speed-lite-pro-19": {
+  "w": 630,
+  "back": "44-54 cm",
+  "img": "https://www.deuter.com/media/e9/13/26/1764626379/speed-lite-pro-19-5-mineral-grove-377468917765b1989f1cce4ccccdd2e3.webp",
+  "url": "https://www.deuter.com/us-en/speed-lite-pro-19/3412125"
+ },
+ "speed-lite-pro-23-sl": {
+  "w": 640,
+  "back": "38-48 cm",
+  "img": "https://www.deuter.com/media/ee/07/09/1764626390/speed-lite-pro-23-sl-5-lotus-mystic-37746841756cb28b68ed73d6937fae6f.webp",
+  "url": "https://www.deuter.com/us-en/speed-lite-pro-23-sl/3412225"
+ },
+ "speed-lite-pro-25": {
+  "w": 680,
+  "back": "44-54 cm",
+  "img": "https://www.deuter.com/media/0c/33/b4/1764626399/speed-lite-pro-25-5-mineral-grove-3774680dbcfcdf255822cdcad80f596a.webp",
+  "url": "https://www.deuter.com/us-en/speed-lite-pro-25/3412325"
+ },
+ "speed-lite-pro-28-sl": {
+  "w": 740,
+  "back": "38-48 cm",
+  "img": "https://www.deuter.com/media/d6/de/c0/1764626419/speed-lite-pro-28-sl-5-black-37746874c9d60590e35f52e3ecfbddb4.webp",
+  "url": "https://www.deuter.com/us-en/speed-lite-pro-28-sl/3412425"
+ },
+ "speed-lite-pro-30": {
+  "w": 760,
+  "back": "44-54 cm",
+  "img": "https://www.deuter.com/media/05/0d/4c/1764626426/speed-lite-pro-30-5-mineral-grove-377468f110a65a3c85ca97383cdfa467.webp",
+  "url": "https://www.deuter.com/us-en/speed-lite-pro-30/3412525"
+ },
+ "telatie-24-sl": {
+  "w": 680,
+  "back": "38-48 cm",
+  "img": "https://www.deuter.com/media/7d/72/a8/1785231692/telatie-24-sl-5-ashrose-cassis-377468675ae4c186670bde8100d2b98e.png",
+  "url": "https://www.deuter.com/us-en/telatie-24-sl/3450027"
+ },
+ "telatie-26": {
+  "w": 720,
+  "back": "44-54 cm",
+  "img": "https://www.deuter.com/media/83/a6/48/1785231688/telatie-26-5-black-377468c2134a1ea8710cf0b678357f0c.png",
+  "url": "https://www.deuter.com/us-en/telatie-26/3450127"
+ },
+ "trail-pro-34-sl": {
+  "w": 1470,
+  "back": "38-48 cm",
+  "img": "https://www.deuter.com/media/3b/68/0c/1764625589/trail-pro-34-sl-5-black-377468c0af8e4fb2bae4a429d8846ee0.webp",
+  "url": "https://www.deuter.com/us-en/trail-pro-34-sl/3441224"
+ },
+ "trail-pro-36": {
+  "w": 1530,
+  "back": "44-54 cm",
+  "img": "https://www.deuter.com/media/98/ca/2d/1764625598/trail-pro-36-5-wave-ivy-3774689932e38ce59ba1f50b406a4f58.webp",
+  "url": "https://www.deuter.com/us-en/trail-pro-36/3441324"
+ },
+ "aircontact-core-45-10-sl": {
+  "w": 2170,
+  "back": "35-56 cm",
+  "img": "https://www.deuter.com/media/06/6f/90/1772735910/aircontact-core-45-10-sl-0-grove-ivy-37746855c14e2520a8607e42937af00e.png",
+  "url": "https://www.deuter.com/us-en/aircontact-core-45-10-sl/3351226"
+ },
+ "aircontact-core-50-10": {
+  "w": 2310,
+  "back": "42-62 cm",
+  "img": "https://www.deuter.com/media/6e/b3/60/1772735685/aircontact-core-50-10-0-baltic-nightblue-37746860a5976d18f9f47dd73b04dfb1.png",
+  "url": "https://www.deuter.com/us-en/aircontact-core-50-10/3351326"
+ },
+ "aircontact-core-55-10-sl": {
+  "w": 2260,
+  "back": "35-56 cm",
+  "img": "https://www.deuter.com/media/a2/51/b4/1772737394/aircontact-core-55-10-sl-0-grove-ivy-3774683d20988e1d82bd86411ae073e3.png",
+  "url": "https://www.deuter.com/us-en/aircontact-core-55-10-sl/3351426"
+ },
+ "aircontact-core-60-10": {
+  "w": 2310,
+  "back": "42-62 cm",
+  "img": "https://www.deuter.com/media/bb/72/3a/1772736421/aircontact-core-60-10-0-savanna-nori-377468552c837d810edf2184f5e0fdce.png",
+  "url": "https://www.deuter.com/us-en/aircontact-core-60-10/3351526"
+ },
+ "aircontact-lite-35-10-sl": {
+  "w": 1490,
+  "back": "35-56 cm",
+  "img": "https://www.deuter.com/media/53/d6/5e/1764624304/aircontact-lite-35-10-sl-0-black-graphite-3774680a8fcbe0eef8954b57b568bd7e.webp",
+  "url": "https://www.deuter.com/us-en/aircontact-lite-35-10-sl/3340023"
+ },
+ "aircontact-lite-40-10": {
+  "w": 1590,
+  "back": "42-62 cm",
+  "img": "https://www.deuter.com/media/ab/03/e5/1764624323/aircontact-lite-40-10-0-amber-maple-377468eb5f05af21d4e2530e3112f20f.webp",
+  "url": "https://www.deuter.com/us-en/aircontact-lite-40-10/3340123"
+ },
+ "aircontact-lite-45-10-sl": {
+  "w": 1540,
+  "back": "35-56 cm",
+  "img": "https://www.deuter.com/media/4a/e0/de/1764624332/aircontact-lite-45-10-sl-0-grove-ivy-377468898cf16e69bb757ca1bc021ac4.webp",
+  "url": "https://www.deuter.com/us-en/aircontact-lite-45-10-sl/3340223"
+ },
+ "aircontact-lite-50-10": {
+  "w": 1640,
+  "back": "42-62 cm",
+  "img": "https://www.deuter.com/media/04/42/c4/1772049620/aircontact-lite-50-10-0-black-graphite-377468ef29590c7153b62164170353dc.webp",
+  "url": "https://www.deuter.com/us-en/aircontact-lite-50-10/3340323"
+ },
+ "aircontact-ultra-35-5-sl": {
+  "w": 1160,
+  "back": "35-56 cm",
+  "img": "https://www.deuter.com/media/a2/52/a2/1764625611/aircontact-ultra-35-5-sl-0-mineral-ivy-377468993170d9bb49d89c55b4959d93.webp",
+  "url": "https://www.deuter.com/us-en/aircontact-ultra-35-5-sl/3380024"
+ },
+ "aircontact-ultra-40-5": {
+  "w": 1210,
+  "back": "42-62 cm",
+  "img": "https://www.deuter.com/media/af/26/e5/1764625622/aircontact-ultra-40-5-0-tin-shale-3774686bd9bbe80ff546f2b59f2825a8.png",
+  "url": "https://www.deuter.com/us-en/aircontact-ultra-40-5/3380124"
+ },
+ "aircontact-ultra-45-5-sl": {
+  "w": 1210,
+  "back": "35-56 cm",
+  "img": "https://www.deuter.com/media/82/b0/64/1764625636/aircontact-ultra-45-5-sl-0-tin-shale-377468892b062b4595b726ba72be8729.png",
+  "url": "https://www.deuter.com/us-en/aircontact-ultra-45-5-sl/3380224"
+ },
+ "aircontact-ultra-50-5": {
+  "w": 1270,
+  "back": "42-62 cm",
+  "img": "https://www.deuter.com/media/f1/61/66/1764625647/aircontact-ultra-50-5-0-savanna-raisin-377468257bd5b18b99a1ee94f5788263.webp",
+  "url": "https://www.deuter.com/us-en/aircontact-ultra-50-5/3380324"
+ },
+ "aircontact-pro-65-10-sl": {
+  "w": 2790,
+  "back": "38-48 cm",
+  "img": "https://www.deuter.com/media/3d/77/40/1764627399/aircontact-pro-65-10-sl-0-graphite-3774682bcc3e5eeac92fbffd51bc5e83.png",
+  "url": "https://www.deuter.com/us-en/aircontact-pro-65-10-sl/3370025"
+ },
+ "futura-air-trek-45-10-sl": {
+  "w": 2000,
+  "back": "35-56 cm",
+  "img": "https://www.deuter.com/media/9d/c3/7c/1764623103/futura-air-trek-45-10-sl-0-black-graphite-37746847bc38897e016a32f4d631fa6e.png",
+  "url": "https://www.deuter.com/us-en/futura-air-trek-45-10-sl/3402021"
+ },
+ "futura-air-trek-50-10": {
+  "w": 2050,
+  "back": "42-62 cm",
+  "img": "https://www.deuter.com/media/12/7d/6f/1764623115/futura-air-trek-50-10-0-black-graphite-3774688e97580f2c3ebc1bf6d269428e.png",
+  "url": "https://www.deuter.com/us-en/futura-air-trek-50-10/3402121"
+ },
+ "futura-air-trek-55-10-sl": {
+  "w": 2100,
+  "back": "35-56 cm",
+  "img": "https://www.deuter.com/media/43/76/18/1764623123/futura-air-trek-55-10-sl-0-black-graphite-377468fc9bf54c8cbcb4afe4c3559876.png",
+  "url": "https://www.deuter.com/us-en/futura-air-trek-55-10-sl/3402221"
+ },
+ "futura-air-trek-60-10": {
+  "w": 2150,
+  "back": "42-62 cm",
+  "img": "https://www.deuter.com/media/8a/0c/3e/1764623138/futura-air-trek-60-10-0-black-graphite-377468f38a9bc0b8c3f9b35796e2dec0.png",
+  "url": "https://www.deuter.com/us-en/futura-air-trek-60-10/3402321"
+ },
+ "astro-500-2c-28f": {
+  "w": 1100,
+  "comfort": 3,
+  "fill": "750FP RDS duck down",
+  "down": true,
+  "img": "https://www.deuter.com/media/5d/27/97/1764626912/astro-500-2c-28f-1-marine-ink-377468ef84276e36ef09ed2e8999758b.webp",
+  "url": "https://www.deuter.com/us-en/astro-500-2c-28f/4046051174594"
+ },
+ "astro-pro-800-16c-3f": {
+  "w": 1400,
+  "comfort": -9,
+  "fill": "750FP RDS down",
+  "down": true,
+  "img": "https://www.deuter.com/media/8a/62/f7/1772731584/astro-pro-800-16c-3f-1-magma-titanium-377468d4e13c57f4d87284389113c18e.webp",
+  "url": "https://www.deuter.com/us-en/astro-pro-800-16c-3f/4046051184661"
+ },
+ "exosphere-0c-32f": {
+  "w": 930,
+  "comfort": 5,
+  "fill": "Thermo Pro Loft synthetic",
+  "down": false,
+  "img": "https://www.deuter.com/media/5b/19/ca/1764626945/exosphere-0c-32f-1-ink-maple-377468ade47bbcd899e045792ff6e703.webp",
+  "url": "https://www.deuter.com/us-en/exosphere-0c-32f/4046051174730"
+ },
+ "orbit-0c-32f": {
+  "w": 1400,
+  "comfort": 5,
+  "fill": "Hollowfibre synthetic",
+  "down": false,
+  "img": "https://www.deuter.com/media/66/c0/e7/1764626921/orbit-0c-32f-1-ivy-ink-377468625f979141bf70467de92d4f43.webp",
+  "url": "https://www.deuter.com/us-en/orbit-0c-32f/4046051174976"
+ },
+ "astro-300-2c-36f": {
+  "w": 800,
+  "comfort": 7,
+  "fill": "RDS grey duck down",
+  "down": true,
+  "img": "https://www.deuter.com/media/8e/55/1e/1764626909/astro-300-2c-36f-1-marine-ink-377468463a7dcaf523174b4ae9cfc676.webp",
+  "url": "https://www.deuter.com/us-en/astro-300-2c-36f/4046051182261"
+ },
+ "astro-500-sq-1c-30f": {
+  "w": 1150,
+  "comfort": 4,
+  "fill": "RDS grey duck down",
+  "down": true,
+  "img": "https://www.deuter.com/media/82/3e/6a/1764626915/astro-500-sq-1c-30f-1-marine-ink-3774688357e38927295a851455c708fb.webp",
+  "url": "https://www.deuter.com/us-en/astro-500-sq-1c-30f/4046051174617"
+ },
+ "astro-pro-400-6c-21f": {
+  "w": 950,
+  "comfort": 0,
+  "fill": "750FP RDS duck down",
+  "down": true,
+  "img": "https://www.deuter.com/media/ea/94/9b/1772731547/astro-pro-400-6c-21f-1-magma-titanium-3774686f691026dfcd0bdd644cae53e9.webp",
+  "url": "https://www.deuter.com/us-en/astro-pro-400-6c-21f/4046051184609"
+ },
+ "astro-pro-600-12c-10f": {
+  "w": 1200,
+  "comfort": -5,
+  "fill": "750FP RDS duck down",
+  "down": true,
+  "img": "https://www.deuter.com/media/72/1d/ee/1772731562/astro-pro-600-12c-10f-1-magma-titanium-377468206328f6111de1864a4acd6d72.webp",
+  "url": "https://www.deuter.com/us-en/astro-pro-600-12c-10f/4046051184630"
+ },
+ "astro-pro-1000-19c-2f": {
+  "w": 1650,
+  "comfort": -11,
+  "fill": "750FP RDS down",
+  "down": true,
+  "img": "https://www.deuter.com/media/4b/74/e9/1772731424/astro-pro-1000-19c-2f-1-magma-titanium-377468bed6b6d8884fd63829d18148ea.webp",
+  "url": "https://www.deuter.com/us-en/astro-pro-1000-19c-2f/4046051184692"
+ },
+ "exosphere-4c-39f": {
+  "w": 790,
+  "comfort": 9,
+  "fill": "Thermo Pro Loft synthetic",
+  "down": false,
+  "img": "https://www.deuter.com/media/b5/b6/bb/1764626933/exosphere-4c-39f-1-ink-maple-377468ef925d26f81fe4525fb4eec43e.webp",
+  "url": "https://www.deuter.com/us-en/exosphere-4c-39f/4046051174679"
+ },
+ "exosphere-6c-21f": {
+  "w": 1400,
+  "comfort": 0,
+  "fill": "Thermo Pro Loft synthetic",
+  "down": false,
+  "img": "https://www.deuter.com/media/c8/f0/f1/1764626967/exosphere-6c-21f-1-ink-maple-3774686489f3159256cedac2aae43e24.webp",
+  "url": "https://www.deuter.com/us-en/exosphere-6c-21f/4046051174792"
+ },
+ "exosphere-11c-12f": {
+  "w": 1700,
+  "comfort": -4,
+  "fill": "Thermo Pro Loft synthetic",
+  "down": false,
+  "img": "https://www.deuter.com/media/1e/05/50/1764626960/exosphere-11c-12f-1-ink-maple-3774680f9e9fa400c890e087a71cec49.webp",
+  "url": "https://www.deuter.com/us-en/exosphere-11c-12f/4046051174853"
+ },
+ "orbit-5c-23f": {
+  "w": 1700,
+  "comfort": 1,
+  "fill": "Hollowfibre synthetic",
+  "down": false,
+  "img": "https://www.deuter.com/media/e4/2a/77/1764627050/orbit-5c-23f-1-ivy-ink-377468f36a3d11bfa1eed4839164c04b.webp",
+  "url": "https://www.deuter.com/us-en/orbit-5c-23f/4046051175034"
+ },
+ "orbit-5c-41f": {
+  "w": 1050,
+  "comfort": 9,
+  "fill": "Hollowfibre synthetic",
+  "down": false,
+  "img": "https://www.deuter.com/media/9c/82/b2/1764627030/orbit-5c-41f-1-ivy-ink-377468f6f5831e1ecd0876fc8e95d054.webp",
+  "url": "https://www.deuter.com/us-en/orbit-5c-41f/4046051174914"
+ },
+ "orbit-sq-5c-23f": {
+  "w": 2050,
+  "comfort": 1,
+  "fill": "Hollowfibre synthetic",
+  "down": false,
+  "img": "https://www.deuter.com/media/c9/c5/4a/1764626974/orbit-sq-5c-23f-1-ivy-ink-377468453c9b9ed10e72b3bf8fa68f24.webp",
+  "url": "https://www.deuter.com/us-en/orbit-sq-5c-23f/4046051175096"
+ },
+ "orbit-sq-6c-43f": {
+  "w": 1400,
+  "comfort": 10,
+  "fill": "Hollowfibre synthetic",
+  "down": false,
+  "img": "https://www.deuter.com/media/a8/f9/16/1764627059/orbit-sq-6c-43f-1-ivy-ink-377468ac4c9c84e81c430a1a5951f902.webp",
+  "url": "https://www.deuter.com/us-en/orbit-sq-6c-43f/4046051175072"
+ },
+ "dreamlite-10c-50f": {
+  "w": 800,
+  "comfort": 14,
+  "fill": "Hollowfibre synthetic",
+  "down": false,
+  "img": "https://www.deuter.com/media/ba/5b/b0/1772725065/dreamlite-10c-50f-1-nautic-breeze-37746846d4095d9ca5ec51ac8b69d13d.webp",
+  "url": "https://www.deuter.com/us-en/dreamlite-10c-50f/4046051184715"
+ },
+ "dreamlite-15c-59f": {
+  "w": 650,
+  "comfort": 18,
+  "fill": "Hollowfibre synthetic",
+  "down": false,
+  "img": "https://www.deuter.com/media/6b/fd/19/1772725145/dreamlite-15c-59f-1-nautic-breeze-377468600e886908f0b2876333a8db7a.webp",
+  "url": "https://www.deuter.com/us-en/dreamlite-15c-59f/4046051184753"
+ }
+}

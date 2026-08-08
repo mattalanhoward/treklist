@@ -136,7 +136,7 @@ export default function ChecklistView() {
 
         {/* NEW ACTION BAR PLACEHOLDER for loading state (max-w-3xl) */}
         <div className="border-b bg-base-100 print:hidden sticky top-[52px] z-50">
-          <div className="max-w-5xl mx-auto px-4 py-2 flex items-center justify-between gap-4">
+          <div className="max-w-6xl mx-auto px-4 py-2 flex items-center justify-between gap-4">
             <div className="flex items-center gap-1.5">
               <div className="h-4 w-16 bg-base-200 rounded animate-pulse" />
               <div className="h-4 w-2 bg-base-200 rounded animate-pulse" />
@@ -152,7 +152,7 @@ export default function ChecklistView() {
         </div>
 
         {/* OLD HEADER PLACEHOLDER REMOVED. Keeping the rest of the skeleton: */}
-        <main className="mx-auto max-w-5xl px-4 py-6">
+        <main className="mx-auto max-w-6xl px-4 py-6">
           <section className="mb-6">
             <div className="flex items-end justify-between gap-4">
               <div>
@@ -165,14 +165,14 @@ export default function ChecklistView() {
               </div>
             </div>
           </section>
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="columns-1 md:columns-2 xl:columns-3 gap-5">
             {Array.from({ length: 6 }).map((_, i) => (
-              <section key={i} className="break-inside-avoid">
+              <section key={i} className="mb-5 break-inside-avoid">
                 <div className="mb-2 flex items-center justify-between">
                   <div className="h-5 w-32 bg-base-200 rounded animate-pulse" />
                   <div className="h-4 w-10 bg-base-200 rounded animate-pulse" />
                 </div>
-                <ul className="divide-y divide-base-200 rounded-xl border bg-base-100">
+                <ul className="divide-y divide-primary/10 rounded-lg border border-primary/10 bg-base-100">
                   {Array.from({ length: 5 }).map((_, j) => (
                     <li key={j} className="flex items-center gap-2 px-3 py-2">
                       <div className="h-4 w-4 rounded bg-base-200 animate-pulse" />
@@ -202,7 +202,7 @@ export default function ChecklistView() {
       <TopBar title={t("app.name")} />
 
       <div className="border-b bg-base-100 print:hidden sticky top-[48px] z-50">
-        <div className="max-w-5xl mx-auto px-4 py-2 flex items-center justify-between gap-4">
+        <div className="max-w-6xl mx-auto px-4 py-2 flex items-center justify-between gap-4">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-1.5 text-sm min-w-0">
             <button
@@ -247,7 +247,7 @@ export default function ChecklistView() {
 
       {/* ---------- SCREEN CONTENT (interactive) ---------- */}
       {/* Ensure main content is hidden from print view to rely solely on the print table */}
-      <main className="mx-auto max-w-5xl px-4 py-6 print:hidden">
+      <main className="mx-auto max-w-6xl px-4 py-6 print:hidden">
         {/* Title + progress */}
         <section className="mb-6">
           <div className="flex items-end justify-between gap-4">
@@ -278,7 +278,7 @@ export default function ChecklistView() {
               </div>
               <div className="mt-1 h-2 w-48 overflow-hidden rounded-full bg-base-200">
                 <div
-                  className="h-full bg-emerald-600"
+                  className="h-full bg-secondary"
                   style={{ width: `${pct}%` }}
                   aria-label={`Progress ${pct}%`}
                 />
@@ -299,59 +299,72 @@ export default function ChecklistView() {
           </div>
         </section>
 
-        {/* 2-column categories (screen) */}
-        <div className="grid gap-4 md:grid-cols-2">
+        {/* Masonry categories (screen) — CSS columns pack tightly and balance
+            column heights, so short categories don't leave grid-row gaps. */}
+        <div className="columns-1 md:columns-2 xl:columns-3 gap-5">
           {grouped.map(({ cat, items }) => {
             const cTotal = items.length;
             const cPacked = items.filter((i) => checked[i._id]).length;
+            const cDone = cPacked === cTotal && cTotal > 0;
             return (
-              <section key={cat._id} className="break-inside-avoid">
-                <div className="mb-2 flex items-center justify-between">
-                  <h2 className="text-lg font-semibold">
+              <section key={cat._id} className="mb-5 break-inside-avoid">
+                <div className="mb-2 flex items-center justify-between gap-2 px-0.5">
+                  <h2 className="text-sm font-semibold uppercase tracking-wider text-primary/50">
                     {cat.title || cat.name}
                   </h2>
-                  <div className="text-sm text-secondary">
+                  <div
+                    className={`text-xs font-medium tabular-nums ${
+                      cDone ? "text-secondary" : "text-primary/40"
+                    }`}
+                  >
                     {t("checklistView.progress.categoryPacked", {
                       packed: cPacked,
                       total: cTotal,
                     })}
                   </div>
                 </div>
-                <ul className="divide-y divide-base-200 rounded-xl border bg-base-100">
+                <ul className="divide-y divide-primary/10 rounded-lg border border-primary/10 bg-base-100 overflow-hidden">
                   {items.map((item) => {
                     const label = `${
                       item.itemType ? item.itemType + " - " : ""
                     }${item.name}`;
+                    const isChecked = !!checked[item._id];
                     return (
                       <li
                         key={item._id}
-                        className="flex items-center gap-2 px-3 py-2"
+                        className="flex items-center gap-2.5 px-3 py-2 hover:bg-primary/5 transition-colors"
                       >
                         <input
                           id={`cb-${item._id}`}
                           type="checkbox"
-                          className="h-4 w-4 rounded border-base-300 text-emerald-600 focus:ring-emerald-600"
-                          checked={!!checked[item._id]}
+                          className="h-4 w-4 rounded border-primary/30 text-secondary focus:ring-secondary"
+                          checked={isChecked}
                           onChange={() => toggle(item._id)}
                         />
                         <label
                           htmlFor={`cb-${item._id}`}
-                          className="flex-1 cursor-pointer select-none"
+                          className="flex-1 cursor-pointer select-none min-w-0"
                         >
-                          <span className="font-medium">{label}</span>
+                          <span
+                            className={`font-medium ${
+                              isChecked ? "text-primary/40 line-through" : "text-primary"
+                            }`}
+                          >
+                            {label}
+                          </span>
                           {item.quantity > 1 && (
-                            <span className="ml-2 rounded bg-base-200 px-2 py-0.5 text-sm text-secondary">
+                            <span className="ml-2 rounded bg-primary/5 px-1.5 py-0.5 text-xs text-primary/60">
                               ×{item.quantity}
                             </span>
                           )}
                         </label>
-                        <div className="flex items-center gap-2 text-secondary">
+                        <div className="flex items-center gap-2 text-primary/40 flex-shrink-0">
                           {item.worn && (
-                            <FaTshirt className="h-4 w-4" aria-label="worn" />
+                            <FaTshirt className="h-3.5 w-3.5" aria-label="worn" />
                           )}
                           {item.consumable && (
                             <FaUtensils
-                              className="h-4 w-4"
+                              className="h-3.5 w-3.5"
                               aria-label="consumable"
                             />
                           )}

@@ -1446,10 +1446,14 @@
     "sort": {
       "nameAsc": "Naam A-Z",
       "nameDesc": "Naam Z-A",
-      "weightAsc": "Gewicht ↑",
-      "weightDesc": "Gewicht ↓",
+      "weightAsc": "Gewicht: licht → zwaar",
+      "weightDesc": "Gewicht: zwaar → licht",
       "dateDesc": "Nieuwste",
-      "dateAsc": "Oudste"
+      "dateAsc": "Oudste",
+      "label": "Sorteren",
+      "category": "Categorie",
+      "name": "Naam (A–Z)",
+      "recent": "Recent toegevoegd"
     },
     "tabs": {
       "all": "Alle uitrusting",
@@ -1478,7 +1482,11 @@
       "clearSelection": "Wissen",
       "deleteSelected": "Verwijderen",
       "showImported": "Toon items uit packs",
-      "hideImported": "Verberg items uit packs"
+      "hideImported": "Verberg items uit packs",
+      "addToList": "Aan lijst toevoegen",
+      "addToListTitle": "Aan lijst toevoegen",
+      "markOwned": "Markeer als in bezit",
+      "moveToWishlist": "Naar verlanglijst"
     },
     "badge": {
       "fromSharedList": "Uit packs"
@@ -1491,7 +1499,14 @@
       "deleted": "Item verwijderd",
       "deleteFailed": "Verwijderen mislukt",
       "bulkDeleted": "{{count}} items verwijderd",
-      "bulkDeleteFailed": "Sommige items konden niet worden verwijderd"
+      "bulkDeleteFailed": "Sommige items konden niet worden verwijderd",
+      "bulkWishlisted": "{{count}} naar verlanglijst verplaatst",
+      "bulkOwned": "{{count}} gemarkeerd als in bezit",
+      "bulkStatusFailed": "Sommige items konden niet worden bijgewerkt",
+      "addedToList": "{{added}} toegevoegd aan {{list}}",
+      "addedToListSkipped": "{{added}} toegevoegd aan {{list}} ({{skipped}} al aanwezig)",
+      "addedToListNone": "Alle geselecteerde items staan al in {{list}}",
+      "addToListFailed": "Kon items niet aan de lijst toevoegen"
     },
     "confirm": {
       "deleteTitle": "Item verwijderen",
@@ -1500,7 +1515,29 @@
       "bulkDeleteTitle": "Items verwijderen",
       "bulkDeleteMessage": "Weet je zeker dat je {{count}} items wilt verwijderen? Ze worden ook uit alle paklijsten verwijderd.",
       "bulkDeleteConfirm": "Alles verwijderen"
-    }
+    },
+    "stats": {
+      "items": "items",
+      "total": "totaal",
+      "owned": "{{count}} in bezit",
+      "wishlist": "{{count}} verlanglijst"
+    },
+    "table": {
+      "name": "Naam",
+      "brand": "Merk",
+      "category": "Categorie",
+      "size": "Maat",
+      "weight": "Gewicht",
+      "qty": "Aantal",
+      "flags": "Kenmerken"
+    },
+    "flags": {
+      "worn": "Gedragen",
+      "consumable": "Verbruiksartikel",
+      "wishlist": "Verlanglijst"
+    },
+    "noLists": "Nog geen lijsten",
+    "loadingLists": "Laden…"
   },
   "wishlist": {
     "actions": {

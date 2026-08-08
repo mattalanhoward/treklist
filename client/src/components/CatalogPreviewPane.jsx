@@ -202,6 +202,8 @@ export default function CatalogPreviewPane({
               images={catalogImages}
               alt={`${item.brand ? item.brand + " " : ""}${item.name || ""}`}
               loading={false}
+              className="h-full"
+              heightClass="h-full"
             />
           </div>
         )}

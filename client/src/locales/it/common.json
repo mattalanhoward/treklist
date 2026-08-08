@@ -1446,10 +1446,14 @@
     "sort": {
       "nameAsc": "Nome A-Z",
       "nameDesc": "Nome Z-A",
-      "weightAsc": "Peso ↑",
-      "weightDesc": "Peso ↓",
+      "weightAsc": "Peso: leggero → pesante",
+      "weightDesc": "Peso: pesante → leggero",
       "dateDesc": "Più recenti",
-      "dateAsc": "Più vecchi"
+      "dateAsc": "Più vecchi",
+      "label": "Ordina",
+      "category": "Categoria",
+      "name": "Nome (A–Z)",
+      "recent": "Aggiunti di recente"
     },
     "tabs": {
       "all": "Tutto l'equipaggiamento",
@@ -1478,7 +1482,11 @@
       "clearSelection": "Cancella",
       "deleteSelected": "Elimina",
       "showImported": "Mostra articoli dai pack",
-      "hideImported": "Nascondi articoli dai pack"
+      "hideImported": "Nascondi articoli dai pack",
+      "addToList": "Aggiungi a lista",
+      "addToListTitle": "Aggiungi a lista",
+      "markOwned": "Segna come posseduto",
+      "moveToWishlist": "Sposta nella lista desideri"
     },
     "badge": {
       "fromSharedList": "Dai pack"
@@ -1491,7 +1499,14 @@
       "deleted": "Articolo eliminato",
       "deleteFailed": "Eliminazione fallita",
       "bulkDeleted": "{{count}} articoli eliminati",
-      "bulkDeleteFailed": "Impossibile eliminare alcuni articoli"
+      "bulkDeleteFailed": "Impossibile eliminare alcuni articoli",
+      "bulkWishlisted": "{{count}} spostati nella lista desideri",
+      "bulkOwned": "{{count}} segnati come posseduti",
+      "bulkStatusFailed": "Impossibile aggiornare alcuni articoli",
+      "addedToList": "{{added}} aggiunti a {{list}}",
+      "addedToListSkipped": "{{added}} aggiunti a {{list}} ({{skipped}} già presenti)",
+      "addedToListNone": "Tutti gli articoli selezionati sono già in {{list}}",
+      "addToListFailed": "Impossibile aggiungere gli articoli alla lista"
     },
     "confirm": {
       "deleteTitle": "Elimina articolo",
@@ -1500,7 +1515,29 @@
       "bulkDeleteTitle": "Elimina articoli",
       "bulkDeleteMessage": "Sei sicuro di voler eliminare {{count}} articoli? Verranno rimossi anche da tutte le liste di attrezzatura.",
       "bulkDeleteConfirm": "Elimina tutto"
-    }
+    },
+    "stats": {
+      "items": "articoli",
+      "total": "totale",
+      "owned": "{{count}} posseduti",
+      "wishlist": "{{count}} lista desideri"
+    },
+    "table": {
+      "name": "Nome",
+      "brand": "Marca",
+      "category": "Categoria",
+      "size": "Taglia",
+      "weight": "Peso",
+      "qty": "Q.tà",
+      "flags": "Attributi"
+    },
+    "flags": {
+      "worn": "Indossato",
+      "consumable": "Consumabile",
+      "wishlist": "Lista desideri"
+    },
+    "noLists": "Ancora nessuna lista",
+    "loadingLists": "Caricamento…"
   },
   "wishlist": {
     "actions": {
