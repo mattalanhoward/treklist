@@ -1446,10 +1446,14 @@
     "sort": {
       "nameAsc": "Nombre A-Z",
       "nameDesc": "Nombre Z-A",
-      "weightAsc": "Peso ↑",
-      "weightDesc": "Peso ↓",
+      "weightAsc": "Peso: menor → mayor",
+      "weightDesc": "Peso: mayor → menor",
       "dateDesc": "Más recientes",
-      "dateAsc": "Más antiguos"
+      "dateAsc": "Más antiguos",
+      "label": "Ordenar",
+      "category": "Categoría",
+      "name": "Nombre (A–Z)",
+      "recent": "Añadido recientemente"
     },
     "tabs": {
       "all": "Todo el equipo",
@@ -1478,7 +1482,11 @@
       "clearSelection": "Limpiar",
       "deleteSelected": "Eliminar",
       "showImported": "Mostrar artículos de packs",
-      "hideImported": "Ocultar artículos de packs"
+      "hideImported": "Ocultar artículos de packs",
+      "addToList": "Añadir a lista",
+      "addToListTitle": "Añadir a lista",
+      "markOwned": "Marcar como propio",
+      "moveToWishlist": "Mover a lista de deseos"
     },
     "badge": {
       "fromSharedList": "De packs"
@@ -1491,7 +1499,14 @@
       "deleted": "Artículo eliminado",
       "deleteFailed": "Error al eliminar",
       "bulkDeleted": "{{count}} artículos eliminados",
-      "bulkDeleteFailed": "Error al eliminar algunos artículos"
+      "bulkDeleteFailed": "Error al eliminar algunos artículos",
+      "bulkWishlisted": "{{count}} movidos a la lista de deseos",
+      "bulkOwned": "{{count}} marcados como propios",
+      "bulkStatusFailed": "No se pudieron actualizar algunos artículos",
+      "addedToList": "{{added}} añadidos a {{list}}",
+      "addedToListSkipped": "{{added}} añadidos a {{list}} ({{skipped}} ya estaban)",
+      "addedToListNone": "Todos los artículos seleccionados ya están en {{list}}",
+      "addToListFailed": "No se pudieron añadir los artículos a la lista"
     },
     "confirm": {
       "deleteTitle": "Eliminar artículo",
@@ -1500,7 +1515,29 @@
       "bulkDeleteTitle": "Eliminar artículos",
       "bulkDeleteMessage": "¿Seguro que quieres eliminar {{count}} artículos? También se eliminarán de todas las listas de equipo.",
       "bulkDeleteConfirm": "Eliminar todo"
-    }
+    },
+    "stats": {
+      "items": "artículos",
+      "total": "total",
+      "owned": "{{count}} en propiedad",
+      "wishlist": "{{count}} lista de deseos"
+    },
+    "table": {
+      "name": "Nombre",
+      "brand": "Marca",
+      "category": "Categoría",
+      "size": "Talla",
+      "weight": "Peso",
+      "qty": "Cant.",
+      "flags": "Etiquetas"
+    },
+    "flags": {
+      "worn": "Puesto",
+      "consumable": "Consumible",
+      "wishlist": "Lista de deseos"
+    },
+    "noLists": "Aún no hay listas",
+    "loadingLists": "Cargando…"
   },
   "wishlist": {
     "actions": {

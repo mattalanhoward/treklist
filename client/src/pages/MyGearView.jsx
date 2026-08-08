@@ -4,16 +4,18 @@ import { useSearchParams } from "react-router-dom";
 import api from "../services/api";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { FiSearch, FiGrid, FiList, FiPlus, FiChevronDown, FiCheckSquare, FiTrash2, FiX } from "react-icons/fi";
+import { FiSearch, FiGrid, FiList, FiPlus, FiChevronDown, FiCheckSquare, FiTrash2, FiX, FiStar } from "react-icons/fi";
 import ConfirmDialog from "../components/ConfirmDialog";
 import GlobalItemEditModal from "../components/GlobalItemEditModal";
 import GlobalItemModal from "../components/GlobalItemModal";
 import MyGearTileCard from "../components/MyGearTileCard";
 import MyGearListItem from "../components/MyGearListItem";
+import MyGearInventoryTable from "../components/MyGearInventoryTable";
+import AddToListMenu from "../components/AddToListMenu";
 import { useUnit } from "../hooks/useUnit";
 import { useWeightInput } from "../hooks/useWeightInput";
 
-export default function MyGearView({ collapsed }) {
+export default function MyGearView() {
   const { t } = useTranslation("common");
   const unit = useUnit();
   const { formatInput, unitLabel } = useWeightInput(unit);
@@ -24,6 +26,8 @@ export default function MyGearView({ collapsed }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [viewMode, setViewMode] = useState("tiles");
+  // Inventory sort: "category" (default grouping) | weight | name | recently added
+  const [sortKey, setSortKey] = useState("category");
 
   // Allow deep-linking to a specific tab via ?tab= (e.g. ?pane=myGear&tab=wishlist).
   const [searchParams] = useSearchParams();
@@ -125,6 +129,17 @@ export default function MyGearView({ collapsed }) {
     return sorted;
   }, [items, wishlistItems]);
 
+  // Per-category item counts for the facet pill options (mirrors the modal's
+  // counted facets).
+  const categoryCounts = useMemo(() => {
+    const counts = {};
+    [...items, ...wishlistItems].forEach((item) => {
+      const key = item.catalogCategory || "Uncategorized";
+      counts[key] = (counts[key] || 0) + 1;
+    });
+    return counts;
+  }, [items, wishlistItems]);
+
   // Search/filter logic
   const normalize = (s) =>
     (s || "")
@@ -224,6 +239,31 @@ export default function MyGearView({ collapsed }) {
 
   const displayLoading = (gearTab === "wishlist" || gearTab === "all") ? (loading || wishlistLoading) : loading;
 
+  // Shared item comparator for the sort control. "category" preserves fetch
+  // order (recent-first) within a group; the others sort explicitly.
+  const compareItems = useCallback(
+    (a, b) => {
+      switch (sortKey) {
+        case "weightDesc":
+          return (b.weight || 0) - (a.weight || 0);
+        case "weightAsc":
+          return (a.weight || 0) - (b.weight || 0);
+        case "name":
+          return (a.name || "").localeCompare(b.name || "");
+        case "brand":
+          return (
+            (a.brand || "").localeCompare(b.brand || "") ||
+            (a.name || "").localeCompare(b.name || "")
+          );
+        case "recent":
+          return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+        default:
+          return 0; // "category" — keep incoming order
+      }
+    },
+    [sortKey],
+  );
+
   const groupedItems = useMemo(() => {
     const groups = new Map();
     displayItems.forEach((item) => {
@@ -236,8 +276,27 @@ export default function MyGearView({ collapsed }) {
       if (b === "Uncategorized") return -1;
       return a.localeCompare(b);
     });
-    return sorted.map(([category, items]) => ({ category, items }));
-  }, [displayItems]);
+    return sorted.map(([category, items]) => ({
+      category,
+      items: [...items].sort(compareItems),
+    }));
+  }, [displayItems, compareItems]);
+
+  // Flat, fully-sorted list for the desktop inventory table. "category" sorts by
+  // category name then item name so rows still cluster by category.
+  const sortedDisplayItems = useMemo(() => {
+    const flat = [...displayItems];
+    if (sortKey === "category") {
+      return flat.sort((a, b) => {
+        const ca = a.catalogCategory || "Uncategorized";
+        const cb = b.catalogCategory || "Uncategorized";
+        if (ca === "Uncategorized" && cb !== "Uncategorized") return 1;
+        if (cb === "Uncategorized" && ca !== "Uncategorized") return -1;
+        return ca.localeCompare(cb) || (a.name || "").localeCompare(b.name || "");
+      });
+    }
+    return flat.sort(compareItems);
+  }, [displayItems, sortKey, compareItems]);
 
   // Handle delete
   const handleDelete = async (item) => {
@@ -311,6 +370,119 @@ export default function MyGearView({ collapsed }) {
     }
   };
 
+  // Bulk status change: move selected items between Owned and Wishlist.
+  const handleBulkStatus = async (targetStatus) => {
+    const ids = [...selectedIds];
+    setActionLoading("bulk");
+    try {
+      await Promise.all(
+        ids.map((id) => api.patch(`/global/items/${id}`, { status: targetStatus })),
+      );
+      toast.success(
+        targetStatus === "wishlisted"
+          ? t("myGear.toast.bulkWishlisted", "{{count}} moved to wishlist", { count: ids.length })
+          : t("myGear.toast.bulkOwned", "{{count}} marked as owned", { count: ids.length }),
+      );
+      await Promise.all([fetchItems(), fetchWishlistItems()]);
+      window.dispatchEvent(new CustomEvent("global-items:updated"));
+      exitSelectionMode();
+    } catch (err) {
+      console.error("Failed bulk status change", err);
+      toast.error(t("myGear.toast.bulkStatusFailed", "Failed to update some items"));
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  // Bulk add selected gear to a chosen list: resolve/create a category per item
+  // (by catalogCategory name), skip items already present, then append each.
+  const handleAddSelectedToList = async (list) => {
+    const listId = list._id;
+    const selected = displayItems.filter((i) => selectedIds.has(i._id));
+    setActionLoading("bulk");
+    try {
+      const { data: full } = await api.get(`/dashboard/${listId}/full`);
+      const categories = [...(full.categories || [])];
+      const existing = new Set(
+        (full.items || []).map((i) => String(i.globalItem)).filter(Boolean),
+      );
+      // title(lower) -> catId, and per-category item counts (for append position)
+      const catByTitle = new Map(
+        categories.map((c) => [String(c.title || "").toLowerCase(), c._id]),
+      );
+      const catCounts = {};
+      (full.items || []).forEach((i) => {
+        const c = String(i.category);
+        catCounts[c] = (catCounts[c] || 0) + 1;
+      });
+
+      let added = 0;
+      let skipped = 0;
+      for (const item of selected) {
+        if (existing.has(String(item._id))) {
+          skipped += 1;
+          continue;
+        }
+        const title = item.catalogCategory || "Uncategorized";
+        let catId = catByTitle.get(title.toLowerCase());
+        if (!catId) {
+          const { data: newCat } = await api.post(`/dashboard/${listId}/categories`, {
+            title,
+            position: categories.length,
+          });
+          catId = newCat._id;
+          categories.push(newCat);
+          catByTitle.set(title.toLowerCase(), catId);
+          catCounts[String(catId)] = 0;
+        }
+        const position = catCounts[String(catId)] || 0;
+        await api.post(`/dashboard/${listId}/categories/${catId}/items`, {
+          globalItem: item._id,
+          productId: item.productId,
+          brand: item.brand,
+          itemType: item.itemType,
+          name: item.name,
+          description: item.description,
+          weight: item.weight,
+          link: item.link,
+          imageUrls: item.imageUrls,
+          worn: item.worn,
+          consumable: item.consumable,
+          quantity: item.quantity || 1,
+          position,
+        });
+        catCounts[String(catId)] = position + 1;
+        added += 1;
+      }
+
+      if (added > 0) {
+        toast.success(
+          skipped > 0
+            ? t("myGear.toast.addedToListSkipped", "Added {{added}} to {{list}} ({{skipped}} already there)", {
+                added,
+                list: list.title,
+                skipped,
+              })
+            : t("myGear.toast.addedToList", "Added {{added}} to {{list}}", {
+                added,
+                list: list.title,
+              }),
+        );
+      } else {
+        toast(t("myGear.toast.addedToListNone", "All selected items are already in {{list}}", { list: list.title }));
+      }
+      window.dispatchEvent(new CustomEvent("global-items:updated"));
+      exitSelectionMode();
+    } catch (err) {
+      console.error("Failed to add items to list", err);
+      toast.error(
+        err?.response?.data?.message || t("myGear.toast.addToListFailed", "Failed to add items to list"),
+      );
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   // Escape key handler for modals and selection mode
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -332,7 +504,7 @@ export default function MyGearView({ collapsed }) {
   return (
     <div className="h-full flex flex-col overflow-hidden bg-neutral/10 transition-all duration-300 w-full">
       {/* Header - single row on desktop, stacked on mobile */}
-      <div data-tour="mygear-header" className="flex-shrink-0 px-4 py-2 border-b border-primary/10 bg-base-100">
+      <div data-tour="mygear-header" className="flex-shrink-0 px-4 py-1.5 border-b border-primary/10 bg-base-100">
         {/* Desktop: single row */}
         <div className="hidden sm:flex items-center justify-between gap-4">
           {/* Left: Title */}
@@ -351,35 +523,68 @@ export default function MyGearView({ collapsed }) {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t("myGear.searchPlaceholder", "Search my gear...")}
-              className="w-full pl-9 pr-3 border border-primary/30 rounded text-primary bg-base-100 placeholder:text-primary/50 text-sm"
+              className="w-full pl-9 pr-3 py-1 border border-primary/30 rounded-lg text-primary bg-base-100 placeholder:text-primary/50 text-sm"
             />
           </div>
 
           {/* Right: Filter + Sort + View toggle */}
           <div className="flex items-center gap-2">
-            {/* Category filter dropdown */}
+            {/* Category filter — pill facet matching the import modal's facet row */}
             <div className="relative">
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="appearance-none pl-3 pr-8 border border-primary/30 rounded text-primary bg-base-100 text-sm cursor-pointer"
+                className={`appearance-none rounded-full border pl-3 pr-8 py-1 text-sm whitespace-nowrap transition-colors cursor-pointer ${
+                  categoryFilter !== "all"
+                    ? "bg-secondary text-white border-secondary"
+                    : "border-primary/20 text-primary/60 hover:border-secondary/50 bg-base-100"
+                }`}
               >
                 <option value="all">{t("myGear.filter.allCategories", "All Categories")}</option>
                 {categories.map((cat) => (
                   <option key={cat} value={cat}>
-                    {cat}
+                    {cat} ({categoryCounts[cat] || 0})
                   </option>
                 ))}
               </select>
-              <FiChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 text-primary/50 pointer-events-none text-xs" />
+              <FiChevronDown
+                className={`absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-xs ${
+                  categoryFilter !== "all" ? "text-white/70" : "text-primary/50"
+                }`}
+              />
+            </div>
+
+            {/* Sort — pill facet, active when not the default category grouping */}
+            <div className="relative">
+              <select
+                value={sortKey}
+                onChange={(e) => setSortKey(e.target.value)}
+                aria-label={t("myGear.sort.label", "Sort")}
+                className={`appearance-none rounded-full border pl-3 pr-8 py-1 text-sm whitespace-nowrap transition-colors cursor-pointer ${
+                  sortKey !== "category"
+                    ? "bg-secondary text-white border-secondary"
+                    : "border-primary/20 text-primary/60 hover:border-secondary/50 bg-base-100"
+                }`}
+              >
+                <option value="category">{t("myGear.sort.category", "Category")}</option>
+                <option value="weightDesc">{t("myGear.sort.weightDesc", "Weight: heavy → light")}</option>
+                <option value="weightAsc">{t("myGear.sort.weightAsc", "Weight: light → heavy")}</option>
+                <option value="name">{t("myGear.sort.name", "Name (A–Z)")}</option>
+                <option value="recent">{t("myGear.sort.recent", "Recently added")}</option>
+              </select>
+              <FiChevronDown
+                className={`absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-xs ${
+                  sortKey !== "category" ? "text-white/70" : "text-primary/50"
+                }`}
+              />
             </div>
 
             {/* View mode toggle */}
-            <div className="inline-flex rounded border border-primary/30 overflow-hidden">
+            <div className="inline-flex rounded-lg border border-primary/30 overflow-hidden">
               <button
                 type="button"
                 onClick={() => setViewMode("list")}
-                className={`px-2 py-1.5 flex items-center text-primary hover:bg-primary/5 ${
+                className={`px-2 py-1 flex items-center text-primary hover:bg-primary/5 ${
                   viewMode === "list" ? "bg-primary/5" : "bg-base-100"
                 }`}
                 title={t("myGear.view.list", "List view")}
@@ -390,7 +595,7 @@ export default function MyGearView({ collapsed }) {
               <button
                 type="button"
                 onClick={() => setViewMode("tiles")}
-                className={`px-2 py-1.5 flex items-center text-primary hover:bg-primary/5 ${
+                className={`px-2 py-1 flex items-center text-primary hover:bg-primary/5 ${
                   viewMode === "tiles" ? "bg-primary/5" : "bg-base-100"
                 }`}
                 title={t("myGear.view.tiles", "Tile view")}
@@ -415,7 +620,7 @@ export default function MyGearView({ collapsed }) {
               data-tour="mygear-add-item"
               type="button"
               onClick={() => setShowAddModal(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-secondary text-white text-sm font-medium rounded-lg hover:bg-secondary/90 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1 bg-secondary text-white text-sm font-medium rounded-lg hover:bg-secondary/90 transition-colors"
             >
               <FiPlus className="text-sm" />
               {t("myGear.actions.addItem", "Add item")}
@@ -424,7 +629,7 @@ export default function MyGearView({ collapsed }) {
         </div>
 
         {/* Tab bar */}
-        <div className="hidden sm:flex gap-4 mt-2 pt-2 border-t border-primary/10">
+        <div className="hidden sm:flex gap-4 mt-3">
           {[
             { key: "all", label: t("myGear.tabs.all", "All Gear"), count: items.length + wishlistItems.length },
             { key: "owned", label: t("myGear.tabs.owned", "My Gear"), count: items.filter(i => !i.importedFromShare).length },
@@ -476,15 +681,29 @@ export default function MyGearView({ collapsed }) {
               </div>
               <div className="flex items-center gap-2">
                 {selectedIds.size > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => setConfirmBulkDelete(true)}
-                    disabled={actionLoading === "bulk"}
-                    className="flex items-center gap-1 px-2 py-1 text-sm bg-error/10 text-error hover:bg-error/20 rounded"
-                  >
-                    <FiTrash2 className="text-xs" />
-                    {t("myGear.actions.deleteSelected", "Delete")}
-                  </button>
+                  <>
+                    <AddToListMenu onSelect={handleAddSelectedToList} disabled={actionLoading === "bulk"} />
+                    <button
+                      type="button"
+                      onClick={() => handleBulkStatus(gearTab === "wishlist" ? "owned" : "wishlisted")}
+                      disabled={actionLoading === "bulk"}
+                      className="flex items-center gap-1 px-2 py-1 text-sm text-secondary hover:bg-secondary/10 rounded disabled:opacity-50"
+                    >
+                      <FiStar className="text-xs" />
+                      {gearTab === "wishlist"
+                        ? t("myGear.actions.markOwned", "Mark as owned")
+                        : t("myGear.actions.moveToWishlist", "Move to wishlist")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setConfirmBulkDelete(true)}
+                      disabled={actionLoading === "bulk"}
+                      className="flex items-center gap-1 px-2 py-1 text-sm bg-error/10 text-error hover:bg-error/20 rounded disabled:opacity-50"
+                    >
+                      <FiTrash2 className="text-xs" />
+                      {t("myGear.actions.deleteSelected", "Delete")}
+                    </button>
+                  </>
                 )}
                 {filteredItems.length > 0 && (
                   <button
@@ -510,7 +729,7 @@ export default function MyGearView({ collapsed }) {
 
         {/* Mobile: stacked layout */}
         <div className="sm:hidden space-y-2">
-          <div className={`flex items-center justify-between gap-4 ${collapsed ? "pl-8" : ""}`}>
+          <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <h1 className="text-lg font-semibold text-primary whitespace-nowrap">
                 {t("myGear.title", "My Gear")}
@@ -519,7 +738,7 @@ export default function MyGearView({ collapsed }) {
 
             <div className="flex items-center gap-2">
               {/* View mode toggle */}
-              <div className="inline-flex rounded border border-primary/30 overflow-hidden">
+              <div className="inline-flex rounded-lg border border-primary/30 overflow-hidden">
                 <button
                   type="button"
                   onClick={() => setViewMode("list")}
@@ -551,7 +770,7 @@ export default function MyGearView({ collapsed }) {
                 data-tour="mygear-add-item"
                 type="button"
                 onClick={() => setShowAddModal(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-secondary text-white text-sm font-medium rounded-lg hover:bg-secondary/90 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1 bg-secondary text-white text-sm font-medium rounded-lg hover:bg-secondary/90 transition-colors"
               >
                 <FiPlus className="text-sm" />
                 {t("myGear.actions.addItem", "Add item")}
@@ -587,17 +806,31 @@ export default function MyGearView({ collapsed }) {
                     </button>
                   )}
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   {selectedIds.size > 0 && (
-                    <button
-                      type="button"
-                      onClick={() => setConfirmBulkDelete(true)}
-                      disabled={actionLoading === "bulk"}
-                      className="p-1.5 text-error hover:bg-error/10 rounded"
-                      title={t("myGear.actions.deleteSelected", "Delete selected")}
-                    >
-                      <FiTrash2 className="text-sm" />
-                    </button>
+                    <>
+                      <AddToListMenu onSelect={handleAddSelectedToList} disabled={actionLoading === "bulk"} />
+                      <button
+                        type="button"
+                        onClick={() => handleBulkStatus(gearTab === "wishlist" ? "owned" : "wishlisted")}
+                        disabled={actionLoading === "bulk"}
+                        className="p-1.5 text-secondary hover:bg-secondary/10 rounded disabled:opacity-50"
+                        title={gearTab === "wishlist"
+                          ? t("myGear.actions.markOwned", "Mark as owned")
+                          : t("myGear.actions.moveToWishlist", "Move to wishlist")}
+                      >
+                        <FiStar className="text-sm" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setConfirmBulkDelete(true)}
+                        disabled={actionLoading === "bulk"}
+                        className="p-1.5 text-error hover:bg-error/10 rounded disabled:opacity-50"
+                        title={t("myGear.actions.deleteSelected", "Delete selected")}
+                      >
+                        <FiTrash2 className="text-sm" />
+                      </button>
+                    </>
                   )}
                   {filteredItems.length > 0 && (
                     <button
@@ -630,7 +863,7 @@ export default function MyGearView({ collapsed }) {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t("myGear.searchPlaceholder", "Search my gear...")}
-              className="w-full pl-9 pr-3 border border-primary/30 rounded text-primary bg-base-100 placeholder:text-primary/50"
+              className="w-full pl-9 pr-3 py-1.5 border border-primary/30 rounded-lg text-primary bg-base-100 placeholder:text-primary/50"
             />
           </div>
 
@@ -640,12 +873,12 @@ export default function MyGearView({ collapsed }) {
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="w-full appearance-none pl-2 pr-6 border border-primary/30 rounded text-primary bg-base-100 text-sm cursor-pointer"
+                className="w-full appearance-none pl-2 pr-6 py-1.5 border border-primary/30 rounded-lg text-primary bg-base-100 text-sm cursor-pointer"
               >
                 <option value="all">{t("myGear.filter.allCategories", "All Categories")}</option>
                 {categories.map((cat) => (
                   <option key={cat} value={cat}>
-                    {cat}
+                    {cat} ({categoryCounts[cat] || 0})
                   </option>
                 ))}
               </select>
@@ -655,7 +888,7 @@ export default function MyGearView({ collapsed }) {
               <select
                 value={gearTab}
                 onChange={(e) => setGearTab(e.target.value)}
-                className="w-full appearance-none pl-2 pr-6 border border-primary/30 rounded text-primary bg-base-100 text-sm cursor-pointer"
+                className="w-full appearance-none pl-2 pr-6 py-1.5 border border-primary/30 rounded-lg text-primary bg-base-100 text-sm cursor-pointer"
               >
                 <option value="all">{t("myGear.tabs.all", "All Gear")} ({items.length + wishlistItems.length})</option>
                 <option value="owned">{t("myGear.tabs.owned", "My Gear")} ({items.filter(i => !i.importedFromShare).length})</option>
@@ -692,33 +925,54 @@ export default function MyGearView({ collapsed }) {
                       : t("myGear.noResults", "No items match your search."))}
           </div>
         ) : viewMode === "list" ? (
-          <div className="space-y-4">
-            {groupedItems.map(({ category, items: groupItems }) => (
-              <div key={category}>
-                {groupedItems.length > 1 && (
-                  <div className="text-sm font-semibold text-primary/50 uppercase tracking-wider px-1 mb-1.5">{category}</div>
-                )}
-                <div className="space-y-2">
-                  {groupItems.map((item) => (
-                    <MyGearListItem
-                      key={item._id}
-                      item={item}
-                      formatWeight={formatInput}
-                      unitLabel={unitLabel}
-                      t={t}
-                      actionLoading={actionLoading}
-                      onViewEdit={() => setEditingItem(item)}
-                      onDelete={() => setConfirmDelete(item)}
-                      onToggleWishlist={() => handleToggleWishlist(item)}
-                      selectionMode={selectionMode}
-                      isSelected={selectedIds.has(item._id)}
-                      onToggleSelect={() => toggleSelection(item._id)}
-                    />
-                  ))}
+          <>
+            {/* Desktop: dense sortable inventory table */}
+            <div className="hidden sm:block">
+              <MyGearInventoryTable
+                items={sortedDisplayItems}
+                sortKey={sortKey}
+                onSortChange={setSortKey}
+                formatWeight={formatInput}
+                unitLabel={unitLabel}
+                t={t}
+                actionLoading={actionLoading}
+                onViewEdit={(item) => setEditingItem(item)}
+                onDelete={(item) => setConfirmDelete(item)}
+                onToggleWishlist={(item) => handleToggleWishlist(item)}
+                selectionMode={selectionMode}
+                selectedIds={selectedIds}
+                onToggleSelect={(id) => toggleSelection(id)}
+              />
+            </div>
+            {/* Mobile: stacked rows grouped by category (a wide table isn't usable on phones) */}
+            <div className="sm:hidden space-y-4">
+              {groupedItems.map(({ category, items: groupItems }) => (
+                <div key={category}>
+                  {groupedItems.length > 1 && (
+                    <div className="text-sm font-semibold text-primary/50 uppercase tracking-wider px-1 mb-1.5">{category}</div>
+                  )}
+                  <div className="space-y-2">
+                    {groupItems.map((item) => (
+                      <MyGearListItem
+                        key={item._id}
+                        item={item}
+                        formatWeight={formatInput}
+                        unitLabel={unitLabel}
+                        t={t}
+                        actionLoading={actionLoading}
+                        onViewEdit={() => setEditingItem(item)}
+                        onDelete={() => setConfirmDelete(item)}
+                        onToggleWishlist={() => handleToggleWishlist(item)}
+                        selectionMode={selectionMode}
+                        isSelected={selectedIds.has(item._id)}
+                        onToggleSelect={() => toggleSelection(item._id)}
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </>
         ) : (
           <div className="space-y-4">
             {groupedItems.map(({ category, items: groupItems }) => (
@@ -750,12 +1004,6 @@ export default function MyGearView({ collapsed }) {
         )}
       </div>
 
-      {/* Footer with count */}
-      {!loading && items.length > 0 && (
-        <div className="flex-shrink-0 px-4 py-2 border-t border-primary/10 bg-base-100 text-sm text-primary/60">
-          {t("myGear.itemCount", "{{count}} item(s)", { count: displayItems.length })}
-        </div>
-      )}
 
       {/* Edit Modal */}
       {editingItem && (

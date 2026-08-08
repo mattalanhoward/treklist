@@ -1446,10 +1446,14 @@
     "sort": {
       "nameAsc": "Name A-Z",
       "nameDesc": "Name Z-A",
-      "weightAsc": "Gewicht ↑",
-      "weightDesc": "Gewicht ↓",
+      "weightAsc": "Gewicht: leicht → schwer",
+      "weightDesc": "Gewicht: schwer → leicht",
       "dateDesc": "Neueste",
-      "dateAsc": "Älteste"
+      "dateAsc": "Älteste",
+      "label": "Sortieren",
+      "category": "Kategorie",
+      "name": "Name (A–Z)",
+      "recent": "Zuletzt hinzugefügt"
     },
     "tabs": {
       "all": "Gesamte Ausrüstung",
@@ -1478,7 +1482,11 @@
       "clearSelection": "Auswahl aufheben",
       "deleteSelected": "Löschen",
       "showImported": "Pack-Artikel anzeigen",
-      "hideImported": "Pack-Artikel ausblenden"
+      "hideImported": "Pack-Artikel ausblenden",
+      "addToList": "Zur Liste hinzufügen",
+      "addToListTitle": "Zur Liste hinzufügen",
+      "markOwned": "Als Besitz markieren",
+      "moveToWishlist": "Auf Wunschliste"
     },
     "badge": {
       "fromSharedList": "Von Packs"
@@ -1491,7 +1499,14 @@
       "deleted": "Artikel gelöscht",
       "deleteFailed": "Löschen fehlgeschlagen",
       "bulkDeleted": "{{count}} Artikel gelöscht",
-      "bulkDeleteFailed": "Einige Artikel konnten nicht gelöscht werden"
+      "bulkDeleteFailed": "Einige Artikel konnten nicht gelöscht werden",
+      "bulkWishlisted": "{{count}} auf Wunschliste verschoben",
+      "bulkOwned": "{{count}} als Besitz markiert",
+      "bulkStatusFailed": "Einige Artikel konnten nicht aktualisiert werden",
+      "addedToList": "{{added}} zu {{list}} hinzugefügt",
+      "addedToListSkipped": "{{added}} zu {{list}} hinzugefügt ({{skipped}} bereits vorhanden)",
+      "addedToListNone": "Alle ausgewählten Artikel sind bereits in {{list}}",
+      "addToListFailed": "Artikel konnten nicht zur Liste hinzugefügt werden"
     },
     "confirm": {
       "deleteTitle": "Artikel löschen",
@@ -1500,7 +1515,29 @@
       "bulkDeleteTitle": "Artikel löschen",
       "bulkDeleteMessage": "Möchtest du {{count}} Artikel wirklich löschen? Sie werden auch aus allen Packlisten entfernt.",
       "bulkDeleteConfirm": "Alle löschen"
-    }
+    },
+    "stats": {
+      "items": "Artikel",
+      "total": "gesamt",
+      "owned": "{{count}} im Besitz",
+      "wishlist": "{{count}} Wunschliste"
+    },
+    "table": {
+      "name": "Name",
+      "brand": "Marke",
+      "category": "Kategorie",
+      "size": "Größe",
+      "weight": "Gewicht",
+      "qty": "Anz.",
+      "flags": "Merkmale"
+    },
+    "flags": {
+      "worn": "Getragen",
+      "consumable": "Verbrauchbar",
+      "wishlist": "Wunschliste"
+    },
+    "noLists": "Noch keine Listen",
+    "loadingLists": "Wird geladen…"
   },
   "wishlist": {
     "actions": {

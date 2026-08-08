@@ -1453,10 +1453,14 @@
     "sort": {
       "nameAsc": "Name A-Z",
       "nameDesc": "Name Z-A",
-      "weightAsc": "Weight ↑",
-      "weightDesc": "Weight ↓",
+      "weightAsc": "Weight: light → heavy",
+      "weightDesc": "Weight: heavy → light",
       "dateDesc": "Newest",
-      "dateAsc": "Oldest"
+      "dateAsc": "Oldest",
+      "label": "Sort",
+      "category": "Category",
+      "name": "Name (A–Z)",
+      "recent": "Recently added"
     },
     "tabs": {
       "all": "All Gear",
@@ -1485,7 +1489,11 @@
       "clearSelection": "Clear",
       "deleteSelected": "Delete",
       "showImported": "Show From Packs items",
-      "hideImported": "Hide From Packs items"
+      "hideImported": "Hide From Packs items",
+      "addToList": "Add to list",
+      "addToListTitle": "Add to list",
+      "markOwned": "Mark as owned",
+      "moveToWishlist": "Move to wishlist"
     },
     "badge": {
       "fromSharedList": "From Packs"
@@ -1498,7 +1506,14 @@
       "deleted": "Item deleted",
       "deleteFailed": "Failed to delete",
       "bulkDeleted": "{{count}} items deleted",
-      "bulkDeleteFailed": "Failed to delete some items"
+      "bulkDeleteFailed": "Failed to delete some items",
+      "bulkWishlisted": "{{count}} moved to wishlist",
+      "bulkOwned": "{{count}} marked as owned",
+      "bulkStatusFailed": "Failed to update some items",
+      "addedToList": "Added {{added}} to {{list}}",
+      "addedToListSkipped": "Added {{added}} to {{list}} ({{skipped}} already there)",
+      "addedToListNone": "All selected items are already in {{list}}",
+      "addToListFailed": "Failed to add items to list"
     },
     "confirm": {
       "deleteTitle": "Delete Item",
@@ -1507,7 +1522,29 @@
       "bulkDeleteTitle": "Delete Items",
       "bulkDeleteMessage": "Are you sure you want to delete {{count}} items? This will also remove them from any gear lists.",
       "bulkDeleteConfirm": "Delete All"
-    }
+    },
+    "stats": {
+      "items": "items",
+      "total": "total",
+      "owned": "{{count}} owned",
+      "wishlist": "{{count}} wishlist"
+    },
+    "table": {
+      "name": "Name",
+      "brand": "Brand",
+      "category": "Category",
+      "size": "Size",
+      "weight": "Weight",
+      "qty": "Qty",
+      "flags": "Flags"
+    },
+    "flags": {
+      "worn": "Worn",
+      "consumable": "Consumable",
+      "wishlist": "Wishlist"
+    },
+    "noLists": "No lists yet",
+    "loadingLists": "Loading…"
   },
   "wishlist": {
     "actions": {

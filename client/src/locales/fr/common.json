@@ -1453,10 +1453,14 @@
     "sort": {
       "nameAsc": "Nom A-Z",
       "nameDesc": "Nom Z-A",
-      "weightAsc": "Poids ↑",
-      "weightDesc": "Poids ↓",
+      "weightAsc": "Poids : léger → lourd",
+      "weightDesc": "Poids : lourd → léger",
       "dateDesc": "Plus récents",
-      "dateAsc": "Plus anciens"
+      "dateAsc": "Plus anciens",
+      "label": "Trier",
+      "category": "Catégorie",
+      "name": "Nom (A–Z)",
+      "recent": "Ajouté récemment"
     },
     "tabs": {
       "all": "Tout l'équipement",
@@ -1485,7 +1489,11 @@
       "clearSelection": "Effacer",
       "deleteSelected": "Supprimer",
       "showImported": "Afficher les articles des packs",
-      "hideImported": "Masquer les articles des packs"
+      "hideImported": "Masquer les articles des packs",
+      "addToList": "Ajouter à une liste",
+      "addToListTitle": "Ajouter à une liste",
+      "markOwned": "Marquer comme possédé",
+      "moveToWishlist": "Mettre en liste de souhaits"
     },
     "badge": {
       "fromSharedList": "Des packs"
@@ -1498,7 +1506,14 @@
       "deleted": "Article supprimé",
       "deleteFailed": "Échec de la suppression",
       "bulkDeleted": "{{count}} articles supprimés",
-      "bulkDeleteFailed": "Échec de la suppression de certains articles"
+      "bulkDeleteFailed": "Échec de la suppression de certains articles",
+      "bulkWishlisted": "{{count}} déplacés vers la liste de souhaits",
+      "bulkOwned": "{{count}} marqués comme possédés",
+      "bulkStatusFailed": "Échec de la mise à jour de certains articles",
+      "addedToList": "{{added}} ajoutés à {{list}}",
+      "addedToListSkipped": "{{added}} ajoutés à {{list}} ({{skipped}} déjà présents)",
+      "addedToListNone": "Tous les articles sélectionnés sont déjà dans {{list}}",
+      "addToListFailed": "Échec de l'ajout des articles à la liste"
     },
     "confirm": {
       "deleteTitle": "Supprimer l'article",
@@ -1507,7 +1522,29 @@
       "bulkDeleteTitle": "Supprimer les articles",
       "bulkDeleteMessage": "Êtes-vous sûr de vouloir supprimer {{count}} articles ? Ils seront également retirés de toutes les listes d'équipement.",
       "bulkDeleteConfirm": "Tout supprimer"
-    }
+    },
+    "stats": {
+      "items": "articles",
+      "total": "total",
+      "owned": "{{count}} possédés",
+      "wishlist": "{{count}} liste de souhaits"
+    },
+    "table": {
+      "name": "Nom",
+      "brand": "Marque",
+      "category": "Catégorie",
+      "size": "Taille",
+      "weight": "Poids",
+      "qty": "Qté",
+      "flags": "Attributs"
+    },
+    "flags": {
+      "worn": "Porté",
+      "consumable": "Consommable",
+      "wishlist": "Liste de souhaits"
+    },
+    "noLists": "Aucune liste pour l'instant",
+    "loadingLists": "Chargement…"
   },
   "wishlist": {
     "actions": {

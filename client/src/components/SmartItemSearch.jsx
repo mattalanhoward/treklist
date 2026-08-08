@@ -818,9 +818,15 @@ function FacetRow({
       style={{ scrollbarWidth: "none" }}
     >
       <div className="flex items-center gap-2 sm:contents">
-        {brands?.length > 0 && (
-          <BrandCombobox brands={brands} counts={brandCounts} value={brand} onChange={onPickBrand} />
-        )}
+        {/* Rendered unconditionally (not gated on the async brand list) so the
+            pill reserves its height on first paint — the counted options fill in
+            when /catalog/brands resolves, with no downward layout shift. */}
+        <BrandCombobox
+          brands={brands || []}
+          counts={brandCounts}
+          value={brand}
+          onChange={onPickBrand}
+        />
         {/* Category dropdown — only once results are shown (redundant on the
             browse landing, where the category tiles already do this). */}
         {showCategory && (
@@ -2379,10 +2385,10 @@ export default function SmartItemSearch({
         )}
       </div>
 
-      {/* Footer — sticky commit bar; hides on mobile while the keyboard is up.
-          Swap mode has no batch commit bar (the pane/sheet "Swap for this"
-          button commits) — the footer only shows for the custom-create form. */}
-      {(!swapMode || showingCustomForm) && (
+      {/* Footer — sticky commit bar with the Close button; hides on mobile while
+          the keyboard is up. Swap mode has no batch commit button (the pane/sheet
+          "Swap for this" button commits), but the footer itself still renders so
+          the Close button and ambient count match the master modal. */}
       <div
         className={`items-center justify-end gap-3 px-5 py-3 border-t border-primary/10 flex-shrink-0 ${
           keyboardOpen ? "hidden sm:flex" : "flex"
@@ -2429,7 +2435,6 @@ export default function SmartItemSearch({
           </button>
         )}
       </div>
-      )}
 
       {/* Stacked catalog preview modal (mobile / non-two-pane) */}
       <CatalogItemPreviewModal
