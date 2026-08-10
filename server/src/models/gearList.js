@@ -38,6 +38,23 @@ const GearListSchema = new mongoose.Schema(
       },
     ],
 
+    // Provenance: set when this list was created by copying another list
+    // (either a public/shared list, or one of the owner's own lists).
+    // `title` and `ownerEmail` are snapshots so the trail survives the source
+    // being renamed or deleted.
+    copiedFrom: {
+      list: { type: mongoose.Types.ObjectId, ref: "GearList", default: null },
+      owner: { type: mongoose.Types.ObjectId, ref: "User", default: null },
+      title: { type: String, default: null },
+      ownerEmail: { type: String, default: null },
+      // Deliberately NOT the share token: that is a live credential granting
+      // read access to the source list, and persisting it on someone else's
+      // document is a leak waiting to happen. A public-vs-self copy is already
+      // derivable from `owner` compared with the list's owner.
+      viaShareLink: { type: Boolean, default: false },
+      at: { type: Date, default: null },
+    },
+
     region: { type: String, default: null },
     isFeatured: { type: Boolean, default: false },
     isSample: { type: Boolean, default: false },
@@ -51,5 +68,8 @@ const GearListSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// "all lists for this user" — used by the dashboard sidebar and admin panels
+GearListSchema.index({ owner: 1 });
 
 module.exports = mongoose.model("GearList", GearListSchema);

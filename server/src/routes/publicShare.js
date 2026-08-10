@@ -7,6 +7,7 @@ const Category = require("../models/category");
 const Item = require("../models/gearItem");
 const GlobalItem = require("../models/globalItem");
 const CatalogItem = require("../models/catalogItem");
+const User = require("../models/user");
 const { resolveOfferForProduct } = require("../services/affiliateResolver");
 const { detectViewerRegion } = require("../utils/regionDetection");
 
@@ -425,9 +426,23 @@ router.post("/:token/copy", auth, async (req, res) => {
           return { list: existing, created: false };
         }
 
+        // Snapshot the source author's email so the provenance trail survives
+        // the source list being renamed or deleted.
+        const srcOwner = srcList.owner
+          ? await User.findById(srcList.owner).select("email").lean()
+          : null;
+
         const newList = await GearList.create({
           owner: ownerId,
           title: `${srcList.title}${copySuffix}`,
+          copiedFrom: {
+            list: srcList._id,
+            owner: srcList.owner || null,
+            title: srcList.title || null,
+            ownerEmail: srcOwner?.email || null,
+            viaShareLink: true,
+            at: new Date(),
+          },
         });
 
         return { list: newList, created: true };
@@ -552,6 +567,11 @@ router.post("/:token/copy", auth, async (req, res) => {
             const created = await GlobalItem.create({
               ...obj,
               importedFromShare: true,
+              // Never inherit the source author's wishlist state — the copier
+              // owns whatever they copied, and a stray "wishlisted" hides the
+              // item from their My Gear counts.
+              status: "owned",
+              wishlistNotes: undefined,
             });
 
             oldToNewGlobalId[srcId] = created._id.toString();
