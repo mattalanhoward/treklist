@@ -724,6 +724,14 @@ router.post("/:listId/copy", async (req, res) => {
       owner: req.userId,
       title: `Copy of ${orig.title}`,
       region: orig.region || null,
+      copiedFrom: {
+        list: orig._id,
+        owner: orig.owner || null,
+        title: orig.title || null,
+        ownerEmail: null, // self-copy; owner is the requesting user
+        viaShareLink: false,
+        at: new Date(),
+      },
       // If you want to copy these too, uncomment:
       // backgroundColor: orig.backgroundColor || "",
       // backgroundImageUrl: orig.backgroundImageUrl || "",

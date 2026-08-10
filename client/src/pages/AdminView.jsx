@@ -1,5 +1,6 @@
 // client/src/pages/AdminView.jsx
 import React, { useState, useEffect, useMemo, useRef } from "react";
+import { createPortal } from "react-dom";
 import api from "../services/api";
 import {
   CATALOG_CATEGORIES,
@@ -3612,6 +3613,424 @@ function SectionHeading({ icon, children, right }) {
   );
 }
 
+// How far a user got past signing up. Mirrors the server's classification in
+// server/src/routes/adminUsers.js — keep the two in sync.
+// NOTE: this app has no daisyUI — badge-*/bg-success style classes are inert
+// here, so these use the project's own theme tokens (see tailwind.config.js).
+const ENGAGEMENT_META = {
+  none: {
+    label: "No activity",
+    badge: "bg-primary/10 text-primary/60",
+    hint: "Signed up but has no lists and no gear",
+  },
+  copier: {
+    label: "Copier",
+    badge: "bg-primary/15 text-primary/80",
+    hint: "Has gear, but all of it arrived by copying someone else's list",
+  },
+  builder: {
+    label: "Builder",
+    badge: "bg-accent/15 text-accent",
+    hint: "Has added their own gear — the first real signal of intent",
+  },
+  power: {
+    label: "Power user",
+    badge: "bg-accent text-neutral",
+    hint: "Has built out a substantial kit of their own",
+  },
+};
+
+function EngagementBadge({ value, className = "" }) {
+  const meta = ENGAGEMENT_META[value];
+  if (!meta) return <span className="text-primary/30">–</span>;
+  return (
+    <span
+      className={
+        "inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold whitespace-nowrap " +
+        `${meta.badge} ${className}`
+      }
+      title={meta.hint}
+    >
+      {meta.label}
+    </span>
+  );
+}
+
+/**
+ * Stacked bar showing what a user's My Gear is actually made of.
+ * The distinction that matters: gear they chose vs gear that rode in on a copy.
+ */
+function GearMixBar({ own = 0, imported = 0, unusedImported = 0 }) {
+  const total = own + imported;
+  if (total === 0) {
+    return <div className="text-xs text-primary/50">No gear yet</div>;
+  }
+  const pct = (n) => `${((n / total) * 100).toFixed(1)}%`;
+  const usedImported = Math.max(0, imported - unusedImported);
+
+  // Theme tokens only — see the note on ENGAGEMENT_META.
+  const segments = [
+    {
+      key: "own",
+      n: own,
+      color: "bg-accent",
+      label: "their own",
+      title: `${own} added by this user`,
+    },
+    {
+      key: "used",
+      n: usedImported,
+      color: "bg-primary/40",
+      label: "from packs, in use",
+      title: `${usedImported} from copied lists, still in use`,
+    },
+    {
+      key: "unused",
+      n: unusedImported,
+      color: "bg-primary/15",
+      label: "from packs, unused",
+      title: `${unusedImported} from copied lists, not in any list`,
+    },
+  ];
+
+  return (
+    <div className="space-y-1.5">
+      <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-primary/5">
+        {segments.map((s) => (
+          <div
+            key={s.key}
+            className={s.color}
+            style={{ width: pct(s.n) }}
+            title={s.title}
+          />
+        ))}
+      </div>
+      <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-primary/70">
+        {segments.map((s) => (
+          <span key={s.key} className="flex items-center gap-1">
+            <span
+              className={`inline-block h-2 w-2 rounded-full ${s.color}`}
+            />
+            {s.n} {s.label}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const TIMELINE_STYLES = {
+  signup: { dot: "bg-primary/40" },
+  "list.created": { dot: "bg-secondary" },
+  "list.copied": { dot: "bg-primary/30" },
+  "item.added": { dot: "bg-accent" },
+  "item.edited": { dot: "bg-accent/40" },
+  "item.placed": { dot: "bg-accent/60" },
+};
+
+/**
+ * The "what is this person actually doing?" panel.
+ *
+ * Treklist keeps no event log, so this is reconstructed from document
+ * timestamps and provenance flags. It can show what was added and when; it
+ * cannot show deletions or browsing. Unused imported gear is the closest
+ * available proxy for "items they threw out of a copied list".
+ */
+/**
+ * Loads the derived activity picture for one user.
+ *
+ * Treklist keeps no event log, so the server reconstructs this from document
+ * timestamps and provenance flags. It can show what was added and when; it
+ * cannot show deletions or browsing. Unused imported gear is the closest
+ * available proxy for "items they threw out of a copied list".
+ */
+function useUserActivity(userId) {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    if (!userId) return;
+    let cancelled = false;
+
+    (async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const { data: res } = await api.get(`/admin/users/${userId}/activity`);
+        if (!cancelled) setData(res);
+      } catch (err) {
+        console.error("Failed to load user activity", err);
+        if (!cancelled) {
+          setError(
+            err?.response?.data?.message ||
+              err?.message ||
+              "Failed to load activity."
+          );
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
+
+  return { loading, error, data };
+}
+
+function engagementFromSummary(summary) {
+  if (!summary) return null;
+  if (summary.listsTotal === 0 && summary.itemsTotal === 0) return "none";
+  if (summary.ownItems >= 25) return "power";
+  if (summary.ownItems > 0) return "builder";
+  return "copier";
+}
+
+const fmtClock = (val) =>
+  new Date(val).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+/**
+ * Opaque sticky table header. The rest of this file uses `bg-base-200`, which
+ * does nothing here (no daisyUI, and no such Tailwind token) — so those headers
+ * are transparent and body rows scroll visibly underneath them.
+ */
+const STICKY_HEAD =
+  "sticky top-0 z-10 bg-neutral text-[11px] uppercase tracking-wide text-primary/60";
+
+function ActivityStats({ summary }) {
+  return (
+    <div className="grid grid-cols-2 xl:grid-cols-4 gap-2.5 mb-4">
+      <StatField label="Their own gear">
+        <span className="font-semibold text-base">{summary.ownItems}</span>
+        <span className="text-primary/50 text-xs"> of {summary.itemsTotal} items</span>
+      </StatField>
+      <StatField label="From copied packs">
+        <span className="font-semibold text-base">{summary.importedItems}</span>
+        {summary.unusedImported > 0 && (
+          <span className="text-primary/50 text-xs">
+            {" "}({summary.unusedImported} unused)
+          </span>
+        )}
+      </StatField>
+      <StatField label="Lists">
+        <span className="font-semibold text-base">{summary.listsTotal}</span>
+        <span className="text-primary/50 text-xs">
+          {" "}{summary.listsCopied} copied · {summary.listsOriginal} original
+        </span>
+      </StatField>
+      <StatField label="Active days">
+        <span className="font-semibold text-base">{summary.activeDays}</span>
+        {summary.firstActionAt && (
+          <span className="text-primary/50 text-xs">
+            {" "}since {new Date(summary.firstActionAt).toLocaleDateString()}
+          </span>
+        )}
+      </StatField>
+    </div>
+  );
+}
+
+function ActivityComposition({ summary }) {
+  return (
+    <div className="rounded-lg bg-base-100 px-3 py-2.5">
+      <div className="text-[11px] uppercase tracking-wide font-semibold text-primary/50 mb-1.5">
+        My Gear composition
+      </div>
+      <GearMixBar
+        own={summary.ownItems}
+        imported={summary.importedItems}
+        unusedImported={summary.unusedImported}
+      />
+      {summary.wishlistedItems > 0 && (
+        <div className="text-[11px] text-primary/50 mt-1.5">
+          Plus {summary.wishlistedItems} wishlisted, excluded from every count
+          above and from the Items column in the users table.
+        </div>
+      )}
+    </div>
+  );
+}
+
+function OwnGearTable({ ownItems }) {
+  return (
+    <section>
+      <SectionHeading
+        right={
+          <span className="text-xs text-primary/60">
+            excludes anything from copied packs
+          </span>
+        }
+      >
+        Gear they added themselves ({ownItems.length})
+      </SectionHeading>
+
+      {ownItems.length === 0 ? (
+        <div className="text-sm text-primary/60 bg-base-100 rounded-lg px-3 py-3">
+          Nothing yet — every item in this account arrived by copying someone
+          else&apos;s list.
+        </div>
+      ) : (
+        <div className="rounded-lg border border-primary/10 overflow-hidden bg-base-100">
+          <div className="max-h-[22rem] overflow-auto lg:max-h-none lg:overflow-visible">
+            <table className="min-w-full text-sm">
+              <thead className={STICKY_HEAD}>
+                <tr>
+                  <th className="text-left font-semibold px-3 py-2">Added</th>
+                  <th className="text-left font-semibold px-3 py-2">Item</th>
+                  <th className="text-left font-semibold px-3 py-2">Type</th>
+                  <th className="text-right font-semibold px-3 py-2">Weight</th>
+                  <th className="text-left font-semibold px-3 py-2">In</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ownItems.map((i) => (
+                  <tr
+                    key={i._id}
+                    className="border-t border-primary/10 hover:bg-neutral/60 align-top"
+                  >
+                    <td className="px-3 py-2 text-xs text-primary/70 whitespace-nowrap">
+                      {new Date(i.createdAt).toLocaleDateString()}{" "}
+                      <span className="text-primary/50">{fmtClock(i.createdAt)}</span>
+                    </td>
+                    <td className="px-3 py-2">
+                      <div className="font-medium text-primary">
+                        {[i.brand, i.name].filter(Boolean).join(" ")}
+                      </div>
+                      <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
+                        {i.variantKey && (
+                          <span className="text-[10px] text-primary/60">
+                            {i.variantKey}
+                          </span>
+                        )}
+                        {i.isCustom && (
+                          <span className="text-[10px] text-primary/50">custom</span>
+                        )}
+                        {i.edited && (
+                          <span className="text-[10px] text-primary/50">edited</span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-3 py-2 text-xs text-primary/80">
+                      {i.itemType || "–"}
+                    </td>
+                    <td className="px-3 py-2 text-xs text-right text-primary/80 whitespace-nowrap">
+                      {i.weight != null ? `${i.weight} g` : "–"}
+                    </td>
+                    <td className="px-3 py-2 text-xs text-primary/70 max-w-[160px] truncate">
+                      {i.inLists.length ? i.inLists.join(", ") : "My Gear only"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function CopyResidue({ count, items }) {
+  const [open, setOpen] = useState(false);
+  if (!items.length) return null;
+
+  return (
+    <div>
+      <button
+        type="button"
+        className="text-xs text-primary/70 hover:text-primary flex items-center gap-1"
+        onClick={() => setOpen((v) => !v)}
+      >
+        {open ? <FiChevronUp /> : <FiChevronDown />}
+        {count} copied items sitting unused in My Gear
+      </button>
+      {open && (
+        <div className="mt-1.5 rounded-lg bg-base-100 px-3 py-2 text-xs text-primary/70">
+          <p className="mb-1.5 text-primary/60">
+            Gear that arrived with a copied list and is not in any list now —
+            usually items they deleted after copying. Deletions are not
+            recorded, so this is inference, not a log.
+          </p>
+          <div className="flex flex-wrap gap-x-3 gap-y-1">
+            {items.map((g) => (
+              <span key={g._id}>
+                {[g.brand, g.name].filter(Boolean).join(" ")}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ActivityTimeline({ timeline, truncated }) {
+  const fmtDay = (val) =>
+    new Date(val).toLocaleDateString([], {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+
+  // Group by day so a burst of activity reads as one session.
+  const days = [];
+  for (const ev of timeline) {
+    const key = new Date(ev.at).toDateString();
+    const last = days[days.length - 1];
+    if (last && last.key === key) last.events.push(ev);
+    else days.push({ key, at: ev.at, events: [ev] });
+  }
+
+  return (
+    <section>
+      <SectionHeading>
+        Timeline ({timeline.length}
+        {truncated ? "+" : ""})
+      </SectionHeading>
+      <div className="rounded-lg border border-primary/10 bg-base-100 max-h-[30rem] overflow-auto lg:max-h-none lg:overflow-visible">
+        {days.map((day) => (
+          <div key={day.key}>
+            <div className={STICKY_HEAD + " px-3 py-1 font-semibold"}>
+              {fmtDay(day.at)}
+            </div>
+            <ul className="px-3 py-1.5">
+              {day.events.map((ev, idx) => {
+                const style =
+                  TIMELINE_STYLES[ev.type] || TIMELINE_STYLES["item.added"];
+                return (
+                  <li key={`${ev.at}-${idx}`} className="flex gap-2.5 py-1 text-sm">
+                    <span className="text-[11px] text-primary/50 tabular-nums w-16 flex-shrink-0 pt-0.5 whitespace-nowrap">
+                      {fmtClock(ev.at)}
+                    </span>
+                    <span
+                      className={`mt-1.5 h-1.5 w-1.5 rounded-full flex-shrink-0 ${style.dot}`}
+                    />
+                    <span className="min-w-0">
+                      <span className="text-primary">{ev.label}</span>
+                      {ev.detail && (
+                        <span className="text-primary/60"> {ev.detail}</span>
+                      )}
+                      {ev.meta && (
+                        <span className="block text-[11px] text-primary/50">
+                          {ev.meta}
+                        </span>
+                      )}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function UserDetailModal({ userId, onClose, onUserChanged }) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -3630,6 +4049,12 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
   const [customItemsCount, setCustomItemsCount] = useState(0);
   const [revoking, setRevoking] = useState(false);
   const [confirmRevokeOpen, setConfirmRevokeOpen] = useState(false);
+
+  const {
+    loading: activityLoading,
+    error: activityError,
+    data: activity,
+  } = useUserActivity(userId);
 
   const handleRevokeSessions = async () => {
     if (!user) return;
@@ -3773,11 +4198,18 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
     return `${years}y ago`;
   };
 
-  return (
-    <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-50">
+  // Portaled to <body> so the overlay is positioned against the viewport and
+  // nothing in the dashboard tree can shift or clip it.
+  //
+  // The TopBar is sticky at z-[60] and paints over the overlay, so the dimmed
+  // area starts at its bottom edge (TOPBAR_H). Padding the top by that plus a
+  // gutter, and the bottom by the same gutter, leaves the card optically
+  // centered in the gray area.
+  return createPortal(
+    <div className="fixed inset-0 bg-primary bg-opacity-50 flex items-center justify-center z-50 px-3 pb-3 pt-[3.75rem] sm:px-4 sm:pb-4 sm:pt-16">
       <form
         onSubmit={handleSave}
-        className="bg-neutralAlt rounded-xl shadow-2xl max-w-4xl w-full px-4 py-4 sm:px-6 sm:py-5 my-4 max-h-[90vh] sm:max-h-[calc(100vh-4rem)] flex flex-col"
+        className="bg-neutralAlt rounded-xl shadow-2xl max-w-6xl 2xl:max-w-7xl w-full px-4 py-4 sm:px-6 sm:py-5 max-h-full flex flex-col"
       >
         {/* Header - fixed at top */}
         <div className="flex justify-between items-start gap-3 pb-3 mb-3 border-b border-base-200 flex-shrink-0">
@@ -3819,8 +4251,10 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
           </button>
         </div>
 
-        {/* Scrollable content area */}
-        <div className="flex-1 overflow-y-auto min-h-0">
+        {/* Content area. Below lg this scrolls as one column; from lg up the
+            two columns scroll independently so the modal fills the viewport
+            instead of growing into one very tall page. */}
+        <div className="flex-1 min-h-0 flex flex-col lg:flex-row lg:gap-x-6 overflow-y-auto lg:overflow-hidden">
         {loading && (
           <div className="text-sm text-primary/70">
             Loading user information…
@@ -3832,7 +4266,14 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
         )}
 
         {!loading && user && (
+          // Two columns from lg up: the account facts and the narrative on the
+          // left, the gear evidence (wide tables) on the right. Keeps the modal
+          // short enough to read without scrolling on a 13" laptop.
+          // The two columns are direct flex children of the scroll container
+          // above, so they stretch to its height without relying on a
+          // percentage height resolving through a wrapper.
           <>
+            <div className="min-w-0 lg:w-5/12 lg:min-h-0 lg:overflow-y-auto lg:pr-2">
             {/* Section: Profile (editable) */}
             <section className="mb-5">
               <SectionHeading icon={<FiUser className="text-primary/60" />}>
@@ -3911,7 +4352,9 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
             {/* Section: Account & activity (read-only) */}
             <section className="mb-5">
               <SectionHeading>Account &amp; activity</SectionHeading>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
+              {/* Two-up: this sits in the narrow left column from lg, where
+                  four across would wrap every label. */}
+              <div className="grid grid-cols-2 xl:grid-cols-3 gap-2.5">
                 <StatField label="Created">
                   {formatDateTime(user.createdAt)}
                 </StatField>
@@ -4043,6 +4486,60 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
               </div>
             </section>
 
+            {/* Left column, lower half: composition + the narrative */}
+            {activityLoading && (
+              <div className="text-sm text-primary/60 mb-5">
+                Reconstructing activity…
+              </div>
+            )}
+            {activityError && (
+              <div className="text-sm text-error mb-5">{activityError}</div>
+            )}
+            {activity && (
+              <>
+                <section className="mb-5">
+                  <ActivityComposition summary={activity.summary} />
+                </section>
+                <section className="mb-5">
+                  <ActivityTimeline
+                    timeline={activity.timeline || []}
+                    truncated={activity.timelineTruncated}
+                  />
+                </section>
+              </>
+            )}
+            </div>
+
+            <div className="min-w-0 lg:w-7/12 lg:min-h-0 lg:overflow-y-auto lg:pr-2">
+            {/* Right column: the gear evidence */}
+            {activity && (
+              <>
+                <section className="mb-5">
+                  <SectionHeading
+                    right={
+                      <EngagementBadge
+                        value={engagementFromSummary(activity.summary)}
+                      />
+                    }
+                  >
+                    Activity
+                  </SectionHeading>
+                  <ActivityStats summary={activity.summary} />
+                </section>
+
+                <div className="mb-3">
+                  <OwnGearTable ownItems={activity.ownItems || []} />
+                </div>
+
+                <div className="mb-5">
+                  <CopyResidue
+                    count={activity.summary.unusedImported}
+                    items={activity.unusedImported || []}
+                  />
+                </div>
+              </>
+            )}
+
             {/* Section: Gear lists */}
             <section>
               <SectionHeading
@@ -4064,12 +4561,13 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
               )}
 
               {lists.length > 0 && (
-                <div className="rounded-lg border border-base-200 overflow-hidden">
-                  <div className="max-h-56 overflow-auto">
+                <div className="rounded-lg border border-primary/10 overflow-hidden bg-base-100">
+                  <div className="max-h-72 overflow-auto lg:max-h-none lg:overflow-visible">
                     <table className="min-w-full text-sm">
-                      <thead className="sticky top-0 z-10">
-                        <tr className="bg-base-200 text-[11px] uppercase tracking-wide text-primary/60">
+                      <thead className={STICKY_HEAD}>
+                        <tr>
                           <th className="text-left font-semibold px-3 py-2">Title</th>
+                          <th className="text-left font-semibold px-3 py-2">Origin</th>
                           <th className="text-left font-semibold px-3 py-2">Trip</th>
                           <th className="text-left font-semibold px-3 py-2">Location</th>
                           <th className="text-right font-semibold px-3 py-2">Items</th>
@@ -4096,6 +4594,29 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
                             >
                               <td className="px-3 py-2 font-medium text-primary truncate max-w-[180px]">
                                 {l.title || "(untitled list)"}
+                              </td>
+                              <td className="px-3 py-2 text-xs max-w-[180px]">
+                                {l.copiedFrom?.at ? (
+                                  <span
+                                    className="text-primary/80"
+                                    title={
+                                      l.copiedFrom.ownerEmail
+                                        ? `Copied from "${l.copiedFrom.title}" by ${l.copiedFrom.ownerEmail}`
+                                        : `Copied from "${l.copiedFrom.title}"`
+                                    }
+                                  >
+                                    <span className="inline-block rounded-full bg-accent/15 text-accent px-1.5 py-0.5 text-[10px] font-semibold mr-1">
+                                      Copy
+                                    </span>
+                                    <span className="truncate inline-block max-w-[110px] align-bottom">
+                                      {l.copiedFrom.title || "unknown source"}
+                                    </span>
+                                  </span>
+                                ) : (
+                                  <span className="inline-block rounded-full bg-primary/10 text-primary/60 px-1.5 py-0.5 text-[10px] font-semibold">
+                                    Original
+                                  </span>
+                                )}
                               </td>
                               <td className="px-3 py-2 text-xs text-primary/80 whitespace-nowrap">
                                 {tripLabel}
@@ -4140,6 +4661,7 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
                 </div>
               )}
             </section>
+            </div>
           </>
         )}
         </div>
@@ -4216,7 +4738,8 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
           </>
         )}
       </form>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -4229,6 +4752,8 @@ function UsersSection() {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all"); // "all" | "user" | "admin"
   const [verifiedFilter, setVerifiedFilter] = useState("all"); // "all" | "true" | "false"
+  // "all" | "none" | "copier" | "builder" | "power"
+  const [engagementFilter, setEngagementFilter] = useState("all");
 
   const [page, setPage] = useState(0); // 0-based
   const [pageSize, setPageSize] = useState(25);
@@ -4247,6 +4772,7 @@ function UsersSection() {
     searchOverride,
     roleOverride,
     verifiedOverride,
+    engagementOverride,
     sortOverride,
   } = {}) => {
     const nextPage = pageOverride ?? page;
@@ -4254,6 +4780,7 @@ function UsersSection() {
     const nextSearch = searchOverride ?? search;
     const nextRole = roleOverride ?? roleFilter;
     const nextVerified = verifiedOverride ?? verifiedFilter;
+    const nextEngagement = engagementOverride ?? engagementFilter;
     const nextSort = sortOverride ?? sort;
 
     setLoading(true);
@@ -4269,6 +4796,7 @@ function UsersSection() {
       if (nextSearch.trim()) params.q = nextSearch.trim();
       if (nextRole !== "all") params.role = nextRole;
       if (nextVerified !== "all") params.isVerified = nextVerified;
+      if (nextEngagement !== "all") params.engagement = nextEngagement;
 
       const { data } = await api.get("/admin/users", { params });
       setUsers(data.users || []);
@@ -4305,93 +4833,25 @@ function UsersSection() {
   const endIndex =
     total === 0 ? 0 : Math.min((currentPage + 1) * pageSize, total);
 
-  const sortedUsers = [...users].sort((a, b) => {
-    const dir = sort.dir === "asc" ? 1 : -1;
-
-    const boolToNum = (val) => (val ? 1 : 0);
-
-    switch (sort.field) {
-      case "email": {
-        const ae = (a.email || "").toLowerCase();
-        const be = (b.email || "").toLowerCase();
-        return ae.localeCompare(be) * dir;
-      }
-      case "trailname": {
-        const at = (a.trailname || "").toLowerCase();
-        const bt = (b.trailname || "").toLowerCase();
-        return at.localeCompare(bt) * dir;
-      }
-      case "role": {
-        // Admins after/before users depending on dir
-        const ar = boolToNum(a.isAdmin);
-        const br = boolToNum(b.isAdmin);
-        if (ar === br) return 0;
-        return (ar - br) * dir;
-      }
-      case "verified": {
-        const av = boolToNum(a.isVerified);
-        const bv = boolToNum(b.isVerified);
-        if (av === bv) return 0;
-        return (av - bv) * dir;
-      }
-      case "marketing": {
-        const am = boolToNum(a.marketing?.optedIn);
-        const bm = boolToNum(b.marketing?.optedIn);
-        if (am === bm) return 0;
-        return (am - bm) * dir;
-      }
-      case "lists": {
-        const al = a.listsCount ?? 0;
-        const bl = b.listsCount ?? 0;
-        if (al === bl) return 0;
-        return al > bl ? dir : -dir;
-      }
-      case "items": {
-        const ai = (a.catalogItemsCount ?? 0) + (a.customItemsCount ?? 0);
-        const bi = (b.catalogItemsCount ?? 0) + (b.customItemsCount ?? 0);
-        if (ai === bi) return 0;
-        return ai > bi ? dir : -dir;
-      }
-      case "lastLoginAt": {
-        const al = a.lastLoginAt ? new Date(a.lastLoginAt).getTime() : 0;
-        const bl = b.lastLoginAt ? new Date(b.lastLoginAt).getTime() : 0;
-        if (al === bl) return 0;
-        return al > bl ? dir : -dir;
-      }
-      case "lastActiveAt": {
-        const aa = a.lastActiveAt ? new Date(a.lastActiveAt).getTime() : 0;
-        const ba = b.lastActiveAt ? new Date(b.lastActiveAt).getTime() : 0;
-        if (aa === ba) return 0;
-        return aa > ba ? dir : -dir;
-      }
-      case "updatedAt": {
-        const au = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
-        const bu = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
-        if (au === bu) return 0;
-        return au > bu ? dir : -dir;
-      }
-      case "createdAt":
-      default: {
-        const ac = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-        const bc = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-        if (ac === bc) return 0;
-        return ac > bc ? dir : -dir;
-      }
-    }
-  });
+  // Sorting is done server-side across the whole result set (including derived
+  // columns like Own and Engagement). Re-sorting here would only reorder the
+  // current page and disagree with the server on anything it cannot see.
+  const sortedUsers = users;
 
   const handleRefresh = () => {
     loadUsers({ pageOverride: currentPage });
   };
 
-  const handleFilterChange = (nextRole, nextVerified) => {
+  const handleFilterChange = (nextRole, nextVerified, nextEngagement) => {
     setRoleFilter(nextRole);
     setVerifiedFilter(nextVerified);
+    setEngagementFilter(nextEngagement ?? engagementFilter);
     setPage(0);
     loadUsers({
       pageOverride: 0,
       roleOverride: nextRole,
       verifiedOverride: nextVerified,
+      engagementOverride: nextEngagement ?? engagementFilter,
     });
   };
 
@@ -4521,6 +4981,25 @@ function UsersSection() {
 
                 <select
                   className="select select-xs select-bordered"
+                  value={engagementFilter}
+                  title="How far the user got past signing up"
+                  onChange={(e) =>
+                    handleFilterChange(
+                      roleFilter,
+                      verifiedFilter,
+                      e.target.value
+                    )
+                  }
+                >
+                  <option value="all">All engagement</option>
+                  <option value="none">No activity</option>
+                  <option value="copier">Copiers only</option>
+                  <option value="builder">Builders</option>
+                  <option value="power">Power users</option>
+                </select>
+
+                <select
+                  className="select select-xs select-bordered"
                   value={pageSize}
                   onChange={(e) => {
                     const next = Number(e.target.value) || 25;
@@ -4572,6 +5051,8 @@ function UsersSection() {
                     <option value="verified">Sort: Verified</option>
                     <option value="lists">Sort: Lists</option>
                     <option value="items">Sort: Items</option>
+                    <option value="own">Sort: Own items</option>
+                    <option value="engagement">Sort: Engagement</option>
                     <option value="lastLoginAt">Sort: Last login</option>
                     <option value="lastActiveAt">Sort: Last seen</option>
                     <option value="marketing">Sort: Marketing</option>
@@ -4656,6 +5137,29 @@ function UsersSection() {
                       >
                         Items
                         {sort.field === "items" && (
+                          <span className="ml-1 text-[10px]">
+                            {sort.dir === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
+                      </th>
+                      <th
+                        className="text-right px-3 py-2 font-semibold cursor-pointer select-none"
+                        onClick={() => handleSort("own")}
+                        title="Items the user added themselves — excludes anything that arrived by copying a list"
+                      >
+                        Own
+                        {sort.field === "own" && (
+                          <span className="ml-1 text-[10px]">
+                            {sort.dir === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
+                      </th>
+                      <th
+                        className="text-left px-3 py-2 font-semibold cursor-pointer select-none"
+                        onClick={() => handleSort("engagement")}
+                      >
+                        Engagement
+                        {sort.field === "engagement" && (
                           <span className="ml-1 text-[10px]">
                             {sort.dir === "asc" ? "↑" : "↓"}
                           </span>
@@ -4752,13 +5256,43 @@ function UsersSection() {
                           </span>
                         </td>
                         <td className="px-3 py-2 text-right align-top">
-                          {u.listsCount ?? 0}
+                          <div>{u.listsCount ?? 0}</div>
+                          {(u.listsCopied ?? 0) > 0 && (
+                            <div
+                              className="text-[10px] text-primary/70 mt-0.5"
+                              title={`${u.listsCopied} of these lists were copied from someone else`}
+                            >
+                              {u.listsCopied} copied
+                            </div>
+                          )}
                         </td>
                         <td className="px-3 py-2 text-right align-top">
-                          <div>{(u.catalogItemsCount ?? 0) + (u.customItemsCount ?? 0)}</div>
+                          <div>{u.itemsCount ?? 0}</div>
                           <div className="text-[10px] text-primary/70 mt-0.5">
                             {u.catalogItemsCount ?? 0} cat / {u.customItemsCount ?? 0} cust
                           </div>
+                        </td>
+                        <td className="px-3 py-2 text-right align-top">
+                          <div
+                            className={
+                              (u.ownItemsCount ?? 0) > 0
+                                ? "font-semibold text-primary"
+                                : "text-primary/40"
+                            }
+                          >
+                            {u.ownItemsCount ?? 0}
+                          </div>
+                          {(u.importedItemsCount ?? 0) > 0 && (
+                            <div
+                              className="text-[10px] text-primary/70 mt-0.5"
+                              title="Items that arrived by copying someone else's list"
+                            >
+                              +{u.importedItemsCount} pack
+                            </div>
+                          )}
+                        </td>
+                        <td className="px-3 py-2 align-top">
+                          <EngagementBadge value={u.engagement} />
                         </td>
                         <td className="px-3 py-2 align-top text-xs">
                           {formatDate(u.createdAt)}
@@ -4885,19 +5419,37 @@ function UsersSection() {
                         >
                           {u.marketing?.optedIn ? "Marketing" : "No marketing"}
                         </span>
+                        <EngagementBadge value={u.engagement} />
                       </div>
 
                       {/* Stats */}
                       <div className="text-xs text-primary/80">
                         <span className="font-medium">{u.listsCount ?? 0}</span>{" "}
-                        lists &middot;{" "}
-                        <span className="font-medium">
-                          {(u.catalogItemsCount ?? 0) + (u.customItemsCount ?? 0)}
-                        </span>{" "}
+                        lists
+                        {(u.listsCopied ?? 0) > 0 && (
+                          <span className="text-primary/60">
+                            {" "}
+                            ({u.listsCopied} copied)
+                          </span>
+                        )}{" "}
+                        &middot;{" "}
+                        <span className="font-medium">{u.itemsCount ?? 0}</span>{" "}
                         items
                         <span className="text-primary/60">
                           {" "}({u.catalogItemsCount ?? 0} cat / {u.customItemsCount ?? 0} cust)
                         </span>
+                      </div>
+                      <div className="text-xs text-primary/80">
+                        <span className="font-medium">
+                          {u.ownItemsCount ?? 0}
+                        </span>{" "}
+                        added themselves
+                        {(u.importedItemsCount ?? 0) > 0 && (
+                          <span className="text-primary/60">
+                            {" "}
+                            &middot; {u.importedItemsCount} from packs
+                          </span>
+                        )}
                       </div>
 
                       {/* Dates */}
