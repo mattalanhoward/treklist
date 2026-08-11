@@ -37,6 +37,9 @@
  *   --skip-food         Exclude food / consumables (meals, bars, drink mixes).
  *   --skip-brands a,b   Exclude these brands (lowercased, comma-separated) when
  *                       already covered by a direct/existing source (e.g. zpacks).
+ *   --feed-descriptions Store the feed's brand marketing copy as `description`.
+ *                       OFF by default since 2026-08-11 — we don't keep brand
+ *                       copy for non-affiliate sources (strip-brand-descriptions.js).
  *
  * WRITE/MERGE semantics (upsert keyed by itemGroupId = "<domainslug>-<productId>"):
  *   NEW item   → inserted with a name-inferred itemType (inferItemType) and lenient
@@ -66,6 +69,9 @@ const DOMAIN = (flag("--domain", "zpacks.com") || "").replace(/^https?:\/\//, ""
 const BRAND_OVERRIDE = flag("--brand", null);
 const PLATFORM = (flag("--platform", "shopify") || "shopify").toLowerCase(); // shopify | woo
 const DUMP_JSON = args.includes("--json");
+// Store the feed's own marketing copy as our description. OFF by default — see
+// the description note in mapProduct().
+const KEEP_FEED_DESC = args.includes("--feed-descriptions");
 const SAMPLE = parseInt(flag("--sample", "8"), 10);
 const COMMIT = args.includes("--commit");
 
@@ -382,9 +388,12 @@ function toCatalogItem(p) {
     category,
     subcategory,
     itemType,
-    // 2000 (was 600) so the trailing Specs/weight/dimensions tables survive —
-    // 600 was cutting off size→weight tables we later want to read back.
-    description: htmlToText(p.body_html).slice(0, 2000),
+    // Feed `body_html` is the BRAND's own marketing copy. We no longer store it
+    // (user decision 2026-08-11 — see strip-brand-descriptions.js); descriptions
+    // must be ours or come from an affiliate feed we have a relationship with.
+    // --feed-descriptions opts back in (2000 chars, so trailing Specs/weight
+    // tables survive) when you intend to read specs back out of the text.
+    ...(KEEP_FEED_DESC ? { description: htmlToText(p.body_html).slice(0, 2000) } : {}),
     imageUrls: images,
     weightGrams,
     variantAxes,
