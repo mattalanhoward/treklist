@@ -38,6 +38,8 @@ const ITEMS = [
     a: { cameraType: "Pocket / Gimbal", sensorSize: "1-inch", maxVideoResolution: "4K", maxFrameRateFps: 120, stabilization: "Mechanical Gimbal" } },
   { n: "Osmo 360", t: "Camera", s: "osmo-360-standard-combo", w: 183, img: "//se-cdn.djiits.com/tpc/uploads/carousel/image/b2065e9d8e1f834362c7ec88b3443edf@ultra.jpg",
     a: { cameraType: "360", sensorSize: "Dual lens", maxVideoResolution: "8K", stabilization: "Electronic (EIS)" } },
+  { n: "Osmo Action 6", t: "Camera", s: "osmo-action-6", w: 149, img: "//se-cdn.djiits.com/tpc/uploads/carousel/image/07a460c41963750113b6f2d649e5873c@ultra.jpg",
+    a: { cameraType: "Action", sensorSize: "1/1.1-inch", maxVideoResolution: "8K", maxFrameRateFps: 120, stabilization: "Electronic (EIS)", waterproofDepthM: 20, batteryLifeMin: 240 } },
   { n: "Osmo Action 5 Pro", t: "Camera", s: "osmo-action-5-pro", w: 146, img: "//se-cdn.djiits.com/tpc/uploads/carousel/image/2f3e608557f64b064bf68c07c1a234c8@ultra.jpg",
     a: { cameraType: "Action", sensorSize: "1/1.3-inch", maxVideoResolution: "4K", maxFrameRateFps: 120, stabilization: "Electronic (EIS)", waterproofDepthM: 20, batteryLifeMin: 240 } },
   { n: "Osmo Action 4", t: "Camera", s: "osmo-action-4", w: 145, img: "//se-cdn.djiits.com/tpc/uploads/carousel/image/fa6ff9c44b34e9638cbff1d3d9bfbcce@ultra.jpg",
