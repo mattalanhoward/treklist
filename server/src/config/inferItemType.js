@@ -72,6 +72,12 @@ const RULES = [
   [/wall charger|travel charger|travel adapter|plug adapter|adaptor|\bcharger\b/i, "Travel Charger"],
   [/ear\s?bud|ear\s?phone|airpod/i, "Earbuds"],
   [/smart\s?watch|gps watch/i, "Smartwatch"],
+  // cameras / drones / gimbals / mics (drone + gimbal + mic before the generic
+  // camera rule; Osmo Pocket/Action/360/Nano are cameras, Osmo Mobile = gimbal)
+  [/\bdrone\b|quadcopter|\bmavic\b|dji (neo|flip|mini|air)\b/i, "Drone"],
+  [/osmo mobile|phone gimbal|handheld gimbal|\bgimbal\b|stabilizer/i, "Gimbal"],
+  [/wireless mic|lav(alier)? mic|\bmicrophone\b|dji mic/i, "Microphone"],
+  [/action cam(era)?|osmo action|osmo pocket|osmo nano|osmo 360|360 camera|\bgopro\b|\bcamera\b/i, "Camera"],
 
   // --- outerwear ---
   [/rain (trouser|pant)|waterproof (trouser|pant)|over\s?trouser/i, "Rain Pants"],
@@ -242,6 +248,10 @@ const CATEGORY_BY_ITEM_TYPE = {
   Earbuds: ["Electronics & Power", "Headphones & Earbuds"],
   Smartphone: ["Electronics & Power", "Phones & GPS"],
   Smartwatch: ["Electronics & Power", "Wearables & GPS"],
+  Camera: ["Electronics & Power", "Photo & Video"],
+  Drone: ["Electronics & Power", "Photo & Video"],
+  Gimbal: ["Electronics & Power", "Photo & Video"],
+  Microphone: ["Electronics & Power", "Photo & Video"],
   // ---- Accessories & Tools ----
   "Trekking Poles": ["Accessories & Tools", "Trekking Poles"],
   "Ice Axe": ["Accessories & Tools", "Climbing Gear"],

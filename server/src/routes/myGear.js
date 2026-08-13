@@ -9,14 +9,19 @@ const router = express.Router();
 router.use(auth);
 
 // GET /api/my-gear/items - Get user's owned gear items
+// ?includeWishlisted=true also returns wishlisted items. Lists can hold gear the
+// user doesn't own yet (the list row carries its own wishlist star), so the
+// add-gear search needs them — otherwise wishlisting an item makes it
+// unfindable when building a list.
 router.get("/items", async (req, res) => {
   try {
     const includeImported = req.query.includeImported === "true";
+    const includeWishlisted = req.query.includeWishlisted === "true";
 
-    const query = {
-      owner: req.userId,
-      status: { $ne: "wishlisted" },
-    };
+    const query = { owner: req.userId };
+    if (!includeWishlisted) {
+      query.status = { $ne: "wishlisted" };
+    }
     if (!includeImported) {
       query.importedFromShare = { $ne: true };
     }

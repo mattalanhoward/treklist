@@ -13,6 +13,17 @@
  *   node src/scripts/backfill-descriptions.js
  *   node src/scripts/backfill-descriptions.js --commit
  */
+/**
+ * ⚠️ SUPERSEDED 2026-08-11 — DO NOT RUN without understanding this.
+ *
+ * This script re-fills descriptions with the BRAND's own marketing copy straight
+ * from each feed. That is exactly what `strip-brand-descriptions.js` removed
+ * (user decision: keep only text we authored or that came from an affiliate feed
+ * we have a relationship with). Running it would silently undo that strip for
+ * every feed brand listed below.
+ *
+ * Pass --yes-refill-brand-copy if you genuinely intend that.
+ */
 require("dotenv").config();
 const mongoose = require("mongoose");
 const { execFile } = require("child_process");
@@ -24,6 +35,14 @@ const flag = (n, d) => { const i = args.indexOf(n); return i !== -1 ? args[i + 1
 const COMMIT = args.includes("--commit");
 const DB = flag("--db", null) || process.env.MONGO_DB_NAME;
 const LOCAL_DBS = new Set(["treklist_local"]);
+if (!args.includes("--yes-refill-brand-copy")) {
+  console.error(
+    "\nRefusing to run: this refills descriptions with brand marketing copy from\n" +
+    "the feeds, undoing strip-brand-descriptions.js (decision 2026-08-11).\n" +
+    "Re-run with --yes-refill-brand-copy if that is really what you want.\n"
+  );
+  process.exit(1);
+}
 if (COMMIT && !LOCAL_DBS.has(DB) && flag("--confirm", null) !== DB) {
   console.error(`\nRefusing to --commit to non-local DB "${DB}".\nRe-run with:  --db ${DB} --commit --confirm ${DB}\n`);
   process.exit(1);

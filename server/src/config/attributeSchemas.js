@@ -4345,6 +4345,220 @@ const SCHEMAS = {
     derive: (attrs) => attrs,
   },
 
+  // ===========================================================================
+  // ELECTRONICS - CAMERA (action / pocket / 360 / compact)
+  // ===========================================================================
+
+  Camera: {
+    fields: {
+      cameraType: {
+        type: "enum",
+        required: false,
+        label: "Camera Type",
+        options: ["Action", "Pocket / Gimbal", "360", "Compact"],
+      },
+      sensorSize: {
+        type: "enum",
+        required: false,
+        label: "Sensor Size",
+        options: [
+          "1-inch",
+          "1/1.1-inch",
+          "1/1.3-inch",
+          "1/1.7-inch",
+          "1/2-inch",
+          "1/2.3-inch",
+          "Dual lens",
+          "Other",
+        ],
+      },
+      maxVideoResolution: {
+        type: "enum",
+        required: false,
+        label: "Max Video Resolution",
+        options: ["1080p", "2.7K", "4K", "5.3K", "5.7K", "6K", "8K"],
+      },
+      maxFrameRateFps: {
+        type: "number",
+        required: false,
+        label: "Max Frame Rate",
+        unit: "fps",
+        min: 24,
+        max: 480,
+      },
+      stabilization: {
+        type: "enum",
+        required: false,
+        label: "Stabilization",
+        options: ["Mechanical Gimbal", "Electronic (EIS)", "None"],
+      },
+      waterproofDepthM: {
+        type: "number",
+        required: false,
+        label: "Waterproof Depth (no case)",
+        unit: "m",
+        min: 0,
+        max: 60,
+      },
+      batteryLifeMin: {
+        type: "number",
+        required: false,
+        label: "Battery Life",
+        unit: "min",
+        min: 1,
+        max: 600,
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  // ===========================================================================
+  // ELECTRONICS - DRONE
+  // ===========================================================================
+
+  Drone: {
+    fields: {
+      takeoffWeightG: {
+        type: "number",
+        required: false,
+        label: "Takeoff Weight",
+        unit: "g",
+        min: 50,
+        max: 25000,
+      },
+      maxFlightTimeMin: {
+        type: "number",
+        required: false,
+        label: "Max Flight Time",
+        unit: "min",
+        min: 1,
+        max: 120,
+      },
+      maxRangeKm: {
+        type: "number",
+        required: false,
+        label: "Max Transmission Range",
+        unit: "km",
+        min: 1,
+        max: 50,
+      },
+      maxVideoResolution: {
+        type: "enum",
+        required: false,
+        label: "Max Video Resolution",
+        options: ["1080p", "2.7K", "4K", "5.1K", "5.4K", "6K"],
+      },
+      sensorSize: {
+        type: "enum",
+        required: false,
+        label: "Camera Sensor Size",
+        options: [
+          "1-inch",
+          "1/1.3-inch",
+          "1/1.7-inch",
+          "1/2-inch",
+          "1/2.3-inch",
+          "Dual lens",
+          "Other",
+        ],
+      },
+      obstacleSensing: {
+        type: "enum",
+        required: false,
+        label: "Obstacle Sensing",
+        options: ["Omnidirectional", "Multi-directional", "Downward", "None"],
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  // ===========================================================================
+  // ELECTRONICS - GIMBAL (handheld stabilizer)
+  // ===========================================================================
+
+  Gimbal: {
+    fields: {
+      payload: {
+        type: "enum",
+        required: false,
+        label: "Payload",
+        options: ["Smartphone", "Action Camera", "Camera"],
+      },
+      axes: {
+        type: "number",
+        required: false,
+        label: "Stabilization Axes",
+        min: 1,
+        max: 3,
+      },
+      maxPayloadG: {
+        type: "number",
+        required: false,
+        label: "Max Payload",
+        unit: "g",
+        min: 50,
+        max: 5000,
+      },
+      batteryLifeHrs: {
+        type: "number",
+        required: false,
+        label: "Battery Life",
+        unit: "hrs",
+        min: 1,
+        max: 30,
+      },
+      foldable: {
+        type: "boolean",
+        required: false,
+        label: "Foldable / Compact",
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
+  // ===========================================================================
+  // ELECTRONICS - MICROPHONE (wireless mic systems)
+  // ===========================================================================
+
+  Microphone: {
+    fields: {
+      wireless: {
+        type: "boolean",
+        required: false,
+        label: "Wireless",
+      },
+      transmitters: {
+        type: "number",
+        required: false,
+        label: "Transmitters",
+        min: 1,
+        max: 4,
+      },
+      rangeM: {
+        type: "number",
+        required: false,
+        label: "Transmission Range",
+        unit: "m",
+        min: 1,
+        max: 400,
+      },
+      internalRecording: {
+        type: "boolean",
+        required: false,
+        label: "Onboard Recording",
+      },
+      batteryLifeHrs: {
+        type: "number",
+        required: false,
+        label: "Battery Life",
+        unit: "hrs",
+        min: 1,
+        max: 40,
+      },
+    },
+    derive: (attrs) => attrs,
+  },
+
   Other: {
     fields: {},
     derive: (attrs) => attrs,

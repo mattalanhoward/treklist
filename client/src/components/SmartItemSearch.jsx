@@ -93,6 +93,7 @@ function ItemRow({
   multiSelect,
   hideCheckbox,
   addedBadge,
+  wishlisted,
   specLabel,
   weightLabel,
   variantLabel,
@@ -268,6 +269,11 @@ function ItemRow({
           </span>
         )}
         {priceLabel && <span className="text-[11px] text-secondary font-medium">{priceLabel}</span>}
+        {wishlisted && (
+          <span className="text-[10.5px] text-secondary font-medium whitespace-nowrap">
+            {t("smartItemSearch.wishlistBadge", "★ Wishlist")}
+          </span>
+        )}
         {addedBadge && (
           <span className="text-[10.5px] text-primary/45 italic whitespace-nowrap">{addedBadge}</span>
         )}
@@ -362,6 +368,7 @@ function ResultSection({
                       ? t("smartItemSearch.inList", "Added")
                       : null
                 }
+                wishlisted={item.status === "wishlisted"}
                 specLabel={item.itemType || null}
                 weightLabel={fmtWeight(item.weight ?? item.weightGrams)}
                 variantLabel={item.variantKey || null}
@@ -1328,7 +1335,9 @@ export default function SmartItemSearch({
   const loadMyGear = useCallback(() => {
     if (!showMyGear) return;
     api
-      .get("/my-gear/items")
+      // Wishlisted gear is still gear you can plan with — a list row carries its
+      // own wishlist star — so it must be findable here, not hidden.
+      .get("/my-gear/items", { params: { includeWishlisted: true } })
       .then(({ data }) => setMyGearItems(data || []))
       .catch(() => {})
       .finally(() => setMyGearLoading(false));
