@@ -754,6 +754,7 @@
     "browseRange": "Bekijk het assortiment →",
     "facetCount": "{{shown}} van {{total}} artikelen",
     "inListCheck": "✓ In lijst",
+    "wishlistBadge": "★ Verlanglijst",
     "addToDest": "Aan {{dest}} toevoegen",
     "swapForThis": "Hiervoor omruilen",
     "showMore": "Meer tonen (nog {{n}})",
@@ -890,6 +891,10 @@
       "Women's Clothing": "Dameskleding"
     },
     "itemTypes": {
+      "Camera": "Camera",
+      "Drone": "Drone",
+      "Gimbal": "Gimbal",
+      "Microphone": "Microfoon",
       "Backpack": "Rugzak",
       "Backpacking Pot": "Campingpan",
       "Stove (Canister)": "Gasbrander (bus)",

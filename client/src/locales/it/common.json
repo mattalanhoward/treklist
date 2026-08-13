@@ -754,6 +754,7 @@
     "browseRange": "Esplora la gamma →",
     "facetCount": "{{shown}} di {{total}} articoli",
     "inListCheck": "✓ Nella lista",
+    "wishlistBadge": "★ Lista desideri",
     "addToDest": "Aggiungi a {{dest}}",
     "swapForThis": "Sostituisci con questo",
     "showMore": "Mostra altri ({{n}} rimanenti)",
@@ -890,6 +891,10 @@
       "Women's Clothing": "Abbigliamento donna"
     },
     "itemTypes": {
+      "Camera": "Fotocamera",
+      "Drone": "Drone",
+      "Gimbal": "Stabilizzatore",
+      "Microphone": "Microfono",
       "Backpack": "Zaino",
       "Backpacking Pot": "Pentola da campeggio",
       "Stove (Canister)": "Fornello a cartuccia",

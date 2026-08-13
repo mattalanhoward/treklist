@@ -761,6 +761,7 @@
     "browseRange": "Browse the range →",
     "facetCount": "{{shown}} of {{total}} items",
     "inListCheck": "✓ In list",
+    "wishlistBadge": "★ Wishlist",
     "addToDest": "Add to {{dest}}",
     "swapForThis": "Swap for this",
     "showMore": "Show more ({{n}} left)",
@@ -897,6 +898,10 @@
       "Women's Clothing": "Women's Clothing"
     },
     "itemTypes": {
+      "Camera": "Camera",
+      "Drone": "Drone",
+      "Gimbal": "Gimbal",
+      "Microphone": "Microphone",
       "Backpack": "Backpack",
       "Backpacking Pot": "Backpacking Pot",
       "Blister Prevention": "Blister Prevention",

@@ -42,6 +42,10 @@ const KEYWORD_MAP = [
   { keywords: ["camp lantern", "camping lantern", "tent lantern"], category: "Electronics & Power", itemType: "Camp Lantern" },
   { keywords: ["power bank", "battery pack", "portable charger", "portable battery"], category: "Electronics & Power", itemType: "Power Bank" },
   { keywords: ["travel charger", "usb charger", "wall charger", "charging adapter"], category: "Electronics & Power", itemType: "Travel Charger" },
+  { keywords: ["drone", "quadcopter", "mavic", "dji neo", "dji flip", "dji mini", "dji air"], category: "Electronics & Power", itemType: "Drone" },
+  { keywords: ["phone gimbal", "handheld gimbal", "osmo mobile", "gimbal", "stabilizer"], category: "Electronics & Power", itemType: "Gimbal" },
+  { keywords: ["wireless mic", "lavalier mic", "microphone", "dji mic"], category: "Electronics & Power", itemType: "Microphone" },
+  { keywords: ["action camera", "action cam", "osmo action", "osmo pocket", "osmo nano", "osmo 360", "360 camera", "gopro", "camera"], category: "Electronics & Power", itemType: "Camera" },
 
   // --- Hydration ---
   { keywords: ["water filter", "water purifier", "water filtration"], category: "Hydration", itemType: "Water Filter" },
