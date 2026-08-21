@@ -122,6 +122,15 @@ const communityUpvoteLimiter = makeLimiter({
   keyGenerator: (req) => `cupvote:${req.userId || ipKeyGenerator(req.ip)}`,
 });
 
+// Pane-view telemetry (routes/events.js). Generous: normal navigation is a
+// handful per minute, so this only catches a client stuck in a loop.
+const eventsLimiter = makeLimiter({
+  windowMs: 60 * 1000, // 1 minute
+  max: 60,
+  message: "Too many requests. Please try again later.",
+  keyGenerator: (req) => `events:${req.userId || ipKeyGenerator(req.ip)}`,
+});
+
 const translateLimiter = makeLimiter({
   windowMs: 60 * 1000, // 1 minute
   max: 30,
@@ -144,4 +153,5 @@ module.exports = {
   communityCommentLimiter,
   communityUpvoteLimiter,
   translateLimiter,
+  eventsLimiter,
 };

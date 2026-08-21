@@ -31,6 +31,7 @@ const postsRoutes = require("./routes/posts");
 const commentsRoutes = require("./routes/comments");
 const notificationsRoutes = require("./routes/notifications");
 const translateRoutes = require("./routes/translate");
+const eventsRoutes = require("./routes/events");
 
 const app = express();
 
@@ -138,6 +139,8 @@ app.use("/api/notifications", authMiddleware, notificationsRoutes);
 app.use("/api/admin/community", authMiddleware, requireAdmin, require("./routes/adminCommunity"));
 app.use("/api/admin/reports", authMiddleware, requireAdmin, require("./routes/adminReports"));
 app.use("/api/translate", translateRoutes);
+// Pane-view telemetry, read back only by the admin user timeline.
+app.use("/api/events", authMiddleware, eventsRoutes);
 
 app.use("/sitemap.xml", require("./routes/sitemap"));
 

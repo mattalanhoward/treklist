@@ -7,7 +7,7 @@ export default function CookiesContent() {
       <h1 className="text-2xl font-semibold mb-2">Cookie Policy</h1>
 
       <p>
-        <strong>Last updated:</strong> December 1, 2025
+        <strong>Last updated:</strong> August 21, 2026
       </p>
       <div className="mt-3 mb-4 rounded-md border border-base-300 bg-base-200/60 px-3 py-2 text-xs md:text-sm">
         <p className="font-semibold mb-1">In plain language:</p>
@@ -117,6 +117,15 @@ export default function CookiesContent() {
       <p>
         We use this information in aggregate form to improve TrekList. We do not
         use analytics cookies to show you targeted ads.
+      </p>
+
+      <p>
+        <strong>Please note:</strong> separately from these cookies, when you
+        are logged in we record which sections of the app you open, on our own
+        servers and against your account. That record does not use cookies and
+        is therefore not controlled by your cookie choices. It is covered by
+        our Privacy Policy (see &quot;In-app activity&quot;), where you can also
+        find how long it is kept and how to object to it.
       </p>
 
       <p>

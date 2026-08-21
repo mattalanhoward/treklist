@@ -3726,15 +3726,18 @@ const TIMELINE_STYLES = {
   "item.added": { dot: "bg-accent" },
   "item.edited": { dot: "bg-accent/40" },
   "item.placed": { dot: "bg-accent/60" },
+  "pane.viewed": { dot: "bg-primary/20" },
 };
 
 /**
  * The "what is this person actually doing?" panel.
  *
- * Treklist keeps no event log, so this is reconstructed from document
- * timestamps and provenance flags. It can show what was added and when; it
- * cannot show deletions or browsing. Unused imported gear is the closest
- * available proxy for "items they threw out of a copied list".
+ * Gear activity is reconstructed from document timestamps and provenance
+ * flags: it shows what was added and when, but not deletions. Unused imported
+ * gear is the closest available proxy for "items they threw out of a copied
+ * list". Navigation is not inferred — pane opens are logged outright and
+ * merged into the same timeline, but only from the day that logging shipped
+ * and only for the server's retention window.
  */
 /**
  * Loads the derived activity picture for one user.
@@ -3848,6 +3851,72 @@ function ActivityComposition({ summary }) {
         <div className="text-[11px] text-primary/50 mt-1.5">
           Plus {summary.wishlistedItems} wishlisted, excluded from every count
           above and from the Items column in the users table.
+        </div>
+      )}
+    </div>
+  );
+}
+
+const PANE_VISIT_LABELS = {
+  gear: "Gear lists",
+  myGear: "My Gear",
+  lists: "My Lists",
+  templates: "Templates",
+  checklist: "Checklist",
+  community: "Community",
+  forum: "Forum",
+  admin: "Admin",
+};
+
+/**
+ * Which panes this user actually opens. Unlike everything else on this screen
+ * these are recorded, not inferred — so an empty panel means "nothing logged
+ * yet", never "they never went there". Pane logging only covers accounts
+ * active since it shipped, and rows expire on the server.
+ */
+function PaneVisits({ summary }) {
+  const counts = summary.paneViews || {};
+  const rows = Object.entries(counts)
+    .filter(([, n]) => n > 0)
+    .sort((a, b) => b[1] - a[1]);
+
+  if (rows.length === 0) {
+    return (
+      <div className="rounded-lg bg-base-100 px-3 py-2.5 text-[11px] text-primary/50">
+        No pane visits logged for this user yet.
+      </div>
+    );
+  }
+
+  const max = rows[0][1];
+
+  return (
+    <div className="rounded-lg bg-base-100 px-3 py-2.5">
+      <div className="text-[11px] uppercase tracking-wide font-semibold text-primary/50 mb-1.5">
+        Where they go
+      </div>
+      <ul className="space-y-1">
+        {rows.map(([pane, n]) => (
+          <li key={pane} className="flex items-center gap-2 text-xs">
+            <span className="w-20 flex-shrink-0 text-primary/70">
+              {PANE_VISIT_LABELS[pane] || pane}
+            </span>
+            <span className="flex-1 h-1.5 rounded-full bg-primary/10 overflow-hidden">
+              <span
+                className="block h-full rounded-full bg-secondary"
+                style={{ width: `${Math.round((n / max) * 100)}%` }}
+              />
+            </span>
+            <span className="w-8 text-right tabular-nums text-primary/60">
+              {n}
+            </span>
+          </li>
+        ))}
+      </ul>
+      {summary.paneViewsSince && (
+        <div className="text-[11px] text-primary/50 mt-1.5">
+          Logged since {new Date(summary.paneViewsSince).toLocaleDateString()}
+          {summary.paneViewsTruncated ? " (capped at the 500 most recent)" : ""}.
         </div>
       )}
     </div>
@@ -4499,6 +4568,9 @@ function UserDetailModal({ userId, onClose, onUserChanged }) {
               <>
                 <section className="mb-5">
                   <ActivityComposition summary={activity.summary} />
+                </section>
+                <section className="mb-5">
+                  <PaneVisits summary={activity.summary} />
                 </section>
                 <section className="mb-5">
                   <ActivityTimeline

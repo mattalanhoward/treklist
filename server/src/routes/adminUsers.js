@@ -13,6 +13,7 @@ const GearItem = require("../models/gearItem");
 const Category = require("../models/category");
 const ShareToken = require("../models/ShareToken");
 const GlobalItem = require("../models/globalItem");
+const UserEvent = require("../models/userEvent");
 
 const { isValidObjectId } = mongoose;
 
@@ -374,18 +375,36 @@ router.get("/:id", async (req, res) => {
  *
  * The "what is this person actually doing?" view.
  *
- * Treklist has no event log, so everything here is reconstructed from document
- * timestamps and provenance flags. Two flags carry most of the signal:
+ * Gear activity is reconstructed from document timestamps and provenance
+ * flags. Two flags carry most of the signal:
  *   GlobalItem.importedFromShare  true  => arrived by copying someone's list
  *                                 false => the user chose and added it
  *   GearList.copiedFrom           set   => this list started as a copy
  *
+ * Navigation is the one thing documents cannot reveal, so it is recorded
+ * outright: UserEvent rows (models/userEvent.js) log which pane the user
+ * opened, and are merged into the same timeline. They only exist from the day
+ * that logging shipped and expire after UserEvent.RETENTION_DAYS, so a user
+ * with no pane events is not necessarily a user who never navigated.
+ *
  * What this CAN see: what they added, when, in what order, what they kept from
- * a copy, and what copied gear they abandoned.
- * What it CANNOT see: deletions (only inferred), renames, and browsing. An
- * imported item with no list row is *probably* deleted from the list, but it
- * could equally have been imported and never placed.
+ * a copy, what copied gear they abandoned, and where they went.
+ * What it CANNOT see: deletions (only inferred) and renames. An imported item
+ * with no list row is *probably* deleted from the list, but it could equally
+ * have been imported and never placed.
  */
+
+// How a stored pane id reads in the timeline.
+const PANE_LABELS = {
+  gear: "a gear list",
+  myGear: "My Gear",
+  lists: "My Lists",
+  templates: "Templates",
+  checklist: "the checklist",
+  community: "Community",
+  forum: "the forum",
+  admin: "Admin",
+};
 
 // An item added to My Gear and dropped into a list is one user action; the two
 // documents are written within moments of each other.
@@ -420,12 +439,21 @@ router.get("/:id/activity", async (req, res) => {
     ]);
 
     const listIds = lists.map((l) => l._id);
-    const gearItems = listIds.length
-      ? await GearItem.find({ gearList: { $in: listIds } })
-          .select("gearList globalItem name brand createdAt updatedAt")
-          .sort({ createdAt: 1 })
-          .lean()
-      : [];
+    const [gearItems, paneEvents] = await Promise.all([
+      listIds.length
+        ? GearItem.find({ gearList: { $in: listIds } })
+            .select("gearList globalItem name brand createdAt updatedAt")
+            .sort({ createdAt: 1 })
+            .lean()
+        : [],
+      // Newest first, capped — a chatty user should not be able to make this
+      // query unbounded. Reversed below so the run-collapsing reads forwards.
+      UserEvent.find({ owner: ownerId, type: "pane.viewed" })
+        .sort({ createdAt: -1 })
+        .limit(500)
+        .select("pane listId detail createdAt")
+        .lean(),
+    ]);
 
     const listById = new Map(lists.map((l) => [String(l._id), l]));
     const globalById = new Map(globalItems.map((g) => [String(g._id), g]));
@@ -632,6 +660,47 @@ router.get("/:id/activity", async (req, res) => {
       });
     }
 
+    // Where they went. Consecutive views of the same pane collapse into one
+    // row — a remount or a refresh is not a second visit — but genuine
+    // back-and-forth (My Gear -> list -> My Gear) stays visible, since that
+    // pattern is exactly what the timeline exists to show.
+    const paneViewCounts = {};
+    let previousPaneKey = null;
+    for (const ev of [...paneEvents].reverse()) {
+      const listTitle = ev.listId ? listById.get(String(ev.listId))?.title : null;
+      const key = [ev.pane, String(ev.listId || ""), ev.detail || ""].join("|");
+
+      paneViewCounts[ev.pane] = (paneViewCounts[ev.pane] || 0) + 1;
+
+      if (key === previousPaneKey) continue;
+      previousPaneKey = key;
+
+      // A list id means two different things depending on the pane, so spell
+      // it out — "Opened <title>" for the editor, "the checklist for <title>"
+      // for the pre-trip check-off screen.
+      let where;
+      if (ev.pane === "checklist") {
+        where = listTitle ? `the checklist for "${listTitle}"` : "the checklist";
+      } else if (listTitle) {
+        where = `"${listTitle}"`;
+      } else {
+        where = PANE_LABELS[ev.pane] || ev.pane;
+      }
+
+      events.push({
+        at: ev.createdAt,
+        type: "pane.viewed",
+        label: `Opened ${where}`,
+        // On My Gear the qualifier is a sub-tab; elsewhere (community) it is a
+        // slug, and calling that a "tab" would be a lie.
+        detail: ev.detail
+          ? ev.pane === "myGear"
+            ? `${ev.detail} tab`
+            : ev.detail
+          : null,
+      });
+    }
+
     events.sort((a, b) => new Date(b.at) - new Date(a.at));
 
     // ---- Session grouping ----------------------------------------------------
@@ -658,6 +727,13 @@ router.get("/:id/activity", async (req, res) => {
         activeDays: activeDays.size,
         firstActionAt,
         lastActionAt,
+        // Pane opens per pane, over the retention window only. Counts every
+        // view, including the repeats collapsed out of the timeline above.
+        paneViews: paneViewCounts,
+        paneViewsSince: paneEvents.length
+          ? paneEvents[paneEvents.length - 1].createdAt
+          : null,
+        paneViewsTruncated: paneEvents.length >= 500,
       },
       lists: listBreakdown,
       ownItems,
