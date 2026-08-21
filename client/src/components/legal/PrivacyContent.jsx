@@ -7,15 +7,16 @@ export default function PrivacyContent() {
       <h1 className="text-2xl font-semibold mb-2">Privacy Policy</h1>
 
       <p>
-        <strong>Last updated:</strong> December 1, 2025
+        <strong>Last updated:</strong> August 21, 2026
       </p>
       <div className="mt-3 mb-4 rounded-md border border-base-300 bg-base-200/60 px-3 py-2 text-xs md:text-sm">
         <p className="font-semibold mb-1">In plain language:</p>
         <p>
           TrekList stores the information it needs to run your account and gear
-          lists, keeps some logs to protect the service, and uses optional
-          analytics (only with your consent) to understand how people use the
-          app. If you choose, we may also email you occasional updates about new
+          lists, keeps some logs to protect the service, records which screens
+          you open while logged in so we can see which features are worth
+          building on, and uses optional analytics (only with your consent) to
+          understand how people find and use the app. If you choose, we may also email you occasional updates about new
           TrekList features and tips. We don&apos;t sell your personal data, and
           you can ask what we store or request deletion at any time. You can
           change your email preferences at any time in your account settings or
@@ -115,6 +116,14 @@ export default function PrivacyContent() {
           features you interact with, timestamps of your visits.
         </li>
         <li>
+          <strong>In-app activity</strong> – while you are logged in, we record
+          which sections of the app you open (for example My Gear, a gear list,
+          the checklist, or Community), when, and which list or community it
+          was. This is stored on our own servers against your account. It does
+          not use cookies, is not shared with any third party, and records only
+          where you went — not the contents of what you were looking at.
+        </li>
+        <li>
           <strong>Device &amp; technical data</strong> – IP address, browser
           type and version, operating system, approximate location (country /
           region based on IP).
@@ -187,7 +196,11 @@ export default function PrivacyContent() {
       <ul className="list-disc pl-6 space-y-1">
         <li>Keep TrekList secure and prevent abuse, spam, or attacks.</li>
         <li>Monitor capacity and performance to keep the service stable.</li>
-        <li>Improve our product based on aggregated usage patterns.</li>
+        <li>
+          Improve our product by looking at which features are actually used,
+          both in aggregate and, where it helps us understand how the app is
+          used in practice, at the level of an individual account.
+        </li>
         <li>
           Communicate important service-related updates (e.g. downtime, security
           issues).
@@ -338,6 +351,10 @@ export default function PrivacyContent() {
         <li>
           <strong>Log and security data</strong> – kept for a limited period
           (typically up to 12 months) for security and troubleshooting.
+        </li>
+        <li>
+          <strong>In-app activity records</strong> – automatically deleted{" "}
+          <strong>90 days</strong> after they are recorded.
         </li>
         <li>
           <strong>Support communication</strong> – kept for as long as necessary

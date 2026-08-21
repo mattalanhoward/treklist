@@ -13,6 +13,8 @@ async function main() {
   const GlobalItem = require("../src/models/globalItem");
   const GearList = require("../src/models/gearList");
   const AffiliateProduct = require("../src/models/affiliateProduct");
+  // TTL index here is what enforces the pane-log retention window.
+  const UserEvent = require("../src/models/userEvent");
 
   await mongoose.connect(uri, {
     dbName: process.env.MONGO_DB_NAME, // ← ensure we don't default to 'test'
@@ -33,6 +35,7 @@ async function main() {
     AffiliateProduct.syncIndexes(),
     GlobalItem.syncIndexes(),
     GearList.syncIndexes(),
+    UserEvent.syncIndexes(),
   ]);
 
   console.log("✅ Indexes ensured.");

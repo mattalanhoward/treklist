@@ -9,6 +9,7 @@ import { FiPrinter, FiRotateCcw } from "react-icons/fi";
 import api from "../services/api";
 import useAuth from "../hooks/useAuth";
 import useChecklistProgress from "../hooks/useChecklistProgress";
+import { logPaneView } from "../services/events";
 import { useTranslation } from "react-i18next";
 
 /**
@@ -48,6 +49,13 @@ export default function ChecklistView() {
       aborted = true;
     };
   }, [listId]);
+
+  // The checklist is its own route, so it misses the Dashboard's pane
+  // telemetry — log it here so the admin timeline sees pre-trip check-offs.
+  useEffect(() => {
+    if (!user?._id || !listId) return;
+    logPaneView("checklist", { listId });
+  }, [user?._id, listId]);
 
   // Use empty revision for stable storage key that persists across gear list edits
   const { checked, toggle, reset } = useChecklistProgress({

@@ -38,6 +38,7 @@ import {
 import PreviewCard from "../components/PreviewCard";
 import CreateListModal from "../components/CreateListModal";
 import { SHOW_COMMUNITY } from "../config/features";
+import { logPaneView } from "../services/events";
 
 function DashboardEmptyState({ hasLists, listsLoading, creatingSample, onCreateNewList }) {
   const { t } = useTranslation("common");
@@ -480,6 +481,43 @@ export default function Dashboard() {
 
     navigate(`/dashboard/${ids[0]}`, { replace: true });
   }, [lists, listId, navigate, listsLoading, isAuthenticated, activePane]);
+
+  // ─── Pane telemetry ───
+  // The admin user timeline infers gear activity from document timestamps but
+  // cannot infer navigation, so record it. Fires only when the pane, the list
+  // or the sub-tab actually changes — the ref keeps re-renders and unrelated
+  // query-param churn out of the log, while a genuine return to a pane
+  // (My Gear -> list -> My Gear) still records both visits.
+  //
+  // Community panes log through the same path. Their entry points are hidden
+  // behind SHOW_COMMUNITY, so this stays silent until that flag flips back to
+  // true, then starts populating timelines with no further change here.
+  const myGearTab = searchParams.get("tab");
+  const lastPaneLogRef = useRef(null);
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    if (activePane === "wishlist") return; // legacy alias, redirected above
+
+    const detail =
+      activePane === "community"
+        ? activeCommunitySlug
+        : activePane === "myGear"
+          ? myGearTab
+          : null;
+    const paneListId = activePane === "gear" ? listId : null;
+
+    const key = `${activePane}|${paneListId || ""}|${detail || ""}`;
+    if (lastPaneLogRef.current === key) return;
+    lastPaneLogRef.current = key;
+
+    logPaneView(activePane, { listId: paneListId, detail });
+  }, [
+    isAuthenticated,
+    activePane,
+    activeCommunitySlug,
+    myGearTab,
+    listId,
+  ]);
 
   // ─── Legacy redirect ───
   // The standalone wishlist pane was removed; the wishlist now lives as a tab
