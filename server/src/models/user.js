@@ -97,7 +97,7 @@ const UserSchema = new mongoose.Schema(
     sidebarCollapsed: { type: Boolean, default: false },
     sidebarGearListsCollapsed: { type: Boolean, default: false },
     sidebarMyGearCollapsed: { type: Boolean, default: false },
-    viewMode: { type: String, enum: ["column", "list"], default: "list" },
+    viewMode: { type: String, enum: ["column", "list"], default: "column" },
     theme: { type: String, default: "light" },
     weightUnit: { type: String, enum: ["g", "oz"], default: "g" },
     measurementSystem: { type: String, enum: ["metric", "imperial"], default: "metric" },
