@@ -498,6 +498,16 @@ export default function Dashboard() {
     if (!isAuthenticated) return;
     if (activePane === "wishlist") return; // legacy alias, redirected above
 
+    // Bare /dashboard on the gear pane is a way-station, not a destination:
+    // the redirect effect above is about to swap in a real list id, and
+    // logging the render in between files an "Opened a gear list" with no
+    // list against every arrival there, so each visit lands in the timeline
+    // twice. Wait for the redirect. A user who really has nowhere to go —
+    // lists loaded and empty — is looking at the empty state, so that counts.
+    if (activePane === "gear" && !listId && (listsLoading || lists.length > 0)) {
+      return;
+    }
+
     const detail =
       activePane === "community"
         ? activeCommunitySlug
@@ -517,6 +527,8 @@ export default function Dashboard() {
     activeCommunitySlug,
     myGearTab,
     listId,
+    listsLoading,
+    lists,
   ]);
 
   // ─── Legacy redirect ───
